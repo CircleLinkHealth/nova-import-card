@@ -182,7 +182,7 @@
 
             this.retrievePatient();
 
-            this.initTwilio();
+            this.initTwilio(true);
 
             App.$on('enrollable:action-complete', () => {
                 this.patientData = null;
@@ -373,16 +373,23 @@
             },
 
             call() {
-                TimeTrackerEventBus.$emit('tracker:call-mode:enter');
-                this.device.connect({
-                    To: this.phone,
-                    From: this.practice_phone ? this.practice_phone : undefined,
-                    IsUnlistedNumber: false,
-                    InboundUserId: this.enrollable_user_id,
-                    InboundEnrolleeId: this.enrollable_id,
-                    OutboundUserId: userId,
-                    Source: "enrolment-dashboard"
-                });
+                //tokens expire so need to fetch a new one every time we want to make a call
+                this.initTwilio(false)
+                    .then(() => {
+                        TimeTrackerEventBus.$emit('tracker:call-mode:enter');
+                        this.device.connect({
+                            To: this.phone,
+                            From: this.practice_phone ? this.practice_phone : undefined,
+                            IsUnlistedNumber: false,
+                            InboundUserId: this.enrollable_user_id,
+                            InboundEnrolleeId: this.enrollable_id,
+                            OutboundUserId: userId,
+                            Source: "enrolment-dashboard"
+                        });
+                    })
+                    .catch(err => {
+
+                    });
             },
             hangUp() {
                 TimeTrackerEventBus.$emit('tracker:call-mode:exit');
@@ -404,49 +411,56 @@
                 }
                 return rootUrl(path);
             },
-            initTwilio: function () {
+            initTwilio: function (showReadyLog) {
                 const url = this.getUrl(`twilio/token?cpm-token=${this.cpmToken}`);
 
-                this.$http.get(url)
-                    .then(response => {
-                        this.log = 'Initializing';
-                        this.device = new Device(response.data.token, {
-                            closeProtection: true,
-                            edge: ['ashburn', 'roaming'],
-                        });
+                this.log = 'Fetching token...';
+                return new Promise((resolve, reject) => {
+                    this.$http.get(url)
+                        .then(response => {
+                            this.log = 'Initializing.';
+                            this.device = new Device(response.data.token, {
+                                closeProtection: true,
+                                edge: ['ashburn', 'roaming'],
+                            });
 
-                        this.device.on('disconnect', () => {
-                            console.log('twilio device: disconnect');
-                            this.log = 'Call ended.';
-                            this.onCall = false;
-                            TimeTrackerEventBus.$emit('tracker:call-mode:exit');
-                            this.updateCallStatus()
-                        });
+                            this.device.on('disconnect', () => {
+                                console.log('twilio device: disconnect');
+                                this.log = 'Call ended.';
+                                this.onCall = false;
+                                TimeTrackerEventBus.$emit('tracker:call-mode:exit');
+                                this.updateCallStatus()
+                            });
 
-                        this.device.on('offline', () => {
-                            console.log('twilio device: offline');
-                            this.log = 'Offline.';
-                            this.updateCallStatus()
-                        });
+                            this.device.on('offline', () => {
+                                console.log('twilio device: offline');
+                                this.log = 'Offline.';
+                                this.updateCallStatus()
+                            });
 
-                        this.device.on('error', (err) => {
-                            console.error('twilio device: error', err);
-                            this.callError = err.message;
-                            this.updateCallStatus()
-                        });
+                            this.device.on('error', (err) => {
+                                console.error('twilio device: error', err);
+                                this.callError = err.message;
+                                this.updateCallStatus()
+                            });
 
-                        this.device.on('ready', () => {
-                            console.log('twilio device: ready');
-                            this.log = 'Ready to make call';
-                            M.toast({html: this.log, displayLength: 5000});
+                            this.device.on('ready', () => {
+                                console.log('twilio device: ready');
+                                if (showReadyLog) {
+                                    this.log = 'Ready to make call';
+                                }
+                                M.toast({html: this.log, displayLength: 5000});
+                                this.updateCallStatus();
+                                resolve();
+                            });
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            this.log = 'Could not fetch token, see console.log';
                             this.updateCallStatus()
+                            reject(error);
                         });
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        this.log = 'Could not fetch token, see console.log';
-                        this.updateCallStatus()
-                    });
+                });
             }
         }
     }

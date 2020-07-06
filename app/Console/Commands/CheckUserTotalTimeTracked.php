@@ -89,21 +89,29 @@ class CheckUserTotalTimeTracked extends Command
         if ($daily) {
             $maxHours = UserTotalTimeChecker::getMaxHoursForDay();
             $result .= "Warning: The following nurses have exceeded the daily maximum of $maxHours hours:\n";
-            $daily->each(function ($time, $id) use (&$result) {
+            $daily->each(function ($time, $key) use (&$result) {
+                $parts = explode('_', $key);
+                $userId = $parts[0];
+                $userDisplayName = $parts[1];
                 $rounded = round($time, 2);
-                $result .= "Nurse[$id]: $rounded hrs spent in CPM yesterday\n";
+                $result .= "${userDisplayName}[${userId}]: $rounded hrs spent in CPM yesterday\n";
             });
         }
         $weekly = $alerts->get('weekly');
         if ($weekly) {
-            $timesMore = UserTotalTimeChecker::getThresholdForWeek();
             if ( ! empty($result)) {
                 $result .= "\n\n";
             }
+            $committedColl = $alerts->get('weekly_committed');
+            $timesMore     = UserTotalTimeChecker::getThresholdForWeek();
             $result .= "Warning: The following nurses have exceeded their committed hours for the last 7 days by more than {$timesMore}x:\n";
-            $weekly->each(function ($time, $id) use (&$result) {
+            $weekly->each(function ($time, $key) use ($committedColl, &$result) {
                 $rounded = round($time, 2);
-                $result .= "Nurse[$id]: $rounded hrs spent in CPM last 7 days\n";
+                $parts = explode('_', $key);
+                $userId = $parts[0];
+                $userDisplayName = $parts[1];
+                $committedHours = $committedColl = $committedColl->get($key);
+                $result .= "${userDisplayName}[${userId}]: $rounded hrs spent in CPM vs $committedHours hrs committed in the last 7 days\n";
             });
         }
 
