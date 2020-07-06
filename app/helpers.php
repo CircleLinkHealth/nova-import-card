@@ -467,7 +467,7 @@ if ( ! function_exists('iterateCsv')) {
                     $results[] = $cb;
                 }
 
-                if (array_key_exists('error', $cb)) {
+                if (array_key_exists('error', (array) $cb)) {
                     $errors[] = $cb['error'];
                 }
             }
