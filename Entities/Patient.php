@@ -551,7 +551,14 @@ class Patient extends BaseModel
                 $q->ofType('care-center');
             })
             ->orderBy('created_at', 'desc')
-            ->first()['provider_id'];
+            ->first();
+
+        if (is_null($id)) {
+            return null;
+        }
+        if (empty($id['provider_id'])) {
+            return null;
+        }
 
         return Nurse::where('user_id', $id)->first();
     }
