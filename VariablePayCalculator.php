@@ -56,7 +56,8 @@ class VariablePayCalculator
     }
 
     /**
-     * @throws \Exception        when patient not found
+     * @throws \Exception when patient not found
+     *
      * @return CalculationResult
      */
     public function calculate(User $nurse)
@@ -267,6 +268,7 @@ class VariablePayCalculator
      * @param $patientCareRateLogs
      *
      * @throws \Exception
+     *
      * @return PatientPayCalculationResult
      */
     private function getPayForPatient(
@@ -577,14 +579,16 @@ class VariablePayCalculator
                         $isBehavioral,
                         $isPcmBillable
                     );
-                    $date = $pay['last_log_date'];
 
-                    if ($date) {
+                    if (is_array($pay) && array_key_exists('last_log_date', $pay) && $date = $pay['last_log_date']) {
                         $visitsForDate = ${$var}->get($date, ['fee' => 0, 'count' => 0]);
-                        ${$var}->put($date, [
-                            'fee'   => $visitsForDate['fee'] + $pay['fee'],
-                            'count' => $visitsForDate['count'] + $pay['count'],
-                        ]);
+
+                        if (is_array($visitsForDate) && array_keys_exist(['fee', 'count'], $visitsForDate) && array_keys_exist(['fee', 'count'], $pay)) {
+                            ${$var}->put($date, [
+                                'fee'   => $visitsForDate['fee'] + $pay['fee'],
+                                'count' => $visitsForDate['count'] + $pay['count'],
+                            ]);
+                        }
                     }
                 }
             }
