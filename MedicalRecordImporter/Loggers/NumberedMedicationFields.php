@@ -25,13 +25,15 @@ class NumberedMedicationFields
             if ( ! empty($patient["medication_${i}"]) && '#N/A' != $patient["medication_${i}"]) {
                 $decoded = json_decode($patient["medication_${i}"], true);
 
-                $medications[] = [
-                    'Name'      => $decoded['name'],
-                    'Sig'       => $decoded['sig'],
-                    'StartDate' => $decoded['start_date'],
-                    'StopDate'  => $decoded['end_date'],
-                    'Status'    => '',
-                ];
+                if (is_array($decoded) && ! empty($decoded['name'])) {
+                    $medications[] = [
+                        'Name'      => $decoded['name'],
+                        'Sig'       => $decoded['sig'],
+                        'StartDate' => $decoded['start_date'],
+                        'StopDate'  => $decoded['end_date'],
+                        'Status'    => '',
+                    ];
+                }
             }
 
             unset($patient["medication_${i}"]);
