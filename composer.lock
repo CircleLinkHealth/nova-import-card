@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d8b44885d3d46f1cb5d4190f6731126",
+    "content-hash": "7442bd1e8c9d56336c57c8a5822c9cb5",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1137,11 +1137,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v2.9.8",
+            "version": "v2.9.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "fb9b1afce8d74368a1ad684dfb1ed2be6dd88d27"
+                "reference": "d2a5967a26c8fe56327d89b2f08a07ce860e9092"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1175,15 +1175,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-30T22:39:41+00:00"
+            "time": "2020-07-06T22:27:27+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.0.4",
+            "version": "v3.0.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "9a1d939b540e28cd89ff69fe5eeffc54ef6214eb"
+                "reference": "544cf7fd72a5f3c695abe67528b68d54fc9c2517"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1208,7 +1208,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-27T17:00:52+00:00"
+            "time": "2020-07-06T23:05:46+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1346,11 +1346,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.4.7",
+            "version": "v1.4.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "3f37437b1acf3ddca54eee53c19781996662e4dd"
+                "reference": "a4de176a99d325a36e12ef9b9fc56a3079686396"
             },
             "type": "laravel-module",
             "extra": {
@@ -1373,7 +1373,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-06T07:58:22+00:00"
+            "time": "2020-07-06T23:04:06+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -16004,7 +16004,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "~7.4",
+        "php": "^7.4",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",
