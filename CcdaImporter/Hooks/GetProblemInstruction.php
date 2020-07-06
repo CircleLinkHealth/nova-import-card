@@ -23,7 +23,7 @@ class GetProblemInstruction extends BaseCcdaImportHook
             }
         );
 
-        $cpmProblem = $this->payload['cpm_problem_id']
+        $cpmProblem = is_array($this->payload) && array_key_exists('cpm_problem_id', $this->payload)
             ? $cpmProblems[$this->payload['cpm_problem_id']]
             : null;
 
