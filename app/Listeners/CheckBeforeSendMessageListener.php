@@ -27,13 +27,12 @@ class CheckBeforeSendMessageListener
         if ( ! empty($event->data['emailData'])) {
             $email = $event->data['emailData']['notifiableMail'];
 
-            // The User who will receive the mail.
-            $user = User::whereEmail($email)->first();
-
-            //todo return false if email contains @careplanmanager.com
             if (Str::contains($email, ['@careplanmanager.com'])) {
                 return false;
             }
+
+            // The User who will receive the mail.
+            $user = User::whereEmail($email)->first();
 
             return $this->checkSubscriptions($event->data['emailData']['activityType'], $user->id);
         }
