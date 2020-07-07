@@ -115,7 +115,7 @@
         </div>
     </div>
     <div class="container">
-        @if($rows != null)
+        @empty(! empty($rows))
             <div class="panel panel-default">
                 {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
                 <div class="panel-body">
