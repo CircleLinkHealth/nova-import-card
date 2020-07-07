@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Console\Command;
 
 class CheckForDraftCarePlans extends Command
@@ -42,8 +43,11 @@ class CheckForDraftCarePlans extends Command
     public function handle()
     {
         $count = User::ofType('participant')
+            ->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
             ->whereHas('carePlan', function ($q) {
-                $q->whereStatus('draft');
+                $q->whereStatus(CarePlan::DRAFT);
             })
             ->count();
 
