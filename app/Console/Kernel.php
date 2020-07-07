@@ -84,6 +84,7 @@ class Kernel extends ConsoleKernel
             ->everyMinute();
 
         $schedule->command(FaxAuditReportsAtPracticePreferredDayTime::class)
+            ->onOneServer()
             ->everyFiveMinutes();
 
         $schedule->command(AutoApproveValidCarePlansAs::class, ['--reimport'])
