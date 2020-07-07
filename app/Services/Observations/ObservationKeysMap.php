@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\ValueObjects;
+namespace App\Services\Observations;
 
 class ObservationKeysMap
 {
