@@ -9,9 +9,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeStaff;
 use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -142,7 +142,7 @@ class PracticeStaffController extends Controller
                 PhoneNumber::getTypes()
             ) ?? '',
             'sendBillingReports'     => $permissions->pivot->send_billing_reports ?? false,
-            'canApproveAllCareplans' => ! optional($user->providerInfo)->approve_own_care_plans,
+            'canApproveAllCareplans' => $user->canApproveCarePlans(),
             'role_names'             => $roles->map(function ($r) {
                 return $r->name;
             }),
@@ -233,13 +233,15 @@ class PracticeStaffController extends Controller
 //            $user->forwardTo($formData['forward_alerts_to']['user_id'], $formData['forward_alerts_to']['who']);
         }
 
-        if (in_array('provider', $roleNames)) {
-            $providerInfo = ProviderInfo::updateOrCreate([
-                'user_id' => $user->id,
-            ], [
-                'approve_own_care_plans' => ! $formData['canApproveAllCareplans'],
-            ]);
+        if ( ! $formData['canApproveAllCareplans'] && $user->canApproveCarePlans()) {
+            $user->attachPermission(Permission::where('name', 'care-plan-approve')->firstOrFail(), false);
+            $user->clearRolesCache();
+        } elseif ( ! $user->canApproveCarePlans()) {
+            $user->attachPermission(Permission::where('name', 'care-plan-approve')->firstOrFail(), true);
+            $user->clearRolesCache();
+        }
 
+        if (in_array('provider', $roleNames)) {
             if ('billing_provider' != $formData['forward_careplan_approval_emails_to']['who']) {
                 foreach ($formData['forward_careplan_approval_emails_to']['user_ids'] as $user_id) {
                     $user->forwardTo($user_id, $formData['forward_careplan_approval_emails_to']['who']);
