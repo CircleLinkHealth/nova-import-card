@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Observation;
+use App\Services\Observations\ObservationConstants;
 use App\Services\Observations\ObservationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -96,6 +97,18 @@ class ObservationController extends Controller
         ]);
 
         $answerResponse = false;
+
+        if (ObservationConstants::ADHERENCE === $newObservation->obs_key) {
+            if (empty($newObservation->obs_value)) {
+                return redirect()->back()->withErrors(['Please fill in the "Value" field below.'])->withInput();
+            }
+
+            $newObservation->save();
+
+            return redirect()->route('patient.summary', [
+                'patientId' => $request->input('userId'),
+            ])->with('messages', ['Successfully added new observation']);
+        }
 
         if ('CF_RPT_60' == $request->input('observationType')) {
             $newObservation->obs_value = str_replace('%', '', $newObservation->obs_value);

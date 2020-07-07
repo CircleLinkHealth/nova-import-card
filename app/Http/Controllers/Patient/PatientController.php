@@ -360,8 +360,6 @@ class PatientController extends Controller
         Request $request,
         $patientId
     ) {
-        $messages = \Session::get('messages');
-
         $wpUser = User::with([
             'primaryPractice',
             'ccdProblems' => function ($q) {
@@ -371,12 +369,10 @@ class PatientController extends Controller
             'observations' => function ($q) {
                 $q->where('obs_unit', '!=', 'invalid')
                     ->where('obs_unit', '!=', 'scheduled')
-                    ->with([
-                        'meta',
-                        'question.careItems',
-                    ])
+                    ->whereNotNull('obs_value')
+                    ->where('obs_value', '!=', '')
                     ->orderBy('obs_date', 'desc')
-                    ->take(100);
+                    ->take(30);
             },
             'patientSummaries',
         ])
@@ -392,11 +388,7 @@ class PatientController extends Controller
 
         $problems = $wpUser->getProblemsToMonitor();
 
-        $params        = $request->all();
-        $detailSection = '';
-        if (isset($params['detail'])) {
-            $detailSection = $params['detail'];
-        }
+        $detailSection = $request->input('detail', '');
 
         $sections = [
             [
@@ -507,38 +499,67 @@ class PatientController extends Controller
             }
         }
 
-        $observation_json = [];
+        $observationsForWebix = [
+            'obs_biometrics'  => '{}',
+            'obs_medications' => '{}',
+            'obs_symptoms'    => '{}',
+            'obs_lifestyle'   => '{}',
+        ];
+
         foreach ($obs_by_pcp as $section => $observations) {
-            $o                          = 0;
-            $observation_json[$section] = 'data:[';
             foreach ($observations as $observation) {
-                // limit to 3 if not detail
-                if (empty($detailSection)) {
-                    if ($o >= 3) {
-                        continue 1;
-                    }
-                }
                 // set default
                 $alertLevel = 'default';
                 if ( ! empty($observation->alert_level)) {
                     $alertLevel = $observation->alert_level;
                 }
-                // lastly format json
-                $observation_json[$section] .= "{ obs_key:'".$observation->obs_key."', ".
-                                               "description:'".str_replace(
-                                                   '_',
-                                                   ' ',
-                                                   $observation->description
-                                               )."', ".
-                                               "obs_value:'".$observation->obs_value."', ".
-                                               "dm_alert_level:'".$alertLevel."', ".
-                                               "obs_unit:'".$observation->obs_unit."', ".
-                                               "obs_message_id:'".$observation->obs_message_id."', ".
-                                               "comment_date:'".Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A')."', ".'},';
-                ++$o;
+
+                $observationsForWebix[$section] = json_encode([
+                    'obs_key'     => $observation->obs_key,
+                    'description' => str_replace(
+                        '_',
+                        ' ',
+                        $observation->description
+                    ),
+                    'obs_value'      => $observation->obs_value,
+                    'dm_alert_level' => $alertLevel,
+                    'obs_unit'       => $observation->obs_unit,
+                    'obs_message_id' => $observation->obs_message_id,
+                    'comment_date'   => Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A'),
+                ]);
             }
-            $observation_json[$section] .= '],';
         }
+
+        $sections = [
+            [
+                'section'           => 'obs_biometrics',
+                'id'                => 'obs_biometrics_dtable',
+                'title'             => 'Biometrics',
+                'col_name_question' => 'Reading Type',
+                'col_name_severity' => 'Reading',
+            ],
+            [
+                'section'           => 'obs_medications',
+                'id'                => 'obs_medications_dtable',
+                'title'             => 'Medications',
+                'col_name_question' => 'Medication',
+                'col_name_severity' => 'Adherence',
+            ],
+            [
+                'section'           => 'obs_symptoms',
+                'id'                => 'obs_symptoms_dtable',
+                'title'             => 'Symptoms',
+                'col_name_question' => 'Symptom',
+                'col_name_severity' => 'Severity',
+            ],
+            [
+                'section'           => 'obs_lifestyle',
+                'id'                => 'obs_lifestyle_dtable',
+                'title'             => 'Lifestyle',
+                'col_name_question' => 'Question',
+                'col_name_severity' => 'Response',
+            ],
+        ];
 
         return view('wpUsers.patient.summary', [
             'program'          => $program,
@@ -546,9 +567,10 @@ class PatientController extends Controller
             'wpUser'           => $wpUser,
             'sections'         => $sections,
             'detailSection'    => $detailSection,
-            'observation_data' => $observation_json,
-            'messages'         => $messages,
+            'observation_data' => $observationsForWebix,
             'problems'         => $problems,
+            'filter'           => '',
+            'sections'         => $sections,
         ]);
     }
 
