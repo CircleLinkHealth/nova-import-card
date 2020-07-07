@@ -149,16 +149,18 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
 
         $shouldBatch = (bool) $user->primaryPractice->cpmSettings()->batch_efax_audit_reports;
 
-        $user->locations->each(function (Location $location) use ($user, $date, $shouldBatch, $key) {
-            if ( ! $this->option('dry')) {
-                $location->notifyNow(new SendAuditReport($user, $date, ['phaxio'], $shouldBatch));
-            }
+        $user->locations
+            ->unique()
+            ->each(function (Location $location) use ($user, $date, $shouldBatch, $key) {
+                if ( ! $this->option('dry')) {
+                    $location->notifyNow(new SendAuditReport($user, $date, ['phaxio'], $shouldBatch));
+                }
 
-            if ( ! Cache::has($key)) {
-                Cache::set($key, 0, now()->addHours(3));
-            }
+                if ( ! Cache::has($key)) {
+                    Cache::set($key, 0, now()->addHours(3));
+                }
 
-            Cache::increment($key);
-        });
+                Cache::increment($key);
+            });
     }
 }
