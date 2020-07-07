@@ -6,7 +6,6 @@
 
 namespace App;
 
-use App\Services\DatamonitorService;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -251,62 +250,6 @@ class Observation extends BaseModel
     public function question()
     {
         return $this->belongsTo(CPRulesQuestions::class, 'obs_message_id', 'msg_id');
-    }
-
-    public function save(array $params = [])
-    {
-        if (empty($this->user_id)) {
-            return false;
-        }
-        $wpUser = User::find($this->user_id);
-        if ( ! $wpUser->program_id) {
-            return false;
-        }
-        $comment = Comment::find($this->comment_id);
-        if ($comment) {
-            $params['comment_id'] = $comment->legacy_comment_id;
-        } else {
-            $this->comment_id     = '0';
-            $params['comment_id'] = '0';
-        }
-        $params['user_id']        = $this->user_id;
-        $params['obs_date']       = $this->obs_date;
-        $params['obs_date_gmt']   = $this->obs_date_gmt;
-        $params['sequence_id']    = $this->sequence_id;
-        $params['obs_message_id'] = $this->obs_message_id;
-        $params['obs_method']     = $this->obs_method;
-        $params['obs_key']        = $this->obs_key;
-        $params['obs_value']      = $this->obs_value;
-        $params['obs_unit']       = $this->obs_unit;
-        $this->program_id         = $wpUser->program_id;
-
-        // updating or inserting?
-        $updating = false;
-        if ($this->id) {
-            $updating = true;
-        }
-
-        // take programId(primaryProgramId) and add to wp_X_observations table
-        /*
-        if($updating) {
-            DB::table('ma_'.$wpUser->primaryProgramId().'_observations')->where('obs_id', $this->legacy_obs_id)->update($params);
-        } else {
-            // add to legacy if doesnt already exist
-            if(empty($this->legacy_obs_id)) {
-                $resultObsId = DB::table('ma_' . $wpUser->primaryProgramId() . '_observations')->insertGetId($params);
-                $this->legacy_obs_id = $resultObsId;
-            }
-        }
-        */
-
-        parent::save();
-
-        // run datamonitor if new obs
-        if ( ! $updating) {
-            $dmService = app(DatamonitorService::class);
-            $dmService->process_obs_alerts($this->id);
-        }
-        // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
     }
 
     public function user()
