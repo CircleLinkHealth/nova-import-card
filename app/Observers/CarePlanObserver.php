@@ -8,6 +8,7 @@ namespace App\Observers;
 
 use App\Events\CarePlanWasProviderApproved;
 use App\Events\CarePlanWasQAApproved;
+use App\Events\CarePlanWasRNApproved;
 use App\Events\PdfableCreated;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
@@ -96,6 +97,10 @@ class CarePlanObserver
         }
 
         if ($carePlan->isDirty('status')) {
+            if (CarePlan::RN_APPROVED == $carePlan->status) {
+                event(new CarePlanWasRNApproved($carePlan->patient));
+            }
+
             if (CarePlan::QA_APPROVED == $carePlan->status) {
                 event(new CarePlanWasQAApproved($carePlan->patient));
             }

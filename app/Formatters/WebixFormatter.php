@@ -14,6 +14,7 @@ use App\Services\NoteService;
 use App\Services\ReportsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use Illuminate\Database\Eloquent\Collection;
@@ -246,7 +247,7 @@ class WebixFormatter implements ReportFormatter
             'medications' => $user->cpmMedicationGroups->pluck('name')->all(),
         ];
 
-        $other_problems = (new ReportsService())->getInstructionsforOtherProblems($user);
+        $other_problems = (new ReportsService())->getInstructionsForOtherProblems($user);
 
         if ( ! empty($other_problems) && isset($careplanReport[$user->id], $careplanReport[$user->id]['problems'])) {
             if ( ! is_string($careplanReport[$user->id]['problems'])) {
@@ -501,7 +502,7 @@ class WebixFormatter implements ReportFormatter
         $patientData           = $this->patients($patients);
         $patientJson           = json_encode($patientData);
         $auth                  = \Auth::user();
-        $canApproveCarePlans   = $auth->canApproveCareplans();
+        $canApproveCarePlans   = $auth->canApproveCarePlans();
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
         $isCareCenter          = $auth->isCareCoach();
         $isAdmin               = $auth->isAdmin();
@@ -551,7 +552,7 @@ class WebixFormatter implements ReportFormatter
             $approverName       = 'NA';
             $tooltip            = 'NA';
 
-            if ('provider_approved' == $careplanStatus) {
+            if (CarePlan::PROVIDER_APPROVED == $careplanStatus) {
                 $approver = $patient->carePlan->providerApproverUser;
                 if ($approver) {
                     $approverName = $approver->getFullName();
@@ -561,29 +562,35 @@ class WebixFormatter implements ReportFormatter
                 $careplanStatus       = 'Approved';
                 $careplanStatusLink   = '<span data-toggle="" title="'.$approverName.' '.$carePlanProviderDate.'">Approved</span>';
                 $tooltip              = $approverName.' '.$carePlanProviderDate;
-            } else {
-                if ('qa_approved' == $careplanStatus) {
-                    $careplanStatus     = 'Approve Now';
-                    $tooltip            = $careplanStatus;
-                    $careplanStatusLink = 'Approve Now';
-                    if ($canApproveCarePlans) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
-                            'patient.careplan.print',
-                            ['patientId' => $patient->id]
-                        ).'"><strong>Approve Now</strong></a>';
-                    }
-                } else {
-                    if ('draft' == $careplanStatus) {
-                        $careplanStatus     = 'CLH Approve';
-                        $tooltip            = $careplanStatus;
-                        $careplanStatusLink = 'CLH Approve';
-                        if ($canQAApproveCarePlans) {
-                            $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
-                                'patient.demographics.show',
-                                [$patient->id]
-                            ).'"><strong>CLH Approve</strong></a>';
-                        }
-                    }
+            } elseif (CarePlan::RN_APPROVED == $careplanStatus) {
+                $careplanStatus     = 'Approve Now';
+                $tooltip            = $careplanStatus;
+                $careplanStatusLink = 'Approve Now';
+                if ($canApproveCarePlans) {
+                    $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
+                        'patient.careplan.print',
+                        ['patientId' => $patient->id]
+                    ).'"><strong>Approve Now</strong></a>';
+                }
+            } elseif (CarePlan::QA_APPROVED == $careplanStatus) {
+                $careplanStatus     = 'RN Approve';
+                $tooltip            = $careplanStatus;
+                $careplanStatusLink = 'RN Approve';
+                if ($canApproveCarePlans) {
+                    $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
+                        'patient.demographics.show',
+                        [$patient->id]
+                    ).'"><strong>RN Approve</strong></a>';
+                }
+            } elseif (CarePlan::DRAFT == $careplanStatus) {
+                $careplanStatus     = 'CLH Approve';
+                $tooltip            = $careplanStatus;
+                $careplanStatusLink = 'CLH Approve';
+                if ($canQAApproveCarePlans) {
+                    $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
+                        'patient.demographics.show',
+                        [$patient->id]
+                    ).'"><strong>CLH Approve</strong></a>';
                 }
             }
 

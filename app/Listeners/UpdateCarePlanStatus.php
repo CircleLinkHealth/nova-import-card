@@ -34,11 +34,15 @@ class UpdateCarePlanStatus
     {
         if ($this->shouldBeProviderApproved($patient, $approver)) {
             $this->providerApprove($patient, $approver);
+        } elseif ($this->shouldBeRNApproved($patient, $approver)) {
+            $this->rnApprove($patient, $approver);
         } elseif ($this->shouldBeQAApproved($patient, $approver)) {
             $this->qaApprove($patient, $approver);
         }
 
-        $patient->save();
+        if ($patient->isDirty()) {
+            $patient->save();
+        }
     }
 
     private function carePlanIsAlreadyApproved(CarePlan $carePlan)
@@ -72,13 +76,21 @@ class UpdateCarePlanStatus
         $patient->carePlan->save();
     }
 
+    private function rnApprove(User &$patient, User $approver)
+    {
+        $patient->carePlan->status         = CarePlan::RN_APPROVED;
+        $patient->carePlan->rn_approver_id = $approver->id;
+        $patient->carePlan->rn_date        = now()->toDateTimeString();
+        $patient->carePlan->save();
+    }
+
     /**
-     * This CarePlan has already been `QA approved` by CLH, and is now being approved by a member of the practice.  We
+     * This CarePlan has already been `RN approved` by CLH, and is now being approved by a member of the practice.  We
      * can now store it with status `Provider Approved`.
      */
     private function shouldBeProviderApproved(User $patient, User $approver): bool
     {
-        return CarePlan::QA_APPROVED == $patient->getCarePlanStatus() && $approver->canApproveCarePlans();
+        return CarePlan::RN_APPROVED == $patient->getCarePlanStatus() && $approver->canApproveCarePlans();
     }
 
     /**
@@ -88,5 +100,14 @@ class UpdateCarePlanStatus
     {
         return CarePlan::DRAFT == $patient->getCarePlanStatus()
                && $approver->hasPermissionForSite('care-plan-qa-approve', $patient->getPrimaryPracticeId());
+    }
+
+    /**
+     * This is a `QA Approved` CarePlan what was just `RN approved` by CLH. We can now store it with status `RN Approved`.
+     */
+    private function shouldBeRNApproved(User $patient, User $approver): bool
+    {
+        return CarePlan::QA_APPROVED == $patient->getCarePlanStatus()
+            && $approver->hasRoleForSite('care-center', $patient->getPrimaryPracticeId());
     }
 }
