@@ -17,9 +17,12 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
+use Tests\Concerns\PhaxioFake\Phaxio;
+use Tests\Concerns\TwilioFake\Twilio;
 use Tests\CustomerTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
@@ -176,6 +179,9 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
     public function test_it_forwards_careplan_when_provider_approved()
     {
+        Phaxio::fake();
+        Mail::fake();
+        Twilio::fake();
         $this->carePlan->status = CarePlan::QA_APPROVED;
         $this->carePlan->save();
 
