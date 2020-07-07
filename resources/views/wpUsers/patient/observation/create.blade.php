@@ -47,29 +47,27 @@
                                                     <option value=""> Select an Observation </option>
                                                     <optgroup label="Biometrics">
                                                         @foreach(App\ValueObjects\ObservationKeysMap::BIOMETRICS as $key => $value)
-                                                            <option value="{{$key}}">{{$value}}</option>
+                                                            <option value="{{$key}}" {{old('observationType') === $key ? 'selected' : ''}}>{{$value}}</option>
                                                         @endforeach
                                                     </optgroup>
 
                                                     <optgroup label="Medications Taken? Y or N">
                                                         @foreach(App\ValueObjects\ObservationKeysMap::MEDICATIONS as $key => $value)
-                                                            <option value="{{$key}}">{{$value}}</option>
+                                                            <option value="{{$key}}" {{old('observationType') === $key ? 'selected' : ''}}>{{$value}}</option>
                                                         @endforeach
                                                     </optgroup>
 
                                                     <optgroup label="Symptoms? (1 - 9)">
                                                         @foreach(App\ValueObjects\ObservationKeysMap::SYMPTOMS as $key => $value)
-                                                            <option value="{{$key}}">{{$value}}</option>
+                                                            <option value="{{$key}}" {{old('observationType') === $key ? 'selected' : ''}}>{{$value}}</option>
                                                         @endforeach
                                                     </optgroup>
 
                                                     <optgroup label="Lifestyle? Y or N">
                                                         @foreach(App\ValueObjects\ObservationKeysMap::LIFESTYLE as $key => $value)
-                                                            <option value="{{$key}}">{{$value}}</option>
+                                                            <option value="{{$key}}" {{old('observationType') === $key ? 'selected' : ''}}>{{$value}}</option>
                                                         @endforeach
                                                     </optgroup>
-
-
                                                 </select>
                                             </div>
                                         </div>
@@ -85,11 +83,11 @@
                                         <div class="col-sm-12">
                                             <div class="form-group">
                                                 <select id="observationSource" name="observationSource" class="selectpickerX dropdownValid form-control" data-size="10"  required>
-                                                    <option value=""> Select Source </option>
-                                                    <option value="ov_reading" >Office Visit (OV) reading</option>
-                                                    <option value="lab">Lab Test</option>
-                                                    <option value="manual_input" selected>Patient Reported</option>
-                                                    <option value="device">Device</option>
+                                                    <option value="" {{old('observationSource') === '' ? 'selected' : ''}}> Select Source </option>
+                                                    <option value="ov_reading" {{old('observationSource') === 'ov_reading' ? 'selected' : ''}}>Office Visit (OV) reading</option>
+                                                    <option value="lab" {{old('observationSource') === 'lab' ? 'selected' : ''}}>Lab Test</option>
+                                                    <option value="manual_input" {{old('observationSource') === 'manual_input' ? 'selected' : ''}}>Patient Reported</option>
+                                                    <option value="device" {{ old('observationSource') === 'device' ? 'selected' : ''}}>Device</option>
                                                 </select>
                                             </div>
                                         </div>
