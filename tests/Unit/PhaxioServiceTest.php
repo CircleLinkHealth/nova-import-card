@@ -66,7 +66,7 @@ class PhaxioServiceTest extends TestCase
     {
         $exception = false;
         try {
-            $this->getService()->send(
+            $this->app->make(Efax::class)->send(
                 ['file' => storage_path('pdfs/careplans/sample-careplan.pdf')]
             );
         } catch (\InvalidArgumentException $e) {
