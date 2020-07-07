@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\EnrollmentLinkValidation;
 use App\Http\Requests\SelfEnrollableUserAuthRequest;
 use App\SelfEnrollment\Helpers;
+use App\Services\Enrollment\EnrollmentBaseLetter;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class SelfEnrollmentController extends Controller
+class SelfEnrollmentController extends EnrollmentBaseLetter
 {
     use AuthenticatesUsers;
     const BLUE_BUTTON_COLOR = '#12a2c4';
@@ -356,23 +356,20 @@ class SelfEnrollmentController extends Controller
     private function enrollmentLetterView(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
     {
         $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
-        $provider                  = $userEnrollee->billingProviderUser();
-        /** @var EnrollmentInvitationLetter $practiceLetter */
-        $practiceLetter = EnrollmentInvitationLetter::where('practice_id', $enrollablePrimaryPractice->id)
-            ->firstOrFail();
-        $letterPages = $this->composeEnrollmentLetter(
-            $practiceLetter,
-            $userEnrollee,
-            $enrollablePrimaryPractice,
-            $isSurveyOnlyUser,
-            $provider,
-            $hideButtons
-        );
+
+//        1. Get base letter view
+//        2. Get Practice Specific letter view.
+
+        $baseLetterView = $this->baseLetterView($enrollablePrimaryPractice, $userEnrollee, $isSurveyOnlyUser, $hideButtons);
+        $provider       = $baseLetterView['provider'];
+        $practiceLetter = $baseLetterView['letter'];
+        $letterPages    = $baseLetterView['letterPages'];
+
         $practiceName           = $enrollablePrimaryPractice->display_name;
-        $practiceLogoSrc        = $practiceLetter->practice_logo_src ?? self::ENROLLMENT_LETTER_DEFAULT_LOGO;
+        $practiceLogoSrc        = $practiceLetter->practice_logo_src ?? SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO;
         $signatoryNameForHeader = $provider->display_name;
         $dateLetterSent         = '???';
-        $buttonColor            = self::DEFAULT_BUTTON_COLOR;
+        $buttonColor            = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
 
         /** @var EnrollableInvitationLink $invitationLink */
         $invitationLink = $enrollee->getLastEnrollmentInvitationLink();
