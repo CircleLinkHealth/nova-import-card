@@ -151,7 +151,7 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
 
         $user->locations->each(function (Location $location) use ($user, $date, $shouldBatch, $key) {
             if ( ! $this->option('dry')) {
-                $location->notify(new SendAuditReport($user, $date, ['phaxio'], $shouldBatch));
+                $location->notifyNow(new SendAuditReport($user, $date, ['phaxio'], $shouldBatch));
             }
 
             if ( ! Cache::has($key)) {
