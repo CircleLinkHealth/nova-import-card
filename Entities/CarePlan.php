@@ -52,7 +52,6 @@ use Validator;
  * @property \CircleLinkHealth\Customer\Entities\User                                               $patient
  * @property \CircleLinkHealth\SharedModels\Entities\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
  * @property \CircleLinkHealth\Customer\Entities\User|null                                          $providerApproverUser
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     whereCarePlanTemplateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
@@ -80,7 +79,6 @@ use Validator;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     whereUserId($value)
  * @mixin \Eloquent
- *
  * @property int|null                        $first_printed_by
  * @property \Illuminate\Support\Carbon|null $first_printed
  * @property string                          $provider_approver_name
@@ -88,7 +86,6 @@ use Validator;
  *     $notifications
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan newQuery()
@@ -97,19 +94,19 @@ use Validator;
  *     whereFirstPrinted($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     whereFirstPrintedBy($value)
- *
- * @property int|null    $notifications_count
- * @property int|null    $pdfs_count
- * @property int|null    $revision_history_count
- * @property string|null $deleted_at
- *
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan onlyTrashed()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withNurseApprovedVia()
- * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withoutTrashed()
+ * @property int|null                        $notifications_count
+ * @property int|null                        $pdfs_count
+ * @property int|null                        $revision_history_count
+ * @property string|null                     $deleted_at
+ * @method   static                          bool|null forceDelete()
+ * @method   static                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan onlyTrashed()
+ * @method   static                          bool|null restore()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereDeletedAt($value)
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withNurseApprovedVia()
+ * @method   static                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withTrashed()
+ * @method   static                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withoutTrashed()
+ * @property \Illuminate\Support\Carbon|null $rn_date
+ * @property int|null                        $rn_approver_id
  */
 class CarePlan extends BaseModel implements PdfReport
 {
@@ -121,6 +118,7 @@ class CarePlan extends BaseModel implements PdfReport
     const PDF               = 'pdf';
     const PROVIDER_APPROVED = 'provider_approved';
     const QA_APPROVED       = 'qa_approved';
+    const RN_APPROVED       = 'rn_approved';
 
     // mode options
     const WEB = 'web';
@@ -131,6 +129,7 @@ class CarePlan extends BaseModel implements PdfReport
 
     protected $dates = [
         'qa_date',
+        'rn_date',
         'provider_date',
         'first_printed',
     ];
@@ -140,10 +139,12 @@ class CarePlan extends BaseModel implements PdfReport
         'mode',
         'provider_approver_id',
         'qa_approver_id',
+        'rn_approver_id',
         'care_plan_template_id',
         'type',
         'status',
         'qa_date',
+        'rn_date',
         'provider_date',
         'first_printed_by',
         'first_printed',
@@ -223,7 +224,7 @@ class CarePlan extends BaseModel implements PdfReport
                     ->whereHas(
                         'carePlan',
                         function ($q) {
-                            $q->whereStatus(CarePlan::QA_APPROVED);
+                            $q->whereStatus(CarePlan::RN_APPROVED);
                         }
                     )
                     ->whereHas(
@@ -401,11 +402,17 @@ class CarePlan extends BaseModel implements PdfReport
      */
     public function shouldShowApprovalButton(): bool
     {
-        if (self::QA_APPROVED === $this->status && auth()->user()->canApproveCarePlans()) {
+        /** @var User $user */
+        $user = auth()->user();
+        if (self::RN_APPROVED === $this->status && $user->canApproveCarePlans()) {
             return true;
         }
 
-        if (self::DRAFT === $this->status && auth()->user()->canQAApproveCarePlans()) {
+        if (self::QA_APPROVED === $this->status && $user->canRNApproveCarePlans()) {
+            return true;
+        }
+
+        if (self::DRAFT === $this->status && $user->canQAApproveCarePlans()) {
             return true;
         }
 
