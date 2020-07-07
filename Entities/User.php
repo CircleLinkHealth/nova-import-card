@@ -763,6 +763,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasPermissionForSite('care-plan-qa-approve', $this->getPrimaryPracticeId());
     }
 
+    public function canRNApproveCarePlans()
+    {
+        return $this->hasRoleForSite('care-center', $this->getPrimaryPracticeId());
+    }
+
     /**
      * This function is called for every record of a model.
      * It is very important to cache at all levels:
@@ -3170,7 +3175,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->whereHas(
                 'carePlan',
                 function ($q) {
-                    $q->whereIn('status', [CarePlan::QA_APPROVED]);
+                    $q->whereIn('status', [CarePlan::RN_APPROVED]);
                 }
             )
             ->intersectPracticesWith($approver)
