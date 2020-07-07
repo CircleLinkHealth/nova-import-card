@@ -49,7 +49,8 @@ class CheckForDraftCarePlans extends Command
 
         if ($count) {
             // $this->info($count);
-            sendSlackMessage('#carecoach_ops', "$count Care Plans require Ops QA/Approval", $this->option('force-notify'));
+            $url = route('patients.dashboard');
+            sendSlackMessage('#carecoach_ops', "$count Care Plans require Ops QA/Approval: $url", $this->option('force-notify'));
         }
     }
 }
