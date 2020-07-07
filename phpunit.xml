@@ -10,9 +10,9 @@
          backupStaticAttributes="false"
          colors="true"
          convertErrorsToExceptions="true"
-         convertNoticesToExceptions="false"
-         convertWarningsToExceptions="false"
-         processIsolation="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
          stopOnFailure="true"
          verbose="true">
     <testsuites>
