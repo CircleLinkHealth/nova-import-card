@@ -619,9 +619,9 @@ class SchedulerService
      * @param $status
      * @param mixed $attestedProblems
      */
-    public function updateCallWithNote(
+    public function updateOrCreateCallWithNote(
         Note $note,
-        $call,
+        ?Call $call,
         $status,
         $attestedProblems = null
     ) {
@@ -649,6 +649,8 @@ class SchedulerService
         if ($attestedProblems) {
             event(new CallIsReadyForAttestedProblemsAttachment($call, $attestedProblems));
         }
+
+        return $call;
     }
 
     /**
@@ -673,28 +675,22 @@ class SchedulerService
         $callStatus,
         $attestedProblems = null
     ) {
-        $scheduled_call = $this->getTodaysCall($patient->id);
-
-        $note = Note::find($noteId);
-
-        $this->updateCallWithNote(
-            $note,
-            $scheduled_call,
+        $scheduled_call = $this->updateOrCreateCallWithNote(
+            $note = Note::find($noteId),
+            $scheduled_call = $this->getTodaysCall($patient->id),
             $callStatus,
             $attestedProblems
         );
 
         if (Call::IGNORED != $callStatus) {
-            $isCallBack = null != $scheduled_call && SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type;
             $this->patientWriteRepository->updateCallLogs(
                 $patient->patientInfo,
                 Call::REACHED == $callStatus,
-                $isCallBack
+                SchedulerService::CALL_BACK_TYPE === optional($scheduled_call)->sub_type
             );
         }
 
-        $nextCall = SchedulerService::getNextScheduledCall($patient->id, true);
-        if ($nextCall) {
+        if (SchedulerService::getNextScheduledCall($patient->id, true)) {
             return null;
         }
 

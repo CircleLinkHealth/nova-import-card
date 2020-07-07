@@ -659,7 +659,7 @@ class NotesController extends Controller
 
                         //'reached' | 'not-reached'
                         $callStatus = $input['call_status'];
-                        $schedulerService->updateCallWithNote($note, $call, $callStatus, $attestedProblems);
+                        $schedulerService->updateOrCreateCallWithNote($note, $call, $callStatus, $attestedProblems);
 
                         //Updates when the patient was successfully contacted last
                         //use $note->created_at, in case we are editing a note
