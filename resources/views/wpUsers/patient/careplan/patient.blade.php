@@ -180,7 +180,7 @@ $user_info = [];
                                                 <span class="help-block">{{ $errors->first('city') }}</span>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('state') ? 'has-error' : '' }}">
-                                                {!! Form::select('state', $states, (old('state') ? old('state') : $patient->state ? $patient->state : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                                {!! Form::select('state', $states, (old('state') ? old('state') : ($patient->state ? $patient->state : '')), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                                 <span class="help-block">{{ $errors->first('state') }}</span>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-4 {{ $errors->first('zip') ? 'has-error' : '' }}">
@@ -269,7 +269,7 @@ $user_info = [];
                                                                     class="attention">*</span>:</label>
                                                     </div>
                                                     <div class="col-sm-12">
-                                                        {!! Form::select('timezone', timezones(), (old('timezone') ? old('timezone') : $patient->timezone ? $patient->timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                                        {!! Form::select('timezone', timezones(), (old('timezone') ? old('timezone') : ($patient->timezone ? $patient->timezone : 'America/New_York')), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                                     </div>
                                                 </div>
 

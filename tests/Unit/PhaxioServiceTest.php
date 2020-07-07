@@ -74,17 +74,4 @@ class PhaxioServiceTest extends TestCase
         }
         $this->assertTrue($exception);
     }
-
-    public function test_it_sends_fax()
-    {
-        $fax = $this->getService()->createFaxFor('+12012819204')->send(
-            ['file' => storage_path('pdfs/careplans/sample-careplan.pdf'), 'direction' => 'received']
-        );
-        $this->assertEquals(1, $fax->count());
-    }
-
-    private function getService()
-    {
-        return app(Efax::class);
-    }
 }
