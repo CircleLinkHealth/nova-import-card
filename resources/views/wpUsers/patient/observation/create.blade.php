@@ -46,25 +46,25 @@
                                                 <select id="observationType" name="observationType" class="observation selectpickerX dropdownValid form-control" data-size="10" required>
                                                     <option value=""> Select an Observation </option>
                                                     <optgroup label="Biometrics">
-                                                        @foreach(\App\Services\Observations\ObservationKeysMap::BIOMETRICS as $key => $value)
+                                                        @foreach(\App\Services\Observations\ObservationConstants::BIOMETRICS as $key => $value)
                                                             <option value="{{$key}}" {{old('observationType') === $key ? 'selected' : ''}}>{{$value}}</option>
                                                         @endforeach
                                                     </optgroup>
 
                                                     <optgroup label="Medications Taken? Y or N">
-                                                        @foreach(\App\Services\Observations\ObservationKeysMap::MEDICATIONS as $key => $value)
+                                                        @foreach(\App\Services\Observations\ObservationConstants::MEDICATIONS as $key => $value)
                                                             <option value="{{$key}}" {{old('observationType') === $key ? 'selected' : ''}}>{{$value}}</option>
                                                         @endforeach
                                                     </optgroup>
 
                                                     <optgroup label="Symptoms? (1 - 9)">
-                                                        @foreach(\App\Services\Observations\ObservationKeysMap::SYMPTOMS as $key => $value)
+                                                        @foreach(\App\Services\Observations\ObservationConstants::SYMPTOMS as $key => $value)
                                                             <option value="{{$key}}" {{old('observationType') === $key ? 'selected' : ''}}>{{$value}}</option>
                                                         @endforeach
                                                     </optgroup>
 
                                                     <optgroup label="Lifestyle? Y or N">
-                                                        @foreach(\App\Services\Observations\ObservationKeysMap::LIFESTYLE as $key => $value)
+                                                        @foreach(\App\Services\Observations\ObservationConstants::LIFESTYLE as $key => $value)
                                                             <option value="{{$key}}" {{old('observationType') === $key ? 'selected' : ''}}>{{$value}}</option>
                                                         @endforeach
                                                     </optgroup>

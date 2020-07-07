@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Observation;
+use App\Services\Observations\ObservationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
@@ -91,8 +92,7 @@ class ObservationController extends Controller
             'obs_method'     => $request->input('observationSource'),
             'user_id'        => $request->input('userId'),
             'obs_value'      => $request->input('observationValue'),
-            'obs_key'        => '',
-            'obs_unit'       => '',
+            'obs_key'        => ObservationService::getObsKey($request->input('observationType')),
         ]);
 
         $answerResponse = false;

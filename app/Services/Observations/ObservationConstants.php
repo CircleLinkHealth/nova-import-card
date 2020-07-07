@@ -6,23 +6,26 @@
 
 namespace App\Services\Observations;
 
-class ObservationKeysMap
+class ObservationConstants
 {
+    public const A1C        = 'A1c';
+    public const ADHERENCE  = 'Adherence';
     public const BIOMETRICS = [
-        'CF_RPT_20' => 'Blood Pressure',
-        'CF_RPT_30' => 'Blood Sugar',
-        'CF_RPT_60' => 'A1c',
-        'CF_RPT_40' => 'Weight',
-        'CF_RPT_50' => 'Cigarette Count',
+        'CF_RPT_20' => self::BLOOD_PRESSURE,
+        'CF_RPT_30' => self::BLOOD_SUGAR,
+        'CF_RPT_60' => self::A1C,
+        'CF_RPT_40' => self::WEIGHT,
+        'CF_RPT_50' => self::CIGARETTE_COUNT,
     ];
-
-    public const LIFESTYLE = [
+    public const BLOOD_PRESSURE  = 'Blood Pressure';
+    public const BLOOD_SUGAR     = 'Blood Sugar';
+    public const CIGARETTE_COUNT = 'Cigarette Count';
+    public const LIFESTYLE       = [
         'CF_SOL_LFS_10' => 'Exercise 20 minutes',
         'CF_LFS_40'     => 'Following Healthy Diet',
         'CF_LFS_80'     => 'Low salt diet',
         'CF_SOL_LFS_90' => 'Diabetes diet',
     ];
-
     public const MEDICATIONS = [
         'CF_SOL_MED_BP'  => 'Blood Pressure meds',
         'CF_SOL_MED_CHL' => 'Cholesterol meds',
@@ -34,7 +37,8 @@ class ObservationKeysMap
         'CF_SOL_MED_BRE' => 'Breathing meds',
         'CF_SOL_MED_DEP' => 'Mood/Depression meds',
     ];
-
+    public const OTHER    = 'Other';
+    public const SEVERITY = 'Severity';
     public const SYMPTOMS = [
         'CF_SYM_51' => 'Shortness of breath',
         'CF_SYM_52' => 'Coughing or wheezing',
@@ -44,4 +48,5 @@ class ObservationKeysMap
         'CF_SYM_56' => 'Swelling in legs/feet',
         'CF_SYM_57' => 'Feeling down,  helpless, or sleep changes',
     ];
+    public const WEIGHT = 'Weight';
 }
