@@ -116,7 +116,7 @@ class ObservationController extends Controller
             if (Str::contains(
                 $newObservation->obs_value,
                 '.'
-            ) && 3 == strlen($newObservation->obs_value) && is_numeric($newObservation->obs_value)
+            ) && 4 >= strlen($newObservation->obs_value) && is_numeric($newObservation->obs_value)
             ) {
                 $answerResponse = true;
             }
