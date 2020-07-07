@@ -30,7 +30,7 @@
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
 
-                    {!! Form::open(array('url' => route('patient.observation.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal')) !!}
+                    {!! Form::open(['url' => route('patient.observation.store', ['patientId' => $patient->id]), 'class' => 'form-horizontal']) !!}
                     <div class="row">
                         <div class="form-block col-md-6">
                             <div class="row">
@@ -46,40 +46,27 @@
                                                 <select id="observationType" name="observationType" class="observation selectpickerX dropdownValid form-control" data-size="10" required>
                                                     <option value=""> Select an Observation </option>
                                                     <optgroup label="Biometrics">
-                                                        <option value="RPT/CF_RPT_20">Blood Pressure</option>
-                                                        <option value="RPT/CF_RPT_30">Blood Sugar</option>
-                                                        <option value="RPT/CF_RPT_60">A1c</option>
-                                                        <option value="RPT/CF_RPT_40">Weight</option>
-                                                        <option value="RPT/CF_RPT_50">Cigarette Count</option>
+                                                        @foreach(App\ValueObjects\ObservationKeysMap::BIOMETRICS as $key => $value)
+                                                            <option value="{{$key}}">{{$value}}</option>
+                                                        @endforeach
                                                     </optgroup>
 
                                                     <optgroup label="Medications Taken? Y or N">
-                                                        <option value="SOL/CF_SOL_MED_BP">Blood Pressure meds</option>
-                                                        <option value="SOL/CF_SOL_MED_CHL">Cholesterol meds</option>
-                                                        <option value="SOL/CF_SOL_MED_BT">Blood Thinners (e.g., Plavix, Aspirin)</option>
-                                                        <option value="SOL/CF_SOL_MED_WPD">Water pills/diuretics</option>
-                                                        <option value="SOL/CF_SOL_MED_OHM">Other meds</option>
-                                                        <option value="SOL/CF_SOL_MED_OD">Oral diabetes meds</option>
-                                                        <option value="SOL/CF_SOL_MED_IID">Insulin or injectable diabetes meds</option>
-                                                        <option value="SOL/CF_SOL_MED_BRE">Breathing meds</option>
-                                                        <option value="SOL/CF_SOL_MED_DEP">Mood/Depression meds</option>
+                                                        @foreach(App\ValueObjects\ObservationKeysMap::MEDICATIONS as $key => $value)
+                                                            <option value="{{$key}}">{{$value}}</option>
+                                                        @endforeach
                                                     </optgroup>
 
                                                     <optgroup label="Symptoms? (1 - 9)">
-                                                        <option value="SYM/CF_SYM_51">Shortness of breath</option>
-                                                        <option value="SYM/CF_SYM_52">Coughing or wheezing</option>
-                                                        <option value="SYM/CF_SYM_53">Chest pain or chest tightness</option>
-                                                        <option value="SYM/CF_SYM_54">Fatigue</option>
-                                                        <option value="SYM/CF_SYM_55">Weakness or dizziness</option>
-                                                        <option value="SYM/CF_SYM_56">Swelling in legs/feet</option>
-                                                        <option value="SYM/CF_SYM_57">Feeling down,  helpless, or sleep changes</option>
+                                                        @foreach(App\ValueObjects\ObservationKeysMap::SYMPTOMS as $key => $value)
+                                                            <option value="{{$key}}">{{$value}}</option>
+                                                        @endforeach
                                                     </optgroup>
 
                                                     <optgroup label="Lifestyle? Y or N">
-                                                        <option value="SOL/CF_SOL_LFS_10">Exercise 20 minutes</option>
-                                                        <option value="SOL/CF_LFS_40">Following Healthy Diet</option>
-                                                        <option value="SOL/CF_LFS_80">Low salt diet</option>
-                                                        <option value="SOL/CF_SOL_LFS_90">Diabetes diet</option>
+                                                        @foreach(App\ValueObjects\ObservationKeysMap::LIFESTYLE as $key => $value)
+                                                            <option value="{{$key}}">{{$value}}</option>
+                                                        @endforeach
                                                     </optgroup>
 
 
@@ -116,7 +103,7 @@
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             <label for="observationDate">
-                                                Observation Date and Time:
+                                                Observation Date and Time (in EST Timezone):
                                             </label>
                                         </div>
                                         <div class="col-sm-12">
@@ -147,8 +134,8 @@
                                 <input type="hidden" name="patientId" id="patientId" value="{{ $patient->id }}">
                                 <input type="hidden" name="userId" id="userId" value="{{ $patient->id }}">
                                 <input type="hidden" name="programId" id="programId" value="{{ $patient->program_id }}">
-                            <!-- <a href="{{ route('patient.summary', array('patientId' => $patient->id)) }}" class="btn btn-danger">Cancel</a> -->
-                                {!! Form::submit('Save', array('class' => 'btn btn-primary')) !!}
+
+                                {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
                             </div>
                         </div>
                         {!! Form::close() !!}
