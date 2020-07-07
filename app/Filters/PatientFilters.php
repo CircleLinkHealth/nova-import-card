@@ -108,7 +108,7 @@ class PatientFilters extends QueryFilters
             $user = auth()->user();
             if ( ! $user->isAdmin()) {
                 // CPM-1790, non-admins should only see rn_approved, and provider_approved
-                $filters['careplanStatus'] = ['provider_approved', 'rn_approved'];
+                $filters['careplanStatus'] = [CarePlan::PROVIDER_APPROVED, CarePlan::RN_APPROVED];
             }
         }
 
