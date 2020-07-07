@@ -491,7 +491,7 @@ class CcdaImporter
     {
         //This CarePlan is now ready to be QA'ed by a CLH Admin
         $this->ccda->imported = true;
-        if (in_array($this->ccda->patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
+        if (in_array($this->ccda->patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::RN_APPROVED, CarePlan::PROVIDER_APPROVED])) {
             $this->ccda->status = Ccda::CAREPLAN_CREATED;
         } else {
             $this->ccda->status = Ccda::QA;
