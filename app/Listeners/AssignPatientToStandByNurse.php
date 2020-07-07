@@ -55,11 +55,19 @@ class AssignPatientToStandByNurse
             return null;
         }
 
+        if ( ! $nurseId = StandByNurseUser::id()) {
+            return null;
+        }
+
+        if ( ! User::where('id', $nurseId)->exists()) {
+            return null;
+        }
+
         try {
             return PatientNurse::updateOrCreate(
                 ['patient_user_id' => $patient->id],
                 [
-                    'nurse_user_id'           => StandByNurseUser::id(),
+                    'nurse_user_id'           => $nurseId,
                     'temporary_nurse_user_id' => null,
                     'temporary_from'          => null,
                     'temporary_to'            => null,
