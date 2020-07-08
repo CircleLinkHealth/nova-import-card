@@ -38,6 +38,7 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <select id="observationType" name="observationType" class="observation selectpickerX dropdownValid form-control" data-size="10" required style="width: 100%;">
+                                        <option value="">Select an Observation</option>
                                         @foreach($observationCatecories as $category)
                                             <optgroup label="{{ $category['display_name']}}">
                                                 @foreach($acceptedObservationTypes->where('category_name', $category['name']) as $key => $acceptedObservation)
@@ -71,10 +72,9 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <select id="observationSource" name="observationSource" class="selectpickerX dropdownValid form-control" data-size="10"  required>
-                                            <option value="" {{old('observationSource') === '' ? 'selected' : ''}}> Select Source </option>
                                             <option value="ov_reading" {{old('observationSource') === 'ov_reading' ? 'selected' : ''}}>Office Visit (OV) reading</option>
                                             <option value="lab" {{old('observationSource') === 'lab' ? 'selected' : ''}}>Lab Test</option>
-                                            <option value="manual_input" {{old('observationSource') === 'manual_input' ? 'selected' : ''}}>Patient Reported</option>
+                                            <option value="manual_input" {{in_array(old('observationSource'), ['manual_input', '']) ? 'selected' : ''}}>Patient Reported</option>
                                             <option value="device" {{ old('observationSource') === 'device' ? 'selected' : ''}}>Device</option>
                                         </select>
                                     </div>
