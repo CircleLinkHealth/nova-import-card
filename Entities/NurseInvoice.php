@@ -70,7 +70,7 @@ class NurseInvoice extends BaseModel implements HasMedia, Pdfable
 
     protected $casts = [
         'month_year'   => 'date',
-        'invoice_data' => ' array',
+        'invoice_data' => 'array',
     ];
 
     protected $dates = [
