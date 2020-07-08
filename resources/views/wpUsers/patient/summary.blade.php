@@ -37,8 +37,8 @@
 
                     @foreach ($sections as $section)
                         @if ( ! empty($detailSection))
-                            @if ($detailSection != $section['section']) {
-                                continue 1;
+                            @if ($detailSection != $section['section'])
+                                @continue;
                             @endif
                         @endif
 

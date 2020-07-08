@@ -361,7 +361,7 @@ class PatientController extends Controller
         Request $request,
         $patientId
     ) {
-        $wpUser = User::with([
+        $patientUser = User::with([
             'primaryPractice',
             'ccdProblems' => function ($q) {
                 $q->with('cpmProblem.cpmInstructions')
@@ -373,56 +373,16 @@ class PatientController extends Controller
                     ->whereNotNull('obs_value')
                     ->where('obs_value', '!=', '')
                     ->orderBy('obs_date', 'desc')
-                    ->take(30);
+                    ->take(20);
             },
             'patientSummaries',
         ])
             ->where('id', $patientId)
-            ->first();
-
-        if ( ! $wpUser) {
-            return response('User not found', 401);
-        }
-
-        // program
-        $program = $wpUser->primaryPractice;
-
-        $problems = $wpUser->getProblemsToMonitor();
+            ->firstOrFail();
 
         $detailSection = $request->input('detail', '');
 
-        $sections = [
-            [
-                'section'           => 'obs_biometrics',
-                'id'                => 'obs_biometrics_dtable',
-                'title'             => 'Biometrics',
-                'col_name_question' => 'Reading Type',
-                'col_name_severity' => 'Reading',
-            ],
-            [
-                'section'           => 'obs_medications',
-                'id'                => 'obs_medications_dtable',
-                'title'             => 'Medications',
-                'col_name_question' => 'Medication',
-                'col_name_severity' => 'Adherence',
-            ],
-            [
-                'section'           => 'obs_symptoms',
-                'id'                => 'obs_symptoms_dtable',
-                'title'             => 'Symptoms',
-                'col_name_question' => 'Symptom',
-                'col_name_severity' => 'Severity',
-            ],
-            [
-                'section'           => 'obs_lifestyle',
-                'id'                => 'obs_lifestyle_dtable',
-                'title'             => 'Lifestyle',
-                'col_name_question' => 'Question',
-                'col_name_severity' => 'Response',
-            ],
-        ];
-
-        $observations = $wpUser->observations;
+        $observations = $patientUser->observations;
 
         // build array of pcp
         $obs_by_pcp = [
@@ -509,47 +469,44 @@ class PatientController extends Controller
             }
         }
 
-        $sections = [
-            [
-                'section'           => 'obs_biometrics',
-                'id'                => 'obs_biometrics_dtable',
-                'title'             => 'Biometrics',
-                'col_name_question' => 'Reading Type',
-                'col_name_severity' => 'Reading',
-            ],
-            [
-                'section'           => 'obs_medications',
-                'id'                => 'obs_medications_dtable',
-                'title'             => 'Medications',
-                'col_name_question' => 'Medication',
-                'col_name_severity' => 'Adherence',
-            ],
-            [
-                'section'           => 'obs_symptoms',
-                'id'                => 'obs_symptoms_dtable',
-                'title'             => 'Symptoms',
-                'col_name_question' => 'Symptom',
-                'col_name_severity' => 'Severity',
-            ],
-            [
-                'section'           => 'obs_lifestyle',
-                'id'                => 'obs_lifestyle_dtable',
-                'title'             => 'Lifestyle',
-                'col_name_question' => 'Question',
-                'col_name_severity' => 'Response',
-            ],
-        ];
-
         return view('wpUsers.patient.summary', [
-            'program'          => $program,
-            'patient'          => $wpUser,
-            'wpUser'           => $wpUser,
-            'sections'         => $sections,
+            'program'          => $patientUser->primaryPractice,
+            'patient'          => $patientUser,
+            'wpUser'           => $patientUser,
             'detailSection'    => $detailSection,
             'observation_data' => $observationsForWebix,
-            'problems'         => $problems,
+            'problems'         => $patientUser->getProblemsToMonitor(),
             'filter'           => '',
-            'sections'         => $sections,
+            'sections'         => [
+                [
+                    'section'           => 'obs_biometrics',
+                    'id'                => 'obs_biometrics_dtable',
+                    'title'             => 'Biometrics',
+                    'col_name_question' => 'Reading Type',
+                    'col_name_severity' => 'Reading',
+                ],
+                [
+                    'section'           => 'obs_medications',
+                    'id'                => 'obs_medications_dtable',
+                    'title'             => 'Medications',
+                    'col_name_question' => 'Medication',
+                    'col_name_severity' => 'Adherence',
+                ],
+                [
+                    'section'           => 'obs_symptoms',
+                    'id'                => 'obs_symptoms_dtable',
+                    'title'             => 'Symptoms',
+                    'col_name_question' => 'Symptom',
+                    'col_name_severity' => 'Severity',
+                ],
+                [
+                    'section'           => 'obs_lifestyle',
+                    'id'                => 'obs_lifestyle_dtable',
+                    'title'             => 'Lifestyle',
+                    'col_name_question' => 'Question',
+                    'col_name_severity' => 'Response',
+                ],
+            ],
         ]);
     }
 
