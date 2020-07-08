@@ -422,9 +422,9 @@ class PatientController extends Controller
                     if ($description = ObservationConstants::MEDICATIONS[$observation->obs_message_id] ?? null) {
                         $observation['description'] = $description;
                     }
-                    $obs_by_pcp['obs_medications']['description'] = $observation;
+                    $obs_by_pcp['obs_medications'][] = $observation;
                     break;
-                case ObservationConstants::SEVERITY:
+                case ObservationConstants::SYMPTOMS_OBSERVATION_TYPE:
                     if ($description = ObservationConstants::SYMPTOMS[$observation->obs_message_id] ?? null) {
                         $observation['items_text']  = $description;
                         $observation['description'] = $description;
@@ -433,6 +433,12 @@ class PatientController extends Controller
                     $obs_by_pcp['obs_symptoms'][] = $observation;
                     break;
                 case 'Other':
+                case ObservationConstants::LIFESTYLE_OBSERVATION_TYPE:
+                if ($description = ObservationConstants::LIFESTYLE[$observation->obs_message_id] ?? null) {
+                    $observation['description'] = $description;
+                }
+                $obs_by_pcp['obs_lifestyle'][] = $observation;
+                break;
                 default:
                     break;
             }

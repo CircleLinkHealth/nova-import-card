@@ -17,13 +17,13 @@ class ObservationService
             return ObservationConstants::ADHERENCE;
         }
         if (array_key_exists($key, ObservationConstants::LIFESTYLE)) {
-            return ObservationConstants::OTHER;
+            return ObservationConstants::LIFESTYLE_OBSERVATION_TYPE;
         }
         if (array_key_exists($key, ObservationConstants::BIOMETRICS)) {
             return ObservationConstants::BIOMETRICS[$key];
         }
         if (array_key_exists($key, ObservationConstants::SYMPTOMS)) {
-            return ObservationConstants::SEVERITY;
+            return ObservationConstants::SYMPTOMS_OBSERVATION_TYPE;
         }
 
         return null;

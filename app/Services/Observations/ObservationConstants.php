@@ -26,7 +26,8 @@ class ObservationConstants
         'CF_LFS_80'     => 'Low salt diet',
         'CF_SOL_LFS_90' => 'Diabetes diet',
     ];
-    public const MEDICATIONS = [
+    public const LIFESTYLE_OBSERVATION_TYPE = 'Lifestyle';
+    public const MEDICATIONS                = [
         'CF_SOL_MED_BP'  => 'Blood Pressure meds',
         'CF_SOL_MED_CHL' => 'Cholesterol meds',
         'CF_SOL_MED_BT'  => 'Blood Thinners (e.g., Plavix, Aspirin)',
@@ -37,8 +38,6 @@ class ObservationConstants
         'CF_SOL_MED_BRE' => 'Breathing meds',
         'CF_SOL_MED_DEP' => 'Mood/Depression meds',
     ];
-    public const OTHER    = 'Other';
-    public const SEVERITY = 'Severity';
     public const SYMPTOMS = [
         'CF_SYM_51' => 'Shortness of breath',
         'CF_SYM_52' => 'Coughing or wheezing',
@@ -48,5 +47,6 @@ class ObservationConstants
         'CF_SYM_56' => 'Swelling in legs/feet',
         'CF_SYM_57' => 'Feeling down,  helpless, or sleep changes',
     ];
-    public const WEIGHT = 'Weight';
+    public const SYMPTOMS_OBSERVATION_TYPE = 'Severity';
+    public const WEIGHT                    = 'Weight';
 }

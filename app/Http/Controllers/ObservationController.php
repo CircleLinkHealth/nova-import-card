@@ -98,9 +98,27 @@ class ObservationController extends Controller
 
         $answerResponse = false;
 
-        if (ObservationConstants::ADHERENCE === $newObservation->obs_key) {
-            if (empty($newObservation->obs_value)) {
-                return redirect()->back()->withErrors(['Please fill in the "Value" field below.'])->withInput();
+        //@todo: define BooleanObservation class
+        if (in_array($newObservation->obs_key, [ObservationConstants::ADHERENCE, ObservationConstants::LIFESTYLE_OBSERVATION_TYPE])) {
+            if ( ! in_array(strtoupper($newObservation->obs_value), ['Y', 'N', 'YES', 'NO'])) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a Y or a N."])->withInput();
+            }
+
+            $newObservation->save();
+
+            return redirect()->route('patient.summary', [
+                'patientId' => $request->input('userId'),
+            ])->with('messages', ['Successfully added new observation']);
+        }
+
+        //@todo: define NumericRangeObservation class
+        if (in_array($newObservation->obs_key, [ObservationConstants::SYMPTOMS_OBSERVATION_TYPE])) {
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => 'required|numeric|between:1,9',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number from 1 to 9."])->withInput();
             }
 
             $newObservation->save();
