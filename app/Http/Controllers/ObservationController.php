@@ -13,7 +13,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Str;
 use Validator;
 
 class ObservationController extends Controller
@@ -120,6 +119,7 @@ class ObservationController extends Controller
             return $this->saveObservationAndRedirect($newObservation);
         }
 
+        //@todo: define NumericRangeObservation class
         if (ObservationConstants::CIGARETTE_COUNT === $newObservation->obs_key) {
             $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
                 $newObservation->obs_key => 'required|numeric',
@@ -132,6 +132,7 @@ class ObservationController extends Controller
             return $this->saveObservationAndRedirect($newObservation);
         }
 
+        //@todo: define NumericRangeObservation Or Percentage class
         if (ObservationConstants::A1C === $newObservation->obs_key) {
             $newObservation->obs_value = str_replace('%', '', $newObservation->obs_value);
 
@@ -146,16 +147,40 @@ class ObservationController extends Controller
             return $this->saveObservationAndRedirect($newObservation);
         }
 
-        if ('CF_RPT_20' == $request->input('observationType')) {
-            $newObservation->obs_value = str_replace('%', '', $newObservation->obs_value);
+        if (ObservationConstants::BLOOD_SUGAR === $newObservation->obs_key) {
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => 'required|numeric',
+            ]);
 
-            if (Str::contains(
-                $newObservation->obs_value,
-                '.'
-            ) && 4 >= strlen($newObservation->obs_value) && is_numeric($newObservation->obs_value)
-            ) {
-                return $this->saveObservationAndRedirect($newObservation);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number greater than, or equal to 1."])->withInput();
             }
+
+            return $this->saveObservationAndRedirect($newObservation);
+        }
+
+        if (ObservationConstants::BLOOD_PRESSURE === $newObservation->obs_key) {
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => [
+                    'required',
+                    function ($attribute, $value, $fail) {
+                        $pieces = explode('/', $value);
+                        if (2 !== count($pieces)
+                            || ! ctype_digit($pieces[0])
+                            || (int) $pieces[0] < 1
+                            || ! ctype_digit($pieces[1])
+                            || (int) $pieces[1] < 1
+                        ) {
+                            $fail("$value is not a valid Blood Pressure. An example of a valid Blood Pressure is 120/80");
+                        }
+                    }, ],
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number greater than, or equal to 0."])->withInput();
+            }
+
+            return $this->saveObservationAndRedirect($newObservation);
         }
 
         return redirect()->back()->withErrors(['The Observation could not be processed.'])->withInput();
