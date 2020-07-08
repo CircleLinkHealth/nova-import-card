@@ -10,6 +10,7 @@ use App\Console\Commands\AutoApproveValidCarePlansAs;
 use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
+use App\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
@@ -440,60 +441,38 @@ class PatientController extends Controller
             }
             $observation['parent_item_text'] = '---';
             switch ($observation['obs_key']) {
-                case 'A1c':
-                    $observation['description']     = 'A1c';
+                case ObservationConstants::A1C:
+                    $observation['description']     = ObservationConstants::A1C;
                     $obs_by_pcp['obs_biometrics'][] = $observation;
                     break;
-                case 'HSP_ER':
-                case 'HSP_HOSP':
-                    break;
                 case 'Cigarettes':
+                case ObservationConstants::CIGARETTE_COUNT:
                     $observation['description']     = 'Smoking (# per day)';
                     $obs_by_pcp['obs_biometrics'][] = $observation;
                     break;
                 case 'Blood_Pressure':
                 case 'Blood_Sugar':
-                case 'Weight':
-                    $observation['description']     = $observation['obs_key'];
+                case ObservationConstants::BLOOD_PRESSURE:
+                case ObservationConstants::BLOOD_SUGAR:
+                case ObservationConstants::WEIGHT:
+                $observation['description']         = $observation['obs_key'];
                     $obs_by_pcp['obs_biometrics'][] = $observation;
                     break;
-                case 'Adherence':
-                    $question = $observation->question;
-                    // find carePlanItem with qid
-                    if ($question) {
-                        $item = $question->careItems->first();
-                        if ($item) {
-                            $observation['description'] = $item->display_name;
-                        }
+                case ObservationConstants::ADHERENCE:
+                    if ($description = ObservationConstants::MEDICATIONS[$observation->obs_message_id] ?? null) {
+                        $observation['description'] = $description;
                     }
-                    $obs_by_pcp['obs_medications'][] = $observation;
+                    $obs_by_pcp['obs_medications']['description'] = $observation;
                     break;
-                case 'Symptom':
-                case 'Severity':
-                    // get description
-                    $question = $observation->question;
-                    if ($question) {
-                        $observation['items_text']  = $question->description;
-                        $observation['description'] = $question->description;
-                        $observation['obs_key']     = $question->description;
+                case ObservationConstants::SEVERITY:
+                    if ($description = ObservationConstants::SYMPTOMS[$observation->obs_message_id] ?? null) {
+                        $observation['items_text']  = $description;
+                        $observation['description'] = $description;
+                        $observation['obs_key']     = $description;
                     }
                     $obs_by_pcp['obs_symptoms'][] = $observation;
                     break;
                 case 'Other':
-                case 'Call':
-                    // only y/n responses, skip anything that is a number as its assumed it is response to a list
-                    $question = $observation->question;
-                    // find carePlanItem with qid
-                    if ($question) {
-                        $item = $question->careItems->first();
-                        if ($item) {
-                            $observation['description'] = $item->display_name;
-                        }
-                    }
-                    if (('Call' == $observation['obs_key']) || ( ! is_numeric($observation['obs_value']))) {
-                        $obs_by_pcp['obs_lifestyle'][] = $observation;
-                    }
-                    break;
                 default:
                     break;
             }
