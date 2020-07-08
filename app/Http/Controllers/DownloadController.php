@@ -14,8 +14,10 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaStream;
 
@@ -41,12 +43,12 @@ class DownloadController extends Controller
 
         $media = collect();
 
-        $this->auditReportsQuery($date, $practiceId)->chunkById(10, function ($mediaExport) use (&$media) {
+        $this->auditReportsQuery($date, $practiceId)->chunkById(300, function ($mediaExport) use (&$media) {
             $media->push($mediaExport);
         });
 
         if ($media->isNotEmpty()) {
-            return MediaStream::create("Audit Reports for {$date->format('F, Y')}.zip")->addMedia($media->flatten());
+            return MediaStream::create("Practice ID $practiceId Audit Reports for {$date->format('F, Y')}.zip")->addMedia($media->flatten());
         }
 
         abort(400, 'No reports found.');
@@ -230,7 +232,10 @@ class DownloadController extends Controller
             function ($query) use ($practiceId) {
                 $query->select('id')
                     ->from((new User())->getTable())
-                    ->whereProgramId($practiceId);
+                    ->where('program_id', $practiceId)
+                    ->where('role_id', Cache::remember('participant_role_id', 2, function () {
+                        return Role::where('name', 'participant')->value('id');
+                    }));
             }
         )->where('collection_name', 'audit_report_'.$date->format('F, Y'))
             ->groupBy('model_id');
