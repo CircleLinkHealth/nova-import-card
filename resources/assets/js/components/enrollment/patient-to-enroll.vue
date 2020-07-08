@@ -856,6 +856,9 @@
                 return ['MD', 'PO'];
             },
             provider_full_name() {
+                if (this.provider.length === 0){
+                    return 'N/A';
+                }
                 let first_name = this.provider.first_name;
                 let last_name = this.provider.last_name;
                 let suffix = this.provider.suffix;
@@ -875,6 +878,9 @@
                 return this.home_is_invalid || this.cell_is_invalid || this.other_is_invalid || this.preferred_phone_empty || this.contact_day_or_time_empty || this.should_not_perform_action;
             },
             provider_name_for_side_bar() {
+                if (this.provider.length === 0){
+                    return 'N/A';
+                }
                 let suffix = this.provider.suffix;
 
                 if (suffix === null){
@@ -889,6 +895,10 @@
                 return this.isSoftDecline ? this.soft_rejected_reasons : this.rejected_reasons;
             },
             provider_name_for_enrollment_script() {
+                if (this.provider.length === 0){
+                    return 'N/A';
+                }
+
                 let providerName;
 
                 let suffix = this.provider.suffix;
@@ -902,6 +912,10 @@
                 return providerName
             },
             providerInfo() {
+                if (this.provider.length === 0){
+                    return null;
+                }
+
                 return this.provider.providerInfo
             },
             provider_pronunciation_exists() {
