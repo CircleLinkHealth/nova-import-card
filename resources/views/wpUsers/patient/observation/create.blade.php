@@ -106,7 +106,7 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <input id="observationDate" name="observationDate" type="text" class="selectpickerX form-control" value="{{ (old('observationDate') ? old('observationDate') : date('Y-m-d H:i')) }}" data-field="datetime" data-format="yyyy-MM-dd HH:mm" required>
+                                                <input id="observationDate" name="observationDate" type="text" class="selectpickerX form-control" value="{{ (old('observationDate') ? old('observationDate') : date('Y-m-d H:i:s')) }}" data-field="datetime" data-format="yyyy-MM-dd HH:mm" required>
                                             </div>
                                         </div>
                                     </div>

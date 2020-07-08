@@ -87,7 +87,7 @@ class ObservationController extends Controller
         }
 
         $newObservation = new Observation([
-            'obs_date'       => Carbon::createFromFormat('Y-m-d H:i', $request->input('observationDate'))->format('Y-m-d H:i:s'),
+            'obs_date'       => Carbon::createFromFormat('Y-m-d H:i:s', $request->input('observationDate'))->format('Y-m-d H:i:s'),
             'sequence_id'    => 0,
             'obs_message_id' => $request->input('observationType'),
             'obs_method'     => $request->input('observationSource'),
@@ -104,11 +104,9 @@ class ObservationController extends Controller
                 return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a Y or a N."])->withInput();
             }
 
-            $newObservation->save();
+            $newObservation->obs_value = strtoupper($newObservation->obs_value[0]);
 
-            return redirect()->route('patient.summary', [
-                'patientId' => $request->input('userId'),
-            ])->with('messages', ['Successfully added new observation']);
+            return $this->saveObservationAndRedirect($newObservation);
         }
 
         //@todo: define NumericRangeObservation class
@@ -121,24 +119,21 @@ class ObservationController extends Controller
                 return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number from 1 to 9."])->withInput();
             }
 
-            $newObservation->save();
-
-            return redirect()->route('patient.summary', [
-                'patientId' => $request->input('userId'),
-            ])->with('messages', ['Successfully added new observation']);
+            return $this->saveObservationAndRedirect($newObservation);
         }
 
-        if ('CF_RPT_60' == $request->input('observationType')) {
+        if (ObservationConstants::A1C === $newObservation->obs_key) {
             $newObservation->obs_value = str_replace('%', '', $newObservation->obs_value);
 
-            if (Str::contains(
-                $newObservation->obs_value,
-                '.'
-            ) && 4 >= strlen($newObservation->obs_value)
-                && is_numeric($newObservation->obs_value)
-            ) {
-                $answerResponse = true;
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => 'required|numeric|between:0.001,100',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter decimal percentage such as \"5.0%\", or \"6.12%\"."])->withInput();
             }
+
+            return $this->saveObservationAndRedirect($newObservation);
         }
 
         if ('CF_RPT_20' == $request->input('observationType')) {
@@ -149,15 +144,9 @@ class ObservationController extends Controller
                 '.'
             ) && 4 >= strlen($newObservation->obs_value) && is_numeric($newObservation->obs_value)
             ) {
-                $answerResponse = true;
+                return $this->saveObservationAndRedirect($newObservation);
             }
         }
-
-        if ( ! $answerResponse) {
-            return redirect()->back()->withErrors(['You entered an invalid value, please review and resubmit.'])->withInput();
-        }
-
-        $newObservation->save();
 
         return redirect()->route('patient.summary', [
             'patientId' => $request->input('userId'),
@@ -195,5 +184,14 @@ class ObservationController extends Controller
             'msg',
             'Changes Successfully Applied.'
         );
+    }
+
+    private function saveObservationAndRedirect(Observation $newObservation)
+    {
+        $newObservation->save();
+
+        return redirect()->route('patient.summary', [
+            'patientId' => $newObservation->user_id,
+        ])->with('messages', ['Successfully added new observation']);
     }
 }

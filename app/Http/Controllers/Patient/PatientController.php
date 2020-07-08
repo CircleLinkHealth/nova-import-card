@@ -403,12 +403,12 @@ class PatientController extends Controller
             switch ($observation['obs_key']) {
                 case ObservationConstants::A1C:
                     $observation['description']     = ObservationConstants::A1C;
-                    $obs_by_pcp['obs_biometrics'][] = $observation;
+                    $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Cigarettes':
                 case ObservationConstants::CIGARETTE_COUNT:
                     $observation['description']     = 'Smoking (# per day)';
-                    $obs_by_pcp['obs_biometrics'][] = $observation;
+                    $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Blood_Pressure':
                 case 'Blood_Sugar':
@@ -416,13 +416,13 @@ class PatientController extends Controller
                 case ObservationConstants::BLOOD_SUGAR:
                 case ObservationConstants::WEIGHT:
                 $observation['description']         = $observation['obs_key'];
-                    $obs_by_pcp['obs_biometrics'][] = $observation;
+                    $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case ObservationConstants::ADHERENCE:
                     if ($description = ObservationConstants::MEDICATIONS[$observation->obs_message_id] ?? null) {
                         $observation['description'] = $description;
                     }
-                    $obs_by_pcp['obs_medications'][] = $observation;
+                    $obs_by_pcp['obs_medications'][] = $this->prepareForWebix($observation);
                     break;
                 case ObservationConstants::SYMPTOMS_OBSERVATION_TYPE:
                     if ($description = ObservationConstants::SYMPTOMS[$observation->obs_message_id] ?? null) {
@@ -430,48 +430,17 @@ class PatientController extends Controller
                         $observation['description'] = $description;
                         $observation['obs_key']     = $description;
                     }
-                    $obs_by_pcp['obs_symptoms'][] = $observation;
+                    $obs_by_pcp['obs_symptoms'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Other':
                 case ObservationConstants::LIFESTYLE_OBSERVATION_TYPE:
                 if ($description = ObservationConstants::LIFESTYLE[$observation->obs_message_id] ?? null) {
                     $observation['description'] = $description;
                 }
-                $obs_by_pcp['obs_lifestyle'][] = $observation;
+                $obs_by_pcp['obs_lifestyle'][] = $this->prepareForWebix($observation);
                 break;
                 default:
                     break;
-            }
-        }
-
-        $observationsForWebix = [
-            'obs_biometrics'  => '{}',
-            'obs_medications' => '{}',
-            'obs_symptoms'    => '{}',
-            'obs_lifestyle'   => '{}',
-        ];
-
-        foreach ($obs_by_pcp as $section => $observations) {
-            foreach ($observations as $observation) {
-                // set default
-                $alertLevel = 'default';
-                if ( ! empty($observation->alert_level)) {
-                    $alertLevel = $observation->alert_level;
-                }
-
-                $observationsForWebix[$section] = json_encode([
-                    'obs_key'     => $observation->obs_key,
-                    'description' => str_replace(
-                        '_',
-                        ' ',
-                        $observation->description
-                    ),
-                    'obs_value'      => $observation->obs_value,
-                    'dm_alert_level' => $alertLevel,
-                    'obs_unit'       => $observation->obs_unit,
-                    'obs_message_id' => $observation->obs_message_id,
-                    'comment_date'   => Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A'),
-                ]);
             }
         }
 
@@ -480,10 +449,12 @@ class PatientController extends Controller
             'patient'          => $patientUser,
             'wpUser'           => $patientUser,
             'detailSection'    => $detailSection,
-            'observation_data' => $observationsForWebix,
-            'problems'         => $patientUser->getProblemsToMonitor(),
-            'filter'           => '',
-            'sections'         => [
+            'observation_data' => collect($obs_by_pcp)->transform(function ($obsType) {
+                return json_encode($obsType);
+            }),
+            'problems' => $patientUser->getProblemsToMonitor(),
+            'filter'   => '',
+            'sections' => [
                 [
                     'section'           => 'obs_biometrics',
                     'id'                => 'obs_biometrics_dtable',
@@ -558,5 +529,22 @@ class PatientController extends Controller
         (new TestPatients())->create();
 
         return redirect()->back();
+    }
+
+    private function prepareForWebix($observation)
+    {
+        return [
+            'obs_key'     => $observation->obs_key,
+            'description' => str_replace(
+                '_',
+                ' ',
+                $observation->description
+            ),
+            'obs_value'      => $observation->obs_value,
+            'dm_alert_level' => empty($observation->alert_level) ? 'default' : $observation->alert_level,
+            'obs_unit'       => $observation->obs_unit,
+            'obs_message_id' => $observation->obs_message_id,
+            'comment_date'   => Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A'),
+        ];
     }
 }
