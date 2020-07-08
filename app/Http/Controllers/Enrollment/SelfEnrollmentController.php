@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\EnrollmentLinkValidation;
 use App\Http\Requests\SelfEnrollableUserAuthRequest;
 use App\SelfEnrollment\Helpers;
@@ -13,18 +14,18 @@ use App\Services\Enrollment\EnrollmentBaseLetter;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
-use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
-class SelfEnrollmentController extends EnrollmentBaseLetter
+class SelfEnrollmentController extends Controller
 {
     use AuthenticatesUsers;
     const BLUE_BUTTON_COLOR = '#12a2c4';
@@ -49,45 +50,6 @@ class SelfEnrollmentController extends EnrollmentBaseLetter
     {
         $this->middleware('guest')->except('logout');
         $this->enrollmentInvitationService = $enrollmentInvitationService;
-    }
-
-    /**
-     * Prepares Enrollment letter pages.
-     *
-     * @param $enrollablePrimaryPractice
-     * @param $isSurveyOnlyUser
-     * @param mixed|null $provider
-     * @param mixed      $hideButtons
-     *
-     * @return array
-     */
-    public function composeEnrollmentLetter(
-        EnrollmentInvitationLetter $letter,
-        User $userForEnrollment,
-        $enrollablePrimaryPractice,
-        $isSurveyOnlyUser,
-        $provider = null,
-        $hideButtons = false
-    ) {
-        // CA's phone numbers is the practice number
-        $practiceNumber = $enrollablePrimaryPractice->outgoing_phone_number;
-        if ($practiceNumber) {
-            //remove +1 from phone number
-            $formatted      = formatPhoneNumber($practiceNumber);
-            $practiceNumber = "<a href='tel:$formatted'>$formatted</a>";
-        }
-
-        if (null === $provider) {
-            $provider = $userForEnrollment->billingProviderUser();
-        }
-
-        return $this->enrollmentInvitationService->createLetter(
-            $enrollablePrimaryPractice,
-            $letter,
-            $practiceNumber,
-            $provider,
-            $hideButtons
-        );
     }
 
     /**
@@ -207,7 +169,7 @@ class SelfEnrollmentController extends EnrollmentBaseLetter
             $practiceNumber = $patient->primaryPractice->outgoing_phone_number;
             $doctorName     = $patient->getBillingProviderName();
 
-            return view('enrollment-consent.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
+            return view('enrollment-letters.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
 
         $this->expirePastInvitationLink($patient);
@@ -356,20 +318,25 @@ class SelfEnrollmentController extends EnrollmentBaseLetter
     private function enrollmentLetterView(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
     {
         $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
+        $baseLetterView            = (new EnrollmentBaseLetter($enrollablePrimaryPractice, $userEnrollee, $isSurveyOnlyUser, $enrollee, $hideButtons))
+            ->getBaseLetter();
 
-//        1. Get base letter view
-//        2. Get Practice Specific letter view.
+        $practiceDisplayName = $enrollablePrimaryPractice->display_name;
+        $provider            = $baseLetterView['provider'];
+        $practiceLetter      = $baseLetterView['letter'];
+        $letterPages         = $baseLetterView['letterPages'];
 
-        $baseLetterView = $this->baseLetterView($enrollablePrimaryPractice, $userEnrollee, $isSurveyOnlyUser, $hideButtons);
-        $provider       = $baseLetterView['provider'];
-        $practiceLetter = $baseLetterView['letter'];
-        $letterPages    = $baseLetterView['letterPages'];
+        $className            = Str::camel($enrollablePrimaryPractice->name.'_letter');
+        $practiceLetterClass  = ucfirst(str_replace(' ', '', "App\Http\Controllers\Enrollment\PracticeSpecificLetter\ $className"));
+        $letterSpecifications = (new $practiceLetterClass())->letterSpecifications($practiceLetter, $enrollablePrimaryPractice->display_name, $userEnrollee);
 
-        $practiceName           = $enrollablePrimaryPractice->display_name;
-        $practiceLogoSrc        = $practiceLetter->practice_logo_src ?? SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO;
-        $signatoryNameForHeader = $provider->display_name;
-        $dateLetterSent         = '???';
-        $buttonColor            = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+        $practiceLogoSrc             = $practiceLetter->practice_logo_src ?? SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO;
+        $signatoryNameForHeader      = $provider->display_name;
+        $dateLetterSent              = '???';
+        $buttonColor                 = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+        $logoStyleRequest            = $letterSpecifications['logoStyleRequest'];
+        $extraAddressValues          = $letterSpecifications['extraAddressValues'];
+        $extraAddressValuesRequested = $letterSpecifications['extraAddressValuesRequested'];
 
         /** @var EnrollableInvitationLink $invitationLink */
         $invitationLink = $enrollee->getLastEnrollmentInvitationLink();
@@ -378,31 +345,13 @@ class SelfEnrollmentController extends EnrollmentBaseLetter
             $buttonColor    = $invitationLink->button_color;
         }
 
-        $uiRequests       = json_decode($practiceLetter->ui_requests);
-        $uiRequestsExists = ! is_null($uiRequests);
-//        Toledo needs logo on the right.
-        $logoStyleRequest = $uiRequestsExists ? $uiRequests->logo_position : '';
-//        Toledo needs some extra data in letter top left. (I could just have done if practice = toledo)
-        $extraAddressHeader = $uiRequestsExists ? collect($uiRequests->extra_address_header) : collect();
+        $view = Str::camel($enrollablePrimaryPractice->name.'_letter');
 
-        $extraAddressValues = collect()->first();
-        if ( ! empty($extraAddressHeader)) {
-            $models = $this->getModelsContainingNeededValues($extraAddressHeader);
-            foreach ($models as $model => $props) {
-                if ($enrollablePrimaryPractice->display_name === $model) {
-                    $extraAddressValues[] = $this->getExtraAddressValues($props, $userEnrollee);
-                }
-//                Else use $model to query.
-            }
-        }
-
-        $extraAddressValuesRequested = ! empty(collect($extraAddressValues)->filter()->all());
-
-        return view('enrollment-consent.enrollmentInvitation', compact(
+        return view("enrollment-letters.$className", compact(
             'userEnrollee',
             'isSurveyOnlyUser',
             'letterPages',
-            'practiceName',
+            'practiceDisplayName',
             'practiceLogoSrc',
             'signatoryNameForHeader',
             'dateLetterSent',
@@ -426,25 +375,6 @@ class SelfEnrollmentController extends EnrollmentBaseLetter
         if ($pastInvitationLinksQuery->exists()) {
             $pastInvitationLinksQuery->update(['manually_expired' => true]);
         }
-    }
-
-    /**
-     * @return array
-     */
-    private function getExtraAddressValues(array $props, User $userEnrollee)
-    {
-        $practiceLocation      = $this->getPracticeLocation($userEnrollee);
-        $practiceLocationArray = $practiceLocation->toArray();
-
-        if (empty($practiceLocationArray)) {
-            return [];
-        }
-
-        return collect($props[0])->mapWithKeys(function ($prop) use ($practiceLocationArray) {
-            return  [
-                $prop => $practiceLocationArray[$prop],
-            ];
-        })->toArray();
     }
 
     /**
@@ -475,35 +405,6 @@ class SelfEnrollmentController extends EnrollmentBaseLetter
         ];
     }
 
-    private function getModelsContainingNeededValues(\Illuminate\Support\Collection $extraAddressHeader)
-    {
-        return $extraAddressHeader->map(function ($model) {
-            return [$model];
-        });
-    }
-
-    /**
-     * @return \App\Location|\Collection|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|\Illuminate\Support\Collection|object
-     */
-    private function getPracticeLocation(User $userEnrollee)
-    {
-        $enrolleePracticeLocationId = $userEnrollee->enrollee->location_id;
-
-        $practiceLocation = collect();
-        if ( ! empty($enrolleePracticeLocationId)) {
-            $practiceLocation = Location::whereId($enrolleePracticeLocationId)->first();
-        }
-
-        // We want keep code execution if no practice location exists.
-        if (is_null($practiceLocation)) {
-            Log::info("Location for practice [$userEnrollee->id] not found. No practice location address will be displayed on letter");
-
-            return collect();
-        }
-
-        return $practiceLocation;
-    }
-
     /**
      * @param $userId
      *
@@ -521,7 +422,7 @@ class SelfEnrollmentController extends EnrollmentBaseLetter
             $practiceNumber = $user->enrollee->practice->outgoing_phone_number;
             $doctorName     = optional($user->enrollee->provider)->last_name;
 
-            return view('enrollment-consent.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
+            return view('enrollment-letters.enrolledMessagePage', compact('practiceNumber', 'doctorName'));
         }
 
         if ($this->hasSurveyInProgress($user)) {

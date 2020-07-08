@@ -3,7 +3,7 @@
         <div class="header">
             {{$signatoryNameForHeader}}
             <br>
-            {{$practiceName}}
+            {{$practiceDisplayName}}
        @if($extraAddressValuesRequested)
                 <br>
                 {{$extraAddressValues[0]['address_line_1']}}
@@ -14,7 +14,7 @@
             @endif
         </div>
         <div class="logo" style="{{$logoStyleRequest}}; opacity: 90%;">
-            @include('enrollment-consent.practiceLogo')
+            @include('enrollment-letters.practiceLogo')
         </div>
     </div>
 </div>

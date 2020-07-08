@@ -1,6 +1,6 @@
 <div class="practice-logo">
     <img src="{{$practiceLogoSrc}}"
-         alt="{{$practiceName}}"/>
+         alt="{{$practiceDisplayName}}"/>
 </div>
 <style>
     .practice-logo img{

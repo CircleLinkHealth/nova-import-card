@@ -6,13 +6,13 @@
         <div class="letter-view">
             @if(!$hideButtons)
                 <div class="header-buttons">
-                    @include('enrollment-consent.enrollableInvitationButtons')
+                    @include('enrollment-letters.enrollableInvitationButtons')
                 </div>
             @endif
                 @if(! $extraAddressValuesRequested)
-                @include('enrollment-consent.headers.commonwealth')
+                @include('enrollment-letters.headers.commonwealth')
                 @else
-                    @include('enrollment-consent.headers.toledo')
+                    @include('enrollment-letters.headers.toledo')
                 @endif
                     <div class="letter-sent">
                         {{$dateLetterSent}}
@@ -22,21 +22,21 @@
                     </div>
                     <div class="letter-body">
                         <div class="body">
-                            @include('enrollment-consent.enrollmentLetter')
+                            @include('enrollment-letters.enrollmentLetter')
                         </div>
                     </div>
 
                 @if(! $extraAddressValuesRequested)
                     <div class="logo" style="margin-bottom: 10px">
                         <div class="logo" style="{{$logoStyleRequest}}">
-                            @include('enrollment-consent.practiceLogo')
+                            @include('enrollment-letters.practiceLogo')
                         </div>
                     </div>
                 @endif
 
                     @if(!$hideButtons)
                         <div class="header-buttons">
-                            @include('enrollment-consent.enrollableInvitationButtons')
+                            @include('enrollment-letters.enrollableInvitationButtons')
                         </div>
                     @endif
                 </div>
