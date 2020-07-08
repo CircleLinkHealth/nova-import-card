@@ -112,7 +112,7 @@ class SchedulerService
             }
         )
             ->where('inbound_cpm_id', $patientId)
-            ->where('status', '=', 'scheduled')
+            ->where('status', '=', Call::SCHEDULED)
             ->when(
                 $excludeToday,
                 function ($query) {

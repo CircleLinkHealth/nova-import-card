@@ -14,8 +14,10 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaStream;
 
@@ -39,10 +41,14 @@ class DownloadController extends Controller
             return response()->redirectToRoute('make.monthly.audit.reports', ['practice_id' => $practiceId, 'month' => $date->format('Y-m')]);
         }
 
-        $mediaExport = $this->auditReportsQuery($date, $practiceId)->get();
+        $media = collect();
 
-        if ($mediaExport->isNotEmpty()) {
-            return MediaStream::create("Audit Reports for {$date->format('F, Y')}.zip")->addMedia($mediaExport);
+        $this->auditReportsQuery($date, $practiceId)->chunkById(300, function ($mediaExport) use (&$media) {
+            $media->push($mediaExport);
+        });
+
+        if ($media->isNotEmpty()) {
+            return MediaStream::create("Practice ID $practiceId Audit Reports for {$date->format('F, Y')}.zip")->addMedia($media->flatten());
         }
 
         abort(400, 'No reports found.');
@@ -184,7 +190,7 @@ class DownloadController extends Controller
                 }
             });
 
-        return 'CPM will create reports for patients for '.$date->format('F, Y').' Visit '.link_to_route('make.monthly.audit.reports', 'this page', ['practice_id' => $practiceId, 'month' => $date->format('Y-m')]).' in 10-20 minutes to download the reports.';
+        return 'CPM will create reports for patients for '.$date->format('F, Y').' Visit '.link_to_route('download.monthly.audit.reports', 'this page', ['practice_id' => $practiceId, 'month' => $date->format('Y-m')]).' in 10-20 minutes to download the reports.';
     }
 
     public function mediaFileExists($filePath)
@@ -226,7 +232,10 @@ class DownloadController extends Controller
             function ($query) use ($practiceId) {
                 $query->select('id')
                     ->from((new User())->getTable())
-                    ->whereProgramId($practiceId);
+                    ->where('program_id', $practiceId)
+                    ->where('role_id', Cache::remember('participant_role_id', 2, function () {
+                        return Role::where('name', 'participant')->value('id');
+                    }));
             }
         )->where('collection_name', 'audit_report_'.$date->format('F, Y'))
             ->groupBy('model_id');
