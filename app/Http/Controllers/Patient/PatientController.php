@@ -216,7 +216,7 @@ class PatientController extends Controller
                 'noLiveCountTimeTracking',
                 'authData',
                 'seesAutoApprovalButton',
-            ]),
+            ])
         );
     }
 
