@@ -189,7 +189,7 @@ class ObservationController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number greater than, or equal to 0."])->withInput();
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number greater than 0."])->withInput();
             }
 
             return $this->saveObservationAndRedirect($newObservation);

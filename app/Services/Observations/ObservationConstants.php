@@ -92,7 +92,7 @@ class ObservationConstants
         ],
         'CF_RPT_20' => [
             'name'          => self::BLOOD_PRESSURE,
-            'display_name'  => self::BLOOD_PRESSURE,
+            'display_name'  => self::BLOOD_PRESSURE.' (mmHg)',
             'category_name' => self::BIOMETRICS_ADHERENCE_OBSERVATION_TYPE,
         ],
         'CF_RPT_30' => [
