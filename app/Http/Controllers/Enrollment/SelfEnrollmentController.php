@@ -345,8 +345,6 @@ class SelfEnrollmentController extends Controller
             $buttonColor    = $invitationLink->button_color;
         }
 
-        $view = Str::camel($enrollablePrimaryPractice->name.'_letter');
-
         return view("enrollment-letters.$className", compact(
             'userEnrollee',
             'isSurveyOnlyUser',
