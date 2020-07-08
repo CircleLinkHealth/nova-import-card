@@ -1153,7 +1153,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "2e32a5f9ae62152b5aa07bab07ec046725af01d7"
+                "reference": "94da2edc7111611d5811335ef6965924d8d50ea1"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1187,7 +1187,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-06T23:22:36+00:00"
+            "time": "2020-07-08T05:55:39+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1362,7 +1362,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "a4de176a99d325a36e12ef9b9fc56a3079686396"
+                "reference": "6472cded240c2d1cf4c0814c03257eeafe78fa1f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1385,7 +1385,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-06T23:04:06+00:00"
+            "time": "2020-07-08T05:04:14+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
