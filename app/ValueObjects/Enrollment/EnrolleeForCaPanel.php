@@ -11,6 +11,7 @@ use App\TrixField;
 use Carbon\CarbonTimeZone;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Illuminate\Support\Facades\Log;
 
 class EnrolleeForCaPanel
 {
@@ -76,6 +77,8 @@ class EnrolleeForCaPanel
 
         $providerPhone = $this->getProviderPhone($enrollable);
 
+        $provider = $enrollable->provider;
+
         return array_merge(
             [
                 'enrollable_id'            => $enrollable->id,
@@ -118,11 +121,11 @@ class EnrolleeForCaPanel
                     ? $this->timeRangeToPanelWindows($enrollable->preferred_window)
                     : [],
 
-                'provider'       => $enrollable->provider->attributesToArray(),
+                'provider'       => $provider ? $provider->attributesToArray() : [],
                 'provider_phone' => $providerPhone,
                 'has_tips'       => (bool) $enrollable->practice->enrollmentTips,
 
-                'is_confirmed_family' => Enrollee::statusIsToConfirm($enrollable->status),
+                'is_confirmed_family' => Enrollee::statusIsToConfirm($enrollable->status) || ! empty($familyAttributes),
             ],
             $familyAttributes,
             $phoneAttributes,
@@ -204,12 +207,16 @@ class EnrolleeForCaPanel
     private function getProviderPhone($enrollable)
     {
         $provider = $enrollable->provider;
-        $phone    = $provider->getPhone();
 
-        if (empty($phone)) {
-            $location = $provider->locations->where('phone', '!=', null)->first();
-            if ($location) {
-                $phone = $location->phone;
+        $phone = null;
+        if ($provider) {
+            $phone = $provider->getPhone();
+
+            if (empty($phone)) {
+                $location = $provider->locations->where('phone', '!=', null)->first();
+                if ($location) {
+                    $phone = $location->phone;
+                }
             }
         }
 
