@@ -14,10 +14,8 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaStream;
 
@@ -232,10 +230,7 @@ class DownloadController extends Controller
             function ($query) use ($practiceId) {
                 $query->select('id')
                     ->from((new User())->getTable())
-                    ->where('program_id', $practiceId)
-                    ->where('role_id', Cache::remember('participant_role_id', 2, function () {
-                        return Role::where('name', 'participant')->value('id');
-                    }));
+                    ->where('program_id', $practiceId);
             }
         )->where('collection_name', 'audit_report_'.$date->format('F, Y'))
             ->groupBy('model_id');
