@@ -72,6 +72,9 @@ class NotesController extends Controller
         // patient view
         /** @var User $patient */
         $patient = User::with([
+            'carePlan' => function ($q) {
+                return $q->select(['id', 'user_id', 'status']);
+            },
             'patientSummaries' => function ($q) {
                 return $q->where('month_year', Carbon::now()->startOfMonth());
             },
@@ -147,27 +150,22 @@ class NotesController extends Controller
             return response('You can only edit DRAFT notes.', 401);
         }
 
-        //if we are editing a note, no need to fetch tasks
-        if ($existingNote && Note::STATUS_COMPLETE === $existingNote->status) {
-            $nurse_patient_tasks = [];
-        } else {
-            $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
-                ->where('type', '=', 'task')
-                ->where('inbound_cpm_id', '=', $patientId)
-                ->where('outbound_cpm_id', '=', $author_id)
-                ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
-                )
-                ->get();
-        }
+        $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
+            ->where('type', '=', 'task')
+            ->where('inbound_cpm_id', '=', $patientId)
+            ->where('outbound_cpm_id', '=', $author_id)
+            ->select(
+                [
+                    'id',
+                    'type',
+                    'sub_type',
+                    'attempt_note',
+                    'scheduled_date',
+                    'window_start',
+                    'window_end',
+                ]
+            )
+            ->get();
 
         // we used to send $meds for Phoenix Heart
         // removed server side implementation because it could use optimization
@@ -197,6 +195,14 @@ class NotesController extends Controller
             $answerFromMoreInfo = $this->getAnswerFromSelfEnrolmentSurvey($patientId);
         }
 
+        // RN Approval Flow - session must have SESSION_RN_APPROVED_KEY
+        $hasRnApprovedCp = false;
+        if ($author->isCareCoach() &&
+            $patient->carePlan && CarePlan::QA_APPROVED === $patient->carePlan->status) {
+            $approvedId      = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
+            $hasRnApprovedCp = $approvedId && $approvedId == $author->id;
+        }
+
         $view_data = [
             'userTime'                        => $performedAt->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
             'program_id'                      => $patient->program_id,
@@ -224,6 +230,7 @@ class NotesController extends Controller
             'hasSuccessfulCall'               => $hasSuccessfulCall,
             'attestationRequirements'         => $this->getAttestationRequirementsIfYouShould($patient),
             'shouldShowForwardNoteSummaryBox' => is_null($existingNote) || 'draft' === optional($existingNote)->status,
+            'hasRnApprovedCarePlan'           => $hasRnApprovedCp,
         ];
 
         return view('wpUsers.patient.note.create', $view_data);
@@ -1051,6 +1058,9 @@ class NotesController extends Controller
             }
             $note = $this->service->editNote($note, $input);
         } else {
+            if (isset($requestInput['call_status']) && Call::REACHED === $requestInput['call_status']) {
+                $input['successful_clinical_call'] = 1;
+            }
             $note = Note::create($input);
         }
 

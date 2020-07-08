@@ -623,6 +623,27 @@
         </div>
     </div>
 
+    <div class="modal fade" id="saving-draft" tabindex="-1" role="dialog"
+         aria-labelledby="saving-draft-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="confirm-note-create-label">Care Plan not approved</h3>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Please open patient's Care Plan and make sure you click on "Ready For Dr." button before saving
+                        a successful clinical call note.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <span id="saving-draft-loader" class="fa fa-spinner fa-spin"></span>
+                    <button id="saving-draft-ok-button" type="button" class="btn btn-grey" disabled>OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div>
         <br/>
     </div>
@@ -642,6 +663,7 @@
             const isEditingCompleteTask = @json(!empty($call) && !empty($call->sub_type));
             const editingTaskType = isEditingCompleteTask ? @json(optional($call)->sub_type) : undefined;
             const disableAutoSave = @json(!empty($note) && $note->status == \App\Note::STATUS_COMPLETE);
+            const hasRnApprovedCarePlan = @json($hasRnApprovedCarePlan);
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
@@ -678,14 +700,14 @@
                             .attr("name", "attested_problems[" + i + "][ccd_problem_id]").val(condition).appendTo(form);
                         i++;
                     });
-                    if (data.bypassed_bhi_validation){
+                    if (data.bypassed_bhi_validation) {
                         $("<input>")
                             .attr("id", "bypassed_bhi_validation")
                             .attr("type", "hidden")
                             .attr("name", "bypassed_bhi_validation").val('true').appendTo(form);
                     }
 
-                    if (data.bypassed_all_validation){
+                    if (data.bypassed_all_validation) {
                         $("<input>")
                             .attr("id", "bypassed_all_validation")
                             .attr("type", "hidden")
@@ -760,8 +782,15 @@
 
                 let phoneEl = $('#phone');
                 phoneEl.change(phoneSessionChange);
-                phoneEl.prop('checked', @json(!empty($call) && empty($call->sub_type)));
+                //successful_clinical_call might be set but no $call. This can happen when we have draft notes
+                const hasClinicalCall = @json(!empty($note) && $note->successful_clinical_call == 1);
+                const hasPhoneSession = @json( (!empty($call) && empty($call->sub_type))) || hasClinicalCall;
+                phoneEl.prop('checked', hasPhoneSession);
                 phoneEl.trigger('change');
+
+                if (hasClinicalCall) {
+                    $('#reached').prop('checked', true);
+                }
 
                 function associateWithTaskChange(e) {
                     if (!e) {
@@ -946,6 +975,17 @@
                         }
                     }
 
+                    // ROAD-39 RN must approve care plan before making a successful welcome call
+                    if (userIsCareCoach && callIsSuccess && !hasRnApprovedCarePlan) {
+                        showSavingDraftModal();
+                        saveDraft()
+                            .then(() => {
+                                $('#saving-draft-loader').addClass('hidden');
+                                $('#saving-draft-ok-button').prop('disabled', false);
+                            })
+                        return;
+                    }
+
                     if (isAssociatedWithTask && !callHasTask) {
                         alert('Please select a task to associate to.');
                         return;
@@ -1000,6 +1040,10 @@
                     confirmSubmitForm();
                 });
 
+                $(document).on("click", "#saving-draft-ok-button", function (event) {
+                    $('#saving-draft').modal('hide');
+                });
+
                 function confirmSubmitForm() {
 
                     if (!conditionsAttested && callIsSuccess && userIsCareCoach) {
@@ -1036,6 +1080,10 @@
 
                 function showTaskCompletedModal() {
                     $('#confirm-task-completed').modal('show');
+                }
+
+                function showSavingDraftModal() {
+                    $('#saving-draft').modal('show');
                 }
 
                 const validateEmailBody = async () => {
@@ -1119,7 +1167,7 @@
 
                 isSavingDraft = true;
 
-                window.axios
+                return window.axios
                     .post(saveDraftUrl, {
                         patient_id: $('#patient_id').val(),
                         note_id: noteId,

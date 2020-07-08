@@ -22,7 +22,8 @@
             'isCareCoach',
             'providerCanApproveOwnCarePlans',
             'showReadyForDrButton',
-            'showReadyForDrButtonDisabled',
+            'readyForDrButtonDisabled',
+            'readyForDrButtonAlreadyClicked',
             'routeApproveOwn',
             'routeApprove',
             'routeApproveViewNext',
@@ -116,6 +117,15 @@
             },
             csrfInput() {
                 return `<input type="hidden" name="_token" value="${this.csrfToken}">`;
+            },
+            readyForDrButtonTooltip() {
+                if (this.readyForDrButtonDisabled) {
+                    return 'Successful welcome call note required';
+                }
+                if (this.readyForDrButtonAlreadyClicked) {
+                    return 'You have approved this Care Plan. Please proceed to save clinical note!';
+                }
+                return '';
             }
         },
         methods: Object.assign({},
@@ -220,7 +230,7 @@
                     <form class="inline-block" style="text-align: left"
                           :action="routeApproveOwn"
                           method="POST">
-                        <template v-html="csrfInput"></template>
+                        <div v-html="csrfInput"></div>
                         <input class="btn btn-sm btn-info" aria-label="..."
                                type="submit"
                                :value="providerCanApproveOwnCarePlansSubmitButtonText">
@@ -230,17 +240,17 @@
             <div class="col-md-2 text-center">
                 <template v-if="showReadyForDrButton">
                     <form id="form-approve"
-                          :class="{'with-tooltip': showReadyForDrButtonDisabled}"
-                          :title="showReadyForDrButtonDisabled ? 'Successful welcome call note required' : ''"
+                          :class="{'with-tooltip': readyForDrButtonDisabled || readyForDrButtonAlreadyClicked}"
+                          :title="readyForDrButtonTooltip"
                           :action="routeApprove"
                           method="POST" style="display: inline">
-                        <template v-html="csrfInput"></template>
-                        <button class="btn btn-success btn-sm inline-block with-tooltip"
+                        <div v-html="csrfInput"></div>
+                        <button class="btn btn-success btn-sm inline-block"
                                 aria-label="..."
                                 form="form-approve"
                                 type="submit"
                                 id="btn-rn-approve"
-                                :disabled="showReadyForDrButtonDisabled"
+                                :disabled="readyForDrButtonDisabled || readyForDrButtonAlreadyClicked"
                                 role="button">
                             Ready for Dr.
                         </button>
@@ -261,7 +271,7 @@
                           id="form-approve"
                           :action="routeApprove"
                           method="POST" style="display: inline">
-                        <template v-html="csrfInput"></template>
+                        <div v-html="csrfInput"></div>
                         <button class="btn btn-info btn-sm inline-block"
                                 aria-label="..."
                                 form="form-approve"
@@ -274,7 +284,7 @@
                         <form id="form-approve-next"
                               :action="routeApproveViewNext"
                               method="POST" style="display: inline">
-                            <template v-html="csrfInput"></template>
+                            <div v-html="csrfInput"></div>
                             <input class="btn btn-success btn-sm inline-block"
                                    aria-label="..."
                                    type="submit"
@@ -283,7 +293,7 @@
 
                         <form :action="routeCarePlanNotEligible"
                               method="POST" id="not-eligible-form" style="display: inline">
-                            {{csrfInput}}
+                            <div v-html="csrfInput"></div>
                             <button type="button" style="margin-right:10px;"
                                     @click="notEligibleClick"
                                     class="btn btn-danger btn-sm text-right">
@@ -379,7 +389,8 @@
             </template>
             <template slot="body">
                 Clicking here sends the Care Plan to Dr., so please ensure this is an assessment-driven
-                Care Plan per CircleLink <a href="https://circlelinkhealth.zendesk.com/hc/en-us/articles/360040849551-CCM-1st-Call-Script-Welcome-and-History">guidelines</a>.
+                Care Plan per CircleLink <a
+                    href="https://circlelinkhealth.zendesk.com/hc/en-us/articles/360040849551-CCM-1st-Call-Script-Welcome-and-History">guidelines</a>.
             </template>
             <template slot="footer">
             </template>

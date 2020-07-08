@@ -804,14 +804,18 @@ class ReportsController extends Controller
         }
 
         /** @var User $user */
-        $user                         = auth()->user();
-        $showReadyForDrButton         = CarePlan::QA_APPROVED === $patient->carePlan->status && $user->isCareCoach() && $user->canRNApproveCarePlans();
-        $showReadyForDrButtonDisabled = false;
+        $user                           = auth()->user();
+        $showReadyForDrButton           = CarePlan::QA_APPROVED === $patient->carePlan->status && $user->isCareCoach() && $user->canRNApproveCarePlans();
+        $readyForDrButtonDisabled       = false;
+        $readyForDrButtonAlreadyClicked = false;
         if ($showReadyForDrButton) {
-            $showReadyForDrButtonDisabled = ! Note::whereStatus(Note::STATUS_DRAFT)
+            $readyForDrButtonDisabled = ! Note::whereStatus(Note::STATUS_DRAFT)
                 ->where('patient_id', '=', $patient->id)
                 ->where('successful_clinical_call', '=', 1)
                 ->exists();
+
+            $approvedBy                     = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
+            $readyForDrButtonAlreadyClicked = $approvedBy && $approvedBy == $user->id;
         }
 
 //        To phase out
@@ -848,10 +852,11 @@ class ReportsController extends Controller
                 ],
                 ]
             ),
-            'socialServicesMiscId'         => $cpmMiscs[CpmMisc::SOCIAL_SERVICES],
-            'othersMiscId'                 => $cpmMiscs[CpmMisc::OTHER],
-            'showReadyForDrButton'         => $showReadyForDrButton,
-            'showReadyForDrButtonDisabled' => $showReadyForDrButtonDisabled,
+            'socialServicesMiscId'           => $cpmMiscs[CpmMisc::SOCIAL_SERVICES],
+            'othersMiscId'                   => $cpmMiscs[CpmMisc::OTHER],
+            'showReadyForDrButton'           => $showReadyForDrButton,
+            'readyForDrButtonDisabled'       => $readyForDrButtonDisabled,
+            'readyForDrButtonAlreadyClicked' => $readyForDrButtonAlreadyClicked,
         ];
 
         return view(

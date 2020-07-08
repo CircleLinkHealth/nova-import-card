@@ -43,7 +43,7 @@ class ProviderController extends Controller
             // this will be used when creating a note
             // the care plan status will be changed only when the note is saved
             $session = $request->session();
-            $session->push(ProviderController::SESSION_RN_APPROVED_KEY, auth()->id());
+            $session->put(ProviderController::SESSION_RN_APPROVED_KEY, auth()->id());
         } else {
             if ($user->canQAApproveCarePlans()) {
                 /** @var CarePlan $carePlan */
