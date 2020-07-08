@@ -12,7 +12,9 @@ use App\SafeRequest as Request;
 use App\Services\Enrollment\EnrollableCallQueue;
 use App\Services\Enrollment\SuggestEnrollable;
 use App\Services\Enrollment\UpdateEnrollable;
+use App\ValueObjects\Enrollment\EnrolleeForCaPanel;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -169,16 +171,24 @@ class EnrollmentCenterController extends ApiController
             ]);
         }
 
-        //Edge case but we don't want the dashboard to break and CAs having nowhere to go after that
-        if ( ! $enrollable->provider) {
-            Log::critical("Enrollee with id: {$enrollable->id}, does not have provider attached. Marking as ineligible and recommending investigation.");
+        $isConfirmedFamilyMember = DB::table('enrollee_family_members')
+            ->where('family_member_enrollee_id', $enrollable->id)
+            ->exists();
+
+        //If enrollee does not have provider attach only show them to the CA if they have been confirmed as a family member for another patient.
+        if ( ! $enrollable->provider && ! $isConfirmedFamilyMember) {
+            $message = "Enrollee with id: {$enrollable->id}, does not have provider attached. Marking as ineligible and recommending investigation.";
+            Log::critical($message);
+            sendSlackMessage('#ca_panel_alerts', $message);
             $enrollable->status = Enrollee::INELIGIBLE;
             $enrollable->save();
 
             return $this->show($request);
         }
 
-        return Enrollable::make($enrollable);
+        $enrollableData = EnrolleeForCaPanel::getArray($enrollable);
+
+        return Enrollable::make($enrollableData);
     }
 
     public function unableToContact(Request $request)
