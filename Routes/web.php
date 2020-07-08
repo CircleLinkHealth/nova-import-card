@@ -8,7 +8,7 @@ Route::group(['middleware' => 'auth'], function () {
     // **** PATIENTS (/manage-patients/{patientId}/)
     Route::group([
         'prefix'     => 'manage-patients/{patientId}',
-        'middleware' => ['patientProgramSecurity', 'checkWebSocketServer'],
+        'middleware' => ['patientProgramSecurity'],
     ], function () {
         Route::group(['prefix' => 'activities'], function () {
             Route::get('create', [
