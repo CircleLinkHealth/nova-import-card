@@ -296,7 +296,7 @@ class WorkScheduleController extends Controller
             });
 
         $eventsForSelectedNurse = $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse)->toArray();
-        $holidaysData           = $nurse->nurseInfo->upcoming_holiday_dates->flatten(); // we only need the future holidays
+        $holidaysData           = $nurse->nurseInfo->getUpcomingHolidayDates()->flatten();
         $holidays               = $this->fullCalendarService->prepareHolidaysData($holidaysData, $nurse, $startDate, $endDate)->toArray();
 
         return response()->json([
@@ -313,6 +313,7 @@ class WorkScheduleController extends Controller
         //I think time tracking submits along with the form, thus messing up sessions.
         //Temporary fix
         $disableTimeTracking = true; // @todo: we need this ?  it wasnt used in view
+
         return view('care-center.work-schedule', compact('authData', 'today'));
     }
 
