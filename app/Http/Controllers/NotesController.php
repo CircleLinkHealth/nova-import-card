@@ -894,7 +894,9 @@ class NotesController extends Controller
         $patient = User::findOrFail($patientId);
 
         try {
-            $input['status'] = 'draft';
+            if (!isset($input['status'])) {
+                $input['status'] = 'draft';
+            }
             $note            = $this->saveNote($patient, $input);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()]);
