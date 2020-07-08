@@ -839,7 +839,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group([
         'prefix'     => 'practice/{practiceId}/patient/{patientId}',
-        'middleware' => ['patientProgramSecurity', 'checkWebSocketServer'],
+        'middleware' => ['patientProgramSecurity'],
     ], function () {
         Route::post('legacy-bhi-consent', [
             'uses' => 'LegacyBhiConsentController@store',
@@ -854,7 +854,7 @@ Route::group(['middleware' => 'auth'], function () {
     // **** PATIENTS (/manage-patients/{patientId}/)
     Route::group([
         'prefix'     => 'manage-patients/{patientId}',
-        'middleware' => ['patientProgramSecurity', 'checkWebSocketServer'],
+        'middleware' => ['patientProgramSecurity'],
     ], function () {
         Route::get('call', [
             'uses' => 'Patient\PatientController@showCallPatientPage',
