@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aaa43fc80684266e361ea6895466d2b9",
+    "content-hash": "144188142e0dff9da94aed648b5efdc3",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1179,11 +1179,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-ROAD-229-ca-family-bug",
+            "version": "v3.0.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "b2e6ca9e231b46bc37d39055e77bb7ce6d8efc75"
+                "reference": "9f132c0d8315f3ed7b86216e8d1480912ec5e50d"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1208,7 +1208,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-08T20:57:31+00:00"
+            "time": "2020-07-08T21:49:42+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1542,11 +1542,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.2.4",
+            "version": "v1.2.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "d6c4046877618ce3aa5903f71135f8ff500a394f"
+                "reference": "bee6432f6fb207b74abc2edf6ac39e7c094823d2"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1571,7 +1571,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-25T22:08:06+00:00"
+            "time": "2020-07-08T21:54:04+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -16159,7 +16159,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20
     },
