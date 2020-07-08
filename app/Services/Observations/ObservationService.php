@@ -10,20 +10,13 @@ class ObservationService
 {
     public static function getObsKey(?string $key)
     {
-        if ( ! $key) {
-            return null;
-        }
-        if (array_key_exists($key, ObservationConstants::MEDICATIONS)) {
-            return ObservationConstants::ADHERENCE;
-        }
-        if (array_key_exists($key, ObservationConstants::LIFESTYLE)) {
-            return ObservationConstants::LIFESTYLE_OBSERVATION_TYPE;
-        }
-        if (array_key_exists($key, ObservationConstants::BIOMETRICS)) {
-            return ObservationConstants::BIOMETRICS[$key];
-        }
-        if (array_key_exists($key, ObservationConstants::SYMPTOMS)) {
-            return ObservationConstants::SYMPTOMS_OBSERVATION_TYPE;
+        if (array_key_exists($key, ObservationConstants::ACCEPTED_OBSERVATION_TYPES)) {
+            $obsType = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$key];
+            if (ObservationConstants::BIOMETRICS_ADHERENCE_OBSERVATION_TYPE !== $obsType['category_name']) {
+                return $obsType['category_name'];
+            }
+
+            return $obsType['name'];
         }
 
         return null;

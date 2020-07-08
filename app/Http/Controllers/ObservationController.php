@@ -96,10 +96,8 @@ class ObservationController extends Controller
             'obs_key'        => ObservationService::getObsKey($request->input('observationType')),
         ]);
 
-        $answerResponse = false;
-
         //@todo: define BooleanObservation class
-        if (in_array($newObservation->obs_key, [ObservationConstants::ADHERENCE, ObservationConstants::LIFESTYLE_OBSERVATION_TYPE])) {
+        if (in_array($newObservation->obs_key, [ObservationConstants::MEDICATIONS_ADHERENCE_OBSERVATION_TYPE, ObservationConstants::LIFESTYLE_OBSERVATION_TYPE])) {
             if ( ! in_array(strtoupper($newObservation->obs_value), ['Y', 'N', 'YES', 'NO'])) {
                 return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a Y or a N."])->withInput();
             }
@@ -117,6 +115,18 @@ class ObservationController extends Controller
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number from 1 to 9."])->withInput();
+            }
+
+            return $this->saveObservationAndRedirect($newObservation);
+        }
+
+        if (ObservationConstants::CIGARETTE_COUNT === $newObservation->obs_key) {
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => 'required|numeric',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number greater than, or equal to 0."])->withInput();
             }
 
             return $this->saveObservationAndRedirect($newObservation);
@@ -148,9 +158,7 @@ class ObservationController extends Controller
             }
         }
 
-        return redirect()->route('patient.summary', [
-            'patientId' => $request->input('userId'),
-        ])->with('messages', ['Successfully added new observation']);
+        return redirect()->back()->withErrors(['The Observation could not be processed.'])->withInput();
     }
 
     public function updateObservation(Request $request)

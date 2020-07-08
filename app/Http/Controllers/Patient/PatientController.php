@@ -331,7 +331,11 @@ class PatientController extends Controller
             abort(403);
         }
 
-        return view('wpUsers.patient.observation.create', ['patient' => $patient]);
+        return view('wpUsers.patient.observation.create', [
+            'patient'                  => $patient,
+            'acceptedObservationTypes' => collect(ObservationConstants::ACCEPTED_OBSERVATION_TYPES)->sortBy('display_name'),
+            'observationCatecories'    => collect(ObservationConstants::CATEGORIES)->sortBy('display_name'),
+        ]);
     }
 
     /**
@@ -407,7 +411,9 @@ class PatientController extends Controller
                     break;
                 case 'Cigarettes':
                 case ObservationConstants::CIGARETTE_COUNT:
-                    $observation['description']     = 'Smoking (# per day)';
+                if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                    $observation['description'] = $description;
+                }
                     $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Blood_Pressure':
@@ -418,14 +424,14 @@ class PatientController extends Controller
                 $observation['description']         = $observation['obs_key'];
                     $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
-                case ObservationConstants::ADHERENCE:
-                    if ($description = ObservationConstants::MEDICATIONS[$observation->obs_message_id] ?? null) {
+                case ObservationConstants::MEDICATIONS_ADHERENCE_OBSERVATION_TYPE:
+                    if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
                         $observation['description'] = $description;
                     }
                     $obs_by_pcp['obs_medications'][] = $this->prepareForWebix($observation);
                     break;
                 case ObservationConstants::SYMPTOMS_OBSERVATION_TYPE:
-                    if ($description = ObservationConstants::SYMPTOMS[$observation->obs_message_id] ?? null) {
+                    if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
                         $observation['items_text']  = $description;
                         $observation['description'] = $description;
                         $observation['obs_key']     = $description;
@@ -434,7 +440,7 @@ class PatientController extends Controller
                     break;
                 case 'Other':
                 case ObservationConstants::LIFESTYLE_OBSERVATION_TYPE:
-                if ($description = ObservationConstants::LIFESTYLE[$observation->obs_message_id] ?? null) {
+                if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
                     $observation['description'] = $description;
                 }
                 $obs_by_pcp['obs_lifestyle'][] = $this->prepareForWebix($observation);
