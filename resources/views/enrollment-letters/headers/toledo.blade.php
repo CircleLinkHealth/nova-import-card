@@ -21,7 +21,7 @@
 
 <style>
     .header{
-        padding-right: 190px;
+        padding-right: 700px;
         font-size: 23px;
     }
 
