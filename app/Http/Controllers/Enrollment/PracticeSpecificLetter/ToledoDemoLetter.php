@@ -57,6 +57,10 @@ class ToledoDemoLetter implements SelfEnrollmentLetter
      * @var mixed
      */
     private $provider;
+    /**
+     * @var User
+     */
+    private $userEnrollee;
 
     /**
      * ToledoDemoLetter constructor.
@@ -73,6 +77,7 @@ class ToledoDemoLetter implements SelfEnrollmentLetter
         $this->extraAddressValues;
         $this->practice;
         $this->extraAddressValuesRequested;
+        $this->userEnrollee;
     }
 
     public function letterBladeView()
@@ -89,7 +94,7 @@ class ToledoDemoLetter implements SelfEnrollmentLetter
         }
 
         return view("enrollment-letters.$className", [
-            'userEnrollee'                => $this->enrollee,
+            'userEnrollee'                => $this->userEnrollee,
             'isSurveyOnlyUser'            => $this->isSurveyOnlyUser,
             'letterPages'                 => $this->letterPages,
             'practiceDisplayName'         => $this->practice->display_name,
@@ -105,7 +110,7 @@ class ToledoDemoLetter implements SelfEnrollmentLetter
 
     public function letterSpecificView(array $baseLetter, Practice $practice, User $userEnrollee)
     {
-        $this->setProperties($baseLetter, $practice);
+        $this->setProperties($baseLetter, $practice, $userEnrollee);
 
         $this->extraAddressValues = collect()->first();
         if ( ! empty($extraAddressHeader)) {
@@ -124,7 +129,7 @@ class ToledoDemoLetter implements SelfEnrollmentLetter
         return  $this->letterBladeView();
     }
 
-    public function setProperties(array $baseLetter, Practice $practice)
+    public function setProperties(array $baseLetter, Practice $practice, User $userEnrollee)
     {
         $uiRequests       = json_decode($baseLetter['letter']->ui_requests);
         $uiRequestsExists = ! is_null($uiRequests);
@@ -136,6 +141,7 @@ class ToledoDemoLetter implements SelfEnrollmentLetter
         $this->isSurveyOnlyUser   = $baseLetter['isSurveyOnlyUser'];
         $this->extraAddressHeader = $uiRequestsExists ? collect($uiRequests->extra_address_header) : collect();
         $this->practice           = $practice;
+        $this->userEnrollee       = $userEnrollee;
     }
 
     public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string

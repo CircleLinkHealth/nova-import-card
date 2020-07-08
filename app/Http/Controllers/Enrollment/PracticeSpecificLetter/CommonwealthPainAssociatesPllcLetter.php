@@ -42,6 +42,10 @@ class CommonwealthPainAssociatesPllcLetter implements SelfEnrollmentLetter
      * @var mixed
      */
     private $provider;
+    /**
+     * @var User
+     */
+    private $userEnrollee;
 
     /**
      * ToledoDemoLetter constructor.
@@ -55,6 +59,7 @@ class CommonwealthPainAssociatesPllcLetter implements SelfEnrollmentLetter
         $this->isSurveyOnlyUser;
         $this->hideButtons = $hideButtons;
         $this->practice;
+        $this->userEnrollee;
     }
 
     public function letterBladeView()
@@ -71,7 +76,7 @@ class CommonwealthPainAssociatesPllcLetter implements SelfEnrollmentLetter
         }
 
         return view("enrollment-letters.$className", [
-            'userEnrollee'           => $this->enrollee,
+            'userEnrollee'           => $this->userEnrollee,
             'isSurveyOnlyUser'       => $this->isSurveyOnlyUser,
             'letterPages'            => $this->letterPages,
             'practiceDisplayName'    => $this->practice->display_name,
@@ -85,12 +90,12 @@ class CommonwealthPainAssociatesPllcLetter implements SelfEnrollmentLetter
 
     public function letterSpecificView(array $baseLetter, Practice $practice, User $userEnrollee)
     {
-        $this->setProperties($baseLetter, $practice);
+        $this->setProperties($baseLetter, $practice, $userEnrollee);
 
         return  $this->letterBladeView();
     }
 
-    public function setProperties(array $baseLetter, Practice $practice)
+    public function setProperties(array $baseLetter, Practice $practice, User $userEnrollee)
     {
         $this->baseLetter       = $baseLetter['letter'];
         $this->provider         = $baseLetter['provider'];
@@ -98,6 +103,7 @@ class CommonwealthPainAssociatesPllcLetter implements SelfEnrollmentLetter
         $this->enrollee         = $baseLetter['enrollee'];
         $this->isSurveyOnlyUser = $baseLetter['isSurveyOnlyUser'];
         $this->practice         = $practice;
+        $this->userEnrollee     = $userEnrollee;
     }
 
     public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
