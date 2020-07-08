@@ -1,37 +1,37 @@
 @if ($enableTimeTracking)
     @push('prescripts')
         @php
-        if (isset($patient)) {
-            $patientId = $patient->id;
+            if (isset($patient)) {
+                $patientId = $patient->id;
 
-            $patientFamilyId = null;
+                $patientFamilyId = null;
 
-            $patientIsCcm        = false;
-            $patientIsBehavioral = false;
+                $patientIsCcm        = false;
+                $patientIsBehavioral = false;
 
-            if (is_a($patient, \CircleLinkHealth\Customer\Entities\Patient::class)) {
-                $user            = optional($patient->user()->first());
-                $patientId       = $user->id;
-                $patientFamilyId = $patient->family_id;
+                if ($patient instanceof \CircleLinkHealth\Customer\Entities\Patient) {
+                    $user            = optional($patient->user);
+                    $patientId       = $user->id;
+                    $patientFamilyId = $patient->family_id;
 
-                $patientIsCcm        = $user->isCcm();
-                $patientIsBehavioral = $user->isBhi();
+                    $patientIsCcm        = $user->isCcm();
+                    $patientIsBehavioral = $user->isBhi();
+                } elseif ($patient instanceof \CircleLinkHealth\Customer\Entities\User) {
+                    $patientFamilyId     = optional($patient->patientInfo)->family_id;
+                    $patientIsCcm        = $patient->isCcm();
+                    $patientIsBehavioral = $patient->isBhi();
+                }
             } else {
-                $patientFamilyId     = optional($patient->patientInfo()->first())->family_id;
-                $patientIsCcm        = $patient->isCcm();
-                $patientIsBehavioral = $patient->isBhi();
+                $patientIsCcm        = false;
+                $patientIsBehavioral = false;
             }
-        } else {
-            $patientIsCcm        = false;
-            $patientIsBehavioral = false;
-        }
-        $ccmCountableUser        = auth()->user()->isCCMCountable();
-        $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-        if ( ! $noLiveCountTimeTracking) {
-            $noLiveCountTimeTracking = $ccmCountableUser
-                ? 0
-                : 1;
-        }
+            if (auth()->guest()) {
+                throw new \Exception('You are not logged in - Michalis is curious to see if this will ever be triggered.');
+            }
+            //revert to below after updating customer package to PHP7.4 branch
+            //$ccmCountableUser        = auth()->user()->isCCMCountable();
+            $ccmCountableUser        = auth()->user()->hasRole(\CircleLinkHealth\Customer\Entities\Role::CCM_TIME_ROLES);
+            $noLiveCountTimeTracking = false;
         @endphp
         <script>
 
@@ -121,9 +121,8 @@
                 "title": '{{$title}}',
                 "submitUrl": '{{route("api.pagetracking")}}',
                 "timeSyncUrl": '{{route("api.get.time.patients")}}',
-                {{--                    "startTimeOld": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}', //what's the point of this?--}}
                 "startTime": getCarbonDateTimeStringInServerTimezone(new Date(window.performance.timing.connectStart)),
-                "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0,
+                "noLiveCount": 0,
                 "noCallMode": "{{ config('services.no-call-mode.env') }}",
                 "patientFamilyId": "{{ $patientFamilyId ?? 0 }}",
                 "isCcm": ('{{ $patientIsCcm }}' == '1') ? true : false,
