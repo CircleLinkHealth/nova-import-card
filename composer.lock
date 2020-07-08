@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9f85410e7f8721a2c995de75488cd9fd",
+    "content-hash": "1ae21a727b4bb533d756046368fd3e4d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1795,11 +1795,11 @@
         },
         {
             "name": "daltcore/lara-pdf-merger",
-            "version": "v1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git",
-                "reference": "e01fcdd3224a1926a9d91b6d8d2cbf18819aa798"
+                "reference": "5e917fabdbbd478bd6cd47d9b9fe8b64a4c0d912"
             },
             "require": {
                 "php": ">=5.4"
@@ -1840,7 +1840,7 @@
                 "paginate",
                 "pdf"
             ],
-            "time": "2020-07-08T00:48:19+00:00"
+            "time": "2020-07-08T06:08:35+00:00"
         },
         {
             "name": "danielme85/laravel-log-to-db",
