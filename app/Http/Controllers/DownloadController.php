@@ -188,7 +188,7 @@ class DownloadController extends Controller
                 }
             });
 
-        return 'CPM will create reports for patients for '.$date->format('F, Y').' Visit '.link_to_route('make.monthly.audit.reports', 'this page', ['practice_id' => $practiceId, 'month' => $date->format('Y-m')]).' in 10-20 minutes to download the reports.';
+        return 'CPM will create reports for patients for '.$date->format('F, Y').' Visit '.link_to_route('download.monthly.audit.reports', 'this page', ['practice_id' => $practiceId, 'month' => $date->format('Y-m')]).' in 10-20 minutes to download the reports.';
     }
 
     public function mediaFileExists($filePath)
