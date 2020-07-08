@@ -25,7 +25,12 @@
                 $patientIsCcm        = false;
                 $patientIsBehavioral = false;
             }
-            $ccmCountableUser        = auth()->user()->isCCMCountable();
+            if (auth()->guest()) {
+                throw new \Exception('You are not logged in - Michalis is curious to see if this will ever be triggered.');
+            }
+            //revert to below after updating customer package to PHP7.4 branch
+            //$ccmCountableUser        = auth()->user()->isCCMCountable();
+            $ccmCountableUser        = auth()->user()->hasRole(\CircleLinkHealth\Customer\Entities\Role::CCM_TIME_ROLES);
             $noLiveCountTimeTracking = false;
         @endphp
         <script>
