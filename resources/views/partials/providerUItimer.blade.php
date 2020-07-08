@@ -9,7 +9,7 @@
             $patientIsCcm        = false;
             $patientIsBehavioral = false;
 
-            if (is_a($patient, Patient::class)) {
+            if (is_a($patient, \CircleLinkHealth\Customer\Entities\Patient::class)) {
                 $user            = optional($patient->user()->first());
                 $patientId       = $user->id;
                 $patientFamilyId = $patient->family_id;
