@@ -11,8 +11,8 @@ use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use AshAllenDesign\ShortURL\Models\ShortURL;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
+use database\seeds\SelfEnrollmentSeeders\PrepareDataForReEnrollmentTestSeeder;
 use Notification;
-use PrepareDataForReEnrollmentTestSeeder;
 use Tests\DuskTestCase;
 
 class SelfEnrollmentDuskTestTest extends DuskTestCase
@@ -20,7 +20,7 @@ class SelfEnrollmentDuskTestTest extends DuskTestCase
     /**
      * Helper to create fake Enrollees.
      *
-     * @var PrepareDataForReEnrollmentTestSeeder
+     * @var \database\seeds\SelfEnrollmentSeeders\PrepareDataForReEnrollmentTestSeeder
      */
     private $factory;
     private $practice;

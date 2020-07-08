@@ -1,5 +1,5 @@
 <div class="headers">
-    <div class="logo" style="{{$logoStyleRequest}}">
+    <div class="logo" style="text-align: center">
         @include('enrollment-letters.practiceLogo')
     </div>
     <br>

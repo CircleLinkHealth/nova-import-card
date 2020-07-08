@@ -1,6 +1,6 @@
 @extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')
-@section('title', 'Toledo Invitation')
-@section('activity', 'Toledo Invitation')
+@section('title', 'CommonWealth Invitation')
+@section('activity', 'CommonWealth Invitation')
 @section('content')
     <div class="container">
         <div class="letter-view">
@@ -10,17 +10,22 @@
                 </div>
             @endif
 
-                    @include('enrollment-letters.headers.toledo')
+            @include('enrollment-letters.headers.commonwealth')
 
-                    @include('enrollment-letters.baseLetter')
+            @include('enrollment-letters.baseLetter')
 
-                    @if(!$hideButtons)
-                        <div class="header-buttons">
-                            @include('enrollment-letters.enrollableInvitationButtons')
-                        </div>
-                    @endif
+                <div class="logo" style="margin-bottom: 10px">
+                    @include('enrollment-letters.practiceLogo')
                 </div>
-            </div>
+
+
+            @if(!$hideButtons)
+                <div class="header-buttons">
+                    @include('enrollment-letters.enrollableInvitationButtons')
+                </div>
+            @endif
+        </div>
+    </div>
     </div>
 
 

@@ -7,7 +7,6 @@
 namespace App\Services\Enrollment;
 
 use App\Http\Controllers\Controller;
-use App\ProviderSignature;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -103,7 +102,8 @@ class EnrollmentBaseLetter extends Controller
     /**
      * @param $practice
      * @param $practiceNumber
-     * @param  bool  $hideButtons
+     * @param bool $hideButtons
+     *
      * @return array
      */
     public function createLetter(Practice $practice, Model $practiceLetter, $practiceNumber, User $provider, $hideButtons = false)
@@ -137,6 +137,7 @@ class EnrollmentBaseLetter extends Controller
             : '';
 
         $practiceSigSrc = $this->getPracticeSignatures($practiceLetter);
+
         // order has to be the same as the $varsToBeReplaced
         $replacementVars = [
             $provider->last_name,
@@ -187,21 +188,5 @@ class EnrollmentBaseLetter extends Controller
     private function getPracticeSignatures(Model $practiceLetter)
     {
         return $this->practiceLetterView::signatures($practiceLetter, $this->practice, $this->provider);
-//        if ( ! empty($practiceLetter->customer_signature_src)) {
-//            if (ProviderSignature::SIGNATURE_VALUE === $practiceLetter->customer_signature_src) {
-//                $practiceNameToGetSignature = $practice->name;
-//                if (isSelfEnrollmentTestModeEnabled()) {
-////                    We need real practice's name and not toledo-demo. Signatures are saved: public/img/toledo-clinic/signatures
-//                    $practiceNameToGetSignature = 'toledo-clinic';
-//                }
-//                $npiNumber      = $provider->load('providerInfo')->providerInfo->npi_number;
-//                $type           = ProviderSignature::SIGNATURE_PIC_TYPE;
-//                $practiceSigSrc = "<img src='/img/signatures/$practiceNameToGetSignature/$npiNumber$type' alt='$practice->dipslay_name' style='max-width: 100%;'/>";
-//            } else {
-
-        // COMMONWEALTH
-//                $practiceSigSrc = "<img src='$practiceLetter->customer_signature_src'  alt='$practice->dipslay_name' style='max-width: 100%;'/>";
-//            }
-//        }
     }
 }

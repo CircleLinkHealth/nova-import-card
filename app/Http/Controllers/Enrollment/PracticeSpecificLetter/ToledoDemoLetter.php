@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment\PracticeSpecificLetter;
 
+use App\Contracts\SelfEnrollmentLetter;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\ProviderSignature;
 use Carbon\Carbon;
@@ -16,13 +17,25 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class ToledoDemoLetter
+class ToledoDemoLetter implements SelfEnrollmentLetter
 {
     private $baseLetter;
     /**
      * @var mixed
      */
     private $enrollee;
+    /**
+     * @var \Collection|\Illuminate\Support\Collection
+     */
+    private $extraAddressHeader;
+    /**
+     * @var mixed
+     */
+    private $extraAddressValues;
+    /**
+     * @var bool
+     */
+    private $extraAddressValuesRequested;
     /**
      * @var bool
      */
@@ -35,6 +48,10 @@ class ToledoDemoLetter
      * @var mixed
      */
     private $letterPages;
+    /**
+     * @var Practice
+     */
+    private $practice;
 
     /**
      * @var mixed
@@ -52,13 +69,17 @@ class ToledoDemoLetter
         $this->enrollee;
         $this->isSurveyOnlyUser;
         $this->hideButtons = $hideButtons;
+        $this->extraAddressHeader;
+        $this->extraAddressValues;
+        $this->practice;
+        $this->extraAddressValuesRequested;
     }
 
-    public function letterBladeView($extraAddressValuesRequested, $logoStyleRequest, $extraAddressValues, Practice $practice)
+    public function letterBladeView()
     {
         $dateLetterSent = '???';
         $buttonColor    = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
-        $className      = SelfEnrollmentController::getLetterClassName($practice->name);
+        $className      = SelfEnrollmentController::getLetterClassName($this->practice->name);
 
         /** @var EnrollableInvitationLink $invitationLink */
         $invitationLink = $this->enrollee->getLastEnrollmentInvitationLink();
@@ -71,51 +92,59 @@ class ToledoDemoLetter
             'userEnrollee'                => $this->enrollee,
             'isSurveyOnlyUser'            => $this->isSurveyOnlyUser,
             'letterPages'                 => $this->letterPages,
-            'practiceDisplayName'         => $practice->display_name,
+            'practiceDisplayName'         => $this->practice->display_name,
             'practiceLogoSrc'             => $this->baseLetter->practice_logo_src ?? SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO,
             'signatoryNameForHeader'      => $this->provider->display_name,
             'dateLetterSent'              => $dateLetterSent,
             'hideButtons'                 => $this->hideButtons,
             'buttonColor'                 => $buttonColor,
-            'logoStyleRequest'            => $logoStyleRequest,
-            'extraAddressValues'          => $extraAddressValues,
-            'extraAddressValuesRequested' => $extraAddressValuesRequested,
+            'extraAddressValues'          => $this->extraAddressValues,
+            'extraAddressValuesRequested' => $this->extraAddressValuesRequested,
         ]);
     }
 
     public function letterSpecificView(array $baseLetter, Practice $practice, User $userEnrollee)
     {
-        $this->setProperties($baseLetter);
+        $this->setProperties($baseLetter, $practice);
 
-        $uiRequests       = json_decode($this->baseLetter->ui_requests);
-        $uiRequestsExists = ! is_null($uiRequests);
-//        Toledo needs logo on the right.
-        $logoStyleRequest = $uiRequestsExists ? $uiRequests->logo_position : '';
-//        $logoStyleRequest = 'text-align:right';
-//        Toledo needs some extra data in letter top left.
-        $extraAddressHeader = $uiRequestsExists ? collect($uiRequests->extra_address_header) : collect();
-
-        $extraAddressValues = collect()->first();
+        $this->extraAddressValues = collect()->first();
         if ( ! empty($extraAddressHeader)) {
             $models = $this->getModelsContainingNeededValues($extraAddressHeader);
             foreach ($models as $model => $props) {
 //                @todo:use name.
                 if ($practice->display_name === $model) {
-                    $extraAddressValues[] = $this->getExtraAddressValues($props, $userEnrollee);
+                    $this->extraAddressValues[] = $this->getExtraAddressValues($props, $userEnrollee);
                 }
 //                Else use $model to query.
             }
         }
 
-        return  $this->letterBladeView( ! empty(collect($extraAddressValues)->filter()->all()), $logoStyleRequest, $extraAddressValues, $practice);
+        $this->extraAddressValuesRequested = ! empty(collect($this->extraAddressValues)->filter()->all());
+
+        return  $this->letterBladeView();
     }
 
-    public static function signatures(Model $practiceLetter, Practice $practice, User $provider)
+    public function setProperties(array $baseLetter, Practice $practice)
+    {
+        $uiRequests       = json_decode($baseLetter['letter']->ui_requests);
+        $uiRequestsExists = ! is_null($uiRequests);
+
+        $this->baseLetter         = $baseLetter['letter'];
+        $this->provider           = $baseLetter['provider'];
+        $this->letterPages        = $baseLetter['letterPages'];
+        $this->enrollee           = $baseLetter['enrollee'];
+        $this->isSurveyOnlyUser   = $baseLetter['isSurveyOnlyUser'];
+        $this->extraAddressHeader = $uiRequestsExists ? collect($uiRequests->extra_address_header) : collect();
+        $this->practice           = $practice;
+    }
+
+    public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
     {
         $practiceSigSrc = '';
         if ( ! empty($practiceLetter->customer_signature_src)) {
             if (ProviderSignature::SIGNATURE_VALUE === $practiceLetter->customer_signature_src) {
                 $practiceNameToGetSignature = $practice->name;
+//                @todo:This should be avoided.
                 if (isSelfEnrollmentTestModeEnabled()) {
 //                    We need real practice's name and not toledo-demo. Signatures are saved: public/img/toledo-clinic/signatures
                     $practiceNameToGetSignature = 'toledo-clinic';
@@ -175,17 +204,5 @@ class ToledoDemoLetter
         }
 
         return $practiceLocation;
-    }
-
-    /**
-     * @param $baseLetter
-     */
-    private function setProperties(array $baseLetter)
-    {
-        $this->baseLetter       = $baseLetter['letter'];
-        $this->provider         = $baseLetter['provider'];
-        $this->letterPages      = $baseLetter['letterPages'];
-        $this->enrollee         = $baseLetter['enrollee'];
-        $this->isSurveyOnlyUser = $baseLetter['isSurveyOnlyUser'];
     }
 }

@@ -163,7 +163,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function triggerEnrollmentSeederTest()
     {
         try {
-            Artisan::call('db:seed', ['--class' => 'PrepareDataForReEnrollmentTestSeeder']);
+            Artisan::call('db:seed', ['--class' => 'database\seeds\SelfEnrollmentSeeders\PrepareDataForReEnrollmentTestSeeder']);
         } catch (\Exception $e) {
             return 'Somethings Wrong. Please try one more time...';
         }

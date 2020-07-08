@@ -58,11 +58,11 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
         $practice = Practice::firstOrCreate(
             [
-                'name' => 'toledo-demo',
+                'name' => 'commonwealth-pain-associates-pllc',
             ],
             [
                 'active'                => 1,
-                'display_name'          => 'Toledo Demo',
+                'display_name'          => 'Commonwealth Pain & Spine',
                 'is_demo'               => 1,
                 'clh_pppm'              => 0,
                 'term_days'             => 30,

@@ -13,7 +13,7 @@
                 {{$extraAddressValues[0]['postal_code']}}
             @endif
         </div>
-        <div class="logo" style="{{$logoStyleRequest}}; opacity: 90%;">
+        <div class="logo" style="text-align: right; opacity: 90%;">
             @include('enrollment-letters.practiceLogo')
         </div>
     </div>
