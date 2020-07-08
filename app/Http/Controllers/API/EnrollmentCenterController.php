@@ -12,6 +12,7 @@ use App\SafeRequest as Request;
 use App\Services\Enrollment\EnrollableCallQueue;
 use App\Services\Enrollment\SuggestEnrollable;
 use App\Services\Enrollment\UpdateEnrollable;
+use App\ValueObjects\Enrollment\EnrolleeForCaPanel;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -178,7 +179,9 @@ class EnrollmentCenterController extends ApiController
             return $this->show($request);
         }
 
-        return Enrollable::make($enrollable);
+        $enrollableData = EnrolleeForCaPanel::getArray($enrollable);
+
+        return Enrollable::make($enrollableData);
     }
 
     public function unableToContact(Request $request)
