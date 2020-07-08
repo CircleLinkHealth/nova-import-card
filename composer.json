@@ -193,7 +193,7 @@
     "circlelinkhealth/timetracking-module": "1.2.4",
     "circlelinkhealth/twofa-module": "1.2.0",
     "consoletvs/charts": "^6.5",
-    "daltcore/lara-pdf-merger": "1.1.0",
+    "daltcore/lara-pdf-merger": "1.1.1",
     "danielme85/laravel-log-to-db": "^2.3",
     "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "2.9.2",
