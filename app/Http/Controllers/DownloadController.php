@@ -39,10 +39,14 @@ class DownloadController extends Controller
             return response()->redirectToRoute('make.monthly.audit.reports', ['practice_id' => $practiceId, 'month' => $date->format('Y-m')]);
         }
 
-        $mediaExport = $this->auditReportsQuery($date, $practiceId)->get();
+        $media = collect();
 
-        if ($mediaExport->isNotEmpty()) {
-            return MediaStream::create("Audit Reports for {$date->format('F, Y')}.zip")->addMedia($mediaExport);
+        $this->auditReportsQuery($date, $practiceId)->chunkById(10, function ($mediaExport) use (&$media) {
+            $media->push($mediaExport);
+        });
+
+        if ($media->isNotEmpty()) {
+            return MediaStream::create("Audit Reports for {$date->format('F, Y')}.zip")->addMedia($media->flatten());
         }
 
         abort(400, 'No reports found.');
