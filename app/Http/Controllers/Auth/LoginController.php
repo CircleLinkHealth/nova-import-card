@@ -197,7 +197,7 @@ class LoginController extends Controller
 
     protected function getBrowsers(): Collection
     {
-        return \Cache::remember('supported-browsers', 1800, function () {
+        return \Cache::remember('supported-browsers', 2, function () {
             return DB::table('browsers')->get();
         });
     }
