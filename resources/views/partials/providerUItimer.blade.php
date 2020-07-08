@@ -9,15 +9,15 @@
             $patientIsCcm        = false;
             $patientIsBehavioral = false;
 
-            if (is_a($patient, \CircleLinkHealth\Customer\Entities\Patient::class)) {
-                $user            = optional($patient->user()->first());
+            if ($patient instanceof \CircleLinkHealth\Customer\Entities\Patient) {
+                $user            = optional($patient->user);
                 $patientId       = $user->id;
                 $patientFamilyId = $patient->family_id;
 
                 $patientIsCcm        = $user->isCcm();
                 $patientIsBehavioral = $user->isBhi();
-            } else {
-                $patientFamilyId     = optional($patient->patientInfo()->first())->family_id;
+            } elseif ($patient instanceof \CircleLinkHealth\Customer\Entities\User) {
+                $patientFamilyId     = optional($patient->patientInfo)->family_id;
                 $patientIsCcm        = $patient->isCcm();
                 $patientIsBehavioral = $patient->isBhi();
             }
@@ -26,12 +26,7 @@
             $patientIsBehavioral = false;
         }
         $ccmCountableUser        = auth()->user()->isCCMCountable();
-        $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-        if ( ! $noLiveCountTimeTracking) {
-            $noLiveCountTimeTracking = $ccmCountableUser
-                ? 0
-                : 1;
-        }
+        $noLiveCountTimeTracking = false;
         @endphp
         <script>
 
