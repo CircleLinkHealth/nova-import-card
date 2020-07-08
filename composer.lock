@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40cd2321c87404114d054faf200e5bf3",
+    "content-hash": "9f85410e7f8721a2c995de75488cd9fd",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1149,7 +1149,7 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.0.0",
+            "version": "dev-php74upgrade",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
@@ -1358,7 +1358,7 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.4.8",
+            "version": "dev-php74upgrade",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
@@ -16981,6 +16981,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },
