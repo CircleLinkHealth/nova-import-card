@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\ReportFormatter;
 use App\Http\Requests\GetUnder20MinutesReport;
+use App\Note;
 use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanAssessmentService;
@@ -19,7 +20,6 @@ use App\Services\ReportsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
@@ -790,6 +790,7 @@ class ReportsController extends Controller
             return 'Patient Not Found..';
         }
 
+        /** @var User $patient */
         $patient = User::with(PatientCareplanRelations::get())->findOrFail($patientId);
 
         if (CarePlan::PDF == $patient->getCareplanMode()) {
@@ -800,6 +801,17 @@ class ReportsController extends Controller
 
         if ( ! $careplan) {
             return 'Careplan not found...';
+        }
+
+        /** @var User $user */
+        $user                         = auth()->user();
+        $showReadyForDrButton         = CarePlan::QA_APPROVED === $patient->carePlan->status && $user->isCareCoach() && $user->canRNApproveCarePlans();
+        $showReadyForDrButtonDisabled = false;
+        if ($showReadyForDrButton) {
+            $showReadyForDrButtonDisabled = ! Note::whereStatus(Note::STATUS_DRAFT)
+                ->where('patient_id', '=', $patient->id)
+                ->where('successful_clinical_call', '=', 1)
+                ->exists();
         }
 
 //        To phase out
@@ -831,13 +843,15 @@ class ReportsController extends Controller
             'careplan'                => array_merge(
                 $careplanService->careplan($patient),
                 //vue front end expects this format
-            ['other' => [
-                ['name' => $careplan[$patientId]['other']],
-            ],
-            ]
+                ['other' => [
+                    ['name' => $careplan[$patientId]['other']],
+                ],
+                ]
             ),
-            'socialServicesMiscId' => $cpmMiscs[CpmMisc::SOCIAL_SERVICES],
-            'othersMiscId'         => $cpmMiscs[CpmMisc::OTHER],
+            'socialServicesMiscId'         => $cpmMiscs[CpmMisc::SOCIAL_SERVICES],
+            'othersMiscId'                 => $cpmMiscs[CpmMisc::OTHER],
+            'showReadyForDrButton'         => $showReadyForDrButton,
+            'showReadyForDrButtonDisabled' => $showReadyForDrButtonDisabled,
         ];
 
         return view(

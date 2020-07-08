@@ -12,9 +12,12 @@ use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Http\Request;
+use Illuminate\Support\MessageBag;
 
 class ProviderController extends Controller
 {
+    public const SESSION_RN_APPROVED_KEY = 'rn_approved';
+    
     private $providerInfoService;
 
     public function __construct(ProviderInfoService $providerInfoService)
@@ -24,29 +27,49 @@ class ProviderController extends Controller
 
     public function approveCarePlan(Request $request, $patientId, $viewNext = false)
     {
-        if (auth()->user()->canQAApproveCarePlans()) {
+        /** @var User $user */
+        $user = auth()->user();
+        if ($user->canRNApproveCarePlans()) {
+            /** @var CarePlan $carePlan */
             $carePlan = CarePlan::where('user_id', $patientId)
                 ->firstOrFail();
 
-            if (CarePlan::DRAFT == $carePlan->status) {
-                $validator = $carePlan->validator($request->has('confirm_diabetes_conditions'));
-                if ($validator->fails()) {
-                    return redirect()->back()->with(['errors' => $validator->errors()]);
+            if (CarePlan::QA_APPROVED !== $carePlan->status) {
+                $bag = new MessageBag(['status' => 'careplan must be qa_approved in order to be rn_approved']);
+
+                return redirect()->back()->with(['errors' => $bag]);
+            }
+
+            // this will be used when creating a note
+            // the care plan status will be changed only when the note is saved
+            $session = $request->session();
+            $session->push(ProviderController::SESSION_RN_APPROVED_KEY, auth()->id());
+        } else {
+            if ($user->canQAApproveCarePlans()) {
+                /** @var CarePlan $carePlan */
+                $carePlan = CarePlan::where('user_id', $patientId)
+                    ->firstOrFail();
+
+                if (CarePlan::DRAFT == $carePlan->status) {
+                    $validator = $carePlan->validator($request->has('confirm_diabetes_conditions'));
+                    if ($validator->fails()) {
+                        return redirect()->back()->with(['errors' => $validator->errors()]);
+                    }
                 }
             }
-        }
 
-        event(new CarePlanWasApproved(User::find($patientId), auth()->user()));
-        $viewNext = (bool) $viewNext;
+            event(new CarePlanWasApproved(User::find($patientId), $user));
+            $viewNext = (bool) $viewNext;
 
-        if ($viewNext) {
-            $nextPatient = $this->getNextPatient(auth()->user());
+            if ($viewNext) {
+                $nextPatient = $this->getNextPatient($user);
 
-            if ( ! $nextPatient) {
-                return redirect()->to('/');
+                if ( ! $nextPatient) {
+                    return redirect()->to('/');
+                }
+
+                $patientId = $nextPatient->id;
             }
-
-            $patientId = $nextPatient->id;
         }
 
         return redirect()->to(route('patient.careplan.print', [

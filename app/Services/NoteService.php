@@ -120,6 +120,10 @@ class NoteService
             $requestInput['logger_id'] = auth()->id();
         }
 
+        if (isset($input['call_status']) && Call::REACHED === $input['call_status']) {
+            $note->successful_clinical_call = 1;
+        }
+
         $note->logger_id = $requestInput['logger_id'];
         $note->isTCM     = isset($requestInput['tcm'])
             ? 'true' === $requestInput['tcm']
