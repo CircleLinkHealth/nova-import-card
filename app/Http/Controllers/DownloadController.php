@@ -226,7 +226,7 @@ class DownloadController extends Controller
             function ($query) use ($practiceId) {
                 $query->select('id')
                     ->from((new User())->getTable())
-                    ->whereProgramId($practiceId);
+                    ->where('program_id', $practiceId);
             }
         )->where('collection_name', 'audit_report_'.$date->format('F, Y'))
             ->groupBy('model_id');
