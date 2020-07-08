@@ -159,6 +159,18 @@ class ObservationController extends Controller
             return $this->saveObservationAndRedirect($newObservation);
         }
 
+        if (ObservationConstants::WEIGHT === $newObservation->obs_key) {
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => 'required|numeric',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number greater than, or equal to 1."])->withInput();
+            }
+
+            return $this->saveObservationAndRedirect($newObservation);
+        }
+
         if (ObservationConstants::BLOOD_PRESSURE === $newObservation->obs_key) {
             $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
                 $newObservation->obs_key => [
