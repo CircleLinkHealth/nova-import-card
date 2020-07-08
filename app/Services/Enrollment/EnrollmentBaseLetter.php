@@ -38,6 +38,10 @@ class EnrollmentBaseLetter extends Controller
      */
     private $practice;
     /**
+     * @var string
+     */
+    private $practiceLetterView;
+    /**
      * @var User|null
      */
     private $provider;
@@ -49,14 +53,15 @@ class EnrollmentBaseLetter extends Controller
     /**
      * EnrollmentBaseLetter constructor.
      */
-    public function __construct(Practice $practice, User $user, bool $isSurveyOnlyUser, Enrollee $enrollee, bool $hideButtons)
+    public function __construct(Practice $practice, User $user, bool $isSurveyOnlyUser, Enrollee $enrollee, bool $hideButtons, string $practiceLetterView)
     {
-        $this->practice         = $practice;
-        $this->user             = $user;
-        $this->isSurveyOnlyUser = $isSurveyOnlyUser;
-        $this->enrollee         = $enrollee;
-        $this->hideButtons      = $hideButtons;
-        $this->provider         = $user->billingProviderUser();
+        $this->practice           = $practice;
+        $this->user               = $user;
+        $this->isSurveyOnlyUser   = $isSurveyOnlyUser;
+        $this->enrollee           = $enrollee;
+        $this->hideButtons        = $hideButtons;
+        $this->provider           = $user->billingProviderUser();
+        $this->practiceLetterView = $practiceLetterView;
     }
 
     /**
@@ -70,7 +75,7 @@ class EnrollmentBaseLetter extends Controller
     public function composeEnrollmentLetter(
         Model $letter,
         User $userForEnrollment,
-        $enrollablePrimaryPractice,
+        Practice $enrollablePrimaryPractice,
         $provider = null,
         $hideButtons = false
     ) {
@@ -97,12 +102,11 @@ class EnrollmentBaseLetter extends Controller
 
     /**
      * @param $practice
-     * @param mixed $practiceNumber
-     * @param bool  $hideButtons
-     *
+     * @param $practiceNumber
+     * @param  bool  $hideButtons
      * @return array
      */
-    public function createLetter($practice, Model $practiceLetter, $practiceNumber, User $provider, $hideButtons = false)
+    public function createLetter(Practice $practice, Model $practiceLetter, $practiceNumber, User $provider, $hideButtons = false)
     {
         $varsToBeReplaced = [
             EnrollmentInvitationLetter::PROVIDER_LAST_NAME,
@@ -132,23 +136,8 @@ class EnrollmentBaseLetter extends Controller
             ? 'How do I sign up?'
             : '';
 
+        $practiceSigSrc = $this->getPracticeSignatures($practiceLetter);
         // order has to be the same as the $varsToBeReplaced
-        $practiceSigSrc = '';
-        if ( ! empty($practiceLetter->customer_signature_src)) {
-            if (ProviderSignature::SIGNATURE_VALUE === $practiceLetter->customer_signature_src) {
-                $practiceNameToGetSignature = $practice->name;
-                if (isSelfEnrollmentTestModeEnabled()) {
-//                    We need real practice's name and not toledo-demo. Signatures are saved: public/img/toledo-clinic/signatures
-                    $practiceNameToGetSignature = 'toledo-clinic';
-                }
-                $npiNumber      = $provider->load('providerInfo')->providerInfo->npi_number;
-                $type           = ProviderSignature::SIGNATURE_PIC_TYPE;
-                $practiceSigSrc = "<img src='/img/signatures/$practiceNameToGetSignature/$npiNumber$type' alt='$practice->dipslay_name' style='max-width: 100%;'/>";
-            } else {
-                $practiceSigSrc = "<img src='$practiceLetter->customer_signature_src'  alt='$practice->dipslay_name' style='max-width: 100%;'/>";
-            }
-        }
-
         $replacementVars = [
             $provider->last_name,
             $practiceNumber,
@@ -176,11 +165,6 @@ class EnrollmentBaseLetter extends Controller
      */
     public function getBaseLetter()
     {
-        return  $this->baseLetter();
-    }
-
-    private function baseLetter()
-    {
         $this->letter = EnrollmentInvitationLetter::where('practice_id', $this->practice->id)->firstOrFail();
 
         $letterPages = $this->composeEnrollmentLetter(
@@ -192,9 +176,32 @@ class EnrollmentBaseLetter extends Controller
         );
 
         return [
-            'letter'      => $this->letter,
-            'letterPages' => $letterPages,
-            'provider'    => $this->provider,
+            'letter'           => $this->letter,
+            'letterPages'      => $letterPages,
+            'provider'         => $this->provider,
+            'enrollee'         => $this->enrollee,
+            'isSurveyOnlyUser' => $this->isSurveyOnlyUser,
         ];
+    }
+
+    private function getPracticeSignatures(Model $practiceLetter)
+    {
+        return $this->practiceLetterView::signatures($practiceLetter, $this->practice, $this->provider);
+//        if ( ! empty($practiceLetter->customer_signature_src)) {
+//            if (ProviderSignature::SIGNATURE_VALUE === $practiceLetter->customer_signature_src) {
+//                $practiceNameToGetSignature = $practice->name;
+//                if (isSelfEnrollmentTestModeEnabled()) {
+////                    We need real practice's name and not toledo-demo. Signatures are saved: public/img/toledo-clinic/signatures
+//                    $practiceNameToGetSignature = 'toledo-clinic';
+//                }
+//                $npiNumber      = $provider->load('providerInfo')->providerInfo->npi_number;
+//                $type           = ProviderSignature::SIGNATURE_PIC_TYPE;
+//                $practiceSigSrc = "<img src='/img/signatures/$practiceNameToGetSignature/$npiNumber$type' alt='$practice->dipslay_name' style='max-width: 100%;'/>";
+//            } else {
+
+        // COMMONWEALTH
+//                $practiceSigSrc = "<img src='$practiceLetter->customer_signature_src'  alt='$practice->dipslay_name' style='max-width: 100%;'/>";
+//            }
+//        }
     }
 }

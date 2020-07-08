@@ -6,16 +6,88 @@
 
 namespace App\Http\Controllers\Enrollment\PracticeSpecificLetter;
 
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\ProviderSignature;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 class ToledoDemoLetter
 {
-    public function letterSpecifications(Model $practiceLetter, string $practiceDisplayName, User $userEnrollee)
+    private $baseLetter;
+    /**
+     * @var mixed
+     */
+    private $enrollee;
+    /**
+     * @var bool
+     */
+    private $hideButtons;
+    /**
+     * @var mixed
+     */
+    private $isSurveyOnlyUser;
+    /**
+     * @var mixed
+     */
+    private $letterPages;
+
+    /**
+     * @var mixed
+     */
+    private $provider;
+
+    /**
+     * ToledoDemoLetter constructor.
+     */
+    public function __construct(bool $hideButtons)
     {
-        $uiRequests       = json_decode($practiceLetter->ui_requests);
+        $this->baseLetter;
+        $this->provider;
+        $this->letterPages;
+        $this->enrollee;
+        $this->isSurveyOnlyUser;
+        $this->hideButtons = $hideButtons;
+    }
+
+    public function letterBladeView($extraAddressValuesRequested, $logoStyleRequest, $extraAddressValues, Practice $practice)
+    {
+        $dateLetterSent = '???';
+        $buttonColor    = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
+        $className      = SelfEnrollmentController::getLetterClassName($practice->name);
+
+        /** @var EnrollableInvitationLink $invitationLink */
+        $invitationLink = $this->enrollee->getLastEnrollmentInvitationLink();
+        if ($invitationLink) {
+            $dateLetterSent = Carbon::parse($invitationLink->updated_at)->toDateString();
+            $buttonColor    = $invitationLink->button_color;
+        }
+
+        return view("enrollment-letters.$className", [
+            'userEnrollee'                => $this->enrollee,
+            'isSurveyOnlyUser'            => $this->isSurveyOnlyUser,
+            'letterPages'                 => $this->letterPages,
+            'practiceDisplayName'         => $practice->display_name,
+            'practiceLogoSrc'             => $this->baseLetter->practice_logo_src ?? SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO,
+            'signatoryNameForHeader'      => $this->provider->display_name,
+            'dateLetterSent'              => $dateLetterSent,
+            'hideButtons'                 => $this->hideButtons,
+            'buttonColor'                 => $buttonColor,
+            'logoStyleRequest'            => $logoStyleRequest,
+            'extraAddressValues'          => $extraAddressValues,
+            'extraAddressValuesRequested' => $extraAddressValuesRequested,
+        ]);
+    }
+
+    public function letterSpecificView(array $baseLetter, Practice $practice, User $userEnrollee)
+    {
+        $this->setProperties($baseLetter);
+
+        $uiRequests       = json_decode($this->baseLetter->ui_requests);
         $uiRequestsExists = ! is_null($uiRequests);
 //        Toledo needs logo on the right.
         $logoStyleRequest = $uiRequestsExists ? $uiRequests->logo_position : '';
@@ -27,18 +99,34 @@ class ToledoDemoLetter
         if ( ! empty($extraAddressHeader)) {
             $models = $this->getModelsContainingNeededValues($extraAddressHeader);
             foreach ($models as $model => $props) {
-                if ($practiceDisplayName === $model) {
+//                @todo:use name.
+                if ($practice->display_name === $model) {
                     $extraAddressValues[] = $this->getExtraAddressValues($props, $userEnrollee);
                 }
 //                Else use $model to query.
             }
         }
 
-        return  [
-            'extraAddressValuesRequested' => ! empty(collect($extraAddressValues)->filter()->all()),
-            'logoStyleRequest'            => $logoStyleRequest,
-            'extraAddressValues'          => $extraAddressValues,
-        ];
+        return  $this->letterBladeView( ! empty(collect($extraAddressValues)->filter()->all()), $logoStyleRequest, $extraAddressValues, $practice);
+    }
+
+    public static function signatures(Model $practiceLetter, Practice $practice, User $provider)
+    {
+        $practiceSigSrc = '';
+        if ( ! empty($practiceLetter->customer_signature_src)) {
+            if (ProviderSignature::SIGNATURE_VALUE === $practiceLetter->customer_signature_src) {
+                $practiceNameToGetSignature = $practice->name;
+                if (isSelfEnrollmentTestModeEnabled()) {
+//                    We need real practice's name and not toledo-demo. Signatures are saved: public/img/toledo-clinic/signatures
+                    $practiceNameToGetSignature = 'toledo-clinic';
+                }
+                $npiNumber      = $provider->load('providerInfo')->providerInfo->npi_number;
+                $type           = ProviderSignature::SIGNATURE_PIC_TYPE;
+                $practiceSigSrc = "<img src='/img/signatures/$practiceNameToGetSignature/$npiNumber$type' alt='$practice->dipslay_name' style='max-width: 100%;'/>";
+            }
+        }
+
+        return $practiceSigSrc;
     }
 
     /**
@@ -87,5 +175,17 @@ class ToledoDemoLetter
         }
 
         return $practiceLocation;
+    }
+
+    /**
+     * @param $baseLetter
+     */
+    private function setProperties(array $baseLetter)
+    {
+        $this->baseLetter       = $baseLetter['letter'];
+        $this->provider         = $baseLetter['provider'];
+        $this->letterPages      = $baseLetter['letterPages'];
+        $this->enrollee         = $baseLetter['enrollee'];
+        $this->isSurveyOnlyUser = $baseLetter['isSurveyOnlyUser'];
     }
 }

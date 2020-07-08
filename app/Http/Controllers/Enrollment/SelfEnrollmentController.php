@@ -12,8 +12,6 @@ use App\Http\Requests\SelfEnrollableUserAuthRequest;
 use App\SelfEnrollment\Helpers;
 use App\Services\Enrollment\EnrollmentBaseLetter;
 use App\Services\Enrollment\EnrollmentInvitationService;
-use Carbon\Carbon;
-use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
@@ -159,6 +157,11 @@ class SelfEnrollmentController extends Controller
             ->first();
     }
 
+    public static function getLetterClassName(string $practiceName)
+    {
+        return Str::camel($practiceName.'_letter');
+    }
+
     public function handleUnreachablePatientInvitation(User $patient)
     {
         if ($this->hasSurveyInProgress($patient)) {
@@ -220,7 +223,7 @@ class SelfEnrollmentController extends Controller
         $user = User::whereId($userId)->has('enrollee')->with('enrollee')->firstOrFail();
 
         if ($user->isSurveyOnly()) {
-            return $this->enrollmentLetterView($user, true, $user->enrollee, true);
+            return $this->prepareLetterViewAndRedirect($user, true, $user->enrollee, true);
         }
 
         abort(403, 'Unauthorized action.');
@@ -308,60 +311,6 @@ class SelfEnrollmentController extends Controller
     }
 
     /**
-     * @param $isSurveyOnlyUser
-     * @param $hideButtons
-     *
-     * @throws \Exception
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    private function enrollmentLetterView(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
-    {
-        $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
-        $baseLetterView            = (new EnrollmentBaseLetter($enrollablePrimaryPractice, $userEnrollee, $isSurveyOnlyUser, $enrollee, $hideButtons))
-            ->getBaseLetter();
-
-        $practiceDisplayName = $enrollablePrimaryPractice->display_name;
-        $provider            = $baseLetterView['provider'];
-        $practiceLetter      = $baseLetterView['letter'];
-        $letterPages         = $baseLetterView['letterPages'];
-
-        $className            = Str::camel($enrollablePrimaryPractice->name.'_letter');
-        $practiceLetterClass  = ucfirst(str_replace(' ', '', "App\Http\Controllers\Enrollment\PracticeSpecificLetter\ $className"));
-        $letterSpecifications = (new $practiceLetterClass())->letterSpecifications($practiceLetter, $enrollablePrimaryPractice->display_name, $userEnrollee);
-
-        $practiceLogoSrc             = $practiceLetter->practice_logo_src ?? SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO;
-        $signatoryNameForHeader      = $provider->display_name;
-        $dateLetterSent              = '???';
-        $buttonColor                 = SelfEnrollmentController::DEFAULT_BUTTON_COLOR;
-        $logoStyleRequest            = $letterSpecifications['logoStyleRequest'];
-        $extraAddressValues          = $letterSpecifications['extraAddressValues'];
-        $extraAddressValuesRequested = $letterSpecifications['extraAddressValuesRequested'];
-
-        /** @var EnrollableInvitationLink $invitationLink */
-        $invitationLink = $enrollee->getLastEnrollmentInvitationLink();
-        if ($invitationLink) {
-            $dateLetterSent = Carbon::parse($invitationLink->updated_at)->toDateString();
-            $buttonColor    = $invitationLink->button_color;
-        }
-
-        return view("enrollment-letters.$className", compact(
-            'userEnrollee',
-            'isSurveyOnlyUser',
-            'letterPages',
-            'practiceDisplayName',
-            'practiceLogoSrc',
-            'signatoryNameForHeader',
-            'dateLetterSent',
-            'hideButtons',
-            'buttonColor',
-            'logoStyleRequest',
-            'extraAddressValues',
-            'extraAddressValuesRequested'
-        ));
-    }
-
-    /**
      * @param $enrollable
      */
     private function expirePastInvitationLink($enrollable)
@@ -427,7 +376,32 @@ class SelfEnrollmentController extends Controller
             return redirect($this->getAwvInvitationLinkForUser($user)->url);
         }
 
-        return $this->enrollmentLetterView($user, true, $user->enrollee, false);
+        return $this->prepareLetterViewAndRedirect($user, true, $user->enrollee, false);
+    }
+
+    /**
+     * @param $isSurveyOnlyUser
+     * @param $hideButtons
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    private function prepareLetterViewAndRedirect(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
+    {
+        $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
+        $letterClass               = self::getLetterClassName($enrollablePrimaryPractice->name);
+        $practiceLetterView        = ucfirst(str_replace(' ', '', "App\Http\Controllers\Enrollment\PracticeSpecificLetter\ $letterClass"));
+
+        $baseLetter = (new EnrollmentBaseLetter(
+            $enrollablePrimaryPractice,
+            $userEnrollee,
+            $isSurveyOnlyUser,
+            $enrollee,
+            $hideButtons,
+            $practiceLetterView
+        ))
+            ->getBaseLetter();
+
+        return (new $practiceLetterView($hideButtons))->letterSpecificView($baseLetter, $enrollablePrimaryPractice, $userEnrollee);
     }
 
     /**
