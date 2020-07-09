@@ -8,7 +8,6 @@ namespace App\Contracts;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Model;
 
 interface SelfEnrollmentLetter

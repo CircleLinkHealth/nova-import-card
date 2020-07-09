@@ -4,33 +4,41 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+namespace App\Console\Commands;
+
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\SeedEligibilityJobsForEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Faker\Factory;
-use Illuminate\Database\Seeder;
+use Illuminate\Console\Command;
 
-class PrepareDataForReEnrollmentTestSeeder extends Seeder
+class CreateSelfEnrollmentTestData extends Command
 {
-//    We can create UI for tester to choose for which practice to create patients
     use SeedEligibilityJobsForEnrollees;
     use UserHelpers;
-
-    const CCM_STATUS_UNREACHABLE = 'unreachable';
     /**
+     * The console command description.
+     *
      * @var string
      */
-    private $practiceName;
+    protected $description = "Triggers 'PrepareDataForReEnrollmentTestSeeder' while passing parameters";
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'create:selfEnrollmentTestData {practiceName}';
 
     /**
-     * PrepareDataForReEnrollmentTestSeeder constructor.
+     * Create a new command instance.
+     *
+     * @return void
      */
-    public function __construct(string $practiceName)
+    public function __construct()
     {
-        $this->practiceName = $practiceName;
+        parent::__construct();
     }
 
     public function createEnrollee(Practice $practice, array $args = [])
@@ -60,21 +68,33 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
     }
 
     /**
-     * Run the database seeds.
+     * Execute the console command.
      *
-     * @return void
+     * @throws \Exception
+     *
+     * @return int
      */
-    public function run()
+    public function handle()
     {
+        $practiceName = $this->argument('practiceName') ?? null;
+
+        if (isProductionEnv()) {
+            throw new \Exception('You cannot execute this action in production environment');
+        }
+
+        if (is_null($practiceName)) {
+            throw new \Exception('Practice input is required');
+        }
+
         $phoneTester = AppConfig::pull('tester_phone', null) ?? config('services.tester.phone');
 
         $practice = Practice::firstOrCreate(
             [
-                'name' => $this->practiceName,
+                'name' => $practiceName,
             ],
             [
                 'active'                => 1,
-                'display_name'          => ucfirst(str_replace('-', ' ', $this->practiceName)),
+                'display_name'          => ucfirst(str_replace('-', ' ', $practiceName)),
                 'is_demo'               => 1,
                 'clh_pppm'              => 0,
                 'term_days'             => 30,

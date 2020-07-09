@@ -12,6 +12,8 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 
 class EnrollmentBaseLetter extends Controller
 {
@@ -100,11 +102,23 @@ class EnrollmentBaseLetter extends Controller
     }
 
     /**
+     * @throws \Exception
+     *
      * @return array
      */
     public function getBaseLetter()
     {
-        $this->letter = EnrollmentInvitationLetter::where('practice_id', $this->practice->id)->firstOrFail();
+        $this->letter = $this->getPracticeLetter();
+
+        if (empty($this->letter)) {
+            try {
+                $className = ucfirst(Str::camel('generate'.'-'.$this->practice->name.'-letter'));
+                Artisan::call("module:seed --class=$className Eligibility");
+            } catch (\Exception $exception) {
+                throw $exception;
+            }
+            $this->letter = $this->getPracticeLetter();
+        }
 
         $letterPages = $this->composeBaseLetter(
             $this->letter,
@@ -178,6 +192,11 @@ class EnrollmentBaseLetter extends Controller
         $letter = json_decode($practiceLetter->letter) ?? [];
 
         return $this->letterPages($letter, $varsToBeReplaced, $replacementVars);
+    }
+
+    private function getPracticeLetter()
+    {
+        return EnrollmentInvitationLetter::where('practice_id', $this->practice->id)->first();
     }
 
     private function getPracticeSignatures(Model $practiceLetter)

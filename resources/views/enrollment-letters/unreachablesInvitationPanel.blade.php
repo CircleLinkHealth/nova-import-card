@@ -21,39 +21,31 @@
     </div>
     <div class="buttons col-lg-12">
   <div class="row">
+       <form action="{{route('trigger.enrolldata.test')}}" method="GET">
+           <div>
+               <div class="input-field col s12">
+                   <select id="practice-select" name="practice-select" style="display: inline-block">
+                       <option value="" disabled selected>Choose practice to create data for</option>
+                       <option value="toledo-clinic">Toledo Clinic</option>
+                       <option value="commonwealth-pain-associates-pllc">Commonwealth Clinic</option>
+                   </select>
+               </div>
+               <a>
+                   <button class="btn waves-effect waves-light" type="submit">Create Test Patients</button>
+               </a>
+               <ul class="browser-default">
+                   <li>
+                       Emulates Enrollees Imported from CSV
+                       <br> and ready to be invited for Auto Enrollment.
+                   </li>
+               </ul>
 
-          <div>
-              <h5>Step 1</h5>
-              <ul class="browser-default">
-                  <li>
-                      Emulates Enrollees Imported from CSV
-                      <br> and ready to be invited for Auto Enrollment.
-                  </li>
-              </ul>
-              <a href="{{route('trigger.enrolldata.test')}}">
-                  <button type="button" class="btn btn-success">Create Test Patients</button>
-              </a>
-          </div>
+           </div>
+       </form>
 
           <br>
 
-{{--          <div class="row" style="display: inline-flex">--}}
-{{--              <div class="enroll-now-href">--}}
-{{--                  <h5>Step 2</h5>--}}
-{{--                  <a href="{{route('send.enrollee.invitations', ['color' => '#4baf50', 'amount'=> 1, 'practice_id' => 8])}}">--}}
-{{--                      <button type="button" class="btn btn-success" style="background-color: #4baf50">Invite 1 Test Enrollee</button>--}}
-{{--                  </a>--}}
-{{--                  <a href="{{route('send.enrollee.invitations', ['color' => '#b1284c', 'amount'=> 1, 'practice_id' => 8])}}">--}}
-{{--                      <button type="button" class="btn btn-success" style="background-color: #b1284c">Invite 1 Test Enrollee</button>--}}
-{{--                  </a>--}}
-{{--              </div>--}}
-{{--              <div class="enroll-now-href" style="padding-top: 53px; padding-left: 10px;">--}}
-{{--                  <a href="{{route('send.unreachable.invitations',  ['amount'=> 1, 'practice_id' => 8])}}">--}}
-{{--                      <button type="button" class="btn btn-success" style="background-color: #4baf50">Invite 1 Test Unreachable Patient</button>--}}
-{{--                  </a>--}}
-{{--              </div>--}}
-          </div>
-
+  </div>
   </div>
 {{--        <div class="row">--}}
 {{--            <div style="display: inline-flex;">--}}
@@ -123,7 +115,6 @@
 {{--                </a>--}}
 {{--            </div>--}}
         </div>
-    </div>
 
 {{--    <div>--}}
 {{--        <h5>Invited Patients credentials</h5>--}}
@@ -160,6 +151,3 @@
 
 </div>
 @endsection
-
-
-

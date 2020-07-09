@@ -6,13 +6,9 @@
 
 namespace App\Services\Enrollment;
 
-use App\ProviderSignature;
 use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
-use Illuminate\Database\Eloquent\Model;
 
 class EnrollmentInvitationService
 {
