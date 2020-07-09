@@ -139,12 +139,12 @@ class VariablePayCalculator
         $this->nurseCareRateLogs = NurseCareRateLog
             ::select(["$nurseCareRateLogTable.*", "$nurseInfoTable.start_date"])
                 ->leftJoin($nurseInfoTable, "$nurseInfoTable.id", '=', "$nurseCareRateLogTable.nurse_id")
-                ->whereIn("$nurseCareRateLogTable.patient_user_id", function ($query) {
+                ->whereIn("$nurseCareRateLogTable.patient_user_id", function ($query) use ($nurseCareRateLogTable) {
                     $query->select('patient_user_id')
-                        ->from((new NurseCareRateLog())->getTable())
+                        ->from($nurseCareRateLogTable)
                         ->whereIn('nurse_id', $this->nurseInfoIds)
                         ->whereBetween('created_at', [$this->startDate, $this->endDate])
-                        ->distinct();
+                        ->groupBy('patient_user_id');
                 })
                 ->whereBetween("$nurseCareRateLogTable.created_at", [$this->startDate, $this->endDate])
                 ->where(function ($q) use ($nurseCareRateLogTable, $nurseInfoTable) {

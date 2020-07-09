@@ -13,7 +13,7 @@ class NurseInvoiceDisputeDeadline
     /**
      * Minutes to cache for.
      */
-    const CACHE_FOR_MINUTES = 20;
+    const CACHE_FOR_MINUTES = 2;
     /**
      * Default preferredOrDefaultDeadline day of month number.
      *
