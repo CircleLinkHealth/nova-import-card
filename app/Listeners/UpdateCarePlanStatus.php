@@ -108,6 +108,6 @@ class UpdateCarePlanStatus
     private function shouldBeRNApproved(User $patient, User $approver): bool
     {
         return CarePlan::QA_APPROVED == $patient->getCarePlanStatus()
-            && $approver->hasRoleForSite('care-center', $patient->getPrimaryPracticeId());
+            && $approver->hasPermissionForSite('care-plan-rn-approve', $patient->getPrimaryPracticeId());
     }
 }

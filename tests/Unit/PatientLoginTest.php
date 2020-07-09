@@ -6,7 +6,11 @@
 
 namespace Tests\Unit;
 
+use App\Call;
+use App\Http\Controllers\NotesController;
+use App\Note;
 use App\Notifications\NotifyPatientCarePlanApproved;
+use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -14,10 +18,13 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Testing\TestResponse;
 use Tests\CustomerTestCase;
+use Tests\Helpers\MakesSafeRequests;
 
 class PatientLoginTest extends CustomerTestCase
 {
+    use MakesSafeRequests;
     /**
      * @var User
      */
@@ -52,7 +59,7 @@ class PatientLoginTest extends CustomerTestCase
         Notification::fake();
 
         //CarePlan Observer will attempt to send the same notification for QA approval.
-        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient->carePlan->status = CarePlan::RN_APPROVED;
         $this->patient->carePlan->save();
 
         //However, we need to make assertions for the same notification sent for Provider Approval (different content)
@@ -80,16 +87,16 @@ class PatientLoginTest extends CustomerTestCase
     }
 
     /**
-     * Test notification is sent to patient upon both QA and Provider Care Plan Approvals.
+     * Test notification is sent to patient upon RN Care Plan Approvals.
      *
      * @return void
      */
-    public function test_notification_is_sent_after_cp_qa_approval()
+    public function test_notification_is_sent_after_cp_rn_approval()
     {
         Notification::fake();
 
         //Nurse QA approves patient Care plan
-        $this->qaApproveCarePlan();
+        $this->rnApproveCarePlan();
 
         Notification::assertSentTo(
             $this->patient,
@@ -109,7 +116,7 @@ class PatientLoginTest extends CustomerTestCase
 
     public function test_patient_can_login_and_see_their_care_plan()
     {
-        $this->qaApproveCarePlan();
+        $this->rnApproveCarePlan();
 
         $this->flushSession();
         $this->actingAs($this->patient);
@@ -131,6 +138,27 @@ class PatientLoginTest extends CustomerTestCase
         $this->enableFeatureForPatient();
 
         $this->assertEquals($this->patient->carePlan->status, CarePlan::DRAFT);
+
+        $this->call('GET', route('patient-user.careplan'))
+            ->assertRedirect(url('/login'))
+            ->assertSessionHasErrors();
+
+        $this->assertEquals(
+            session('errors')->get('careplan-error')[0],
+            "Your Care Plan is being reviewed. <br> For details, please contact CircleLink Health Support at <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>."
+        );
+    }
+
+    public function test_patient_cannot_go_to_page_if_careplan_is_qa_approved()
+    {
+        $this->actingAs($this->patient);
+
+        $this->enableFeatureForPatient();
+
+        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient->carePlan->save();
+        $this->patient->carePlan->fresh();
+        $this->assertEquals($this->patient->carePlan->status, CarePlan::QA_APPROVED);
 
         $this->call('GET', route('patient-user.careplan'))
             ->assertRedirect(url('/login'))
@@ -168,6 +196,36 @@ class PatientLoginTest extends CustomerTestCase
             ->assertSessionHasErrors();
 
         $this->assertEquals(session('errors')->get(0)[0], 'This page can be accessed only by patients.');
+    }
+
+    private function createNote($patientId, $body)
+    {
+        /** @var NotesController $controller */
+        $controller = app(NotesController::class);
+
+        $req = $this->safeRequest(
+            route('patient.note.store', ['patientId' => $patientId]),
+            'POST',
+            [
+                'status'      => 'complete',
+                'type'        => 'CCM Welcome Call',
+                'phone'       => 1,
+                'call_status' => Call::REACHED,
+                'note_id'     => null,
+                'body'        => $body,
+                'patient_id'  => $patientId,
+            ]
+        );
+
+        $resp = TestResponse::fromBaseResponse($controller->store($req, app(SchedulerService::class), $patientId));
+        self::assertNull($resp->exception);
+
+        /** @var Note $note */
+        $note = Note::whereBody($body)->first();
+        self::assertNotNull($note);
+        self::assertTrue('complete' === $note->status);
+
+        return $note->id;
     }
 
     /**
@@ -217,11 +275,15 @@ class PatientLoginTest extends CustomerTestCase
         $this->assertEquals($this->patient->carePlan->status, CarePlan::PROVIDER_APPROVED);
     }
 
-    private function qaApproveCarePlan()
+    private function rnApproveCarePlan()
     {
         $this->actingAs($this->nurse);
 
-        $this->assertEquals(CarePlan::DRAFT, $this->patient->carePlan->status);
+        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient->carePlan->save();
+        $this->patient->carePlan->fresh();
+
+        $this->assertEquals(CarePlan::QA_APPROVED, $this->patient->carePlan->status);
 
         $this->call('POST', route('patient.careplan.approve', [
             'patientId' => $this->patient->id,
@@ -231,11 +293,14 @@ class PatientLoginTest extends CustomerTestCase
         ])
             ->assertSessionHasNoErrors();
 
+        //need also a successful clinical note in this session for cp to be approved
+        $this->createNote($this->patient->id, 'rnApproveCarePlan'.rand());
+
         auth()->logout();
 
         $this->patient->load('carePlan');
         //assert careplan has been QA approved
-        $this->assertEquals($this->patient->carePlan->status, CarePlan::QA_APPROVED);
+        $this->assertEquals($this->patient->carePlan->status, CarePlan::RN_APPROVED);
     }
 
     /**
