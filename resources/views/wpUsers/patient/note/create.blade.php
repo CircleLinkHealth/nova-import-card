@@ -632,13 +632,24 @@
                 </div>
                 <div class="modal-body">
                     <p>
-                        Please open patient's Care Plan and make sure you click on "Ready For Dr." button before saving
-                        a successful clinical call note.
+                        You must ensure Care Plan is ready for Dr. review, and click on "Ready For Dr." on Care Plan
+                        before saving the 1st clinical call note.
                     </p>
                 </div>
-                <div class="modal-footer">
-                    <span id="saving-draft-loader" class="fa fa-spinner fa-spin"></span>
-                    <button id="saving-draft-ok-button" type="button" class="btn btn-grey" disabled>OK</button>
+                <div class="modal-footer text-center">
+                    <div class="row text-center">
+                        <div class="col-md-6">
+                            <a class="disabled btn btn-success" id="saving-draft-visit-careplan-link" href="{{route('patient.careplan.print', ['patientId' => $patient->id])}}">
+                                Visit Care Plan
+                                <span id="saving-draft-loader" class="fa fa-spinner fa-spin"></span>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <button id="saving-draft-ok-button" type="button" class="btn btn-success">
+                                Stay on this page
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -981,7 +992,7 @@
                         saveDraft()
                             .then(() => {
                                 $('#saving-draft-loader').addClass('hidden');
-                                $('#saving-draft-ok-button').prop('disabled', false);
+                                $('#saving-draft-visit-careplan-link').removeClass('disabled');
                             })
                         return;
                     }
