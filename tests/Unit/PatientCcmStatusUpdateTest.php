@@ -124,7 +124,7 @@ class PatientCcmStatusUpdateTest extends TestCase
         $this->assertEquals($info->withdrawn_reason, 'Changed Insurance');
     }
 
-    /*public function test_withdrawn_1st_call_status_is_saved_on_mass_withdrawal()
+    public function test_withdrawn_1st_call_status_is_saved_on_mass_withdrawal()
     {
         auth()->login($this->admin);
 
@@ -143,7 +143,7 @@ class PatientCcmStatusUpdateTest extends TestCase
         $info = $this->patient->patientInfo()->first();
         $this->assertEquals($info->ccm_status, 'withdrawn_1st_call');
         $this->assertEquals($info->withdrawn_reason, 'No Longer Interested');
-    }*/
+    }
 
     private function getNoteStoreParams(): array
     {
