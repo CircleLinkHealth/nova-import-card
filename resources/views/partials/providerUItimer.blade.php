@@ -123,7 +123,7 @@
                 "submitUrl": '{{route("api.pagetracking")}}',
                 "timeSyncUrl": '{{route("api.get.time.patients")}}',
                 "startTime": getCarbonDateTimeStringInServerTimezone(new Date(window.performance.timing.connectStart)),
-                "noLiveCount": 0,
+                "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0,
                 "noCallMode": "{{ config('services.no-call-mode.env') }}",
                 "patientFamilyId": "{{ $patientFamilyId ?? 0 }}",
                 "isCcm": ('{{ $patientIsCcm }}' == '1') ? true : false,
