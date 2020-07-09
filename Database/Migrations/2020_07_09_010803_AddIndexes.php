@@ -55,7 +55,7 @@ class AddIndexes extends Migration
                 'invitationable_id',
                 'invitationable_type',
                 'created_at',
-            ]);
+            ], 'index_for_InvitePracticeEnrollees@query');
         });
 
         //for MedicalRecordFactory@getEligibilityJobWithTargetPatient
