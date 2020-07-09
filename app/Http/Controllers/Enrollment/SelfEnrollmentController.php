@@ -388,15 +388,15 @@ class SelfEnrollmentController extends Controller
     {
         $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
 //        This should be the real pracice's name. eg. toledo-clinin and not toledo-demo.
-        $emulateRealPractice = AppConfig::pull('emulate_practice', null);
-
-        if (isSelfEnrollmentTestModeEnabled() || $enrollablePrimaryPractice->is_demo) {
-            if (is_null($emulateRealPractice)) {
-                throw new \Exception("Config key: 'emulate_practice' has not been set in App Config");
-            }
-
-            $enrollablePrimaryPractice->name = $emulateRealPractice;
-        }
+//        $emulateRealPractice = AppConfig::pull('emulate_practice', 'commonwealth-pain-associates-pllc');
+//
+//        if (isSelfEnrollmentTestModeEnabled() || $enrollablePrimaryPractice->is_demo) {
+//            if (is_null($emulateRealPractice)) {
+//                throw new \Exception("Config key: 'emulate_practice' has not been set in App Config");
+//            }
+//
+//            $enrollablePrimaryPractice->name = $emulateRealPractice;
+//        }
 
         $letterClass        = self::getLetterClassName($enrollablePrimaryPractice->name);
         $practiceLetterView = ucfirst(str_replace(' ', '', "App\Http\Controllers\Enrollment\PracticeSpecificLetter\ $letterClass"));
