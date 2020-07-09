@@ -787,7 +787,7 @@ class ReportsController extends Controller
         ini_set('memory_limit', '512M');
 
         if ( ! $patientId) {
-            return 'Patient Not Found..';
+            return response('Patient Not Found..', 400);
         }
 
         /** @var User $patient */
@@ -799,8 +799,8 @@ class ReportsController extends Controller
 
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport($patient);
 
-        if ( ! $careplan) {
-            return 'Careplan not found...';
+        if ( ! $patient->carePlan || ! $careplan) {
+            return response('Careplan not found...', 400);
         }
 
         /** @var User $user */
