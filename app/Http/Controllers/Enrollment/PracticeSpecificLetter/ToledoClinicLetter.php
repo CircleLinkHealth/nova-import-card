@@ -13,7 +13,6 @@ use App\ProviderSignature;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use GenerateToledoSignatures;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
@@ -107,11 +106,6 @@ class ToledoClinicLetter extends EnrollmentLetterDefaultConfigs implements SelfE
     {
         $practiceSigSrc = '';
         if ( ! empty($practiceLetter->customer_signature_src)) {
-            // We need real practice's name and not toledo-demo. Signatures are saved: public/img/toledo-clinic/signatures
-            if (isSelfEnrollmentTestModeEnabled() && $practice->is_demo) {
-                $practice = Practice::where('name', '=', GenerateToledoSignatures::TOLEDO_CLINIC)
-                    ->first();
-            }
             if (ProviderSignature::SIGNATURE_VALUE === $practiceLetter->customer_signature_src) {
                 $practiceNameToGetSignature = $practice->name;
                 $npiNumber                  = $provider->load('providerInfo')->providerInfo->npi_number;
