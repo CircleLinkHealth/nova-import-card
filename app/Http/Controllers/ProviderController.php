@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\CarePlanWasApproved;
+use App\Note;
 use App\Services\ProviderInfoService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
@@ -44,6 +45,20 @@ class ProviderController extends Controller
             // the care plan status will be changed only when the note is saved
             $session = $request->session();
             $session->put(ProviderController::SESSION_RN_APPROVED_KEY, auth()->id());
+
+            /** @var Note $note */
+            $note = Note::wherePatientId($patientId)
+                ->where('status', '=', 'draft')
+                ->where('successful_clinical_call', '=', 1)
+                ->select(['id'])
+                ->first();
+
+            if ($note) {
+                return redirect()->to(route('patient.note.create', [
+                    'patientId' => $patientId,
+                    'noteId'    => $note->id,
+                ]));
+            }
         } else {
             if ($user->canQAApproveCarePlans()) {
                 /** @var CarePlan $carePlan */
