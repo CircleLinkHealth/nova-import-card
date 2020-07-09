@@ -48,5 +48,36 @@ class AddIndexes extends Migration
                 'start_date',
             ]);
         });
+
+        //for InvitePracticeEnrollees@query
+        Schema::table('enrollables_invitation_links', function (Blueprint $table) {
+            $table->index([
+                'invitationable_id',
+                'invitationable_type',
+                'created_at',
+            ]);
+        });
+
+        //for MedicalRecordFactory@getEligibilityJobWithTargetPatient
+        Schema::table('enrollees', function (Blueprint $table) {
+            $table->index([
+                'mrn',
+                'practice_id',
+                'first_name',
+                'last_name',
+                'user_id',
+            ]);
+        });
+
+        //for NovaPage Timer query
+        Schema::table('lv_page_timer', function (Blueprint $table) {
+            $table->index([
+                'title',
+                'url_short',
+                'patient_id',
+                'provider_id',
+                'deleted_at',
+            ]);
+        });
     }
 }
