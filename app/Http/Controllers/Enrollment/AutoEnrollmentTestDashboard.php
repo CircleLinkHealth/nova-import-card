@@ -143,7 +143,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function sendInvitesPanelTest()
     {
-        return view('enrollment-consent.unreachablesInvitationPanel');
+        return view('enrollment-letters.unreachablesInvitationPanel');
     }
 
     public function sendPatientsReminderTestMethod()
@@ -163,7 +163,7 @@ class AutoEnrollmentTestDashboard extends Controller
     public function triggerEnrollmentSeederTest()
     {
         try {
-            Artisan::call('db:seed', ['--class' => 'database\seeds\SelfEnrollmentSeeders\PrepareDataForReEnrollmentTestSeeder']);
+            Artisan::call('db:seed', ['--class' => 'PrepareDataForReEnrollmentTestSeeder']);
         } catch (\Exception $e) {
             return 'Somethings Wrong. Please try one more time...';
         }

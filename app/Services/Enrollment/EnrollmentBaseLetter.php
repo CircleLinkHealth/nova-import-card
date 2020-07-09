@@ -71,7 +71,7 @@ class EnrollmentBaseLetter extends Controller
      *
      * @return mixed
      */
-    public function composeEnrollmentLetter(
+    public function composeBaseLetter(
         Model $letter,
         User $userForEnrollment,
         Practice $enrollablePrimaryPractice,
@@ -90,7 +90,7 @@ class EnrollmentBaseLetter extends Controller
             $provider = $userForEnrollment->billingProviderUser();
         }
 
-        return $this->createLetter(
+        return $this->replaceLetterVars(
             $enrollablePrimaryPractice,
             $letter,
             $practiceNumber,
@@ -100,13 +100,37 @@ class EnrollmentBaseLetter extends Controller
     }
 
     /**
+     * @return array
+     */
+    public function getBaseLetter()
+    {
+        $this->letter = EnrollmentInvitationLetter::where('practice_id', $this->practice->id)->firstOrFail();
+
+        $letterPages = $this->composeBaseLetter(
+            $this->letter,
+            $this->user,
+            $this->practice,
+            $this->provider,
+            $this->hideButtons
+        );
+
+        return [
+            'letter'           => $this->letter,
+            'letterPages'      => $letterPages,
+            'provider'         => $this->provider,
+            'enrollee'         => $this->enrollee,
+            'isSurveyOnlyUser' => $this->isSurveyOnlyUser,
+        ];
+    }
+
+    /**
      * @param $practice
      * @param $practiceNumber
      * @param bool $hideButtons
      *
      * @return array
      */
-    public function createLetter(Practice $practice, Model $practiceLetter, $practiceNumber, User $provider, $hideButtons = false)
+    public function replaceLetterVars(Practice $practice, Model $practiceLetter, $practiceNumber, User $provider, $hideButtons = false)
     {
         $varsToBeReplaced = [
             EnrollmentInvitationLetter::PROVIDER_LAST_NAME,
@@ -151,7 +175,18 @@ class EnrollmentBaseLetter extends Controller
             $optionalTitle,
         ];
 
-        $letter      = json_decode($practiceLetter->letter) ?? [];
+        $letter = json_decode($practiceLetter->letter) ?? [];
+
+        return $this->letterPages($letter, $varsToBeReplaced, $replacementVars);
+    }
+
+    private function getPracticeSignatures(Model $practiceLetter)
+    {
+        return $this->practiceLetterView::signatures($practiceLetter, $this->practice, $this->provider);
+    }
+
+    private function letterPages(object $letter, array $varsToBeReplaced, array $replacementVars)
+    {
         $letterPages = [];
         foreach ($letter as $page) {
             $body          = $page->body;
@@ -159,34 +194,5 @@ class EnrollmentBaseLetter extends Controller
         }
 
         return $letterPages;
-    }
-
-    /**
-     * @return array
-     */
-    public function getBaseLetter()
-    {
-        $this->letter = EnrollmentInvitationLetter::where('practice_id', $this->practice->id)->firstOrFail();
-
-        $letterPages = $this->composeEnrollmentLetter(
-            $this->letter,
-            $this->user,
-            $this->practice,
-            $this->provider,
-            $this->hideButtons
-        );
-
-        return [
-            'letter'           => $this->letter,
-            'letterPages'      => $letterPages,
-            'provider'         => $this->provider,
-            'enrollee'         => $this->enrollee,
-            'isSurveyOnlyUser' => $this->isSurveyOnlyUser,
-        ];
-    }
-
-    private function getPracticeSignatures(Model $practiceLetter)
-    {
-        return $this->practiceLetterView::signatures($practiceLetter, $this->practice, $this->provider);
     }
 }

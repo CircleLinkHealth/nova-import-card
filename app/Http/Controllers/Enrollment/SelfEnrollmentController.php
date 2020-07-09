@@ -12,6 +12,7 @@ use App\Http\Requests\SelfEnrollableUserAuthRequest;
 use App\SelfEnrollment\Helpers;
 use App\Services\Enrollment\EnrollmentBaseLetter;
 use App\Services\Enrollment\EnrollmentInvitationService;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
@@ -386,8 +387,19 @@ class SelfEnrollmentController extends Controller
     private function prepareLetterViewAndRedirect(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
     {
         $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
-        $letterClass               = self::getLetterClassName($enrollablePrimaryPractice->name);
-        $practiceLetterView        = ucfirst(str_replace(' ', '', "App\Http\Controllers\Enrollment\PracticeSpecificLetter\ $letterClass"));
+//        This should be the real pracice's name. eg. toledo-clinin and not toledo-demo.
+        $emulateRealPractice = AppConfig::pull('emulate_practice', null);
+
+        if (isSelfEnrollmentTestModeEnabled() || $enrollablePrimaryPractice->is_demo) {
+            if (is_null($emulateRealPractice)) {
+                throw new \Exception("Config key: 'emulate_practice' has not been set in App Config");
+            }
+
+            $enrollablePrimaryPractice->name = $emulateRealPractice;
+        }
+
+        $letterClass        = self::getLetterClassName($enrollablePrimaryPractice->name);
+        $practiceLetterView = ucfirst(str_replace(' ', '', "App\Http\Controllers\Enrollment\PracticeSpecificLetter\ $letterClass"));
 
         $baseLetter = (new EnrollmentBaseLetter(
             $enrollablePrimaryPractice,
@@ -399,7 +411,7 @@ class SelfEnrollmentController extends Controller
         ))
             ->getBaseLetter();
 
-        return (new $practiceLetterView($hideButtons))->letterSpecificView($baseLetter, $enrollablePrimaryPractice, $userEnrollee);
+        return (new $practiceLetterView($hideButtons, $baseLetter, $enrollablePrimaryPractice, $userEnrollee))->letterSpecificView();
     }
 
     /**

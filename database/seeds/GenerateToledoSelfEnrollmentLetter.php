@@ -57,7 +57,7 @@ class GenerateToledoSelfEnrollmentLetter extends Seeder
                 self::UI_REQUESTS => json_encode([
                     'logo_position'        => 'text-align:right',
                     'extra_address_header' => [
-                        $toledoPractice->display_name => [
+                        $toledoPractice->name => [
                             'address_line_1',
                             'city',
                             'state',

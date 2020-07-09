@@ -4,7 +4,7 @@
             {{$signatoryNameForHeader}}
             <br>
             {{$practiceDisplayName}}
-       @if($extraAddressValuesRequested)
+       @if($extraAddressValuesExists)
                 <br>
                 {{$extraAddressValues[0]['address_line_1']}}
                 <br>
