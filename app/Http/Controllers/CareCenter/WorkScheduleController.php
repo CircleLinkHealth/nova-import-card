@@ -313,6 +313,7 @@ class WorkScheduleController extends Controller
         //I think time tracking submits along with the form, thus messing up sessions.
         //Temporary fix
         $disableTimeTracking = true; // @todo: we need this ?  it wasnt used in view
+
         return view('care-center.work-schedule', compact('authData', 'today'));
     }
 
