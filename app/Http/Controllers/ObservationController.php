@@ -203,7 +203,7 @@ class ObservationController extends Controller
             if (Str::contains(
                 $params['obs_value'],
                 '.'
-            ) && 3 == strlen($params['obs_value']) && is_numeric($params['obs_value'])
+            ) && 4 >= strlen($params['obs_value']) && is_numeric($params['obs_value'])
             ) {
                 $answerResponse = true;
             }

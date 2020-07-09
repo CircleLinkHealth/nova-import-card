@@ -8,8 +8,6 @@ namespace App\Providers;
 
 use Anaseqal\NovaImport\NovaImport;
 use App\Nova\Dashboards\ServerInsights;
-use App\Nova\Metrics\PatientsOverTargetBhiTime;
-use App\Nova\Metrics\PatientsOverTargetCcmTime;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
@@ -76,8 +74,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function cards()
     {
         return [
-            new PatientsOverTargetCcmTime(),
-            new PatientsOverTargetBhiTime(),
         ];
     }
 

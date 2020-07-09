@@ -81,9 +81,10 @@ class Kernel extends ConsoleKernel
         ini_set('memory_limit', '800M');
 
         $schedule->command(CheckEmrDirectInbox::class)
-            ->everyMinute();
+            ->everyTwoMinutes();
 
         $schedule->command(FaxAuditReportsAtPracticePreferredDayTime::class)
+            ->onOneServer()
             ->everyFiveMinutes();
 
         $schedule->command(AutoApproveValidCarePlansAs::class, ['--reimport'])
@@ -98,13 +99,13 @@ class Kernel extends ConsoleKernel
         $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])->dailyAt('10:27');
         $schedule->command(EnrollmentFinalAction::class)->dailyAt('08:27');
 
-        $schedule->command('horizon:snapshot')->everyFiveMinutes();
+        $schedule->command('horizon:snapshot')->everyFifteenMinutes();
 
         $schedule->command(ProcessNextEligibilityBatchChunk::class)
             ->everyFiveMinutes()
             ->withoutOverlapping();
 
-        $schedule->command(RescheduleMissedCalls::class)->everyFiveMinutes()->onOneServer();
+        $schedule->command(RescheduleMissedCalls::class)->everyFifteenMinutes()->onOneServer();
 
         $schedule->command(CheckEnrolledPatientsForScheduledCalls::class)->dailyAt('00:10')->onOneServer();
 
@@ -113,7 +114,7 @@ class Kernel extends ConsoleKernel
         //family calls will be scheduled in RescheduleMissedCalls
         //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30')->onOneServer();
 
-        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes()->onOneServer();
+        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFifteenMinutes()->onOneServer();
 
         $schedule->command(SendCarePlanApprovalReminders::class)
             ->weekdays()

@@ -330,7 +330,6 @@
 
                     }, 2000)))
                     .catch(err => {
-                        //to implement
                         this.loading = false;
                         this.loading_modal.close()
                         let errorMessage = err.response.data.message;

@@ -12,7 +12,6 @@ use App\Http\Middleware\CareAmbassadorAPI;
 use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckOnboardingInvite;
 use App\Http\Middleware\CheckPatientUserData;
-use App\Http\Middleware\CheckWebSocketServer;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\EnrollmentCenter;
 use App\Http\Middleware\LogoutIfAccessDisabled;
@@ -98,7 +97,6 @@ class Kernel extends HttpKernel
         'ability'                => CerberusAbility::class,
         'permission'             => CerberusPermission::class,
         'patientProgramSecurity' => PatientProgramSecurity::class,
-        'checkWebSocketServer'   => CheckWebSocketServer::class,
         'providerDashboardACL'   => ProviderDashboardACL::class,
         'role'                   => CerberusRole::class,
         'verify.invite'          => CheckOnboardingInvite::class,
