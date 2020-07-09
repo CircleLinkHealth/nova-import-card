@@ -8,13 +8,15 @@ namespace CircleLinkHealth\Eligibility\Database\Seeders;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
+use Exception;
 use Illuminate\Database\Seeder;
 
-class EnrollmentInvitationLetterSeeder extends Seeder
+class GenerateCommonwealthPainAssociatesPllcLetter extends Seeder
 {
     /**
      * Run the database seeds.
      *
+     * @throws Exception
      * @return void
      */
     public function run()
@@ -29,7 +31,7 @@ class EnrollmentInvitationLetterSeeder extends Seeder
         $locationEnrollButtonSecondVersion = EnrollmentInvitationLetter::LOCATION_ENROLL_BUTTON_SECOND;
         $optionalTitle                     = EnrollmentInvitationLetter::OPTIONAL_TITLE;
 
-        $practices = Practice::get();
+        $practice = $this->getPractice();
 
         $bodyPageOne = "<p><span>$practiceName</span>
 <span> has invested in a new Personalized Care Program to help patients get care at home, which is especially important given current events, and I'm inviting you to join.</span></p>
@@ -117,28 +119,41 @@ class EnrollmentInvitationLetterSeeder extends Seeder
                         <p>$optionalParagraph</p>
                         <p>$locationEnrollButtonSecondVersion</p> <br>";
 
-        foreach ($practices as $practice) {
-            EnrollmentInvitationLetter::updateOrCreate(
-                ['practice_id' => $practice->id],
-                [
-                    'letter' => json_encode([
-                        'page_1' => [
-                            'identifier' => 'letter_main_subject',
-                            'body'       => $bodyPageOne,
-                        ],
+        EnrollmentInvitationLetter::updateOrCreate(
+            [
+                'practice_id' => $practice->id,
+            ],
+            [
+                'practice_logo_src'      => '/img/logos/CommonWealth/commonwealth_logo.png',
+                'customer_signature_src' => '/img/logos/CommonWealth/commonwealth_signature.png',
+                'letter'                 => json_encode([
+                    'page_1' => [
+                        'identifier' => 'letter_main_subject',
+                        'body'       => $bodyPageOne,
+                    ],
 
-                        'page_2' => [
-                            'identifier' => 'faq',
-                            'body'       => $bodyPageTwo,
-                        ],
+                    'page_2' => [
+                        'identifier' => 'faq',
+                        'body'       => $bodyPageTwo,
+                    ],
 
-                        'page_3' => [
-                            'identifier' => 'faq',
-                            'body'       => $bodyPageThree,
-                        ],
-                    ]),
-                ]
-            );
+                    'page_3' => [
+                        'identifier' => 'faq',
+                        'body'       => $bodyPageThree,
+                    ],
+                ]),
+            ]
+        );
+    }
+
+    private function getPractice()
+    {
+        $commonwealthPractice = Practice::where('name', '=', 'commonwealth-pain-associates-pllc')->first();
+
+        if ( ! $commonwealthPractice) {
+            throw new Exception('Commonwealth Practice not found in Practices');
         }
+
+        return $commonwealthPractice;
     }
 }
