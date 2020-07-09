@@ -72,12 +72,11 @@ class AddIndexes extends Migration
         //for NovaPage Timer query
         Schema::table('lv_page_timer', function (Blueprint $table) {
             $table->index([
-                'title',
                 'url_short',
                 'patient_id',
                 'provider_id',
                 'deleted_at',
-            ]);
+            ], 'index_for_nova_page_timer_query');
         });
     }
 }
