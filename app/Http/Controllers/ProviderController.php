@@ -29,7 +29,7 @@ class ProviderController extends Controller
     {
         /** @var User $user */
         $user = auth()->user();
-        if ($user->canRNApproveCarePlans()) {
+        if ($user->isCareCoach() && $user->canRNApproveCarePlans()) {
             /** @var CarePlan $carePlan */
             $carePlan = CarePlan::where('user_id', $patientId)
                 ->firstOrFail();

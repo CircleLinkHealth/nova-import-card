@@ -199,9 +199,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         //Test validation passes if approver confirms both types of diabetes are correct
         $this->assertTrue($this->carePlan->validator(true)->passes());
 
-        //create care center that can QA approve careplans
-        $careCenter = $this->createUser($this->practice()->id, 'care-center');
-        auth()->login($careCenter);
+        auth()->login($this->superadmin());
         $carePlan = $this->carePlan;
         $this->assertEquals($carePlan->status, CarePlan::DRAFT);
 
