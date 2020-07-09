@@ -17,6 +17,9 @@ class LogScheduledTask
      */
     public function handle($event)
     {
-        \Log::info(get_class($event).': '.$event->task->command);
+        \Log::info($message = get_class($event).': '.$event->task->command);
+        if (extension_loaded('newrelic')) {
+            newrelic_add_custom_parameter('ScheduledTask', $message);
+        }
     }
 }

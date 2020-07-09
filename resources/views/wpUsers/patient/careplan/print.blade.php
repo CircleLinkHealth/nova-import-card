@@ -61,7 +61,7 @@ if (isset($patient) && ! empty($patient)) {
                                         <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
 
                                             <?php
-                                            $noLiveCountTimeTracking = false;
+                                            $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
                                             $ccmCountableUser        = auth()->user()->isCCMCountable();
                                             ?>
                                             @if ($noLiveCountTimeTracking)

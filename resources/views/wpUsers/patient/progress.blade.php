@@ -56,7 +56,7 @@ if (isset($patient)) {
                                             </div>
                                         @else
                                             <?php
-                                            $noLiveCountTimeTracking = false;
+                                            $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
                                             $ccmCountableUser        = auth()->user()->isCCMCountable();
                                             ?>
                                             @if ($noLiveCountTimeTracking)
