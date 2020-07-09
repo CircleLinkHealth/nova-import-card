@@ -56,8 +56,10 @@ if (isset($patient)) {
                                             </div>
                                         @else
                                             <?php
-                                            $noLiveCountTimeTracking = false;
-                                            $ccmCountableUser        = auth()->user()->isCCMCountable();
+                                            $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
+                                            //revert to below after updating customer package to PHP7.4 branch
+                                            //auth()->user()->isCCMCountable();
+                                            $ccmCountableUser = (bool) auth()->user()->hasRole(\CircleLinkHealth\Customer\Entities\Role::CCM_TIME_ROLES);
                                             ?>
                                             @if ($noLiveCountTimeTracking)
                                                 <div class="color-grey" style="max-width: 350px; margin: auto">

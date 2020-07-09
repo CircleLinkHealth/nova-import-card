@@ -61,8 +61,10 @@ if (isset($patient) && ! empty($patient)) {
                                         <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
 
                                             <?php
-                                            $noLiveCountTimeTracking = false;
-                                            $ccmCountableUser        = auth()->user()->isCCMCountable();
+                                            $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
+                                            //revert to below after updating customer package to PHP7.4 branch
+                                            //auth()->user()->isCCMCountable();
+                                            $ccmCountableUser = (bool) auth()->user()->hasRole(\CircleLinkHealth\Customer\Entities\Role::CCM_TIME_ROLES);
                                             ?>
                                             @if ($noLiveCountTimeTracking)
                                                 <div class="color-grey">
