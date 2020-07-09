@@ -17,7 +17,7 @@ use Illuminate\Support\MessageBag;
 class ProviderController extends Controller
 {
     public const SESSION_RN_APPROVED_KEY = 'rn_approved';
-    
+
     private $providerInfoService;
 
     public function __construct(ProviderInfoService $providerInfoService)

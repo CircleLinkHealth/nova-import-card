@@ -12,9 +12,7 @@ use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Notification;
@@ -65,42 +63,6 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         $this->patient()->setPreferredContactLocation($this->location()->id);
 
         $this->carePlan = $this->patient()->carePlan;
-    }
-
-    public function test_care_center_can_qa_approve()
-    {
-        $this->assertTrue($this->careCoach()->canQAApproveCarePlans());
-        $this->assertTrue(CarePlan::DRAFT === $this->carePlan->status);
-
-        $response = $this->actingAs($this->careCoach())->get(
-            route(
-                'patient.careplan.print',
-                [
-                    'patientId' => $this->patient()->id,
-                ]
-            )
-        )
-            ->assertSee('Approve');
-    }
-
-    public function test_care_center_cannot_approve()
-    {
-        $carePlan = $this->carePlan;
-
-        $carePlan->status = CarePlan::QA_APPROVED;
-        $carePlan->save();
-        $this->assertTrue(CarePlan::QA_APPROVED === $carePlan->fresh()->status);
-        $this->assertFalse($this->careCoach()->canApproveCarePlans());
-
-        $response = $this->actingAs($this->careCoach())->get(
-            route(
-                'patient.careplan.print',
-                [
-                    'patientId' => $this->patient()->id,
-                ]
-            )
-        )
-            ->assertDontSee('Approve');
     }
 
     public function test_careplan_validation()
@@ -176,7 +138,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
     public function test_it_forwards_careplan_when_provider_approved()
     {
-        $this->carePlan->status = CarePlan::QA_APPROVED;
+        $this->carePlan->status = CarePlan::RN_APPROVED;
         $this->carePlan->save();
 
         $response = $this->actingAs($this->provider())->call(
@@ -202,76 +164,6 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         $this->assertEquals($this->carePlan->status, CarePlan::PROVIDER_APPROVED);
         $this->assertEquals($this->carePlan->provider_approver_id, $this->provider()->id);
         $this->assertTrue(Carbon::now()->isSameDay($this->carePlan->provider_date));
-    }
-
-    public function test_medical_assistant_can_approve()
-    {
-        $medicalAssistant = $this->createUser($this->practice()->id, 'med_assistant');
-        auth()->login($medicalAssistant);
-
-        $this->carePlan->status = CarePlan::QA_APPROVED;
-        $this->carePlan->save();
-
-        $response = $this->get(
-            route(
-                'patient.careplan.print',
-                [
-                    'patientId' => $this->patient()->id,
-                ]
-            )
-        )
-            ->assertSee('Approve');
-    }
-
-    public function test_provider_can_approve()
-    {
-        $this->carePlan->status = CarePlan::QA_APPROVED;
-        $this->carePlan->save();
-
-        $response = $this->actingAs($this->provider())->get(
-            route(
-                'patient.careplan.print',
-                [
-                    'patientId' => $this->patient()->id,
-                ]
-            )
-        )
-            ->assertSee('Approve');
-    }
-
-    public function test_provider_can_approve_all_practice_careplans()
-    {
-        $this->carePlan->status = CarePlan::QA_APPROVED;
-        $this->carePlan->save();
-        $this->patient()->setBillingProviderId($this->provider(2)[0]->id);
-
-        $this->assertNotEquals($this->provider(2)[0]->id, $this->provider(2)[1]->id);
-
-        $this->assertTrue(1 === User::patientsPendingProviderApproval($this->provider(2)[0])->count());
-        $this->assertTrue(1 === User::patientsPendingProviderApproval($this->provider(2)[1])->count());
-
-        $response = $this->actingAs($this->provider(2)[1])->get(
-            route(
-                'patient.careplan.print',
-                [
-                    'patientId' => $this->patient()->id,
-                ]
-            )
-        )
-            ->assertSee('Approve');
-    }
-
-    public function test_provider_cannot_qa_approve()
-    {
-        $response = $this->actingAs($this->provider())->get(
-            route(
-                'patient.careplan.print',
-                [
-                    'patientId' => $this->patient()->id,
-                ]
-            )
-        )
-            ->assertDontSee('Approve');
     }
 
     public function test_qa_approval_is_blocked_for_patients_with_both_types_of_diabetes_unless_approver_confirms()
@@ -370,28 +262,5 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
         //assert careplan has been QA approved
         $this->assertEquals($carePlan->fresh()->status, CarePlan::QA_APPROVED);
-    }
-
-    public function test_r_n_can_approve()
-    {
-        $rn = $this->createUser($this->practice()->id, 'registered-nurse');
-
-        $careplanApprove = Permission::where('name', 'care-plan-approve')->first();
-        $rn->attachPermission($careplanApprove->id);
-
-        auth()->login($rn);
-
-        $this->carePlan->status = CarePlan::QA_APPROVED;
-        $this->carePlan->save();
-
-        $response = $this->get(
-            route(
-                'patient.careplan.print',
-                [
-                    'patientId' => $this->patient()->id,
-                ]
-            )
-        )
-            ->assertSee('Approve');
     }
 }

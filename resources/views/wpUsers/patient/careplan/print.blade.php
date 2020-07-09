@@ -4,7 +4,7 @@
 
 <?php
 
-if (isset($patient) && !empty($patient)) {
+if (isset($patient) && ! empty($patient)) {
     $today = \Carbon\Carbon::now()->toFormattedDateString();
 
     $alreadyShown = [];
