@@ -31,9 +31,7 @@
 
             $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
             if ( ! $noLiveCountTimeTracking) {
-                //revert to below after updating customer package to PHP7.4 branch
-                //auth()->user()->isCCMCountable();
-                $noLiveCountTimeTracking = !! auth()->user()->hasRole(\CircleLinkHealth\Customer\Entities\Role::CCM_TIME_ROLES);
+                $noLiveCountTimeTracking = auth()->user()->isCCMCountable();
             }
         @endphp
         <script>
