@@ -1060,7 +1060,7 @@ class NotesController extends Controller
             }
             $note = $this->service->editNote($note, $input);
         } else {
-            if (isset($requestInput['call_status']) && Call::REACHED === $requestInput['call_status']) {
+            if (isset($input['call_status']) && Call::REACHED === $input['call_status']) {
                 $input['successful_clinical_call'] = 1;
             }
             $note = Note::create($input);
