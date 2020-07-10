@@ -46,45 +46,36 @@ class ProviderController extends Controller
             $session = $request->session();
             $session->put(ProviderController::SESSION_RN_APPROVED_KEY, auth()->id());
 
-            /** @var Note $note */
-            $note = Note::wherePatientId($patientId)
-                ->where('status', '=', 'draft')
-                ->where('successful_clinical_call', '=', 1)
-                ->select(['id'])
-                ->first();
+            // should redirect to the draft note
+            return redirect()->to(route('patient.note.create', [
+                'patientId' => $patientId,
+            ]));
+        }
 
-            if ($note) {
-                return redirect()->to(route('patient.note.create', [
-                    'patientId' => $patientId,
-                    'noteId'    => $note->id,
-                ]));
-            }
-        } else {
-            if ($user->canQAApproveCarePlans()) {
-                /** @var CarePlan $carePlan */
-                $carePlan = CarePlan::where('user_id', $patientId)
-                    ->firstOrFail();
+        if ($user->canQAApproveCarePlans()) {
+            /** @var CarePlan $carePlan */
+            $carePlan = CarePlan::where('user_id', $patientId)
+                ->firstOrFail();
 
-                if (CarePlan::DRAFT == $carePlan->status) {
-                    $validator = $carePlan->validator($request->has('confirm_diabetes_conditions'));
-                    if ($validator->fails()) {
-                        return redirect()->back()->with(['errors' => $validator->errors()]);
-                    }
+            if (CarePlan::DRAFT == $carePlan->status) {
+                $validator = $carePlan->validator($request->has('confirm_diabetes_conditions'));
+                if ($validator->fails()) {
+                    return redirect()->back()->with(['errors' => $validator->errors()]);
                 }
             }
+        }
 
-            event(new CarePlanWasApproved(User::find($patientId), $user));
-            $viewNext = (bool) $viewNext;
+        event(new CarePlanWasApproved(User::find($patientId), $user));
+        $viewNext = (bool) $viewNext;
 
-            if ($viewNext) {
-                $nextPatient = $this->getNextPatient($user);
+        if ($viewNext) {
+            $nextPatient = $this->getNextPatient($user);
 
-                if ( ! $nextPatient) {
-                    return redirect()->to('/');
-                }
-
-                $patientId = $nextPatient->id;
+            if ( ! $nextPatient) {
+                return redirect()->to('/');
             }
+
+            $patientId = $nextPatient->id;
         }
 
         return redirect()->to(route('patient.careplan.print', [

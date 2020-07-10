@@ -1036,9 +1036,8 @@ class NotesController extends Controller
      */
     private function saveNote(User $patient, $input): ?Note
     {
-        $noteId = ! empty($input['note_id'])
-            ? $input['note_id']
-            : null;
+        //note_id comes from form, noteId comes from route
+        $noteId = $input['note_id'] ?? ($input['noteId'] ?? null);
 
         //in case Performed By field is removed from the form (per CPM-165)
         if ( ! isset($input['author_id'])) {
