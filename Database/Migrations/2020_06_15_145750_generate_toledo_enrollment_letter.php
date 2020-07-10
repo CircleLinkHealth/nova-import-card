@@ -24,7 +24,7 @@ class GenerateToledoEnrollmentLetter extends Migration
      */
     public function up()
     {
-        if ( ! \Illuminate\Support\Facades\App::environment(['testing'])) {
+        if ( ! \Illuminate\Support\Facades\App::environment(['testing', 'review'])) {
             Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateToledoClinicLetter']);
         }
     }
