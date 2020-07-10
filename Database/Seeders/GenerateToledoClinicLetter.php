@@ -11,6 +11,7 @@ use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Exception;
 use GenerateToledoSignatures;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
 class GenerateToledoClinicLetter extends Seeder
 {
@@ -76,7 +77,21 @@ class GenerateToledoClinicLetter extends Seeder
     private function getPractice()
     {
         $toledoPractice = Practice::where('name', '=', GenerateToledoSignatures::TOLEDO_CLINIC)->first();
-
+        if (App::environment(['testing'])) {
+            $toledoPractice = Practice::firstOrCreate(
+                [
+                    'name' => GenerateToledoSignatures::TOLEDO_CLINIC,
+                ],
+                [
+                    'active'                => 1,
+                    'display_name'          => ucfirst(str_replace('-', ' ', GenerateToledoSignatures::TOLEDO_CLINIC)),
+                    'is_demo'               => 1,
+                    'clh_pppm'              => 0,
+                    'term_days'             => 30,
+                    'outgoing_phone_number' => 2025550196,
+                ]
+            );
+        }
         if ( ! $toledoPractice) {
             throw new Exception('Toledo Practice not found in Practices');
         }

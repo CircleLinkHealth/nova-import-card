@@ -33,6 +33,7 @@ use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use PrepareDataForReEnrollmentTestSeeder;
 use Tests\CustomerTestCase;
 
 class CcdaImporterTest extends CustomerTestCase
@@ -40,7 +41,7 @@ class CcdaImporterTest extends CustomerTestCase
     public function test_auto_enrollment_flow()
     {
         Notification::fake();
-        $enrollee = $this->app->make(\database\seeds\SelfEnrollmentSeeders\PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice());
+        $enrollee = $this->app->make(PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice());
         SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
             now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
