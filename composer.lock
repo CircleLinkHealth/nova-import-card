@@ -1117,7 +1117,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "092912e99a921988c14fec7703d6ff3623de9c02"
+                "reference": "2001bcb15d98ac8d13e1e5f0836e9079f4b0358a"
             },
             "type": "laravel-module",
             "extra": {
@@ -1139,7 +1139,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-09T22:25:26+00:00"
+            "time": "2020-07-10T00:40:10+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1189,7 +1189,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "574679a6a13f7c2108e01858553980bea54c2eb0"
+                "reference": "810bce1621b42f10745de647201f65d03ea2dcf5"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1214,7 +1214,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-09T22:24:24+00:00"
+            "time": "2020-07-10T00:34:36+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
