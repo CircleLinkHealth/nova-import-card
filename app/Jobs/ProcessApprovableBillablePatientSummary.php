@@ -46,8 +46,13 @@ class ProcessApprovableBillablePatientSummary implements ShouldQueue
         $rateLimitedMiddleware = (new RateLimited())
             ->allow(30)
             ->everySeconds(60)
-            ->releaseAfterSeconds(10);
+            ->releaseAfterSeconds(20);
 
         return [$rateLimitedMiddleware];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addHours(3);
     }
 }
