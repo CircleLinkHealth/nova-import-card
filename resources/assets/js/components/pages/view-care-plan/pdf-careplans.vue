@@ -16,6 +16,7 @@
         },
 
         props: [
+            'careplanStatus',
             'mode',
             'isProvider',
             'isAdmin',
@@ -126,6 +127,16 @@
                     return 'You have approved this Care Plan. Please proceed to save clinical note!';
                 }
                 return '';
+            },
+            approveButtonName() {
+                switch (this.careplanStatus) {
+                    case 'draft':
+                        return 'QA Approve';
+                    case 'qa_approved':
+                        return 'RN Approve'
+                    default:
+                        return 'Approve';
+                }
             }
         },
         methods: Object.assign({},
@@ -276,7 +287,8 @@
                                 aria-label="..."
                                 form="form-approve"
                                 type="submit"
-                                role="button">Approve
+                                role="button">
+                            {{approveButtonName}}
                         </button>
                     </form>
 
@@ -288,7 +300,7 @@
                             <input class="btn btn-success btn-sm inline-block"
                                    aria-label="..."
                                    type="submit"
-                                   role="button" value="Approve and View Next">
+                                   role="button" :value="approveButtonName + ' and View Next'">
                         </form>
 
                         <form :action="routeCarePlanNotEligible"

@@ -830,6 +830,7 @@ class ReportsController extends Controller
 
         $args = [
             'patient'                 => $patient,
+            'careplanStatus'          => $patient->carePlan->status,
             'problems'                => $careplan[$patientId]['problems'],
             'problemNames'            => $careplan[$patientId]['problem'],
             'biometrics'              => $careplan[$patientId]['bio_data'],
