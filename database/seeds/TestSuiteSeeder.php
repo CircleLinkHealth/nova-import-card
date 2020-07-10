@@ -5,7 +5,6 @@
  */
 
 use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
-use database\seeds\SelfEnrollmentSeeders\PrepareDataForReEnrollmentTestSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 

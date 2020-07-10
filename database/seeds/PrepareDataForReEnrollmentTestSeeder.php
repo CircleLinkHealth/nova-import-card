@@ -20,18 +20,6 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
     use UserHelpers;
 
     const CCM_STATUS_UNREACHABLE = 'unreachable';
-    /**
-     * @var string
-     */
-    private $practiceName;
-
-    /**
-     * PrepareDataForReEnrollmentTestSeeder constructor.
-     */
-    public function __construct(string $practiceName)
-    {
-        $this->practiceName = $practiceName;
-    }
 
     public function createEnrollee(Practice $practice, array $args = [])
     {
@@ -70,11 +58,11 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
         $practice = Practice::firstOrCreate(
             [
-                'name' => $this->practiceName,
+                'name' => 'demo',
             ],
             [
                 'active'                => 1,
-                'display_name'          => ucfirst(str_replace('-', ' ', $this->practiceName)),
+                'display_name'          => 'Demo Clinic',
                 'is_demo'               => 1,
                 'clh_pppm'              => 0,
                 'term_days'             => 30,

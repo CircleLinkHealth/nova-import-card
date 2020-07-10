@@ -22,21 +22,19 @@ use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use database\seeds\SelfEnrollmentSeeders\PrepareDataForReEnrollmentTestSeeder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Notification;
+use PrepareDataForReEnrollmentTestSeeder;
 use Tests\Concerns\TwilioFake\Twilio;
 
 class SelfEnrollmentTest extends TestCase
 {
     /**
-     * Helper to create fake Enrollees.
-     *
-     * @var PrepareDataForReEnrollmentTestSeeder
+     * @var
      */
     private $factory;
 
