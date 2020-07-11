@@ -158,10 +158,10 @@ class Kernel extends ConsoleKernel
             CreateApprovableBillablePatientsReport::class,
             ['--reset-actor', now()->startOfMonth()->toDateString()]
         )
-            ->twiceDaily(12, 16);
+            ->dailyAt('23:00');
 
         $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
-            ->twiceDaily(7, 21);
+            ->dailyAt('21:00');
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
