@@ -171,7 +171,7 @@ class Call extends BaseModel implements AttachableToNotification
 
     public function getIsFromCareCenterAttribute()
     {
-        if ( ! is_a($this->schedulerUser, User::class)) {
+        if ( ! $this->schedulerUser instanceof User) {
             //null in cases of scheduler = 'algorithm'
             return false;
         }
