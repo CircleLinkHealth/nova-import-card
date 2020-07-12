@@ -6,6 +6,9 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\SyncCareAmbassadorLogs as SyncCareAmbassadorLogsJob;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class SyncCareAmbassadorLogs extends Command
@@ -15,13 +18,13 @@ class SyncCareAmbassadorLogs extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Sync CareAmbassadorLog stats with actual data from enrollees table.';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'enrollment:sync-ca-logs {startDate} {endDate?}';
 
     /**
      * Create a new command instance.
@@ -40,6 +43,23 @@ class SyncCareAmbassadorLogs extends Command
      */
     public function handle()
     {
-        return 0;
+        $startDate = Carbon::parse($this->argument('startDate'));
+
+        $endDateInput = $this->argument('endDate');
+        $endDate      = $endDateInput ? Carbon::parse($endDateInput) : $startDate;
+
+        $careAmbassadorUsers = User::with('careAmbassador')
+            ->has('careAmbassador')
+            ->get();
+
+        foreach ($careAmbassadorUsers as $ca) {
+            $currentDate = $startDate->copy();
+
+            while ($currentDate->lessThanOrEqualTo($endDate)) {
+                SyncCareAmbassadorLogsJob::dispatch($ca, $currentDate);
+
+                $currentDate->addDay();
+            }
+        }
     }
 }
