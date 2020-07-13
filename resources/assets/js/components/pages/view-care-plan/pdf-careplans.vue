@@ -60,62 +60,11 @@
                 this.patientProblemNames = problemNames;
             });
 
-            $('#form-approve').submit(function (e) {
-                e.preventDefault();
-                const form = this;
+            $('#form-approve').submit(self.preventFormSubmitAndShowConfirmDiabetesModalIfYouShould)
 
-                if (self.patientHasBothTypesOfDiabetes) {
-                    $(":input").each(function () {
-                        if ($(this).attr('name') === "confirm_diabetes_conditions") {
-                            form.submit();
-                        }
-                    });
+            $('#form-approve-next').submit(self.preventFormSubmitAndShowConfirmDiabetesModalIfYouShould)
 
-                    App.$emit('show-diabetes-check-modal');
-
-                    return;
-                } else {
-                    form.submit();
-                }
-            })
-
-            $('#form-approve-next').submit(function (e) {
-                e.preventDefault();
-                const form = this;
-
-                if (self.patientHasBothTypesOfDiabetes) {
-                    $(":input").each(function () {
-                        if ($(this).attr('name') === "confirm_diabetes_conditions") {
-                            form.submit();
-                        }
-                    });
-
-                    App.$emit('show-diabetes-check-modal');
-
-                    return;
-                } else {
-                    form.submit();
-                }
-            })
-
-            $('#form-provider-approve').submit(function (e) {
-                e.preventDefault();
-                const form = this;
-
-                if (self.patientHasBothTypesOfDiabetes) {
-                    $(":input").each(function () {
-                        if ($(this).attr('name') === "confirm_diabetes_conditions") {
-                            form.submit();
-                        }
-                    });
-
-                    App.$emit('show-diabetes-check-modal');
-
-                    return;
-                } else {
-                    form.submit();
-                }
-            })
+            $('#form-provider-approve').submit(self.preventFormSubmitAndShowConfirmDiabetesModalIfYouShould)
 
         },
         data() {
@@ -180,6 +129,24 @@
         methods: Object.assign({},
             mapActions(['destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
             {
+                preventFormSubmitAndShowConfirmDiabetesModalIfYouShould(e){
+                    e.preventDefault();
+                    const form = this;
+
+                    if (self.patientHasBothTypesOfDiabetes) {
+                        $(":input").each(function () {
+                            if ($(this).attr('name') === "confirm_diabetes_conditions") {
+                                form.submit();
+                            }
+                        });
+
+                        App.$emit('show-diabetes-check-modal');
+
+                        return;
+                    } else {
+                        form.submit();
+                    }
+                },
                 getPatientCarePlan(patientId) {
                     if (!patientId) {
                         return
