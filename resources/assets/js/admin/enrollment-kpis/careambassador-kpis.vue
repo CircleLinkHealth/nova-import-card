@@ -21,9 +21,9 @@
         <div class="top-10">
             <loader v-if="loaders.next || loaders.excel"></loader>
         </div>
-        <v-client-table ref="table" :data="tableData" :columns="columns" :options="options"
+        <v-server-table ref="table" :url="getUrlCom" v-on:filter="listenTo" :data="tableData" :columns="columns" :options="options"
                         id="table">
-        </v-client-table>
+        </v-server-table>
     </div>
 </template>
 
@@ -44,6 +44,11 @@
             'notifications': Notifications,
         },
         props: [],
+        computed: {
+            getUrlCom(){
+                return rootUrl(`/admin/enrollment/ambassador/kpis/data?start_date=${this.startDate}&end_date=${this.endDate}`);
+            },
+        },
         data() {
             return {
                 exportCSVText: 'Export as CSV',
@@ -57,13 +62,6 @@
                 tableData: [],
                 columns: [ 'name','total_hours','total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
                 options: {
-                    requestAdapter(data) {
-                        if (typeof (self) !== 'undefined') {
-                            data.query.startDate = self.startDate;
-                            data.query.endDate = self.endDate;
-                        }
-                        return data;
-                    },
                     headings: {
                         name : 'Ambassador Name',
                         total_hours: 'Total Hours',
@@ -75,8 +73,8 @@
                         hourly_rate: 'Hourly Rate',
                         per_cost: 'Cost per Enrollment',
                     },
-                    perPage: 50,
-                    perPageValues: [10, 25, 50, 100, 200],
+                    perPage: 10,
+                    perPageValues: [5, 10, 20],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
                     filterable: ['name','total_hours','total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
@@ -86,23 +84,6 @@
 
         },
         methods: {
-            retrieveTableData(){
-                const self = this
-                this.loaders.next = true
-                return this.axios.get(this.getUrl()).then(response => {
-                    if (!response) {
-                        //request was cancelled
-                        return;
-                    }
-                    this.loaders.next = false
-                    this.tableData = response.data;
-                }).catch(err => {
-                    this.loaders.next = false
-                })
-            },
-            getUrl() {
-                return rootUrl(`/admin/enrollment/ambassador/kpis/data?start_date=${this.startDate}&end_date=${this.endDate}`);
-            },
             listenTo(a) {
                 this.info = JSON.stringify(a);
             },
@@ -132,27 +113,35 @@
                 link.click();
                 this.loaders.excel = false
             },
-            setStartDate(event){
+            setStartDate(event) {
                 this.loaders.next = true
                 this.startDate = event.currentTarget._value
-                this.retrieveTableData();
+                this.refreshTable();
             },
-            setEndDate(event){
+            setEndDate(event) {
                 this.loaders.next = true
                 this.endDate = event.currentTarget._value
-                this.retrieveTableData();
-            }
+                this.refreshTable();
+            },
+            refreshTable() {
+                this.$refs.table.refresh();
+            },
         },
         created() {
             self = this;
             console.info('created');
-        },
-        mounted() {
-            this.loaders.next = true;
             this.startDate = moment().startOf('month').format('YYYY-MM-DD');
             this.endDate = moment().format('YYYY-MM-DD');
-            this.retrieveTableData();
+        },
+        mounted() {
             console.info('mounted');
+            Event.$on('vue-tables.loading', function (data) {
+                self.loaders.next = true
+            });
+
+            Event.$on('vue-tables.loaded', function (data) {
+                self.loaders.next = false
+            });
         }
     }
 </script>
