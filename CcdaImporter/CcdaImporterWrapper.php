@@ -152,7 +152,7 @@ class CcdaImporterWrapper
         }
 
         //Second most reliable place is ccdas.referring_provider_name.
-        if ( ! $provider && $term = $this->ccda->getReferringProviderName()) {
+        if ( ! $provider && $term = trim($this->ccda->getReferringProviderName())) {
             $provider = self::searchBillingProvider($term, $this->ccda->practice_id);
         }
 
@@ -225,18 +225,6 @@ class CcdaImporterWrapper
      */
     public function import()
     {
-        $this->fillInSupplementaryData()
-            ->guessPracticeLocationProvider();
-
-        if ( ! $this->ccda->json) {
-            $this->ccda->bluebuttonJson();
-        }
-
-        if ( ! $this->ccda->patient_mrn) {
-            //fetch a fresh instance from the DB to have virtual fields
-            $this->ccda = $this->ccda->fresh();
-        }
-
         $patient = $this->ccda->load('patient')->patient ?? null;
 
         // If this is a survey only patient who has not yet enrolled, we should not enroll them.
@@ -247,6 +235,18 @@ class CcdaImporterWrapper
         if ($patient) {
             $this->ccda = self::attemptToDecorateCcda($patient, $this->ccda);
         }
+
+        if ( ! $this->ccda->json) {
+            $this->ccda->bluebuttonJson();
+        }
+
+        if ( ! $this->ccda->patient_mrn) {
+            //fetch a fresh instance from the DB to have virtual fields
+            $this->ccda = $this->ccda->fresh();
+        }
+
+        $this->fillInSupplementaryData()
+            ->guessPracticeLocationProvider();
 
         $this->ccda = with(new CcdaImporter($this->ccda, $this->enrollee))->attemptImport();
 
@@ -283,6 +283,9 @@ class CcdaImporterWrapper
         }
         if ( ! $term) {
             return null;
+        }
+        if ($provider = self::mysqlMatch($term, $practiceId)) {
+            return $provider;
         }
         $baseQuery = (new ProviderByName())->query($term);
 
@@ -334,6 +337,15 @@ class CcdaImporterWrapper
         }
 
         return true;
+    }
+
+    private static function mysqlMatch(string $term, int $practiceId)
+    {
+        $term = collect(explode(' ', $term))->transform(function ($term) {
+            return "+$term";
+        })->implode(' ');
+
+        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('$term')")->ofPractice($practiceId)->ofType('provider')->first();
     }
 
     private function replaceCommonAddressVariations($providerAddress)
@@ -419,10 +431,11 @@ class CcdaImporterWrapper
     {
         //Get address line 1 from documentation_of section of ccda
         $addresses = collect(optional($ccda->bluebuttonJson())->encounters ?? [])->map(function ($encounter) {
-            $location = (array) $encounter->address ?? [];
+            $encounter = (array) $encounter;
+            $location = $encounter['address'] ?? [];
 
             if (empty($location)) {
-                $location = (array) $encounter->location ?? [];
+                $location = $encounter['location'] ?? [];
             }
 
             if (empty($location)) {
