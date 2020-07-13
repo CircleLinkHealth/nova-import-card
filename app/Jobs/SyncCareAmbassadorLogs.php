@@ -99,5 +99,6 @@ class SyncCareAmbassadorLogs implements ShouldQueue
         $log->save();
 
         //todo: there's an issue here we need to solve. Patients might be logged in multiple dates as multiple stats
+        //test
     }
 }
