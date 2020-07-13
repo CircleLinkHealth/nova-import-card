@@ -41,10 +41,10 @@ class AddsEvenMoreIndexes extends Migration
 
         Schema::table('calls', function (Blueprint $table) {
             $table->index([
-                'type',
                 'inbound_cpm_id',
                 'status',
                 'scheduled_date',
+                'type',
             ]);
         });
     }
