@@ -38,9 +38,6 @@ use App\Console\Commands\TuneScheduledCalls;
 use App\Notifications\NurseDailyReport;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
@@ -51,7 +48,6 @@ use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Artisan;
-use Laravel\Scout\Console\ImportCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -207,18 +203,6 @@ class Kernel extends ConsoleKernel
         })->onOneServer();
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30')->onOneServer();
         $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)->dailyAt('00:10')->onOneServer();
-
-        $schedule->command(ImportCommand::class, [
-            User::class,
-        ])->dailyAt('03:05');
-
-        $schedule->command(ImportCommand::class, [
-            Practice::class,
-        ])->dailyAt('03:10');
-
-        $schedule->command(ImportCommand::class, [
-            Location::class,
-        ])->dailyAt('03:15');
 
         $schedule->command(CheckUserTotalTimeTracked::class)
             ->dailyAt('01:10')
