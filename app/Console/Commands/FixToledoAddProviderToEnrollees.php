@@ -24,7 +24,7 @@ class FixToledoAddProviderToEnrollees extends Command
      *
      * @var string
      */
-    protected $signature = 'fix:toledo:add-provider-to-enrollees { minimumId? }';
+    protected $signature = 'fix:toledo:add-provider-to-enrollees { minimumId? } { --participants-only }';
 
     /**
      * Create a new command instance.
@@ -45,6 +45,12 @@ class FixToledoAddProviderToEnrollees extends Command
     {
         Enrollee::where('practice_id', 235)
             ->with('user')
+            ->whereHas('user', function ($q) {
+                $q->ofType('participant');
+            })
+            ->when($this->option('participants-only'), function ($q) {
+                $q->where('id', '>=', (int) $this->argument('minimumId'));
+            })
             ->when(is_numeric($this->argument('minimumId')), function ($q) {
                 $q->where('id', '>=', (int) $this->argument('minimumId'));
             })
@@ -71,7 +77,10 @@ class FixToledoAddProviderToEnrollees extends Command
 
                     $enrollee->provider_id = $p->billing_provider_user_id;
                     $enrollee->referring_provider_name = $p->referring_provider_name;
-                    $enrollee->save();
+
+                    if ($enrollee->isDirty()) {
+                        $enrollee->save();
+                    }
 
                     if ($enrollee->user) {
                         $enrollee->user->setBillingProviderId($enrollee->provider_id);
