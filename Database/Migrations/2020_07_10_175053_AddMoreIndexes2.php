@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddMoreIndexes extends Migration
+class AddMoreIndexes2 extends Migration
 {
     /**
      * Reverse the migrations.
