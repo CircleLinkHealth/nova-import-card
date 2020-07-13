@@ -271,7 +271,7 @@ class CcdaImporterWrapper
     }
 
     /**
-     * Search for a Billing Provider using a search term, and.
+     * Search for a Billing Provider using a search term.
      *
      * @param string $term
      * @param int    $practiceId
@@ -284,7 +284,7 @@ class CcdaImporterWrapper
         if ( ! $term) {
             return null;
         }
-        if ($provider = self::mysqlMatch($term, $practiceId)) {
+        if ($provider = self::mysqlMatchProvider($term, $practiceId)) {
             return $provider;
         }
         $baseQuery = (new ProviderByName())->query($term);
@@ -316,6 +316,25 @@ class CcdaImporterWrapper
     }
 
     /**
+     * Search for a Location using a search term.
+     *
+     * @param string $term
+     * @param int    $practiceId
+     */
+    public static function searchLocation(string $term = null, int $practiceId = null): ?Location
+    {
+        if ( ! $practiceId) {
+            return null;
+        }
+        if ( ! $term) {
+            return null;
+        }
+        if ($location = self::mysqlMatchLocation($term, $practiceId)) {
+            return $location;
+        }
+    }
+
+    /**
      * If this is a survey only patient who has not yet enrolled, we should not enroll them.
      */
     private static function isUnenrolledSurveyUser(?User $patient, ?Enrollee $enrollee): bool
@@ -339,13 +358,25 @@ class CcdaImporterWrapper
         return true;
     }
 
-    private static function mysqlMatch(string $term, int $practiceId)
+    private static function mysqlMatchLocation(string $term, int $practiceId): ?Location
     {
-        $term = collect(explode(' ', $term))->transform(function ($term) {
-            return "+$term";
-        })->implode(' ');
+        $term = self::prepareForMysqlMatch($term);
+
+        return Location::whereRaw("MATCH(name) AGAINST('$term')")->where('practice_id', $practiceId)->first();
+    }
+
+    private static function mysqlMatchProvider(string $term, int $practiceId): ?User
+    {
+        $term = self::prepareForMysqlMatch($term);
 
         return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('$term')")->ofPractice($practiceId)->ofType('provider')->first();
+    }
+
+    private static function prepareForMysqlMatch(string $term)
+    {
+        return collect(explode(' ', $term))->transform(function ($term) {
+            return "+$term";
+        })->implode(' ');
     }
 
     private function replaceCommonAddressVariations($providerAddress)
