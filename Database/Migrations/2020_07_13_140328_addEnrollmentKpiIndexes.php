@@ -33,7 +33,7 @@ class AddEnrollmentKpiIndexes extends Migration
                 'status',
                 'last_attempt_at',
                 'attempt_count',
-            ]);
+            ], 'enrollment_kpis_index');
         });
     }
 }
