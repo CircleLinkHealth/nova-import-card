@@ -177,7 +177,7 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "1.7.0",
-    "circlelinkhealth/cpm-migrations-module": "2.1.8",
+    "circlelinkhealth/cpm-migrations-module": "dev-hotfix-unprocessed-enrollees",
     "circlelinkhealth/customer-module": "3.0.3",
     "circlelinkhealth/eligibility-module": "3.0.7",
     "circlelinkhealth/enrollment-invites": "*",
