@@ -3406,11 +3406,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             $careTeamMember->type           = CarePerson::BILLING_PROVIDER;
         }
 
-        Log::debug("Saving provider[$value] for user[$this->id]");
-        $careTeamMember->save();
-
-        $this->load('billingProvider');
-        $this->load('careTeamMembers');
+        if ($careTeamMember->isDirty()) {
+            Log::debug("Saving provider[$value] for user[$this->id]");
+            $careTeamMember->save();
+            $this->load(['billingProvider', 'careTeamMembers']);
+        }
 
         return true;
     }
