@@ -13,7 +13,6 @@ use App\Note;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\NotifyPatientCarePlanApproved;
-use App\Rules\DoesNotHaveBothTypesOfDiabetes;
 use App\Rules\HasEnoughProblems;
 use App\Services\Calls\SchedulerService;
 use App\Services\CareplanService;
@@ -26,6 +25,7 @@ use CircleLinkHealth\Customer\Rules\PatientIsNotDuplicate;
 use CircleLinkHealth\Customer\Traits\PdfReportTrait;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Rules\HasValidNbiMrn;
+use CircleLinkHealth\SharedModels\Rules\DoesNotHaveBothTypesOfDiabetes;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Log;
@@ -52,6 +52,7 @@ use Validator;
  * @property \CircleLinkHealth\Customer\Entities\User                                               $patient
  * @property \CircleLinkHealth\SharedModels\Entities\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
  * @property \CircleLinkHealth\Customer\Entities\User|null                                          $providerApproverUser
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     whereCarePlanTemplateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
@@ -79,6 +80,7 @@ use Validator;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     whereUserId($value)
  * @mixin \Eloquent
+ *
  * @property int|null                        $first_printed_by
  * @property \Illuminate\Support\Carbon|null $first_printed
  * @property string                          $provider_approver_name
@@ -86,6 +88,7 @@ use Validator;
  *     $notifications
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan newQuery()
@@ -94,17 +97,20 @@ use Validator;
  *     whereFirstPrinted($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan
  *     whereFirstPrintedBy($value)
- * @property int|null                        $notifications_count
- * @property int|null                        $pdfs_count
- * @property int|null                        $revision_history_count
- * @property string|null                     $deleted_at
- * @method   static                          bool|null forceDelete()
- * @method   static                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan onlyTrashed()
- * @method   static                          bool|null restore()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereDeletedAt($value)
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withNurseApprovedVia()
- * @method   static                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withTrashed()
- * @method   static                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withoutTrashed()
+ *
+ * @property int|null    $notifications_count
+ * @property int|null    $pdfs_count
+ * @property int|null    $revision_history_count
+ * @property string|null $deleted_at
+ *
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withNurseApprovedVia()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withoutTrashed()
+ *
  * @property \Illuminate\Support\Carbon|null $rn_date
  * @property int|null                        $rn_approver_id
  */
@@ -516,8 +522,7 @@ class CarePlan extends BaseModel implements PdfReport
                 'conditions' => [
                     new HasEnoughProblems($this->patient),
                     //If Approver has confirmed that Diabetes Conditions are correct or if Care Plan has already been approved, bypass check
-                    //todo: move rule to this module (currently did not because CarePlan exists both in Shared Models and eligibility)
-                    ! $confirmDiabetesConditions && self::DRAFT === $this->status
+                    ! $confirmDiabetesConditions
                         ? new DoesNotHaveBothTypesOfDiabetes()
                         : null,
                 ],
