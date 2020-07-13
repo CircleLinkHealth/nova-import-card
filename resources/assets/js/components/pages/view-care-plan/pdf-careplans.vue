@@ -79,6 +79,44 @@
                 }
             })
 
+            $('#form-approve-next').submit(function (e) {
+                e.preventDefault();
+                const form = this;
+
+                if (self.patientHasBothTypesOfDiabetes) {
+                    $(":input").each(function () {
+                        if ($(this).attr('name') === "confirm_diabetes_conditions") {
+                            form.submit();
+                        }
+                    });
+
+                    App.$emit('show-diabetes-check-modal');
+
+                    return;
+                } else {
+                    form.submit();
+                }
+            })
+
+            $('#form-provider-approve').submit(function (e) {
+                e.preventDefault();
+                const form = this;
+
+                if (self.patientHasBothTypesOfDiabetes) {
+                    $(":input").each(function () {
+                        if ($(this).attr('name') === "confirm_diabetes_conditions") {
+                            form.submit();
+                        }
+                    });
+
+                    App.$emit('show-diabetes-check-modal');
+
+                    return;
+                } else {
+                    form.submit();
+                }
+            })
+
         },
         data() {
             return {
@@ -238,7 +276,7 @@
         <div class="row">
             <div class="col-md-5 text-left">
                 <template v-if="isProvider">
-                    <form class="inline-block" style="text-align: left"
+                    <form id="form-provider-approve" class="inline-block" style="text-align: left"
                           :action="routeApproveOwn"
                           method="POST">
                         <div v-html="csrfInput"></div>
