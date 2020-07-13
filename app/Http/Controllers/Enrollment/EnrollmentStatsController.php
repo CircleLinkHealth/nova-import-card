@@ -50,6 +50,7 @@ class EnrollmentStatsController extends Controller
 
         $caQuery = User::ofType('care-ambassador')
             ->with(['careAmbassador'])
+            ->has('careAmbassador')
             ->when($careAmbassadorName, function ($q) use ($careAmbassadorName) {
                 $q->where('display_name', 'like', "%{$careAmbassadorName}%");
             })

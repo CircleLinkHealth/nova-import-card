@@ -39,6 +39,10 @@ class CareAmbassadorKPIsCSVResource extends JsonResource
     {
         $stats = CareAmbassadorKPIs::get($this->resource, $this->start, $this->end);
 
+        if ( ! $stats) {
+            return null;
+        }
+
         return '"'.str_replace(',', '', $stats['name']).'",'.
             '"'.$stats['total_hours'].'",'.
             '"'.$stats['total_seconds'].'",'.
@@ -48,6 +52,7 @@ class CareAmbassadorKPIsCSVResource extends JsonResource
             '"'.$stats['mins_per_enrollment'].'",'.
             '"'.$stats['conversion'].'",'.
             '"'.$stats['hourly_rate'].'",'.
-            '"'.$stats['per_cost'].'"';
+            '"'.$stats['per_cost'].'",'.
+            '"'.$stats['earnings'].'"';
     }
 }

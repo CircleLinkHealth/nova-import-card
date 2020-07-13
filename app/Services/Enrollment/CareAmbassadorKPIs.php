@@ -73,6 +73,7 @@ class CareAmbassadorKPIs
         if ( ! $this->careAmbassadorModel) {
             Log::critical("No CareAmbassador Model found for CA User with id: {$this->careAmbassadorUser->id}");
 
+            //should never be the case but even if it is, this is non breaking
             return [];
         }
 
@@ -219,6 +220,7 @@ class CareAmbassadorKPIs
             'total_calls'         => $this->totalCalled,
             'calls_per_hour'      => $this->callsPerHour,
             'mins_per_enrollment' => $this->minsPerEnrollment,
+            'earnings'            => $this->earnings,
             'conversion'          => $this->conversion,
             'hourly_rate'         => $this->hourlyRate,
             'per_cost'            => $this->perCost,

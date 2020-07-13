@@ -88,30 +88,42 @@
                 this.info = JSON.stringify(a);
             },
             exportCSV() {
+                let data = []
+                this.loaders.excel = true
 
-                const str = 'Ambassador Name,Total Hours,Total Seconds,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost per Enrollment,Earnings\n'
-                    + this.tableData.map(item => [
-                        item.name,
-                        item.total_hours,
-                        item.total_seconds,
-                        item.no_enrolled,
-                        item.total_calls,
-                        item.calls_per_hour,
-                        item.mins_per_enrollment,
-                        item.conversion,
-                        item.hourly_rate,
-                        item.per_cost,
-                        item.earnings].join(","))
-                        .join("\n")
-                        .replace(/(^\[)|(\]$)/gm, "");
+                const $table = this.$refs.table
+                const query = $table.$data.query
 
-                const csvData = new Blob([str], {type: 'text/csv'});
-                const csvUrl = URL.createObjectURL(csvData);
-                const link = document.createElement('a');
-                link.download = `Ambassador KPIs from ${this.startDate} to ${this.endDate}.csv`;
-                link.href = csvUrl;
-                link.click();
-                this.loaders.excel = false
+                const filters = Object.keys(query).map(key => ({
+                    key,
+                    value: query[key]
+                })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
+                const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+
+                const download = (page = 1) => {
+                    return this.axios.get( rootUrl(`/admin/enrollment/ambassador/kpis/data?start_date=${this.startDate}&end_date=${this.endDate}&rows=10&page=${page}&csv${filters}`)).then(response => {
+                        const pagination = response.data
+                        data = data.concat(pagination.data)
+                        this.exportCSVText = `Export as CSV (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`
+                        if (pagination.meta.to < pagination.meta.total) return download(page + 1)
+                        return pagination
+                    }).catch(err => {
+                        console.log('ambassador:csv:export', err)
+                    })
+                }
+                return download().then(res => {
+
+                    const str = 'Ambassador Name,Total Hours,Total Seconds,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost Per Enrollment,Earnings\n'
+                        + data.join('\n');
+                    const csvData = new Blob([str], {type: 'text/csv'});
+                    const csvUrl = URL.createObjectURL(csvData);
+                    const link = document.createElement('a');
+                    link.download = `Ambassador KPIs from ${this.startDate} to ${this.endDate}.csv`;
+                    link.href = csvUrl;
+                    link.click();
+                    this.exportCSVText = 'Export as CSV';
+                    this.loaders.excel = false
+                })
             },
             setStartDate(event) {
                 this.loaders.next = true
@@ -125,6 +137,10 @@
             },
             refreshTable() {
                 this.$refs.table.refresh();
+            },
+            columnMapping(name) {
+                const columns = {}
+                return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
             },
         },
         created() {
