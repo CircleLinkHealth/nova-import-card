@@ -27,6 +27,9 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
 
     public function __construct(string $mrn, int $practiceId)
     {
+        if (empty($mrn)) {
+            throw new \InvalidArgumentException("MRN cannot be empty. practiceId[$mrn]");
+        }
         $this->mrn        = $mrn;
         $this->practiceId = $practiceId;
     }
