@@ -131,7 +131,7 @@
             {
                 preventFormSubmitAndShowConfirmDiabetesModalIfYouShould(e){
                     e.preventDefault();
-                    const form = this;
+                    const form = e.target;
 
                     if (self.patientHasBothTypesOfDiabetes) {
                         $(":input").each(function () {
