@@ -8,6 +8,7 @@ namespace App\Observers;
 
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class EnrolleeObserver
 {
@@ -15,6 +16,13 @@ class EnrolleeObserver
     {
         if ($this->shouldCreateSurveyOnlyUser($enrollee)) {
             CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
+        }
+
+        if (($enrollee->isDirty('provider_id') || $enrollee->isDirty('location_id')) && ! empty($enrollee->medical_record_id)) {
+            $updated = Ccda::where('id', $enrollee->medical_record_id)->where('practice_id', $enrollee->practice_id)->update([
+                'billing_provider_id' => $enrollee->provider_id,
+                'location_id'         => $enrollee->location_id,
+            ]);
         }
     }
 
