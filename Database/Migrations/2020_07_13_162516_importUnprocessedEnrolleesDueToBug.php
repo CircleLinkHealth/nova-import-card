@@ -31,7 +31,7 @@ class ImportUnprocessedEnrolleesDueToBug extends Migration
                 $e->where('status', \CircleLinkHealth\Eligibility\Entities\Enrollee::CONSENTED)
                     ->whereNotNull('care_ambassador_user_id')
                     ->whereHas('ccda', function ($ccda) {
-                        $ccda->where('is_processed', false);
+                        $ccda->where('imported', false);
                     });
             })
             ->get();
