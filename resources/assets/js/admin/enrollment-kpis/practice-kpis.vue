@@ -86,23 +86,6 @@
             },
         },
         methods: {
-            retrieveTableData() {
-                const self = this
-                this.loaders.next = true
-                return this.axios.get(this.getUrl()).then(response => {
-                    if (!response) {
-                        //request was cancelled
-                        return;
-                    }
-                    this.loaders.next = false
-                    this.tableData = response.data;
-                }).catch(err => {
-                    this.loaders.next = false
-                })
-            },
-            getUrl() {
-                return rootUrl(`/admin/enrollment/practice/kpis/data?start_date=${this.startDate}&end_date=${this.endDate}`);
-            },
             listenTo(a) {
                 this.info = JSON.stringify(a);
             },

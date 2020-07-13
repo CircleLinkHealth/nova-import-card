@@ -9,7 +9,7 @@ namespace App\Http\Resources;
 use App\Services\Enrollment\CareAmbassadorKPIs;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CareAmbassadorKPIsResource extends JsonResource
+class CareAmbassadorKPIsCSVResource extends JsonResource
 {
     protected $end;
     protected $start;

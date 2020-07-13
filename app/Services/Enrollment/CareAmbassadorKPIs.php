@@ -7,115 +7,221 @@
 namespace App\Services\Enrollment;
 
 use App\CareAmbassadorLog;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Illuminate\Support\Facades\Log;
 
 class CareAmbassadorKPIs
 {
+    protected $callsPerHour;
+
+    protected $careAmbassadorModel;
     /**
      * @var User
      */
     protected $careAmbassadorUser;
+
+    protected $conversion;
+
+    protected $earnings;
+
     /**
      * @var string
      */
     protected $end;
+
+    protected $enrolleesAssigned;
+
+    protected $hourlyRate;
+
+    protected $minsPerEnrollment;
+
+    protected $perCost;
+
+    protected $shouldSetCostRelatedMetrics;
 
     /**
      * @var string
      */
     protected $start;
 
-    public function __construct(User $careAmbassadorUser, string $start, string $end)
+    protected $totalCalled;
+
+    protected $totalEnrolled;
+
+    protected $totalHours;
+
+    protected $totalSeconds;
+
+    public function __construct(User $careAmbassadorUser, Carbon $start, Carbon $end)
     {
         $this->careAmbassadorUser = $careAmbassadorUser;
         $this->start              = $start;
         $this->end                = $end;
     }
 
-    public static function get(User $careAmbassadorUser, string $start, string $end)
+    public static function get(User $careAmbassadorUser, Carbon $start, Carbon $end)
     {
         return (new static($careAmbassadorUser, $start, $end))->makeStats();
     }
 
     private function makeStats(): array
     {
-        $data = [];
+        $this->careAmbassadorModel = $this->careAmbassadorUser->careAmbassador;
 
-        $input = $request->input();
+        if ( ! $this->careAmbassadorModel) {
+            Log::critical("No CareAmbassador Model found for CA User with id: {$this->careAmbassadorUser->id}");
 
-        if (isset($input['start_date'], $input['end_date'])) {
-            $start = Carbon::parse($input['start_date'])->startOfDay()->toDateString();
-            $end   = Carbon::parse($input['end_date'])->endOfDay()->toDateString();
-        } else {
-            $start = Carbon::now()->startOfDay()->subWeek()->toDateString();
-            $end   = Carbon::now()->endOfDay()->toDateString();
+            return [];
         }
 
-        $careAmbassadors = User::whereHas('roles', function ($q) {
-            $q->where('name', 'care-ambassador');
-        })->pluck('id');
+        return $this->setCareAmbassadorAssignedEnrollees()
+            ->setHourlyRate()
+            ->setTotalSeconds()
+            ->setTotalHours()
+            ->setTotalEnrolled()
+            ->setTotalCalled()
+            ->setMinsPerEnrollment()
+            ->setEarnings()
+            ->setCallsPerHour()
+            ->setConversion()
+            ->setPerCost()
+            ->toArray();
+    }
 
-        $data = [];
+    private function setCallsPerHour()
+    {
+        $this->callsPerHour = $this->shouldSetCostRelatedMetrics() ? number_format(
+            $this->totalCalled / ($this->totalSeconds / 3600),
+            2
+        ) : 'N/A';
 
-        foreach ($careAmbassadors as $ambassadorUser) {
-            $ambassador = User::find($ambassadorUser)->careAmbassador;
+        return $this;
+    }
 
-            if ( ! $ambassador) {
-                continue;
-            }
-            $base = CareAmbassadorLog::where('enroller_id', $ambassador->id)
-                ->where('day', '>=', $start)
-                ->where('day', '<=', $end);
+    private function setCareAmbassadorAssignedEnrollees()
+    {
+        $this->enrolleesAssigned = Enrollee::select('id', 'status')
+            ->where('care_ambassador_user_id', $this->careAmbassadorUser->id)
+            ->ofStatus([
+                Enrollee::UNREACHABLE,
+                Enrollee::CONSENTED,
+                Enrollee::ENROLLED,
+                Enrollee::REJECTED,
+                Enrollee::SOFT_REJECTED,
+            ])
+            ->lastCalledBetween($this->start, $this->end)
+            ->get();
 
-            $hourCost = $ambassador->hourly_rate ?? 'Not Set';
+        return $this;
+    }
 
-            $totalTimeInSystemSeconds = $base->sum('total_time_in_system');
+    private function setConversion()
+    {
+        $this->conversion = $this->shouldSetCostRelatedMetrics() ? number_format(
+            ($this->totalEnrolled / $this->totalCalled) * 100,
+            2
+        ).'%' : 'N/A';
 
-            $data[$ambassador->id]['hourly_rate'] = $hourCost;
+        return $this;
+    }
 
-            $data[$ambassador->id]['name'] = User::find($ambassadorUser)->getFullName();
+    private function setEarnings()
+    {
+        $this->earnings = $this->shouldSetCostRelatedMetrics() ? '$'.number_format(
+            $this->hourlyRate * ($this->totalSeconds / 3600),
+            2
+        ) : 'N/A';
 
-            $data[$ambassador->id]['total_hours'] = floatval(round($totalTimeInSystemSeconds / 3600, 2));
+        return $this;
+    }
 
-            $data[$ambassador->id]['total_seconds'] = $totalTimeInSystemSeconds;
+    private function setHourlyRate()
+    {
+        $this->hourlyRate = $this->careAmbassadorModel->hourly_rate ?? 'Not Set';
 
-            $data[$ambassador->id]['no_enrolled'] = $base->sum('no_enrolled');
+        return $this;
+    }
 
-            $data[$ambassador->id]['mins_per_enrollment'] = (0 != $base->sum('no_enrolled'))
-                ?
-                number_format(($totalTimeInSystemSeconds / 60) / $base->sum('no_enrolled'), 2)
-                : 0;
+    private function setMinsPerEnrollment()
+    {
+        $this->minsPerEnrollment = (0 != $this->totalEnrolled)
+            ?
+            number_format(($this->totalSeconds / 60) / $this->totalEnrolled, 2)
+            : 0;
 
-            $data[$ambassador->id]['total_calls'] = $base->sum('total_calls');
+        return $this;
+    }
 
-            if (0 != $base->sum('total_calls') && 0 != $base->sum('no_enrolled') && 'Not Set' != $hourCost && 0 !== $totalTimeInSystemSeconds) {
-                $data[$ambassador->id]['earnings'] = '$'.number_format(
-                    $hourCost * ($totalTimeInSystemSeconds / 3600),
-                    2
-                );
+    private function setPerCost()
+    {
+        $this->perCost = $this->shouldSetCostRelatedMetrics() ? '$'.number_format(
+            (($this->totalSeconds / 3600) * $this->hourlyRate) / $this->totalEnrolled,
+            2
+        ) : 'N/A';
 
-                $data[$ambassador->id]['calls_per_hour'] = number_format(
-                    $base->sum('total_calls') / ($totalTimeInSystemSeconds / 3600),
-                    2
-                );
+        return $this;
+    }
 
-                $data[$ambassador->id]['conversion'] = number_format(
-                    ($base->sum('no_enrolled') / $base->sum('total_calls')) * 100,
-                    2
-                ).'%';
+    private function setTotalCalled()
+    {
+        $this->totalCalled = $this->enrolleesAssigned->count();
 
-                $data[$ambassador->id]['per_cost'] = '$'.number_format(
-                    (($totalTimeInSystemSeconds / 3600) * $hourCost) / $base->sum('no_enrolled'),
-                    2
-                );
-            } else {
-                $data[$ambassador->id]['earnings']       = 'N/A';
-                $data[$ambassador->id]['conversion']     = 'N/A';
-                $data[$ambassador->id]['calls_per_hour'] = 'N/A';
-                $data[$ambassador->id]['per_cost']       = 'N/A';
-            }
+        return $this;
+    }
+
+    private function setTotalEnrolled()
+    {
+        $this->totalEnrolled = $this->enrolleesAssigned
+            ->whereIn('status', [Enrollee::CONSENTED, Enrollee::ENROLLED])
+            ->count();
+
+        return $this;
+    }
+
+    private function setTotalHours()
+    {
+        $this->totalHours = floatval(round($this->totalSeconds / 3600, 2));
+
+        return $this;
+    }
+
+    private function setTotalSeconds()
+    {
+        $this->totalSeconds = CareAmbassadorLog::where('enroller_id', $this->careAmbassadorModel->id)
+            ->where('day', '>=', $this->start)
+            ->where('day', '<=', $this->end)
+            ->sum('total_time_in_system');
+
+        return $this;
+    }
+
+    private function shouldSetCostRelatedMetrics()
+    {
+        if (null === $this->shouldSetCostRelatedMetrics) {
+            $this->shouldSetCostRelatedMetrics = 0 != $this->totalCalled
+                && 0 != $this->totalEnrolled
+                && 'Not Set' != $this->hourlyRate
+                && 0 !== $this->totalSeconds;
         }
 
-        return $data;
+        return $this->shouldSetCostRelatedMetrics;
+    }
+
+    private function toArray()
+    {
+        return [
+            'name'                => $this->careAmbassadorUser->getFullName(),
+            'total_hours'         => $this->totalHours,
+            'total_seconds'       => $this->totalSeconds,
+            'no_enrolled'         => $this->totalEnrolled,
+            'total_calls'         => $this->totalCalled,
+            'calls_per_hour'      => $this->callsPerHour,
+            'mins_per_enrollment' => $this->minsPerEnrollment,
+            'conversion'          => $this->conversion,
+            'hourly_rate'         => $this->hourlyRate,
+            'per_cost'            => $this->perCost,
+        ];
     }
 }

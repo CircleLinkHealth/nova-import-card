@@ -8,7 +8,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class CareAmbassadorKPIsResourceCollection extends ResourceCollection
+class CareAmbassadorKPIsCSVResourceCollection extends ResourceCollection
 {
     protected $end;
     protected $start;
@@ -23,7 +23,7 @@ class CareAmbassadorKPIsResourceCollection extends ResourceCollection
 
     public function toArray($request)
     {
-        return $this->collection->map(function (CareAmbassadorKPIsResource $resource) use ($request) {
+        return $this->collection->map(function (CareAmbassadorKPIsCSVResource $resource) use ($request) {
             return $resource->setTimeRange($this->start, $this->end)->toArray($request);
         })->all();
     }
