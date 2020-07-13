@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4da74959bc998ecd6a1352eb834d12f6",
+    "content-hash": "e55079cf12b66443970a5e743e44801a",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1125,11 +1125,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.1.8",
+            "version": "v2.1.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "fa5cc4122602ce85cdf7098f0edaec47cf8da1b0"
+                "reference": "4301eed4cad46e224dc46c916add4ce0e201c1d6"
             },
             "type": "laravel-module",
             "extra": {
@@ -1151,7 +1151,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-13T18:39:33+00:00"
+            "time": "2020-07-13T22:21:18+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1197,11 +1197,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.0.7",
+            "version": "v3.0.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "cd7e56dfec86b0fe2e80c5caef5a3b6997281a86"
+                "reference": "0cab39fec74355e61cb9276ebfe1bf4a92cef37e"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1226,7 +1226,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-13T17:58:41+00:00"
+            "time": "2020-07-13T20:21:44+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -13572,16 +13572,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.2.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "8b455361dc1e619253a5b5212e37ace32cb27e71"
+                "reference": "db6bd05163ee0a050f6f27e2139fe5e404f50aea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/8b455361dc1e619253a5b5212e37ace32cb27e71",
-                "reference": "8b455361dc1e619253a5b5212e37ace32cb27e71",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/db6bd05163ee0a050f6f27e2139fe5e404f50aea",
+                "reference": "db6bd05163ee0a050f6f27e2139fe5e404f50aea",
                 "shasum": ""
             },
             "require": {
@@ -13639,7 +13639,7 @@
                 "laravel",
                 "page"
             ],
-            "time": "2020-07-13T15:28:28+00:00"
+            "time": "2020-07-13T21:03:23+00:00"
         },
         {
             "name": "facade/ignition-contracts",
