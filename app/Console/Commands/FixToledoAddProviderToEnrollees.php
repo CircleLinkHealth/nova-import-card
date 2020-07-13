@@ -24,7 +24,7 @@ class FixToledoAddProviderToEnrollees extends Command
      *
      * @var string
      */
-    protected $signature = 'fix:toledo:add-provider-to-enrollees';
+    protected $signature = 'fix:toledo:add-provider-to-enrollees { minimumId? }';
 
     /**
      * Create a new command instance.
@@ -45,7 +45,9 @@ class FixToledoAddProviderToEnrollees extends Command
     {
         Enrollee::where('practice_id', 235)
             ->with('user')
-            ->inRandomOrder()
+            ->when(is_numeric($this->argument('minimumId')), function ($q) {
+                $q->where('id', '>=', (int) $this->argument('minimumId'));
+            })
             ->chunkById(300, function ($enrollees) {
                 foreach ($enrollees as $enrollee) {
                     $p = Demographics::where('practice_id', $enrollee->practice_id)
