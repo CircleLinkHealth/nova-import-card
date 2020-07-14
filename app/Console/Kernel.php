@@ -170,16 +170,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(GetCcds::class)
             ->dailyAt('03:00')
             ->onOneServer();
-
-        $schedule->command(ImportCommand::class, [User::class])
-            ->dailyAt('03:05');
-
-        $schedule->command(ImportCommand::class, [Practice::class])
-            ->dailyAt('03:10');
-
-        $schedule->command(ImportCommand::class, [Location::class])
-            ->dailyAt('03:15');
-
+        
         $schedule->command(CheckForMissingLogoutsAndInsert::class)
             ->dailyAt('04:00');
 
