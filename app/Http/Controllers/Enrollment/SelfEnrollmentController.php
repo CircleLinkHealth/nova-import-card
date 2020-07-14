@@ -387,20 +387,20 @@ class SelfEnrollmentController extends Controller
      */
     private function prepareLetterViewAndRedirect(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
     {
-        $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
-        $letterClass               = ucfirst(self::getLetterClassName($enrollablePrimaryPractice->name));
-        $practiceLetterView        = ucfirst(str_replace(' ', '', "App\Http\Controllers\Enrollment\PracticeSpecificLetter\ $letterClass"));
-
-        $baseLetter = (new EnrollmentBaseLetter(
+        $enrollablePrimaryPractice     = $userEnrollee->primaryPractice;
+        $letterClass                   = ucfirst(self::getLetterClassName($enrollablePrimaryPractice->name));
+        $practiceLetterClass           = ucfirst(str_replace(' ', '', "App\Http\Controllers\Enrollment\PracticeSpecificLetter\ $letterClass"));
+        $practiceLetterReflectionClass = new \ReflectionClass($practiceLetterClass);
+        $baseLetter                    = (new EnrollmentBaseLetter(
             $enrollablePrimaryPractice,
             $userEnrollee,
             $isSurveyOnlyUser,
             $enrollee,
             $hideButtons,
-            $practiceLetterView
+            $practiceLetterReflectionClass
         ))->getBaseLetter();
 
-        return (new $practiceLetterView($hideButtons, $baseLetter, $enrollablePrimaryPractice, $userEnrollee))->letterSpecificView();
+        return (new $practiceLetterClass($hideButtons, $baseLetter, $enrollablePrimaryPractice, $userEnrollee))->letterSpecificView();
     }
 
     /**

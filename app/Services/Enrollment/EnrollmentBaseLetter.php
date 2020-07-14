@@ -39,7 +39,7 @@ class EnrollmentBaseLetter extends Controller
      */
     private $practice;
     /**
-     * @var string
+     * @var \ReflectionClass
      */
     private $practiceLetterView;
     /**
@@ -53,8 +53,9 @@ class EnrollmentBaseLetter extends Controller
 
     /**
      * EnrollmentBaseLetter constructor.
+     * @param $practiceLetterView
      */
-    public function __construct(Practice $practice, User $user, bool $isSurveyOnlyUser, Enrollee $enrollee, bool $hideButtons, string $practiceLetterView)
+    public function __construct(Practice $practice, User $user, bool $isSurveyOnlyUser, Enrollee $enrollee, bool $hideButtons, \ReflectionClass $practiceLetterView)
     {
         $this->practice           = $practice;
         $this->user               = $user;
@@ -201,7 +202,7 @@ class EnrollmentBaseLetter extends Controller
 
     private function getPracticeSignatures(Model $practiceLetter)
     {
-        return $this->practiceLetterView::signatures($practiceLetter, $this->practice, $this->provider);
+        return $this->practiceLetterView->name::signatures($practiceLetter, $this->practice, $this->provider);
     }
 
     private function letterPages(object $letter, array $varsToBeReplaced, array $replacementVars)
