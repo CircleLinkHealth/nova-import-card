@@ -388,7 +388,7 @@ class SelfEnrollmentController extends Controller
     private function prepareLetterViewAndRedirect(User $userEnrollee, $isSurveyOnlyUser, Enrollee $enrollee, $hideButtons)
     {
         $enrollablePrimaryPractice = $userEnrollee->primaryPractice;
-        $letterClass               = self::getLetterClassName($enrollablePrimaryPractice->name);
+        $letterClass               = ucfirst(self::getLetterClassName($enrollablePrimaryPractice->name));
         $practiceLetterView        = ucfirst(str_replace(' ', '', "App\Http\Controllers\Enrollment\PracticeSpecificLetter\ $letterClass"));
 
         $baseLetter = (new EnrollmentBaseLetter(
