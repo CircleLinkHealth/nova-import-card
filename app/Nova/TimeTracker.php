@@ -46,6 +46,7 @@ class TimeTracker extends Resource
      * @var array
      */
     public static $search = [
+        'id',
         'title',
         'url_short',
         'patient_id',
