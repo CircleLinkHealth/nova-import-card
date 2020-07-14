@@ -1,27 +1,27 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
-use App\Notifications\PatientUnsuccessfulCallNotification;
-use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class SendUnsuccessfulCallPatientsReminderNotification extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'send:unreached-patients-reminder';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Send reminder notification to unreached patients';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'send:unreached-patients-reminder';
 
     /**
      * Create a new command instance.

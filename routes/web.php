@@ -1937,6 +1937,11 @@ Route::group([
         'uses' => 'Twilio\TwilioController@smsStatusCallback',
         'as'   => 'twilio.sms.status',
     ]);
+
+    Route::post('/sms/inbound', [
+        'uses' => 'Twilio\TwilioController@smsInbound',
+        'as'   => 'twilio.sms.inbound',
+    ]);
 });
 
 Route::group([
