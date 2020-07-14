@@ -151,7 +151,7 @@ class GenerateCommonwealthPainAssociatesPllcLetter extends Seeder
     private function getPractice()
     {
         $commonwealthName     = 'commonwealth-pain-associates-pllc';
-        $commonwealthPractice = Practice::where('name', '=', 'commonwealth-pain-associates-pllc')->first();
+        $commonwealthPractice = Practice::where('name', '=', $commonwealthName)->first();
         if (App::environment(['testing'])) {
             $commonwealthPractice = Practice::firstOrCreate(
                 [
