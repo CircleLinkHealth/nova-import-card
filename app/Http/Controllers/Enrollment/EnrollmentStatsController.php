@@ -52,7 +52,7 @@ class EnrollmentStatsController extends Controller
             ->with(['careAmbassador'])
             ->has('careAmbassador')
             ->when($careAmbassadorName, function ($q) use ($careAmbassadorName) {
-                $q->where('display_name', 'like', "%{$careAmbassadorName}%");
+                return $q->where('display_name', 'like', "%{$careAmbassadorName}%");
             })
             ->select($fields);
 

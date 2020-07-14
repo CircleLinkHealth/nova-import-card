@@ -53,6 +53,7 @@ class CareAmbassadorKPIsCSVResource extends JsonResource
             '"'.$stats['conversion'].'",'.
             '"'.$stats['hourly_rate'].'",'.
             '"'.$stats['per_cost'].'",'.
+            '"'.$stats['patient_earnings'].'",'.
             '"'.$stats['earnings'].'"';
     }
 }

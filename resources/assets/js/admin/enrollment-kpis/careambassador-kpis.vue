@@ -60,7 +60,7 @@
                 endDate: null,
                 loading: false,
                 tableData: [],
-                columns: [ 'name','total_hours','total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
+                columns: [ 'name','total_hours','total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'patient_earnings', 'earnings'],
                 options: {
                     headings: {
                         name : 'Ambassador Name',
@@ -72,13 +72,15 @@
                         mins_per_enrollment: 'Mins/Enrollment',
                         hourly_rate: 'Hourly Rate',
                         per_cost: 'Cost per Enrollment',
+                        patient_earnings: 'Patient Earnings',
+                        earnings: 'Total Earnings'
                     },
                     perPage: 10,
                     perPageValues: [5, 10, 20],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['name','total_hours','total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
-                    sortable: ['name','total_hours', 'total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
+                    filterable: ['name'],
+                    sortable: ['name'],
                 },
             }
 
@@ -113,7 +115,7 @@
                 }
                 return download().then(res => {
 
-                    const str = 'Ambassador Name,Total Hours,Total Seconds,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost Per Enrollment,Earnings\n'
+                    const str = 'Ambassador Name,Total Hours,Total Seconds,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost Per Enrollment,Patient Earnings,Total Earnings\n'
                         + data.join('\n');
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);

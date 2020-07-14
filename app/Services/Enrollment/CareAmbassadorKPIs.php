@@ -37,6 +37,8 @@ class CareAmbassadorKPIs
 
     protected $minsPerEnrollment;
 
+    protected $patientEarnings;
+
     protected $perCost;
 
     protected $shouldSetCostRelatedMetrics;
@@ -88,6 +90,7 @@ class CareAmbassadorKPIs
             ->setCallsPerHour()
             ->setConversion()
             ->setPerCost()
+            ->setPatientEarnings()
             ->toArray();
     }
 
@@ -103,7 +106,7 @@ class CareAmbassadorKPIs
 
     private function setCareAmbassadorAssignedEnrollees()
     {
-        $this->enrolleesAssigned = Enrollee::select('id', 'status')
+        $this->enrolleesAssigned = Enrollee::select('id', 'status', 'total_time_spent')
             ->where('care_ambassador_user_id', $this->careAmbassadorUser->id)
             ->ofStatus([
                 Enrollee::UNREACHABLE,
@@ -151,6 +154,13 @@ class CareAmbassadorKPIs
             ?
             number_format(($this->totalSeconds / 60) / $this->totalEnrolled, 2)
             : 0;
+
+        return $this;
+    }
+
+    private function setPatientEarnings()
+    {
+        $this->patientEarnings = $this->shouldSetCostRelatedMetrics() ? '$'.number_format($this->hourlyRate * ($this->enrolleesAssigned->sum('total_time_spent') / 3600), 2) : 'N/A';
 
         return $this;
     }
@@ -223,6 +233,7 @@ class CareAmbassadorKPIs
             'earnings'            => $this->earnings,
             'conversion'          => $this->conversion,
             'hourly_rate'         => $this->hourlyRate,
+            'patient_earnings'    => $this->patientEarnings,
             'per_cost'            => $this->perCost,
         ];
     }
