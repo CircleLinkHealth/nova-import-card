@@ -59,10 +59,12 @@ class SyncCareAmbassadorLogs implements ShouldQueue
         $startDateTime = $this->date->copy()->startOfDay();
         $endDateTime   = $this->date->copy()->endOfDay();
 
-        $log->total_calls = Enrollee::where('care_ambassador_user_id', $userId)
+        $enrollees = Enrollee::where('care_ambassador_user_id', $userId)
             ->where('last_attempt_at', '>=', $startDateTime)
             ->where('last_attempt_at', '<=', $endDateTime)
-            //status are needed here for the sake of end-user seeing numbers. E.g a stat is not shown for an ineligible patient, so don't count in totals
+            ->get();
+
+        $log->total_calls = $enrollees
             ->whereIn('status', [
                 Enrollee::UNREACHABLE,
                 Enrollee::CONSENTED,
@@ -72,27 +74,19 @@ class SyncCareAmbassadorLogs implements ShouldQueue
             ])
             ->count();
 
-        $log->no_enrolled = Enrollee::where('care_ambassador_user_id', $userId)
-            ->where('last_attempt_at', '>=', $startDateTime)
-            ->where('last_attempt_at', '<=', $endDateTime)
+        $log->no_enrolled = $enrollees
             ->whereIn('status', [Enrollee::CONSENTED, Enrollee::ENROLLED])
             ->count();
 
-        $log->no_rejected = Enrollee::where('care_ambassador_user_id', $userId)
-            ->where('last_attempt_at', '>=', $startDateTime)
-            ->where('last_attempt_at', '<=', $endDateTime)
+        $log->no_rejected = $enrollees
             ->where('status', Enrollee::REJECTED)
             ->count();
 
-        $log->no_soft_rejected = Enrollee::where('care_ambassador_user_id', $userId)
-            ->where('last_attempt_at', '>=', $startDateTime)
-            ->where('last_attempt_at', '<=', $endDateTime)
+        $log->no_soft_rejected = $enrollees
             ->where('status', Enrollee::SOFT_REJECTED)
             ->count();
 
-        $log->no_utc = Enrollee::where('care_ambassador_user_id', $userId)
-            ->where('last_attempt_at', '>=', $startDateTime)
-            ->where('last_attempt_at', '<=', $endDateTime)
+        $log->no_utc = $enrollees
             ->where('status', Enrollee::UNREACHABLE)
             ->count();
 
