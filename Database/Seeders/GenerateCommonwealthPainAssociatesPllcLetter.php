@@ -10,6 +10,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Exception;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
 class GenerateCommonwealthPainAssociatesPllcLetter extends Seeder
 {
@@ -17,6 +18,7 @@ class GenerateCommonwealthPainAssociatesPllcLetter extends Seeder
      * Run the database seeds.
      *
      * @throws Exception
+     *
      * @return void
      */
     public function run()
@@ -148,8 +150,23 @@ class GenerateCommonwealthPainAssociatesPllcLetter extends Seeder
 
     private function getPractice()
     {
+        $commonwealthName     = 'commonwealth-pain-associates-pllc';
         $commonwealthPractice = Practice::where('name', '=', 'commonwealth-pain-associates-pllc')->first();
-
+        if (App::environment(['testing'])) {
+            $commonwealthPractice = Practice::firstOrCreate(
+                [
+                    'name' => $commonwealthName,
+                ],
+                [
+                    'active'                => 1,
+                    'display_name'          => ucfirst(str_replace('-', ' ', $commonwealthName)),
+                    'is_demo'               => 1,
+                    'clh_pppm'              => 0,
+                    'term_days'             => 30,
+                    'outgoing_phone_number' => 2025550196,
+                ]
+            );
+        }
         if ( ! $commonwealthPractice) {
             throw new Exception('Commonwealth Practice not found in Practices');
         }
