@@ -20,6 +20,7 @@ use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Validator;
 
@@ -150,6 +151,12 @@ class WorkScheduleController extends Controller
 
         $window = $this->nurseContactWindows
             ->find($windowId);
+
+        if (empty($window)) {
+            Log::info("Work Window $windowId does not exists. There is nothing to delete.");
+
+            return;
+        }
 
         $this->destroyWindowValidation($window);
         //  Delete
