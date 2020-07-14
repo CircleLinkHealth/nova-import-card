@@ -77,7 +77,7 @@ class GenerateToledoClinicLetter extends Seeder
     private function getPractice()
     {
         $toledoPractice = Practice::where('name', '=', GenerateToledoSignatures::TOLEDO_CLINIC)->first();
-        if (App::environment(['testing'])) {
+        if (App::environment(['testing', 'review'])) {
             $toledoPractice = Practice::firstOrCreate(
                 [
                     'name' => GenerateToledoSignatures::TOLEDO_CLINIC,
