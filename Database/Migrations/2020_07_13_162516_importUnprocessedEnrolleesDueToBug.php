@@ -25,7 +25,7 @@ class ImportUnprocessedEnrolleesDueToBug extends Migration
      */
     public function up()
     {
-        $users = \CircleLinkHealth\Customer\Entities\User::ofType('survey-only')
+        \CircleLinkHealth\Customer\Entities\User::ofType('survey-only')
             ->with(['enrollee.batch'])
             ->whereHas('enrollee', function ($e) {
                 $e->where('status', \CircleLinkHealth\Eligibility\Entities\Enrollee::CONSENTED)
@@ -34,12 +34,12 @@ class ImportUnprocessedEnrolleesDueToBug extends Migration
                         $ccda->where('imported', false);
                     });
             })
-            ->get();
+            ->chunkById(40, function ($users) {
+                foreach ($users as $user) {
+                    $enrollee = $user->enrollee;
 
-        foreach ($users as $user) {
-            $enrollee = $user->enrollee;
-
-            ImportConsentedEnrollees::dispatch([$enrollee->id], $enrollee->batch);
-        }
+                    ImportConsentedEnrollees::dispatch([$enrollee->id], $enrollee->batch);
+                }
+            });
     }
 }
