@@ -387,6 +387,11 @@ class Enrollee extends BaseModel
         }
     }
 
+    public function batch()
+    {
+        return $this->belongsTo(EligibilityBatch::class, 'batch_id');
+    }
+
     public function careAmbassador()
     {
         return $this->belongsTo(User::class, 'care_ambassador_user_id');
