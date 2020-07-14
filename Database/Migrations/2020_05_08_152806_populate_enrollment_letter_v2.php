@@ -25,7 +25,7 @@ class PopulateEnrollmentLetterV2 extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv()) {
+        if ( ! isUnitTestingEnv() && isCpm()) {
             Artisan::call('db:seed', [
                 '--class' => GenerateCommonwealthPainAssociatesPllcLetter::class,
             ]);

@@ -24,7 +24,7 @@ class PopulateToledoProvidersSignatures extends Migration
      */
     public function up()
     {
-        if ( ! \Illuminate\Support\Facades\App::environment(['testing', 'review'])) {
+        if ( ! \Illuminate\Support\Facades\App::environment(['testing', 'review']) && isCpm()) {
             Artisan::call('db:seed', ['--class' => 'GenerateToledoSignatures']);
         }
     }
