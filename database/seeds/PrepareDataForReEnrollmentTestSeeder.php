@@ -8,6 +8,7 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\SeedEligibilityJobsForEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Faker\Factory;
@@ -20,15 +21,21 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
     use UserHelpers;
 
     const CCM_STATUS_UNREACHABLE = 'unreachable';
+    /**
+     * @var string
+     */
+    private $practiceName;
 
-    public function createEnrollee(Practice $practice, array $args = [])
+    /**
+     * PrepareDataForReEnrollmentTestSeeder constructor.
+     */
+    public function __construct(string $practiceName)
     {
-        $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')
-            ->ofPractice($practice->id)
-            ->first();
-        if ( ! $provider) {
-            $provider = $this->createUser($practice->id, 'provider');
-        }
+        $this->practiceName = $practiceName;
+    }
+
+    public function createEnrollee(Practice $practice, User $provider, array $args = [])
+    {
         $enrolleeForTesting = factory(Enrollee::class)->create(array_merge($args, [
             'provider_id'             => $provider->id,
             'practice_id'             => $practice->id,
@@ -58,11 +65,11 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
         $practice = Practice::firstOrCreate(
             [
-                'name' => 'demo',
+                'name' => $this->practiceName,
             ],
             [
                 'active'                => 1,
-                'display_name'          => 'Demo Clinic',
+                'display_name'          => ucfirst(str_replace('-', ' ', $this->practiceName)),
                 'is_demo'               => 1,
                 'clh_pppm'              => 0,
                 'term_days'             => 30,
@@ -84,26 +91,30 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             ]
         );
 
+        $provider = User::ofType('provider')
+            ->with('providerInfo')
+            ->ofPractice($practice->id)
+            ->first();
+        if ( ! $provider) {
+            $provider = $this->createUser($practice->id, 'provider');
+        }
+
+        $provider->providerInfo->update([
+            // This is a real npi number of a real provider.
+            // We need this to display signature in letter.
+            'npi_number' => 1962409979,
+        ]);
+
         $n       = 1;
         $limit   = 5;
         $testDob = \Carbon\Carbon::parse('1901-01-01');
         while ($n <= $limit) {
-            $enrollee = $this->createEnrollee($practice, [
+            $this->createEnrollee($practice, $provider, [
                 'primary_phone' => $phoneTester,
                 'home_phone'    => $phoneTester,
                 'cell_phone'    => $phoneTester,
                 'dob'           => $testDob,
-            ]);
-
-            $enrollee->update(
-                [
-                    'location_id' => $location->id,
-                ]
-            );
-
-            $enrollee->provider->providerInfo->update([
-                //                This is a real npi number of a real provider. We need this to display signature in letter.
-                'npi_number' => 1962409979,
+                'location_id'   => $location->id,
             ]);
             ++$n;
         }

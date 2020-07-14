@@ -168,7 +168,7 @@ class AutoEnrollmentTestDashboard extends Controller
             return 'Somethings Wrong. Please try one more time...';
         }
 
-        return 'You can go back and proceed to Step 2.';
+        return 'You can go back and proceed';
     }
 
     private function deleteTestAwvUser(User $user, $surveyInstance)
