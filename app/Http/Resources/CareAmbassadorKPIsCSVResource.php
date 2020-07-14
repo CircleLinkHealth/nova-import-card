@@ -35,7 +35,7 @@ class CareAmbassadorKPIsCSVResource extends JsonResource
      *
      * @return string
      */
-    public function toArray($request)
+    public function toString($request)
     {
         $stats = CareAmbassadorKPIs::get($this->resource, $this->start, $this->end);
 

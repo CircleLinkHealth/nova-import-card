@@ -24,7 +24,7 @@ class CareAmbassadorKPIsCSVResourceCollection extends ResourceCollection
     public function toArray($request)
     {
         return $this->collection->map(function (CareAmbassadorKPIsCSVResource $resource) use ($request) {
-            return $resource->setTimeRange($this->start, $this->end)->toArray($request);
+            return $resource->setTimeRange($this->start, $this->end)->toString($request);
         })->filter()->all();
     }
 }
