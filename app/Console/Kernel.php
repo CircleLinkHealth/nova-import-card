@@ -39,9 +39,6 @@ use App\Console\Commands\TuneScheduledCalls;
 use App\Notifications\NurseDailyReport;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
@@ -52,7 +49,6 @@ use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Artisan;
-use Laravel\Scout\Console\ImportCommand;
 
 class Kernel extends ConsoleKernel
 {
