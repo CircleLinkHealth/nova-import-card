@@ -39,6 +39,10 @@ class CareAmbassadorKPIs
 
     protected $patientEarnings;
 
+    protected $patientHours;
+
+    protected $patientSeconds;
+
     protected $perCost;
 
     protected $shouldSetCostRelatedMetrics;
@@ -83,6 +87,8 @@ class CareAmbassadorKPIs
             ->setHourlyRate()
             ->setTotalSeconds()
             ->setTotalHours()
+            ->setPatientSeconds()
+            ->setPatientHours()
             ->setTotalEnrolled()
             ->setTotalCalled()
             ->setMinsPerEnrollment()
@@ -160,7 +166,21 @@ class CareAmbassadorKPIs
 
     private function setPatientEarnings()
     {
-        $this->patientEarnings = $this->shouldSetCostRelatedMetrics() ? '$'.number_format($this->hourlyRate * ($this->enrolleesAssigned->sum('total_time_spent') / 3600), 2) : 'N/A';
+        $this->patientEarnings = $this->shouldSetCostRelatedMetrics() ? '$'.number_format($this->hourlyRate * ($this->patientSeconds / 3600), 2) : 'N/A';
+
+        return $this;
+    }
+
+    private function setPatientHours()
+    {
+        $this->patientHours = floatval(round($this->patientSeconds / 3600, 2));
+
+        return $this;
+    }
+
+    private function setPatientSeconds()
+    {
+        $this->patientSeconds = $this->enrolleesAssigned->sum('total_time_spent');
 
         return $this;
     }
@@ -226,6 +246,8 @@ class CareAmbassadorKPIs
             'name'                => $this->careAmbassadorUser->getFullName(),
             'total_hours'         => $this->totalHours,
             'total_seconds'       => $this->totalSeconds,
+            'patient_hours'       => $this->patientHours,
+            'patient_seconds'     => $this->patientSeconds,
             'no_enrolled'         => $this->totalEnrolled,
             'total_calls'         => $this->totalCalled,
             'calls_per_hour'      => $this->callsPerHour,

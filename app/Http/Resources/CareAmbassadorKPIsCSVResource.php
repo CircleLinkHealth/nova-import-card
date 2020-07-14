@@ -46,6 +46,8 @@ class CareAmbassadorKPIsCSVResource extends JsonResource
         return '"'.str_replace(',', '', $stats['name']).'",'.
             '"'.$stats['total_hours'].'",'.
             '"'.$stats['total_seconds'].'",'.
+            '"'.$stats['patient_hours'].'",'.
+            '"'.$stats['patient_seconds'].'",'.
             '"'.$stats['no_enrolled'].'",'.
             '"'.$stats['total_calls'].'",'.
             '"'.$stats['calls_per_hour'].'",'.
