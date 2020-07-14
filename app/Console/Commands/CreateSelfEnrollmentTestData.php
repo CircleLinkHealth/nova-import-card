@@ -125,13 +125,8 @@ class CreateSelfEnrollmentTestData extends Command
                 'home_phone'    => $phoneTester,
                 'cell_phone'    => $phoneTester,
                 'dob'           => $testDob,
+                'location_id'   => $location->id,
             ]);
-
-            $enrollee->update(
-                [
-                    'location_id' => $location->id,
-                ]
-            );
 
             $enrollee->provider->providerInfo->update([
                 //                This is a real npi number of a real provider. We need this to display signature in letter.
