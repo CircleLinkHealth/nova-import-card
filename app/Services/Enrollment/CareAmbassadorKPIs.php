@@ -103,7 +103,7 @@ class CareAmbassadorKPIs
     private function setCallsPerHour()
     {
         $this->callsPerHour = $this->shouldSetCostRelatedMetrics() ? number_format(
-            $this->totalCalled / ($this->totalSeconds / 3600),
+            $this->totalCalled / ($this->patientSeconds / 3600),
             2
         ) : 'N/A';
 
@@ -158,7 +158,7 @@ class CareAmbassadorKPIs
     {
         $this->minsPerEnrollment = (0 != $this->totalEnrolled)
             ?
-            number_format(($this->totalSeconds / 60) / $this->totalEnrolled, 2)
+            number_format(($this->patientSeconds / 60) / $this->totalEnrolled, 2)
             : 0;
 
         return $this;
@@ -187,8 +187,9 @@ class CareAmbassadorKPIs
 
     private function setPerCost()
     {
+        //use patient seconds per ROAD-218
         $this->perCost = $this->shouldSetCostRelatedMetrics() ? '$'.number_format(
-            (($this->totalSeconds / 3600) * $this->hourlyRate) / $this->totalEnrolled,
+            (($this->patientSeconds / 3600) * $this->hourlyRate) / $this->totalEnrolled,
             2
         ) : 'N/A';
 

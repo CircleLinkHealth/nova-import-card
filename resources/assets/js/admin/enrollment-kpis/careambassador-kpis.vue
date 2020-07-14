@@ -74,8 +74,8 @@
                         mins_per_enrollment: 'Mins/Enrollment',
                         hourly_rate: 'Hourly Rate',
                         per_cost: 'Cost per Enrollment',
-                        patient_earnings: 'Patient Earnings',
-                        earnings: 'Total Earnings'
+                        patient_earnings: 'Patient Cost',
+                        earnings: 'Total Cost'
                     },
                     perPage: 10,
                     perPageValues: [5, 10, 20],
