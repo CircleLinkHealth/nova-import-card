@@ -1,6 +1,7 @@
-<script src="https://browser.sentry-cdn.com/5.13.2/bundle.min.js"
-        integrity="sha384-dfLJFVWgMshiEcDOKARUAYP75u71aRBwHGnklTytOvQJrhnj+l2KDLvnyMnHxWj+" crossorigin="anonymous">
-</script>
+<script
+        src="https://browser.sentry-cdn.com/5.19.2/bundle.min.js"
+        integrity="sha384-JpEWxJ7oLRn+baXBgcCKEv73uYWsgouzEResgJneOXvTjDZ+1crAXcNAKZoiL96Z"
+        crossorigin="anonymous"></script>
 
 <script>
     function init() {
