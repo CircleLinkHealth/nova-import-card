@@ -10,6 +10,8 @@ use App\CareAmbassadorLog;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CareAmbassadorKPIs
@@ -112,17 +114,25 @@ class CareAmbassadorKPIs
 
     private function setCareAmbassadorAssignedEnrollees()
     {
-        $this->enrolleesAssigned = Enrollee::select('id', 'status', 'total_time_spent')
-            ->where('care_ambassador_user_id', $this->careAmbassadorUser->id)
-            ->ofStatus([
-                Enrollee::UNREACHABLE,
-                Enrollee::CONSENTED,
-                Enrollee::ENROLLED,
-                Enrollee::REJECTED,
-                Enrollee::SOFT_REJECTED,
-            ])
-            ->lastCalledBetween($this->start, $this->end)
+        $this->enrolleesAssigned = PageTimer::select(DB::raw('lv_page_timer.provider_id as ca_user_id'), 'enrollee_id', DB::raw('enrollees.status as enrollee_status'), 'start_time', 'end_time', DB::raw('SUM(billable_duration) as total_time'))
+            ->leftJoin('enrollees', 'lv_page_timer.enrollee_id', '=', 'enrollees.id')
+            ->where('lv_page_timer.provider_id', $this->careAmbassadorUser->id)
+            ->whereNotNull('enrollee_id')
+            ->where('start_time', '>=', $this->start)
+            ->where('end_time', '<=', $this->end)
+            ->groupBy('enrollee_id')
             ->get();
+//        $this->enrolleesAssigned = Enrollee::select('id', 'status', 'total_time_spent')
+//            ->where('care_ambassador_user_id', $this->careAmbassadorUser->id)
+//            ->ofStatus([
+//                Enrollee::UNREACHABLE,
+//                Enrollee::CONSENTED,
+//                Enrollee::ENROLLED,
+//                Enrollee::REJECTED,
+//                Enrollee::SOFT_REJECTED,
+//            ])
+//            ->lastCalledBetween($this->start, $this->end)
+//            ->get();
 
         return $this;
     }
@@ -180,7 +190,7 @@ class CareAmbassadorKPIs
 
     private function setPatientSeconds()
     {
-        $this->patientSeconds = $this->enrolleesAssigned->sum('total_time_spent');
+        $this->patientSeconds = $this->enrolleesAssigned->sum('total_time');
 
         return $this;
     }
@@ -206,7 +216,7 @@ class CareAmbassadorKPIs
     private function setTotalEnrolled()
     {
         $this->totalEnrolled = $this->enrolleesAssigned
-            ->whereIn('status', [Enrollee::CONSENTED, Enrollee::ENROLLED])
+            ->whereIn('enrollee_status', [Enrollee::CONSENTED, Enrollee::ENROLLED])
             ->count();
 
         return $this;
