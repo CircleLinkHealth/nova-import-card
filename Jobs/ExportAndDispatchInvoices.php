@@ -66,26 +66,6 @@ class ExportAndDispatchInvoices implements ShouldQueue
 
         $invoices = collect();
         User::withDownloadableInvoices($startDate, $endDate)
-            ->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
-                $invoice->where('month_year', $startDate);
-            })
-            //            Need nurses that are currently active or used to be for selected month
-            ->where(function ($query) use ($startDate, $endDate) {
-                $query->whereHas(
-                    'nurseInfo',
-                    function ($info) {
-                        $info->where('status', 'active')->when(
-                            isProductionEnv(),
-                            function ($info) {
-                                $info->where('is_demo', false);
-                            }
-                        );
-                    }
-                )
-                    ->orWhereHas('pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
-                        $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
-                    });
-            })
             ->whereIn('program_id', $this->practiceIds)
             ->select('id', 'program_id')
             ->chunk(20, function ($users) use ($startDate, $endDate, &$invoices) {
