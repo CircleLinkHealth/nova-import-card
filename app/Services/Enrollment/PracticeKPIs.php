@@ -87,6 +87,19 @@ class PracticeKPIs
             ->toArray();
     }
 
+    private function setAcqCost()
+    {
+        $totalCostAndConsentedExist = $this->totalCost > 0 && $this->consented > 0;
+        $this->acqCost              = $totalCostAndConsentedExist ?
+            '$'.number_format(
+                $this->totalCost / $this->consented,
+                2
+            )
+       : 'N/A';
+
+        return $this;
+    }
+
     private function setConsented()
     {
         $this->consented = $this->practiceEnrollees->whereIn('enrollee_status', [
