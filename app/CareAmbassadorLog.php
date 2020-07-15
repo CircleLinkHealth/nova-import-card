@@ -48,6 +48,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
  */
 class CareAmbassadorLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
+    //todo: Decide if stat fields are actually useful, since we are switching to getting stats dynamically (from DB) for KPIs page
     protected $fillable = [
         'enroller_id',
         'day',
