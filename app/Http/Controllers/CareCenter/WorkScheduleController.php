@@ -153,7 +153,7 @@ class WorkScheduleController extends Controller
 
         if (empty($window)) {
             return response()->json([
-                'error' => 'does not exists',
+                'error' => 'window does not exist',
             ], 400);
         }
 
