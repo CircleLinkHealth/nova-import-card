@@ -132,9 +132,16 @@ class EnrollmentDirectorController extends Controller
     {
         $ambassadors = User::ofType('care-ambassador')
             ->select(['id', 'display_name'])
-            ->get();
+            ->get()
+            ->transform(function ($u) {
+                return [
+                    'id'           => $u->id,
+                    'display_name' => $u->display_name,
+                ];
+            })
+            ->toArray();
 
-        return response()->json($ambassadors->toArray());
+        return response()->json($ambassadors);
     }
 
     public function getEnrollees(Request $request, EnrolleeFilters $filters)
