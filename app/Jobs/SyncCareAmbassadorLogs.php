@@ -59,7 +59,8 @@ class SyncCareAmbassadorLogs implements ShouldQueue
         $startDateTime = $this->date->copy()->startOfDay();
         $endDateTime   = $this->date->copy()->endOfDay();
 
-        $enrollees = Enrollee::where('care_ambassador_user_id', $userId)
+        $enrollees = Enrollee::select('id', 'status')
+            ->where('care_ambassador_user_id', $userId)
             ->where('last_attempt_at', '>=', $startDateTime)
             ->where('last_attempt_at', '<=', $endDateTime)
             ->get();
