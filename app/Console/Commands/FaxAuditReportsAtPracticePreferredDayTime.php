@@ -10,6 +10,7 @@ use App\Notifications\SendAuditReport;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\Phaxio\PhaxioFaxService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\CustomerNotificationContactTimePreference;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
@@ -43,6 +44,43 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
     public function __construct()
     {
         parent::__construct();
+    }
+
+    public function getNextPatient(Carbon $date)
+    {
+        return User::ofType('participant')
+            ->with([
+                'patientInfo',
+                'patientSummaries',
+                'primaryPractice',
+                'primaryPractice.settings',
+            ])
+            ->whereHas('primaryPractice.notificationContactPreferences', function ($q) {
+                return             $q->where('notification', SendAuditReport::class);
+            })
+            ->whereHas('primaryPractice', function ($query) {
+                $query->where('active', '=', true)
+                    ->whereHas('settings', function ($query) {
+                        $query->where('efax_audit_reports', '=', true);
+                    });
+            })
+            ->whereHas('patientSummaries', function ($query) use ($date) {
+                $query->where('total_time', '>', 0)
+                    ->where('month_year', $date);
+            })
+            ->whereDoesntHave('patientInfo.notificationsAboutThisPatient', function ($query) use ($date) {
+                $query->where('type', SendAuditReport::class)
+                    ->where('created_at', '>=', $date->copy()->addMonth()->startOfMonth()->toDateString())
+                    ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date))
+                    ->where('phaxio_event_status', PhaxioFaxService::EVENT_STATUS_SUCCESS)
+                    ->where('phaxio_event_type', PhaxioFaxService::EVENT_TYPE_FAX_COMPLETED);
+            })
+            ->whereDoesntHave('patientInfo.notificationsAboutThisPatient', function ($query) use ($date) {
+                $query->where('type', SendAuditReport::class)
+                    ->where('created_at', '>=', now()->startOfDay())
+                    ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date));
+            })
+            ->first();
     }
 
     /**
@@ -99,62 +137,30 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
 
     private function sendNotification(string $key, Carbon $date)
     {
-        $user = User::ofType('participant')
-            ->with([
-                'patientInfo',
-                'patientSummaries',
-                'primaryPractice',
-                'primaryPractice.settings',
-            ])
-            ->whereHas('primaryPractice.notificationContactPreferences', function ($q) {
-                return             $q->where('notification', SendAuditReport::class);
-            })
-            ->whereHas('primaryPractice', function ($query) {
-                $query->where('active', '=', true)
-                    ->whereHas('settings', function ($query) {
-                        $query->where('efax_audit_reports', '=', true);
-                    });
-            })
-            ->whereHas('patientSummaries', function ($query) use ($date) {
-                $query->where('total_time', '>', 0)
-                    ->where('month_year', $date);
-            })
-            ->whereDoesntHave('patientInfo.notificationsAboutThisPatient', function ($query) use ($date) {
-                $query->where('type', SendAuditReport::class)
-                    ->whereBetween('created_at', [
-                        $date->copy()->addMonth()->startOfMonth(),
-                        now(),
-                    ])
-                    ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date))
-                    ->where('phaxio_event_status', PhaxioFaxService::EVENT_STATUS_SUCCESS)
-                    ->where('phaxio_event_type', PhaxioFaxService::EVENT_TYPE_FAX_COMPLETED);
-            })
-            ->whereDoesntHave('patientInfo.notificationsAboutThisPatient', function ($query) use ($date) {
-                $query->where('type', SendAuditReport::class)
-                    ->whereBetween('created_at', [
-                        now()->subHour(),
-                        now(),
-                    ])
-                    ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date));
-            })
-            ->first();
+        if ( ! $user = $this->getNextPatient($date)) {
+            return;
+        }
 
-        if ( ! $user) {
+        if (DatabaseNotification::where('type', SendAuditReport::class)->where('patient_id', $user->id)->exists()) {
+            \Log::error("Error! User[$user->id] has a SendAuditReport::class attempt and should not have been sent this again.");
+
             return;
         }
 
         $shouldBatch = (bool) $user->primaryPractice->cpmSettings()->batch_efax_audit_reports;
 
-        $user->locations->each(function (Location $location) use ($user, $date, $shouldBatch, $key) {
-            if ( ! $this->option('dry')) {
-                $location->notify(new SendAuditReport($user, $date, ['phaxio'], $shouldBatch));
-            }
+        $user->locations
+            ->unique()
+            ->each(function (Location $location) use ($user, $date, $shouldBatch, $key) {
+                if ( ! $this->option('dry')) {
+                    $location->notifyNow(new SendAuditReport($user, $date, ['phaxio'], $shouldBatch));
+                }
 
-            if ( ! Cache::has($key)) {
-                Cache::set($key, 0, now()->addHours(3));
-            }
+                if ( ! Cache::has($key)) {
+                    Cache::set($key, 0, now()->addHours(3));
+                }
 
-            Cache::increment($key);
-        });
+                Cache::increment($key);
+            });
     }
 }

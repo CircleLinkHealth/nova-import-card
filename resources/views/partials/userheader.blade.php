@@ -184,10 +184,8 @@
                             </div>
                         @else
                             <?php
-                            $noLiveCountTimeTracking = $useOldTimeTracker
-                                ? true
-                                : (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
-                            $ccmCountableUser = auth()->user()->isCCMCountable();
+                            $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
+                            $ccmCountableUser        = auth()->user()->isCCMCountable();
                             ?>
                             @if ($noLiveCountTimeTracking)
                                 <div class="color-grey">

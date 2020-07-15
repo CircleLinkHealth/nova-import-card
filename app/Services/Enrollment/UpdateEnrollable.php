@@ -264,6 +264,10 @@ class UpdateEnrollable extends EnrollableService
 
     private function updateUnreachablePatientUserIfYouShould()
     {
+        if (Enrollee::UNREACHABLE_PATIENT !== $this->enrollee->source) {
+            return;
+        }
+
         $this->enrollee->load('user.patientInfo');
 
         $patientUser = $this->enrollee->user;

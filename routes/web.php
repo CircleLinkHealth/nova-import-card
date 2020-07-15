@@ -4,9 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\User;
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
-
 Route::get('/e/{shortURLKey}', '\AshAllenDesign\ShortURL\Controllers\ShortURLController')->name('short-url.visit');
 
 Route::get('passwordless-login-for-cp-approval/{token}/{patientId}', 'Auth\LoginController@login')
@@ -839,7 +836,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group([
         'prefix'     => 'practice/{practiceId}/patient/{patientId}',
-        'middleware' => ['patientProgramSecurity', 'checkWebSocketServer'],
+        'middleware' => ['patientProgramSecurity'],
     ], function () {
         Route::post('legacy-bhi-consent', [
             'uses' => 'LegacyBhiConsentController@store',
@@ -854,7 +851,7 @@ Route::group(['middleware' => 'auth'], function () {
     // **** PATIENTS (/manage-patients/{patientId}/)
     Route::group([
         'prefix'     => 'manage-patients/{patientId}',
-        'middleware' => ['patientProgramSecurity', 'checkWebSocketServer'],
+        'middleware' => ['patientProgramSecurity'],
     ], function () {
         Route::get('call', [
             'uses' => 'Patient\PatientController@showCallPatientPage',
@@ -2181,12 +2178,6 @@ Route::group([
     //---------------------------------------
 });
 
-// TEMPORARY SIGNED ROUTE
-//Route::get('/patient-self-enrollment', [
-//    'uses' => 'Enrollment\Auth\SelfEnrollmentController@enrollableInvitationManager',
-//    'as'   => 'invitation.enrollment',
-//]);
-
 Route::group([
     'prefix'     => 'auth',
     'middleware' => ['web'],
@@ -2257,6 +2248,11 @@ Route::post('enrollee-login-viewed', [
     'uses' => 'Enrollment\SelfEnrollmentController@viewFormVisited',
     'as'   => 'enrollee.login.viewed',
 ])->middleware('guest');
+
+//Route::get('get-calendar-data', [
+//    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
+//    'as'   => 'care.center.work.schedule.getCalendarData',
+//]);
 
 //TargetPatient::inRandomOrder()->whereDoesntHave('user', function ($q) {
 //    $q->whereIn('program_id', [232, 21, 110, 159, 172, 180, 221]);
