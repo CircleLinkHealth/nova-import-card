@@ -102,7 +102,7 @@ class CallObserver
     private function shouldApproveCarePlan(Call $call)
     {
         return SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE === $call->sub_type
-               && 'task'                                                     === $call->type
+               && SchedulerService::TASK_TYPE                                === $call->type
                && $call->isDirty('status')
                && 'done' === $call->status;
     }

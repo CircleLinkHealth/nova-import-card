@@ -6,7 +6,10 @@
 
 namespace App\Jobs;
 
+use App\Notifications\PatientUnsuccessfulCallReplyNotification;
+use App\Services\Calls\SchedulerService;
 use App\TwilioInboundSms;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -44,20 +47,42 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
     public function handle()
     {
         // 0. store request data in twilio_inbound_sms
-        $this->storeRawLogs();
+        $recordId = $this->storeRawLogs();
+
         // 1. read source number, find patient
-        // 2. parse input
-        // 3. create call for nurse with ASAP flag
+        $fromNumber = $this->input['From'];
+        /** @var User $user */
+        $user = User::whereHas('phoneNumbers', function ($q) use ($fromNumber) {
+            $q->where('number', '=', $fromNumber);
+        })->first();
+
+        if ( ! $user) {
+            sendSlackMessage('#carecoach_ops', "Could not find patient from inbound sms. See database record id[$recordId]");
+
+            return;
+        }
+
+        // 2. create call for nurse with ASAP flag
+        /** @var SchedulerService $service */
+        $service = app(SchedulerService::class);
+        $service->scheduleAsapCallbackTaskFromSms($user, $this->input['From'], $this->input['Body'], 'twilio_inbound_sms');
+
+        // 3. reply to patient
+        $user->notify(new PatientUnsuccessfulCallReplyNotification(['twilio']));
     }
 
-    private function storeRawLogs(): void
+    private function storeRawLogs(): ?int
     {
         try {
-            TwilioInboundSms::create([
+            $result = TwilioInboundSms::create([
                 'data' => json_encode($this->input),
             ]);
+
+            return $result->id;
         } catch (\Throwable $e) {
             Log::warning($e->getMessage());
+
+            return null;
         }
     }
 }
