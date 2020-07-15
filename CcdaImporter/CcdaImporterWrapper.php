@@ -7,11 +7,13 @@
 namespace Modules\Eligibility\CcdaImporter;
 
 use App\Search\ProviderByName;
+use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
@@ -120,6 +122,16 @@ class CcdaImporterWrapper
             $this->ccda->location_id = \Cache::remember("cpm_practice_{$this->ccda->practice_id}___location_for_athena_department_id_$deptId", 2, function () use ($deptId) {
                 return Location::where('practice_id', $this->ccda->practice_id)->where('external_department_id', $deptId)->value('id');
             });
+
+            if ( ! $this->ccda->location_id && $ehrPracticeId = optional($this->ccda->targetPatient)->ehr_practice_id) {
+                $aLoc = \Cache::remember("paid_api_pull:athena_ehrPracticeId_departments_{$ehrPracticeId}", 60, function () use ($ehrPracticeId) {
+                    return app(AthenaApiImplementation::class)->getDepartments($ehrPracticeId);
+                })->where('departmentid', $deptId)->first();
+
+                if ($aLoc) {
+                    $cpmLocation = CreateLocationsFromAthenaApi::createNewLocationFromAthenaApiDeprtment($aLoc, $this->ccda->practice_id);
+                }
+            }
         }
 
         return $this;
