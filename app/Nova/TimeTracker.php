@@ -46,6 +46,7 @@ class TimeTracker extends Resource
      * @var array
      */
     public static $search = [
+        'id',
         'title',
         'url_short',
         'patient_id',
@@ -69,7 +70,7 @@ class TimeTracker extends Resource
      */
     public static $title = 'title';
 
-    public static $with = ['logger', 'patient'];
+    public static $with = ['logger', 'patient', 'activity'];
 
     /**
      * Get the actions available for the resource.
