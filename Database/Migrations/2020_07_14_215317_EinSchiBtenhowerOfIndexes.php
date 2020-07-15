@@ -36,7 +36,7 @@ class EinSchiBtenhowerOfIndexes extends Migration
                 'dob',
                 'first_name',
                 'medical_record_type',
-            ]);
+            ], 'EinSchiBtenhower_fields_index');
         });
     }
 }
