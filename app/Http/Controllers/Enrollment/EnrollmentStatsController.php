@@ -6,9 +6,10 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\CareAmbassadorLog;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CareAmbassadorKPIsCSVResourceCollection;
 use App\Http\Resources\PracticeKPIsCSVResourceCollection;
+use App\Services\Enrollment\CareAmbassadorKPIs;
 use App\Services\Enrollment\PracticeKPIs;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -26,11 +27,63 @@ class EnrollmentStatsController extends Controller
      */
     public function ambassadorStats(Request $request)
     {
-        $stats = collect($this->getAmbassadorStats($request))->map(function ($ps) {
-            return $ps;
-        })->values()->toArray();
+        $input = $request->input();
 
-        return response()->json($stats);
+        if (isset($input['start_date'], $input['end_date'])) {
+            $start = Carbon::parse($input['start_date'])->startOfDay();
+            $end   = Carbon::parse($input['end_date'])->endOfDay();
+        } else {
+            $start = Carbon::now()->subWeek()->startOfDay();
+            $end   = Carbon::now()->endOfDay();
+        }
+
+        $fields = ['*'];
+
+        $byColumn  = $request->get('byColumn');
+        $query     = json_decode($request->get('query'));
+        $limit     = $request->get('limit');
+        $orderBy   = $request->get('orderBy');
+        $ascending = $request->get('ascending');
+        $page      = $request->get('page');
+
+        $careAmbassadorName = $query && property_exists($query, 'name') ? $query->name : null;
+
+        $caQuery = User::ofType('care-ambassador')
+            ->with(['careAmbassador'])
+            ->has('careAmbassador')
+            ->when($careAmbassadorName, function ($q) use ($careAmbassadorName) {
+                return $q->where('display_name', 'like', "%{$careAmbassadorName}%");
+            })
+            ->select($fields);
+
+        $count = $caQuery->count();
+
+        $caQuery->limit($limit)
+            ->skip($limit * ($page - 1));
+
+        if (isset($orderBy)) {
+            $direction = 1 == $ascending
+                ? 'ASC'
+                : 'DESC';
+            $caQuery->orderBy($orderBy, $direction);
+        }
+
+        if ($request->has('csv')) {
+            return CareAmbassadorKPIsCSVResourceCollection::make($caQuery->paginate($input['rows']))->setTimeRange($start, $end);
+        }
+
+        $careAmbassadors = $caQuery->get();
+
+        $stats = [];
+
+        foreach ($careAmbassadors as $ca) {
+            $stats[] = CareAmbassadorKPIs::get($ca, $start, $end);
+        }
+
+        return [
+            'data'  => $stats,
+            'count' => $count,
+        ];
     }
 
     /**
@@ -122,90 +175,5 @@ class EnrollmentStatsController extends Controller
             'data'  => $stats,
             'count' => $count,
         ];
-    }
-
-    /**
-     * Get Ambassador stats.
-     *
-     * @return array
-     */
-    private function getAmbassadorStats(Request $request)
-    {
-        $input = $request->input();
-
-        if (isset($input['start_date'], $input['end_date'])) {
-            $start = Carbon::parse($input['start_date'])->startOfDay()->toDateString();
-            $end   = Carbon::parse($input['end_date'])->endOfDay()->toDateString();
-        } else {
-            $start = Carbon::now()->startOfDay()->subWeek()->toDateString();
-            $end   = Carbon::now()->endOfDay()->toDateString();
-        }
-
-        $careAmbassadors = User::whereHas('roles', function ($q) {
-            $q->where('name', 'care-ambassador');
-        })->pluck('id');
-
-        $data = [];
-
-        foreach ($careAmbassadors as $ambassadorUser) {
-            $ambassador = User::find($ambassadorUser)->careAmbassador;
-
-            if ( ! $ambassador) {
-                continue;
-            }
-            $base = CareAmbassadorLog::where('enroller_id', $ambassador->id)
-                ->where('day', '>=', $start)
-                ->where('day', '<=', $end);
-
-            $hourCost = $ambassador->hourly_rate ?? 'Not Set';
-
-            $totalTimeInSystemSeconds = $base->sum('total_time_in_system');
-
-            $data[$ambassador->id]['hourly_rate'] = $hourCost;
-
-            $data[$ambassador->id]['name'] = User::find($ambassadorUser)->getFullName();
-
-            $data[$ambassador->id]['total_hours'] = floatval(round($totalTimeInSystemSeconds / 3600, 2));
-
-            $data[$ambassador->id]['total_seconds'] = $totalTimeInSystemSeconds;
-
-            $data[$ambassador->id]['no_enrolled'] = $base->sum('no_enrolled');
-
-            $data[$ambassador->id]['mins_per_enrollment'] = (0 != $base->sum('no_enrolled'))
-                ?
-                number_format(($totalTimeInSystemSeconds / 60) / $base->sum('no_enrolled'), 2)
-                : 0;
-
-            $data[$ambassador->id]['total_calls'] = $base->sum('total_calls');
-
-            if (0 != $base->sum('total_calls') && 0 != $base->sum('no_enrolled') && 'Not Set' != $hourCost && 0 !== $totalTimeInSystemSeconds) {
-                $data[$ambassador->id]['earnings'] = '$'.number_format(
-                    $hourCost * ($totalTimeInSystemSeconds / 3600),
-                    2
-                );
-
-                $data[$ambassador->id]['calls_per_hour'] = number_format(
-                    $base->sum('total_calls') / ($totalTimeInSystemSeconds / 3600),
-                    2
-                );
-
-                $data[$ambassador->id]['conversion'] = number_format(
-                    ($base->sum('no_enrolled') / $base->sum('total_calls')) * 100,
-                    2
-                ).'%';
-
-                $data[$ambassador->id]['per_cost'] = '$'.number_format(
-                    (($totalTimeInSystemSeconds / 3600) * $hourCost) / $base->sum('no_enrolled'),
-                    2
-                );
-            } else {
-                $data[$ambassador->id]['earnings']       = 'N/A';
-                $data[$ambassador->id]['conversion']     = 'N/A';
-                $data[$ambassador->id]['calls_per_hour'] = 'N/A';
-                $data[$ambassador->id]['per_cost']       = 'N/A';
-            }
-        }
-
-        return $data;
     }
 }

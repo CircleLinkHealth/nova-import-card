@@ -25,29 +25,34 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @property \Carbon\Carbon|null      $created_at
  * @property \Carbon\Carbon|null      $updated_at
  * @property \App\CareAmbassador|null $enroller
- * @method   static                   \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereCreatedAt($value)
- * @method   static                   \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereDay($value)
- * @method   static                   \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereEnrollerId($value)
- * @method   static                   \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereId($value)
- * @method   static                   \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereNoEnrolled($value)
- * @method   static                   \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereNoRejected($value)
- * @method   static                   \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereNoUtc($value)
- * @method   static                   \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereTotalCalls($value)
- * @method   static                   \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereTotalTimeInSystem($value)
- * @method   static                   \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereUpdatedAt($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereDay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereEnrollerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereNoEnrolled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereNoRejected($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereNoUtc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereTotalCalls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereTotalTimeInSystem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property int|null                                                                                    $practice_id
  * @property \CircleLinkHealth\Customer\Entities\Practice                                                $practice
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog query()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereNoSoftRejected($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog wherePracticeId($value)
- * @property int|null                                                                                    $revision_history_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereNoSoftRejected($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog wherePracticeId($value)
+ *
+ * @property int|null $revision_history_count
  */
 class CareAmbassadorLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
+    //todo: Decide if stat fields are actually useful, since we are switching to getting stats dynamically (from DB) for KPIs page
     protected $fillable = [
         'enroller_id',
         'day',
