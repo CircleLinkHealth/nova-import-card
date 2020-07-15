@@ -20,7 +20,6 @@ use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Validator;
 
@@ -153,9 +152,9 @@ class WorkScheduleController extends Controller
             ->find($windowId);
 
         if (empty($window)) {
-            Log::info("Work Window $windowId does not exists. There is nothing to delete.");
-
-            return;
+            return response()->json([
+                'error' => 'window does not exists',
+            ], 400);
         }
 
         $this->destroyWindowValidation($window);
