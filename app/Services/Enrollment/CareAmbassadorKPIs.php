@@ -118,6 +118,13 @@ class CareAmbassadorKPIs
             ->leftJoin('enrollees', 'lv_page_timer.enrollee_id', '=', 'enrollees.id')
             ->where('lv_page_timer.provider_id', $this->careAmbassadorUser->id)
             ->whereNotNull('enrollee_id')
+            ->whereIn('enrollees.status', [
+                Enrollee::CONSENTED,
+                Enrollee::ENROLLED,
+                Enrollee::UNREACHABLE,
+                Enrollee::REJECTED,
+                Enrollee::SOFT_REJECTED,
+            ])
             ->where('start_time', '>=', $this->start)
             ->where('end_time', '<=', $this->end)
             ->groupBy('enrollee_id')

@@ -184,6 +184,13 @@ class PracticeKPIs
             ->leftJoin('care_ambassadors', 'lv_page_timer.provider_id', '=', 'care_ambassadors.user_id')
             ->whereNotNull('lv_page_timer.provider_id')
             ->whereNotNull('enrollee_id')
+            ->whereIn('enrollees.status', [
+                Enrollee::CONSENTED,
+                Enrollee::ENROLLED,
+                Enrollee::UNREACHABLE,
+                Enrollee::REJECTED,
+                Enrollee::SOFT_REJECTED,
+            ])
             ->where('enrollees.practice_id', $this->practice->id)
             ->where('start_time', '>=', $this->start)
             ->where('end_time', '<=', $this->end)
