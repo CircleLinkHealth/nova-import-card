@@ -46,11 +46,15 @@ class ManuallyCreateEnrollmentTestData extends Command
         $practiceName = $this->argument('practiceName') ?? null;
 
         if (isProductionEnv()) {
-            throw new \Exception('You cannot execute this action in production environment');
+            $this->warn('You cannot execute this action in production environment');
+
+            return;
         }
 
         if (is_null($practiceName)) {
-            throw new \Exception('Practice input is required');
+            $this->warn('Practice input is required');
+
+            return;
         }
 
         (new \PrepareDataForReEnrollmentTestSeeder($practiceName))->run();
