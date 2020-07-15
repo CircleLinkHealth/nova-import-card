@@ -122,17 +122,6 @@ class CareAmbassadorKPIs
             ->where('end_time', '<=', $this->end)
             ->groupBy('enrollee_id')
             ->get();
-//        $this->enrolleesAssigned = Enrollee::select('id', 'status', 'total_time_spent')
-//            ->where('care_ambassador_user_id', $this->careAmbassadorUser->id)
-//            ->ofStatus([
-//                Enrollee::UNREACHABLE,
-//                Enrollee::CONSENTED,
-//                Enrollee::ENROLLED,
-//                Enrollee::REJECTED,
-//                Enrollee::SOFT_REJECTED,
-//            ])
-//            ->lastCalledBetween($this->start, $this->end)
-//            ->get();
 
         return $this;
     }
