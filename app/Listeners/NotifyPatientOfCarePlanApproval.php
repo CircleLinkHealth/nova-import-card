@@ -22,6 +22,7 @@ class NotifyPatientOfCarePlanApproval implements ShouldQueue
      */
     public function handle($event)
     {
-        $event->patient->carePlan->fresh()->notifyPatientOfApproval();
+        optional($event->patient->fresh('carePlan')->carePlan)
+            ->notifyPatientOfApproval();
     }
 }
