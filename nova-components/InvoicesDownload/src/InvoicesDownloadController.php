@@ -9,6 +9,7 @@ namespace Circlelinkhealth\InvoicesDownload;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
+use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class InvoicesDownloadController
@@ -47,61 +48,47 @@ class InvoicesDownloadController
 
         return response()->json(
             [
-                'message' => "We are exporting invoices for $monthToString, for the following practices:$practiceNamesForUi",
+                'message' => "We are exporting invoices for $monthToString, for the following practices:$practiceNamesForUi.
+                 Will be send to your email when exporting is done!",
             ],
             200
         );
     }
 
+    /**
+     * @return mixed
+     */
     public function handle()
     {
-        return  Practice::active()
+        return Practice::active()
             ->with('nurses')
             ->authUserCanAccess()
             ->whereHas('nurses')
-            ->select('id', 'display_name')
-            ->get()
-            ->transform(function ($practice) {
-                return [
-                    'label' => $practice->display_name,
-                    'value' => $practice->id,
-                ];
-            });
-    }
-
-    private function getDownloadFormats(array $downloadFormats)
-    {
-        $formats = [];
-        foreach ($downloadFormats as $format) {
-            $formats[] = $format['value'];
-        }
-
-        return $formats;
+            ->select(DB::raw('id as value'), DB::raw('display_name as label'))
+            ->get();
     }
 
     /**
-     * @param $practices
      * @return array
      */
-    private function getPracticesIds($practices)
+    private function getDownloadFormats(array $downloadFormats)
     {
-        $practiceIds = [];
-
-        foreach ($practices as $practice) {
-            $practiceIds[] = $practice['value'];
-        }
-
-        return $practiceIds;
+        return collect($downloadFormats)->pluck('label')->toArray();
     }
 
-    private function getPracticesNames($practices)
+    /**
+     * @return array
+     */
+    private function getPracticesIds(array $practices)
     {
-        $practiceNames = [];
+        return collect($practices)->pluck('value')->toArray();
+    }
 
-        foreach ($practices as $practice) {
-            $practiceNames[] = $practice['label'];
-        }
-
-        return $practiceNames;
+    /**
+     * @return array
+     */
+    private function getPracticesNames(array $practices)
+    {
+        return  collect($practices)->pluck('label')->toArray();
     }
 }
