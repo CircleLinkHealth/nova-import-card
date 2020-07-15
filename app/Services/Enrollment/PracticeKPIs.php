@@ -46,8 +46,10 @@ class PracticeKPIs
         $data['name'] = $this->practice->display_name;
 
         $data['unique_patients_called'] = Enrollee::where('practice_id', $this->practice->id)
+            ->whereNotNull('care_ambassador_user_id')
             ->where('last_attempt_at', '>=', $this->start)
             ->where('last_attempt_at', '<=', $this->end)
+            //status are needed here for the sake of end-user seeing numbers. E.g a stat is not shown for an ineligible patient, so don't count in totals
             ->whereIn('status', [
                 Enrollee::UNREACHABLE,
                 Enrollee::CONSENTED,

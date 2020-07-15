@@ -81,6 +81,7 @@ use Illuminate\Support\Facades\Cache;
  * @property int|null                                                                                                        $revision_history_count
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereSuccessStory($value)
  * @property int                                                                                                             $success_story
+ * @property int                                                                                                             $successful_clinical_call
  */
 class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport, AttachableToNotification
 {
