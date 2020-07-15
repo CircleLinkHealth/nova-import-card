@@ -243,6 +243,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiChargeable()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiEligible()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withDownloadableInvoices($startDate, $endDate)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User notOfPracticeRequiringSpecialBhiConsent()
@@ -3276,6 +3277,30 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 },
             ]
         );
+    }
+
+    /**
+     * @param $query
+     *
+     * @return mixed
+     */
+    public function scopeWithDownloadableInvoices($query, Carbon $startDate, Carbon $endDate)
+    {
+        return $query->careCoaches()->with([
+            'nurseInfo' => function ($nurseInfo) use ($startDate, $endDate) {
+                $nurseInfo->with(
+                    [
+                        'invoices' => function ($invoice) use ($startDate) {
+                            $invoice->where('month_year', $startDate);
+                        },
+                    ]
+                );
+            },
+            'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
+                $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
+            },
+            'primaryPractice',
+        ]);
     }
 
     /**
