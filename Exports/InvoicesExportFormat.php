@@ -49,10 +49,8 @@ class InvoicesExportFormat
                 $baseSalary = $invoice->invoice_data['baseSalary'];
 
                 $payStructure = 'visit';
-                if ($invoice->invoice_data['variablePay']) {
-                    if ($invoice->invoice_data['fixedRatePay'] > $invoice->invoice_data['variableRatePay']) {
-                        $payStructure = 'hourly';
-                    }
+                if ($invoice->invoice_data['variablePay'] && $invoice->invoice_data['fixedRatePay'] > $invoice->invoice_data['variableRatePay']) {
+                    $payStructure = 'hourly';
                 }
 
                 return [
