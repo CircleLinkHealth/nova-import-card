@@ -26,17 +26,19 @@ class EinSchiBtenhowerOfIndexes extends Migration
      */
     public function up()
     {
-        Schema::table('enrollees', function (Blueprint $table) {
-            $table->index([
-                'practice_id',
-                'user_id',
-                'medical_record_id',
-                'mrn',
-                'last_name',
-                'dob',
-                'first_name',
-                'medical_record_type',
-            ], 'EinSchiBtenhower_fields_index');
-        });
+        if (app()->environment(['production', 'staging'])) {
+            Schema::table('enrollees', function (Blueprint $table) {
+                $table->index([
+                    'practice_id',
+                    'user_id',
+                    'medical_record_id',
+                    'mrn',
+                    'last_name',
+                    'dob',
+                    'first_name',
+                    'medical_record_type',
+                ], 'EinSchiBtenhower_fields_index');
+            });
+        }
     }
 }
