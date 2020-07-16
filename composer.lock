@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "033eff10f3a36f1399578069a442270e",
+    "content-hash": "83a02e88a0c38d3827cc32b4ccb72bc9",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1197,11 +1197,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.1.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "b6417c6011af073ad9e80364ffe93f6fc9cc7a77"
+                "reference": "4ba51234ad94ed93b5a0a6ef3c3cbc9221ad0807"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1226,7 +1226,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-15T13:32:17+00:00"
+            "time": "2020-07-16T17:17:22+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -13143,16 +13143,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.10.8",
+            "version": "1.10.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "56e0e094478f30935e9128552188355fa9712291"
+                "reference": "83c3250093d5491600a822e176b107a945baf95a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/56e0e094478f30935e9128552188355fa9712291",
-                "reference": "56e0e094478f30935e9128552188355fa9712291",
+                "url": "https://api.github.com/repos/composer/composer/zipball/83c3250093d5491600a822e176b107a945baf95a",
+                "reference": "83c3250093d5491600a822e176b107a945baf95a",
                 "shasum": ""
             },
             "require": {
@@ -13233,7 +13233,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-06-24T19:23:30+00:00"
+            "time": "2020-07-16T10:57:00+00:00"
         },
         {
             "name": "composer/semver",
@@ -16991,6 +16991,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20
     },
