@@ -163,7 +163,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
             $args
         );
 
-        if ($consentDate = $this->enrollee->consented_at) {
+        if ($consentDate = optional($this->enrollee)->consented_at) {
             $patientInfo->consent_date = $consentDate;
 
             if (
