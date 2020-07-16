@@ -62,10 +62,9 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
 
         try {
             // 2. create call for nurse with ASAP flag
-            $htmlStripped = htmlspecialchars($this->input['HtmlBody'], ENT_NOQUOTES);
             /** @var SchedulerService $service */
             $service = app(SchedulerService::class);
-            $task    = $service->scheduleAsapCallbackTask($user, $htmlStripped, 'postmark_inbound_mail');
+            $task    = $service->scheduleAsapCallbackTask($user, $this->input['TextBody'], 'postmark_inbound_mail');
         } catch (\Exception $e) {
             sendSlackMessage('#carecoach_ops', "{$e->getMessage()}. See database record id[$recordId]");
 

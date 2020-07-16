@@ -369,6 +369,11 @@ class SchedulerService
             return $existing;
         }
 
+        $scheduledDate = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
+            $patient->patientInfo,
+            now()
+        );
+
         $nurseId     = null;
         $nurseFinder = (new NurseFinder($patient->patientInfo))->find();
         if ($nurseFinder && isset($nurseFinder['nurse'])) {
@@ -397,6 +402,7 @@ class SchedulerService
                 'call_time'             => 0,
                 'asap'                  => true,
                 'is_cpm_outbound'       => true,
+                'scheduled_date'        => $scheduledDate['day'],
             ]
         );
     }
