@@ -39,9 +39,8 @@ class CreatePostmarkInboundMailTable extends Migration
                 ->virtualAs('JSON_UNQUOTE(data->"$.To")')
                 ->index();
 
-            $table->string('body')
-                ->virtualAs('JSON_UNQUOTE(data->"$.HtmlBody")')
-                ->index();
+            $table->text('body')
+                ->virtualAs('JSON_UNQUOTE(data->"$.TextBody")');
 
             $table->timestamps();
         });

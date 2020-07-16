@@ -39,9 +39,8 @@ class CreateTwilioInboundSmsTable extends Migration
                 ->virtualAs('JSON_UNQUOTE(data->"$.To")')
                 ->index();
 
-            $table->string('body')
-                ->virtualAs('JSON_UNQUOTE(data->"$.Body")')
-                ->index();
+            $table->text('body')
+                ->virtualAs('JSON_UNQUOTE(data->"$.Body")');
 
             $table->timestamps();
         });
