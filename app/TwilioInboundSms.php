@@ -25,5 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TwilioInboundSms extends Model
 {
+    protected $fillable = [
+        'data',
+    ];
     protected $table = 'twilio_inbound_sms';
 }

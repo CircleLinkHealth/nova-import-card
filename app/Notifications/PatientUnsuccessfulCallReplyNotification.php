@@ -55,6 +55,7 @@ class PatientUnsuccessfulCallReplyNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
+            ->subject('We have received your message!')
             ->line($this->getMessage());
     }
 

@@ -25,5 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PostmarkInboundMail extends Model
 {
+    protected $fillable = [
+        'data',
+    ];
     protected $table = 'postmark_inbound_mail';
 }
