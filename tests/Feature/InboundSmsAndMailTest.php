@@ -11,15 +11,17 @@ use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
+use Illuminate\Support\Facades\Mail;
 use Tests\Concerns\TwilioFake\Twilio;
 use Tests\CustomerTestCase;
 
-class TwilioInboundSmsTest extends CustomerTestCase
+class InboundSmsAndMailTest extends CustomerTestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
         Notification::fake();
+        Mail::fake();
         Twilio::fake();
 
         $nurse   = $this->careCoach();
@@ -43,8 +45,27 @@ class TwilioInboundSmsTest extends CustomerTestCase
     public function test_should_create_asap_call_to_nurse()
     {
         $patient  = $this->patient();
-        $data     = $this->getRequestData($patient->getPhoneNumberForSms(), 'test');
+        $data     = $this->getSmsRequestData($patient->getPhoneNumberForSms(), 'test');
         $response = $this->post(route('twilio.sms.inbound'), $data);
+        $response->assertStatus(200);
+
+        /** @var Call $call */
+        $call = Call::whereInboundCpmId($patient->id)
+            ->where('type', '=', SchedulerService::TASK_TYPE)
+            ->where('sub_type', '=', SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS)
+            ->first();
+        self::assertNotNull($call);
+        self::assertEquals(1, $call->asap);
+        self::assertEquals('test', $call->attempt_note);
+
+        Notification::assertSentTo($patient, PatientUnsuccessfulCallReplyNotification::class);
+    }
+
+    public function test_should_create_asap_call_to_nurse_from_inbound_mail()
+    {
+        $patient  = $this->patient();
+        $data     = $this->getMailRequestData($patient->email, 'test');
+        $response = $this->post(route('postmark.inbound'), $data);
         $response->assertStatus(200);
 
         /** @var Call $call */
@@ -62,11 +83,11 @@ class TwilioInboundSmsTest extends CustomerTestCase
     public function test_should_not_create_more_than_one_asap_task_with_multiple_sms()
     {
         $patient  = $this->patient();
-        $data     = $this->getRequestData($patient->getPhoneNumberForSms(), 'test');
+        $data     = $this->getSmsRequestData($patient->getPhoneNumberForSms(), 'test');
         $response = $this->post(route('twilio.sms.inbound'), $data);
         $response->assertStatus(200);
 
-        $data     = $this->getRequestData($patient->getPhoneNumberForSms(), 'test2');
+        $data     = $this->getSmsRequestData($patient->getPhoneNumberForSms(), 'test2');
         $response = $this->post(route('twilio.sms.inbound'), $data);
         $response->assertStatus(200);
 
@@ -82,7 +103,35 @@ class TwilioInboundSmsTest extends CustomerTestCase
         Notification::assertSentTo($patient, PatientUnsuccessfulCallReplyNotification::class);
     }
 
-    private function getRequestData(string $fromPhoneNumber, string $body)
+    private function getMailRequestData(string $fromEmail, string $body)
+    {
+        return [
+            'FromName'          => 'Pangratios Cosma',
+            'MessageStream'     => 'inbound',
+            'From'              => $fromEmail,
+            'FromFull'          => [],
+            'To'                => 'ce336c4be369b05746140c3478913fbd@inbound.postmarkapp.com',
+            'ToFull'            => [],
+            'Cc'                => null,
+            'CcFull'            => [],
+            'Bcc'               => null,
+            'BccFull'           => [],
+            'OriginalRecipient' => 'ce336c4be369b05746140c3478913fbd@inbound.postmarkapp.com',
+            'Subject'           => 'test',
+            'MessageID'         => 'd456403a-dd57-4a77-89fd-8ce716db1647',
+            'ReplyTo'           => null,
+            'MailboxHash'       => null,
+            'Date'              => 'Thu, 16 Jul 2020 08:56:26 +0000',
+            'TextBody'          => $body,
+            'HtmlBody'          => $body,
+            'StrippedTextReply' => null,
+            'Tag'               => null,
+            'Headers'           => [],
+            'Attachments'       => [],
+        ];
+    }
+
+    private function getSmsRequestData(string $fromPhoneNumber, string $body)
     {
         return [
             'ToCountry'     => 'US',

@@ -347,13 +347,12 @@ class SchedulerService
     }
 
     /**
-     * @param $phoneNumber
      * @param $taskNote
      * @param $scheduler
+     * @param  null       $phoneNumber
      * @throws \Exception
-     * @return Call|\Illuminate\Database\Eloquent\Model
      */
-    public function scheduleAsapCallbackTaskFromSms(User $patient, $phoneNumber, $taskNote, $scheduler)
+    public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null): Call
     {
         // check if there is already a task scheduled
         /** @var Call $existing */
@@ -391,7 +390,7 @@ class SchedulerService
                 'attempt_note'          => $taskNote,
                 'scheduler'             => $scheduler,
                 'is_manual'             => false,
-                'inbound_phone_number'  => $phoneNumber,
+                'inbound_phone_number'  => $phoneNumber ?? '',
                 'outbound_phone_number' => '',
                 'inbound_cpm_id'        => $patient->id,
                 'outbound_cpm_id'       => $nurseId,
@@ -400,6 +399,18 @@ class SchedulerService
                 'is_cpm_outbound'       => true,
             ]
         );
+    }
+
+    /**
+     * @param $phoneNumber
+     * @param $taskNote
+     * @param $scheduler
+     * @throws \Exception
+     * @return Call|\Illuminate\Database\Eloquent\Model
+     */
+    public function scheduleAsapCallbackTaskFromSms(User $patient, $phoneNumber, $taskNote, $scheduler)
+    {
+        return $this->scheduleAsapCallbackTask($patient, $taskNote, $scheduler, $phoneNumber);
     }
 
     public function storeScheduledCall(

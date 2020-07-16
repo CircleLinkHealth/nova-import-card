@@ -26,6 +26,7 @@ class VerifyCsrfToken extends Middleware
         'enrollment/sms/reply',
         '/sendgrid/status',
         '/postmark/status',
+        '/postmark/inbound',
         '/twilio/sms/status',
         '/twilio/sms/inbound',
         '/admin/reports/monthly-billing/v2/updateApproved',

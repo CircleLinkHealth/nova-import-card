@@ -1960,6 +1960,11 @@ Route::group([
         'uses' => 'PostmarkController@statusCallback',
         'as'   => 'postmark.status',
     ]);
+
+    Route::post('/inbound', [
+        'uses' => 'PostmarkController@inbound',
+        'as'   => 'postmark.inbound',
+    ]);
 });
 
 Route::group([
