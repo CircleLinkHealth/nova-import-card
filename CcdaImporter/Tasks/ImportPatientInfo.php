@@ -162,6 +162,15 @@ class ImportPatientInfo extends BaseCcdaImportTask
             $args
         );
 
+        if ($consentDate = $this->enrollee->consented_at) {
+            $patientInfo->consent_date = $consentDate;
+
+            if ($this->patient->isSurveyOnly()
+                && Patient::UNREACHABLE === $this->patient->patientInfo->ccm_status) {
+                $patientInfo->ccm_status = Patient::ENROLLED;
+            }
+        }
+
         if ( ! $patientInfo->mrn_number) {
             $patientInfo->mrn_number = $args['mrn_number'];
         }
