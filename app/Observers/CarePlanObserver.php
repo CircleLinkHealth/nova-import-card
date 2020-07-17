@@ -97,11 +97,11 @@ class CarePlanObserver
 
         if ($carePlan->isDirty('status')) {
             if (CarePlan::QA_APPROVED == $carePlan->status) {
-                event(new CarePlanWasQAApproved($carePlan->patient));
+                event(new CarePlanWasQAApproved($carePlan->patient->fresh('carePlan')));
             }
 
             if (CarePlan::PROVIDER_APPROVED == $carePlan->status) {
-                event(new CarePlanWasProviderApproved($carePlan->patient));
+                event(new CarePlanWasProviderApproved($carePlan->patient->fresh('carePlan')));
                 event(new PdfableCreated($carePlan));
             }
         }

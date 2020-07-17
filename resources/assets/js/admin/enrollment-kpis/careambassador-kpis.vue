@@ -21,9 +21,9 @@
         <div class="top-10">
             <loader v-if="loaders.next || loaders.excel"></loader>
         </div>
-        <v-client-table ref="table" :data="tableData" :columns="columns" :options="options"
+        <v-server-table ref="table" :url="getUrlCom" v-on:filter="listenTo" :data="tableData" :columns="columns" :options="options"
                         id="table">
-        </v-client-table>
+        </v-server-table>
     </div>
 </template>
 
@@ -44,6 +44,11 @@
             'notifications': Notifications,
         },
         props: [],
+        computed: {
+            getUrlCom(){
+                return rootUrl(`/admin/enrollment/ambassador/kpis/data?start_date=${this.startDate}&end_date=${this.endDate}`);
+            },
+        },
         data() {
             return {
                 exportCSVText: 'Export as CSV',
@@ -55,104 +60,108 @@
                 endDate: null,
                 loading: false,
                 tableData: [],
-                columns: [ 'name','total_hours','total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
+                columns: [ 'name','total_hours','total_seconds', 'patient_hours', 'patient_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'patient_earnings', 'earnings'],
                 options: {
-                    requestAdapter(data) {
-                        if (typeof (self) !== 'undefined') {
-                            data.query.startDate = self.startDate;
-                            data.query.endDate = self.endDate;
-                        }
-                        return data;
-                    },
                     headings: {
                         name : 'Ambassador Name',
                         total_hours: 'Total Hours',
                         total_seconds: 'Total Seconds',
+                        patient_hours: 'Patient Hours',
+                        patient_seconds: 'Patient Seconds',
                         no_enrolled: '#Enrolled',
                         total_calls: '#Called',
                         calls_per_hour: 'Calls/Hour',
                         mins_per_enrollment: 'Mins/Enrollment',
                         hourly_rate: 'Hourly Rate',
                         per_cost: 'Cost per Enrollment',
+                        patient_earnings: 'Patient Cost',
+                        earnings: 'Total Cost'
                     },
-                    perPage: 50,
-                    perPageValues: [10, 25, 50, 100, 200],
+                    perPage: 10,
+                    perPageValues: [5, 10, 20],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['name','total_hours','total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
-                    sortable: ['name','total_hours', 'total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
+                    filterable: ['name'],
+                    sortable: ['name'],
                 },
             }
 
         },
         methods: {
-            retrieveTableData(){
-                const self = this
-                this.loaders.next = true
-                return this.axios.get(this.getUrl()).then(response => {
-                    if (!response) {
-                        //request was cancelled
-                        return;
-                    }
-                    this.loaders.next = false
-                    this.tableData = response.data;
-                }).catch(err => {
-                    this.loaders.next = false
-                })
-            },
-            getUrl() {
-                return rootUrl(`/admin/enrollment/ambassador/kpis/data?start_date=${this.startDate}&end_date=${this.endDate}`);
-            },
             listenTo(a) {
                 this.info = JSON.stringify(a);
             },
             exportCSV() {
+                let data = []
+                this.loaders.excel = true
 
-                const str = 'Ambassador Name,Total Hours,Total Seconds,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost per Enrollment,Earnings\n'
-                    + this.tableData.map(item => [
-                        item.name,
-                        item.total_hours,
-                        item.total_seconds,
-                        item.no_enrolled,
-                        item.total_calls,
-                        item.calls_per_hour,
-                        item.mins_per_enrollment,
-                        item.conversion,
-                        item.hourly_rate,
-                        item.per_cost,
-                        item.earnings].join(","))
-                        .join("\n")
-                        .replace(/(^\[)|(\]$)/gm, "");
+                const $table = this.$refs.table
+                const query = $table.$data.query
 
-                const csvData = new Blob([str], {type: 'text/csv'});
-                const csvUrl = URL.createObjectURL(csvData);
-                const link = document.createElement('a');
-                link.download = `Ambassador KPIs from ${this.startDate} to ${this.endDate}.csv`;
-                link.href = csvUrl;
-                link.click();
-                this.loaders.excel = false
+                const filters = Object.keys(query).map(key => ({
+                    key,
+                    value: query[key]
+                })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
+                const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+
+                const download = (page = 1) => {
+                    return this.axios.get( rootUrl(`/admin/enrollment/ambassador/kpis/data?start_date=${this.startDate}&end_date=${this.endDate}&rows=10&page=${page}&csv${filters}`)).then(response => {
+                        const pagination = response.data
+                        data = data.concat(pagination.data)
+                        this.exportCSVText = `Export as CSV (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`
+                        if (pagination.meta.to < pagination.meta.total) return download(page + 1)
+                        return pagination
+                    }).catch(err => {
+                        console.log('ambassador:csv:export', err)
+                    })
+                }
+                return download().then(res => {
+
+                    const str = 'Ambassador Name,Total Hours,Total Seconds,Patient Hours,Patient Seconds,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost Per Enrollment,Patient Earnings,Total Earnings\n'
+                        + data.join('\n');
+                    const csvData = new Blob([str], {type: 'text/csv'});
+                    const csvUrl = URL.createObjectURL(csvData);
+                    const link = document.createElement('a');
+                    link.download = `Ambassador KPIs from ${this.startDate} to ${this.endDate}.csv`;
+                    link.href = csvUrl;
+                    link.click();
+                    this.exportCSVText = 'Export as CSV';
+                    this.loaders.excel = false
+                })
             },
-            setStartDate(event){
+            setStartDate(event) {
                 this.loaders.next = true
                 this.startDate = event.currentTarget._value
-                this.retrieveTableData();
+                this.refreshTable();
             },
-            setEndDate(event){
+            setEndDate(event) {
                 this.loaders.next = true
                 this.endDate = event.currentTarget._value
-                this.retrieveTableData();
-            }
+                this.refreshTable();
+            },
+            refreshTable() {
+                this.$refs.table.refresh();
+            },
+            columnMapping(name) {
+                const columns = {}
+                return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
+            },
         },
         created() {
             self = this;
             console.info('created');
-        },
-        mounted() {
-            this.loaders.next = true;
             this.startDate = moment().startOf('month').format('YYYY-MM-DD');
             this.endDate = moment().format('YYYY-MM-DD');
-            this.retrieveTableData();
+        },
+        mounted() {
             console.info('mounted');
+            Event.$on('vue-tables.loading', function (data) {
+                self.loaders.next = true
+            });
+
+            Event.$on('vue-tables.loaded', function (data) {
+                self.loaders.next = false
+            });
         }
     }
 </script>
