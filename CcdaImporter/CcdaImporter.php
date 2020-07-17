@@ -245,10 +245,10 @@ class CcdaImporter
 //                 - Not useful because in the case of BP we don't have a starting value.
 //            Uncomment after we have refactored vitals/observations.
 //            ->importVitals()
-            ->raiseConcernsOrAutoQAApprove()
             ->updateCcdaPostImport()
             ->updateEnrolleePostImport()
-            ->updatePatientUserPostImport();
+            ->updatePatientUserPostImport()
+            ->raiseConcernsOrAutoQAApprove();
 
         event(new PatientUserCreated($this->ccda->patient));
     }
@@ -534,6 +534,9 @@ class CcdaImporter
                 'program_id' => $this->ccda->patient->program_id,
             ],
         ]);
+
+        \DB::commit();
+        $this->ccda->patient->clearRolesCache();
 
         if ($this->ccda->patient->isDirty()) {
             $this->ccda->patient->save();

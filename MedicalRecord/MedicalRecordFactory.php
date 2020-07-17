@@ -50,7 +50,7 @@ class MedicalRecordFactory
                 app(MedicalHistoryFromAthena::class)->decorate(
                     app(InsuranceFromAthena::class)->decorate(
                         app(DemographicsFromAthena::class)->decorate(
-                            app(CcdaFromAthena::class)->decorate(
+                            app(CcdaFromAthena::class)->setCcda($ccda)->setPatientUser($user)->decorate(
                                 $this->getEligibilityJobWithTargetPatient($user)->eligibilityJob
                             )
                         )

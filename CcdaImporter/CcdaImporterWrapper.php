@@ -21,6 +21,7 @@ use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class CcdaImporterWrapper
@@ -96,9 +97,7 @@ class CcdaImporterWrapper
             return $this;
         }
 
-        if ( ! Practice::where('id', $this->ccda->practice_id)->whereHas('ehr', function ($q) {
-            $q->where('name', Ehr::ATHENA_EHR_NAME);
-        })->exists()) {
+        if ( ! self::isAthenaPractice($this->ccda->practice_id)) {
             return $this;
         }
 
@@ -280,6 +279,15 @@ class CcdaImporterWrapper
         event(new CcdaImported($this->ccda->getId()));
 
         return $this->ccda;
+    }
+
+    public static function isAthenaPractice(int $practiceId): bool
+    {
+        return Cache::remember("is_athena_ehr_practice_id_$practiceId", 2, function () use ($practiceId) {
+            return Practice::where('id', $practiceId)->whereHas('ehr', function ($q) {
+                $q->where('name', Ehr::ATHENA_EHR_NAME);
+            })->exists();
+        });
     }
 
     /**

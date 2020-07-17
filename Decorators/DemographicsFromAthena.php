@@ -40,6 +40,7 @@ class DemographicsFromAthena implements MedicalRecordDecorator
 
         if ($eligibilityJob->isDirty()) {
             $eligibilityJob->save();
+            \DB::commit();
         }
 
         return $eligibilityJob;

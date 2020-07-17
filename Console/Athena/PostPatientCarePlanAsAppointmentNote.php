@@ -52,28 +52,28 @@ class PostPatientCarePlanAsAppointmentNote extends Command
                         ->whereNotNull('external_id');
                 });
             },
+            'patient.patientInfo',
         ])
             ->whereHas('patient', function ($p) {
-                $p->where('ccm_status', Patient::TO_ENROLL);
+                $p->where('ccm_status', Patient::TO_ENROLL)
+                    ->has('patientInfo');
             })
             ->get()
             ->map(function ($c) {
                 $link = route('patient.careplan.print', ['patientId' => $c->user_id]);
 
-                $practiceId = $c->patient
-                    ->primaryPractice
-                    ->external_id;
-
                 $appointments = $this->api->getPatientAppointments(
-                    $practiceId,
-                    $c->user_id,
+                    $athenaPracticeId = $c->patient
+                        ->primaryPractice
+                        ->external_id,
+                    $c->patient->patientInfo->mrn_number,
                     false
                 );
                 $sortedAppointments = collect($appointments['appointments'])->sortBy('date');
                 $nextAppointment = $sortedAppointments->first();
 
                 $response = $this->api->postAppointmentNotes(
-                    $practiceId,
+                    $athenaPracticeId,
                     $nextAppointment['appointmentid'],
                     $link,
                     true
