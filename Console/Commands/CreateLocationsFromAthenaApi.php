@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Console\Commands;
 
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -38,10 +39,40 @@ class CreateLocationsFromAthenaApi extends Command
      *
      * @return void
      */
-    public function __construct(?AthenaApiImplementation $api)
+    public function __construct(AthenaApiImplementation $api)
     {
         parent::__construct();
         $this->api = $api;
+    }
+
+    public static function createNewLocationFromAthenaApiDeprtment(array $departmentFromAthenaApi, int $practiceId)
+    {
+        $location = Location::withTrashed()->updateOrCreate([
+            'practice_id'            => $practiceId,
+            'external_department_id' => $departmentFromAthenaApi['departmentid'],
+        ], [
+            'name'           => capitalizeWords($departmentFromAthenaApi['name']),
+            'phone'          => empty($phone = formatPhoneNumberE164($departmentFromAthenaApi['phone'] ?? null)) ? null : $phone,
+            'fax'            => empty($fax = formatPhoneNumberE164($departmentFromAthenaApi['clinicalproviderfax'] ?? $departmentFromAthenaApi['fax'] ?? null)) ? null : $fax,
+            'address_line_1' => $departmentFromAthenaApi['address'],
+            'address_line_2' => $departmentFromAthenaApi['address2'] ?? null,
+            'city'           => capitalizeWords($departmentFromAthenaApi['city']),
+            'state'          => $departmentFromAthenaApi['state'],
+            'timezone'       => $departmentFromAthenaApi['timezonename'],
+            'postal_code'    => $departmentFromAthenaApi['zip'],
+        ]);
+
+        if ($location->wasRecentlyCreated) {
+            $handles = AppConfig::pull('nbi_rwjbarnabas_mrn_slack_watchers', '');
+
+            sendSlackMessage(
+                '#customersuccess',
+                "$handles A recently imported patient goes to Location `{$location->name}`, which did not exist in CPM. CPM pulled it from Athena API.",
+                true
+            );
+        }
+
+        return $location;
     }
 
     /**
@@ -110,20 +141,7 @@ class CreateLocationsFromAthenaApi extends Command
 
             $this->warn("Processing athenaLocationId[{$aLoc['departmentid']}]");
 
-            $cpmLocation = Location::withTrashed()->updateOrCreate([
-                'practice_id'            => $this->practice()->id,
-                'external_department_id' => $aLoc['departmentid'],
-            ], [
-                'name'           => capitalizeWords($aLoc['name']),
-                'phone'          => empty($phone = formatPhoneNumberE164($aLoc['phone'] ?? null)) ? null : $phone,
-                'fax'            => empty($fax = formatPhoneNumberE164($aLoc['clinicalproviderfax'] ?? $aLoc['fax'] ?? null)) ? null : $fax,
-                'address_line_1' => $aLoc['address'],
-                'address_line_2' => $aLoc['address2'] ?? null,
-                'city'           => capitalizeWords($aLoc['city']),
-                'state'          => $aLoc['state'],
-                'timezone'       => $aLoc['timezonename'],
-                'postal_code'    => $aLoc['zip'],
-            ]);
+            $cpmLocation = self::createNewLocationFromAthenaApiDeprtment($aLoc, $this->practice()->id);
 
             if (true === $softDeleteTillAdminApproves) {
                 $cpmLocation->delete();

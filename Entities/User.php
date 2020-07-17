@@ -1523,13 +1523,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getFirstName()
     {
-        return ucfirst(strtolower($this->first_name));
+        return $this->first_name;
     }
 
     public function getFullName()
     {
-        $firstName = ucwords(strtolower($this->first_name));
-        $lastName  = ucwords(strtolower($this->last_name));
+        $firstName = $this->first_name;
+        $lastName  = $this->last_name;
         $suffix    = $this->getSuffix();
 
         return trim("${firstName} ${lastName} ${suffix}");
@@ -1592,7 +1592,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getLastName()
     {
-        return ucfirst(strtolower($this->last_name));
+        return $this->last_name;
     }
 
     public function getLeadContactID()
