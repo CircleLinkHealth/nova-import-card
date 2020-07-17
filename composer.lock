@@ -902,8 +902,14 @@
             "version": "v3.1.7",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
+                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
                 "reference": "d81ab94a80a723ff0201b3e8194a27f80d6184f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/d81ab94a80a723ff0201b3e8194a27f80d6184f4",
+                "reference": "d81ab94a80a723ff0201b3e8194a27f80d6184f4",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "~5.0|~6.0|~7.0",
@@ -1201,7 +1207,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "65ea988022aa0711a629e152360175d3e8924615"
+                "reference": "9d0f1ae9037dfe4c667d4375fb4ae87661efb3a5"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1226,7 +1232,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-16T18:06:51+00:00"
+            "time": "2020-07-17T14:07:28+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
