@@ -38,6 +38,10 @@
                                  :disabled="onPhone[selectedPatientNumber]">
                             <option v-for="(number, key) in patientNumbers" :key="key" :value="number">{{number}}
                             </option>
+<!--                            @click: offer the capability to choose a phone number type-->
+<!--                            Dropdown to choose type-->
+<!--                            Dropdown to input new number-->
+<!--                            A type will have many numbers-->
                             <option value="patientUnlisted">Other</option>
                         </select2>
                     </div>
