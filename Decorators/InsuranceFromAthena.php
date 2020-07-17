@@ -64,7 +64,11 @@ class InsuranceFromAthena implements MedicalRecordDecorator
             return $this->addInsuranceFromEligibilityJob($eligibilityJob);
         }
 
-        return $this->addInsuranceFromAthenaApi($eligibilityJob);
+        if ($eligibilityJob->targetPatient && $eligibilityJob->targetPatient->ccda) {
+            return $this->addInsuranceFromAthenaApi($eligibilityJob);
+        }
+
+        return $eligibilityJob;
     }
 
     /**
