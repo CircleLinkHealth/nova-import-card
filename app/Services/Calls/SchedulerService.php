@@ -107,6 +107,27 @@ class SchedulerService
         );
     }
 
+    public static function getLastUnsuccessfulCall($patientId, $calledDate = null, $withParticipants = true): ?Call
+    {
+        if ( ! $calledDate) {
+            $calledDate = now();
+        }
+
+        return Call::when($withParticipants, function ($q) {
+            return $q->with([
+                'inboundUser' => function ($q) {
+                    $q->without(['roles', 'perms'])
+                        ->with(['billingProvider']);
+                },
+                'outboundUser',
+            ]);
+        })
+            ->whereInboundCpmId($patientId)
+            ->where('status', '=', Call::NOT_REACHED)
+            ->whereBetween('called_date', [$calledDate->copy()->startOfDay(), $calledDate->copy()->endOfDay()])
+            ->first();
+    }
+
     public static function getNextScheduledCall($patientId, $excludeToday = false)
     {
         return Call::where(

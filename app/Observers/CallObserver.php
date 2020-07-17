@@ -10,7 +10,6 @@ use App\Call;
 use App\Events\CarePlanWasApproved;
 use App\Note;
 use App\Notifications\CallCreated;
-use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Services\ActivityService;
 use App\Services\Calls\SchedulerService;
 use App\Services\NotificationService;
@@ -66,11 +65,6 @@ class CallObserver
                 $date = Carbon::parse($call->updated_at);
 
                 $this->activityService->processMonthlyActivityTime($patient->id, $date);
-
-                // ROAD-98 - sms patients with unsuccessful call
-                if (Call::NOT_REACHED === $call->status && $call->outboundUser->isCareCoach()) {
-                    $patient->notify(new PatientUnsuccessfulCallNotification($call, false));
-                }
             }
         }
 
@@ -102,8 +96,8 @@ class CallObserver
     private function shouldApproveCarePlan(Call $call)
     {
         return SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE === $call->sub_type
-               && SchedulerService::TASK_TYPE                                === $call->type
-               && $call->isDirty('status')
-               && 'done' === $call->status;
+            && SchedulerService::TASK_TYPE                                   === $call->type
+            && $call->isDirty('status')
+            && 'done' === $call->status;
     }
 }

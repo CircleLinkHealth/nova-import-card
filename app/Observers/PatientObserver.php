@@ -8,6 +8,8 @@ namespace App\Observers;
 
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Listeners\AssignPatientToStandByNurse;
+use App\Notifications\PatientUnsuccessfulCallNotification;
+use App\Services\Calls\SchedulerService;
 use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -31,7 +33,7 @@ class PatientObserver
     {
         if ($patient->isDirty('ccm_status')) {
             if (Patient::UNREACHABLE === $patient->ccm_status
-            && ! $patient->user->hasRole('survey-only')) {
+                && ! $patient->user->hasRole('survey-only')) {
                 $this->createEnrolleModelForPatient($patient->user);
             }
 
@@ -52,6 +54,11 @@ class PatientObserver
             }
 
             $this->assignToStandByNurseIfChangedToEnrolled($patient);
+        }
+
+        if ($patient->isDirty('no_call_attempts_since_last_success') && $patient->no_call_attempts_since_last_success > 0) {
+            // ROAD-98 - sms patients with unsuccessful call
+            $this->sendUnsuccessfulCallNotificationToPatient($patient);
         }
     }
 
@@ -120,6 +127,24 @@ class PatientObserver
                 AssignPatientToStandByNurse::assign($patient->user);
             }
         }
+    }
+
+    private function sendUnsuccessfulCallNotificationToPatient(Patient $patient)
+    {
+        if (Patient::ENROLLED !== $patient->ccm_status) {
+            return;
+        }
+
+        //send notification only on first unsuccessful attempt, and then every after 2, so 1st, 3rd, 5th
+        if (0 === $patient->no_call_attempts_since_last_success % 2) {
+            return;
+        }
+
+        $call = SchedulerService::getLastUnsuccessfulCall($patient->user_id, now(), true);
+        if ( ! $call) {
+            return;
+        }
+        $call->inboundUser->notify(new PatientUnsuccessfulCallNotification($call, false));
     }
 
     private function statusChangedToEnrolled(Patient $patient): bool
