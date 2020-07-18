@@ -2181,12 +2181,6 @@ Route::group([
     //---------------------------------------
 });
 
-// TEMPORARY SIGNED ROUTE
-//Route::get('/patient-self-enrollment', [
-//    'uses' => 'Enrollment\Auth\SelfEnrollmentController@enrollableInvitationManager',
-//    'as'   => 'invitation.enrollment',
-//]);
-
 Route::group([
     'prefix'     => 'auth',
     'middleware' => ['web'],
