@@ -73,7 +73,8 @@
                                         outbound-user-id="{{auth()->id()}}"
                                         source="patient-call-page"
                                         :patient-numbers="{{$phoneNumbers}}"
-                                        clinical-escalation-number="{{$clinicalEscalationNumber}}">
+                                        clinical-escalation-number="{{$clinicalEscalationNumber}}"
+                                        :phone-types="{{json_encode($phoneTypes)}}">
                                 </call-number>
                             </div>
                         </div>

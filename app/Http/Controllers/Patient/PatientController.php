@@ -134,7 +134,7 @@ class PatientController extends Controller
                 return ! empty($p->number);
             })
             ->mapWithKeys(function ($p) {
-                return [$p->type => $p->number];
+                return [ucfirst($p->type) => $p->number];
             });
 
         $clinicalEscalationNumber = null;
@@ -152,12 +152,19 @@ class PatientController extends Controller
         //naive authentication for the CPM Caller Service
         $cpmToken = \Hash::make(config('app.key').Carbon::today()->toDateString());
 
+        $phoneTypes = [
+            'Cell',
+            'Home',
+            'Work',
+        ];
+
         return view('wpUsers.patient.calls.index')
             ->with([
                 'patient'                  => $user,
                 'phoneNumbers'             => $phoneNumbers,
                 'clinicalEscalationNumber' => $clinicalEscalationNumber,
                 'cpmToken'                 => $cpmToken,
+                'phoneTypes'               => $phoneTypes,
             ]);
     }
 

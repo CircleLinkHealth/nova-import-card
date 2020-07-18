@@ -33,17 +33,27 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="col-xs-9 no-padding">
-                        <select2 class="form-control" v-model="dropdownNumber"
-                                 :settings="{minimumResultsForSearch: -1}"
+                        <div style="display: inline-flex">
+                            <label v-if="dropdownNumber === 'patientUnlisted'" for="numberType" style="display: grid">Choose Phone Number Type
+                            <select2 id="numberType" class="form-control" v-model="dropdownPhoneType">
+                                <option v-for="(phoneType, key) in phoneTypes" :key="key"  :value="phoneType">{{phoneType}}
+                                </option>
+                            </select2>
+                            </label>
+                            <label for="phoneNumber" style="display: grid">Phone Number
+                            <select2 id="phoneNumber" class="form-control" v-model="dropdownNumber"
+                                     :settings="{minimumResultsForSearch: -1}"
                                  :disabled="onPhone[selectedPatientNumber]">
-                            <option v-for="(number, key) in patientNumbers" :key="key" :value="number">{{number}}
-                            </option>
-<!--                            @click: offer the capability to choose a phone number type-->
-<!--                            Dropdown to choose type-->
-<!--                            Dropdown to input new number-->
-<!--                            A type will have many numbers-->
-                            <option value="patientUnlisted">Other</option>
-                        </select2>
+                                <option v-for="(number, key) in patientNumbers" :key="key" :value="number">{{key}}: {{number}}
+                                </option>
+                                <!--                            @click: offer the capability to choose a phone number type-->
+                                <!--                            Dropdown to choose type-->
+                                <!--                            Dropdown to input new number-->
+                                <!--                            A type will have many numbers-->
+                                <option value="patientUnlisted">Other</option>
+                            </select2>
+                            </label>
+                        </div>
                     </div>
                     <div class="col-xs-3 no-padding" style="padding-left: 2px; padding-right: 2px"
                          v-if="dropdownNumber !== 'patientUnlisted'">
@@ -205,6 +215,10 @@
             'call-numpad': CallNumpad
         },
         props: {
+            phoneTypes:{
+                type: Array,
+                default:[]
+            },
             cpmToken: {
                 type: String,
                 default: ''
@@ -229,6 +243,7 @@
                 type: Object,
                 default: {}
             },
+
             clinicalEscalationNumber: {
                 type: String,
                 default: null
@@ -255,7 +270,8 @@
                 dropdownNumber: Object.values(this.patientNumbers).length > 0 ? Object.values(this.patientNumbers)[0] : 'patientUnlisted',
                 patientUnlistedNumber: '',
                 otherUnlistedNumber: '',
-                callSids: {}
+                callSids: {},
+                dropdownPhoneType:'',
             }
         },
         computed: {
@@ -289,7 +305,6 @@
             }
         },
         methods: {
-
             getUrl: function (path) {
                 if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
                     if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
