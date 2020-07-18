@@ -161,8 +161,8 @@ interface AthenaApiImplementation
      *
      * @param $practiceId
      * @param bool $showAllDepartments
+     * @param bool $providerlist
      *
-     * @param  bool  $providerlist
      * @return mixed
      */
     public function getDepartments($practiceId, $showAllDepartments = false, $providerlist = false);
@@ -198,6 +198,7 @@ interface AthenaApiImplementation
      * Get patient medications.
      *
      *@throws \Exception
+     *
      * @return array|mixed
      */
     public function getMedications(int $patientId, int $practiceId, int $departmentId);
@@ -224,7 +225,7 @@ interface AthenaApiImplementation
      *
      * @return mixed
      */
-    public function getPatientAppointments($practiceId, $patientId, $showPast = true, $showCancelled = false);
+    public function getPatientAppointments(?int $practiceId, ?int $patientId, $showPast = true, $showCancelled = false);
 
     /**
      * Get the patient's custom fields.
