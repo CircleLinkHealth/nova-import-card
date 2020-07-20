@@ -15,8 +15,11 @@ use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -119,6 +122,49 @@ class PatientController extends Controller
         }
 
         return response()->json($patients);
+    }
+
+    public function saveNewPhoneNumber(Request $request)
+    {
+        $phoneType   = $request->input('phoneType');
+        $phoneNumber = ($request->input('phoneNumber'));
+        $userId      = $request->input('patientUserId');
+
+        if ( ! ImportPhones::validatePhoneNumber($phoneNumber)) {
+            return response()->json([
+                'message' => 'Phone number is not a valid US number',
+            ]);
+        }
+
+        $phoneNumber = formatPhoneNumberE164($phoneNumber);
+        /** @var User $patientUser */
+        $patientUser  = User::with('patientInfo', 'phoneNumbers')->where('id', $userId)->firstOrFail();
+        $locationId   = optional($patientUser->patientInfo)->location->id ?? null;
+        $numberExists = $patientUser->phoneNumbers()->where('type', $phoneType)->where('number', $phoneNumber)->exists();
+
+        if ($numberExists) {
+            return response()->json(
+                [
+                    'message' => "Phone Number with type '$phoneType' already exists for patient $userId",
+                ]
+            );
+        }
+
+        $savedNumber = PhoneNumber::firstOrCreate(
+            [
+                'user_id' => $userId,
+                'number'  => $phoneNumber,
+                'type'    => $phoneType,
+            ],
+            [
+                'is_primary'  => true,
+                'location_id' => $locationId,
+            ]
+        );
+
+        return response()->json([
+            'data' => $savedNumber->number,
+        ], 200);
     }
 
     public function showCallPatientPage(CallPatientRequest $request, $patientId)

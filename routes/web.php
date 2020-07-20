@@ -778,6 +778,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patients.listing',
         ])->middleware('permission:patient.read');
 
+        Route::post('new/phone', [
+            'uses' => 'Patient\PatientController@saveNewPhoneNumber',
+            'as'   => 'patient.phone.create',
+        ])->middleware('permission:patient.create,patient.update,location.read,practice.read');
+
         Route::get('listing/pdf', [
             'uses' => 'Patient\PatientController@showPatientListingPdf',
             'as'   => 'patients.listing.pdf',

@@ -35,8 +35,12 @@
                     <div class="col-xs-9 no-padding">
                         <div style="display: inline-flex">
                             <label v-if="dropdownNumber === 'patientUnlisted'" for="numberType" style="display: grid">Choose Phone Number Type
-                            <select2 id="numberType" class="form-control" v-model="dropdownPhoneType">
-                                <option v-for="(phoneType, key) in phoneTypes" :key="key"  :value="phoneType">{{phoneType}}
+                            <select2 id="numberType" class="form-control"
+                                     v-model="dropdownPhoneType">
+                                <option v-for="(phoneType, key) in phoneTypes"
+                                        :key="key"
+                                        :value="phoneType">
+                                    {{phoneType}}
                                 </option>
                             </select2>
                             </label>
@@ -107,10 +111,11 @@
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
                         </button>
-                        <button  class="btn btn-danger" @click="saveNewNumber"
+                        <button class="btn btn-danger" @click="saveNewNumber"
                                 :disabled="disableSaveButton">
                             Save
                         </button>
+                        <loader v-if="saving"></loader>
                         <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
                                 @click="toggleMuteMessage(selectedPatientNumber)">
                             <i class="fa fa-fw"
@@ -213,6 +218,7 @@
     import {Logger} from '../logger-logdna';
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
+    import axios from "../bootstrap-axios";
 
     let self;
 
@@ -282,12 +288,15 @@
                 otherUnlistedNumber: '',
                 callSids: {},
                 dropdownPhoneType:'',
+                saving:false,
             }
         },
         computed: {
             disableSaveButton(){
                 if (this.dropdownNumber === 'patientUnlisted') {
-                    return isNaN(this.patientUnlistedNumber.toString()) || this.patientUnlistedNumber.toString().length !== 10;
+                    return this.saving ||
+                        isNaN(this.patientUnlistedNumber.toString())
+                        || this.patientUnlistedNumber.toString().length !== 10;
                 }
                 return false;
             },
@@ -322,7 +331,20 @@
         },
         methods: {
             saveNewNumber(){
-
+                const type = this.dropdownPhoneType.length !== 0 ? this.dropdownPhoneType : 'cell';
+                this.saving = true;
+                axios.post('/manage-patients/new/phone', {
+                    phoneType:type,
+                    phoneNumber:this.patientUnlistedNumber,
+                    patientUserId:this.inboundUserId,
+                })
+                    .then((response => {
+                        console.log(response.data);
+                        this.saving = false;
+                })).catch((error) => {
+                    this.saving = false;
+                    console.log(error.message);
+                });
             },
 
             resetToDefaultNumber(){
