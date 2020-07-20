@@ -48,12 +48,8 @@
                             <select2 id="phoneNumber" class="form-control" v-model="dropdownNumber"
                                      :settings="{minimumResultsForSearch: -1}"
                                  :disabled="onPhone[selectedPatientNumber]">
-                                <option v-for="(number, key) in patientNumbers" :key="key" :value="number">{{key}}: {{number}}
+                                <option v-for="(number, key) in patientNumbers" :key="key.type" :value="number.number">{{number.type}}: {{number.number}}
                                 </option>
-                                <!--                            @click: offer the capability to choose a phone number type-->
-                                <!--                            Dropdown to choose type-->
-                                <!--                            Dropdown to input new number-->
-                                <!--                            A type will have many numbers-->
                                 <option value="patientUnlisted">Other</option>
                             </select2>
                             </label>
@@ -256,7 +252,7 @@
             outboundUserId: String,
             source: String,
             patientNumbers: {
-                type: Object,
+                type: Array,
                 default: {}
             },
 
@@ -327,7 +323,7 @@
             },
             isCurrentlyOnConference() {
                 return Object.values(this.onPhone).filter(x => x).length > 1;
-            }
+            },
         },
         methods: {
             saveNewNumber(){
@@ -352,7 +348,7 @@
             },
 
             defaultDropdownNumber(){
-              return Object.values(this.patientNumbers).length > 0 ? Object.values(this.patientNumbers)[0] : 'patientUnlisted';
+              return Object.values(this.patientNumbers).length > 0 ? Object.values(this.patientNumbers)[0].number : 'patientUnlisted';
             },
 
             getUrl: function (path) {

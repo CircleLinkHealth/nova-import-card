@@ -150,20 +150,25 @@ class PatientController extends Controller
             );
         }
 
-        $savedNumber = PhoneNumber::firstOrCreate(
+        $makePrimary = 0 == strcasecmp(
+            $phoneType,
+            PhoneNumber::HOME
+        );
+
+        PhoneNumber::firstOrCreate(
             [
                 'user_id' => $userId,
                 'number'  => $phoneNumber,
                 'type'    => $phoneType,
             ],
             [
-                'is_primary'  => true,
+                'is_primary'  => $makePrimary,
                 'location_id' => $locationId,
             ]
         );
 
         return response()->json([
-            'data' => $savedNumber->number,
+            'data' => $phoneNumber,
         ], 200);
     }
 
@@ -179,8 +184,11 @@ class PatientController extends Controller
             ->filter(function ($p) {
                 return ! empty($p->number);
             })
-            ->mapWithKeys(function ($p) {
-                return [ucfirst($p->type) => $p->number];
+            ->transform(function ($p) {
+                return [
+                    'number' => $p->number,
+                    'type'   => ucfirst($p->type),
+                ];
             });
 
         $clinicalEscalationNumber = null;
