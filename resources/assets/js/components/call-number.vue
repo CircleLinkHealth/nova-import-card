@@ -107,8 +107,8 @@
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
                         </button>
-                        <button  class="btn btn-danger" @click=""
-                                :disabled="enableSaveButton">
+                        <button  class="btn btn-danger" @click="saveNewNumber"
+                                :disabled="disableSaveButton">
                             Save
                         </button>
                         <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
@@ -285,9 +285,9 @@
             }
         },
         computed: {
-            enableSaveButton(){
+            disableSaveButton(){
                 if (this.dropdownNumber === 'patientUnlisted') {
-                    return ! isNaN(this.patientUnlistedNumber.toString()) && this.patientUnlistedNumber.toString().length === 10;
+                    return isNaN(this.patientUnlistedNumber.toString()) || this.patientUnlistedNumber.toString().length !== 10;
                 }
                 return false;
             },
@@ -321,6 +321,10 @@
             }
         },
         methods: {
+            saveNewNumber(){
+
+            },
+
             resetToDefaultNumber(){
             this.dropdownNumber = this.defaultDropdownNumber;
             },
