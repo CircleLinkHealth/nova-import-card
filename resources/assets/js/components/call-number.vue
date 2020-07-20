@@ -40,7 +40,7 @@
                                 </option>
                             </select2>
                             </label>
-                            <label for="phoneNumber" style="display: grid">Phone Number
+                            <label v-if="dropdownNumber !== 'patientUnlisted'" for="phoneNumber" style="display: grid">Phone Number
                             <select2 id="phoneNumber" class="form-control" v-model="dropdownNumber"
                                      :settings="{minimumResultsForSearch: -1}"
                                  :disabled="onPhone[selectedPatientNumber]">
@@ -67,6 +67,12 @@
                                 @click="toggleMuteMessage(selectedPatientNumber)">
                             <i class="fa fa-fw"
                                :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>
+                        </button>
+                    </div>
+                    <div v-else>
+                        <button class="glyphicon glyphicon-remove"
+                                style="padding: 6px; color:red; font-size: 19px;"
+                                @click="resetToDefaultNumber">
                         </button>
                     </div>
                 </div>
@@ -267,7 +273,7 @@
                 connection: null,
                 //twilio device
                 device: null,
-                dropdownNumber: Object.values(this.patientNumbers).length > 0 ? Object.values(this.patientNumbers)[0] : 'patientUnlisted',
+                dropdownNumber: this.defaultDropdownNumber,
                 patientUnlistedNumber: '',
                 otherUnlistedNumber: '',
                 callSids: {},
@@ -305,6 +311,14 @@
             }
         },
         methods: {
+            resetToDefaultNumber(){
+            this.dropdownNumber = this.defaultDropdownNumber;
+            },
+
+            defaultDropdownNumber(){
+              return Object.values(this.patientNumbers).length > 0 ? Object.values(this.patientNumbers)[0] : 'patientUnlisted';
+            },
+
             getUrl: function (path) {
                 if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
                     if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
