@@ -432,8 +432,10 @@ $user_info = [];
                                                     function onStatusChange(e) {
 
                                                         let ccmStatus = document.getElementById("ccm_status");
+                                                        if (!ccmStatus) {
+                                                            return;
+                                                        }
 
-                                                        console.log(ccmStatus);
                                                         if (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call") {
                                                             $('#withdrawn-reason').removeClass('hidden');
                                                             onReasonChange();

@@ -48,9 +48,7 @@ class EnrollmentDirectorController extends Controller
         $enrollee = Enrollee::findOrFail($request->input('enrollee_id'));
 
         $enrollee->update([
-            'status' => Enrollee::TO_CALL,
-            //if enrollee already has max attempt count, and CA calls them, if they are unreachable, they will never be brought again - so reset attempt_count as well
-            'attempt_count'           => 0,
+            'status'                  => Enrollee::TO_CALL,
             'care_ambassador_user_id' => $request->input('care_ambassador_user_id'),
             'requested_callback'      => Carbon::parse($request->input('callback_date')),
             'callback_note'           => htmlspecialchars($request->input('callback_note'), ENT_NOQUOTES),
@@ -134,9 +132,11 @@ class EnrollmentDirectorController extends Controller
     {
         $ambassadors = User::ofType('care-ambassador')
             ->select(['id', 'display_name'])
-            ->get();
+            ->without(['roles', 'perms'])
+            ->get()
+            ->toArray();
 
-        return response()->json($ambassadors->toArray());
+        return response()->json($ambassadors);
     }
 
     public function getEnrollees(Request $request, EnrolleeFilters $filters)

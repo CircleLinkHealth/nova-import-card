@@ -55,7 +55,25 @@ class CallController extends Controller
 
     public function getPatientNextScheduledCallJson($patientId)
     {
-        return response()->json(SchedulerService::getNextScheduledCall($patientId));
+        $call = SchedulerService::getNextScheduledCall($patientId);
+
+        $result = [];
+
+        if ($call) {
+            $result = [
+                'id'              => $call->id,
+                'type'            => $call->type,
+                'inbound_cpm_id'  => $call->inbound_cpm_id,
+                'outbound_cpm_id' => $call->outbound_cpm_id,
+                'scheduled_date'  => $call->scheduled_date,
+                'window_start'    => $call->window_start,
+                'window_end'      => $call->window_end,
+                'attempt_note'    => $call->attempt_note,
+                'is_manual'       => $call->is_manual,
+            ];
+        }
+
+        return response()->json($result);
     }
 
     public function import(Request $request)

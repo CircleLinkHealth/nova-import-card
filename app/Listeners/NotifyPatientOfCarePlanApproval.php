@@ -27,7 +27,8 @@ class NotifyPatientOfCarePlanApproval implements ShouldQueue
         if ($this->shouldSkip($event)) {
             return;
         }
-        $event->patient->carePlan->fresh()->notifyPatientOfApproval();
+        optional($event->patient->fresh('carePlan')->carePlan)
+            ->notifyPatientOfApproval();
     }
 
     /**
