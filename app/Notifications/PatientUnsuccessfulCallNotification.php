@@ -130,7 +130,7 @@ class PatientUnsuccessfulCallNotification extends Notification
             $subject = "Nurse $this->nurseFirstName called 2 days ago. When's a better time?";
         }
 
-        $line1 = "Hi, it's $this->drLastName's care program at $this->practice!";
+        $line1 = "Hi, it's Dr. $this->drLastName's care program at $this->practice!";
         if ( ! $this->isReminder) {
             $line2 = "Nurse $this->nurseFirstName just tried calling.";
         } else {

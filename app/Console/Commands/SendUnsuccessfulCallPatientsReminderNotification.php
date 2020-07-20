@@ -43,6 +43,7 @@ class SendUnsuccessfulCallPatientsReminderNotification extends Command
      */
     public function handle()
     {
+        //1. get notifications sent out 2 days ago, make sure we haven't notified today already
         $query = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
             ->whereBetween('created_at', [now()->subDays(2)->startOfDay(), now()->subDays(2)->endOfDay()])
             ->whereNotIn('notifiable_id', function ($q) {
@@ -52,6 +53,13 @@ class SendUnsuccessfulCallPatientsReminderNotification extends Command
                     ->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()]);
             });
         $query->each(function (DatabaseNotification $notification) {
+            //2. check if we already have scheduled callback task
+            $task = SchedulerService::getNextScheduledActivity($notification->notifiable_id, SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS);
+            if ($task) {
+                return;
+            }
+
+            //3. get last unsuccessful call, which has nurse that called
             $call = SchedulerService::getLastUnsuccessfulCall($notification->notifiable_id, $notification->created_at);
             if ($call) {
                 $call->inboundUser->notify(new PatientUnsuccessfulCallNotification($call, true));

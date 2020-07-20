@@ -117,9 +117,24 @@ class SchedulerService
             return $q->with([
                 'inboundUser' => function ($q) {
                     $q->without(['roles', 'perms'])
-                        ->with(['billingProvider']);
+                        ->with([
+                            'billingProvider' => function ($q) {
+                                $q->with([
+                                    'user' => function ($q) {
+                                        $q->without(['roles', 'perms'])
+                                            ->select(['id', 'last_name']);
+                                    },
+                                ]);
+                            },
+                            'primaryPractice' => function ($q) {
+                                $q->select(['id', 'display_name']);
+                            },
+                        ]);
                 },
-                'outboundUser',
+                'outboundUser' => function ($q) {
+                    $q->without(['roles', 'perms'])
+                        ->select(['id', 'first_name']);
+                },
             ]);
         })
             ->whereInboundCpmId($patientId)
@@ -128,15 +143,9 @@ class SchedulerService
             ->first();
     }
 
-    public static function getNextScheduledCall($patientId, $excludeToday = false)
+    public static function getNextScheduledActivities($patientId, $excludeToday)
     {
-        return Call::where(
-            function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
-            }
-        )
-            ->where('inbound_cpm_id', $patientId)
+        return Call::where('inbound_cpm_id', $patientId)
             ->where('status', '=', Call::SCHEDULED)
             ->when(
                 $excludeToday,
@@ -147,7 +156,24 @@ class SchedulerService
                     $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
                 }
             )
-            ->orderBy('scheduled_date', 'desc')
+            ->orderBy('scheduled_date', 'desc');
+    }
+
+    public static function getNextScheduledActivity($patientId, $subType, $excludeToday = false)
+    {
+        return self::getNextScheduledActivities($patientId, $excludeToday)
+            ->where('type', '=', 'task')
+            ->where('sub_type', '=', $subType)
+            ->first();
+    }
+
+    public static function getNextScheduledCall($patientId, $excludeToday = false): ?Call
+    {
+        return self::getNextScheduledActivities($patientId, $excludeToday)
+            ->where(function ($q) {
+                $q->whereNull('type')
+                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
+            })
             ->first();
     }
 
