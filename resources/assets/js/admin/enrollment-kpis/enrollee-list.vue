@@ -156,7 +156,9 @@
                 const $table = this.$refs.table
                 const query = $table.$data.query
 
-                const filters = Object.keys(query).map(key => ({
+                const filters = Object.keys(query)
+                    .filter(item => item !== 'status')
+                    .map(key => ({
                     key,
                     value: query[key]
                 })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
@@ -164,6 +166,7 @@
 
                 const hideStatus = {
                     hideStatus: this.hideStatus,
+                    status: this.statusFilter,
                 };
 
                 const download = (page = 1) => {
