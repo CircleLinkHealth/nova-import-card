@@ -427,7 +427,7 @@ class ReimportPatientMedicalRecord extends Command
 
         if ($initiatorId = $this->argument('initiatorUserId')) {
             $this->warn("Notifying of failure user:$initiatorId");
-            User::findOrFail($initiatorId)->notify(new PatientNotReimportedNotification($user->id));
+//            User::findOrFail($initiatorId)->notify(new PatientNotReimportedNotification($user->id));
         }
     }
 
@@ -435,7 +435,7 @@ class ReimportPatientMedicalRecord extends Command
     {
         if ($initiatorId = $this->argument('initiatorUserId')) {
             $this->warn("Notifying user:$initiatorId");
-            User::findOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
+//            User::findOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
         }
     }
 

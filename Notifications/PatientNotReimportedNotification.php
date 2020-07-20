@@ -97,6 +97,6 @@ class PatientNotReimportedNotification extends Notification implements ShouldBro
      */
     public function via($notifiable)
     {
-        return ['database', 'mail'];
+        return ['database'];
     }
 }

@@ -387,6 +387,11 @@ class Enrollee extends BaseModel
         }
     }
 
+    public function batch()
+    {
+        return $this->belongsTo(EligibilityBatch::class, 'batch_id');
+    }
+
     public function careAmbassador()
     {
         return $this->belongsTo(User::class, 'care_ambassador_user_id');
@@ -771,12 +776,27 @@ class Enrollee extends BaseModel
         );
     }
 
+    public function scopeLastCalledBetween($query, Carbon $start, Carbon $end)
+    {
+        return $query->where('last_attempt_at', '>=', $start->startOfDay())
+            ->where('last_attempt_at', '<=', $end->endOfDay());
+    }
+
     public function scopeLessThanThreeAttempts($query)
     {
         $query->where(function ($q) {
             $q->whereNull('attempt_count')
                 ->orWhere('attempt_count', '<', self::MAX_CALL_ATTEMPTS);
         });
+    }
+
+    public function scopeOfStatus($query, $status)
+    {
+        if ( ! is_array($status)) {
+            $status = [$status];
+        }
+
+        return $query->whereIn('status', $status);
     }
 
     public function scopeSearchAddresses($query, string $term)

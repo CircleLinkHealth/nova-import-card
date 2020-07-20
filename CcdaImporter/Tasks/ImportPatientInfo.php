@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Support\Str;
 
 class ImportPatientInfo extends BaseCcdaImportTask
@@ -161,6 +162,24 @@ class ImportPatientInfo extends BaseCcdaImportTask
             ],
             $args
         );
+
+        if ($consentDate = optional($this->enrollee)->consented_at) {
+            $patientInfo->consent_date = $consentDate;
+
+            if (
+            (
+                $this->patient->isSurveyOnly()
+                && Patient::UNREACHABLE === $this->patient->patientInfo->ccm_status
+            )
+            || (
+                in_array($this->enrollee->status, [Enrollee::ENROLLED, Enrollee::CONSENTED])
+                && Patient::UNREACHABLE === $this->patient->patientInfo->ccm_status
+                && 1 === Revision::whereRevisionableId($this->patient->patientInfo->id)->whereRevisionableType(Patient::class)->whereNull('old_value')->where('new_value', Patient::UNREACHABLE)->where('key', 'ccm_status')->count()
+            )
+            ) {
+                $patientInfo->ccm_status = Patient::ENROLLED;
+            }
+        }
 
         if ( ! $patientInfo->mrn_number) {
             $patientInfo->mrn_number = $args['mrn_number'];

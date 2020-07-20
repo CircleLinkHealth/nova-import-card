@@ -50,7 +50,7 @@ class MedicalRecordFactory
                 app(MedicalHistoryFromAthena::class)->decorate(
                     app(InsuranceFromAthena::class)->decorate(
                         app(DemographicsFromAthena::class)->decorate(
-                            app(CcdaFromAthena::class)->decorate(
+                            app(CcdaFromAthena::class)->setCcda($ccda)->setPatientUser($user)->decorate(
                                 $this->getEligibilityJobWithTargetPatient($user)->eligibilityJob
                             )
                         )
@@ -87,7 +87,7 @@ class MedicalRecordFactory
                 }
             )->with(
                 'eligibilityJob.targetPatient'
-            )->has('eligibilityJob.targetPatient')->orderByRaw('care_ambassador_user_id, preferred_days, preferred_window, id desc')->firstOrFail();
+            )->has('eligibilityJob')->orderByRaw('care_ambassador_user_id, preferred_days, preferred_window, id desc')->firstOrFail();
 
             if (is_null($this->enrollee->user_id)) {
                 $this->enrollee->user_id = $user->id;
