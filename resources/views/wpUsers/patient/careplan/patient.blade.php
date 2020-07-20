@@ -135,11 +135,16 @@ $user_info = [];
                                                     <div class="col-sm-6">
                                                         <div class="form-group {{ $errors->first('home_phone_number') ? 'has-error' : '' }}">
                                                             <label class="sr-only" for="telephone">Phone</label>
-                                                            <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                            <input type="tel" @if (isProductionEnv()) pattern='\d{3}[\-]\d{3}[\-]\d{4}' @endif
                                                                    class="form-control" name="home_phone_number"
                                                                    id="home_phone_number" placeholder="Telephone *"
                                                                    title="Please write a phone number in the format 123-345-7890"
-                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}">
+                                                                   @if (isProductionEnv())
+                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}"
+                                                                   @else
+                                                                   value="{{ old('home_phone_number') ?? $patient->getHomePhoneNumber() }}"
+                                                                   @endif>
+
                                                             <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
                                                         </div>
                                                     </div>
@@ -147,12 +152,16 @@ $user_info = [];
                                                         <div class="form-group {{ $errors->first('mobile_phone_number') ? 'has-error' : '' }}">
                                                             <label class="sr-only"
                                                                    for="mobile_phone_number">Phone</label>
-                                                            <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                            <input type="tel" @if (isProductionEnv()) pattern='\d{3}[\-]\d{3}[\-]\d{4}' @endif
                                                                    class="form-control" name="mobile_phone_number"
                                                                    id="mobile_phone_number"
                                                                    placeholder="Mobile Telephone *"
                                                                    title="Please write a phone number in the format 123-345-7890"
-                                                                   value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}">
+                                                                   @if (isProductionEnv())
+                                                                       value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}"
+                                                                   @else
+                                                                       value="{{ old('mobile_phone_number') ?? $patient->getMobilePhoneNumber() }}"
+                                                                   @endif>
                                                             <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
                                                         </div>
                                                     </div>
