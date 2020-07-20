@@ -1782,7 +1782,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return false;
         })->filter()->unique()->values();
 
-        return $validCellNumbers->first();
+        return $validCellNumbers->first() ?? '';
     }
 
     public function getPreferredCcContactDays()
