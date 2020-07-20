@@ -628,12 +628,12 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="confirm-note-create-label">Care Plan not approved</h3>
+                    <h3 class="modal-title" id="confirm-note-create-label">Care Plan needs approval</h3>
                 </div>
                 <div class="modal-body">
                     <p>
-                        You must ensure Care Plan is ready for Dr. review, and click on "Ready For Dr." on Care Plan
-                        before saving the 1st clinical call note.
+                        Before saving note, please ensure Care Plan is assessment-driven and ready for Dr. review,
+                        then click "Ready for Dr.".
                     </p>
                 </div>
                 <div class="modal-footer text-center">

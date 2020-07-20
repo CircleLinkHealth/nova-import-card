@@ -406,8 +406,9 @@
             </template>
             <template slot="body">
                 Clicking here sends the Care Plan to Dr., so please ensure this is an assessment-driven
-                Care Plan per CircleLink <a
+                Care Plan per CircleLink <a style="color: #337ab7;"
                     href="https://circlelinkhealth.zendesk.com/hc/en-us/articles/360040849551-CCM-1st-Call-Script-Welcome-and-History">guidelines</a>.
+                You must perform and draft a welcome call note before approving.
             </template>
             <template slot="footer">
             </template>
@@ -426,5 +427,11 @@
 
     .pointer {
         cursor: pointer;
+    }
+
+    #btn-rn-approve[disabled] {
+        background-color: #757575;
+        border-color: #3d3c3c;
+        opacity: 0.4;
     }
 </style>
