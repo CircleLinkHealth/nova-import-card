@@ -282,7 +282,7 @@
                         </span>
                         <br/>
                     </blockquote>
-                    <blockquote v-if="last_call_outcome !== '' && ! is_confirmed_family">
+                    <blockquote v-if="last_call_outcome !== ''">
                         Last Call Outcome: {{ last_call_outcome }}
                         <span v-if="last_call_outcome_reason !== ''">
                         <br/>
