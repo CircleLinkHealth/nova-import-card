@@ -424,10 +424,19 @@ class PatientCareplanController extends Controller
 
         $billingProviderUserId = $patient->getBillingProviderId();
 
+        $phoneNumbers = PatientController::phoneNumbersFor($patient)->transform(function ($phone) {
+            return [
+                'phoneNumberId' => $phone->id,
+                'number'        => substr(formatPhoneNumberE164($phone->number), 2),
+                'type'          => ucfirst($phone->type),
+            ];
+        });
+
         return view(
             'wpUsers.patient.careplan.patient',
             compact(
                 [
+                    'phoneNumbers',
                     'providers',
                     'locations',
                     'billingProviderUserId',

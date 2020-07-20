@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -327,6 +328,17 @@ if ( ! function_exists('extractNumbers')) {
         preg_match_all('/([\d]+)/', $string, $match);
 
         return implode($match[0]);
+    }
+}
+
+if ( ! function_exists('getPhoneTypes')) {
+    function getPhoneTypes()
+    {
+        return [
+            ucfirst(PhoneNumber::MOBILE),
+            ucfirst(PhoneNumber::HOME),
+            ucfirst(PhoneNumber::WORK),
+        ];
     }
 }
 

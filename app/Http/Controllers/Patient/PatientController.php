@@ -20,6 +20,7 @@ use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -52,6 +53,17 @@ class PatientController extends Controller
     public function patientAjaxSearch(Request $request)
     {
         return view('wpUsers.patient.select');
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function phoneNumbersFor(Model $user)
+    {
+        return $user->phoneNumbers
+            ->filter(function ($p) {
+                return ! empty($p->number);
+            });
     }
 
     /**
@@ -180,16 +192,12 @@ class PatientController extends Controller
             ->where('id', $patientId)
             ->firstOrFail();
 
-        $phoneNumbers = $user->phoneNumbers
-            ->filter(function ($p) {
-                return ! empty($p->number);
-            })
-            ->transform(function ($p) {
-                return [
-                    'number' => $p->number,
-                    'type'   => ucfirst($p->type),
-                ];
-            });
+        $phoneNumbers = self::phoneNumbersFor($user)->transform(function ($p) {
+            return [
+                'number' => $p->number,
+                'type'   => ucfirst($p->type),
+            ];
+        });
 
         $clinicalEscalationNumber = null;
         if (optional($user->patientInfo->location)->clinical_escalation_phone) {
@@ -206,11 +214,7 @@ class PatientController extends Controller
         //naive authentication for the CPM Caller Service
         $cpmToken = \Hash::make(config('app.key').Carbon::today()->toDateString());
 
-        $phoneTypes = [
-            'Cell',
-            'Home',
-            'Work',
-        ];
+        $phoneTypes = getPhoneTypes();
 
         return view('wpUsers.patient.calls.index')
             ->with([

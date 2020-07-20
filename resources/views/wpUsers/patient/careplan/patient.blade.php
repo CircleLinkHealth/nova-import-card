@@ -131,41 +131,9 @@ $user_info = [];
                                                 <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                             </div>
                                             <div class="form-item col-sm-12">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group {{ $errors->first('home_phone_number') ? 'has-error' : '' }}">
-                                                            <label class="sr-only" for="telephone">Phone</label>
-                                                            <input type="tel" @if (isProductionEnv()) pattern='\d{3}[\-]\d{3}[\-]\d{4}' @endif
-                                                                   class="form-control" name="home_phone_number"
-                                                                   id="home_phone_number" placeholder="Telephone *"
-                                                                   title="Please write a phone number in the format 123-345-7890"
-                                                                   @if (isProductionEnv())
-                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}"
-                                                                   @else
-                                                                   value="{{ old('home_phone_number') ?? $patient->getHomePhoneNumber() }}"
-                                                                   @endif>
+                                                <edit-patient-number :phone-numbers="{{json_encode($phoneNumbers)}}">
 
-                                                            <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group {{ $errors->first('mobile_phone_number') ? 'has-error' : '' }}">
-                                                            <label class="sr-only"
-                                                                   for="mobile_phone_number">Phone</label>
-                                                            <input type="tel" @if (isProductionEnv()) pattern='\d{3}[\-]\d{3}[\-]\d{4}' @endif
-                                                                   class="form-control" name="mobile_phone_number"
-                                                                   id="mobile_phone_number"
-                                                                   placeholder="Mobile Telephone *"
-                                                                   title="Please write a phone number in the format 123-345-7890"
-                                                                   @if (isProductionEnv())
-                                                                       value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}"
-                                                                   @else
-                                                                       value="{{ old('mobile_phone_number') ?? $patient->getMobilePhoneNumber() }}"
-                                                                   @endif>
-                                                            <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                </edit-patient-number>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('email') ? 'has-error' : '' }}">
                                                 <label class="sr-only" for="lastName">Email Address</label>
