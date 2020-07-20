@@ -39,11 +39,15 @@ class FixDuplicateMedications extends Command
                     ->havingRaw('COUNT(*) > 1');
             })->orderByDesc('id')
             ->with('ccdMedications')
-            ->chunk(50, function ($users) {
-                foreach ($users as $user) {
-                    $deleted = $user->ccdMedications()->whereNotIn('id', $user->ccdMedications->unique('name')->pluck('id')->all())->delete();
-                    $this->info("Deleted $deleted medications for patient_user[{$user->id}]");
-                }
+            ->chunk(200, function ($users) {
+                \DB::transaction(function () use ($users) {
+                    foreach ($users as $user) {
+                        $deleted = $user->ccdMedications()->whereNotIn('id', $user->ccdMedications->unique(function ($m) {
+                            return str_replace(' ', '', strtolower($m->name));
+                        })->pluck('id')->all())->delete();
+                        $this->info("Deleting $deleted medications for patient_user[{$user->id}]");
+                    }
+                });
             });
     }
 }
