@@ -576,7 +576,6 @@
                 </div>
             </div>
         </div>
-        </div>
 
     </form>
 
@@ -639,7 +638,8 @@
                 <div class="modal-footer text-center">
                     <div class="row text-center">
                         <div class="col-md-6">
-                            <a class="disabled btn btn-success" id="saving-draft-visit-careplan-link" href="{{route('patient.careplan.print', ['patientId' => $patient->id])}}">
+                            <a class="disabled btn btn-success" id="saving-draft-visit-careplan-link"
+                               href="{{route('patient.careplan.print', ['patientId' => $patient->id])}}">
                                 Visit Care Plan
                                 <span id="saving-draft-loader" class="fa fa-spinner fa-spin"></span>
                             </a>
@@ -798,23 +798,23 @@
                         // $("#Outbound").prop("checked", true);
                     }
 
-                let phoneEl = $('#phone');
-                phoneEl.change(phoneSessionChange);
-                //successful_clinical_call might be set but no $call. This can happen when we have draft notes
-                const hasClinicalCall = @json(!empty($note) && $note->successful_clinical_call == 1);
-                const hasPhoneSession = @json( (!empty($call) && empty($call->sub_type))) || hasClinicalCall;
-                phoneEl.prop('checked', hasPhoneSession);
-                phoneEl.trigger('change');
+                    let phoneEl = $('#phone');
+                    phoneEl.change(phoneSessionChange);
+                    //successful_clinical_call might be set but no $call. This can happen when we have draft notes
+                    const hasClinicalCall = @json(!empty($note) && $note->successful_clinical_call == 1);
+                    const hasPhoneSession = @json( (!empty($call) && empty($call->sub_type))) || hasClinicalCall;
+                    phoneEl.prop('checked', hasPhoneSession);
+                    phoneEl.trigger('change');
 
-                if (hasClinicalCall) {
-                    $('#reached').prop('checked', true);
-                }
-
-                function associateWithTaskChange(e) {
-                    if (!e) {
-                        return;
+                    if (hasClinicalCall) {
+                        $('#reached').prop('checked', true);
                     }
-                    if (e.currentTarget.checked) {
+
+                    function associateWithTaskChange(e) {
+                        if (!e) {
+                            return;
+                        }
+                        if (e.currentTarget.checked) {
 
                             $('#phone-label').hide();
                             const selectList = $('#activityKey');
@@ -993,21 +993,21 @@
                             }
                         }
 
-                    // ROAD-39 RN must approve care plan before making a successful welcome call
-                    if (userIsCareCoach && callIsSuccess && !hasRnApprovedCarePlan) {
-                        showSavingDraftModal();
-                        saveDraft()
-                            .then(() => {
-                                $('#saving-draft-loader').addClass('hidden');
-                                $('#saving-draft-visit-careplan-link').removeClass('disabled');
-                            })
-                        return;
-                    }
+                        // ROAD-39 RN must approve care plan before making a successful welcome call
+                        if (userIsCareCoach && callIsSuccess && !hasRnApprovedCarePlan) {
+                            showSavingDraftModal();
+                            saveDraft()
+                                .then(() => {
+                                    $('#saving-draft-loader').addClass('hidden');
+                                    $('#saving-draft-visit-careplan-link').removeClass('disabled');
+                                })
+                            return;
+                        }
 
-                    if (isAssociatedWithTask && !callHasTask) {
-                        alert('Please select a task to associate to.');
-                        return;
-                    }
+                        if (isAssociatedWithTask && !callHasTask) {
+                            alert('Please select a task to associate to.');
+                            return;
+                        }
 
                         if (isAssociatedWithTask && !isEditingCompleteTask) {
                             showTaskCompletedModal();
@@ -1058,11 +1058,11 @@
                         confirmSubmitForm();
                     });
 
-                $(document).on("click", "#saving-draft-ok-button", function (event) {
-                    $('#saving-draft').modal('hide');
-                });
+                    $(document).on("click", "#saving-draft-ok-button", function (event) {
+                        $('#saving-draft').modal('hide');
+                    });
 
-                function confirmSubmitForm() {
+                    function confirmSubmitForm() {
 
                         if (!conditionsAttested && callIsSuccess && userIsCareCoach) {
                             app.$emit('show-attest-call-conditions-modal');
@@ -1086,12 +1086,12 @@
                         //otherwise its value will not reach the server
                         $('#activityKey').prop("disabled", false);
 
-                    if (noteId) {
-                        $('<input />').attr('type', 'hidden')
-                            .attr('name', "note_id")
-                            .attr('value', noteId)
-                            .appendTo(form);
-                    }
+                        if (noteId) {
+                            $('<input />').attr('type', 'hidden')
+                                .attr('name', "note_id")
+                                .attr('value', noteId)
+                                .appendTo(form);
+                        }
 
                         form.submit();
                     }
@@ -1183,33 +1183,33 @@
 
                         isSavingDraft = true;
 
-                return window.axios
-                    .post(saveDraftUrl, {
-                        patient_id: $('#patient_id').val(),
-                        note_id: noteId,
-                        type: $('#activityKey').val(),
-                        general_comment: $('#general_comment').val(),
-                        performed_at: $('#performed_at').val(),
-                        author_id: $('#author_id').val(),
-                        task_id: $('.tasks-radio:checked').val(),
-                        phone: $('.phone-radios:checked').val(),
-                        call_status: $('.call-status-radio:checked').val(),
-                        welcome_call: $('#welcome_call').is(":checked"),
-                        other_call: $('#other_call').is(":checked"),
-                        medication_recon: $('#medication_recon').is(":checked"),
-                        tcm: $('#tcm').is(":checked"),
-                        summary: $('#summary').val(),
-                        body: fullBody,
-                        logger_id: $('#logger_id').val(),
-                        programId: $('#programId').val(),
-                        task_status: $('#task_status').val(),
-                        success_story: $('#success_story').is(":checked")
-                    })
-                    .then((response, status) => {
-                        isSavingDraft = false;
-                        if (response.data && response.data.note_id) {
-                            noteId = response.data.note_id;
-                        }
+                        return window.axios
+                            .post(saveDraftUrl, {
+                                patient_id: $('#patient_id').val(),
+                                note_id: noteId,
+                                type: $('#activityKey').val(),
+                                general_comment: $('#general_comment').val(),
+                                performed_at: $('#performed_at').val(),
+                                author_id: $('#author_id').val(),
+                                task_id: $('.tasks-radio:checked').val(),
+                                phone: $('.phone-radios:checked').val(),
+                                call_status: $('.call-status-radio:checked').val(),
+                                welcome_call: $('#welcome_call').is(":checked"),
+                                other_call: $('#other_call').is(":checked"),
+                                medication_recon: $('#medication_recon').is(":checked"),
+                                tcm: $('#tcm').is(":checked"),
+                                summary: $('#summary').val(),
+                                body: fullBody,
+                                logger_id: $('#logger_id').val(),
+                                programId: $('#programId').val(),
+                                task_status: $('#task_status').val(),
+                                success_story: $('#success_story').is(":checked")
+                            })
+                            .then((response, status) => {
+                                isSavingDraft = false;
+                                if (response.data && response.data.note_id) {
+                                    noteId = response.data.note_id;
+                                }
 
                                 clearDraftFromClientSide();
 
