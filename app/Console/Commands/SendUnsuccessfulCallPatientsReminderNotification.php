@@ -10,9 +10,12 @@ use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 
 class SendUnsuccessfulCallPatientsReminderNotification extends Command
 {
+    const DAYS_TO_GO_BACK = 2;
+
     /**
      * The console command description.
      *
@@ -24,7 +27,7 @@ class SendUnsuccessfulCallPatientsReminderNotification extends Command
      *
      * @var string
      */
-    protected $signature = 'send:unreached-patients-reminder';
+    protected $signature = 'send:unreached-patients-reminder {--testing}';
 
     /**
      * Create a new command instance.
@@ -43,28 +46,41 @@ class SendUnsuccessfulCallPatientsReminderNotification extends Command
      */
     public function handle()
     {
+        if ($this->option('testing')) {
+            //move forward to the future, so that the command can be tested
+            Carbon::setTestNow(now()->addDays(self::DAYS_TO_GO_BACK));
+        }
+
+        $userIds = collect();
+
         //1. get notifications sent out 2 days ago, make sure we haven't notified today already
-        $query = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
-            ->whereBetween('created_at', [now()->subDays(2)->startOfDay(), now()->subDays(2)->endOfDay()])
+        DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
+            ->whereBetween('created_at', [now()->subDays(self::DAYS_TO_GO_BACK)->startOfDay(), now()->subDays(self::DAYS_TO_GO_BACK)->endOfDay()])
             ->whereNotIn('notifiable_id', function ($q) {
                 $q->select(['notifiable_id'])
                     ->from((new DatabaseNotification())->getTable())
                     ->whereType(PatientUnsuccessfulCallNotification::class)
                     ->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()]);
-            });
-        $query->each(function (DatabaseNotification $notification) {
-            //2. check if we already have scheduled callback task
-            $task = SchedulerService::getNextScheduledActivity($notification->notifiable_id, SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS);
-            if ($task) {
-                return;
-            }
+            })
+            ->each(function (DatabaseNotification $notification) use ($userIds) {
+                //2. check if we already have scheduled callback task
+                $task = SchedulerService::getNextScheduledActivity($notification->notifiable_id, SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS);
+                if ($task) {
+                    return;
+                }
 
-            //3. get last unsuccessful call, which has nurse that called
-            $call = SchedulerService::getLastUnsuccessfulCall($notification->notifiable_id, $notification->created_at);
-            if ($call) {
-                $call->inboundUser->notify(new PatientUnsuccessfulCallNotification($call, true));
-            }
-        });
+                //3. get last unsuccessful call, which has nurse that called
+                $call = SchedulerService::getLastUnsuccessfulCall($notification->notifiable_id, $notification->created_at);
+                if ($call) {
+                    $call->inboundUser->notify(new PatientUnsuccessfulCallNotification($call, true));
+                    $userIds->push($call->inbound_cpm_id);
+                }
+            });
+
+        if ($userIds->isNotEmpty()) {
+            $str = implode(',', $userIds->toArray());
+            $this->info("Sending reminders to users: $str");
+        }
 
         return 0;
     }
