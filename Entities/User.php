@@ -1769,11 +1769,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         $validCellNumbers = $this->phoneNumbers->whereNotNull('number')->where('number', '!=', '')->map(function ($phone) {
-            $number = formatPhoneNumberE164($phone->number);
-
             // when running tests, faker doesn't always produce valid us mobile phone number
-            if ( ! isProductionEnv() || \Propaganistas\LaravelPhone\PhoneNumber::make($number, 'US')->isOfType('mobile')) {
-                return $number;
+            $phoneNumber = \Propaganistas\LaravelPhone\PhoneNumber::make($phone->number, ['US', 'CY']);
+            if ( ! isProductionEnv() || $phoneNumber->isOfType('mobile')) {
+                if ($phoneNumber->isOfCountry('CY')) {
+                    return $phone->value;
+                }
+
+                return formatPhoneNumberE164($phone->number);
             }
 
             return false;
