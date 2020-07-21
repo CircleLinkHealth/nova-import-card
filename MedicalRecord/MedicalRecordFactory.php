@@ -72,7 +72,7 @@ class MedicalRecordFactory
 
     public function createToledoClinicMedicalRecord(User $user, ?Ccda $ccda)
     {
-        return new PracticePullMedicalRecord($ccda->patient_mrn, $ccda->practice_id);
+        return new PracticePullMedicalRecord(optional($ccda)->patient_mrn ?? $user->getMRN(), optional($ccda)->practice_id ?? $user->program_id);
     }
 
     private function getEligibilityJobWithTargetPatient(User $user)
