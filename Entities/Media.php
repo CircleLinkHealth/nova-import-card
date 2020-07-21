@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\Models\Media as SpatieMedia;
 use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
@@ -32,26 +33,28 @@ use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
  * @property mixed                                                                                $human_readable_size
  * @property mixed                                                                                $type
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection $model
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media newModelQuery()
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media newQuery()
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|SpatieMedia ordered()
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media query()
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereCollectionName($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereCreatedAt($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereCustomProperties($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereDisk($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereFileName($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereId($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereManipulations($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereMimeType($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereModelId($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereModelType($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereName($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereOrderColumn($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereResponsiveImages($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereSize($value)
- * @method   static                                                                               \Illuminate\Database\Eloquent\Builder|\App\Media whereUpdatedAt($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SpatieMedia ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereCollectionName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereCustomProperties($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereDisk($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereFileName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereManipulations($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereMimeType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereModelId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereModelType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereOrderColumn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereResponsiveImages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereSize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property int|null    $is_pdf
  * @property int|null    $is_ccda
  * @property int|null    $is_upg0506
@@ -60,6 +63,8 @@ use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
  */
 class Media extends SpatieMedia
 {
+    use SoftDeletes;
+
     protected $table = 'media';
 
     /**
