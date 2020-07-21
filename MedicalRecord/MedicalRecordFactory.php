@@ -26,13 +26,17 @@ class MedicalRecordFactory
      */
     private $enrollee;
 
-    public static function create(User $user, Ccda $ccda)
+    public static function create(User $user, ?Ccda $ccda)
     {
         $static     = new static();
         $methodName = 'create'.ucfirst(Str::camel($user->primaryPractice->name)).'MedicalRecord';
 
         if (method_exists($static, $methodName)) {
             return $static->{$methodName}($user, $ccda);
+        }
+
+        if (is_null($ccda)) {
+            return null;
         }
 
         return $static->createDefaultMedicalRecord($user, $ccda);
@@ -43,21 +47,21 @@ class MedicalRecordFactory
      *
      * @return CommonwealthMedicalRecord
      */
-    public function createCommonwealthPainAssociatesPllcMedicalRecord(User $user, Ccda $ccda)
+    public function createCommonwealthPainAssociatesPllcMedicalRecord(User $user, ?Ccda $ccda)
     {
         return new CommonwealthMedicalRecord(
             app(PcmChargeableServices::class)->decorate(
                 app(MedicalHistoryFromAthena::class)->decorate(
                     app(InsuranceFromAthena::class)->decorate(
                         app(DemographicsFromAthena::class)->decorate(
-                            app(CcdaFromAthena::class)->setCcda($ccda)->setPatientUser($user)->decorate(
+                            $ej = app(CcdaFromAthena::class)->setCcda($ccda)->setPatientUser($user)->decorate(
                                 $this->getEligibilityJobWithTargetPatient($user)->eligibilityJob
                             )
                         )
                     )
                 )
             )->data,
-            new CcdaMedicalRecord($ccda->bluebuttonJson())
+            new CcdaMedicalRecord(optional($ccda)->bluebuttonJson() ?? $ej->targetPatient->ccda->bluebuttonJson())
         );
     }
 
@@ -66,7 +70,7 @@ class MedicalRecordFactory
         return new CcdaMedicalRecord(json_decode($ccda->json));
     }
 
-    public function createToledoClinicMedicalRecord(User $user, Ccda $ccda)
+    public function createToledoClinicMedicalRecord(User $user, ?Ccda $ccda)
     {
         return new PracticePullMedicalRecord($ccda->patient_mrn, $ccda->practice_id);
     }
@@ -86,7 +90,7 @@ class MedicalRecordFactory
                     $q->whereNull('user_id')->orWhere('user_id', $user->id);
                 }
             )->with(
-                'eligibilityJob.targetPatient'
+                'eligibilityJob.targetPatient.ccda'
             )->has('eligibilityJob')->orderByRaw('care_ambassador_user_id, preferred_days, preferred_window, id desc')->firstOrFail();
 
             if (is_null($this->enrollee->user_id)) {
