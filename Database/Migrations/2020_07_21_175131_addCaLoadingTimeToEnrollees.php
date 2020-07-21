@@ -5,8 +5,10 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class AddsLocationNameFulltextIndex extends Migration
+class AddCaLoadingTimeToEnrollees extends Migration
 {
     /**
      * Reverse the migrations.
@@ -24,7 +26,5 @@ class AddsLocationNameFulltextIndex extends Migration
      */
     public function up()
     {
-        //for CCD Location Search
-        DB::statement('ALTER TABLE locations ADD FULLTEXT full(name)');
     }
 }
