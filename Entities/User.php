@@ -1768,19 +1768,31 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
-        $validCellNumbers = $this->phoneNumbers->whereNotNull('number')->where('number', '!=', '')->map(function ($phone) {
-            // when running tests, faker doesn't always produce valid us mobile phone number
-            $phoneNumber = \Propaganistas\LaravelPhone\PhoneNumber::make($phone->number, ['US', 'CY']);
-            if ( ! isProductionEnv() || $phoneNumber->isOfType('mobile')) {
-                if ($phoneNumber->isOfCountry('CY')) {
-                    return $phone->value;
+        $validCellNumbers = $this->phoneNumbers
+            ->whereNotNull('number')->where('number', '!=', '')
+            ->map(function ($phone) {
+                // when running tests, faker doesn't always produce valid us mobile phone number
+                $phoneNumber = \Propaganistas\LaravelPhone\PhoneNumber::make($phone->number, ['US', 'CY']);
+                try {
+                    //isOfType might throw, in that case we do not use the number
+                    if ( ! isProductionEnv() || $phoneNumber->isOfType('mobile')) {
+                        if ($this->isCypriotNumber($phoneNumber)) {
+                            return $phone->number;
+                        }
+
+                        return formatPhoneNumberE164($phone->number);
+                    }
+                } catch (NumberParseException $e) {
+                    Log::warning($e->getMessage());
+
+                    return false;
                 }
 
-                return formatPhoneNumberE164($phone->number);
-            }
-
-            return false;
-        })->filter()->unique()->values();
+                return false;
+            })
+            ->filter()
+            ->unique()
+            ->values();
 
         return $validCellNumbers->first() ?? '';
     }
@@ -4098,6 +4110,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
                 return $number;
             }
+        }
+    }
+
+    private function isCypriotNumber(\Propaganistas\LaravelPhone\PhoneNumber $phoneNumber)
+    {
+        try {
+            return $phoneNumber->isOfCountry('CY');
+        } catch (NumberParseException $e) {
+            return false;
         }
     }
 
