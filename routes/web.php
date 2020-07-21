@@ -758,6 +758,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.demographics.store',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
 
+        Route::post('demographics/edit', [
+            'uses' => 'Patient\PatientCareplanController@deletePhoneNumber',
+            'as'   => 'patient.phone.delete',
+        ])->middleware('permission:patient.create,patient.update,careplan.update');
+
         Route::get('dashboard', [
             'uses' => 'Patient\PatientController@showDashboard',
             'as'   => 'patients.dashboard',

@@ -57,6 +57,12 @@ class PatientCareplanController extends Controller
         return $this->editOrCreateDemographics($request);
     }
 
+    public function deletePhoneNumber(Request $request)
+    {
+        $x = $request->input('phoneId');
+        $x = 1;
+    }
+
     public function index()
     {
         $practiceIds       = auth()->user()->viewableProgramIds();
@@ -429,8 +435,11 @@ class PatientCareplanController extends Controller
                 'phoneNumberId' => $phone->id,
                 'number'        => substr(formatPhoneNumberE164($phone->number), 2),
                 'type'          => ucfirst($phone->type),
+                'inputDisabled' => true,
             ];
         });
+
+        $phoneTypes = getPhoneTypes();
 
         return view(
             'wpUsers.patient.careplan.patient',
@@ -440,6 +449,7 @@ class PatientCareplanController extends Controller
                     'providers',
                     'locations',
                     'billingProviderUserId',
+                    'phoneTypes',
                     'patient',
                     'states',
                     'timezones',

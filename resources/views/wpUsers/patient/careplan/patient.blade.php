@@ -131,7 +131,8 @@ $user_info = [];
                                                 <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                             </div>
                                             <div class="form-item col-sm-12">
-                                                <edit-patient-number :phone-numbers="{{json_encode($phoneNumbers)}}">
+                                                <edit-patient-number :phone-numbers="{{json_encode($phoneNumbers)}}"
+                                                                     :phone-types="{{json_encode($phoneTypes)}}">
 
                                                 </edit-patient-number>
                                             </div>
