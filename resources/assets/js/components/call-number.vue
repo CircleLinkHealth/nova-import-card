@@ -71,6 +71,7 @@
                     </div>
                     <div v-else>
                         <button class="glyphicon glyphicon-remove"
+                                title="Close new number menu"
                                 style="padding: 6px; color:red; font-size: 19px;"
                                 @click="resetToDefaultNumber">
                         </button>
