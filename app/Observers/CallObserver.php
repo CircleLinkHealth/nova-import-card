@@ -68,10 +68,10 @@ class CallObserver
             }
         }
 
-        if (Call::REACHED === $call->status || 'done' === $call->status) {
-            // Call::where('id', $call->id)->update(['asap' => false]);
-            $call->asap = false;
-            $call->save();
+        //moved to saving()
+        /*
+        if ($call->asap && in_array($call->status, [Call::REACHED, 'done'])) {
+            Call::where('id', $call->id)->update(['asap' => false]);
             $call->markAttachmentNotificationAsRead($call->outboundUser);
         }
 
@@ -79,6 +79,22 @@ class CallObserver
         //@todo:come up with a better solution for this
         if ($call->shouldSendLiveNotification()) {
             $this->createNotificationAndSendToPusher($call);
+        }
+        */
+    }
+
+    public function saving(Call $call)
+    {
+        // If sub_type = "addendum_response" means it has already been created by AddendumObserver
+        // @todo:come up with a better solution for this
+        // Call::shouldSendLiveNotification checks for asap, so we have to call it before we update to false
+        if ($call->shouldSendLiveNotification()) {
+            $this->createNotificationAndSendToPusher($call);
+        }
+
+        if ($call->asap && in_array($call->status, [Call::REACHED, 'done'])) {
+            $call->asap = false;
+            $call->markAttachmentNotificationAsRead($call->outboundUser);
         }
     }
 
