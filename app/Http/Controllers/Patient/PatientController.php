@@ -180,7 +180,8 @@ class PatientController extends Controller
         );
 
         return response()->json([
-            'data' => $phoneNumber,
+            'data'    => $phoneNumber,
+            'message' => 'Phone number has been saved!',
         ], 200);
     }
 

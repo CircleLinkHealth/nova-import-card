@@ -24,12 +24,13 @@
                    @click="deletePhone(number.phoneNumberId)"></i>
                 <br>
             </template>
-            <loader v-if="loading"></loader>
+            <loader v-if="loading || keepLoaderAlive"></loader>
 
+            <!--Extra inputs that are requested by user-->
             <div v-for="(input, index) in newInputs" style="display: inline-flex; padding-bottom: 10px; padding-left: 10px;">
                 <div style="padding-right: 14px; margin-left: -10px;">
                     <select2 id="numberType" class="form-control" style="width: 81.566px;"
-                             v-model="dropdownPhoneType">
+                             v-model="newPhoneType">
                         <option v-for="(phoneType, key) in phoneTypes"
                                 :key="key"
                                 :value="phoneType">
@@ -51,13 +52,13 @@
                    @click="removeInputField(index)"></i>
 
                 <button class="btn btn-sm save-number"
-                        @click="editOrSaveNumber"
+                        @click="saveNewNumber"
                         :disabled="disableSaveButton">
-                    Save
+                    Save phone number
                 </button>
             </div>
 <br>
-            <a v-if="!loading"
+            <a v-if="!loading && this.newInputs.length === 0"
                class="glyphicon glyphicon-plus-sign add-new-number"
                title="Add Phone Number"
                @click="addPhoneField()">
@@ -70,43 +71,71 @@
 <script>
     import LoaderComponent from "./loader";
     import axios from "../bootstrap-axios";
+    import {addNotification} from "../store/actions";
 
     export default {
         name: "edit-patient-number",
         components: {
             loader: LoaderComponent,
-
         },
         props: [
-            'phoneNumbers',
-            'phoneTypes'
+            'userId',
         ],
 
         data(){
             return {
                 loading:false,
-                patientPhoneNumbers:this.phoneNumbers,
+                patientPhoneNumbers:[],
                 editingIsOn:false,
-                dropdownPhoneType:'',
+                newPhoneType:'',
                 newPhoneNumber:'',
-                newInputs:[]
+                newInputs:[],
+                phoneTypes:[]
             }
         },
         computed:{
             disableSaveButton(){
                 return this.loading
-                         || isNaN(this.newPhoneNumber.toString())
-                        || this.newPhoneNumber.toString().length !== 10;
+                    || this.newPhoneType.length === 0
+                    || isNaN(this.newPhoneNumber.toString())
+                    || this.newPhoneNumber.toString().length !== 10;
 
             },
+
+            keepLoaderAlive(){
+                return this.patientPhoneNumbers.length === 0;
+            }
         },
 
-        methods:{
+        methods: {
+            resetData(){
+                this.patientPhoneNumbers = [];
+                this.phoneTypes = [];
+                this.newInputs = [];
+            },
+            getPhoneNumbers(){
+                this.loading = true;
+                this.resetData();
+                axios.post('/manage-patients/demographics/get-phones', {
+                    userId:this.userId
+                })
+                    .then((response => {
+                        this.patientPhoneNumbers.push(...response.data.phoneNumbers);
+                        this.phoneTypes.push(...response.data.phoneTypes);
+                        this.loading = false;
+                    })).catch((error) => {
+                    this.loading = false;
+                    console.log(error.message);
+                });
+            },
             addPhoneField(){
                 if (this.newInputs.length > 0) {
+                    //Should never reach here.
                     alert('Please save the existing field first');
                     return;
                 }
+                this.newPhoneNumber = '';
+                this.newPhoneType = '';
 
                 const arr = {
                   placeholder: '2345678901'
@@ -114,8 +143,28 @@
 
                 this.newInputs.push(arr);
             },
-            editOrSaveNumber(){
-
+            
+            saveNewNumber(){
+                this.loading = true;
+                if (this.newPhoneType.length === 0){
+                    alert("Please choose phone number type");
+                }
+                axios.post('/manage-patients/new/phone', {
+                    phoneType:this.newPhoneType,
+                    phoneNumber:this.newPhoneNumber,
+                    patientUserId:this.userId,
+                })
+                    .then((response => {
+                        console.log(response.data);
+                        this.getPhoneNumbers();
+                        if (response.data.hasOwnProperty('messages')){
+                            alert(response.data.messages);
+                        }
+                        this.loading = false;
+                    })).catch((error) => {
+                    this.loading = false;
+                    console.log(error.message);
+                });
             },
 
             removeInputField(index){
@@ -128,18 +177,24 @@
             },
 
             deletePhone(phoneNumberId){
+                confirm("Are you sure you want to delete this phone number");
                 this.loading = true;
-                axios.post('/manage-patients/demographics/edit', {
+                axios.post('/manage-patients/demographics/delete-phone', {
                     phoneId:phoneNumberId
                 })
                     .then((response => {
                         console.log(response.data);
+                        this.getPhoneNumbers();
                         this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
                     console.log(error.message);
                 });
             }
+        },
+
+        created() {
+            this.getPhoneNumbers();
         }
     }
 </script>

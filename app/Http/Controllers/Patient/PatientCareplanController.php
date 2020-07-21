@@ -21,6 +21,8 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\PatientNurse;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -59,8 +61,42 @@ class PatientCareplanController extends Controller
 
     public function deletePhoneNumber(Request $request)
     {
-        $x = $request->input('phoneId');
-        $x = 1;
+        if (empty($request->input('phoneId'))) {
+            return response()->json([
+                'message' => 'User id is null',
+            ], 400);
+        }
+
+        PhoneNumber::whereId($request->input('phoneId'))->delete();
+
+        return response()->json([
+            'message' => 'Phone Number Has Been Deleted',
+        ], 200);
+    }
+
+    public function getPatientPhoneNumbers(Request $request)
+    {
+        if (empty($request->input('userId'))) {
+            return response()->json([
+                'message' => 'User id is null',
+            ], 400);
+        }
+
+        $patient      = User::findOrFail($request->input('userId'));
+        $phoneNumbers = PatientController::phoneNumbersFor($patient)->transform(function ($phone) {
+            return [
+                'phoneNumberId' => $phone->id,
+                'number'        => substr(formatPhoneNumberE164($phone->number), 2),
+                'type'          => ucfirst($phone->type),
+            ];
+        });
+
+        $phoneTypes = getPhoneTypes();
+
+        return response()->json([
+            'phoneNumbers' => $phoneNumbers,
+            'phoneTypes'   => $phoneTypes,
+        ], 200);
     }
 
     public function index()
