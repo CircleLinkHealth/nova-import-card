@@ -50,10 +50,11 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
         $recordId = $this->storeRawLogs();
 
         // 1. read source number, find patient
-        $fromNumber = $this->input['From'];
+        $fromNumber          = $this->input['From'];
+        $fromNumberFormatted = formatPhoneNumber($fromNumber);
         /** @var User $user */
-        $user = User::whereHas('phoneNumbers', function ($q) use ($fromNumber) {
-            $q->where('number', '=', $fromNumber);
+        $user = User::whereHas('phoneNumbers', function ($q) use ($fromNumber, $fromNumberFormatted) {
+            $q->whereIn('number', [$fromNumber, $fromNumberFormatted]);
         })->first();
 
         if ( ! $user) {
