@@ -24,7 +24,7 @@
                    @click="deletePhone(number.phoneNumberId)"></i>
                 <br>
             </template>
-            <loader v-if="loading || keepLoaderAlive"></loader>
+            <loader v-if="loading"></loader>
 
             <!--Extra inputs that are requested by user-->
             <div v-for="(input, index) in newInputs" style="display: inline-flex; padding-bottom: 10px; padding-left: 10px;">
@@ -62,7 +62,7 @@
                class="glyphicon glyphicon-plus-sign add-new-number"
                title="Add Phone Number"
                @click="addPhoneField()">
-                Add new phone number
+                Add phone number
             </a>
         </div>
     </div>
@@ -71,7 +71,6 @@
 <script>
     import LoaderComponent from "./loader";
     import axios from "../bootstrap-axios";
-    import {addNotification} from "../store/actions";
 
     export default {
         name: "edit-patient-number",
@@ -101,10 +100,6 @@
                     || this.newPhoneNumber.toString().length !== 10;
 
             },
-
-            keepLoaderAlive(){
-                return this.patientPhoneNumbers.length === 0;
-            }
         },
 
         methods: {
