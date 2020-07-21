@@ -256,7 +256,7 @@ class DownloadController extends Controller
     private function clearExistingAuditReportsIfYouShould(Request $request, Carbon $date, int $practiceId)
     {
         if ($request->has('clear-existing')) {
-            $deleted = Media::where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date))
+            $deleted = Media::where('collection_name', PatientDailyAuditReport::mediaCollectionName($date))
                 ->whereIn('model_type', [
                     \CircleLinkHealth\Customer\Entities\User::class,
                     \App\User::class,
