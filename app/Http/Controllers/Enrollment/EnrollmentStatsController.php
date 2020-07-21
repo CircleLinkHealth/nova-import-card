@@ -65,7 +65,7 @@ class EnrollmentStatsController extends Controller
             $direction = 1 == $ascending
                 ? 'ASC'
                 : 'DESC';
-            $caQuery->orderBy($orderBy, $direction);
+            $caQuery->orderBy('display_name', $direction);
         }
 
         if ($request->has('csv')) {
