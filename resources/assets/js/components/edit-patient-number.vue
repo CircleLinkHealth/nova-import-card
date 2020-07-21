@@ -144,6 +144,10 @@
                 if (this.newPhoneType.length === 0){
                     alert("Please choose phone number type");
                 }
+                if (this.newPhoneNumber.length === 0){
+                    // Should not happen.
+                    alert("Please type a phone number");
+                }
                 axios.post('/manage-patients/new/phone', {
                     phoneType:this.newPhoneType,
                     phoneNumber:this.newPhoneNumber,
