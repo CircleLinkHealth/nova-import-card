@@ -38,7 +38,7 @@ class CcdaImporterWrapper
     /**
      * CcdaImporterWrapper constructor.
      */
-    public function __construct(Ccda $ccda, Enrollee $enrollee = null)
+    public function __construct(Ccda $ccda, Enrollee &$enrollee = null)
     {
         $this->ccda     = $ccda;
         $this->enrollee = $enrollee;
@@ -265,7 +265,7 @@ class CcdaImporterWrapper
             $this->ccda->save();
         }
 
-        $this->ccda->queryForOtherCcdasForTheSamePatient()->update([
+        $updated = $this->ccda->queryForOtherCcdasForTheSamePatient()->update([
             'mrn'                     => $this->ccda->mrn,
             'referring_provider_name' => $this->ccda->referring_provider_name,
             'location_id'             => $this->ccda->location_id,

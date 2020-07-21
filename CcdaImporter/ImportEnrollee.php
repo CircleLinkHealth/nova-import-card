@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
 
 class ImportEnrollee
 {
-    public static function import(Enrollee $enrollee)
+    public static function import(Enrollee &$enrollee)
     {
         $static = new static();
 
@@ -95,6 +95,7 @@ class ImportEnrollee
 
         if ($enrollee->user()->exists()) {
             $msg .= route('patient.careplan.print', [$enrollee->user_id]);
+            $enrollee->setRelation('user', $enrollee->user ?? $enrollee->fresh('user')->user);
         } else {
             $msg .= route('import.ccd.remix');
         }

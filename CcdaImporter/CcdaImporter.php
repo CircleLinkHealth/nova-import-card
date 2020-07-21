@@ -59,7 +59,7 @@ class CcdaImporter
 
     public function __construct(
         Ccda $ccda,
-        Enrollee $enrollee = null
+        Enrollee &$enrollee = null
     ) {
         $this->str      = new StringManipulation();
         $this->ccda     = $ccda;
@@ -170,6 +170,11 @@ class CcdaImporter
 
             if ($this->enrollee->medical_record_id != $this->ccda->id) {
                 $this->enrollee->medical_record_id = $this->ccda->id;
+            }
+
+            if ( ! $this->enrollee->user_id) {
+                $this->enrollee->user_id = $this->ccda->patient->id;
+                $this->enrollee->setRelation('user', $this->ccda->patient);
             }
         }
 
