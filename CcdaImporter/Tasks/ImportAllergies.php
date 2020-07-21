@@ -31,7 +31,9 @@ class ImportAllergies extends BaseCcdaImportTask
                 return null;
             }
 
-            if ($this->patient->ccdAllergies->contains('name', '=', $new['allergen_name'])) {
+            if ($this->patient->ccdAllergies->filter(function ($allergy) use ($new) {
+                return str_replace(' ', '', strtolower($allergy->allergen_name)) === str_replace(' ', '', strtolower($new['allergen_name']));
+            })->isNotEmpty()) {
                 return null;
             }
 
