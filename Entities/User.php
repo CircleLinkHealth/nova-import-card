@@ -702,7 +702,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
                 if ($user->isParticipant()) {
                     $user->patientInfo()->restore();
-                    $user->patientSummaries()->restore();
                     $user->carePlan()->restore();
                     $user->careTeamMembers()->get()->each(function ($ctm) {
                         $ctm->restore();
