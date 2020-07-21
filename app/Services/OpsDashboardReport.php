@@ -169,7 +169,7 @@ class OpsDashboardReport
                 $this->report->revisionsPausedIds[] = $patientId;
                 $this->report->incrementRevisionsPausedCount();
             } elseif (in_array($newestStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
-                $this->report->revisionsWithdrawnIds[] = $patient;
+                $this->report->revisionsWithdrawnIds[] = $patientId;
                 $this->report->incrementRevisionsWithdrawnCount();
             }
         } elseif (Patient::ENROLLED !== $oldestStatus &&
