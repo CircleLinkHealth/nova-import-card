@@ -28,5 +28,9 @@ class AttachLocation extends BaseCcdaImportTask
             $this->patient->timezone = $timezone;
             $this->patient->save();
         }
+
+        if ($this->patient->locations->isEmpty()) {
+            $this->patient->attachLocation($locationId);
+        }
     }
 }
