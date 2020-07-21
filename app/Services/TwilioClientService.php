@@ -11,7 +11,7 @@ use Twilio\Rest\Client;
 
 class TwilioClientService implements TwilioClientable
 {
-    private const TOKEN_LIFETIME_SECONDS = 7200; //2 hours
+    private const TOKEN_LIFETIME_SECONDS = 3600 * 8; //8 hours in seconds
     private $capability;
 
     private $client;
