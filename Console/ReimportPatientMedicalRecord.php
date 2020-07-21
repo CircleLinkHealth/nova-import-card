@@ -138,7 +138,17 @@ class ReimportPatientMedicalRecord extends Command
         }
 
         if ($mr = MedicalRecordFactory::create($user, null)) {
-            return $mr;
+            $ccda = Ccda::create(
+                [
+                    'source'      => $mr->getType(),
+                    'json'        => $mr->toJson(),
+                    'practice_id' => (int) $user->program_id,
+                    'patient_id'  => $user->id,
+                ]
+            );
+            $this->log("User[{$user->id}] Created CCDA[{$ccda->id}]");
+
+            return $ccda;
         }
 
         return null;
