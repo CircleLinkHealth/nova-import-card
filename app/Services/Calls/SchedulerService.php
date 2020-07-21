@@ -406,6 +406,7 @@ class SchedulerService
         $existing = Call::where('type', '=', SchedulerService::TASK_TYPE)
             ->where('sub_type', '=', SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS)
             ->where('status', '=', Call::SCHEDULED)
+            ->where('inbound_cpm_id', '=', $patient->id)
             ->first();
 
         if ($existing) {
