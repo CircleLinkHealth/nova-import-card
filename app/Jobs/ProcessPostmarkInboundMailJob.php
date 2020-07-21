@@ -25,6 +25,11 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     use SerializesModels;
 
     /**
+     * @var bool|null
+     */
+    private $dbRecordId;
+
+    /**
      * @var array
      */
     private $input;
@@ -34,9 +39,10 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(array $input)
+    public function __construct(array $input, int $dbRecordId = null)
     {
-        $this->input = $input;
+        $this->input      = $input;
+        $this->dbRecordId = $dbRecordId;
     }
 
     /**
@@ -47,7 +53,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     public function handle()
     {
         // 0. store request data in postmark_inbound_mail
-        $recordId = $this->storeRawLogs();
+        $recordId = $this->dbRecordId ?: $this->storeRawLogs();
 
         // 1. read source email, find patient
         $email = $this->input['From'];
@@ -68,6 +74,11 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         } catch (\Exception $e) {
             sendSlackMessage('#carecoach_ops', "{$e->getMessage()}. See database record id[$recordId]");
 
+            return;
+        }
+
+        //if we already have a db record, we don't have to send a reply again
+        if ($this->dbRecordId) {
             return;
         }
 
