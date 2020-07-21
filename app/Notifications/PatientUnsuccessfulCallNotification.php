@@ -165,7 +165,7 @@ class PatientUnsuccessfulCallNotification extends Notification
 
     private function getSmsMessage(User $patient): TwilioSmsMessage
     {
-        $part1 = "Hi it's $this->drLastName's care program at $this->practice! ";
+        $part1 = "Hi it's Dr. $this->drLastName's care program at $this->practice! ";
 
         if ( ! $this->isReminder) {
             $part2 = "Nurse $this->nurseFirstName just tried calling. ";
