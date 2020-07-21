@@ -133,7 +133,6 @@ $user_info = [];
                                             <div class="form-item col-sm-12">
                                                 <edit-patient-number :phone-numbers="{{json_encode($phoneNumbers)}}"
                                                                      :phone-types="{{json_encode($phoneTypes)}}">
-
                                                 </edit-patient-number>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('email') ? 'has-error' : '' }}">

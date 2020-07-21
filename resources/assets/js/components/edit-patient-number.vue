@@ -8,38 +8,61 @@
                            :value="number.type"
                            :disabled="true"/>
                 </div>
-<!--                <div v-else style="display: inline-flex; padding-right: 5px;">-->
-<!--                <select2 id="numberType" class="form-control"-->
-<!--                         v-model="dropdownPhoneType">-->
-<!--                    <option v-for="(phoneType, key) in phoneTypes"-->
-<!--                            :key="key"-->
-<!--                            :value="phoneType">-->
-<!--                        {{phoneType}}-->
-<!--                    </option>-->
-<!--                </select2>-->
-<!--                </div>-->
+
               <div style="display: inline-flex; padding-bottom: 10px; padding-left: 10px;">
                   <span class="input-group-addon" style="padding-right: 26px; padding-top: 10px;">+1</span>
                   <input name="number"
                          class="form-control phone-number" type="tel"
                          title="10-digit US Phone Number" placeholder="2345678901"
                          :value="number.number"
-                         :disabled="number.inputDisabled || loading"/>
-
-                  <i v-if="!loading"
-                     class="glyphicon glyphicon-trash remove-phone"
-                     title="Delete Phone Number"
-                     @click="deletePhone(number.phoneNumberId)"></i>
-
-                  <button v-if="shouldShowDuringEdit(index)"
-                          class="btn btn-sm save-number"
-                          @click="editOrSaveNumber">
-                      Save
-                  </button>
+                         :disabled="true"/>
               </div>
+
+                <i v-if="!loading"
+                   class="glyphicon glyphicon-trash remove-phone"
+                   title="Delete Phone Number"
+                   @click="deletePhone(number.phoneNumberId)"></i>
                 <br>
             </template>
             <loader v-if="loading"></loader>
+
+            <div v-for="(input, index) in newInputs" style="display: inline-flex; padding-bottom: 10px; padding-left: 10px;">
+                <div style="padding-right: 14px; margin-left: -10px;">
+                    <select2 id="numberType" class="form-control" style="width: 81.566px;"
+                             v-model="dropdownPhoneType">
+                        <option v-for="(phoneType, key) in phoneTypes"
+                                :key="key"
+                                :value="phoneType">
+                            {{phoneType}}
+                        </option>
+                    </select2>
+                </div>
+
+                <span class="input-group-addon" style="padding-right: 26px; padding-top: 10px;">+1</span>
+                <input name="number"
+                   class="form-control phone-number" type="tel"
+                   title="10-digit US Phone Number" :placeholder="input.placeholder"
+                   v-model="newPhoneNumber"
+                   :disabled="loading"/>
+
+                <i v-if="!loading"
+                   class="glyphicon glyphicon-minus remove-input"
+                   title="Remove extra field"
+                   @click="removeInputField(index)"></i>
+
+                <button class="btn btn-sm save-number"
+                        @click="editOrSaveNumber"
+                        :disabled="disableSaveButton">
+                    Save
+                </button>
+            </div>
+<br>
+            <a v-if="!loading"
+               class="glyphicon glyphicon-plus-sign add-new-number"
+               title="Add Phone Number"
+               @click="addPhoneField()">
+                Add new phone number
+            </a>
         </div>
     </div>
 </template>
@@ -61,37 +84,48 @@
 
         data(){
             return {
-                phoneNumber:'',
                 loading:false,
                 patientPhoneNumbers:this.phoneNumbers,
                 editingIsOn:false,
-                dropdownPhoneType:''
+                dropdownPhoneType:'',
+                newPhoneNumber:'',
+                newInputs:[]
             }
         },
         computed:{
+            disableSaveButton(){
+                return this.loading
+                         || isNaN(this.newPhoneNumber.toString())
+                        || this.newPhoneNumber.toString().length !== 10;
 
+            },
         },
 
         methods:{
+            addPhoneField(){
+                if (this.newInputs.length > 0) {
+                    alert('Please save the existing field first');
+                    return;
+                }
+
+                const arr = {
+                  placeholder: '2345678901'
+                };
+
+                this.newInputs.push(arr);
+            },
             editOrSaveNumber(){
 
             },
-            shouldShowDuringEdit(index){
-                return this.patientPhoneNumbers[index].inputDisabled === false;
+
+            removeInputField(index){
+                this.loading = true;
+              console.log(index);
+              console.log(this.newInputs[index]);
+              this.newInputs.splice(index, 1);
+              this.loading = false;
+
             },
-            // disableInput(index){
-            //     this.loading = true;
-            //     this.editingIsOn = false;
-            //     this.patientPhoneNumbers[index].inputDisabled = true;
-            //     this.loading = false;
-            // },
-            //
-            // enableInput(index){
-            //     this.loading = true;
-            //     this.editingIsOn = true;
-            //     this.patientPhoneNumbers[index].inputDisabled = false;
-            //     this.loading = false;
-            // },
 
             deletePhone(phoneNumberId){
                 this.loading = true;
@@ -130,6 +164,13 @@
         color: red;
         cursor: pointer;
     }
+    .remove-input{
+        margin-left: 19px;
+        padding-top: 5px;
+        color: red;
+        cursor: pointer;
+        background-color: transparent;
+    }
     .stop-edit-phone{
         margin-left: 10px;
         padding-top: 5px;
@@ -142,6 +183,14 @@
         height: 29px;
         padding: 5px;
         color: #50b2e2;
+    }
+
+    .add-new-number{
+        word-spacing: -10px;
+        color: #50b2e2;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 10px;
     }
 
 </style>
