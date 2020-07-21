@@ -294,7 +294,7 @@
                     }
                 }
 
-                this.notifyTimeTracker(true);
+                //this.notifyTimeTracker(true);
 
                 return this.axios
                     .get(url, errorData)
@@ -340,8 +340,11 @@
                             this.error = 'Something went wrong while retrieving patient. Please contact CLH support.';
                         }
 
-                        this.error_modal.open()
+                        this.error_modal.open();
                         console.error(err);
+
+                        //just making sure that this time is not counted towards any patient (until page refresh or request is retried)
+                        this.notifyTimeTracker(true);
                     });
             },
 
