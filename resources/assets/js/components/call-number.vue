@@ -360,6 +360,7 @@
                         console.log(response.data);
                         this.patientUnlistedNumber = '';
                         this.getPhoneNumbers();
+                        this.resetToDefaultView();
                         if (response.data.hasOwnProperty('message')){
                             alert(response.data.message);
                         }
