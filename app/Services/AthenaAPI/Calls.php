@@ -505,6 +505,24 @@ class Calls implements AthenaApiImplementation
      * Gets Information about a single patient's appointments
      * set $showPast to false to get future appointments only.
      *
+     * Sample:
+     * array (
+     * 0 =>
+     * array (
+     * 'date' => '07/17/2020',
+     * 'copay' => 0,
+     * 'duration' => '10',
+     * 'appointmenttypeid' => '1',
+     * 'appointmentid' => '1234',
+     * 'appointmenttype' => 'MD FOLLOW UP',
+     * 'starttime' => '09:00',
+     * 'patientappointmenttypename' => 'Follow-Up',
+     * 'departmentid' => '1',
+     * 'providerid' => '1',
+     * 'appointmentstatus' => 'f',
+     * ),
+     * )
+     *
      * @param $practiceId
      * @param $patientId
      * @param bool $showPast
@@ -515,8 +533,8 @@ class Calls implements AthenaApiImplementation
      * @return mixed
      */
     public function getPatientAppointments(
-        $practiceId,
-        $patientId,
+        ?int $practiceId,
+        ?int $patientId,
         $showPast = true,
         $showCancelled = false
     ) {

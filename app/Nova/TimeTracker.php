@@ -19,6 +19,7 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 use Suenerds\NovaSearchableBelongsToFilter\NovaSearchableBelongsToFilter;
 use Titasgailius\SearchRelations\SearchesRelations;
 
@@ -46,6 +47,7 @@ class TimeTracker extends Resource
      * @var array
      */
     public static $search = [
+        'id',
         'title',
         'url_short',
         'patient_id',
@@ -68,8 +70,6 @@ class TimeTracker extends Resource
      * @var string
      */
     public static $title = 'title';
-
-    public static $with = ['logger', 'patient'];
 
     /**
      * Get the actions available for the resource.
@@ -207,6 +207,23 @@ class TimeTracker extends Resource
             new TimestampFilter('From', 'start_time', 'from', Carbon::now()->startOfMonth()),
             new TimestampFilter('To', 'start_time', 'to', Carbon::now()->endOfMonth()),
         ];
+    }
+
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        return $query->with([
+            'logger' => function ($q) {
+                $q->without(['roles', 'perms'])
+                    ->select(['id', 'display_name']);
+            },
+            'patient' => function ($q) {
+                $q->without(['roles', 'perms'])
+                    ->select(['id', 'display_name']);
+            },
+            'activity' => function ($q) {
+                $q->select(['id', 'page_timer_id', 'is_behavioral']);
+            },
+        ]);
     }
 
     public static function label()

@@ -10,10 +10,12 @@ use App\Http\Requests\DownloadMediaWithSignedRequest;
 use App\Http\Requests\DownloadPracticeAuditReports;
 use App\Http\Requests\DownloadZippedMediaWithSignedRequest;
 use App\Jobs\CreateAuditReportForPatientForMonth;
+use App\Reports\PatientDailyAuditReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -34,6 +36,8 @@ class DownloadController extends Controller
         $monthInput = $request->input('month');
 
         $date = Carbon::createFromFormat('Y-m', $monthInput)->startOfMonth();
+
+        $this->clearExistingAuditReportsIfYouShould($request, $date, $practiceId);
 
         if ( ! $this->auditReportsQuery($date, $practiceId)->exists()) {
             return response()->redirectToRoute('make.monthly.audit.reports', ['practice_id' => $practiceId, 'month' => $date->format('Y-m')]);
@@ -170,6 +174,8 @@ class DownloadController extends Controller
 
         $date = Carbon::createFromFormat('Y-m', $monthInput)->startOfMonth();
 
+        $this->clearExistingAuditReportsIfYouShould($request, $date, $practiceId);
+
         User::ofType('participant')->ofPractice($practiceId)
             ->with('patientInfo')
             ->with('patientSummaries')
@@ -245,5 +251,26 @@ class DownloadController extends Controller
         $practiceId = $media->model_id;
 
         return auth()->user()->practice((int) $practiceId) || auth()->user()->isAdmin();
+    }
+
+    private function clearExistingAuditReportsIfYouShould(Request $request, Carbon $date, int $practiceId)
+    {
+        if ($request->has('clear-existing')) {
+            $deleted = Media::where('collection_name', PatientDailyAuditReport::mediaCollectionName($date))
+                ->whereIn('model_type', [
+                    \CircleLinkHealth\Customer\Entities\User::class,
+                    \App\User::class,
+                ])
+                ->whereIn('model_id', function ($q) use ($practiceId) {
+                    $q->select('user_id')
+                        ->from('practice_role_user')
+                        ->where('role_id', Role::byName('participant')->id)
+                        ->where('program_id', $practiceId);
+                })->delete();
+
+            return $deleted;
+        }
+
+        return null;
     }
 }
