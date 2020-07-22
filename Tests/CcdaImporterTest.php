@@ -41,7 +41,7 @@ class CcdaImporterTest extends CustomerTestCase
     public function test_auto_enrollment_flow()
     {
         Notification::fake();
-        $enrollee = $this->app->make(PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice());
+        $enrollee = $this->app->make(PrepareDataForReEnrollmentTestSeeder::class)->createEnrollee($this->practice(), $this->provider());
         SendInvitation::dispatch($enrollee->user, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
             now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
