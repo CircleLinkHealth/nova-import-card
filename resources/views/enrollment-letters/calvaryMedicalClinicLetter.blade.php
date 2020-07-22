@@ -14,12 +14,7 @@
 
             @include('enrollment-letters.baseLetter')
 
-            <div class="logo" style="margin-bottom: 10px">
-                @include('enrollment-letters.practiceLogo')
-            </div>
-
-
-            @if(!$hideButtons)
+                @if(!$hideButtons)
                 <div class="header-buttons">
                     @include('enrollment-letters.enrollableInvitationButtons')
                 </div>
