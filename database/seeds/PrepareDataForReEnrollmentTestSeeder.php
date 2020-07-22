@@ -28,10 +28,16 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
     /**
      * PrepareDataForReEnrollmentTestSeeder constructor.
+     *
+     * @param string $practiceName
      */
-    public function __construct(string $practiceName)
+    public function __construct(string $practiceName = null)
     {
-        $this->practiceName = $practiceName;
+        if (\Illuminate\Support\Facades\App::environment(['testing', 'review'])) {
+            $this->practiceName = 'demo-clinic';
+        } else {
+            $this->practiceName = $practiceName;
+        }
     }
 
     public function createEnrollee(Practice $practice, User $provider, array $args = [])
