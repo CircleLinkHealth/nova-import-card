@@ -28,7 +28,6 @@
                        <option value="" disabled selected>Choose practice to create data for</option>
                        <option value="toledo-clinic">Toledo Clinic</option>
                        <option value="commonwealth-pain-associates-pllc">Commonwealth Clinic</option>
-                       <option value="calvary-medical-clinic">Calvary Clinic</option>
                    </select>
                </div>
                <a>
