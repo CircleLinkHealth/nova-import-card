@@ -8,6 +8,7 @@ namespace App\Providers;
 
 use Anaseqal\NovaImport\NovaImport;
 use App\Nova\Dashboards\ServerInsights;
+use Christophrumpel\NovaNotifications\NovaNotifications;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
@@ -63,6 +64,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         return [
             new NovaImport(),
+            new NovaNotifications(),
         ];
     }
 
