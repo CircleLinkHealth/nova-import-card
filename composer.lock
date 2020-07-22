@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.147.2",
+            "version": "3.147.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c58688f53c730b74cec1b6cfee8d9ed5bb40d946"
+                "reference": "a563bb8bd83ec232db6b0b230832e3a6bde8a838"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c58688f53c730b74cec1b6cfee8d9ed5bb40d946",
-                "reference": "c58688f53c730b74cec1b6cfee8d9ed5bb40d946",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a563bb8bd83ec232db6b0b230832e3a6bde8a838",
+                "reference": "a563bb8bd83ec232db6b0b230832e3a6bde8a838",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-07-21T18:11:40+00:00"
+            "time": "2020-07-22T18:18:26+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1189,7 +1189,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "dc1fe3eecb458901f1e67fc3bb1f917cc7d27cc0"
+                "reference": "a3a4a383ccca036c793e49f5a0f77344b5ab8b2c"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1214,7 +1214,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-22T16:58:57+00:00"
+            "time": "2020-07-22T19:46:01+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -3147,16 +3147,16 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.10.0",
+            "version": "v1.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "077d6ae98d550161d3b2a0ba283bdce785c74d85"
+                "reference": "f6752236dbb2d641d50dffee789e553e2fda129d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/077d6ae98d550161d3b2a0ba283bdce785c74d85",
-                "reference": "077d6ae98d550161d3b2a0ba283bdce785c74d85",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/f6752236dbb2d641d50dffee789e553e2fda129d",
+                "reference": "f6752236dbb2d641d50dffee789e553e2fda129d",
                 "shasum": ""
             },
             "require": {
@@ -3195,7 +3195,7 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2020-07-08T19:11:36+00:00"
+            "time": "2020-07-22T18:24:05+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
