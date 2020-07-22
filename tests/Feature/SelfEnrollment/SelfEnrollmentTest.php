@@ -502,13 +502,13 @@ class SelfEnrollmentTest extends TestCase
     private function createEnrollees(int $number = 1)
     {
         if (1 === $number) {
-            return $this->factory()->createEnrollee($this->practice());
+            return $this->factory()->createEnrollee($this->practice(), $this->provider());
         }
 
         $coll = collect();
 
         for ($i = 0; $i < $number; ++$i) {
-            $coll->push($this->factory()->createEnrollee($this->practice()));
+            $coll->push($this->factory()->createEnrollee($this->practice(), $this->provider()));
         }
 
         return $coll;
