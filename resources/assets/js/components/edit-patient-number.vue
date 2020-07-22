@@ -109,12 +109,13 @@
                     || this.newPhoneNumber.toString().length !== 10;
 
             },
-        },
 
-        methods: {
             shouldShowError(){
                 return this.patientPhoneNumbers.length === 0;
             },
+        },
+
+        methods: {
             resetData(){
                 this.patientPhoneNumbers = [];
                 this.phoneTypes = [];
