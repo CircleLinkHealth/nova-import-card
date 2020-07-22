@@ -28,24 +28,13 @@ class UserCsvResource extends JsonResource
             \Log::critical("Patient with id:{$this->id} does not have Practice attached.");
         }
 
-        $patient       = $this->patientInfo;
-        $careplan      = $this->carePlan;
-        $ccmStatusDate = '';
-        if ('paused' == $patient->ccm_status) {
-            $ccmStatusDate = $patient->date_paused;
-        }
-        if ('withdrawn' == $patient->ccm_status) {
-            $ccmStatusDate = $patient->date_withdrawn;
-        }
-        if ('unreachable' == $patient->ccm_status) {
-            $ccmStatusDate = $patient->date_unreachable;
-        }
-
         /** @var Patient $patientInfo */
-        $patientInfo  = $this->whenLoaded('patientInfo');
+        $patient  = $this->patientInfo;
+        $careplan = $this->carePlan;
+
         $locationName = 'n/a';
-        if ( ! is_null($patientInfo) && $patientInfo->relationLoaded('location') && $patientInfo->location) {
-            $locationName = $patientInfo->location->name;
+        if ( ! is_null($patient) && $patient->relationLoaded('location') && $patient->location) {
+            $locationName = $patient->location->name;
         }
 
         return ('"'.$this->display_name ?? $this->name()).'",'.
@@ -64,7 +53,29 @@ class UserCsvResource extends JsonResource
                '"'.$this->created_at.'",'.
                '"'.$this->getTimeInDecimals($this->getBhiTime()).'",'.
                '"'.$this->getTimeInDecimals($this->getCcmTime()).'",'.
-               '"'.$ccmStatusDate.'"';
+               '"'.$this->getPatientCcmStatusDate($patient).'"';
+    }
+
+    private function getPatientCcmStatusDate(Patient $patient)
+    {
+        $ccmStatus = $patient->ccm_status;
+
+        switch ($ccmStatus) {
+            case Patient::PAUSED:
+                return $patient->date_paused;
+                break;
+            case in_array($patient->ccm_status, [
+                Patient::WITHDRAWN_1ST_CALL,
+                Patient::WITHDRAWN,
+            ]):
+                return $patient->date_withdrawn;
+                    break;
+            case Patient::UNREACHABLE:
+                return $patient->date_unreachable;
+                break;
+            default:
+                return '';
+        }
     }
 
     /**
