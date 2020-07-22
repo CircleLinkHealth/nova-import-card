@@ -44,7 +44,7 @@
                                 </option>
                             </select2>
                             </label>
-                            <label v-if="dropdownNumber !== 'patientUnlisted'" for="phoneNumber" style="display: grid">Phone Number
+                            <label v-if="dropdownNumber !== 'patientUnlisted'" for="phoneNumber" style="display: grid; width: 500px;">Phone Number
                             <select2 id="phoneNumber" class="form-control" v-model="dropdownNumber"
                                      :settings="{minimumResultsForSearch: -1}"
                                  :disabled="onPhone[selectedPatientNumber]">
@@ -55,7 +55,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-xs-3 no-padding" style="padding-left: 2px; padding-right: 2px"
+                    <div class="col-xs-3 no-padding" style="padding-left: 2px; padding-right: 2px; padding-top: 14px;"
                          v-if="dropdownNumber !== 'patientUnlisted'">
                         <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
                                 :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
@@ -73,7 +73,7 @@
                         <button class="glyphicon glyphicon-remove"
                                 title="Close new number menu"
                                 style="padding: 6px; color:red; font-size: 19px;"
-                                @click="resetToDefaultNumber">
+                                @click="resetToDefaultView">
                         </button>
                     </div>
                 </div>
@@ -87,14 +87,18 @@
 
                             <template v-if="debug">
                                 <input name="patient-unlisted-number"
-                                       class="form-control" type="tel"
+                                       class="form-control"
+                                       type="tel"
+                                       style="width: 459px;"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
                             </template>
                             <template v-else>
                                 <input name="patient-unlisted-number"
                                        maxlength="10" minlength="10"
-                                       class="form-control" type="tel"
+                                       class="form-control"
+                                       type="tel"
+                                       style="width: 459px;"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
                             </template>
@@ -135,10 +139,11 @@
                     <div class="col-xs-9 no-padding">
                         <input name="clinical-escalation-number"
                                class="form-control"
+                               style="width: 500px;"
                                :value="clinicalEscalationNumber && clinicalEscalationNumber.length > 0 ? clinicalEscalationNumber : 'Not found'"
                                disabled/>
                     </div>
-                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
+                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px;">
                         <button class="btn btn-circle" @click="toggleOtherCallMessage(clinicalEscalationNumber)"
                                 :disabled="!ready || !clinicalEscalationNumber || clinicalEscalationNumber.length === 0
                                                                      || (!allowConference && !onPhone[clinicalEscalationNumber] && isCurrentlyOnPhone)
@@ -172,7 +177,8 @@
 
                             <template v-if="debug">
                                 <input name="other-number"
-                                       class="form-control" type="tel"
+                                       class="form-control"
+                                       type="tel"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="otherUnlistedNumber"
                                        :disabled="!ready || onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
@@ -180,7 +186,8 @@
                             <template v-else>
                                 <input name="other-number"
                                        maxlength="10" minlength="10"
-                                       class="form-control" type="tel"
+                                       class="form-control"
+                                       type="tel"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="otherUnlistedNumber"
                                        :disabled="!ready || onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
@@ -225,13 +232,9 @@
         name: 'call-number',
         components: {
             loader: LoaderComponent,
-            'call-numpad': CallNumpad
+            'call-numpad': CallNumpad,
         },
         props: {
-            phoneTypes:{
-                type: Array,
-                default:[]
-            },
             cpmToken: {
                 type: String,
                 default: ''
@@ -252,11 +255,6 @@
             inboundUserId: String,
             outboundUserId: String,
             source: String,
-            patientNumbers: {
-                type: Array,
-                default: {}
-            },
-
             clinicalEscalationNumber: {
                 type: String,
                 default: null
@@ -286,6 +284,8 @@
                 callSids: {},
                 dropdownPhoneType:'',
                 saving:false,
+                phoneTypes:[],
+                patientNumbers:[]
             }
         },
         computed: {
@@ -326,9 +326,30 @@
                 return Object.values(this.onPhone).filter(x => x).length > 1;
             },
         },
-        methods: {
+        methods:{
+            resetData(){
+                this.patientNumbers = [];
+                this.phoneTypes = [];
+            },
+            
+            getPhoneNumbers(){
+                this.loading = true;
+                this.resetData();
+                axios.post('/manage-patients/demographics/get-phones', {
+                    userId:this.inboundUserId
+                })
+                    .then((response => {
+                        this.patientNumbers.push(...response.data.phoneNumbers);
+                        this.phoneTypes.push(...response.data.phoneTypes);
+                        this.loading = false;
+                    })).catch((error) => {
+                    this.loading = false;
+                    console.log(error.message);
+                });
+            },
+
             saveNewNumber(){
-                const type = this.dropdownPhoneType.length !== 0 ? this.dropdownPhoneType : 'cell';
+                const type = this.dropdownPhoneType.length !== 0 ? this.dropdownPhoneType : 'mobile';
                 this.saving = true;
                 axios.post('/manage-patients/new/phone', {
                     phoneType:type,
@@ -337,6 +358,11 @@
                 })
                     .then((response => {
                         console.log(response.data);
+                        this.patientUnlistedNumber = '';
+                        this.getPhoneNumbers();
+                        if (response.data.hasOwnProperty('message')){
+                            alert(response.data.message);
+                        }
                         this.saving = false;
                 })).catch((error) => {
                     this.saving = false;
@@ -344,12 +370,12 @@
                 });
             },
 
-            resetToDefaultNumber(){
+            resetToDefaultView(){
             this.dropdownNumber = this.defaultDropdownNumber;
             },
 
             defaultDropdownNumber(){
-              return Object.values(this.patientNumbers).length > 0 ? Object.values(this.patientNumbers)[0].number : 'patientUnlisted';
+                return this.patientNumbers !== [] ? this.patientNumbers[0] : 'patientUnlisted';
             },
 
             getUrl: function (path) {
@@ -924,7 +950,7 @@
 
         },
         created() {
-
+            this.getPhoneNumbers();
             self = this;
             this.resetPhoneState();
             this.registerBroadcastChannelHandlers();

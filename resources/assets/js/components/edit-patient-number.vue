@@ -1,18 +1,22 @@
 <template>
     <div class="phone-numbers">
         <div class="input-group">
+            <span v-if="shouldShowError" class="help-block" style="color: red">{{this.errorMessage}}</span>
             <template v-if="true" v-for="(number, index) in patientPhoneNumbers">
                 <div style="display: inline-flex; padding-right: 5px;">
                     <input name="type"
-                           class="form-control phone-type" type="text"
+                           class="form-control phone-type"
+                           type="text"
                            :value="number.type"
                            :disabled="true"/>
                 </div>
 
               <div style="display: inline-flex; padding-bottom: 10px; padding-left: 10px;">
-                  <span class="input-group-addon" style="padding-right: 26px; padding-top: 10px;">+1</span>
+                  <span class="input-group-addon plus-one">+1</span>
                   <input name="number"
-                         class="form-control phone-number" type="tel"
+                         class="form-control phone-number"
+                         style="background-color: transparent;"
+                         type="tel"
                          title="10-digit US Phone Number" placeholder="2345678901"
                          :value="number.number"
                          :disabled="true"/>
@@ -41,10 +45,14 @@
 
                 <span class="input-group-addon" style="padding-right: 26px; padding-top: 10px;">+1</span>
                 <input name="number"
-                   class="form-control phone-number" type="tel"
-                   title="10-digit US Phone Number" :placeholder="input.placeholder"
-                   v-model="newPhoneNumber"
-                   :disabled="loading"/>
+                       class="form-control phone-number"
+                       maxlength="10"
+                       minlength="10"
+                       type="tel"
+                       title="10-digit US Phone Number"
+                       :placeholder="input.placeholder"
+                       v-model="newPhoneNumber"
+                       :disabled="loading"/>
 
                 <i v-if="!loading"
                    class="glyphicon glyphicon-minus remove-input"
@@ -79,6 +87,7 @@
         },
         props: [
             'userId',
+            'errorMessage'
         ],
 
         data(){
@@ -103,6 +112,9 @@
         },
 
         methods: {
+            shouldShowError(){
+                return this.patientPhoneNumbers.length === 0;
+            },
             resetData(){
                 this.patientPhoneNumbers = [];
                 this.phoneTypes = [];
@@ -205,6 +217,7 @@
     .phone-type{
         max-width: 80px;
         text-align: center;
+        background-color: transparent;
     }
     .edit-phone{
         margin-left: 10px;
@@ -245,6 +258,11 @@
         font-size: 20px;
         cursor: pointer;
         padding: 10px;
+    }
+    .plus-one{
+        padding-right: 26px;
+        padding-top: 10px;
+        background-color: transparent;
     }
 
 </style>

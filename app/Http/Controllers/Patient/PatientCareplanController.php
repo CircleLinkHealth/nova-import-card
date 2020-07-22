@@ -593,6 +593,7 @@ class PatientCareplanController extends Controller
                 'required'                   => 'The :attribute field is required.',
                 'home_phone_number.required' => 'The patient phone number field is required.',
             ];
+
             $v = Validator::make($params->all(), $user->getPatientRules(), $messages);
             if ($v->fails()) {
                 return redirect()->back()->withErrors($v->errors())->withInput($request->input());

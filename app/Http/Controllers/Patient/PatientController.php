@@ -216,14 +216,14 @@ class PatientController extends Controller
         $cpmToken = \Hash::make(config('app.key').Carbon::today()->toDateString());
 
         $phoneTypes = getPhoneTypes();
-
+        //@todo:get phoneTypes and numbers from vue
         return view('wpUsers.patient.calls.index')
             ->with([
-                'patient'                  => $user,
-                'phoneNumbers'             => $phoneNumbers,
+                'patient' => $user,
+                //                'phoneNumbers'             => $phoneNumbers,
                 'clinicalEscalationNumber' => $clinicalEscalationNumber,
                 'cpmToken'                 => $cpmToken,
-                'phoneTypes'               => $phoneTypes,
+                //                'phoneTypes'               => $phoneTypes,
             ]);
     }
 

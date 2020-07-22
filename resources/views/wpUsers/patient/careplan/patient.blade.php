@@ -131,7 +131,10 @@ $user_info = [];
                                                 <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                             </div>
                                             <div class="form-item col-sm-12">
-                                                <edit-patient-number :user-id="{{$patient->id}}"></edit-patient-number>
+                                                <edit-patient-number
+                                                        :user-id="{{$patient->id}}"
+                                                         error-message="{{$errors->first('home_phone_number')}}">
+                                                </edit-patient-number>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('email') ? 'has-error' : '' }}">
                                                 <label class="sr-only" for="lastName">Email Address</label>
