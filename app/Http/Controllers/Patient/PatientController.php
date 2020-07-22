@@ -158,7 +158,7 @@ class PatientController extends Controller
             return response()->json(
                 [
                     'message' => "Phone Number with type '$phoneType' already exists for patient $userId",
-                ]
+                ],
             );
         }
 

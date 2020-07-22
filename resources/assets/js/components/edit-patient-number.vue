@@ -169,13 +169,13 @@
                     .then((response => {
                         console.log(response.data);
                         this.getPhoneNumbers();
-                        if (response.data.hasOwnProperty('messages')){
-                            alert(response.data.messages);
+                        if (response.data.hasOwnProperty('message')){
+                            alert(response.data.message);
                         }
                         this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
-                    console.log(error.message);
+                    console.log(error);
                 });
             },
 
