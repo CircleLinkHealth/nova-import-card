@@ -393,7 +393,7 @@
                 if (patient.patient_info.ccm_status === 'paused') {
                     return moment(patient.patient_info.date_paused).format('MM-DD-YYYY')
                 }
-                if (patient.patient_info.ccm_status === 'withdrawn') {
+                if (patient.patient_info.ccm_status === 'withdrawn'|| patient.patient_info.ccm_status === 'withdrawn_1st_call') {
                     return moment(patient.patient_info.date_withdrawn).format('MM-DD-YYYY')
                 }
                 if (patient.patient_info.ccm_status === 'unreachable') {
