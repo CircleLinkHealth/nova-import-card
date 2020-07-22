@@ -63,16 +63,13 @@ class UserCsvResource extends JsonResource
         switch ($ccmStatus) {
             case Patient::PAUSED:
                 return $patient->date_paused;
-                break;
             case in_array($patient->ccm_status, [
                 Patient::WITHDRAWN_1ST_CALL,
                 Patient::WITHDRAWN,
             ]):
                 return $patient->date_withdrawn;
-                    break;
             case Patient::UNREACHABLE:
                 return $patient->date_unreachable;
-                break;
             default:
                 return '';
         }
