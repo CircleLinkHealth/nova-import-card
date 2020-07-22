@@ -33,7 +33,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
      */
     public function __construct(string $practiceName = null)
     {
-        if (\Illuminate\Support\Facades\App::environment(['testing', 'review'])) {
+        if (\Illuminate\Support\Facades\App::environment(['testing', 'review']) && is_null($practiceName)) {
             $this->practiceName = 'demo-clinic';
         } else {
             $this->practiceName = $practiceName;
