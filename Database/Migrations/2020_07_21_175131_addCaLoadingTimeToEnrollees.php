@@ -26,5 +26,9 @@ class AddCaLoadingTimeToEnrollees extends Migration
      */
     public function up()
     {
+        //get CAs with assigned enrollees where they have been called
+        //get all ca page timers where they don't have enrollee id
+
+        //loop through activities taking enrollee by count index -> once max is reached do i - enrolleeCount
     }
 }
