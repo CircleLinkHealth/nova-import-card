@@ -7,57 +7,55 @@
 namespace App\Http\Controllers\Enrollment\PracticeSpecificLetter;
 
 use App\Contracts\SelfEnrollmentLetter;
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\Http\Controllers\Enrollment\PracticeLetterHelper\LettersHelper;
 use App\Http\Controllers\EnrollmentLetterDefaultConfigs;
-use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 class CalvaryMedicalClinicLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
 {
     /**
      * @var array
      */
-    protected $baseLetter;
+    public $baseLetter;
     /**
      * @var mixed
      */
-    protected $enrollee;
+    public $enrollee;
+    /**
+     * @var array
+     */
+    public $extraAddressValues;
 
     /**
      * @var bool
      */
-    protected $extraAddressValuesExists;
+    public $extraAddressValuesExists;
     /**
      * @var bool
      */
-    protected $hideButtons;
+    public $hideButtons;
     /**
      * @var
      */
-    protected $isSurveyOnlyUser;
+    public $isSurveyOnlyUser;
     /**
      * @var
      */
-    protected $letterPages;
+    public $letterPages;
     /**
      * @var Practice
      */
-    protected $practice;
+    public $practice;
     /**
      * @var
      */
-    protected $provider;
+    public $provider;
     /**
      * @var User
      */
-    protected $userEnrollee;
-    /**
-     * @var array
-     */
-    private $extraAddressValues;
+    public $userEnrollee;
 
     /**
      * CalvaryMedicalClinicLetter constructor.
@@ -80,19 +78,7 @@ class CalvaryMedicalClinicLetter extends EnrollmentLetterDefaultConfigs implemen
         $baseLetterConfigs = $this->getBaseViewConfigs();
         $className         = $baseLetterConfigs['className'];
 
-        return view("enrollment-letters.$className", [
-            'userEnrollee'             => $this->userEnrollee,
-            'isSurveyOnlyUser'         => $this->isSurveyOnlyUser,
-            'letterPages'              => $this->letterPages,
-            'practiceDisplayName'      => $this->practice->display_name,
-            'practiceLogoSrc'          => $this->baseLetter['letter']->practice_logo_src ?? SelfEnrollmentController::ENROLLMENT_LETTER_DEFAULT_LOGO,
-            'signatoryNameForHeader'   => $this->provider->display_name,
-            'dateLetterSent'           => $baseLetterConfigs['dateLetterSent'],
-            'hideButtons'              => $this->hideButtons,
-            'buttonColor'              => $baseLetterConfigs['buttonColor'],
-            'extraAddressValues'       => $this->extraAddressValues,
-            'extraAddressValuesExists' => $this->extraAddressValuesExists,
-        ]);
+        return view("enrollment-letters.$className", LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs));
     }
 
     public function letterSpecificView()
@@ -114,7 +100,7 @@ class CalvaryMedicalClinicLetter extends EnrollmentLetterDefaultConfigs implemen
      */
     private function getExtraAddressValues(User $userEnrollee)
     {
-        $practiceLocation      = $this->getPracticeLocation($userEnrollee);
+        $practiceLocation      = LettersHelper::getPracticeLocation($userEnrollee);
         $practiceLocationArray = $practiceLocation->toArray();
 
         if (empty($practiceLocationArray)) {
@@ -128,32 +114,6 @@ class CalvaryMedicalClinicLetter extends EnrollmentLetterDefaultConfigs implemen
             'postal_code', // zip
         ];
 
-        return collect($extraProps)->mapWithKeys(function ($prop) use ($practiceLocationArray) {
-            return  [
-                $prop => $practiceLocationArray[$prop],
-            ];
-        })->toArray();
-    }
-
-    /**
-     * @return \App\Location|\Collection|\Illuminate\Database\Eloquent\Builder|\Illuminate\Support\Collection|Model|object
-     */
-    private function getPracticeLocation(User $userEnrollee)
-    {
-        $enrolleePracticeLocationId = $userEnrollee->enrollee->location_id;
-
-        $practiceLocation = collect();
-        if ( ! empty($enrolleePracticeLocationId)) {
-            $practiceLocation = Location::whereId($enrolleePracticeLocationId)->first();
-        }
-
-        // We want continue code execution if no practice location exists.
-        if (is_null($practiceLocation)) {
-            Log::info("Location for practice [$userEnrollee->id] not found. No practice location address will be displayed on letter");
-
-            return collect();
-        }
-
-        return $practiceLocation;
+        return LettersHelper::extraAddressValues($extraProps, $practiceLocationArray);
     }
 }
