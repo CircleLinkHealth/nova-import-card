@@ -78,7 +78,7 @@
                     return false;
                 }
 
-                if (this.patientEmail.endsWith('@careplanmanager.com') ||  this.patientEmail.endsWith('@example.com'), this.patientEmail.endsWith('@noEmail.com')){
+                if (this.patientEmail.endsWith('@careplanmanager.com') ||  this.patientEmail.endsWith('@example.com') || this.patientEmail.endsWith('@noEmail.com')){
                     return false;
                 }
 
