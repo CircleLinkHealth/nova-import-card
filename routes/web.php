@@ -758,12 +758,12 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.demographics.store',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
 
-        Route::post('demographics/delete-phone', [
+        Route::post('delete-phone', [
             'uses' => 'Patient\PatientCareplanController@deletePhoneNumber',
             'as'   => 'patient.phone.delete',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
 
-        Route::post('demographics/get-phones', [
+        Route::post('get-phones', [
             'uses' => 'Patient\PatientCareplanController@getPatientPhoneNumbers',
             'as'   => 'patient.get.phones',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
@@ -790,6 +790,11 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::post('new/phone', [
             'uses' => 'Patient\PatientController@saveNewPhoneNumber',
+            'as'   => 'patient.phone.create',
+        ])->middleware('permission:patient.create,patient.update,location.read,practice.read');
+
+        Route::post('mark/primary-phone', [
+            'uses' => 'Patient\PatientController@markAsPrimaryPhone',
             'as'   => 'patient.phone.create',
         ])->middleware('permission:patient.create,patient.update,location.read,practice.read');
 

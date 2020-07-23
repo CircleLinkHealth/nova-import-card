@@ -50,6 +50,40 @@ class PatientController extends Controller
         return view('patient.create-test-patients');
     }
 
+    public function markAsPrimaryPhone(Request $request)
+    {
+        $phoneId       = $request->input('phoneId');
+        $patientUserId = $request->input('patientUserId');
+
+        if ( ! empty($phoneId) || ! empty($patientUserId)) {
+            $phones = PhoneNumber::whereUserId($patientUserId)->get();
+
+            foreach ($phones as $phone) {
+                if ($phone->id !== $phoneId && $phone->is_primary) {
+                    $phone->is_primary = false;
+                    $phone->save();
+                }
+                if ($phone->id === $phoneId) {
+                    $phone->is_primary = true;
+                    $phone->save();
+                }
+            }
+
+            return response()->json(
+                [
+                ],
+                200
+            );
+        }
+
+        return response()->json(
+            [
+                'message' => 'Required Parameters missing',
+            ],
+            400
+        );
+    }
+
     public function patientAjaxSearch(Request $request)
     {
         return view('wpUsers.patient.select');
@@ -162,11 +196,6 @@ class PatientController extends Controller
             );
         }
 
-        $makePrimary = 0 == strcasecmp(
-            $phoneType,
-            PhoneNumber::HOME
-        );
-
         PhoneNumber::firstOrCreate(
             [
                 'user_id' => $userId,
@@ -174,7 +203,7 @@ class PatientController extends Controller
                 'type'    => $phoneType,
             ],
             [
-                'is_primary'  => $makePrimary,
+                'is_primary'  => false,
                 'location_id' => $locationId,
             ]
         );

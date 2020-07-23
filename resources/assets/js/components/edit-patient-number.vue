@@ -36,7 +36,9 @@
                    title="Delete Phone Number"
                    @click="deletePhone(number.phoneNumberId)"></i>
 
-                <button v-if="isIndexToUpdate(index)" class="btn btn-sm update-primaryNumber"
+                <button v-if="isIndexToUpdate(index)"
+                        class="btn btn-sm update-primaryNumber"
+                        type="button"
                         style="display: inline;"
                         @click="updatePrimaryPhone(number.phoneNumberId)"
                         :disabled="number.isPrimary">
@@ -85,6 +87,7 @@
                    @click="removeInputField(index)"></i>
 
                 <button class="btn btn-sm save-number" style="display: inline;"
+                        type="button"
                         @click="saveNewNumber"
                         :disabled="disableSaveButton">
                     {{setSaveBtnText}}
@@ -145,19 +148,27 @@
 
             setSaveBtnText(){
                 if(this.makeNewNumberPrimary){
-                    console.log('1');
                     return'Save & Make Private';
                 }
-                console.log('2');
                 return "Save Number";
             },
         },
 
         methods: {
-            updatePrimaryPhone(){
-                const x =  document.getElementById("isPrimary").checked === true;
-                console.log(x);
-                return;
+            updatePrimaryPhone(phoneNumberId){
+                confirm("Are you sure you want to mark this number as primary number");
+                this.loading = true;
+                axios.post('/manage-patients/mark/primary-phone', {
+                    phoneId:phoneNumberId,
+                    patientUserId:this.userId,
+                }).then((response => {
+                        console.log(response.data);
+                        this.getPhoneNumbers();
+                        this.loading = false;
+                    })).catch((error) => {
+                    this.loading = false;
+                    console.log(error.message);
+                });
             },
 
             isIndexToUpdate(index){
@@ -173,10 +184,11 @@
                 this.phoneTypes = [];
                 this.newInputs = [];
             },
+
             getPhoneNumbers(){
                 this.loading = true;
                 this.resetData();
-                axios.post('/manage-patients/demographics/get-phones', {
+                axios.post('/manage-patients/get-phones', {
                     userId:this.userId
                 })
                     .then((response => {
@@ -203,7 +215,7 @@
 
                 this.newInputs.push(arr);
             },
-            
+
             saveNewNumber(){
                 this.loading = true;
                 if (this.newPhoneType.length === 0){
@@ -243,7 +255,7 @@
             deletePhone(phoneNumberId){
                 confirm("Are you sure you want to delete this phone number");
                 this.loading = true;
-                axios.post('/manage-patients/demographics/delete-phone', {
+                axios.post('/manage-patients/delete-phone', {
                     phoneId:phoneNumberId
                 })
                     .then((response => {
