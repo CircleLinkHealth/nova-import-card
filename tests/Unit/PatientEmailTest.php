@@ -40,7 +40,9 @@ class PatientEmailTest extends CustomerTestCase
             ->assertStatus(400)
             ->getOriginalContent();
 
-        $this->assertTrue(isset($responseData['errors']));
+        $this->assertTrue(in_array('Email subject contains patient PHI: First Name', $responseData['messages']));
+        $this->assertTrue(in_array('Email body contains patient PHI: First Name', $responseData['messages']));
+        $this->assertTrue(in_array('Email is invalid.', $responseData['messages']));
     }
 
     private function enableFeatureForNurse()
