@@ -173,7 +173,11 @@ class PatientController extends Controller
         $user->access_disabled = 1;
         $user->setFirstName($input['firstName']);
         $user->setLastName($input['lastName']);
-        $user->createNewUser($input['email'], Str::random());
+        $user->username = $input['email'];
+        $user->email    = $input['email'];
+        $user->password = bcrypt(Str::random());
+        $user->save();
+
         if ( ! empty($input['phoneNumber'])) {
             $phoneNumber = new PhoneNumber();
             $phoneNumber->setRawAttributes([
