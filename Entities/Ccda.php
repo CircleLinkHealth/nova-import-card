@@ -409,7 +409,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
      *
      * @return Ccda
      */
-    public function import(Enrollee $enrollee = null)
+    public function import(Enrollee &$enrollee = null)
     {
         return with(new CcdaImporterWrapper($this, $enrollee))->import();
     }
