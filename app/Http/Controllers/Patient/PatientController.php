@@ -211,9 +211,13 @@ class PatientController extends Controller
             ]
         );
 
-        foreach ($phoneNumbers->all() as $number) {
-            // One more trip to DB
-            $this->updatePreviousPrimaryPhone($number, $newPhoneNumber->id);
+        //should only be one
+        $existingPrimaryNumbers = $phoneNumbers->where('is_primary', '=', true)->all();
+        if ($request->input('makePrimary') && ! empty($existingPrimaryNumbers)) {
+            foreach ($existingPrimaryNumbers as $number) {
+                // One more trip to DB
+                $this->updatePreviousPrimaryPhone($number, $newPhoneNumber->id);
+            }
         }
 
         return response()->json([
