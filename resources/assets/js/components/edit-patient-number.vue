@@ -3,7 +3,7 @@
         <div class="input-group">
             <span v-if="shouldShowError" class="help-block" style="color: red">{{this.errorMessage}}</span>
             <template v-if="true" v-for="(number, index) in patientPhoneNumbers">
-                <div style="display: inline-flex; padding-right: 5px;">
+                <div class="number-type">
                     <input name="type"
                            class="form-control phone-type"
                            type="text"
@@ -11,7 +11,7 @@
                            :disabled="true"/>
                 </div>
 
-              <div style="display: inline-flex; padding-bottom: 10px; padding-left: 10px;">
+              <div style="display: inline-flex; padding-bottom: 10px;">
                   <span class="input-group-addon plus-one">+1</span>
                   <input name="number"
                          class="form-control phone-number"
@@ -264,6 +264,11 @@
         padding-right: 26px;
         padding-top: 10px;
         background-color: transparent;
+    }
+    .number-type{
+        display: inline-flex;
+        padding-right: 5px;
+        padding-left: 30px;
     }
 
 </style>
