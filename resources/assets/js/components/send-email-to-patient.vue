@@ -5,9 +5,9 @@
             <label for="patient-email-body">
                 Compose Mail
             </label></div>
-        <div class="form-group" v-if="this.patientEmail">To: {{this.patientEmail}}</div>
+        <div class="form-group" v-if="patientEmailIsValid">To: {{this.patientEmail}}</div>
         <div class="form-group" v-else>
-            <div style="padding-bottom: 10px"><span><strong>Patient email not found.</strong> Send to:</span><br></div>
+            <div style="padding-bottom: 10px"><span><strong>Patient email not found or is invalid.</strong> Send to:</span><br></div>
             <div class="col-sm-4" style="padding-left: 0"><input class="form-control" type="email" id="custom-patient-email" name="custom-patient-email"
                                                                  placeholder="Enter email..."></div>
             <div class="col-sm-4"><input type="checkbox" id="default-patient-email" name="default-patient-email"
@@ -73,6 +73,17 @@
             deleteUrl() {
                 return rootUrl('/patient-email/' + this.patientId + '/delete-attachment');
             },
+            patientEmailIsValid(){
+                if (! this.patientEmail || this.patientEmail.length === 0){
+                    return false;
+                }
+
+                if (this.patientEmail.endsWith('@careplanmanager.com') ||  this.patientEmail.endsWith('@example.com'), this.patientEmail.endsWith('@noEmail.com')){
+                    return false;
+                }
+
+                return true;
+            }
         },
         methods: {
             handleFile(file) {
