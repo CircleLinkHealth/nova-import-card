@@ -48,7 +48,10 @@
                             <select2 id="phoneNumber" class="form-control" v-model="dropdownNumber"
                                      :settings="{minimumResultsForSearch: -1}"
                                  :disabled="onPhone[selectedPatientNumber]">
-                                <option v-for="(number, key) in patientNumbers" :key="key.type" :value="number.number">{{number.type}}: {{number.number}}
+                                <option v-for="(number, key) in patientNumbers"
+                                        :key="key.type"
+                                        :value="number.number">
+                                    {{number.type}}: {{number.number}}
                                 </option>
                                 <option value="patientUnlisted">Other</option>
                             </select2>
@@ -285,7 +288,7 @@
                 dropdownPhoneType:'',
                 saving:false,
                 phoneTypes:[],
-                patientNumbers:[]
+                patientNumbers:[],
             }
         },
         computed: {
@@ -335,7 +338,7 @@
             getPhoneNumbers(){
                 this.loading = true;
                 this.resetData();
-                axios.post('/manage-patients/demographics/get-phones', {
+                axios.post('/manage-patients/get-phones', {
                     userId:this.inboundUserId
                 })
                     .then((response => {
@@ -519,8 +522,7 @@
                     if (!isDebug) {
                         if (isCurrentlyOnConference) {
                             this.log = `Hanging up call to ${number}`;
-                            this.axios
-                                .post(this.getUrl(`twilio/call/end?cpm-token=${this.cpmToken}`), {
+                            this.axios.post(this.getUrl(`twilio/call/end?cpm-token=${this.cpmToken}`), {
                                     CallSid: this.callSids[number],
                                     InboundUserId: this.inboundUserId,
                                     OutboundUserId: this.outboundUserId,

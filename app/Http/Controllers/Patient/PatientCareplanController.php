@@ -67,7 +67,13 @@ class PatientCareplanController extends Controller
             ], 400);
         }
 
-        PhoneNumber::whereId($request->input('phoneId'))->delete();
+        $phoneNumber = PhoneNumber::whereId($request->input('phoneId'));
+        if ( ! empty($phoneNumber->first()) && $phoneNumber->first()->is_primary) {
+            return response()->json([
+                'message' => 'You cannot delete a primary number',
+            ]);
+        }
+        $phoneNumber->delete();
 
         return response()->json([
             'message' => 'Phone Number Has Been Deleted',

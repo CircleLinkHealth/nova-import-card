@@ -2,7 +2,7 @@
     <div class="phone-numbers">
         <div class="input-group">
             <span v-if="shouldShowError" class="help-block" style="color: red">{{this.errorMessage}}</span>
-            <h5 v-if="!loading" style="padding-left: 4px;">Primary<br>Phone</h5>
+            <h5 v-if="!loading" style="padding-left: 4px; color: #50b2e2;">Primary<br>Phone</h5>
             <template v-if="true" v-for="(number, index) in patientPhoneNumbers">
                 <div class="numbers">
                     <div style="margin-top: 7px;">
@@ -17,6 +17,7 @@
                     <div class="types">
                         <input name="type"
                                class="form-control phone-type"
+                               :class="{'bgColor' : numberIsPrimary(number)}"
                                type="text"
                                :value="number.type"
                                :disabled="true"/>
@@ -25,13 +26,14 @@
                   <span class="input-group-addon plus-one">+1</span>
                   <input name="number"
                          class="form-control phone-number"
+                         :class="{'bgColor' : numberIsPrimary(number)}"
                          type="tel"
                          title="10-digit US Phone Number" placeholder="2345678901"
                          :value="number.number"
                          :disabled="true"/>
               </div>
 
-                <i v-if="!loading"
+                <i v-if="!loading && number.isPrimary === false"
                    class="glyphicon glyphicon-trash remove-phone"
                    title="Delete Phone Number"
                    @click="deletePhone(number.phoneNumberId)"></i>
@@ -155,6 +157,10 @@
         },
 
         methods: {
+            numberIsPrimary(number){
+                return number.isPrimary;
+            },
+
             updatePrimaryPhone(phoneNumberId){
                 confirm("Are you sure you want to mark this number as primary number");
                 this.loading = true;
@@ -264,6 +270,9 @@
                         console.log(response.data);
                         this.getPhoneNumbers();
                         this.loading = false;
+                        if (response.data.hasOwnProperty('message')){
+                            alert(response.data.message);
+                        }
                     })).catch((error) => {
                     this.loading = false;
                     console.log(error.message);
@@ -358,5 +367,9 @@
         margin-left: 10px;
         margin-top: -20px
     }
+
+.bgColor{
+    background-color:  #c4ebff;
+}
 
 </style>

@@ -193,7 +193,7 @@ class PatientController extends Controller
         if ($numberExists) {
             return response()->json(
                 [
-                    'message' => "Phone Number with type '$phoneType' already exists for patient $userId",
+                    'message' => "The same Phone Number with type '$phoneType' already exists for this patient",
                 ],
             );
         }
