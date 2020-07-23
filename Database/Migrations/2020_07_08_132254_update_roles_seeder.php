@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class AddsLocationNameFulltextIndex extends Migration
+class UpdateRolesSeeder extends Migration
 {
     /**
      * Reverse the migrations.
@@ -24,7 +24,10 @@ class AddsLocationNameFulltextIndex extends Migration
      */
     public function up()
     {
-        //for CCD Location Search
-        DB::statement('ALTER TABLE locations ADD FULLTEXT full(name)');
+        if ( ! isUnitTestingEnv()) {
+            Artisan::call('db:seed', [
+                '--class' => \CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder::class,
+            ]);
+        }
     }
 }
