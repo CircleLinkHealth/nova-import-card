@@ -28,7 +28,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/brick/money" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/cakephp/chronos" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/christophrumpel/nova-notifications" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-nova-theme" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/enrollment-invites" />

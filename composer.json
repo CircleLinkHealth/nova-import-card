@@ -171,7 +171,6 @@
     "appstract/laravel-opcache": "^4.0",
     "ashallendesign/short-url": "3.0.3",
     "barryvdh/laravel-snappy": "0.4.7",
-    "christophrumpel/nova-notifications": "^1.0",
     "circlelinkhealth/ccda-parser-processor-php-module": "1.1.2",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.1.7",
     "circlelinkhealth/clh-import-card-extended": "*",

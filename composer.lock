@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4286a2bc5c4b96990aac701db5ae8be1",
+    "content-hash": "219f29bca04646236b647024ac54b6fd",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.147.2",
+            "version": "3.147.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c58688f53c730b74cec1b6cfee8d9ed5bb40d946"
+                "reference": "a563bb8bd83ec232db6b0b230832e3a6bde8a838"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c58688f53c730b74cec1b6cfee8d9ed5bb40d946",
-                "reference": "c58688f53c730b74cec1b6cfee8d9ed5bb40d946",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a563bb8bd83ec232db6b0b230832e3a6bde8a838",
+                "reference": "a563bb8bd83ec232db6b0b230832e3a6bde8a838",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-07-21T18:11:40+00:00"
+            "time": "2020-07-22T18:18:26+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -856,54 +856,6 @@
                 "time"
             ],
             "time": "2020-05-26T01:27:20+00:00"
-        },
-        {
-            "name": "christophrumpel/nova-notifications",
-            "version": "1.0.11",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/christophrumpel/nova-notifications.git",
-                "reference": "cdf56cc39e1b9d0c0290c630a799f9ac60ae0418"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/christophrumpel/nova-notifications/zipball/cdf56cc39e1b9d0c0290c630a799f9ac60ae0418",
-                "reference": "cdf56cc39e1b9d0c0290c630a799f9ac60ae0418",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/nova": "*",
-                "php": ">=7.2.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.0",
-                "orchestra/testbench": "~3.0",
-                "phpunit/phpunit": "8.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Christophrumpel\\NovaNotifications\\ToolServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Christophrumpel\\NovaNotifications\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova tool for handling Laravel Notifications.",
-            "keywords": [
-                "laravel",
-                "notifications",
-                "nova"
-            ],
-            "time": "2019-10-28T07:47:39+00:00"
         },
         {
             "name": "circlelinkhealth/ccda-parser-processor-php-module",
@@ -3250,16 +3202,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.139",
+            "version": "v0.140",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "84e99f792cae7bd92b8b54c75b0ad3502d628db6"
+                "reference": "298affe3f7b3c251c369a4a7eae30d8b96a66200"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/84e99f792cae7bd92b8b54c75b0ad3502d628db6",
-                "reference": "84e99f792cae7bd92b8b54c75b0ad3502d628db6",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/298affe3f7b3c251c369a4a7eae30d8b96a66200",
+                "reference": "298affe3f7b3c251c369a4a7eae30d8b96a66200",
                 "shasum": ""
             },
             "require": {
@@ -3283,20 +3235,20 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-06-08T00:24:31+00:00"
+            "time": "2020-07-22T00:25:27+00:00"
         },
         {
             "name": "google/auth",
-            "version": "v1.10.0",
+            "version": "v1.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "077d6ae98d550161d3b2a0ba283bdce785c74d85"
+                "reference": "f6752236dbb2d641d50dffee789e553e2fda129d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/077d6ae98d550161d3b2a0ba283bdce785c74d85",
-                "reference": "077d6ae98d550161d3b2a0ba283bdce785c74d85",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/f6752236dbb2d641d50dffee789e553e2fda129d",
+                "reference": "f6752236dbb2d641d50dffee789e553e2fda129d",
                 "shasum": ""
             },
             "require": {
@@ -3335,7 +3287,7 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2020-07-08T19:11:36+00:00"
+            "time": "2020-07-22T18:24:05+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -4829,17 +4781,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.8.0",
+            "version": "v3.8.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "a875729083b83687e46805846e1c716e19dc35a7"
+                "reference": "c78ac8e2fd11f05ab451a175f8890d81e8898706"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-a875729083b83687e46805846e1c716e19dc35a7-zip-332865.zip",
-                "reference": "a875729083b83687e46805846e1c716e19dc35a7",
-                "shasum": "c5175dcc263b3ba5b0bd4cab9e557b7c03cc86da"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-c78ac8e2fd11f05ab451a175f8890d81e8898706-zip-412016.zip",
+                "reference": "c78ac8e2fd11f05ab451a175f8890d81e8898706",
+                "shasum": "aaf47dc7998b42b181ad37566b394f756905958d"
             },
             "require": {
                 "brick/money": "^0.4.2",
@@ -4899,7 +4851,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-07-21T17:46:13+00:00"
+            "time": "2020-07-22T08:55:44+00:00"
         },
         {
             "name": "laravel/passport",
@@ -12524,16 +12476,16 @@
         },
         {
             "name": "voku/portable-ascii",
-            "version": "1.5.2",
+            "version": "1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/voku/portable-ascii.git",
-                "reference": "618631dc601d8eb6ea0a9fbf654ec82f066c4e97"
+                "reference": "25bcbf01678930251fd572891447d9e318a6e2b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voku/portable-ascii/zipball/618631dc601d8eb6ea0a9fbf654ec82f066c4e97",
-                "reference": "618631dc601d8eb6ea0a9fbf654ec82f066c4e97",
+                "url": "https://api.github.com/repos/voku/portable-ascii/zipball/25bcbf01678930251fd572891447d9e318a6e2b8",
+                "reference": "25bcbf01678930251fd572891447d9e318a6e2b8",
                 "shasum": ""
             },
             "require": {
@@ -12578,6 +12530,10 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://opencollective.com/portable-ascii",
+                    "type": "open_collective"
+                },
+                {
                     "url": "https://www.patreon.com/voku",
                     "type": "patreon"
                 },
@@ -12586,7 +12542,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-06-15T23:49:30+00:00"
+            "time": "2020-07-22T23:32:04+00:00"
         },
         {
             "name": "waynestate/nova-ckeditor4-field",
