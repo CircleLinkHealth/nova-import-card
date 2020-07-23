@@ -63,7 +63,7 @@ class CcdaFromAthena implements MedicalRecordDecorator
      *
      * @return CcdaFromAthena
      */
-    public function setCcda(Ccda $ccda)
+    public function setCcda(?Ccda $ccda)
     {
         $this->ccda = $ccda;
 
@@ -95,7 +95,7 @@ class CcdaFromAthena implements MedicalRecordDecorator
                 ->practice
                 ->external_id,
             $eligibilityJob->patient_mrn,
-            false
+            true
         )['appointments'] ?? []))->sortBy('date')->first();
 
         if ( ! $nextAppointment) {

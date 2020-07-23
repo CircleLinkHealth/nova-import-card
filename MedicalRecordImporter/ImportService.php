@@ -18,7 +18,7 @@ class ImportService
      *
      * @param $ccdaId
      */
-    public function importExistingCcda($ccdaId, Enrollee $enrollee = null): ?User
+    public function importExistingCcda($ccdaId, Enrollee &$enrollee = null): ?User
     {
         /** @var Ccda $ccda */
         $ccda = Ccda::withTrashed()
@@ -33,6 +33,11 @@ class ImportService
 
         if ($ccda->imported) {
             if ($ccda->patient) {
+                if ( ! $enrollee->user_id) {
+                    $enrollee->user_id = $ccda->patient->id;
+                    $enrollee->setRelation('user', $ccda->patient);
+                }
+
                 return $ccda->patient;
             }
         }

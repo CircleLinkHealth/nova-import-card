@@ -24,7 +24,7 @@ class PcmChargeableServices implements MedicalRecordDecorator
 
         /** @var Problem $p */
         foreach (EligibilityChecker::getProblemsForEligibility($eligibilityJob) as $p) {
-            if ( ! is_a($p, Problem::class)) {
+            if ( ! $p instanceof Problem) {
                 continue;
             }
 

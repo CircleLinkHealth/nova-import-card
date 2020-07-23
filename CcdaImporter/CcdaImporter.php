@@ -11,6 +11,7 @@ use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
@@ -58,7 +59,7 @@ class CcdaImporter
 
     public function __construct(
         Ccda $ccda,
-        Enrollee $enrollee = null
+        Enrollee &$enrollee = null
     ) {
         $this->str      = new StringManipulation();
         $this->ccda     = $ccda;
@@ -109,6 +110,10 @@ class CcdaImporter
             $email = $newUserId.'@careplanmanager.com';
         }
 
+        if (User::ofType('participant')->where('email', $email)->where('last_name', $this->ccda->patient_last_name)->where('first_name', '!=', $this->ccda->patient_fist_name)->exists()) {
+            $email = "family_$email";
+        }
+
         $demographics = $this->ccda->bluebuttonJson()->demographics;
 
         $newPatientUser = (new UserRepository())->createNewUser(
@@ -119,13 +124,11 @@ class CcdaImporter
                     'display_name' => ucwords(
                         strtolower($this->ccda->patient_first_name.' '.$this->ccda->patient_last_name)
                     ),
-                    'first_name' => $this->ccda->patient_first_name,
-                    'last_name'  => $this->ccda->patient_last_name,
-                    'mrn_number' => $this->ccda->patient_mrn,
-                    'birth_date' => $this->ccda->patientDob(),
-                    'username'   => empty($email)
-                        ? $newUserId
-                        : $email,
+                    'first_name'        => $this->ccda->patient_first_name,
+                    'last_name'         => $this->ccda->patient_last_name,
+                    'mrn_number'        => $this->ccda->patient_mrn,
+                    'birth_date'        => $this->ccda->patientDob(),
+                    'username'          => $newUserId,
                     'program_id'        => $this->ccda->practice_id,
                     'is_auto_generated' => true,
                     'roles'             => [Role::whereName('participant')->firstOrFail()->id],
@@ -167,6 +170,11 @@ class CcdaImporter
 
             if ($this->enrollee->medical_record_id != $this->ccda->id) {
                 $this->enrollee->medical_record_id = $this->ccda->id;
+            }
+
+            if ( ! $this->enrollee->user_id) {
+                $this->enrollee->user_id = $this->ccda->patient->id;
+                $this->enrollee->setRelation('user', $this->ccda->patient);
             }
         }
 
