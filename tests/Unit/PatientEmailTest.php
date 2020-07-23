@@ -37,7 +37,6 @@ class PatientEmailTest extends CustomerTestCase
         ]), ['patient_email_subject' => $this->patient->first_name,
             'patient_email_body'     => $this->patient->first_name,
             'custom_patient_email'   => 'test@careplanmanager.com', ])
-            ->assertStatus(400)
             ->getOriginalContent();
 
         $this->assertTrue(in_array('Email subject contains patient PHI: First Name', $responseData['messages']));
