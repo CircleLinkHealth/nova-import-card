@@ -88,7 +88,7 @@ class PatientCareplanController extends Controller
                 'phoneNumberId' => $phone->id,
                 'number'        => substr(formatPhoneNumberE164($phone->number), 2),
                 'type'          => ucfirst($phone->type),
-                'isPrimary'     => $phone->is_primary,
+                'isPrimary'     => boolval($phone->is_primary),
             ];
         });
 

@@ -9,6 +9,7 @@
                         <input name="isPrimary"
                                class="is-primary"
                                :checked="number.isPrimary"
+                               @click="enableUpdateButton(index)"
                                type="radio">
                     </div>
 
@@ -34,6 +35,13 @@
                    class="glyphicon glyphicon-trash remove-phone"
                    title="Delete Phone Number"
                    @click="deletePhone(number.phoneNumberId)"></i>
+
+                <button v-if="isIndexToUpdate(index)" class="btn btn-sm update-primaryNumber"
+                        style="display: inline;"
+                        @click="updatePrimaryPhone(number.phoneNumberId)"
+                        :disabled="number.isPrimary">
+                    Make primary
+                </button>
                 <br>
             </template>
             <loader v-if="loading"></loader>
@@ -43,9 +51,10 @@
                 <div style="padding-right: 14px; margin-left: -10px;">
 
                     <div class="numbers">
-                        <input name="isPrimary"
+                        <input id="isPrimary"
                                class="is-primary"
-                               type="radio">
+                               v-model="makeNewNumberPrimary"
+                               type="checkbox">
 
                         <div class="types">
                        <select2 id="numberType" class="form-control" style="width: 81px;"
@@ -78,7 +87,7 @@
                 <button class="btn btn-sm save-number" style="display: inline;"
                         @click="saveNewNumber"
                         :disabled="disableSaveButton">
-                    Save phone number
+                    {{setSaveBtnText}}
                 </button>
                 </div>
                 </div>
@@ -112,11 +121,13 @@
             return {
                 loading:false,
                 patientPhoneNumbers:[],
-                editingIsOn:false,
                 newPhoneType:'',
                 newPhoneNumber:'',
                 newInputs:[],
-                phoneTypes:[]
+                phoneTypes:[],
+                // saveBtnText:"Save Number",
+                markPrimaryEnabledForIndex:'',
+                makeNewNumberPrimary:false
             }
         },
         computed:{
@@ -131,9 +142,32 @@
             shouldShowError(){
                 return this.patientPhoneNumbers.length === 0;
             },
+
+            setSaveBtnText(){
+                if(this.makeNewNumberPrimary){
+                    console.log('1');
+                    return'Save & Make Private';
+                }
+                console.log('2');
+                return "Save Number";
+            },
         },
 
         methods: {
+            updatePrimaryPhone(){
+                const x =  document.getElementById("isPrimary").checked === true;
+                console.log(x);
+                return;
+            },
+
+            isIndexToUpdate(index){
+            return index === this.markPrimaryEnabledForIndex;
+            },
+
+            enableUpdateButton(index){
+                this.markPrimaryEnabledForIndex = index;
+            },
+
             resetData(){
                 this.patientPhoneNumbers = [];
                 this.phoneTypes = [];
@@ -296,12 +330,19 @@
     }
     .types{
         padding-right: 10px;
-        padding-left: 30px;
+        padding-left: 10px;
     }
     .phone-number{
         background-color: transparent;
         max-width: 140px;
         min-width: 140px;
+    }
+    .update-primaryNumber{
+        height: 29px;
+        padding: 5px;
+        color: #50b2e2;
+        margin-left: 10px;
+        margin-top: -20px
     }
 
 </style>
