@@ -40,16 +40,37 @@ class ListenToAwvChannel implements ShouldQueue
     /**
      * Execute the job.
      *
+     * @throws \Exception
      * @return void
      */
     public function handle()
     {
         if (self::AWV_REPORT_CREATED === $this->channel) {
-            AwvNotifyBillingProviderOfCareDocument::createFromAwvPatientReport($this->data)::dispatch();
+            $data = $this->decodeCareDocumentJsonData($this->data);
+            AwvNotifyBillingProviderOfCareDocument::dispatch($data['patient_id'], $data['report_media_id']);
         }
 
         if (self::ENROLLMENT_SURVEY_COMPLETED === $this->channel) {
+            //todo: better decode data here, so the EnrollableSurveyCompleted can be tested without worrying about corrupted data
             EnrollableSurveyCompleted::dispatch($this->data);
         }
+    }
+
+    private function decodeCareDocumentJsonData(?string $patientReportdata)
+    {
+        $decoded = json_decode($patientReportdata, true);
+
+        if ( ! is_array($decoded) || empty($decoded)) {
+            throw new \Exception('Invalid patient report data received from AWV');
+        }
+
+        if ( ! array_keys_exist([
+            'patient_id',
+            'report_media_id',
+        ], $decoded)) {
+            throw new \Exception('There are keys missing from patient report data received from AWV.');
+        }
+
+        return $decoded;
     }
 }
