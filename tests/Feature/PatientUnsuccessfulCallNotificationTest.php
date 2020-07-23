@@ -76,11 +76,12 @@ class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
 
         //need to have an entry in db for the SendUnsuccessfulCallPatientsReminderNotification command to work
         DatabaseNotification::create([
-            'id'            => Str::random(36),
-            'type'          => PatientUnsuccessfulCallNotification::class,
-            'notifiable_id' => $patient->id,
-            'created_at'    => now(),
-            'updated_at'    => now(),
+            'id'              => Str::random(36),
+            'type'            => PatientUnsuccessfulCallNotification::class,
+            'notifiable_id'   => $patient->id,
+            'notifiable_type' => get_class($patient),
+            'created_at'      => now(),
+            'updated_at'      => now(),
         ]);
         Notification::assertSentTo($patient, PatientUnsuccessfulCallNotification::class);
 
@@ -90,11 +91,12 @@ class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
         $this->artisan(SendUnsuccessfulCallPatientsReminderNotification::class);
         //add another entry that was created because of the command
         DatabaseNotification::create([
-            'id'            => Str::random(36),
-            'type'          => PatientUnsuccessfulCallNotification::class,
-            'notifiable_id' => $patient->id,
-            'created_at'    => now(),
-            'updated_at'    => now(),
+            'id'              => Str::random(36),
+            'type'            => PatientUnsuccessfulCallNotification::class,
+            'notifiable_id'   => $patient->id,
+            'notifiable_type' => get_class($patient),
+            'created_at'      => now(),
+            'updated_at'      => now(),
         ]);
         Notification::assertSentToTimes($patient, PatientUnsuccessfulCallNotification::class, 2);
 

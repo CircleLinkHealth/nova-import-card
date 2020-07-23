@@ -107,6 +107,21 @@ class SchedulerService
         );
     }
 
+    public static function getAsapTaskSince($patientId, $taskName, Carbon $since = null)
+    {
+        if ( ! $since) {
+            $since = now();
+        }
+
+        return Call::where('inbound_cpm_id', $patientId)
+            ->where('type', '=', 'task')
+            ->where('sub_type', '=', $taskName)
+            ->where('asap', '=', 1)
+            ->where('scheduled_date', '>=', $since->toDateString())
+            ->orderBy('scheduled_date', 'desc')
+            ->first();
+    }
+
     public static function getLastUnsuccessfulCall($patientId, $calledDate = null, $withParticipants = true): ?Call
     {
         if ( ! $calledDate) {
