@@ -19,10 +19,10 @@ class PatientEmailTest extends CustomerTestCase
     {
         parent::setUp();
 
-//        $this->patient = $this->patient();
-//        $this->nurse   = $this->careCoach();
-//
-//        $this->enableFeatureForNurse();
+        $this->patient = $this->patient();
+        $this->nurse   = $this->careCoach();
+
+        $this->enableFeatureForNurse();
     }
 
     /**
