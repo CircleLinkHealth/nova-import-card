@@ -399,7 +399,15 @@ $user_info = [];
                                                     @if(auth()->user()->isAdmin() && $patient->careplan)
                                                     <div class="row" style="margin-top: 10px;">
                                                         <div class="col-lg-4">{!! Form::label('careplan_status', 'Careplan Status:') !!}</div>
-                                                        <div class="col-lg-8">{!! Form::select('careplan_status', [CircleLinkHealth\SharedModels\Entities\CarePlan::DRAFT => 'Draft', CircleLinkHealth\SharedModels\Entities\CarePlan::QA_APPROVED => 'CLH Approved', CircleLinkHealth\SharedModels\Entities\CarePlan::PROVIDER_APPROVED => 'Provider Approved'], optional($patient->careplan)->status, ['class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
+                                                        <div class="col-lg-8">
+                                                            {!! Form::select('careplan_status', [
+                                                                    CircleLinkHealth\SharedModels\Entities\CarePlan::DRAFT => 'Draft',
+                                                                    CircleLinkHealth\SharedModels\Entities\CarePlan::QA_APPROVED => 'CLH Approved',
+                                                                    CircleLinkHealth\SharedModels\Entities\CarePlan::RN_APPROVED => 'RN Approved',
+                                                                    CircleLinkHealth\SharedModels\Entities\CarePlan::PROVIDER_APPROVED => 'Provider Approved'],
+                                                                        optional($patient->careplan)->status, ['class' => 'form-control select-picker', 'style' => 'width:100%;'])
+                                                            !!}
+                                                        </div>
                                                     </div>
                                                     @endif
                                                     <div id="withdrawn-reason" class="row hidden"

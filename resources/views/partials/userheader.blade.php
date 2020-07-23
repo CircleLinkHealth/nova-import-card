@@ -306,18 +306,6 @@
             -webkit-animation: bounce 0.65s 4;
         }
 
-        .custom-tooltip {
-            display: none;
-            z-index: 9999999;
-            position: absolute;
-            border: 1px solid #333;
-            background-color: #161616;
-            border-radius: 5px;
-            padding: 10px;
-            color: #fff;
-            font-size: 12px;
-        }
-
         .bhi-tooltip {
             display: none;
             z-index: 9999999;
@@ -348,31 +336,6 @@
             $('.glyphicon-flag').click(function (e) {
                 $(".load-hidden-bhi, .modal-mask").show();
             });
-
-            $('.with-tooltip')
-                .hover(function () {
-                    // Hover over code
-                    var title = $(this).attr('title');
-
-                    $(this)
-                        .data('tipText', title)
-                        .removeAttr('title');
-
-                    $('<p class="custom-tooltip"></p>')
-                        .text(title)
-                        .appendTo('body')
-                        .fadeIn('slow');
-
-                }, function () {
-                    // Hover out code
-                    $(this).attr('title', $(this).data('tipText'));
-                    $('.custom-tooltip').remove();
-                })
-                .mousemove(function (e) {
-                    var mousex = e.pageX + 20; //Get X coordinates
-                    var mousey = e.pageY + 10; //Get Y coordinates
-                    $('.custom-tooltip').css({top: mousey, left: mousex})
-                });
 
             $('.with-bhi-tooltip')
                 .hover(function () {
