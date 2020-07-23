@@ -1050,7 +1050,8 @@
                             .post(validateEmailBodyUrl, {
                                 //validate subject as well
                                 patient_email_subject: $("[id='email-subject']").val(),
-                                patient_email_body: $("[id='patient-email-body-input']").val()
+                                patient_email_body: $("[id='patient-email-body-input']").val(),
+                                custom_patient_email: $("[id='custom-patient-email']").val()
                             })
                             .then((response) => {
                                 if (response.data.status == 400) {

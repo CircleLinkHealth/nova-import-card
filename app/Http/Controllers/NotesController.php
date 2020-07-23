@@ -15,6 +15,7 @@ use App\Jobs\SendSingleNotification;
 use App\Note;
 use App\Rules\PatientEmailAttachments;
 use App\Rules\PatientEmailDoesNotContainPhi;
+use App\Rules\ValidatePatientCustomEmail;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
@@ -588,9 +589,13 @@ class NotesController extends Controller
 
         if ($shouldSendPatientEmail) {
             Validator::make($input, [
-                'email-subject'      => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
-                'patient-email-body' => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
-                'attachments'        => ['sometimes', new PatientEmailAttachments()],
+                'email-subject'        => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'patient-email-body'   => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'attachments'          => ['sometimes', new PatientEmailAttachments()],
+                'custom_patient_email' => [
+                    'sometimes',
+                    new ValidatePatientCustomEmail(),
+                ],
             ])->validate();
         }
 
