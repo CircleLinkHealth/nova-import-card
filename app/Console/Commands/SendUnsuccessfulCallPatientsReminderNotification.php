@@ -66,7 +66,7 @@ class SendUnsuccessfulCallPatientsReminderNotification extends Command
                 // unlikely, but this could happen (most probably in a testing scenario):
                 // in one day, 3 unsuccessful calls to same patient,
                 // so this notification went out to same patient more than once
-                if ($userIds->has($notification->notifiable_id)) {
+                if ($userIds->contains($notification->notifiable_id)) {
                     return;
                 }
 
