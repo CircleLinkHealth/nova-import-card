@@ -13,7 +13,6 @@ use App\Note;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\NotifyPatientCarePlanApproved;
-use App\Rules\DoesNotHaveBothTypesOfDiabetes;
 use App\Rules\HasEnoughProblems;
 use App\Services\Calls\SchedulerService;
 use App\Services\CareplanService;
@@ -26,6 +25,7 @@ use CircleLinkHealth\Customer\Rules\PatientIsNotDuplicate;
 use CircleLinkHealth\Customer\Traits\PdfReportTrait;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Rules\HasValidNbiMrn;
+use CircleLinkHealth\SharedModels\Rules\DoesNotHaveBothTypesOfDiabetes;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Log;
@@ -110,6 +110,9 @@ use Validator;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withNurseApprovedVia()
  * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\CarePlan withoutTrashed()
+ *
+ * @property \Illuminate\Support\Carbon|null $rn_date
+ * @property int|null                        $rn_approver_id
  */
 class CarePlan extends BaseModel implements PdfReport
 {
@@ -121,6 +124,7 @@ class CarePlan extends BaseModel implements PdfReport
     const PDF               = 'pdf';
     const PROVIDER_APPROVED = 'provider_approved';
     const QA_APPROVED       = 'qa_approved';
+    const RN_APPROVED       = 'rn_approved';
 
     // mode options
     const WEB = 'web';
@@ -131,6 +135,7 @@ class CarePlan extends BaseModel implements PdfReport
 
     protected $dates = [
         'qa_date',
+        'rn_date',
         'provider_date',
         'first_printed',
     ];
@@ -140,10 +145,12 @@ class CarePlan extends BaseModel implements PdfReport
         'mode',
         'provider_approver_id',
         'qa_approver_id',
+        'rn_approver_id',
         'care_plan_template_id',
         'type',
         'status',
         'qa_date',
+        'rn_date',
         'provider_date',
         'first_printed_by',
         'first_printed',
@@ -223,7 +230,7 @@ class CarePlan extends BaseModel implements PdfReport
                     ->whereHas(
                         'carePlan',
                         function ($q) {
-                            $q->whereStatus(CarePlan::QA_APPROVED);
+                            $q->whereStatus(CarePlan::RN_APPROVED);
                         }
                     )
                     ->whereHas(
@@ -401,11 +408,17 @@ class CarePlan extends BaseModel implements PdfReport
      */
     public function shouldShowApprovalButton(): bool
     {
-        if (self::QA_APPROVED === $this->status && auth()->user()->canApproveCarePlans()) {
+        /** @var User $user */
+        $user = auth()->user();
+        if (self::RN_APPROVED === $this->status && $user->canApproveCarePlans()) {
             return true;
         }
 
-        if (self::DRAFT === $this->status && auth()->user()->canQAApproveCarePlans()) {
+        if (self::QA_APPROVED === $this->status && $user->canRNApproveCarePlans()) {
+            return true;
+        }
+
+        if (self::DRAFT === $this->status && $user->canQAApproveCarePlans()) {
             return true;
         }
 
@@ -509,8 +522,7 @@ class CarePlan extends BaseModel implements PdfReport
                 'conditions' => [
                     new HasEnoughProblems($this->patient),
                     //If Approver has confirmed that Diabetes Conditions are correct or if Care Plan has already been approved, bypass check
-                    //todo: move rule to this module (currently did not because CarePlan exists both in Shared Models and eligibility)
-                    ! $confirmDiabetesConditions && self::DRAFT === $this->status
+                    ! $confirmDiabetesConditions
                         ? new DoesNotHaveBothTypesOfDiabetes()
                         : null,
                 ],
