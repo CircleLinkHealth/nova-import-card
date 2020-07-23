@@ -2,20 +2,28 @@
     <div class="phone-numbers">
         <div class="input-group">
             <span v-if="shouldShowError" class="help-block" style="color: red">{{this.errorMessage}}</span>
+            <h5 v-if="!loading" style="padding-left: 4px;">Primary<br>Phone</h5>
             <template v-if="true" v-for="(number, index) in patientPhoneNumbers">
-                <div class="number-type">
-                    <input name="type"
-                           class="form-control phone-type"
-                           type="text"
-                           :value="number.type"
-                           :disabled="true"/>
-                </div>
+                <div class="numbers">
+                    <div style="margin-top: 7px;">
+                        <input name="isPrimary"
+                               class="is-primary"
+                               :checked="number.isPrimary"
+                               type="radio">
+                    </div>
 
-              <div style="display: inline-flex; padding-bottom: 10px;">
+
+                    <div class="types">
+                        <input name="type"
+                               class="form-control phone-type"
+                               type="text"
+                               :value="number.type"
+                               :disabled="true"/>
+                    </div>
+
                   <span class="input-group-addon plus-one">+1</span>
                   <input name="number"
                          class="form-control phone-number"
-                         style="background-color: transparent;"
                          type="tel"
                          title="10-digit US Phone Number" placeholder="2345678901"
                          :value="number.number"
@@ -33,15 +41,23 @@
             <!--Extra inputs that are requested by user-->
             <div v-for="(input, index) in newInputs" style="display: inline-flex; padding-bottom: 10px; padding-left: 10px;">
                 <div style="padding-right: 14px; margin-left: -10px;">
-                    <select2 id="numberType" class="form-control" style="width: 81.566px;"
-                             v-model="newPhoneType">
-                        <option v-for="(phoneType, key) in phoneTypes"
-                                :key="key"
-                                :value="phoneType">
-                            {{phoneType}}
-                        </option>
-                    </select2>
-                </div>
+
+                    <div class="numbers">
+                        <input name="isPrimary"
+                               class="is-primary"
+                               type="radio">
+
+                        <div class="types">
+                       <select2 id="numberType" class="form-control" style="width: 81px;"
+                                v-model="newPhoneType">
+                           <option v-for="(phoneType, key) in phoneTypes"
+                                   :key="key"
+                                   :value="phoneType">
+                               {{phoneType}}
+                           </option>
+                       </select2>
+                   </div>
+
 
                 <span class="input-group-addon" style="padding-right: 26px; padding-top: 10px;">+1</span>
                 <input name="number"
@@ -59,11 +75,13 @@
                    title="Remove extra field"
                    @click="removeInputField(index)"></i>
 
-                <button class="btn btn-sm save-number"
+                <button class="btn btn-sm save-number" style="display: inline;"
                         @click="saveNewNumber"
                         :disabled="disableSaveButton">
                     Save phone number
                 </button>
+                </div>
+                </div>
             </div>
 <br>
             <a v-if="!loading && this.newInputs.length === 0"
@@ -216,6 +234,7 @@
     float: left;
 }
     .phone-type{
+        min-width: 80px;
         max-width: 80px;
         text-align: center;
         background-color: transparent;
@@ -227,8 +246,8 @@
         cursor: pointer;
     }
     .remove-phone{
-        margin-left: 19px;
-        padding-top: 5px;
+        top: -7px;
+        padding-left: 3px;
         color: red;
         cursor: pointer;
     }
@@ -265,10 +284,24 @@
         padding-top: 10px;
         background-color: transparent;
     }
-    .number-type{
+    .numbers{
         display: inline-flex;
         padding-right: 5px;
+        padding-left: 16px;
+        padding-bottom: 10px;
+    }
+    .is-primary{
+        display: flex;
+        margin-right: 10px;
+    }
+    .types{
+        padding-right: 10px;
         padding-left: 30px;
+    }
+    .phone-number{
+        background-color: transparent;
+        max-width: 140px;
+        min-width: 140px;
     }
 
 </style>
