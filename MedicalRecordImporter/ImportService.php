@@ -55,7 +55,7 @@ class ImportService
                 $ccda->patient_id = $enrollee->user_id = $exists->id;
                 $ccda->save();
                 $enrollee->save();
-                if (in_array($exists->carePlan->status, [CarePlan::PROVIDER_APPROVED, CarePlan::QA_APPROVED])) {
+                if (in_array($exists->carePlan->status, [CarePlan::PROVIDER_APPROVED, CarePlan::RN_APPROVED, CarePlan::QA_APPROVED])) {
                     return $exists;
                 }
             }
