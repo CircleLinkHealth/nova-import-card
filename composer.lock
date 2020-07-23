@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "49f2fbeb6936617dd0b3b59b299eb1b7",
+    "content-hash": "3b3fdfc68725500f7795f5b0584ff809",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1115,11 +1115,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-ROAD-39_rn_approval",
+            "version": "v2.2.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "8da0aea20ae2d99bb6c7cfef32dbfa1ebbb29f3a"
+                "reference": "9433c4422dcc8a5a6cec8bfd9d7e8d9d4b5baa82"
             },
             "type": "laravel-module",
             "extra": {
@@ -1141,15 +1141,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-23T10:07:35+00:00"
+            "time": "2020-07-23T10:34:04+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-ROAD-39_rn_approval",
+            "version": "v3.0.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "cd9045e401a280a826879343cf4adeccbde2f6e3"
+                "reference": "c47028d70e0ab0c385bf809d34906ad4555195b4"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1183,15 +1183,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-23T10:05:01+00:00"
+            "time": "2020-07-23T10:32:14+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-ROAD-39_rn_approval",
+            "version": "v3.1.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "df157b26162d349aea0f19efad0dad382b1476f5"
+                "reference": "c749368d25aac45e4d6bd94da55f470be97ef1f4"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1216,7 +1216,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-23T10:06:07+00:00"
+            "time": "2020-07-23T10:36:24+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1511,11 +1511,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-ROAD-39_rn_approval",
+            "version": "v1.7.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "be57c02bd8b607621a242f6acde3d93ee73bcf87"
+                "reference": "7bc78d375ffbc48708ca9f11143a22bf40ee0ac0"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1529,7 +1529,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-23T10:06:17+00:00"
+            "time": "2020-07-23T10:35:28+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -15966,10 +15966,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
-        "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/eligibility-module": 20,
-        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20
     },
