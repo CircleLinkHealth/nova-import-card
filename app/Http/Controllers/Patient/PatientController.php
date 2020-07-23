@@ -56,14 +56,14 @@ class PatientController extends Controller
         $patientUserId = $request->input('patientUserId');
 
         if ( ! empty($phoneId) || ! empty($patientUserId)) {
-            $phones = PhoneNumber::whereUserId($patientUserId)->get();
-
+            /** @var PhoneNumber $phones */
+            $phones = $this->getAllNumbersOfPatient($patientUserId);
             foreach ($phones as $phone) {
-                if ($phone->id !== $phoneId && $phone->is_primary) {
-                    $phone->is_primary = false;
-                    $phone->save();
-                }
+                // One trip to DB
+                $this->updatePreviousPrimaryPhone($phone, $phoneId);
+
                 if ($phone->id === $phoneId) {
+                    // One more trip to DB
                     $phone->is_primary = true;
                     $phone->save();
                 }
@@ -76,6 +76,7 @@ class PatientController extends Controller
             );
         }
 
+        //else
         return response()->json(
             [
                 'message' => 'Required Parameters missing',
@@ -185,6 +186,7 @@ class PatientController extends Controller
         $phoneNumber = formatPhoneNumberE164($phoneNumber);
         /** @var User $patientUser */
         $patientUser  = User::with('patientInfo', 'phoneNumbers')->where('id', $userId)->firstOrFail();
+        $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id);
         $locationId   = optional($patientUser->patientInfo)->location->id ?? null;
         $numberExists = $patientUser->phoneNumbers()->where('type', $phoneType)->where('number', $phoneNumber)->exists();
 
@@ -196,17 +198,23 @@ class PatientController extends Controller
             );
         }
 
-        PhoneNumber::firstOrCreate(
+        // One trip to DB
+        $newPhoneNumber = PhoneNumber::firstOrCreate(
             [
                 'user_id' => $userId,
                 'number'  => $phoneNumber,
                 'type'    => $phoneType,
             ],
             [
-                'is_primary'  => false,
+                'is_primary'  => $request->input('makePrimary'),
                 'location_id' => $locationId,
             ]
         );
+
+        foreach ($phoneNumbers->all() as $number) {
+            // One more trip to DB
+            $this->updatePreviousPrimaryPhone($number, $newPhoneNumber->id);
+        }
 
         return response()->json([
             'data'    => $phoneNumber,
@@ -639,5 +647,21 @@ class PatientController extends Controller
             'obs_message_id' => $observation->obs_message_id,
             'comment_date'   => Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A'),
         ];
+    }
+
+    /**
+     * @return \App\PhoneNumber[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    private function getAllNumbersOfPatient(int $patientUserId)
+    {
+        return PhoneNumber::whereUserId($patientUserId)->get();
+    }
+
+    private function updatePreviousPrimaryPhone(PhoneNumber $phone, int $newPhoneId)
+    {
+        if ($phone->id !== $newPhoneId && $phone->is_primary) {
+            $phone->is_primary = false;
+            $phone->save();
+        }
     }
 }

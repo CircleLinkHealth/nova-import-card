@@ -36,7 +36,7 @@
                    title="Delete Phone Number"
                    @click="deletePhone(number.phoneNumberId)"></i>
 
-                <button v-if="isIndexToUpdate(index)"
+                <button v-if="isIndexToUpdate(index) && number.isPrimary === false"
                         class="btn btn-sm update-primaryNumber"
                         type="button"
                         style="display: inline;"
@@ -183,6 +183,7 @@
                 this.patientPhoneNumbers = [];
                 this.phoneTypes = [];
                 this.newInputs = [];
+                this.makeNewNumberPrimary = false;
             },
 
             getPhoneNumbers(){
@@ -229,6 +230,7 @@
                     phoneType:this.newPhoneType,
                     phoneNumber:this.newPhoneNumber,
                     patientUserId:this.userId,
+                    makePrimary:this.makeNewNumberPrimary
                 })
                     .then((response => {
                         console.log(response.data);
