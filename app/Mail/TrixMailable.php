@@ -67,7 +67,7 @@ class TrixMailable extends Mailable
                 'content'      => $this->content,
                 'attachments'  => collect($media)->filter(),
             ])
-            ->from('no-reply@careplanmanager.com', 'Care Coaching Team')
+            ->from(config('mail.from.address'), 'Care Coaching Team')
             ->subject($this->emailSubject);
 
         //attach media
