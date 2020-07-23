@@ -63,6 +63,13 @@ class SendUnsuccessfulCallPatientsReminderNotification extends Command
                     ->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()]);
             })
             ->each(function (DatabaseNotification $notification) use ($userIds) {
+                // unlikely, but this could happen (most probably in a testing scenario):
+                // in one day, 3 unsuccessful calls to same patient,
+                // so this notification went out to same patient more than once
+                if ($userIds->has($notification->notifiable_id)) {
+                    return;
+                }
+
                 // 2. check if we already have callback task since the notification
                 $task = SchedulerService::getAsapTaskSince($notification->notifiable_id, SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS, $notification->created_at);
                 if ($task) {

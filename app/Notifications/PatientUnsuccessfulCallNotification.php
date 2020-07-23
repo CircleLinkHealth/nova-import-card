@@ -80,6 +80,7 @@ class PatientUnsuccessfulCallNotification extends Notification
             'nurseFirstName' => $this->nurseFirstName,
             'drLastName'     => $this->drLastName,
             'practice'       => $this->practice,
+            'isReminder'     => $this->isReminder,
         ];
     }
 
