@@ -24,7 +24,7 @@ class ManualInvoiceDownloadCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'test:invoiceDownloadCommand {forPractice} {downloadFormat} {forMonth} {userId}';
+    protected $signature = 'manual:invoiceDownloadCommand {forPractice} {downloadFormat} {forMonth} {userId}';
 
     /**
      * Create a new command instance.
