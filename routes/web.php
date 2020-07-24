@@ -795,7 +795,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::post('mark/primary-phone', [
             'uses' => 'Patient\PatientController@markAsPrimaryPhone',
-            'as'   => 'patient.phone.create',
+            'as'   => 'primary.phone.mark',
         ])->middleware('permission:patient.create,patient.update,location.read,practice.read');
 
         Route::get('listing/pdf', [
