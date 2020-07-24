@@ -19,10 +19,17 @@ class InvoiceDownloadController extends Controller
 
         $mediaExport = Media::whereIn('id', $ids)->get();
 
-        if ($mediaExport->isNotEmpty()) {
-            $now = now()->toDateTimeString();
-
-            return MediaStream::create("Invoices downloaded at $now.zip")->addMedia($mediaExport);
+        if ($mediaExport->isEmpty()) {
+            return response()->json(
+                [
+                    'message' => 'We are sorry, zip file does not exist.',
+                ],
+                400
+            );
         }
+
+        $now = now()->toDateTimeString();
+
+        return MediaStream::create("Invoices downloaded at $now.zip")->addMedia($mediaExport);
     }
 }
