@@ -654,7 +654,7 @@ class NotesController extends Controller
             $task_status = $input['task_status'];
             $call        = Call::find($task_id);
             if ($call) {
-                if ('done' === $task_status) {
+                if (Call::DONE === $task_status) {
                     if ('Call Back' === $call->sub_type) {
                         if ( ! isset($input['call_status'])) {
                             return redirect()

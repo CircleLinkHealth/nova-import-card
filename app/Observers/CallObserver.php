@@ -68,7 +68,7 @@ class CallObserver
             }
         }
 
-        if ('reached' === $call->status || 'done' === $call->status) {
+        if (Call::REACHED === $call->status || Call::DONE === $call->status) {
             Call::where('id', $call->id)->update(['asap' => false]);
             $call->markAttachmentNotificationAsRead($call->outboundUser);
         }
@@ -96,6 +96,6 @@ class CallObserver
         return SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE === $call->sub_type
                && 'task'                                                     === $call->type
                && $call->isDirty('status')
-               && 'done' === $call->status;
+               && Call::DONE === $call->status;
     }
 }
