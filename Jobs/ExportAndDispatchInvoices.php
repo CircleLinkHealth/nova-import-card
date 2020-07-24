@@ -92,12 +92,12 @@ class ExportAndDispatchInvoices implements ShouldQueue
         foreach ($this->downloadFormats as $downloadFormat) {
             $mediaIds = [];
 
-            if (NurseInvoice::PDF_DOWNLOAD_FORMAT === $downloadFormat) {
+            if (0 == strcasecmp(NurseInvoice::PDF_DOWNLOAD_FORMAT, $downloadFormat)) {
                 $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $downloadFormat, $startDate))->generateInvoicePdf();
                 $mediaIds        = collect($invoiceDocument)->pluck('mediaIds')->flatten()->toArray();
             }
 
-            if (NurseInvoice::CSV_DOWNLOAD_FORMAT === $downloadFormat) {
+            if (0 == strcasecmp(NurseInvoice::CSV_DOWNLOAD_FORMAT, $downloadFormat)) {
                 $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $downloadFormat, $startDate))->generateInvoiceCsv();
                 $mediaIds        = collect($invoiceDocument)->pluck('id')->toArray();
             }
