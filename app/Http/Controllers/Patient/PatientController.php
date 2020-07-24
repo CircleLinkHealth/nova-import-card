@@ -190,6 +190,17 @@ class PatientController extends Controller
         $locationId   = optional($patientUser->patientInfo)->location->id ?? null;
         $numberExists = $patientUser->phoneNumbers()->where('type', $phoneType)->where('number', $phoneNumber)->exists();
 
+        if (is_null($locationId)) {
+            $patientWithPractice = $patientUser->loadMissing('primaryPractice');
+            try {
+                $practice = $patientWithPractice->primaryPractice;
+            } catch (\Exception $e) {
+                throw new \Exception("Practice for patient with user id: {$patientUser->id} not found");
+            }
+
+            $locationId = $practice->primary_location_id;
+        }
+
         if ($numberExists) {
             return response()->json(
                 [

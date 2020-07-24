@@ -145,11 +145,11 @@
             },
 
             shouldShowError(){
-                return this.patientPhoneNumbers.length === 0;
+                return this.isTheFirstPhoneNumber;
             },
 
             setSaveBtnText(){
-                if(this.makeNewNumberPrimary){
+                if(this.makeNewNumberPrimary || this.isTheFirstPhoneNumber){
                     return'Save & Make Private';
                 }
                 return "Save Number";
@@ -223,6 +223,10 @@
                 this.newInputs.push(arr);
             },
 
+            isTheFirstPhoneNumber(){
+            return this.patientPhoneNumbers.length === 0;
+            },
+
             saveNewNumber(){
                 this.loading = true;
                 if (this.newPhoneType.length === 0){
@@ -232,6 +236,12 @@
                     // Should not happen.
                     alert("Please type a phone number");
                 }
+
+                // If it is the first number then make it primary.
+                if (this.isTheFirstPhoneNumber){
+                    this.makeNewNumberPrimary = true;
+                }
+
                 axios.post('/manage-patients/new/phone', {
                     phoneType:this.newPhoneType,
                     phoneNumber:this.newPhoneNumber,
