@@ -37,7 +37,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
         parent::__construct();
     }
 
-    public function compare($textone, $texttwo)
+    public static function compare($textone, $texttwo)
     {
         $arr1 = str_split($textone);
         $arr2 = str_split($texttwo);
@@ -118,7 +118,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
 
                     if (
                         $ccd->patient_mrn == $ccd->patient->patientInfo->mrn_number
-                        && $this->compare(strtolower(trim($ccd->patient_first_name.$ccd->patient_last_name)), strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name)))
+                        && self::compare(strtolower(trim($ccd->patient_first_name.$ccd->patient_last_name)), strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name)))
                         && $ccd->practice_id == $ccd->patient->program_id
                         && $ccd->patient->patientInfo->birth_date->isSameDay($safeDob)
                     ) {
@@ -129,7 +129,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
 
                     if (
                         $ccd->bluebuttonJson()->demographics->mrn_number == $ccd->patient->patientInfo->mrn_number
-                        && $this->compare(strtolower(trim(($ccd->bluebuttonJson()->demographics->name->given[0] ?? '').$ccd->bluebuttonJson()->demographics->name->family)), strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name)))
+                        && self::compare(strtolower(trim(($ccd->bluebuttonJson()->demographics->name->given[0] ?? '').$ccd->bluebuttonJson()->demographics->name->family)), strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name)))
                         && $ccd->practice_id == $ccd->patient->program_id
                         && $ccd->patient->patientInfo->birth_date->isSameDay($safeDob)
                     ) {

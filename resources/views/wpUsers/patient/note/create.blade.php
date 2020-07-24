@@ -309,7 +309,7 @@
                                                                        @endif
                                                                        class="call-status-radio"
                                                                        name="call_status"
-                                                                       value="not reached"
+                                                                       value="{{\App\Call::NOT_REACHED}}"
                                                                        id="not-reached"/>
                                                                 <label for="not-reached">
                                                                     <span> </span>Patient Not Reached
@@ -323,7 +323,7 @@
                                                                        @endif
                                                                        name="call_status"
                                                                        class="call-status-radio"
-                                                                       value="reached"
+                                                                       value="{{\App\Call::REACHED}}"
                                                                        id="reached"/>
                                                                 <label for="reached">
                                                                     <span> </span>Successful Clinical Call
@@ -338,7 +338,7 @@
                                                                        @endif
                                                                        name="call_status"
                                                                        class="call-status-radio"
-                                                                       value="ignored"
+                                                                       value="{{\App\Call::IGNORED}}"
                                                                        id="ignored"/>
                                                                 <label for="ignored">
                                                                     <span> </span>Patient Busy - Rescheduled Call
@@ -346,43 +346,6 @@
                                                             </div>
                                                         </div>
                                                         <hr style="margin-top: 0; margin-bottom: 0">
-                                                    @else
-                                                        <div class="call-status-radios multi-input-wrapper"
-                                                             style="padding-bottom: 3px; display: none">
-                                                            <div>
-                                                                <div class="radio">
-                                                                    <input type="checkbox"
-                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
-                                                                           @endif
-                                                                           @if (!empty($call) && $call->status === \App\Call::WELCOME) checked
-                                                                           @endif
-                                                                           name="welcome_call"
-                                                                           value="welcome_call"
-                                                                           id="welcome_call"/>
-                                                                    <label for="welcome_call">
-                                                                        <span> </span>Successful
-                                                                        Welcome Call
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            <div>
-                                                                <div class="radio">
-                                                                    <input type="checkbox"
-                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
-                                                                           @endif
-                                                                           @if (!empty($call) && $call->status === \App\Call::OTHER) checked
-                                                                           @endif
-                                                                           name="other_call"
-                                                                           value="other_call"
-                                                                           id="other_call"/>
-                                                                    <label for="other_call">
-                                                                        <span> </span>Successful
-                                                                        Other
-                                                                        Patient Call
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
                                                     @endif
                                                     <div class="other-radios multi-input-wrapper"
                                                          style="padding-top: 3px; display: none">
@@ -576,7 +539,6 @@
                 </div>
             </div>
         </div>
-        </div>
 
     </form>
 
@@ -623,6 +585,39 @@
         </div>
     </div>
 
+    <div class="modal fade" id="saving-draft" tabindex="-1" role="dialog"
+         aria-labelledby="saving-draft-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="confirm-note-create-label">Care Plan needs approval</h3>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Before saving note, please ensure Care Plan is assessment-driven and ready for Dr. review,
+                        then click "Ready for Dr.".
+                    </p>
+                </div>
+                <div class="modal-footer text-center">
+                    <div class="row text-center">
+                        <div class="col-md-6">
+                            <a class="disabled btn btn-success" id="saving-draft-visit-careplan-link"
+                               href="{{route('patient.careplan.print', ['patientId' => $patient->id])}}">
+                                Visit Care Plan
+                                <span id="saving-draft-loader" class="fa fa-spinner fa-spin"></span>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <button id="saving-draft-ok-button" type="button" class="btn btn-success">
+                                Stay on this page
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div>
         <br/>
     </div>
@@ -642,6 +637,7 @@
             const isEditingCompleteTask = @json(!empty($call) && !empty($call->sub_type));
             const editingTaskType = isEditingCompleteTask ? @json(optional($call)->sub_type) : undefined;
             const disableAutoSave = @json(!empty($note) && $note->status == \App\Note::STATUS_COMPLETE);
+            const hasRnApprovedCarePlan = @json($hasRnApprovedCarePlan);
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
@@ -663,531 +659,559 @@
                 }
             };
 
+            function withApp(callback) {
+                if (typeof App === 'undefined') {
+                    setTimeout(() => withApp(callback), 500);
+                    return;
+                }
+                callback(App);
+            }
+
             let formAttachments;
             $(document).ready(function () {
+                withApp(function (app) {
+                    //Once nurse has attested call conditions add as form inputs and submit form
+                    app.$on('call-conditions-attested', (data) => {
+                        conditionsAttested = true;
 
-                //Once nurse has attested call conditions add as form inputs and submit form
-                App.$on('call-conditions-attested', (data) => {
-                    conditionsAttested = true;
-
-                    let i = 0;
-                    data.attested_problems.map(function (condition) {
-                        $("<input>")
-                            .attr("id", "attested_problems")
-                            .attr("type", "hidden")
-                            .attr("name", "attested_problems[" + i + "][ccd_problem_id]").val(condition).appendTo(form);
-                        i++;
-                    });
-                    if (data.bypassed_bhi_validation){
-                        $("<input>")
-                            .attr("id", "bypassed_bhi_validation")
-                            .attr("type", "hidden")
-                            .attr("name", "bypassed_bhi_validation").val('true').appendTo(form);
-                    }
-
-                    if (data.bypassed_all_validation){
-                        $("<input>")
-                            .attr("id", "bypassed_all_validation")
-                            .attr("type", "hidden")
-                            .attr("name", "bypassed_all_validation").val('true').appendTo(form);
-                    }
-
-                    confirmSubmitForm();
-                });
-
-                let callIsSuccess = false;
-                let conditionsAttested = false;
-
-                if (medications && medications.length) {
-                    waitForEl('#note', () => {
-                        const noteBody = $('#note');
-                        if (noteBody.val().length === 0) {
-                            const medDescriptions = [];
-                            for (let i = 0; i < medications.length; i++) {
-                                const med = medications[i];
-                                const desc = `-${med.name}\n\t${med.sig}`;
-                                medDescriptions.push(desc);
-                            }
-
-                            noteBody.val(`\n\n${MEDICATIONS_SEPARATOR}\n${medDescriptions.join('\n')}`);
-                            const event = new Event('change');
-                            document.getElementById('note').dispatchEvent(event);
-                        }
-                    });
-                }
-
-                App.$on('file-upload', (attachments) => {
-                    formAttachments = attachments;
-                });
-
-                //CPM-182: Show a confirmation box if user spend time creating the note
-                //but did not register a phone session
-                const startDate = Date.now();
-
-                function phoneSessionChange(e) {
-                    if (e) {
-                        if (e.currentTarget.checked) {
-                            $('#task-label').hide();
-                            $('#collapseOne').show();
-                            $('.call-status-radios').show();
-                            $('.other-radios').show();
-                            $("#Inbound").prop("checked", false);
-                            $("#Outbound").prop("checked", true);
-                        } else {
-                            if (isEditingCompleteTask || patientNurseTasks.length) {
-                                $('#task-label').show();
-                            }
-                            $('#collapseOne').hide();
-                            $('.call-status-radios').hide();
-                            $('.other-radios').hide();
-                            $("#Inbound").prop("checked", false);
-                            $("#Outbound").prop("checked", false);
-                        }
-
-                        if (window['App']) {
-                            window['App'].$emit('create-note:with-call', e.currentTarget.checked);
-                        }
-                    } else {
-                        $('#collapseOne').toggle();
-                        $('.call-status-radios').toggle();
-                        $('.other-radios').toggle();
-                    }
-                    //bug fix - this set value to phone="Outbound" in the form without
-                    //the user knowing
-                    //instead, set default only when visible
-                    // $("#Outbound").prop("checked", true);
-                }
-
-                let phoneEl = $('#phone');
-                phoneEl.change(phoneSessionChange);
-                phoneEl.prop('checked', @json(!empty($call) && empty($call->sub_type)));
-                phoneEl.trigger('change');
-
-                function associateWithTaskChange(e) {
-                    if (!e) {
-                        return;
-                    }
-                    if (e.currentTarget.checked) {
-
-                        $('#phone-label').hide();
-                        const selectList = $('#activityKey');
-                        selectList.empty();
-                        const defaultOption = new Option('Select Topic', "");
-                        defaultOption.innerHTML = "Select Topic";
-                        selectList.append(defaultOption);
-                        for (let i in taskTypeToTopicMap) {
-                            if (!taskTypeToTopicMap.hasOwnProperty(i)) {
-                                continue;
-                            }
-                            const o = new Option(taskTypeToTopicMap[i], taskTypeToTopicMap[i]);
-                            o.innerHTML = taskTypeToTopicMap[i];
-                            selectList.append(o);
-                        }
-
-                        //hide radios. will be decided what to show when a task is clicked
-                        $('.call-status-radios').hide();
-                        $('.other-radios').hide();
-
-                        //if there is a task selected, select it as note topic
-                        if ($('.tasks-radio').prop('checked')) {
-                            $('.tasks-radio').trigger('change');
-                        }
-
-                        selectList.prop("disabled", true);
-                        $('#tasks-container').show();
-
-                        //if only one task, just select it
-                        if (isEditingCompleteTask || patientNurseTasks.length === 1) {
-                            $('.tasks-radio').prop('checked', true);
-                            $('.tasks-radio').trigger('change');
-                        }
-                    } else {
-
-                        $('.tasks-radio').prop('checked', false);
-                        $('#phone-label').show();
-                        const selectList = $('#activityKey');
-                        selectList.empty();
-                        const defaultOption = new Option('Select Topic', "");
-                        defaultOption.innerHTML = "Select Topic";
-                        selectList.append(defaultOption);
-                        for (let i in noteTypesMap) {
-                            if (!noteTypesMap.hasOwnProperty(i)) {
-                                continue;
-                            }
-                            const o = new Option(noteTypesMap[i], i);
-                            o.innerHTML = noteTypesMap[i];
-                            selectList.append(o);
-                        }
-
-                        selectList.prop("disabled", false);
-                        $('.call-status-radios').hide();
-                        $('#tasks-container').hide();
-                    }
-                }
-
-                $('.tasks-radio').change(onTaskSelected);
-
-                if (patientNurseTasks.length || isEditingCompleteTask) {
-                    $('#task-label').show();
-                    $('#task').change(associateWithTaskChange);
-                    if (isEditingCompleteTask) {
-                        $('#task').trigger('change');
-                    }
-                } else {
-                    $('#task-label').hide();
-                }
-
-                function onTaskSelected(e) {
-                    //get id of task
-                    const task = editingTaskType ? {sub_type: editingTaskType} : patientNurseTasks.find(x => x.id === +e.currentTarget.value);
-                    if (!task) {
-                        return;
-                    }
-
-                    if (!editingTaskType && task.sub_type === 'Call Back') {
-                        $('.call-status-radios').show();
-                    } else {
-                        $('.call-status-radios').hide();
-                    }
-
-                    const selectList = $('#activityKey');
-                    selectList.val(taskTypeToTopicMap[task.sub_type]);
-                }
-
-                function tcmChange(e) {
-                    let notifyCareteamEl = $('#notify-careteam');
-                    let whoIsNotifiedEl = $('#who-is-notified');
-
-                    if (e) {
-                        if (e.currentTarget.checked) {
-                            notifyCareteamEl.prop("checked", true);
-                            notifyCareteamEl.prop("disabled", true);
-                            notifyCareteamEl.trigger('change');
-
-                            @empty($notifies_text)
-                            whoIsNotifiedEl.text("{{optional($patient->billingProviderUser())->getFullName()}}");
-                            @endempty
-                        } else {
-                            notifyCareteamEl.prop("checked", false);
-                            notifyCareteamEl.prop("disabled", false);
-                            notifyCareteamEl.trigger('change');
-
-                            whoIsNotifiedEl.text("{{$notifies_text}}");
-                        }
-                    } else {
-
-                    }
-                }
-
-                let tcmEl = $('#tcm');
-                tcmEl.change(tcmChange);
-                tcmEl.prop('checked', @json(!empty($note) && $note->isTCM));
-                tcmEl.trigger('change');
-
-                const validateEmailBodyUrl = '{{route('patient-email.validate', ['patient_id' => $patient->id])}}';
-
-                $('#newNote').submit(function (e) {
-                    e.preventDefault();
-                    form = this;
-
-                    const summaryTextField = $('.text-area-summary');
-                    if (summaryTextField.length > 0 && summaryTextField.is(":required") && summaryTextField.val().trim().length === 0) {
-                        alert('Please enter a summary for this note.');
-                        return;
-                    }
-
-
-                    //prevent sent if send patient email is check and email body is empty
-                    if ($("[id='email-patient']").prop("checked") == true && shouldValidateEmailBody) {
-
-
-                        if ($("[id='patient-email-body-input']").val() == 0) {
-                            alert("Please fill out the patient email!");
-                            return;
-                        } else {
-                            return validateEmailBody()
-                        }
-                    }
-                    //append patient email attachments on form if the exist
-                    if (formAttachments) {
                         let i = 0;
-                        formAttachments.map(function (attachment) {
+                        data.attested_problems.map(function (condition) {
                             $("<input>")
+                                .attr("id", "attested_problems")
                                 .attr("type", "hidden")
-                                .attr("name", "attachments[" + i + "][media_id]").val(attachment.media_id).appendTo(form);
-                            $("<input>")
-                                .attr("type", "hidden")
-                                .attr("name", "attachments[" + i + "][path]").val(attachment.path).appendTo(form);
+                                .attr("name", "attested_problems[" + i + "][ccd_problem_id]").val(condition).appendTo(form);
                             i++;
                         });
+                        if (data.bypassed_bhi_validation) {
+                            $("<input>")
+                                .attr("id", "bypassed_bhi_validation")
+                                .attr("type", "hidden")
+                                .attr("name", "bypassed_bhi_validation").val('true').appendTo(form);
+                        }
+
+                        if (data.bypassed_all_validation) {
+                            $("<input>")
+                                .attr("id", "bypassed_all_validation")
+                                .attr("type", "hidden")
+                                .attr("name", "bypassed_all_validation").val('true').appendTo(form);
+                        }
+
+                        confirmSubmitForm();
+                    });
+
+                    let callIsSuccess = false;
+                    let conditionsAttested = false;
+
+                    if (medications && medications.length) {
+                        waitForEl('#note', () => {
+                            const noteBody = $('#note');
+                            if (noteBody.val().length === 0) {
+                                const medDescriptions = [];
+                                for (let i = 0; i < medications.length; i++) {
+                                    const med = medications[i];
+                                    const desc = `-${med.name}\n\t${med.sig}`;
+                                    medDescriptions.push(desc);
+                                }
+
+                                noteBody.val(`\n\n${MEDICATIONS_SEPARATOR}\n${medDescriptions.join('\n')}`);
+                                const event = new Event('change');
+                                document.getElementById('note').dispatchEvent(event);
+                            }
+                        });
                     }
 
+                    app.$on('file-upload', (attachments) => {
+                        formAttachments = attachments;
+                    });
 
-                    const isAssociatedWithTask = $('#task').is(':checked');
-                    const callHasTask = $('.tasks-radio').is(':checked');
+                    //CPM-182: Show a confirmation box if user spend time creating the note
+                    //but did not register a phone session
+                    const startDate = Date.now();
 
-                    const isPhoneSession = $('#phone').is(':checked');
+                    function phoneSessionChange(e) {
+                        if (e) {
+                            if (e.currentTarget.checked) {
+                                $('#task-label').hide();
+                                $('#collapseOne').show();
+                                $('.call-status-radios').show();
+                                $('.other-radios').show();
+                                $("#Inbound").prop("checked", false);
+                                $("#Outbound").prop("checked", true);
+                            } else {
+                                if (isEditingCompleteTask || patientNurseTasks.length) {
+                                    $('#task-label').show();
+                                }
+                                $('#collapseOne').hide();
+                                $('.call-status-radios').hide();
+                                $('.other-radios').hide();
+                                $("#Inbound").prop("checked", false);
+                                $("#Outbound").prop("checked", false);
+                            }
 
-                    let callHasStatus = false;
-                    if (userIsCCMCountable) {
-                        //radio buttons
-                        callHasStatus = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value.length > 0;
-                        callIsSuccess = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value === "reached";
-                    } else {
-                        //checkbox
-                        callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
+                            app.$emit('create-note:with-call', e.currentTarget.checked);
+
+                        } else {
+                            $('#collapseOne').toggle();
+                            $('.call-status-radios').toggle();
+                            $('.other-radios').toggle();
+                        }
+                        //bug fix - this set value to phone="Outbound" in the form without
+                        //the user knowing
+                        //instead, set default only when visible
+                        // $("#Outbound").prop("checked", true);
                     }
 
-                    if (!callHasStatus) {
-                        const isCallBackTask = $('#activityKey').val() === "Call Back";
-                        if ((userIsCCMCountable && isPhoneSession) || (isAssociatedWithTask && isCallBackTask)) {
-                            alert('Please select whether patient was reached or not.');
+                    let phoneEl = $('#phone');
+                    phoneEl.change(phoneSessionChange);
+                    //successful_clinical_call might be set but no $call. This can happen when we have draft notes
+                    const hasClinicalCall = @json(!empty($note) && $note->successful_clinical_call == 1);
+                    const hasPhoneSession = @json( (!empty($call) && empty($call->sub_type))) || hasClinicalCall;
+                    phoneEl.prop('checked', hasPhoneSession);
+                    phoneEl.trigger('change');
+
+                    if (hasClinicalCall) {
+                        $('#reached').prop('checked', true);
+                    }
+
+                    function associateWithTaskChange(e) {
+                        if (!e) {
                             return;
                         }
-                    }
+                        if (e.currentTarget.checked) {
 
-                    if (isAssociatedWithTask && !callHasTask) {
-                        alert('Please select a task to associate to.');
-                        return;
-                    }
-
-                    if (isAssociatedWithTask && !isEditingCompleteTask) {
-                        showTaskCompletedModal();
-                        return;
-                    }
-
-                    const SECONDS_THRESHOLD = 90 * 1000;
-                    const CHARACTERS_THRESHOLD = 100;
-                    let showModal = false;
-                    const noteBody = form['body'].value;
-                    const noteBodyWithoutMeds = getNoteBodyExcludingMedications(noteBody);
-
-                    //CPM-182:
-                    // if time more than 90 seconds
-                    // and (is not phone session, or phone session but not success)
-
-                    //CPM-880:
-                    // show modal only for ccm countable users
-                    if (userIsCCMCountable && ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBodyWithoutMeds.length > CHARACTERS_THRESHOLD)) {
-
-                        if (!isPhoneSession || !callIsSuccess) {
-                            showModal = true;
-                        }
-
-                    }
-
-                    if (showModal) {
-                        $('#confirm-note-create').modal('show');
-                        return;
-                    }
-
-                    confirmSubmitForm();
-                });
-
-                $(document).on("click", "#confirm-note-submit", function (event) {
-                    confirmSubmitForm();
-                });
-
-                $(document).on("click", "#confirm-task-completed-submit", function (event) {
-                    $('#task_status').val("done");
-                    $('#confirm-task-completed').modal('hide');
-                    confirmSubmitForm();
-                });
-
-                $(document).on("click", "#confirm-task-not-completed-submit", function (event) {
-                    $('#task_status').val("not_done");
-                    $('#confirm-task-completed').modal('hide');
-                    confirmSubmitForm();
-                });
-
-                function confirmSubmitForm() {
-
-                    if (!conditionsAttested && callIsSuccess && userIsCareCoach) {
-                        App.$emit('show-attest-call-conditions-modal');
-                        return;
-                    }
-                    if (isSavingDraft) {
-                        setTimeout(() => confirmSubmitForm(), 500);
-                        return;
-                    }
-
-                    //CPM-91 and CPM-437 double submitting notes
-                    if (submitted) {
-                        return;
-                    }
-
-                    submitted = true;
-
-                    clearDraftFromClientSide();
-                    //when we associate a note with task, we disable the note topic
-                    //we have to enable it back before posting to server,
-                    //otherwise its value will not reach the server
-                    $('#activityKey').prop("disabled", false);
-
-                    if (noteId) {
-                        $('<input />').attr('type', 'hidden')
-                            .attr('name', "noteId")
-                            .attr('value', noteId)
-                            .appendTo(form);
-                    }
-
-                    form.submit();
-                }
-
-                function showTaskCompletedModal() {
-                    $('#confirm-task-completed').modal('show');
-                }
-
-                const validateEmailBody = async () => {
-                    return await window.axios
-                        .post(validateEmailBodyUrl, {
-                            //validate subject as well
-                            patient_email_subject: $("[id='email-subject']").val(),
-                            patient_email_body: $("[id='patient-email-body-input']").val()
-                        })
-                        .then((response) => {
-                            if (response.data.status == 400) {
-                                App.$emit('patient-email-body-errors', response.data.messages);
-                                return false;
+                            $('#phone-label').hide();
+                            const selectList = $('#activityKey');
+                            selectList.empty();
+                            const defaultOption = new Option('Select Topic', "");
+                            defaultOption.innerHTML = "Select Topic";
+                            selectList.append(defaultOption);
+                            for (let i in taskTypeToTopicMap) {
+                                if (!taskTypeToTopicMap.hasOwnProperty(i)) {
+                                    continue;
+                                }
+                                const o = new Option(taskTypeToTopicMap[i], taskTypeToTopicMap[i]);
+                                o.innerHTML = taskTypeToTopicMap[i];
+                                selectList.append(o);
                             }
-                            shouldValidateEmailBody = false;
-                            return $('#newNote').submit();
-                        })
-                        .catch(err => {
-                            App.$emit('patient-email-body-errors', err);
-                            return false
-                        });
-                };
 
-            });
+                            //hide radios. will be decided what to show when a task is clicked
+                            $('.call-status-radios').hide();
+                            $('.other-radios').hide();
 
+                            //if there is a task selected, select it as note topic
+                            if ($('.tasks-radio').prop('checked')) {
+                                $('.tasks-radio').trigger('change');
+                            }
 
-            /*
-            //no need since we have auto save now
-            window.addEventListener('beforeunload', (event) => {
+                            selectList.prop("disabled", true);
+                            $('#tasks-container').show();
 
-                if (submitted) {
-                    return;
-                }
+                            //if only one task, just select it
+                            if (isEditingCompleteTask || patientNurseTasks.length === 1) {
+                                $('.tasks-radio').prop('checked', true);
+                                $('.tasks-radio').trigger('change');
+                            }
+                        } else {
 
-                const noteBody = $('#note').val();
-                const trimmed = getNoteBodyExcludingMedications(noteBody);
+                            $('.tasks-radio').prop('checked', false);
+                            $('#phone-label').show();
+                            const selectList = $('#activityKey');
+                            selectList.empty();
+                            const defaultOption = new Option('Select Topic', "");
+                            defaultOption.innerHTML = "Select Topic";
+                            selectList.append(defaultOption);
+                            for (let i in noteTypesMap) {
+                                if (!noteTypesMap.hasOwnProperty(i)) {
+                                    continue;
+                                }
+                                const o = new Option(noteTypesMap[i], i);
+                                o.innerHTML = noteTypesMap[i];
+                                selectList.append(o);
+                            }
 
-                if (trimmed.length) {
-                    if (!confirm()) {
-                        // Cancel the event as stated by the standard.
-                        event.preventDefault();
-                        // Chrome requires returnValue to be set.
-                        event.returnValue = '';
+                            selectList.prop("disabled", false);
+                            $('.call-status-radios').hide();
+                            $('#tasks-container').hide();
+                        }
                     }
-                }
 
-            });
-            */
+                    $('.tasks-radio').change(onTaskSelected);
 
-            function getNoteBodyExcludingMedications(noteBody) {
-                const medicationsIndex = noteBody.indexOf(MEDICATIONS_SEPARATOR);
+                    if (patientNurseTasks.length || isEditingCompleteTask) {
+                        $('#task-label').show();
+                        $('#task').change(associateWithTaskChange);
+                        if (isEditingCompleteTask) {
+                            $('#task').trigger('change');
+                        }
+                    } else {
+                        $('#task-label').hide();
+                    }
 
-                if (medicationsIndex > -1) {
-                    return noteBody.substring(0, medicationsIndex).trim();
-                }
-                return noteBody;
-            }
-
-
-            let isSavingDraft = false;
-
-            /* 2 minutes */
-            const AUTO_SAVE_INTERVAL = 1000 * 60 * 2;
-
-            let noteId = null;
-
-            @if (! empty($note))
-                noteId = '{{$note->id}}';
-                    @endif
-
-            const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
-
-            const saveDraft = () => {
-
-                const fullBody = $('#note').val();
-                const body = getNoteBodyExcludingMedications(fullBody);
-                if (!body.length) {
-                    setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
-                    return;
-                }
-
-                isSavingDraft = true;
-
-                window.axios
-                    .post(saveDraftUrl, {
-                        patient_id: $('#patient_id').val(),
-                        note_id: noteId,
-                        type: $('#activityKey').val(),
-                        general_comment: $('#general_comment').val(),
-                        performed_at: $('#performed_at').val(),
-                        author_id: $('#author_id').val(),
-                        task_id: $('.tasks-radio:checked').val(),
-                        phone: $('.phone-radios:checked').val(),
-                        call_status: $('.call-status-radio:checked').val(),
-                        welcome_call: $('#welcome_call').is(":checked"),
-                        other_call: $('#other_call').is(":checked"),
-                        medication_recon: $('#medication_recon').is(":checked"),
-                        tcm: $('#tcm').is(":checked"),
-                        summary: $('#summary').val(),
-                        body: fullBody,
-                        logger_id: $('#logger_id').val(),
-                        programId: $('#programId').val(),
-                        task_status: $('#task_status').val(),
-                        success_story: $('#success_story').is(":checked")
-                    })
-                    .then((response, status) => {
-                        isSavingDraft = false;
-                        if (response.data && response.data.note_id) {
-                            noteId = response.data.note_id;
+                    function onTaskSelected(e) {
+                        //get id of task
+                        const task = editingTaskType ? {sub_type: editingTaskType} : patientNurseTasks.find(x => x.id === +e.currentTarget.value);
+                        if (!task) {
+                            return;
                         }
 
-                        clearDraftFromClientSide();
+                        if (!editingTaskType && task.sub_type === 'Call Back') {
+                            $('.call-status-radios').show();
+                        } else {
+                            $('.call-status-radios').hide();
+                        }
 
-                        setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
-                    })
-                    .catch(err => {
-                        isSavingDraft = false;
-                        console.error(err);
-                        setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+                        const selectList = $('#activityKey');
+                        selectList.val(taskTypeToTopicMap[task.sub_type]);
+                    }
+
+                    function tcmChange(e) {
+                        let notifyCareteamEl = $('#notify-careteam');
+                        let whoIsNotifiedEl = $('#who-is-notified');
+
+                        if (e) {
+                            if (e.currentTarget.checked) {
+                                notifyCareteamEl.prop("checked", true);
+                                notifyCareteamEl.prop("disabled", true);
+                                notifyCareteamEl.trigger('change');
+
+                                @empty($notifies_text)
+                                whoIsNotifiedEl.text("{{optional($patient->billingProviderUser())->getFullName()}}");
+                                @endempty
+                            } else {
+                                notifyCareteamEl.prop("checked", false);
+                                notifyCareteamEl.prop("disabled", false);
+                                notifyCareteamEl.trigger('change');
+
+                                whoIsNotifiedEl.text("{{$notifies_text}}");
+                            }
+                        } else {
+
+                        }
+                    }
+
+                    let tcmEl = $('#tcm');
+                    tcmEl.change(tcmChange);
+                    tcmEl.prop('checked', @json(!empty($note) && $note->isTCM));
+                    tcmEl.trigger('change');
+
+                    const validateEmailBodyUrl = '{{route('patient-email.validate', ['patient_id' => $patient->id])}}';
+
+                    $('#newNote').submit(function (e) {
+                        e.preventDefault();
+                        form = this;
+
+                        const summaryTextField = $('.text-area-summary');
+                        if (summaryTextField.length > 0 && summaryTextField.is(":required") && summaryTextField.val().trim().length === 0) {
+                            alert('Please enter a summary for this note.');
+                            return;
+                        }
+
+
+                        //prevent sent if send patient email is check and email body is empty
+                        if ($("[id='email-patient']").prop("checked") == true && shouldValidateEmailBody) {
+
+
+                            if ($("[id='patient-email-body-input']").val() == 0) {
+                                alert("Please fill out the patient email!");
+                                return;
+                            } else {
+                                return validateEmailBody()
+                            }
+                        }
+                        //append patient email attachments on form if the exist
+                        if (formAttachments) {
+                            let i = 0;
+                            formAttachments.map(function (attachment) {
+                                $("<input>")
+                                    .attr("type", "hidden")
+                                    .attr("name", "attachments[" + i + "][media_id]").val(attachment.media_id).appendTo(form);
+                                $("<input>")
+                                    .attr("type", "hidden")
+                                    .attr("name", "attachments[" + i + "][path]").val(attachment.path).appendTo(form);
+                                i++;
+                            });
+                        }
+
+
+                        const isAssociatedWithTask = $('#task').is(':checked');
+                        const callHasTask = $('.tasks-radio').is(':checked');
+
+                        const isPhoneSession = $('#phone').is(':checked');
+
+                        let callHasStatus = false;
+                        if (userIsCCMCountable) {
+                            //radio buttons
+                            callHasStatus = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value.length > 0;
+                            callIsSuccess = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value === "reached";
+                        } else {
+                            //checkbox
+                            callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
+                        }
+
+                        if (!callHasStatus) {
+                            const isCallBackTask = $('#activityKey').val() === "Call Back";
+                            if ((userIsCCMCountable && isPhoneSession) || (isAssociatedWithTask && isCallBackTask)) {
+                                alert('Please select whether patient was reached or not.');
+                                return;
+                            }
+                        }
+
+                        // ROAD-39 RN must approve care plan before making a successful welcome call
+                        if (userIsCareCoach && callIsSuccess && !hasRnApprovedCarePlan) {
+                            showSavingDraftModal();
+                            saveDraft()
+                                .then(() => {
+                                    $('#saving-draft-loader').addClass('hidden');
+                                    $('#saving-draft-visit-careplan-link').removeClass('disabled');
+                                })
+                            return;
+                        }
+
+                        if (isAssociatedWithTask && !callHasTask) {
+                            alert('Please select a task to associate to.');
+                            return;
+                        }
+
+                        if (isAssociatedWithTask && !isEditingCompleteTask) {
+                            showTaskCompletedModal();
+                            return;
+                        }
+
+                        const SECONDS_THRESHOLD = 90 * 1000;
+                        const CHARACTERS_THRESHOLD = 100;
+                        let showModal = false;
+                        const noteBody = form['body'].value;
+                        const noteBodyWithoutMeds = getNoteBodyExcludingMedications(noteBody);
+
+                        //CPM-182:
+                        // if time more than 90 seconds
+                        // and (is not phone session, or phone session but not success)
+
+                        //CPM-880:
+                        // show modal only for ccm countable users
+                        if (userIsCCMCountable && ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBodyWithoutMeds.length > CHARACTERS_THRESHOLD)) {
+
+                            if (!isPhoneSession || !callIsSuccess) {
+                                showModal = true;
+                            }
+
+                        }
+
+                        if (showModal) {
+                            $('#confirm-note-create').modal('show');
+                            return;
+                        }
+
+                        confirmSubmitForm();
                     });
-            };
 
-            if (!disableAutoSave) {
-                setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
-            }
+                    $(document).on("click", "#confirm-note-submit", function (event) {
+                        confirmSubmitForm();
+                    });
 
-            const deleteElem = $('#delete-note');
-            if (deleteElem && deleteElem.length) {
-                deleteElem.click(function (e) {
-                    e.preventDefault();
-                    if (confirm('Are you sure?')) {
+                    $(document).on("click", "#confirm-task-completed-submit", function (event) {
+                        $('#task_status').val("done");
+                        $('#confirm-task-completed').modal('hide');
+                        confirmSubmitForm();
+                    });
+
+                    $(document).on("click", "#confirm-task-not-completed-submit", function (event) {
+                        $('#task_status').val("not_done");
+                        $('#confirm-task-completed').modal('hide');
+                        confirmSubmitForm();
+                    });
+
+                    $(document).on("click", "#saving-draft-ok-button", function (event) {
+                        $('#saving-draft').modal('hide');
+                    });
+
+                    function confirmSubmitForm() {
+
+                        if (!conditionsAttested && callIsSuccess && userIsCareCoach) {
+                            app.$emit('show-attest-call-conditions-modal');
+                            return;
+                        }
+                        if (isSavingDraft) {
+                            setTimeout(() => confirmSubmitForm(), 500);
+                            return;
+                        }
+
+                        //CPM-91 and CPM-437 double submitting notes
+                        if (submitted) {
+                            return;
+                        }
+
+                        submitted = true;
+
                         clearDraftFromClientSide();
-                        $('#delete-form').submit();
+                        //when we associate a note with task, we disable the note topic
+                        //we have to enable it back before posting to server,
+                        //otherwise its value will not reach the server
+                        $('#activityKey').prop("disabled", false);
+
+                        if (noteId) {
+                            $('<input />').attr('type', 'hidden')
+                                .attr('name', "note_id")
+                                .attr('value', noteId)
+                                .appendTo(form);
+                        }
+
+                        form.submit();
+                    }
+
+                    function showTaskCompletedModal() {
+                        $('#confirm-task-completed').modal('show');
+                    }
+
+                    function showSavingDraftModal() {
+                        $('#saving-draft').modal('show');
+                    }
+
+                    const validateEmailBody = async () => {
+                        return await window.axios
+                            .post(validateEmailBodyUrl, {
+                                //validate subject as well
+                                patient_email_subject: $("[id='email-subject']").val(),
+                                patient_email_body: $("[id='patient-email-body-input']").val(),
+                                custom_patient_email: $("[id='custom-patient-email']").val()
+                            })
+                            .then((response) => {
+                                if (response.data.status == 400) {
+                                    app.$emit('patient-email-body-errors', response.data.messages);
+                                    return false;
+                                }
+                                shouldValidateEmailBody = false;
+                                return $('#newNote').submit();
+                            })
+                            .catch(err => {
+                                app.$emit('patient-email-body-errors', err);
+                                return false
+                            });
+                    };
+
+
+                    /*
+                    //no need since we have auto save now
+                    window.addEventListener('beforeunload', (event) => {
+
+                        if (submitted) {
+                            return;
+                        }
+
+                        const noteBody = $('#note').val();
+                        const trimmed = getNoteBodyExcludingMedications(noteBody);
+
+                        if (trimmed.length) {
+                            if (!confirm()) {
+                                // Cancel the event as stated by the standard.
+                                event.preventDefault();
+                                // Chrome requires returnValue to be set.
+                                event.returnValue = '';
+                            }
+                        }
+
+                    });
+                    */
+
+                    function getNoteBodyExcludingMedications(noteBody) {
+                        const medicationsIndex = noteBody.indexOf(MEDICATIONS_SEPARATOR);
+
+                        if (medicationsIndex > -1) {
+                            return noteBody.substring(0, medicationsIndex).trim();
+                        }
+                        return noteBody;
+                    }
+
+
+                    let isSavingDraft = false;
+
+                    /* 2 minutes */
+                    const AUTO_SAVE_INTERVAL = 1000 * 60 * 2;
+
+                    let noteId = null;
+
+                    @if (! empty($note))
+                        noteId = '{{$note->id}}';
+                            @endif
+
+                    const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
+
+                    const saveDraft = () => {
+
+                        const fullBody = $('#note').val();
+                        const body = getNoteBodyExcludingMedications(fullBody);
+                        if (!body.length) {
+                            setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+                            return;
+                        }
+
+                        isSavingDraft = true;
+
+                        return window.axios
+                            .post(saveDraftUrl, {
+                                patient_id: $('#patient_id').val(),
+                                note_id: noteId,
+                                type: $('#activityKey').val(),
+                                general_comment: $('#general_comment').val(),
+                                performed_at: $('#performed_at').val(),
+                                author_id: $('#author_id').val(),
+                                task_id: $('.tasks-radio:checked').val(),
+                                phone: $('.phone-radios:checked').val(),
+                                call_status: $('.call-status-radio:checked').val(),
+                                welcome_call: $('#welcome_call').is(":checked"),
+                                other_call: $('#other_call').is(":checked"),
+                                medication_recon: $('#medication_recon').is(":checked"),
+                                tcm: $('#tcm').is(":checked"),
+                                summary: $('#summary').val(),
+                                body: fullBody,
+                                logger_id: $('#logger_id').val(),
+                                programId: $('#programId').val(),
+                                task_status: $('#task_status').val(),
+                                success_story: $('#success_story').is(":checked")
+                            })
+                            .then((response, status) => {
+                                isSavingDraft = false;
+                                if (response.data && response.data.note_id) {
+                                    noteId = response.data.note_id;
+                                }
+
+                                clearDraftFromClientSide();
+
+                                setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+                            })
+                            .catch(err => {
+                                isSavingDraft = false;
+                                console.error(err);
+                                setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+                            });
+                    };
+
+                    if (!disableAutoSave) {
+                        setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+                    }
+
+                    const deleteElem = $('#delete-note');
+                    if (deleteElem && deleteElem.length) {
+                        deleteElem.click(function (e) {
+                            e.preventDefault();
+                            if (confirm('Are you sure?')) {
+                                clearDraftFromClientSide();
+                                $('#delete-form').submit();
+                            }
+                        });
+                    }
+
+                    function clearDraftFromClientSide() {
+                        if (app.$refs.bodyComponent && app.$refs.bodyComponent.clearFromStorage) {
+                            app.$refs.bodyComponent.clearFromStorage();
+                        }
+
+                        if (app.$refs.summaryInput && app.$refs.summaryInput.clearFromStorage) {
+                            app.$refs.summaryInput.clearFromStorage();
+                        }
                     }
                 });
-            }
-
-            function clearDraftFromClientSide() {
-
-                if (typeof App === "undefined") {
-                    return;
-                }
-
-                if (App.$refs.bodyComponent && App.$refs.bodyComponent.clearFromStorage) {
-                    App.$refs.bodyComponent.clearFromStorage();
-                }
-
-                if (App.$refs.summaryInput && App.$refs.summaryInput.clearFromStorage) {
-                    App.$refs.summaryInput.clearFromStorage();
-                }
-
-            }
+            });
         </script>
     @endpush
 @endsection

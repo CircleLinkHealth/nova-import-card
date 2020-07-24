@@ -50,11 +50,11 @@
                 CCM Status Change
             </template>
             <template slot="careplanStatus" slot-scope="props">
-                <a v-if="canApproveCareplans && props.row.careplanStatus === 'qa_approved'" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
+                <a v-if="canApproveCareplans && props.row.careplanStatus === 'rn_approved'" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
                     <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
                 </a>
 
-                <a v-else-if="isAdmin && props.row.careplanStatus === 'draft'" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
+                <a v-else-if="isAdmin && (props.row.careplanStatus === 'draft' || props.row.careplanStatus === 'qa_approved')" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
                     <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
                 </a>
 
@@ -176,6 +176,7 @@
                 carePlanStatusMap = {
                     to_enroll: 'To Enroll',
                     qa_approved: 'CLH Approved',
+                    rn_approved: 'RN Approved',
                     provider_approved: 'Provider Approved',
                     none: 'None',
                     draft: 'Approve Now',
@@ -183,7 +184,7 @@
                 };
             } else {
                 carePlanStatusMap = {
-                    qa_approved: 'Approve Now',
+                    rn_approved: 'Approve Now',
                     provider_approved: 'Approved',
                 };
             }
@@ -225,13 +226,14 @@
             options() {
 
                 let careplanStatus = [
-                    {id: 'qa_approved', text: this.carePlanStatusMap['qa_approved']},
+                    {id: 'rn_approved', text: this.carePlanStatusMap['rn_approved']},
                     {id: 'provider_approved', text: this.carePlanStatusMap['provider_approved']},
                 ];
                 if (this.isAdmin) {
                     careplanStatus.push({id: '', text: this.carePlanStatusMap['none']});
                     careplanStatus.push({id: 'g0506', text: this.carePlanStatusMap['g0506']});
                     careplanStatus.push({id: 'draft', text: this.carePlanStatusMap['draft']});
+                    careplanStatus.push({id: 'qa_approved', text: this.carePlanStatusMap['qa_approved']});
                 }
 
                 return {
@@ -393,7 +395,7 @@
                 if (patient.patient_info.ccm_status === 'paused') {
                     return moment(patient.patient_info.date_paused).format('MM-DD-YYYY')
                 }
-                if (patient.patient_info.ccm_status === 'withdrawn') {
+                if (patient.patient_info.ccm_status === 'withdrawn'|| patient.patient_info.ccm_status === 'withdrawn_1st_call') {
                     return moment(patient.patient_info.date_withdrawn).format('MM-DD-YYYY')
                 }
                 if (patient.patient_info.ccm_status === 'unreachable') {
@@ -603,7 +605,8 @@
 
                 ([...(careplanStatusSelect.querySelectorAll('option') || [])]).forEach(option => {
                     option.innerText = ({
-                        qa_approved: 'Approve Now',
+                        qa_approved: 'CLH Approved',
+                        rn_approved: 'Approve Now',
                         to_enroll: 'To Enroll',
                         provider_approved: 'Provider Approved',
                         none: 'None',

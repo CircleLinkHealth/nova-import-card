@@ -96,6 +96,8 @@ class Call extends BaseModel implements AttachableToNotification
 {
     use Filterable;
     use NotificationAttachable;
+    //Denotes a completed task
+    const DONE = 'done';
 
     //patient was reached/not reached but this call is to be ignored
     //eg. patient was reached but was busy, so ignore call from reached/not reached reports
