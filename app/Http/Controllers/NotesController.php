@@ -766,11 +766,11 @@ class NotesController extends Controller
 
             //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
             if ( ! $noteIsAlreadyComplete && $is_phone_session) {
-                if (isset($input['call_status']) && 'reached' == $input['call_status']) {
+                if (isset($input['call_status']) && Call::REACHED == $input['call_status']) {
                     if (auth()->user()->isProvider()) {
                         $this->service->storeCallForNote(
                             $note,
-                            'reached',
+                            Call::REACHED,
                             $patient,
                             Auth::user(),
                             Auth::user()->id,
