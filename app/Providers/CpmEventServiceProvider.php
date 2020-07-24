@@ -10,6 +10,7 @@ use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Events\CarePlanWasApproved;
 use App\Events\CarePlanWasProviderApproved;
 use App\Events\CarePlanWasQAApproved;
+use App\Events\CarePlanWasRNApproved;
 use App\Events\NoteFinalSaved;
 use App\Events\PatientUserCreated;
 use App\Events\PdfableCreated;
@@ -121,10 +122,12 @@ class CpmEventServiceProvider extends ServiceProvider
         CarePlanWasQAApproved::class => [
             AssignPatientToStandByNurse::class,
             AddPatientConsentNote::class,
+        ],
+        CarePlanWasRNApproved::class => [
             AutoApproveCarePlan::class,
-            UPG0506Handler::class,
-            SendCarePlanForDMProviderApproval::class,
+            UPG0506Handler::class, //auto approve for UPG0506 - why not in AutoApproveCarePlan then?
             NotifyPatientOfCarePlanApproval::class,
+            SendCarePlanForDMProviderApproval::class,
         ],
         CarePlanWasProviderApproved::class => [
             ForwardApprovedCarePlanToPractice::class,

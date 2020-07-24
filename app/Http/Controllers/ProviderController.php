@@ -7,14 +7,18 @@
 namespace App\Http\Controllers;
 
 use App\Events\CarePlanWasApproved;
+use App\Note;
 use App\Services\ProviderInfoService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Http\Request;
+use Illuminate\Support\MessageBag;
 
 class ProviderController extends Controller
 {
+    public const SESSION_RN_APPROVED_KEY = 'rn_approved';
+
     private $providerInfoService;
 
     public function __construct(ProviderInfoService $providerInfoService)
@@ -24,7 +28,32 @@ class ProviderController extends Controller
 
     public function approveCarePlan(Request $request, $patientId, $viewNext = false)
     {
-        if (auth()->user()->canQAApproveCarePlans()) {
+        /** @var User $user */
+        $user = auth()->user();
+        if ($user->isCareCoach() && $user->canRNApproveCarePlans()) {
+            /** @var CarePlan $carePlan */
+            $carePlan = CarePlan::where('user_id', $patientId)
+                ->firstOrFail();
+
+            if (CarePlan::QA_APPROVED !== $carePlan->status) {
+                $bag = new MessageBag(['status' => 'careplan must be qa_approved in order to be rn_approved']);
+
+                return redirect()->back()->with(['errors' => $bag]);
+            }
+
+            // this will be used when creating a note
+            // the care plan status will be changed only when the note is saved
+            $session = $request->session();
+            $session->put(ProviderController::SESSION_RN_APPROVED_KEY, auth()->id());
+
+            // should redirect to the draft note
+            return redirect()->to(route('patient.note.create', [
+                'patientId' => $patientId,
+            ]));
+        }
+
+        if ($user->canQAApproveCarePlans()) {
+            /** @var CarePlan $carePlan */
             $carePlan = CarePlan::where('user_id', $patientId)
                 ->firstOrFail();
 
@@ -36,11 +65,11 @@ class ProviderController extends Controller
             }
         }
 
-        event(new CarePlanWasApproved(User::find($patientId), auth()->user()));
+        event(new CarePlanWasApproved(User::find($patientId), $user));
         $viewNext = (bool) $viewNext;
 
         if ($viewNext) {
-            $nextPatient = $this->getNextPatient(auth()->user());
+            $nextPatient = $this->getNextPatient($user);
 
             if ( ! $nextPatient) {
                 return redirect()->to('/');

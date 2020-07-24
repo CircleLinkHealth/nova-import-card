@@ -87,7 +87,7 @@ class AssignPatientToStandByNurse
             return true;
         }
 
-        if ( ! in_array($patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
+        if ( ! in_array($patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::RN_APPROVED, CarePlan::PROVIDER_APPROVED])) {
             return true;
         }
 
