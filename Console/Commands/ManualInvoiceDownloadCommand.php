@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
 use Illuminate\Console\Command;
 
-class TestInvoiceDownloadCommand extends Command
+class ManualInvoiceDownloadCommand extends Command
 {
     /**
      * The console command description.
