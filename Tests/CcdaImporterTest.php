@@ -28,6 +28,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
@@ -71,12 +72,10 @@ class CcdaImporterTest extends CustomerTestCase
         $cp->provider_date        = now()->toDateTimeString();
         $cp->save();
 
-        $ccda2     = FakeCalvaryCcda::create($ccdaArgs);
-        $imported2 = $ccda2->import($enrollee);
+        ReimportPatientMedicalRecord::for($cp->user_id, null, 'call');
 
-        $cp = CarePlan::where('user_id', $imported1->patient_id)->firstOrFail();
-
-        $this->assertTrue(CarePlan::PROVIDER_APPROVED === $cp->status);
+        $this->assertTrue(CarePlan::where('user_id', $imported1->patient_id)->where('status', CarePlan::PROVIDER_APPROVED)->exists());
+        $this->assertTrue(1 === CarePlan::where('user_id', $imported1->patient_id)->count());
     }
 
     public function test_it_attaches_ccda_to_duplicate_patients_and_imports()
