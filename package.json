@@ -1,4 +1,5 @@
 {
+    "name": "cpm-web",
     "private": true,
     "scripts": {
         "build-cpm": "COMPOSER_MEMORY_LIMIT=-1 composer install && php artisan migrate && php artisan migrate:views && npm install && npm run bower_install",
