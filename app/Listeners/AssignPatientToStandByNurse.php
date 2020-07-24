@@ -42,7 +42,12 @@ class AssignPatientToStandByNurse
     {
         $scheduler = app()->make(SchedulerService::class);
 
-        if ($scheduler->hasScheduledCall($patient)) {
+        if ($nextCall = $scheduler->getScheduledCallForPatient($patient)) {
+            if ( ! $nextCall->outbound_cpm_id) {
+                $nextCall->outbound_cpm_id = StandByNurseUser::id();
+                $nextCall->save();
+            }
+
             return null;
         }
 

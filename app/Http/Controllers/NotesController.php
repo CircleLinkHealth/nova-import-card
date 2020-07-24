@@ -16,6 +16,7 @@ use App\Jobs\SendSingleNotification;
 use App\Note;
 use App\Rules\PatientEmailAttachments;
 use App\Rules\PatientEmailDoesNotContainPhi;
+use App\Rules\ValidatePatientCustomEmail;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
@@ -623,9 +624,13 @@ class NotesController extends Controller
         $shouldSendPatientEmail = isset($input['email-patient']);
         if ($shouldSendPatientEmail) {
             Validator::make($input, [
-                'email-subject'      => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
-                'patient-email-body' => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
-                'attachments'        => ['sometimes', new PatientEmailAttachments()],
+                'email-subject'        => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'patient-email-body'   => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'attachments'          => ['sometimes', new PatientEmailAttachments()],
+                'custom_patient_email' => [
+                    'sometimes',
+                    new ValidatePatientCustomEmail(),
+                ],
             ])->validate();
         }
 
@@ -699,7 +704,7 @@ class NotesController extends Controller
                             $note->performed_at
                         );
                     } else {
-                        $call->status = 'done';
+                        $call->status = Call::DONE;
                     }
                 }
 

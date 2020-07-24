@@ -74,8 +74,6 @@ class CountPatientMonthlySummaryCalls extends Command
             )
             ->chunkById(500, function ($summaries) use ($date) {
                 foreach ($summaries as $pms) {
-                    $save = false;
-
                     $noOfSuccessfulCalls = $this->callRepository->numberOfSuccessfulCalls(
                         $pms->patient_id,
                         $date
@@ -84,7 +82,6 @@ class CountPatientMonthlySummaryCalls extends Command
                     if ($noOfSuccessfulCalls != $pms->no_of_successful_calls) {
                         $this->comment("user_id:{$pms->patient_id}:pms_id:{$pms->id} no_of_successful_calls changing from {$pms->no_of_successful_calls} to ${noOfSuccessfulCalls}");
                         $pms->no_of_successful_calls = $noOfSuccessfulCalls;
-                        $save = true;
                     }
 
                     $noOfCalls = $this->callRepository->numberOfCalls($pms->patient_id, $date);
@@ -92,10 +89,9 @@ class CountPatientMonthlySummaryCalls extends Command
                     if ($noOfCalls != $pms->no_of_calls) {
                         $this->comment("user_id:{$pms->patient_id}:pms_id:{$pms->id} no_of_calls changing from {$pms->no_of_calls} to ${noOfCalls}");
                         $pms->no_of_calls = $noOfCalls;
-                        $save = true;
                     }
 
-                    if ($save) {
+                    if ($pms->isDirty()) {
                         $pms->save();
                         $this->incrementCounter();
                     }

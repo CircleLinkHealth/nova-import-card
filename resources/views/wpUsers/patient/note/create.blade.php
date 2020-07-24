@@ -309,7 +309,7 @@
                                                                        @endif
                                                                        class="call-status-radio"
                                                                        name="call_status"
-                                                                       value="not reached"
+                                                                       value="{{\App\Call::NOT_REACHED}}"
                                                                        id="not-reached"/>
                                                                 <label for="not-reached">
                                                                     <span> </span>Patient Not Reached
@@ -323,7 +323,7 @@
                                                                        @endif
                                                                        name="call_status"
                                                                        class="call-status-radio"
-                                                                       value="reached"
+                                                                       value="{{\App\Call::REACHED}}"
                                                                        id="reached"/>
                                                                 <label for="reached">
                                                                     <span> </span>Successful Clinical Call
@@ -338,7 +338,7 @@
                                                                        @endif
                                                                        name="call_status"
                                                                        class="call-status-radio"
-                                                                       value="ignored"
+                                                                       value="{{\App\Call::IGNORED}}"
                                                                        id="ignored"/>
                                                                 <label for="ignored">
                                                                     <span> </span>Patient Busy - Rescheduled Call
@@ -346,43 +346,6 @@
                                                             </div>
                                                         </div>
                                                         <hr style="margin-top: 0; margin-bottom: 0">
-                                                    @else
-                                                        <div class="call-status-radios multi-input-wrapper"
-                                                             style="padding-bottom: 3px; display: none">
-                                                            <div>
-                                                                <div class="radio">
-                                                                    <input type="checkbox"
-                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
-                                                                           @endif
-                                                                           @if (!empty($call) && $call->status === \App\Call::WELCOME) checked
-                                                                           @endif
-                                                                           name="welcome_call"
-                                                                           value="welcome_call"
-                                                                           id="welcome_call"/>
-                                                                    <label for="welcome_call">
-                                                                        <span> </span>Successful
-                                                                        Welcome Call
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            <div>
-                                                                <div class="radio">
-                                                                    <input type="checkbox"
-                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
-                                                                           @endif
-                                                                           @if (!empty($call) && $call->status === \App\Call::OTHER) checked
-                                                                           @endif
-                                                                           name="other_call"
-                                                                           value="other_call"
-                                                                           id="other_call"/>
-                                                                    <label for="other_call">
-                                                                        <span> </span>Successful
-                                                                        Other
-                                                                        Patient Call
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
                                                     @endif
                                                     <div class="other-radios multi-input-wrapper"
                                                          style="padding-top: 3px; display: none">
@@ -1109,7 +1072,8 @@
                             .post(validateEmailBodyUrl, {
                                 //validate subject as well
                                 patient_email_subject: $("[id='email-subject']").val(),
-                                patient_email_body: $("[id='patient-email-body-input']").val()
+                                patient_email_body: $("[id='patient-email-body-input']").val(),
+                                custom_patient_email: $("[id='custom-patient-email']").val()
                             })
                             .then((response) => {
                                 if (response.data.status == 400) {
