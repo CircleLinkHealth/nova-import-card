@@ -682,7 +682,7 @@ class NotesController extends Controller
                             $note->performed_at
                         );
                     } else {
-                        $call->status = 'done';
+                        $call->status = Call::DONE;
                     }
                 }
 

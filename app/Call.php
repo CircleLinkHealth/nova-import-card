@@ -45,49 +45,59 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
  * @property \App\Note|null                                                                              $note
  * @property \CircleLinkHealth\Customer\Entities\User|null                                               $outboundUser
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereAttemptNote($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereCallTime($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereCalledDate($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereCreatedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereInboundCpmId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereInboundPhoneNumber($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereIsCpmOutbound($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereNoteId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereOutboundCpmId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereOutboundPhoneNumber($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereScheduledDate($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereScheduler($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereService($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereStatus($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereUpdatedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowEnd($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAttemptNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCallTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCalledDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereInboundCpmId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereInboundPhoneNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereIsCpmOutbound($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereNoteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereOutboundCpmId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereOutboundPhoneNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereScheduledDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereScheduler($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereService($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowEnd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
  * @mixin \Eloquent
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call filter(\App\Filters\QueryFilters $filters)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call newModelQuery()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call newQuery()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call ofMonth(\Carbon\Carbon $monthYear)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call ofStatus($status)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call query()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call scheduled()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call whereIsManual($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call whereSubType($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call whereType($value)
- * @property int                                                                                                             $asap
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call whereAsap($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call filter(\App\Filters\QueryFilters $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call ofMonth(\Carbon\Carbon $monthYear)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call ofStatus($status)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call scheduled()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereIsManual($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereSubType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereType($value)
+ *
+ * @property int $asap
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAsap($value)
+ *
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call calledLastThreeMonths()
- * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection                                              $attestedProblems
- * @property int|null                                                                                                        $attested_problems_count
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Call unassigned()
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call calledLastThreeMonths()
+ *
+ * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection $attestedProblems
+ * @property int|null                                                           $attested_problems_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call unassigned()
  */
 class Call extends BaseModel implements AttachableToNotification
 {
     use Filterable;
     use NotificationAttachable;
+    //Denotes a completed task
+    const DONE = 'done';
 
     //patient was reached/not reached but this call is to be ignored
     //eg. patient was reached but was busy, so ignore call from reached/not reached reports
