@@ -698,7 +698,7 @@ class SchedulerService
             return null;
         }
 
-        $previousCall = $this->getPreviousCall($patient, $scheduled_call['id']);
+        $previousCall = $this->getPreviousCall($patient, optional($scheduled_call)->id);
 
         if (Call::REACHED == $callStatus) {
             $prediction = (new SuccessfulHandler(
