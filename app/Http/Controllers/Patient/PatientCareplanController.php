@@ -372,8 +372,7 @@ class PatientCareplanController extends Controller
         )->all();
 
         // roles
-        $patientRoleId = Role::where('name', '=', 'participant')->first();
-        $patientRoleId = $patientRoleId->id;
+        $patientRoleId = Role::byName('participant')->id;
 
         $reasons = [
             'No Longer Interested',
@@ -555,7 +554,7 @@ class PatientCareplanController extends Controller
         if ($v->fails()) {
             return redirect()->back()->withErrors($v->errors())->withInput($request->input());
         }
-        $role      = Role::whereName('participant')->first();
+        $role      = Role::byName('participant')->id;
         $newUserId = Str::random(15);
 
         $carePlanStatus = CarePlan::DRAFT;
