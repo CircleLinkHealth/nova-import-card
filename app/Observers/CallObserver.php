@@ -7,6 +7,7 @@
 namespace App\Observers;
 
 use App\Call;
+use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Events\CarePlanWasApproved;
 use App\Note;
 use App\Notifications\CallCreated;
@@ -77,6 +78,10 @@ class CallObserver
         //@todo:come up with a better solution for this
         if ($call->shouldSendLiveNotification()) {
             $this->createNotificationAndSendToPusher($call);
+        }
+
+        if (Carbon::parse($call->called_date)->isLastMonth()) {
+            app(CountPatientMonthlySummaryCalls::class)->countCalls(now()->subMonth()->startOfMonth(), [$call->patientId()]);
         }
     }
 
