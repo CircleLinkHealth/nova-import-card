@@ -172,7 +172,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
                 && Patient::UNREACHABLE === $this->patient->patientInfo->ccm_status
             )
             || (
-                in_array($this->enrollee->status, [Enrollee::ENROLLED, Enrollee::CONSENTED])
+                in_array($this->enrollee->status, [Enrollee::ENROLLED])
                 && Patient::UNREACHABLE === $this->patient->patientInfo->ccm_status
                 && 1 === Revision::whereRevisionableId($this->patient->patientInfo->id)->whereRevisionableType(Patient::class)->whereNull('old_value')->where('new_value', Patient::UNREACHABLE)->where('key', 'ccm_status')->count()
             )
@@ -191,10 +191,6 @@ class ImportPatientInfo extends BaseCcdaImportTask
 
         if ( ! $patientInfo->ccda_id) {
             $patientInfo->ccda_id = $args['ccda_id'];
-        }
-
-        if ( ! $patientInfo->ccm_status) {
-            $patientInfo->ccm_status = Patient::ENROLLED;
         }
 
         if ( ! $patientInfo->consent_date) {

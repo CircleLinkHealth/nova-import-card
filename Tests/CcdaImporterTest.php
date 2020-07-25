@@ -7,14 +7,12 @@
 namespace CircleLinkHealth\Eligibility\Tests;
 
 use App\EnrollmentInvitationsBatch;
-use App\Listeners\AssignPatientToStandByNurse;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -132,30 +130,6 @@ class CcdaImporterTest extends CustomerTestCase
         AttachPractice::for($this->patient(), $ccda);
 
         $this->assertTrue($this->patient()->program_id === $differentPracticeId);
-    }
-
-    public function test_it_does_not_assign_primary_nurse_if_one_exists()
-    {
-        PatientNurse::updateOrCreate(
-            ['patient_user_id' => $this->patient()->id],
-            [
-                'nurse_user_id'           => $this->careCoach()->id,
-                'temporary_nurse_user_id' => null,
-                'temporary_from'          => null,
-                'temporary_to'            => null,
-            ]
-        );
-        $this->enableStandByNurse();
-        CarePlan::where('user_id', $this->patient()->id)->update([
-            'status' => CarePlan::PROVIDER_APPROVED,
-        ]);
-
-        AssignPatientToStandByNurse::assign($this->patient()->fresh());
-
-        $this->assertDatabaseHas('patients_nurses', [
-            'patient_user_id' => $this->patient()->id,
-            'nurse_user_id'   => $this->careCoach()->id,
-        ]);
     }
 
     public function test_it_does_not_change_billing_provider_during_reimport()

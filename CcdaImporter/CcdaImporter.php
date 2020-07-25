@@ -10,6 +10,7 @@ use App\Events\PatientUserCreated;
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
@@ -131,7 +132,7 @@ class CcdaImporter
                     'username'          => $newUserId,
                     'program_id'        => $this->ccda->practice_id,
                     'is_auto_generated' => true,
-                    'roles'             => [Role::whereName('participant')->firstOrFail()->id],
+                    'roles'             => [Role::byName('participant')->id],
                     'is_awv'            => Ccda::IMPORTER_AWV === $this->ccda->source,
                     'address'           => array_key_exists(0, $demographics->address->street)
                         ? $demographics->address->street[0]
@@ -147,6 +148,23 @@ class CcdaImporter
         );
 
         $this->ccda->patient_id = $newPatientUser->id;
+        $this->ccda->setRelation('patient', $newPatientUser);
+    }
+
+    private function ensurePatientHasParticipantRole()
+    {
+        if ($this->ccda->patient->isParticipant()) {
+            return;
+        }
+
+        $this->ccda->patient->roles()->sync([
+            Role::byName('participant')->id => [
+                'program_id' => $this->ccda->patient->program_id,
+            ],
+        ]);
+
+        \DB::commit();
+        $this->ccda->patient->clearRolesCache();
     }
 
     private function handleDuplicateEnrollees()
@@ -224,10 +242,13 @@ class CcdaImporter
                 return $this->ccda;
             } catch (PatientAlreadyExistsException $e) {
                 $this->ccda->patient_id = $e->getPatientUserId();
+                $this->ccda->load(['patient.primaryPractice', 'patient.patientInfo']);
             }
         }
 
-        $this->ccda->load(['patient.primaryPractice', 'patient.patientInfo']);
+        $this->ensurePatientHasParticipantRole();
+
+        $this->ccda->loadMissing(['patient.primaryPractice', 'patient.patientInfo']);
 
         if (is_null($this->ccda->patient)) {
             throw new \Exception("Could not create patient for CCDA[{$this->ccda->id}]");
@@ -418,6 +439,9 @@ class CcdaImporter
             $this->ccda->patient->carePlan->qa_approver_id = CarePlanAutoApprover::id();
             $this->ccda->patient->carePlan->qa_date        = now()->toDateTimeString();
             $this->ccda->patient->carePlan->save();
+
+            $this->ccda->patient->patientInfo->ccm_status = Patient::ENROLLED;
+            $this->ccda->patient->patientInfo->save();
         }
 
         return $this;
@@ -534,18 +558,6 @@ class CcdaImporter
 
     private function updatePatientUserPostImport()
     {
-        //Make sure Patient does not have survey-only role moving forward
-        $participantRoleId = Role::whereName('participant')->firstOrFail()->id;
-
-        $this->ccda->patient->roles()->sync([
-            $participantRoleId => [
-                'program_id' => $this->ccda->patient->program_id,
-            ],
-        ]);
-
-        \DB::commit();
-        $this->ccda->patient->clearRolesCache();
-
         if ($this->ccda->patient->isDirty()) {
             $this->ccda->patient->save();
         }
