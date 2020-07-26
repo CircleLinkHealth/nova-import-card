@@ -32,103 +32,13 @@
         <template v-if="!(waiting && device === null)">
             <div class="row">
                 <div class="col-xs-12">
-                    <div class="col-xs-9 no-padding">
-                        <div style="display: inline-flex">
-                            <label v-if="dropdownNumber === 'patientUnlisted'" for="numberType" style="display: grid">Choose Phone Number Type
-                            <select2 id="numberType" class="form-control"
-                                     v-model="dropdownPhoneType">
-                                <option v-for="(phoneType, key) in phoneTypes"
-                                        :key="key"
-                                        :value="phoneType">
-                                    {{phoneType}}
-                                </option>
-                            </select2>
-                            </label>
-                            <label v-if="dropdownNumber !== 'patientUnlisted'" for="phoneNumber" style="display: grid; width: 500px;">Phone Number
-                            <select2 id="phoneNumber" class="form-control" v-model="dropdownNumber"
-                                     :settings="{minimumResultsForSearch: -1}"
-                                 :disabled="onPhone[selectedPatientNumber]">
-                                <option v-for="(number, key) in patientNumbers"
-                                        :key="key.type"
-                                        :value="number.number">
-                                    {{number.type}}: {{number.number}}
-                                </option>
-                                <option value="patientUnlisted">Other</option>
-                            </select2>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-xs-3 no-padding" style="padding-left: 2px; padding-right: 2px; padding-top: 14px;"
-                         v-if="dropdownNumber !== 'patientUnlisted'">
-                        <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
-                                :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
-                                :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
-                            <i class="fa fa-fw fa-phone"
-                               :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
-                        </button>
-                        <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
-                                @click="toggleMuteMessage(selectedPatientNumber)">
-                            <i class="fa fa-fw"
-                               :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>
-                        </button>
-                    </div>
-                    <div v-else>
-                        <button class="glyphicon glyphicon-remove"
-                                title="Close new number menu"
-                                style="padding: 6px; color:red; font-size: 19px;"
-                                @click="resetToDefaultView">
-                        </button>
-                    </div>
+                    <edit-patient-number ref="editPatientNumber"
+                            :user-id="326"
+                            error-message="SHould Pass Error Mesg">
+                    </edit-patient-number>
+
                 </div>
             </div>
-            <div class="row" v-if="dropdownNumber === 'patientUnlisted'" style="margin-top: 5px">
-                <div class="col-xs-12">
-                    <label>Please input a 10 digit US Phone Number</label>
-                    <div class="col-xs-9 no-padding">
-                        <div class="input-group">
-                            <span class="input-group-addon">+1</span>
-
-                            <template v-if="debug">
-                                <input name="patient-unlisted-number"
-                                       class="form-control"
-                                       type="tel"
-                                       style="width: 459px;"
-                                       title="10-digit US Phone Number" placeholder="1234567890"
-                                       v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
-                            </template>
-                            <template v-else>
-                                <input name="patient-unlisted-number"
-                                       maxlength="10" minlength="10"
-                                       class="form-control"
-                                       type="tel"
-                                       style="width: 459px;"
-                                       title="10-digit US Phone Number" placeholder="1234567890"
-                                       v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
-                            </template>
-                        </div>
-                    </div>
-
-                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
-                        <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
-                                :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
-                                :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
-                            <i class="fa fa-fw fa-phone"
-                               :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
-                        </button>
-                        <button class="btn btn-danger" @click="saveNewNumber"
-                                :disabled="disableSaveButton">
-                            Save
-                        </button>
-                        <loader v-if="saving"></loader>
-                        <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
-                                @click="toggleMuteMessage(selectedPatientNumber)">
-                            <i class="fa fa-fw"
-                               :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <br/>
 
             <div class="row" style="margin-top: 5px">
@@ -288,10 +198,13 @@
                 dropdownPhoneType:'',
                 saving:false,
                 phoneTypes:[],
-                patientNumbers:[],
+                // patientNumbers:[],
             }
         },
         computed: {
+            patientNumbers(){
+              return this.$refs.editPatientNumber.patientPhoneNumbers;
+            },
             disableSaveButton(){
                 if (this.dropdownNumber === 'patientUnlisted') {
                     return this.saving ||
@@ -330,57 +243,57 @@
             },
         },
         methods:{
-            resetData(){
-                this.patientNumbers = [];
-                this.phoneTypes = [];
-            },
+            // resetData(){
+            //     this.patientNumbers = [];
+            //     this.phoneTypes = [];
+            // },
             
-            getPhoneNumbers(){
-                this.loading = true;
-                this.resetData();
-                axios.post('/manage-patients/get-phones', {
-                    userId:this.inboundUserId
-                })
-                    .then((response => {
-                        this.patientNumbers.push(...response.data.phoneNumbers);
-                        this.phoneTypes.push(...response.data.phoneTypes);
-                        this.loading = false;
-                    })).catch((error) => {
-                    this.loading = false;
-                    console.log(error.message);
-                });
-            },
+            // getPhoneNumbers(){
+            //     this.loading = true;
+            //     this.resetData();
+            //     axios.post('/manage-patients/get-phones', {
+            //         userId:this.inboundUserId
+            //     })
+            //         .then((response => {
+            //             this.patientNumbers.push(...response.data.phoneNumbers);
+            //             this.phoneTypes.push(...response.data.phoneTypes);
+            //             this.loading = false;
+            //         })).catch((error) => {
+            //         this.loading = false;
+            //         console.log(error.message);
+            //     });
+            // },
 
-            saveNewNumber(){
-                const type = this.dropdownPhoneType.length !== 0 ? this.dropdownPhoneType : 'mobile';
-                this.saving = true;
-                axios.post('/manage-patients/new/phone', {
-                    phoneType:type,
-                    phoneNumber:this.patientUnlistedNumber,
-                    patientUserId:this.inboundUserId,
-                })
-                    .then((response => {
-                        console.log(response.data);
-                        this.patientUnlistedNumber = '';
-                        this.getPhoneNumbers();
-                        this.resetToDefaultView();
-                        if (response.data.hasOwnProperty('message')){
-                            alert(response.data.message);
-                        }
-                        this.saving = false;
-                })).catch((error) => {
-                    this.saving = false;
-                    console.log(error.message);
-                });
-            },
+            // saveNewNumber(){
+            //     const type = this.dropdownPhoneType.length !== 0 ? this.dropdownPhoneType : 'mobile';
+            //     this.saving = true;
+            //     axios.post('/manage-patients/new/phone', {
+            //         phoneType:type,
+            //         phoneNumber:this.patientUnlistedNumber,
+            //         patientUserId:this.inboundUserId,
+            //     })
+            //         .then((response => {
+            //             console.log(response.data);
+            //             this.patientUnlistedNumber = '';
+            //             // this.getPhoneNumbers();
+            //             this.resetToDefaultView();
+            //             if (response.data.hasOwnProperty('message')){
+            //                 alert(response.data.message);
+            //             }
+            //             this.saving = false;
+            //     })).catch((error) => {
+            //         this.saving = false;
+            //         console.log(error.message);
+            //     });
+            // },
 
-            resetToDefaultView(){
-            this.dropdownNumber = this.defaultDropdownNumber;
-            },
+            // resetToDefaultView(){
+            // this.dropdownNumber = this.defaultDropdownNumber;
+            // },
 
-            defaultDropdownNumber(){
-                return this.patientNumbers !== [] ? this.patientNumbers[0] : 'patientUnlisted';
-            },
+            // defaultDropdownNumber(){
+            //     return this.patientNumbers !== [] ? this.patientNumbers[0] : 'patientUnlisted';
+            // },
 
             getUrl: function (path) {
                 if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
@@ -953,7 +866,6 @@
 
         },
         created() {
-            this.getPhoneNumbers();
             self = this;
             this.resetPhoneState();
             this.registerBroadcastChannelHandlers();
