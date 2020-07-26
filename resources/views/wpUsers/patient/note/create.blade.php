@@ -346,6 +346,43 @@
                                                             </div>
                                                         </div>
                                                         <hr style="margin-top: 0; margin-bottom: 0">
+                                                    @else
+                                                        <div class="call-status-radios multi-input-wrapper"
+                                                             style="padding-bottom: 3px; display: none">
+                                                            <div>
+                                                                <div class="radio">
+                                                                    <input type="checkbox"
+                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                           @endif
+                                                                           @if (!empty($call) && $call->status === \App\Call::WELCOME) checked
+                                                                           @endif
+                                                                           name="welcome_call"
+                                                                           value="{{\App\Call::WELCOME}}"
+                                                                           id="welcome_call"/>
+                                                                    <label for="welcome_call">
+                                                                        <span> </span>Successful
+                                                                        Welcome Call
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="radio">
+                                                                    <input type="checkbox"
+                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                           @endif
+                                                                           @if (!empty($call) && $call->status === \App\Call::OTHER) checked
+                                                                           @endif
+                                                                           name="other_call"
+                                                                           value="{{\App\Call::OTHER}}"
+                                                                           id="other_call"/>
+                                                                    <label for="other_call">
+                                                                        <span> </span>Successful
+                                                                        Other
+                                                                        Patient Call
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     @endif
                                                     <div class="other-radios multi-input-wrapper"
                                                          style="padding-top: 3px; display: none">

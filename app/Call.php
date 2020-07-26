@@ -258,7 +258,7 @@ class Call extends BaseModel implements AttachableToNotification
 
     public function patientId()
     {
-        return $this->has('outboundUser.patientInfo.user')
+        return $this->has('outboundUser.patientInfo.user')->exists()
             ? $this->outbound_cpm_id
             : $this->inbound_cpm_id;
     }

@@ -17,7 +17,6 @@ use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
 use App\Listeners\AddPatientConsentNote;
-use App\Listeners\AssignPatientToStandByNurse;
 use App\Listeners\AttachAttestedProblemsToCall;
 use App\Listeners\AttachUPG0506CarePlanToPatientUser;
 use App\Listeners\AutoApproveCarePlan;
@@ -120,7 +119,6 @@ class CpmEventServiceProvider extends ServiceProvider
             UpdateCcdaStatus::class,
         ],
         CarePlanWasQAApproved::class => [
-            AssignPatientToStandByNurse::class,
             AddPatientConsentNote::class,
         ],
         CarePlanWasRNApproved::class => [
