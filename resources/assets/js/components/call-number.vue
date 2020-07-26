@@ -33,8 +33,9 @@
             <div class="row">
                 <div class="col-xs-12">
                     <edit-patient-number ref="editPatientNumber"
-                            :user-id="326"
-                            error-message="SHould Pass Error Mesg">
+                                         :user-id="326"
+                                         error-message="SHould Pass Error Mesg"
+                                         :call-enabled=true>
                     </edit-patient-number>
 
                 </div>
@@ -292,6 +293,10 @@
             },
         },
         methods:{
+            kolos(number){
+                console.log(".skfsdkfsfgasf/asfasf");
+            },
+
             // resetData(){
             //     this.patientNumbers = [];
             //     this.phoneTypes = [];

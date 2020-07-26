@@ -2,35 +2,35 @@
     <div class="phone-numbers">
         <div class="input-group">
             <span v-if="shouldShowError" class="help-block" style="color: red">{{this.errorMessage}}</span>
-            <h5 v-if="!loading && callEnabled" style="padding-left: 4px; color: #50b2e2;">Primary<br>Phone</h5>
+            <h5 v-if="!loading && callEnabled" style="padding-left: 4px; color: #50b2e2;">Number<br>to Call</h5>
             <template v-if="true" v-for="(number, index) in patientPhoneNumbers">
-                <div class="numbers"  @mouseover="enableUpdateButton(index)">
+                <div class="numbers">
                     <div v-if="callEnabled" style="margin-top: 7px;">
                         <input name="isPrimary"
                                class="is-primary"
-                               :checked="number.isPrimary"
-                               @click=""
+                               @click="selectedNumber(number.number)"
                                type="radio">
                     </div>
 
-                    <div class="types">
-                        <input name="type"
-                               class="form-control phone-type"
+                    <div  @mouseover="enableUpdateButton(index)" style="display: inline-flex;">
+                        <div class="types">
+                            <input name="type"
+                                   class="form-control phone-type"
+                                   :class="{'bgColor' : numberIsPrimary(number)}"
+                                   type="text"
+                                   :value="number.type"
+                                   :disabled="true"/>
+                        </div>
+
+                        <span class="input-group-addon plus-one">+1</span>
+                        <input name="number"
+                               class="form-control phone-number"
                                :class="{'bgColor' : numberIsPrimary(number)}"
-                               type="text"
-                               :value="number.type"
+                               type="tel"
+                               :value="number.number"
                                :disabled="true"/>
                     </div>
-
-                  <span class="input-group-addon plus-one">+1</span>
-                  <input name="number"
-                         class="form-control phone-number"
-                         :class="{'bgColor' : numberIsPrimary(number)}"
-                         type="tel"
-                         title="10-digit US Phone Number" placeholder="2345678901"
-                         :value="number.number"
-                         :disabled="true"/>
-              </div>
+                    </div>
 
                 <i v-if="!loading && number.isPrimary === false"
                    class="glyphicon glyphicon-trash remove-phone"
@@ -110,11 +110,15 @@
 <script>
     import LoaderComponent from "./loader";
     import axios from "../bootstrap-axios";
+    import {Event} from "vue-tables-2";
+    import CallNumber from "./call-number";
 
     export default {
         name: "edit-patient-number",
+
         components: {
-            loader: LoaderComponent,
+            'loader': LoaderComponent,
+            'call-number':CallNumber,
         },
 
         props: [
@@ -158,6 +162,10 @@
         },
 
         methods: {
+            selectedNumber(number){
+                // Event.$on('call-number:kolos', number);
+            },
+
             numberIsPrimary(number){
                 return number.isPrimary;
             },
