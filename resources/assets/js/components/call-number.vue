@@ -39,6 +39,55 @@
 
                 </div>
             </div>
+<!--            <div class="row" v-if="dropdownNumber === 'patientUnlisted'" style="margin-top: 5px">-->
+<!--                <div class="col-xs-12">-->
+<!--                    <label>Please input a 10 digit US Phone Number</label>-->
+<!--                    <div class="col-xs-9 no-padding">-->
+<!--                        <div class="input-group">-->
+<!--                            <span class="input-group-addon">+1</span>-->
+
+<!--                            <template v-if="debug">-->
+<!--                                <input name="patient-unlisted-number"-->
+<!--                                       class="form-control"-->
+<!--                                       type="tel"-->
+<!--                                       style="width: 459px;"-->
+<!--                                       title="10-digit US Phone Number" placeholder="1234567890"-->
+<!--                                       v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>-->
+<!--                            </template>-->
+<!--                            <template v-else>-->
+<!--                                <input name="patient-unlisted-number"-->
+<!--                                       maxlength="10" minlength="10"-->
+<!--                                       class="form-control"-->
+<!--                                       type="tel"-->
+<!--                                       style="width: 459px;"-->
+<!--                                       title="10-digit US Phone Number" placeholder="1234567890"-->
+<!--                                       v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>-->
+<!--                            </template>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+            <!--    Need    a selectedPatientNumber     -->
+                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
+                        <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
+                                :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
+                                :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
+                            <i class="fa fa-fw fa-phone"
+                               :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
+                        </button>
+<!--                        <button class="btn btn-danger" @click="saveNewNumber"-->
+<!--                                :disabled="disableSaveButton">-->
+<!--                            Save-->
+<!--                        </button>-->
+                        <loader v-if="saving"></loader>
+                        <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
+                                @click="toggleMuteMessage(selectedPatientNumber)">
+                            <i class="fa fa-fw"
+                               :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>
+                        </button>
+                    </div>
+<!--                </div>-->
+<!--            </div>-->
+
             <br/>
 
             <div class="row" style="margin-top: 5px">

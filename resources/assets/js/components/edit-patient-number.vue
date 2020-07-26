@@ -2,17 +2,16 @@
     <div class="phone-numbers">
         <div class="input-group">
             <span v-if="shouldShowError" class="help-block" style="color: red">{{this.errorMessage}}</span>
-            <h5 v-if="!loading" style="padding-left: 4px; color: #50b2e2;">Primary<br>Phone</h5>
+            <h5 v-if="!loading && callEnabled" style="padding-left: 4px; color: #50b2e2;">Primary<br>Phone</h5>
             <template v-if="true" v-for="(number, index) in patientPhoneNumbers">
-                <div class="numbers">
-                    <div style="margin-top: 7px;">
+                <div class="numbers"  @mouseover="enableUpdateButton(index)">
+                    <div v-if="callEnabled" style="margin-top: 7px;">
                         <input name="isPrimary"
                                class="is-primary"
                                :checked="number.isPrimary"
-                               @click="enableUpdateButton(index)"
+                               @click=""
                                type="radio">
                     </div>
-
 
                     <div class="types">
                         <input name="type"
@@ -117,9 +116,11 @@
         components: {
             loader: LoaderComponent,
         },
+
         props: [
             'userId',
-            'errorMessage'
+            'errorMessage',
+            'callEnabled',
         ],
 
         data(){
