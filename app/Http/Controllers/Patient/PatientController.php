@@ -136,13 +136,7 @@ class PatientController extends Controller
 
     public function showCallPatientPage(Request $request, $patientId)
     {
-        $user = User::with([
-            'phoneNumbers' => function ($q) {
-                $q->whereNotNull('number')
-                    ->where('number', '!=', '')
-                    ->orderByDesc('is_primary');
-            },
-        ])
+        $user = User::with('phoneNumbers')
             ->with('patientInfo.location')
             ->with('primaryPractice.locations')
             ->where('id', $patientId)

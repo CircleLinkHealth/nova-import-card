@@ -6,7 +6,7 @@
         <div class="letter-view">
             <div class="practice-logo">
                 <div class="logo">
-                    @include('enrollment-consent.practiceLogo')
+                    @include('enrollment-letters.practiceLogo')
                 </div>
             </div>
             <div>

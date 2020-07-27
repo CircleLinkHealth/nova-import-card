@@ -1,6 +1,6 @@
 <div class="headers">
-    <div class="logo" style="{{$logoStyleRequest}}">
-        @include('enrollment-consent.practiceLogo')
+    <div class="logo" style="text-align: center">
+        @include('enrollment-letters.practiceLogo')
     </div>
     <br>
     <hr>
@@ -9,6 +9,6 @@
     <div class="header">
         {{$signatoryNameForHeader}}
         <br>
-        {{$practiceName}}
+        {{$practiceDisplayName}}
     </div>
 </div>
