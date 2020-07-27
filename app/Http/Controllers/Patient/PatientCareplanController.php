@@ -84,7 +84,7 @@ class PatientCareplanController extends Controller
                     $careplanStatusLink = '';
                     $approverName = 'NA';
 
-                    if ('provider_approved' == $careplanStatus) {
+                    if (CarePlan::PROVIDER_APPROVED == $careplanStatus) {
                         $careplanStatus = $careplanStatusLink = 'Approved';
 
                         $approver = $cp->approver_full_name;
@@ -94,10 +94,13 @@ class PatientCareplanController extends Controller
 
                             $careplanStatusLink = '<span data-toggle="" title="'.$approverName.' '.$carePlanProviderDate.'">Approved</span>';
                         }
-                    } elseif ('qa_approved' == $careplanStatus) {
+                    } elseif (CarePlan::RN_APPROVED == $careplanStatus) {
                         $careplanStatus = 'Prov. to Approve';
                         $careplanStatusLink = 'Prov. to Approve';
-                    } elseif ('draft' == $careplanStatus) {
+                    } elseif (CarePlan::QA_APPROVED == $careplanStatus) {
+                        $careplanStatus = 'RN to Approve';
+                        $careplanStatusLink = 'RN to Approve';
+                    } elseif (CarePlan::DRAFT == $careplanStatus) {
                         $careplanStatus = 'CLH to Approve';
                         $careplanStatusLink = 'CLH to Approve';
                     }
@@ -372,8 +375,7 @@ class PatientCareplanController extends Controller
         )->all();
 
         // roles
-        $patientRoleId = Role::where('name', '=', 'participant')->first();
-        $patientRoleId = $patientRoleId->id;
+        $patientRoleId = Role::byName('participant')->id;
 
         $reasons = [
             'No Longer Interested',
@@ -401,11 +403,11 @@ class PatientCareplanController extends Controller
 
         $showApprovalButton = false; // default hide
         if (Auth::user()->isProvider()) {
-            if ('provider_approved' != $patient->getCarePlanStatus()) {
+            if (CarePlan::PROVIDER_APPROVED != $patient->getCarePlanStatus()) {
                 $showApprovalButton = true;
             }
         } else {
-            if ('draft' == $patient->getCarePlanStatus()) {
+            if (CarePlan::DRAFT == $patient->getCarePlanStatus()) {
                 $showApprovalButton = true;
             }
         }
@@ -555,7 +557,7 @@ class PatientCareplanController extends Controller
         if ($v->fails()) {
             return redirect()->back()->withErrors($v->errors())->withInput($request->input());
         }
-        $role      = Role::whereName('participant')->first();
+        $role      = Role::byName('participant')->id;
         $newUserId = Str::random(15);
 
         $carePlanStatus = CarePlan::DRAFT;

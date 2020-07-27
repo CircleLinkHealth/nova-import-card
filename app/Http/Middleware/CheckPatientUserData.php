@@ -43,7 +43,7 @@ class CheckPatientUserData
             return redirect('login')->withErrors(['careplan-error' => "[402] There was an error retrieving your Care Plan and we are investigating the issue. <br> If the problem persists, please contact CircleLink Health Support at <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>."]);
         }
 
-        if (CarePlan::DRAFT == $loggedUser->carePlan->status) {
+        if (in_array($loggedUser->carePlan->status, [CarePlan::DRAFT, CarePlan::QA_APPROVED])) {
             auth()->logout();
 
             return redirect('login')->withErrors(['careplan-error' => "Your Care Plan is being reviewed. <br> For details, please contact CircleLink Health Support at <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>."]);

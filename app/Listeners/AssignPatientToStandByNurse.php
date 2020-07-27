@@ -56,10 +56,6 @@ class AssignPatientToStandByNurse
 
     private static function makeStandByNursePrimary(User $patient)
     {
-        if (PatientNurse::where('patient_user_id', $patient->id)->exists()) {
-            return null;
-        }
-
         try {
             return PatientNurse::updateOrCreate(
                 ['patient_user_id' => $patient->id],
@@ -92,7 +88,7 @@ class AssignPatientToStandByNurse
             return true;
         }
 
-        if ( ! in_array($patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
+        if ( ! in_array($patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::RN_APPROVED, CarePlan::PROVIDER_APPROVED])) {
             return true;
         }
 

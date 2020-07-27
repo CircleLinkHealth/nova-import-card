@@ -505,7 +505,6 @@ class Calls implements AthenaApiImplementation
      * Gets Information about a single patient's appointments
      * set $showPast to false to get future appointments only.
      *
-     *
      * Sample:
      * array (
      * 0 =>

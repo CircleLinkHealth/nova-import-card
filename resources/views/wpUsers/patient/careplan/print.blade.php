@@ -126,7 +126,6 @@ if (isset($patient) && ! empty($patient)) {
                                     </div>
                                 @endif
 
-
                                 <div class="col-xs-12 text-left">
                                     @if ($recentSubmission || $skippedAssessment)
                                         <div class="text-right">
@@ -146,92 +145,36 @@ if (isset($patient) && ! empty($patient)) {
                                             </script>
                                         @endpush
                                     @else
-                                        <pdf-careplans v-cloak>
-                                            <template slot="careplanViewOptions">
-                                                @if(auth()->user()->providerInfo && auth()->user()->isProvider())
-                                                    <form class="inline-block" style="text-align: left"
-                                                          action="{{route('provider.update-approve-own')}}"
-                                                          method="POST">
-                                                        {{csrf_field()}}
-                                                        <input class="btn btn-sm btn-info" aria-label="..."
-                                                               type="submit"
-                                                               value="@if(auth()->user()->providerInfo->approve_own_care_plans)View all Practice Care Plans @else View Assigned Care Plans Only @endif">
-                                                    </form>
-                                                @endif
-                                            </template>
-                                            <template slot="buttons">
-                                            <?php
-                                            $patientCarePlan = isset($patient)
-                                                ? $patient->carePlan
-                                                : null;
-                                            $patientCarePlanPdfs = isset($patientCarePlan)
-                                                ? $patientCarePlan->pdfs
-                                                : null;
-                                            $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs)
-                                                ? $patientCarePlanPdfs->isNotEmpty()
-                                                : false;
-                                            ?>
 
-                                            @if ($patientCarePlanPdfsHasItems)
-                                                <!--href="{{route('patient.pdf.careplan.print', ['patientId' => $patient->id])}}"-->
-                                                    <a href="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
-                                                       class="btn btn-info btn-sm inline-block">PDF CarePlans</a>
-                                                @endif
-                                            </template>
+                                        <?php
+                                        $patientCarePlan = isset($patient)
+                                            ? $patient->carePlan
+                                            : null;
+                                        $patientCarePlanPdfs = isset($patientCarePlan)
+                                            ? $patientCarePlan->pdfs
+                                            : null;
+                                        $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs)
+                                            ? $patientCarePlanPdfs->isNotEmpty()
+                                            : false;
+                                        ?>
 
-                                            @if (optional($patientCarePlan)->shouldShowApprovalButton())
-                                                <form id="form-approve"
-                                                      action="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
-                                                      method="POST" style="display: inline">
-                                                    {{ csrf_field() }}
-                                                    <button class="btn btn-info btn-sm inline-block"
-                                                            aria-label="..."
-                                                            form="form-approve"
-                                                            type="submit"
-                                                            role="button">Approve</button>
-                                                </form>
-
-                                                @if(auth()->user()->isProvider() || auth()->user()->isAdmin())
-                                                    <form id="form-approve-next" action="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
-                                                          method="POST" style="display: inline">
-                                                        {{ csrf_field() }}
-                                                        <input class="btn btn-success btn-sm inline-block"
-                                                               aria-label="..."
-                                                               type="submit"
-
-                                                               role="button" value="Approve
-                                                        and View Next">
-                                                    </form>
-
-                                                    <form action="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id])}}"
-                                                          method="POST" id="not-eligible-form" style="display: inline">
-                                                        {{ csrf_field() }}
-                                                        <button type="button" style="margin-right:10px;"
-                                                                onclick="notEligibleClick()"
-                                                                class="btn btn-danger btn-sm text-right">Not Eligible
-                                                        </button>
-
-                                                        <script>
-                                                            function notEligibleClick() {
-                                                                if (confirm('CAUTION: Clicking "confirm" will delete this patient’s entire record from Care Plan Manager. This action cannot be undone. Do you want to delete this patients entire record?')) {
-                                                                    document.getElementById('not-eligible-form').submit();
-                                                                }
-                                                            }
-                                                        </script>
-                                                    </form>
-                                                @endif
-                                            @endif
-
-                                            <a class="btn btn-info btn-sm inline-block" aria-label="..."
-                                               role="button"
-                                               href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}">Print
-                                                This Page</a>
-
-                                            <form class="lang" action="#" method="POST" id="form">
-                                                {{ csrf_field() }}
-                                                <input type="hidden" name="lang" value="es"/>
-                                                <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
-                                -->       </form>
+                                        <pdf-careplans v-cloak
+                                                       careplan-status="{{$careplanStatus}}"
+                                                       :is-provider="@json(auth()->user()->providerInfo && auth()->user()->isProvider())"
+                                                       :is-care-coach="@json(auth()->user()->isCareCoach())"
+                                                       :is-admin="@json(auth()->user()->isAdmin())"
+                                                       :provider-can-approve-own-care-plans="@json(auth()->user()->providerInfo && auth()->user()->providerInfo->approve_own_care_plans)"
+                                                       :show-ready-for-dr-button="@json($showReadyForDrButton)"
+                                                       :ready-for-dr-button-disabled="@json($readyForDrButtonDisabled)"
+                                                       :ready-for-dr-button-already-clicked="@json($readyForDrButtonAlreadyClicked)"
+                                                       :should-show-approval-button="@json(optional($patientCarePlan)->shouldShowApprovalButton() ?? false)"
+                                                       :patient-care-plan-pdfs-has-items="@json($patientCarePlanPdfsHasItems)"
+                                                       route-approve-own="{{route('provider.update-approve-own')}}"
+                                                       route-approve="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
+                                                       route-approve-view-next="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
+                                                       route-switch-to-pdf="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
+                                                       route-print-care-plan="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}"
+                                                       route-care-plan-not-eligible="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id])}}">
                                         </pdf-careplans>
                                     @endif
                                 </div>
@@ -424,7 +367,7 @@ if (isset($patient) && ! empty($patient)) {
                 <allergies ref="allergiesComponent" patient-id="{{$patient->id}}">
                     <div class="col-xs-12">
                         @if($allergies)
-                            <p><?= nl2br($allergies); ?></p>
+                            <p><?php echo nl2br($allergies); ?></p>
                         @else
                             <p>No allergies at this time</p>
                         @endif
@@ -433,9 +376,10 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /ALLERGIES -->
 
                 <!-- SOCIALSERVICES -->
-                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}" misc-id="{{$socialServicesMiscId}}">
+                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}"
+                                 misc-id="{{$socialServicesMiscId}}">
                     @if($social)
-                        <p><?= nl2br($social); ?></p>
+                        <p><?php echo nl2br($social); ?></p>
                     @else
                         <p>No instructions at this time</p>
                     @endif
@@ -489,7 +433,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- OTHER NOTES -->
                 <others ref="othersComponent" patient-id="{{$patient->id}}" misc-id="{{$othersMiscId}}">
                     @if($other)
-                        <p><?= nl2br($other); ?></p>
+                        <p><?php echo nl2br($other); ?></p>
                     @else
                         <p>No instructions at this time</p>
                     @endif

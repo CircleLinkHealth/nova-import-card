@@ -43,7 +43,14 @@ class PatientFilters extends QueryFilters
     public function careplanStatus($status)
     {
         return $this->builder->whereHas('carePlan', function ($query) use ($status) {
-            $query->where('status', $status)->orWhere('status', 'LIKE', '%'.$status.'%');
+            $query->where(function ($q) use ($status) {
+                if ( ! is_array($status)) {
+                    $status = [$status];
+                }
+                foreach ($status as $val) {
+                    $q->orWhere('status', 'LIKE', '%'.$val.'%');
+                }
+            });
         });
     }
 
@@ -100,8 +107,8 @@ class PatientFilters extends QueryFilters
             /** @var User $user */
             $user = auth()->user();
             if ( ! $user->isAdmin()) {
-                // CPM-1790, non-admins should only see qa_approved and provider_approved
-                $filters['careplanStatus'] = 'approved';
+                // CPM-1790, non-admins should only see rn_approved, and provider_approved
+                $filters['careplanStatus'] = [CarePlan::PROVIDER_APPROVED, CarePlan::RN_APPROVED];
             }
         }
 
