@@ -1515,7 +1515,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "ee08c7174ebd9e49e154bd6dd880102ad7aa9b6c"
+                "reference": "51e4c7822963692b84deae79a7b02110acf2a1cf"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1529,7 +1529,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-27T16:18:45+00:00"
+            "time": "2020-07-27T17:49:43+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -3117,16 +3117,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.140",
+            "version": "v0.141",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "298affe3f7b3c251c369a4a7eae30d8b96a66200"
+                "reference": "4ba7279b0a56366e4f19b9d1a1b5456f99353b6f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/298affe3f7b3c251c369a4a7eae30d8b96a66200",
-                "reference": "298affe3f7b3c251c369a4a7eae30d8b96a66200",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/4ba7279b0a56366e4f19b9d1a1b5456f99353b6f",
+                "reference": "4ba7279b0a56366e4f19b9d1a1b5456f99353b6f",
                 "shasum": ""
             },
             "require": {
@@ -3150,7 +3150,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-07-22T00:25:27+00:00"
+            "time": "2020-07-27T00:25:27+00:00"
         },
         {
             "name": "google/auth",
@@ -4453,16 +4453,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.21.0",
+            "version": "v7.22.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "3ccdb116524de408fdc00715b6f06a1031ddace9"
+                "reference": "668642a353ec5b32888565f04f1a163798ef4f6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/3ccdb116524de408fdc00715b6f06a1031ddace9",
-                "reference": "3ccdb116524de408fdc00715b6f06a1031ddace9",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/668642a353ec5b32888565f04f1a163798ef4f6a",
+                "reference": "668642a353ec5b32888565f04f1a163798ef4f6a",
                 "shasum": ""
             },
             "require": {
@@ -4606,7 +4606,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-07-21T14:26:42+00:00"
+            "time": "2020-07-27T15:49:44+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -5258,16 +5258,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.69",
+            "version": "1.0.70",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "7106f78428a344bc4f643c233a94e48795f10967"
+                "reference": "585824702f534f8d3cf7fab7225e8466cc4b7493"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/7106f78428a344bc4f643c233a94e48795f10967",
-                "reference": "7106f78428a344bc4f643c233a94e48795f10967",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/585824702f534f8d3cf7fab7225e8466cc4b7493",
+                "reference": "585824702f534f8d3cf7fab7225e8466cc4b7493",
                 "shasum": ""
             },
             "require": {
@@ -5278,7 +5278,7 @@
                 "league/flysystem-sftp": "<1.0.6"
             },
             "require-dev": {
-                "phpspec/phpspec": "^3.4",
+                "phpspec/phpspec": "^3.4 || ^4.0 || ^5.0 || ^6.0",
                 "phpunit/phpunit": "^5.7.26"
             },
             "suggest": {
@@ -5338,7 +5338,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2020-05-18T15:13:39+00:00"
+            "time": "2020-07-26T07:20:36+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
@@ -6698,44 +6698,6 @@
                 "serialize"
             ],
             "time": "2020-06-17T14:59:55+00:00"
-        },
-        {
-            "name": "org_heigl/ghostscript",
-            "version": "2.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/heiglandreas/Org_Heigl_Ghostscript.git",
-                "reference": "2bcd115f047589c28243a66e6bbea993fc91da21"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/heiglandreas/Org_Heigl_Ghostscript/zipball/2bcd115f047589c28243a66e6bbea993fc91da21",
-                "reference": "2bcd115f047589c28243a66e6bbea993fc91da21",
-                "shasum": ""
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.0",
-                "phpdocumentor/phpdocumentor": "^2.9",
-                "phpunit/phpunit": "^5.5||^6.0||^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Org_Heigl\\Ghostscript\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Heigl",
-                    "email": "andreas@heigl.org"
-                }
-            ],
-            "description": "A PHP-Wrapper around the Ghostscript-CLI",
-            "time": "2018-02-22T08:37:21+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -9159,25 +9121,24 @@
         },
         {
             "name": "spatie/pdf-to-image",
-            "version": "v2.x-dev",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/pdf-to-image.git",
-                "reference": "6718a89065c34dfadfbb2ca61eb1c3e6a956e503"
+                "reference": "3b140c4ef9a8cbb72ac51592a3f13d6a6b6d969e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/pdf-to-image/zipball/6718a89065c34dfadfbb2ca61eb1c3e6a956e503",
-                "reference": "6718a89065c34dfadfbb2ca61eb1c3e6a956e503",
+                "url": "https://api.github.com/repos/spatie/pdf-to-image/zipball/3b140c4ef9a8cbb72ac51592a3f13d6a6b6d969e",
+                "reference": "3b140c4ef9a8cbb72ac51592a3f13d6a6b6d969e",
                 "shasum": ""
             },
             "require": {
-                "org_heigl/ghostscript": "^2.2",
-                "php": "^7.0"
+                "ext-imagick": "*",
+                "php": "^7.2"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.2",
-                "spatie/temporary-directory": "^1.1"
+                "phpunit/phpunit": "^8.0"
             },
             "type": "library",
             "autoload": {
@@ -9206,7 +9167,7 @@
                 "pdf-to-image",
                 "spatie"
             ],
-            "time": "2017-06-20T05:58:45+00:00"
+            "time": "2020-04-29T08:21:17+00:00"
         },
         {
             "name": "spatie/pdf-to-text",
@@ -12834,16 +12795,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.3.3",
+            "version": "2.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "cc7df15806aad8a9915148ea4daf7f0dd0be45b5"
+                "reference": "87335b120bc9652e4ee2bf285b7322a785211476"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/cc7df15806aad8a9915148ea4daf7f0dd0be45b5",
-                "reference": "cc7df15806aad8a9915148ea4daf7f0dd0be45b5",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/87335b120bc9652e4ee2bf285b7322a785211476",
+                "reference": "87335b120bc9652e4ee2bf285b7322a785211476",
                 "shasum": ""
             },
             "require": {
@@ -12902,7 +12863,7 @@
                 "laravel",
                 "page"
             ],
-            "time": "2020-07-14T11:34:42+00:00"
+            "time": "2020-07-27T15:17:39+00:00"
         },
         {
             "name": "facade/ignition-contracts",

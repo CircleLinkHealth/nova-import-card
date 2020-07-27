@@ -22,6 +22,7 @@
             'isAdmin',
             'isCareCoach',
             'providerCanApproveOwnCarePlans',
+            'rnApprovalEnabled',
             'showReadyForDrButton',
             'readyForDrButtonDisabled',
             'readyForDrButtonAlreadyClicked',
@@ -118,9 +119,10 @@
             approveButtonName() {
                 switch (this.careplanStatus) {
                     case 'draft':
-                        return 'QA Approve';
+                        //if rn approval feature is not enabled, we qa and rn approve at the same time
+                        return this.rnApprovalEnabled ? 'QA Approve' : 'QA/RN Approve';
                     case 'qa_approved':
-                        return 'RN Approve'
+                        return this.rnApprovalEnabled ? 'RN Approve' : 'Approve';
                     default:
                         return 'Approve';
                 }
@@ -129,7 +131,7 @@
         methods: Object.assign({},
             mapActions(['destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
             {
-                preventFormSubmitAndShowConfirmDiabetesModalIfYouShould(e){
+                preventFormSubmitAndShowConfirmDiabetesModalIfYouShould(e) {
                     e.preventDefault();
                     const form = e.target;
 
@@ -407,7 +409,7 @@
             <template slot="body">
                 Clicking here sends the Care Plan to Dr., so please ensure this is an assessment-driven
                 Care Plan per CircleLink <a style="color: #337ab7;"
-                    href="https://circlelinkhealth.zendesk.com/hc/en-us/articles/360040849551-CCM-1st-Call-Script-Welcome-and-History">guidelines</a>.
+                                            href="https://circlelinkhealth.zendesk.com/hc/en-us/articles/360040849551-CCM-1st-Call-Script-Welcome-and-History">guidelines</a>.
                 You must perform and draft a welcome call note before approving.
             </template>
             <template slot="footer">

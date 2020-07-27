@@ -164,6 +164,7 @@ if (isset($patient) && ! empty($patient)) {
                                                        :is-care-coach="@json(auth()->user()->isCareCoach())"
                                                        :is-admin="@json(auth()->user()->isAdmin())"
                                                        :provider-can-approve-own-care-plans="@json(auth()->user()->providerInfo && auth()->user()->providerInfo->approve_own_care_plans)"
+                                                       :rn-approval-enabled="@json($rnApprovalEnabled)"
                                                        :show-ready-for-dr-button="@json($showReadyForDrButton)"
                                                        :ready-for-dr-button-disabled="@json($readyForDrButtonDisabled)"
                                                        :ready-for-dr-button-already-clicked="@json($readyForDrButtonAlreadyClicked)"

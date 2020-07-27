@@ -855,6 +855,7 @@ class ReportsController extends Controller
             ),
             'socialServicesMiscId'           => $cpmMiscs[CpmMisc::SOCIAL_SERVICES],
             'othersMiscId'                   => $cpmMiscs[CpmMisc::OTHER],
+            'rnApprovalEnabled'              => $patient->carePlan->isRnApprovalEnabled(),
             'showReadyForDrButton'           => $showReadyForDrButton,
             'readyForDrButtonDisabled'       => $readyForDrButtonDisabled,
             'readyForDrButtonAlreadyClicked' => $readyForDrButtonAlreadyClicked,
