@@ -49,10 +49,9 @@ class CheckForMissingLogoutsAndInsert extends Command
             ['created_at', '<=', Carbon::parse($date)->endOfDay()],
         ])
             ->orderBy('created_at', 'asc')
-            ->select('id')
             ->chunk(50, function ($yesterdaysActivities) use ($date) {
-                foreach ($yesterdaysActivities as $activity) {
-                    CheckLogoutEventAndSave::dispatch($date, $activity->id)->onQueue('low');
+                foreach ($yesterdaysActivities as $loginActivity) {
+                    CheckLogoutEventAndSave::dispatch($date, $loginActivity)->onQueue('low');
                 }
             });
     }

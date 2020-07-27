@@ -24,29 +24,30 @@ class CheckLogoutEventAndSave implements ShouldQueue
      * @var Carbon
      */
     private $date;
+
     /**
-     * @var int
+     * @var
      */
-    private $id;
+    private $loginEvent;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(Carbon $date, int $id)
+    public function __construct(Carbon $date, LoginLogout $loginEvent)
     {
-        $this->date = $date;
-        $this->id   = $id;
+        $this->date       = $date;
+        $this->loginEvent = $loginEvent;
     }
 
     /**
      * @return \DateTime|null
      */
-    public function getEndTimeOfLatestActivityAfterLogin(LoginLogout $event)
+    public function getEndTimeOfLatestActivityAfterLogin(LoginLogout $loginEvent)
     {
         //@todo: If it is the last activity(page_timer) for the day, then where to set the logout from?
-        $latestActivityAfterLogin = $event->activities->sortBy('end_time')
-            ->where('end_time', '>=', $event->login_time)
-            ->where('end_time', '<=', Carbon::parse($event->login_time)->endOfDay())
+        $latestActivityAfterLogin = $loginEvent->activities->sortBy('end_time')
+            ->where('end_time', '>=', $loginEvent->login_time)
+            ->where('end_time', '<=', Carbon::parse($loginEvent->login_time)->endOfDay())
             ->first();
 
         if (is_null($latestActivityAfterLogin)) {
@@ -93,13 +94,12 @@ class CheckLogoutEventAndSave implements ShouldQueue
 
     private function eventWithActivities()
     {
-        return LoginLogout::with([
-            'activities' => function ($activity) {
-                $activity->whereBetween('end_time', [$this->date->copy()->startOfDay(), $this->date->copy()->endOfDay()]);
-            },
-        ])->where('id', $this->id)
-            ->whereHas('activities', function ($activity) {
-                $activity->whereBetween('end_time', [$this->date->copy()->startOfDay(), $this->date->copy()->endOfDay()]);
-            })->first();
+        return $this->loginEvent->loadMissing(
+            [
+                'activities' => function ($activity) {
+                    $activity->whereBetween('end_time', [$this->date->copy()->startOfDay(), $this->date->copy()->endOfDay()]);
+                },
+            ]
+        );
     }
 }
