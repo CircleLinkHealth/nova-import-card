@@ -11,6 +11,8 @@ use App\Console\Commands\AutoApproveValidCarePlansAs;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
+use App\Console\Commands\CheckForDraftCarePlans;
+use App\Console\Commands\CheckForDraftNotesAndQAApproved;
 use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\CheckUserTotalTimeTracked;
@@ -228,5 +230,8 @@ class Kernel extends ConsoleKernel
             ->onOneServer();
 
         $schedule->command(GenerateReportForScheduledPAM::class)->monthlyOn(date('t'), '23:30');
+
+        $schedule->command(CheckForDraftCarePlans::class)->dailyAt('08:00')->onOneServer();
+        $schedule->command(CheckForDraftNotesAndQAApproved::class)->dailyAt('08:10')->onOneServer();
     }
 }

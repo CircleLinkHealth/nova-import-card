@@ -6,6 +6,7 @@
 
 namespace App\Filters;
 
+use App\Call;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
 
@@ -32,8 +33,8 @@ class CallViewFilters extends QueryFilters
         return $this->builder
             ->where('type', '!=', 'call')
             ->where(function ($q) {
-                $q->where('status', '=', 'done')
-                    ->orWhere('status', '=', 'reached');
+                $q->where('status', '=', Call::DONE)
+                    ->orWhere('status', '=', Call::REACHED);
             });
     }
 

@@ -16,7 +16,7 @@ use PrepareDataForReEnrollmentTestSeeder;
 use Tests\DuskTestCase;
 use Tests\Helpers\CustomerTestCaseHelper;
 
-class SelfEnrollmentDuskTestTest extends DuskTestCase
+class SelfEnrollmentDuskTest extends DuskTestCase
 {
     use CustomerTestCaseHelper;
     /**
