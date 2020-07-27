@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d16e6e8212be899b6db1e599b32a4c47",
+    "content-hash": "8104436ae75d5aba4f295224cba3022d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1131,11 +1131,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.2.5",
+            "version": "v2.2.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "9433c4422dcc8a5a6cec8bfd9d7e8d9d4b5baa82"
+                "reference": "fab8c82a173e423dbef7b92e27698c2db6d3387c"
             },
             "type": "laravel-module",
             "extra": {
@@ -1157,7 +1157,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-23T10:34:04+00:00"
+            "time": "2020-07-27T21:23:18+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
