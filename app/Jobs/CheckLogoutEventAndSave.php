@@ -64,35 +64,30 @@ class CheckLogoutEventAndSave implements ShouldQueue
      */
     public function handle()
     {
-        /** @var LoginLogout $loginEventWithActivities */
-        $loginEventWithActivities = $this->eventWithActivities();
+        /** @var LoginLogout $loginEvent */
+        $loginEvent = $this->eventWithActivities();
 
-        if (is_null($loginEventWithActivities)) {
+        if (is_null($loginEvent)) {
             return;
         }
 
         /** @var Carbon $latestActivityEndTime */
-        $latestActivityEndTime = $this->getEndTimeOfLatestActivityAfterLogin($loginEventWithActivities);
+        $latestActivityEndTime = $this->getEndTimeOfLatestActivityAfterLogin($loginEvent);
 
         // If is null then exit loop.
         if (is_null($latestActivityEndTime)) {
             return;
         }
 
-        if (empty($loginEventWithActivities->logout_time)) {
-            $this->saveLogoutEvent($loginEventWithActivities, $latestActivityEndTime);
-        }
-    }
-
-    public function saveLogoutEvent(LoginLogout $event, Carbon $latestActivityEndTime)
-    {
-        try {
-            $event->logout_time     = $latestActivityEndTime;
-            $event->was_edited      = true;
-            $event->duration_in_sec = $latestActivityEndTime->diffInSeconds($event->login_time);
-            $event->save();
-        } catch (\Exception $exception) {
-            \Log::error("Could not get end_time from page_timer table, for logout event $event->id");
+        if (empty($loginEvent->logout_time)) {
+            try {
+                $loginEvent->logout_time     = $latestActivityEndTime;
+                $loginEvent->was_edited      = true;
+                $loginEvent->duration_in_sec = $latestActivityEndTime->diffInSeconds($loginEvent->login_time);
+                $loginEvent->save();
+            } catch (\Exception $exception) {
+                \Log::error("Could not get end_time from page_timer table, for logout event $loginEvent->id");
+            }
         }
     }
 
