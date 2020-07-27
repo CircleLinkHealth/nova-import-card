@@ -188,7 +188,7 @@
     "circlelinkhealth/patientapi-module": "1.3.3",
     "circlelinkhealth/raygun-module": "1.1",
     "circlelinkhealth/revisionable-module": "6.1.1",
-    "circlelinkhealth/shared-models-module": "1.7.2",
+    "circlelinkhealth/shared-models-module": "dev-ROAD-39_enable_feature_after_july_27_2020",
     "circlelinkhealth/sqlviews-module": "1.2.5",
     "circlelinkhealth/timetracking-module": "1.2.5",
     "circlelinkhealth/twofa-module": "1.2.0",
