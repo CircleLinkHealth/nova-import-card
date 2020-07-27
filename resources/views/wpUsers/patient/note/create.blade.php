@@ -766,7 +766,7 @@
                     const startDate = Date.now();
 
                     function phoneSessionChange(e) {
-                        if (e) {
+                        if (e && e.currentTarget) {
                             if (e.currentTarget.checked) {
                                 $('#task-label').hide();
                                 $('#collapseOne').show();
@@ -811,7 +811,7 @@
                     }
 
                     function associateWithTaskChange(e) {
-                        if (!e) {
+                        if (!e || !e.currentTarget) {
                             return;
                         }
                         if (e.currentTarget.checked) {
@@ -905,7 +905,7 @@
                         let notifyCareteamEl = $('#notify-careteam');
                         let whoIsNotifiedEl = $('#who-is-notified');
 
-                        if (e) {
+                        if (e && e.currentTarget) {
                             if (e.currentTarget.checked) {
                                 notifyCareteamEl.prop("checked", true);
                                 notifyCareteamEl.prop("disabled", true);
@@ -982,7 +982,12 @@
                             callIsSuccess = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value === "reached";
                         } else {
                             //checkbox
-                            callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
+                            if (form['welcome_call']) {
+                                callIsSuccess = form['welcome_call'].checked;
+                            }
+                            if (!callIsSuccess && form['other_call']) {
+                                callIsSuccess = form['other_call'].checked;
+                            }
                         }
 
                         if (!callHasStatus) {
