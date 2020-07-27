@@ -10,7 +10,9 @@ use App\Events\PatientUserCreated;
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
@@ -58,7 +60,7 @@ class CcdaImporter
 
     public function __construct(
         Ccda $ccda,
-        Enrollee $enrollee = null
+        Enrollee &$enrollee = null
     ) {
         $this->str      = new StringManipulation();
         $this->ccda     = $ccda;
@@ -109,6 +111,10 @@ class CcdaImporter
             $email = $newUserId.'@careplanmanager.com';
         }
 
+        if (User::ofType('participant')->where('email', $email)->where('last_name', $this->ccda->patient_last_name)->where('first_name', '!=', $this->ccda->patient_fist_name)->exists()) {
+            $email = "family_$email";
+        }
+
         $demographics = $this->ccda->bluebuttonJson()->demographics;
 
         $newPatientUser = (new UserRepository())->createNewUser(
@@ -119,16 +125,14 @@ class CcdaImporter
                     'display_name' => ucwords(
                         strtolower($this->ccda->patient_first_name.' '.$this->ccda->patient_last_name)
                     ),
-                    'first_name' => $this->ccda->patient_first_name,
-                    'last_name'  => $this->ccda->patient_last_name,
-                    'mrn_number' => $this->ccda->patient_mrn,
-                    'birth_date' => $this->ccda->patientDob(),
-                    'username'   => empty($email)
-                        ? $newUserId
-                        : $email,
+                    'first_name'        => $this->ccda->patient_first_name,
+                    'last_name'         => $this->ccda->patient_last_name,
+                    'mrn_number'        => $this->ccda->patient_mrn,
+                    'birth_date'        => $this->ccda->patientDob(),
+                    'username'          => $newUserId,
                     'program_id'        => $this->ccda->practice_id,
                     'is_auto_generated' => true,
-                    'roles'             => [Role::whereName('participant')->firstOrFail()->id],
+                    'roles'             => [Role::byName('participant')->id],
                     'is_awv'            => Ccda::IMPORTER_AWV === $this->ccda->source,
                     'address'           => array_key_exists(0, $demographics->address->street)
                         ? $demographics->address->street[0]
@@ -144,6 +148,23 @@ class CcdaImporter
         );
 
         $this->ccda->patient_id = $newPatientUser->id;
+        $this->ccda->setRelation('patient', $newPatientUser);
+    }
+
+    private function ensurePatientHasParticipantRole()
+    {
+        if ($this->ccda->patient->isParticipant()) {
+            return;
+        }
+
+        $this->ccda->patient->roles()->sync([
+            Role::byName('participant')->id => [
+                'program_id' => $this->ccda->patient->program_id,
+            ],
+        ]);
+
+        \DB::commit();
+        $this->ccda->patient->clearRolesCache();
     }
 
     private function handleDuplicateEnrollees()
@@ -167,6 +188,11 @@ class CcdaImporter
 
             if ($this->enrollee->medical_record_id != $this->ccda->id) {
                 $this->enrollee->medical_record_id = $this->ccda->id;
+            }
+
+            if ( ! $this->enrollee->user_id) {
+                $this->enrollee->user_id = $this->ccda->patient->id;
+                $this->enrollee->setRelation('user', $this->ccda->patient);
             }
         }
 
@@ -216,10 +242,13 @@ class CcdaImporter
                 return $this->ccda;
             } catch (PatientAlreadyExistsException $e) {
                 $this->ccda->patient_id = $e->getPatientUserId();
+                $this->ccda->load(['patient.primaryPractice', 'patient.patientInfo']);
             }
         }
 
-        $this->ccda->load(['patient.primaryPractice', 'patient.patientInfo']);
+        $this->ensurePatientHasParticipantRole();
+
+        $this->ccda->loadMissing(['patient.primaryPractice', 'patient.patientInfo']);
 
         if (is_null($this->ccda->patient)) {
             throw new \Exception("Could not create patient for CCDA[{$this->ccda->id}]");
@@ -245,10 +274,10 @@ class CcdaImporter
 //                 - Not useful because in the case of BP we don't have a starting value.
 //            Uncomment after we have refactored vitals/observations.
 //            ->importVitals()
-            ->raiseConcernsOrAutoQAApprove()
             ->updateCcdaPostImport()
             ->updateEnrolleePostImport()
-            ->updatePatientUserPostImport();
+            ->updatePatientUserPostImport()
+            ->raiseConcernsOrAutoQAApprove();
 
         event(new PatientUserCreated($this->ccda->patient));
     }
@@ -410,6 +439,9 @@ class CcdaImporter
             $this->ccda->patient->carePlan->qa_approver_id = CarePlanAutoApprover::id();
             $this->ccda->patient->carePlan->qa_date        = now()->toDateTimeString();
             $this->ccda->patient->carePlan->save();
+
+            $this->ccda->patient->patientInfo->ccm_status = Patient::ENROLLED;
+            $this->ccda->patient->patientInfo->save();
         }
 
         return $this;
@@ -491,7 +523,7 @@ class CcdaImporter
     {
         //This CarePlan is now ready to be QA'ed by a CLH Admin
         $this->ccda->imported = true;
-        if (in_array($this->ccda->patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
+        if (in_array($this->ccda->patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::RN_APPROVED, CarePlan::PROVIDER_APPROVED])) {
             $this->ccda->status = Ccda::CAREPLAN_CREATED;
         } else {
             $this->ccda->status = Ccda::QA;
@@ -526,15 +558,6 @@ class CcdaImporter
 
     private function updatePatientUserPostImport()
     {
-        //Make sure Patient does not have survey-only role moving forward
-        $participantRoleId = Role::whereName('participant')->firstOrFail()->id;
-
-        $this->ccda->patient->roles()->sync([
-            $participantRoleId => [
-                'program_id' => $this->ccda->patient->program_id,
-            ],
-        ]);
-
         if ($this->ccda->patient->isDirty()) {
             $this->ccda->patient->save();
         }

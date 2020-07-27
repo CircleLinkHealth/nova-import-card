@@ -13,6 +13,7 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class InsuranceFromAthena implements MedicalRecordDecorator
 {
@@ -64,7 +65,11 @@ class InsuranceFromAthena implements MedicalRecordDecorator
             return $this->addInsuranceFromEligibilityJob($eligibilityJob);
         }
 
-        return $this->addInsuranceFromAthenaApi($eligibilityJob);
+        if ($eligibilityJob->targetPatient && $eligibilityJob->targetPatient->ccda) {
+            return $this->addInsuranceFromAthenaApi($eligibilityJob);
+        }
+
+        return $eligibilityJob;
     }
 
     /**
@@ -90,6 +95,7 @@ class InsuranceFromAthena implements MedicalRecordDecorator
 
         if ($eligibilityJob->isDirty()) {
             $eligibilityJob->save();
+            DB::commit();
         }
 
         return $eligibilityJob;

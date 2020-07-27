@@ -7,14 +7,12 @@
 namespace CircleLinkHealth\Eligibility\Tests;
 
 use App\EnrollmentInvitationsBatch;
-use App\Listeners\AssignPatientToStandByNurse;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -28,6 +26,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportMedications;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
+use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
@@ -72,12 +71,10 @@ class CcdaImporterTest extends CustomerTestCase
         $cp->provider_date        = now()->toDateTimeString();
         $cp->save();
 
-        $ccda2     = FakeCalvaryCcda::create($ccdaArgs);
-        $imported2 = $ccda2->import($enrollee);
+        ReimportPatientMedicalRecord::for($cp->user_id, null, 'call');
 
-        $cp = CarePlan::where('user_id', $imported1->patient_id)->firstOrFail();
-
-        $this->assertTrue(CarePlan::PROVIDER_APPROVED === $cp->status);
+        $this->assertTrue(CarePlan::where('user_id', $imported1->patient_id)->where('status', CarePlan::PROVIDER_APPROVED)->exists());
+        $this->assertTrue(1 === CarePlan::where('user_id', $imported1->patient_id)->count());
     }
 
     public function test_it_attaches_ccda_to_duplicate_patients_and_imports()
@@ -134,30 +131,6 @@ class CcdaImporterTest extends CustomerTestCase
         AttachPractice::for($this->patient(), $ccda);
 
         $this->assertTrue($this->patient()->program_id === $differentPracticeId);
-    }
-
-    public function test_it_does_not_assign_primary_nurse_if_one_exists()
-    {
-        PatientNurse::updateOrCreate(
-            ['patient_user_id' => $this->patient()->id],
-            [
-                'nurse_user_id'           => $this->careCoach()->id,
-                'temporary_nurse_user_id' => null,
-                'temporary_from'          => null,
-                'temporary_to'            => null,
-            ]
-        );
-        $this->enableStandByNurse();
-        CarePlan::where('user_id', $this->patient()->id)->update([
-            'status' => CarePlan::PROVIDER_APPROVED,
-        ]);
-
-        AssignPatientToStandByNurse::assign($this->patient()->fresh());
-
-        $this->assertDatabaseHas('patients_nurses', [
-            'patient_user_id' => $this->patient()->id,
-            'nurse_user_id'   => $this->careCoach()->id,
-        ]);
     }
 
     public function test_it_does_not_change_billing_provider_during_reimport()

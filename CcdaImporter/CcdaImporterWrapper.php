@@ -7,11 +7,13 @@
 namespace Modules\Eligibility\CcdaImporter;
 
 use App\Search\ProviderByName;
+use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
@@ -19,6 +21,7 @@ use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class CcdaImporterWrapper
@@ -35,7 +38,7 @@ class CcdaImporterWrapper
     /**
      * CcdaImporterWrapper constructor.
      */
-    public function __construct(Ccda $ccda, Enrollee $enrollee = null)
+    public function __construct(Ccda $ccda, Enrollee &$enrollee = null)
     {
         $this->ccda     = $ccda;
         $this->enrollee = $enrollee;
@@ -94,9 +97,7 @@ class CcdaImporterWrapper
             return $this;
         }
 
-        if ( ! Practice::where('id', $this->ccda->practice_id)->whereHas('ehr', function ($q) {
-            $q->where('name', Ehr::ATHENA_EHR_NAME);
-        })->exists()) {
+        if ( ! self::isAthenaPractice($this->ccda->practice_id)) {
             return $this;
         }
 
@@ -120,6 +121,16 @@ class CcdaImporterWrapper
             $this->ccda->location_id = \Cache::remember("cpm_practice_{$this->ccda->practice_id}___location_for_athena_department_id_$deptId", 2, function () use ($deptId) {
                 return Location::where('practice_id', $this->ccda->practice_id)->where('external_department_id', $deptId)->value('id');
             });
+
+            if ( ! $this->ccda->location_id && $ehrPracticeId = optional($this->ccda->targetPatient)->ehr_practice_id) {
+                $aLoc = \Cache::remember("paid_api_pull:athena_ehrPracticeId_departments_{$ehrPracticeId}", 60, function () use ($ehrPracticeId) {
+                    return app(AthenaApiImplementation::class)->getDepartments($ehrPracticeId);
+                })->where('departmentid', $deptId)->first();
+
+                if ($aLoc) {
+                    $cpmLocation = CreateLocationsFromAthenaApi::createNewLocationFromAthenaApiDeprtment($aLoc, $this->ccda->practice_id);
+                }
+            }
         }
 
         return $this;
@@ -152,7 +163,7 @@ class CcdaImporterWrapper
         }
 
         //Second most reliable place is ccdas.referring_provider_name.
-        if ( ! $provider && $term = $this->ccda->getReferringProviderName()) {
+        if ( ! $provider && $term = trim($this->ccda->getReferringProviderName())) {
             $provider = self::searchBillingProvider($term, $this->ccda->practice_id);
         }
 
@@ -225,18 +236,6 @@ class CcdaImporterWrapper
      */
     public function import()
     {
-        $this->fillInSupplementaryData()
-            ->guessPracticeLocationProvider();
-
-        if ( ! $this->ccda->json) {
-            $this->ccda->bluebuttonJson();
-        }
-
-        if ( ! $this->ccda->patient_mrn) {
-            //fetch a fresh instance from the DB to have virtual fields
-            $this->ccda = $this->ccda->fresh();
-        }
-
         $patient = $this->ccda->load('patient')->patient ?? null;
 
         // If this is a survey only patient who has not yet enrolled, we should not enroll them.
@@ -248,13 +247,25 @@ class CcdaImporterWrapper
             $this->ccda = self::attemptToDecorateCcda($patient, $this->ccda);
         }
 
+        if ( ! $this->ccda->json) {
+            $this->ccda->bluebuttonJson();
+        }
+
+        if ( ! $this->ccda->patient_mrn) {
+            //fetch a fresh instance from the DB to have virtual fields
+            $this->ccda = $this->ccda->fresh();
+        }
+
+        $this->fillInSupplementaryData()
+            ->guessPracticeLocationProvider();
+
         $this->ccda = with(new CcdaImporter($this->ccda, $this->enrollee))->attemptImport();
 
         if ($this->ccda->isDirty()) {
             $this->ccda->save();
         }
 
-        $this->ccda->queryForOtherCcdasForTheSamePatient()->update([
+        $updated = $this->ccda->queryForOtherCcdasForTheSamePatient()->update([
             'mrn'                     => $this->ccda->mrn,
             'referring_provider_name' => $this->ccda->referring_provider_name,
             'location_id'             => $this->ccda->location_id,
@@ -270,8 +281,17 @@ class CcdaImporterWrapper
         return $this->ccda;
     }
 
+    public static function isAthenaPractice(int $practiceId): bool
+    {
+        return Cache::remember("is_athena_ehr_practice_id_$practiceId", 2, function () use ($practiceId) {
+            return Practice::where('id', $practiceId)->whereHas('ehr', function ($q) {
+                $q->where('name', Ehr::ATHENA_EHR_NAME);
+            })->exists();
+        });
+    }
+
     /**
-     * Search for a Billing Provider using a search term, and.
+     * Search for a Billing Provider using a search term.
      *
      * @param string $term
      * @param int    $practiceId
@@ -283,6 +303,9 @@ class CcdaImporterWrapper
         }
         if ( ! $term) {
             return null;
+        }
+        if ($provider = self::mysqlMatchProvider($term, $practiceId)) {
+            return $provider;
         }
         $baseQuery = (new ProviderByName())->query($term);
 
@@ -313,6 +336,25 @@ class CcdaImporterWrapper
     }
 
     /**
+     * Search for a Location using a search term.
+     *
+     * @param string $term
+     * @param int    $practiceId
+     */
+    public static function searchLocation(string $term = null, int $practiceId = null): ?Location
+    {
+        if ( ! $practiceId) {
+            return null;
+        }
+        if ( ! $term) {
+            return null;
+        }
+        if ($location = self::mysqlMatchLocation($term, $practiceId)) {
+            return $location;
+        }
+    }
+
+    /**
      * If this is a survey only patient who has not yet enrolled, we should not enroll them.
      */
     private static function isUnenrolledSurveyUser(?User $patient, ?Enrollee $enrollee): bool
@@ -334,6 +376,27 @@ class CcdaImporterWrapper
         }
 
         return true;
+    }
+
+    private static function mysqlMatchLocation(string $term, int $practiceId): ?Location
+    {
+        $term = self::prepareForMysqlMatch($term);
+
+        return Location::whereRaw("MATCH(name) AGAINST('$term')")->where('practice_id', $practiceId)->first();
+    }
+
+    private static function mysqlMatchProvider(string $term, int $practiceId): ?User
+    {
+        $term = self::prepareForMysqlMatch($term);
+
+        return User::whereRaw("MATCH(display_name, first_name, last_name) AGAINST('$term')")->ofPractice($practiceId)->ofType('provider')->first();
+    }
+
+    private static function prepareForMysqlMatch(string $term)
+    {
+        return collect(explode(' ', $term))->transform(function ($term) {
+            return "+$term";
+        })->implode(' ');
     }
 
     private function replaceCommonAddressVariations($providerAddress)
@@ -419,10 +482,11 @@ class CcdaImporterWrapper
     {
         //Get address line 1 from documentation_of section of ccda
         $addresses = collect(optional($ccda->bluebuttonJson())->encounters ?? [])->map(function ($encounter) {
-            $location = (array) $encounter->address ?? [];
+            $encounter = (array) $encounter;
+            $location = $encounter['address'] ?? [];
 
             if (empty($location)) {
-                $location = (array) $encounter->location ?? [];
+                $location = $encounter['location'] ?? [];
             }
 
             if (empty($location)) {

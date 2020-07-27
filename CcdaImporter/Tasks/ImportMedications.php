@@ -89,7 +89,9 @@ class ImportMedications extends BaseCcdaImportTask
             return null;
         }
 
-        if ($this->patient->ccdMedications->contains('name', '=', $newMed['cons_name'])) {
+        if ($this->patient->ccdMedications->filter(function ($medication) use ($newMed) {
+            return str_replace(' ', '', strtolower($medication->name)) === str_replace(' ', '', strtolower($newMed['cons_name']));
+        })->isNotEmpty()) {
             return null;
         }
 

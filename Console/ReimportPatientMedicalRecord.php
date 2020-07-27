@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\Console;
 
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
@@ -98,53 +97,6 @@ class ReimportPatientMedicalRecord extends Command
 
     private function attemptCreateCcdaFromMrTemplate(User $user)
     {
-        if (in_array($user->primaryPractice->name, ['diabetes-texas-pa'])) {
-            $ccda = Ccda::where('practice_id', $user->primaryPractice->id)
-                ->whereNotNull('practice_id')
-                ->where('patient_first_name', $user->first_name)
-                ->whereNotNull('patient_first_name')
-                ->where('patient_last_name', $user->last_name)
-                ->whereNotNull('patient_last_name')
-                ->where('patient_mrn', 'like', "%{$user->getMRN()}")
-                ->whereNotNull('patient_mrn')
-                ->first();
-
-            if ($ccda) {
-                $ccda->patient_id = $user->id;
-                $ccda->save();
-
-                return;
-            }
-
-            $eJ = EligibilityJob::whereHas('batch', function ($q) use ($user) {
-                $q->where('practice_id', $user->primaryPractice->id);
-            })->where('patient_first_name', $user->first_name)->where('patient_last_name', $user->last_name)->where('patient_mrn', 'like', "%{$user->getMRN()}")->first();
-
-            if ( ! $eJ) {
-                return;
-            }
-            $mr = new CsvWithJsonMedicalRecord(
-                tap(
-                    sanitize_array_keys($eJ->data),
-                    function ($data) use ($eJ) {
-                        $eJ->data = $data;
-                        $eJ->save();
-                    }
-                )
-            );
-
-            $ccda = Ccda::create(
-                [
-                    'source'      => $mr->getType(),
-                    'json'        => $mr->toJson(),
-                    'practice_id' => (int) $user->program_id,
-                    'patient_id'  => $user->id,
-                    'mrn'         => $user->getMRN(),
-                ]
-            );
-            $this->log("Created CCDA[{$ccda->id}]");
-        }
-
         if (in_array($user->primaryPractice->name, ['marillac-clinic-inc', 'calvary-medical-clinic']) && ! empty($this->getEnrollee($user)) && ! empty($this->getEnrollee($user)->eligibilityJob)) {
             $this->warn(
                 $msg = "User[{$user->id}] Enrollee[{$this->getEnrollee($user)->id}]. Running 'csv-with-json' decorator."
@@ -181,6 +133,22 @@ class ReimportPatientMedicalRecord extends Command
                 );
                 $this->log("User[{$user->id}] Created CCDA[{$ccda->id}]");
             }
+
+            return $ccda;
+        }
+
+        if ($mr = MedicalRecordFactory::create($user, null)) {
+            $ccda = Ccda::create(
+                [
+                    'source'      => $mr->getType(),
+                    'json'        => $mr->toJson(),
+                    'practice_id' => (int) $user->program_id,
+                    'patient_id'  => $user->id,
+                ]
+            );
+            $this->log("User[{$user->id}] Created CCDA[{$ccda->id}]");
+
+            return $ccda;
         }
 
         return null;
@@ -427,7 +395,7 @@ class ReimportPatientMedicalRecord extends Command
 
         if ($initiatorId = $this->argument('initiatorUserId')) {
             $this->warn("Notifying of failure user:$initiatorId");
-            User::findOrFail($initiatorId)->notify(new PatientNotReimportedNotification($user->id));
+//            User::findOrFail($initiatorId)->notify(new PatientNotReimportedNotification($user->id));
         }
     }
 
@@ -435,14 +403,21 @@ class ReimportPatientMedicalRecord extends Command
     {
         if ($initiatorId = $this->argument('initiatorUserId')) {
             $this->warn("Notifying user:$initiatorId");
-            User::findOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
+//            User::findOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
         }
     }
 
     private function reimport(User $user): bool
     {
         if ( ! $user->ccdas()->exists()) {
-            $this->attemptCreateCcdaFromMrTemplate($user);
+            if ($this->getEnrollee($user) && $ccda = Ccda::where('practice_id', $this->enrollee->practice_id)
+                ->where('patient_mrn', $this->enrollee->mrn)
+                ->where('patient_dob', $this->enrollee->dob->toDateString())->first()) {
+                $this->enrollee->medical_record_id = $ccda->id;
+                $this->enrollee->save();
+            } else {
+                $this->attemptCreateCcdaFromMrTemplate($user);
+            }
         }
 
         $this->clearExistingCarePlanData($user);

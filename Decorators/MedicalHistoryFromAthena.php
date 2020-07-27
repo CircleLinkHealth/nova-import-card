@@ -10,6 +10,7 @@ use App\Traits\ValidatesDates;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use Illuminate\Support\Facades\DB;
 
 class MedicalHistoryFromAthena implements MedicalRecordDecorator
 {
@@ -62,6 +63,7 @@ class MedicalHistoryFromAthena implements MedicalRecordDecorator
 
         if ($eligibilityJob->isDirty()) {
             $eligibilityJob->save();
+            DB::commit();
         }
 
         return $eligibilityJob;
