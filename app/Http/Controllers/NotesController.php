@@ -102,7 +102,7 @@ class NotesController extends Controller
         $careteam_info = $patient
             ->careTeamMembers
             ->mapWithKeys(function (CarePerson $member) {
-                return [$member->member_user_id => $member->user->getFullName()];
+                return [$member->member_user_id => optional($member->user)->getFullName() ?? 'N/A'];
             })
             ->toArray();
         asort($careteam_info);
@@ -492,7 +492,7 @@ class NotesController extends Controller
         $careteam_info = $patient
             ->careTeamMembers
             ->mapWithKeys(function (CarePerson $member) {
-                return [$member->member_user_id => $member->user->getFullName()];
+                return [$member->member_user_id => optional($member->user)->getFullName() ?? 'N/A'];
             })
             ->toArray();
         asort($careteam_info);
