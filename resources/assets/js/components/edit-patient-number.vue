@@ -54,11 +54,6 @@
                 <div style="padding-right: 14px; margin-left: -10px;">
 
                     <div class="numbers">
-                        <input id="isPrimary"
-                               class="is-primary"
-                               v-model="makeNewNumberPrimary"
-                               type="checkbox">
-
                         <div class="types">
                        <select2 id="numberType" class="form-control" style="width: 81px;"
                                 v-model="newPhoneType">
@@ -93,6 +88,12 @@
                         :disabled="disableSaveButton">
                     {{setSaveBtnText}}
                 </button>
+
+                        <input id="makePrimary"
+                               class="make-primary"
+                               v-model="makeNewNumberPrimary"
+                               type="checkbox">
+                        <label for="makePrimary" style="padding-left: 30px;">Make Primary</label>
                 </div>
                 </div>
             </div>
@@ -150,11 +151,11 @@
             },
 
             shouldShowError(){
-                return this.isTheFirstPhoneNumber;
+                return this.patientPhoneNumbers.length === 0;
             },
 
             setSaveBtnText(){
-                if(this.makeNewNumberPrimary || this.isTheFirstPhoneNumber){
+                if(this.makeNewNumberPrimary || this.shouldShowError){
                     return'Save & Make Private';
                 }
                 return "Save Number";
@@ -366,6 +367,12 @@
         padding-left: 16px;
         padding-bottom: 10px;
     }
+
+    .make-primary{
+        display: flex;
+        margin-left: 15px;
+    }
+
     .is-primary{
         display: flex;
         margin-right: 10px;

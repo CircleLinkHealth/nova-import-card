@@ -75,7 +75,7 @@
                     <input name="selected-number"
                            class="form-control selected-number"
                            style="width: 500px;"
-                           :value="dropdownNumber"
+                           :value="selectedPatientNumber"
                            disabled/>
                 </div>
 
@@ -291,7 +291,7 @@
 
             selectedPatientNumber() {
                 if (this.dropdownNumber.length !== 0) {
-                    return this.dropdownNumber;
+                    return "+1" + this.dropdownNumber;
                 }
             },
             isCurrentlyOnPhone() {
@@ -993,7 +993,7 @@
     }
     .selected-number{
         font-weight: bolder;
-        font-size: 20px;
+        font-size: 18px;
         padding: 10px;
     }
 </style>
