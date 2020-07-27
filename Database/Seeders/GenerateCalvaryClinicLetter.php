@@ -14,7 +14,9 @@ use Illuminate\Database\Seeder;
 
 class GenerateCalvaryClinicLetter extends Seeder
 {
+
     const UI_REQUESTS = 'ui_requests';
+
 
     /**
      * Run the database seeds.
@@ -31,6 +33,7 @@ class GenerateCalvaryClinicLetter extends Seeder
         $calvaryPractice = $this->getPractice();
 
         $bodyPageOne = "
+
 <p>$practiceName has invested in a new Personalized Care Program to help patients get care at home, which is especially important given current events, and I'm inviting you to join.</p>
 
 <p>You are getting this invitation because you're eligible according to Medicare guidelines, and we believe you will benefit from it greatly, particularly during this pandemic.</p>
@@ -47,7 +50,6 @@ class GenerateCalvaryClinicLetter extends Seeder
 
 <p>What's Next?</p>
 <p>In a few days, you'll get a call from one of our care coordinators from $practiceNumber. They'll be happy to answer your questions, and help you get started if you decide to join during that call.</p>
-
 <p>I look forward to having you join this program to continue keeping you healthy between office visits.</p>
 <p>Sincerely,</p>
 <p>$customerSignaturePic<br />$signatoryName<br/></p>";
@@ -67,6 +69,7 @@ class GenerateCalvaryClinicLetter extends Seeder
                         ],
                     ]
                 ),
+
                 self::UI_REQUESTS => json_encode([
                     'logo_position'        => 'text-align:right',
                     'extra_address_header' => [
