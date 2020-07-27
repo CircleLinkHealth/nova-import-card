@@ -4,6 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\User;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+
 Route::get('/e/{shortURLKey}', '\AshAllenDesign\ShortURL\Controllers\ShortURLController')->name('short-url.visit');
 
 Route::get('passwordless-login-for-cp-approval/{token}/{patientId}', 'Auth\LoginController@login')
@@ -2263,3 +2266,24 @@ Route::post('enrollee-login-viewed', [
 //    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
 //    'as'   => 'care.center.work.schedule.getCalendarData',
 //]);
+
+//TargetPatient::inRandomOrder()->whereDoesntHave('user', function ($q) {
+//    $q->whereIn('program_id', [232, 21, 110, 159, 172, 180, 221]);
+//})->whereHas('ccda', function ($q) {$q->whereNotNull('patient_mrn');})->with('ccda')->chunkById(500, function ($tPs) {
+//    foreach ($tPs as $tP) {
+//        if ( ! $tP->ccda->patient_mrn) {
+//            continue;
+//        }
+//        $u = User::whereHas('patientInfo', function ($q) use ($tP) {
+//            $q->where('mrn_number', $tP->ccda->patient_mrn);
+//        })
+//            ->where('first_name', $tP->ccda->patient_first_name)
+//            ->where('last_name', $tP->ccda->patient_last_name)
+//            ->where('program_id', $tP->practice_id)->first();
+//
+//        if ($u) {
+//            $tP->user_id = $u->id;
+//            $tP->save();
+//        }
+//    }
+//});

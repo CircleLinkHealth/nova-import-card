@@ -96,6 +96,8 @@ class Call extends BaseModel implements AttachableToNotification
 {
     use Filterable;
     use NotificationAttachable;
+    //Denotes a completed task
+    const DONE = 'done';
 
     //patient was reached/not reached but this call is to be ignored
     //eg. patient was reached but was busy, so ignore call from reached/not reached reports
@@ -256,7 +258,7 @@ class Call extends BaseModel implements AttachableToNotification
 
     public function patientId()
     {
-        return $this->has('outboundUser.patientInfo.user')
+        return $this->has('outboundUser.patientInfo.user')->exists()
             ? $this->outbound_cpm_id
             : $this->inbound_cpm_id;
     }

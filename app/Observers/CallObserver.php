@@ -7,6 +7,7 @@
 namespace App\Observers;
 
 use App\Call;
+use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Events\CarePlanWasApproved;
 use App\Note;
 use App\Notifications\CallCreated;
@@ -81,6 +82,10 @@ class CallObserver
             $this->createNotificationAndSendToPusher($call);
         }
         */
+
+        if (Carbon::parse($call->called_date)->isLastMonth()) {
+            app(CountPatientMonthlySummaryCalls::class)->countCalls(now()->subMonth()->startOfMonth(), [$call->patientId()]);
+        }
     }
 
     public function saving(Call $call)
@@ -92,7 +97,7 @@ class CallObserver
             $this->createNotificationAndSendToPusher($call);
         }
 
-        if ($call->asap && in_array($call->status, [Call::REACHED, 'done'])) {
+        if ($call->asap && in_array($call->status, [Call::REACHED, Call::DONE])) {
             $call->asap = false;
             $call->markAttachmentNotificationAsRead($call->outboundUser);
         }
@@ -114,6 +119,6 @@ class CallObserver
         return SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE === $call->sub_type
             && SchedulerService::TASK_TYPE                                   === $call->type
             && $call->isDirty('status')
-            && 'done' === $call->status;
+            && Call::DONE === $call->status;
     }
 }

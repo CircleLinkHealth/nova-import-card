@@ -65,7 +65,7 @@ trait SetupTestCustomerTrait
     public function createPatient(Practice $practice, $providerId)
     {
         $roles = [
-            Role::whereName('participant')->first()->id,
+            Role::byName('participant')->id,
         ];
 
         $patient = $this->setupUser($practice->id, $roles);

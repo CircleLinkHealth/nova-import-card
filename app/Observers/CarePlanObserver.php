@@ -84,8 +84,6 @@ class CarePlanObserver
     public function saved(CarePlan $carePlan)
     {
         if ($this->shouldScheduleCall($carePlan)) {
-            $carePlan->provider_approver_id = null;
-            $carePlan->provider_date        = null;
             /** @var SchedulerService $schedulerService */
             $schedulerService = app()->make(SchedulerService::class);
             $schedulerService->ensurePatientHasScheduledCall($carePlan->patient, self::class);

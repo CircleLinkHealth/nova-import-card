@@ -16,6 +16,7 @@ use App\Jobs\SendSingleNotification;
 use App\Note;
 use App\Rules\PatientEmailAttachments;
 use App\Rules\PatientEmailDoesNotContainPhi;
+use App\Rules\ValidatePatientCustomEmail;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
@@ -101,7 +102,7 @@ class NotesController extends Controller
         $careteam_info = $patient
             ->careTeamMembers
             ->mapWithKeys(function (CarePerson $member) {
-                return [$member->member_user_id => $member->user->getFullName()];
+                return [$member->member_user_id => optional($member->user)->getFullName() ?? 'N/A'];
             })
             ->toArray();
         asort($careteam_info);
@@ -238,24 +239,18 @@ class NotesController extends Controller
 
     public function deleteDraft(Request $request, $patientId, $noteId)
     {
-        $note   = Note::findOrFail($noteId);
-        $errors = null;
+        $note = Note::findOrFail($noteId);
         if (Note::STATUS_DRAFT !== $note->status) {
-            $errors = ['You cannot delete a non-draft note'];
+            throw new \Exception('You cannot delete a non-draft note');
         }
 
         if ($note->author_id != auth()->id()) {
-            $errors = ['Only the author of the note can delete it'];
+            throw new \Exception('Only the author of the note can delete it');
         }
 
-        $redirect = redirect()->route('patient.note.index', ['patientId' => $patientId]);
-        if ($errors) {
-            $redirect->withErrors($errors);
-        } else {
-            $note->delete();
-        }
+        $note->delete();
 
-        return $redirect;
+        return redirect()->route('patient.note.index', ['patientId' => $patientId]);
     }
 
     public function download(Request $request, $patientId, $noteId)
@@ -491,7 +486,7 @@ class NotesController extends Controller
         $careteam_info = $patient
             ->careTeamMembers
             ->mapWithKeys(function (CarePerson $member) {
-                return [$member->member_user_id => $member->user->getFullName()];
+                return [$member->member_user_id => optional($member->user)->getFullName() ?? 'N/A'];
             })
             ->toArray();
         asort($careteam_info);
@@ -623,9 +618,13 @@ class NotesController extends Controller
         $shouldSendPatientEmail = isset($input['email-patient']);
         if ($shouldSendPatientEmail) {
             Validator::make($input, [
-                'email-subject'      => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
-                'patient-email-body' => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
-                'attachments'        => ['sometimes', new PatientEmailAttachments()],
+                'email-subject'        => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'patient-email-body'   => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'attachments'          => ['sometimes', new PatientEmailAttachments()],
+                'custom_patient_email' => [
+                    'sometimes',
+                    new ValidatePatientCustomEmail(),
+                ],
             ])->validate();
         }
 
@@ -676,7 +675,7 @@ class NotesController extends Controller
             $task_status = $input['task_status'];
             $call        = Call::find($task_id);
             if ($call) {
-                if ('done' === $task_status) {
+                if (Call::DONE === $task_status) {
                     if ('Call Back' === $call->sub_type) {
                         if ( ! isset($input['call_status'])) {
                             return redirect()
@@ -699,7 +698,7 @@ class NotesController extends Controller
                             $note->performed_at
                         );
                     } else {
-                        $call->status = 'done';
+                        $call->status = Call::DONE;
                     }
                 }
 

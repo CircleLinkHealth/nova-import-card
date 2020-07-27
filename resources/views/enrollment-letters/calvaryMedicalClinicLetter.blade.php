@@ -1,46 +1,26 @@
 @extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')
-@section('title', 'Enrollment Invitation')
-@section('activity', 'Enrollment Invitation')
+@section('title', 'Calvary Invitation')
+@section('activity', 'Calvary Invitation')
 @section('content')
     <div class="container">
         <div class="letter-view">
             @if(!$hideButtons)
                 <div class="header-buttons">
-                    @include('enrollment-consent.enrollableInvitationButtons')
+                    @include('enrollment-letters.enrollableInvitationButtons')
                 </div>
             @endif
-                @if(! $extraAddressValuesRequested)
-                @include('enrollment-consent.headers.commonwealth')
-                @else
-                    @include('enrollment-consent.headers.toledo')
-                @endif
-                    <div class="letter-sent">
-                        {{$dateLetterSent}}
-                    </div>
-                    <div class="letter-head">
-                        Dear {{$userEnrollee->first_name}},
-                    </div>
-                    <div class="letter-body">
-                        <div class="body">
-                            @include('enrollment-consent.enrollmentLetter')
-                        </div>
-                    </div>
 
-                @if(! $extraAddressValuesRequested)
-                    <div class="logo" style="margin-bottom: 10px">
-                        <div class="logo" style="{{$logoStyleRequest}}">
-                            @include('enrollment-consent.practiceLogo')
-                        </div>
-                    </div>
-                @endif
+            @include('enrollment-letters.headers.calvary')
 
-                    @if(!$hideButtons)
-                        <div class="header-buttons">
-                            @include('enrollment-consent.enrollableInvitationButtons')
-                        </div>
-                    @endif
+            @include('enrollment-letters.baseLetter')
+
+                @if(!$hideButtons)
+                <div class="header-buttons">
+                    @include('enrollment-letters.enrollableInvitationButtons')
                 </div>
-            </div>
+            @endif
+        </div>
+    </div>
     </div>
 
 

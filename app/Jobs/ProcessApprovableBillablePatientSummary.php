@@ -13,7 +13,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Spatie\RateLimitedMiddleware\RateLimited;
 
 class ProcessApprovableBillablePatientSummary implements ShouldQueue
 {
@@ -36,23 +35,10 @@ class ProcessApprovableBillablePatientSummary implements ShouldQueue
      */
     public function handle(PatientSummaryEloquentRepository $repo)
     {
-        if ($summary = $repo->setApprovalStatusAndNeedsQA($this->summary)) {
+        $summary = $repo->setApprovalStatusAndNeedsQA($this->summary);
+
+        if (is_a($summary, PatientMonthlySummary::class)) {
             $summary->save();
         }
-    }
-
-    public function middleware()
-    {
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(30)
-            ->everySeconds(60)
-            ->releaseAfterSeconds(20);
-
-        return [$rateLimitedMiddleware];
-    }
-
-    public function retryUntil(): \DateTime
-    {
-        return now()->addHours(3);
     }
 }

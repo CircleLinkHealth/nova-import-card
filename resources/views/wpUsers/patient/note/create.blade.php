@@ -309,7 +309,7 @@
                                                                        @endif
                                                                        class="call-status-radio"
                                                                        name="call_status"
-                                                                       value="not reached"
+                                                                       value="{{\App\Call::NOT_REACHED}}"
                                                                        id="not-reached"/>
                                                                 <label for="not-reached">
                                                                     <span> </span>Patient Not Reached
@@ -323,7 +323,7 @@
                                                                        @endif
                                                                        name="call_status"
                                                                        class="call-status-radio"
-                                                                       value="reached"
+                                                                       value="{{\App\Call::REACHED}}"
                                                                        id="reached"/>
                                                                 <label for="reached">
                                                                     <span> </span>Successful Clinical Call
@@ -338,7 +338,7 @@
                                                                        @endif
                                                                        name="call_status"
                                                                        class="call-status-radio"
-                                                                       value="ignored"
+                                                                       value="{{\App\Call::IGNORED}}"
                                                                        id="ignored"/>
                                                                 <label for="ignored">
                                                                     <span> </span>Patient Busy - Rescheduled Call
@@ -357,7 +357,7 @@
                                                                            @if (!empty($call) && $call->status === \App\Call::WELCOME) checked
                                                                            @endif
                                                                            name="welcome_call"
-                                                                           value="welcome_call"
+                                                                           value="{{\App\Call::WELCOME}}"
                                                                            id="welcome_call"/>
                                                                     <label for="welcome_call">
                                                                         <span> </span>Successful
@@ -373,7 +373,7 @@
                                                                            @if (!empty($call) && $call->status === \App\Call::OTHER) checked
                                                                            @endif
                                                                            name="other_call"
-                                                                           value="other_call"
+                                                                           value="{{\App\Call::OTHER}}"
                                                                            id="other_call"/>
                                                                     <label for="other_call">
                                                                         <span> </span>Successful
@@ -766,7 +766,7 @@
                     const startDate = Date.now();
 
                     function phoneSessionChange(e) {
-                        if (e) {
+                        if (e && e.currentTarget) {
                             if (e.currentTarget.checked) {
                                 $('#task-label').hide();
                                 $('#collapseOne').show();
@@ -811,7 +811,7 @@
                     }
 
                     function associateWithTaskChange(e) {
-                        if (!e) {
+                        if (!e || !e.currentTarget) {
                             return;
                         }
                         if (e.currentTarget.checked) {
@@ -905,7 +905,7 @@
                         let notifyCareteamEl = $('#notify-careteam');
                         let whoIsNotifiedEl = $('#who-is-notified');
 
-                        if (e) {
+                        if (e && e.currentTarget) {
                             if (e.currentTarget.checked) {
                                 notifyCareteamEl.prop("checked", true);
                                 notifyCareteamEl.prop("disabled", true);
@@ -982,7 +982,12 @@
                             callIsSuccess = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value === "reached";
                         } else {
                             //checkbox
-                            callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
+                            if (form['welcome_call']) {
+                                callIsSuccess = form['welcome_call'].checked;
+                            }
+                            if (!callIsSuccess && form['other_call']) {
+                                callIsSuccess = form['other_call'].checked;
+                            }
                         }
 
                         if (!callHasStatus) {
@@ -1109,7 +1114,8 @@
                             .post(validateEmailBodyUrl, {
                                 //validate subject as well
                                 patient_email_subject: $("[id='email-subject']").val(),
-                                patient_email_body: $("[id='patient-email-body-input']").val()
+                                patient_email_body: $("[id='patient-email-body-input']").val(),
+                                custom_patient_email: $("[id='custom-patient-email']").val()
                             })
                             .then((response) => {
                                 if (response.data.status == 400) {

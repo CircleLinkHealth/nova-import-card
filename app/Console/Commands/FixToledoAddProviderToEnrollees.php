@@ -7,11 +7,10 @@
 namespace App\Console\Commands;
 
 use App\Models\PracticePull\Demographics;
-use CircleLinkHealth\Customer\Entities\Location;
+use App\Search\ProviderByName;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
-use Modules\Eligibility\CcdaImporter\CcdaImporterWrapper;
 
 class FixToledoAddProviderToEnrollees extends Command
 {
@@ -26,7 +25,7 @@ class FixToledoAddProviderToEnrollees extends Command
      *
      * @var string
      */
-    protected $signature = 'fix:toledo:add-provider-to-enrollees { minimumId? } { --participants-only }';
+    protected $signature = 'fix:toledo:add-provider-to-enrollees';
 
     /**
      * Create a new command instance.
@@ -46,16 +45,9 @@ class FixToledoAddProviderToEnrollees extends Command
     public function handle()
     {
         Enrollee::where('practice_id', 235)
-            ->with('user.patientInfo')
-            ->whereHas('user', function ($q) {
-                $q->ofType('participant')->has('patientInfo');
-            })
-            ->when($this->option('participants-only'), function ($q) {
-                $q->where('id', '>=', (int) $this->argument('minimumId'));
-            })
-            ->when(is_numeric($this->argument('minimumId')), function ($q) {
-                $q->where('id', '>=', (int) $this->argument('minimumId'));
-            })
+            ->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT.'_2')
+            ->with('user')
+            ->inRandomOrder()
             ->chunkById(300, function ($enrollees) {
                 foreach ($enrollees as $enrollee) {
                     $p = Demographics::where('practice_id', $enrollee->practice_id)
@@ -64,8 +56,14 @@ class FixToledoAddProviderToEnrollees extends Command
 
                     $this->warn("Updating $enrollee->id");
 
+                    if (empty($p->billing_provider_user_id) && $name = explode(' ', $p->referring_provider_name)) {
+                        if (count($name) >= 2) {
+                            $p->billing_provider_user_id = User::ofType('provider')->ofPractice($enrollee->practice_id)->where('first_name', $name[0])->where('last_name', $name[1])->value('id');
+                        }
+                    }
+
                     if (empty($p->billing_provider_user_id)) {
-                        $p->billing_provider_user_id = optional(CcdaImporterWrapper::searchBillingProvider($p->referring_provider_name, $enrollee->practice_id))->id;
+                        $p->billing_provider_user_id = optional(ProviderByName::first($p->referring_provider_name))->id;
                     }
 
                     if (empty($p->billing_provider_user_id)) {
@@ -73,32 +71,19 @@ class FixToledoAddProviderToEnrollees extends Command
                         continue;
                     }
 
-                    $enrollee->provider_id = $p->billing_provider_user_id;
-                    $enrollee->referring_provider_name = $p->referring_provider_name;
-
-                    if ($enrollee->user) {
-                        $enrollee->user->setBillingProviderId($enrollee->provider_id);
-
-                        $location = CcdaImporterWrapper::searchLocation($p->facility_name, $enrollee->practice_id);
-                        $this->setLocation($enrollee->user, $location);
-                        $p->location_id = $location->id;
-                        $enrollee->location_id = $location->id;
-                    }
-
                     if ($p->isDirty()) {
                         $p->save();
                     }
 
-                    if ($enrollee->isDirty()) {
-                        $enrollee->save();
+                    $enrollee->provider_id = $p->billing_provider_user_id;
+                    $enrollee->referring_provider_name = $p->referring_provider_name;
+                    $enrollee->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
+                    $enrollee->save();
+
+                    if ($enrollee->user) {
+                        $enrollee->user->setBillingProviderId($enrollee->provider_id);
                     }
                 }
             });
-    }
-
-    private function setLocation(User $user, Location $location)
-    {
-        $user->setPreferredContactLocation($location->id);
-        $user->locations()->sync([$location->id]);
     }
 }
