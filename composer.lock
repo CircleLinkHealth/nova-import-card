@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3ee2658ed7ba2299f1ee2377bd35e522",
+    "content-hash": "ffafa6c7c33c1698c1b562a26f5b90b1",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1115,11 +1115,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-ROAD-98_call_unreached_notification",
+            "version": "v2.2.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "75ff90137910fe6fe254facebae50ccc2d29d5f3"
+                "reference": "cf87fb1524cb71a6542423f2f0bb59937445d6b3"
             },
             "type": "laravel-module",
             "extra": {
@@ -1141,15 +1141,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-27T23:27:48+00:00"
+            "time": "2020-07-27T23:46:33+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-ROAD-98_call_unreached_notification",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "2180a3bd5dc41fe663b40075e04150758a60725f"
+                "reference": "f9570b5dd73c9461dc6c857720a3d2ea8c6f9055"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1183,7 +1183,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-27T23:27:56+00:00"
+            "time": "2020-07-27T23:45:08+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -15967,8 +15967,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
-        "circlelinkhealth/customer-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20
     },
