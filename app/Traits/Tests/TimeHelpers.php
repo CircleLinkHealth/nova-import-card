@@ -43,6 +43,10 @@ trait TimeHelpers
         $forceSkip = false,
         $withPhoneSession = false
     ): ?Note {
+        if ($withSuccessfulCall) {
+            $withPhoneSession = true;
+        }
+
         if ( ! $activityName) {
             $activityName = $withSuccessfulCall
                 ? 'Patient Note Creation'
