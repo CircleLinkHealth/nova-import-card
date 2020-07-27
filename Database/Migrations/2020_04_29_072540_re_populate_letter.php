@@ -24,9 +24,9 @@ class RePopulateLetter extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv()) {
+        if ( ! isUnitTestingEnv() && isCpm()) {
             Artisan::call('db:seed', [
-                '--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\EnrollmentInvitationLetterSeeder',
+                '--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateCommonwealthPainAssociatesPllcLetter',
             ]);
         }
     }
