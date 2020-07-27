@@ -159,6 +159,7 @@ if (isset($patient) && ! empty($patient)) {
                                         ?>
 
                                         <pdf-careplans v-cloak
+                                                       mode="web"
                                                        careplan-status="{{$careplanStatus}}"
                                                        :is-provider="@json(auth()->user()->providerInfo && auth()->user()->isProvider())"
                                                        :is-care-coach="@json(auth()->user()->isCareCoach())"

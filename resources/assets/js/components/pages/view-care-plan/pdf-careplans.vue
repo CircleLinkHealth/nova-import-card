@@ -34,6 +34,8 @@
             'routeCarePlanNotEligible',
             'patientCarePlanPdfsHasItems',
             'shouldShowApprovalButton',
+            'routeSwitchToWeb',
+            'canSwitchToWeb'
         ],
 
         created() {
@@ -242,7 +244,7 @@
 
 <template>
     <div class="col-md-12" style="padding-top: 2%;" v-cloak>
-        <div class="row">
+        <div class="row" v-if="mode === Modes.Web">
             <div class="col-md-5 text-left">
                 <template v-if="isProvider">
                     <form id="form-provider-approve" class="inline-block" style="text-align: left"
@@ -332,7 +334,15 @@
             </div>
         </div>
 
-        <div class="row" v-if="patientCarePlan.mode == 'pdf'">
+        <div class="row" v-if="mode === Modes.Pdf">
+            <div class="col-md-5 text-left" v-if="canSwitchToWeb">
+                <a :href="routeSwitchToWeb" class="btn revert-btn inline-block">
+                    REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA
+                </a>
+            </div>
+        </div>
+
+        <div class="row" v-if="patientCarePlan.mode === 'pdf'">
             <div class="col-md-12 list-group">
                 <div class="list-group-item list-group-item-action top-20" v-for="(pdf, index) in patientCarePlan.pdfs"
                      :key="index">
