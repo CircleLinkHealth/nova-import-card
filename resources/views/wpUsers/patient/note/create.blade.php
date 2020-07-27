@@ -309,7 +309,7 @@
                                                                        @endif
                                                                        class="call-status-radio"
                                                                        name="call_status"
-                                                                       value="not reached"
+                                                                       value="{{\App\Call::NOT_REACHED}}"
                                                                        id="not-reached"/>
                                                                 <label for="not-reached">
                                                                     <span> </span>Patient Not Reached
@@ -323,7 +323,7 @@
                                                                        @endif
                                                                        name="call_status"
                                                                        class="call-status-radio"
-                                                                       value="reached"
+                                                                       value="{{\App\Call::REACHED}}"
                                                                        id="reached"/>
                                                                 <label for="reached">
                                                                     <span> </span>Successful Clinical Call
@@ -338,7 +338,7 @@
                                                                        @endif
                                                                        name="call_status"
                                                                        class="call-status-radio"
-                                                                       value="ignored"
+                                                                       value="{{\App\Call::IGNORED}}"
                                                                        id="ignored"/>
                                                                 <label for="ignored">
                                                                     <span> </span>Patient Busy - Rescheduled Call
@@ -357,7 +357,7 @@
                                                                            @if (!empty($call) && $call->status === \App\Call::WELCOME) checked
                                                                            @endif
                                                                            name="welcome_call"
-                                                                           value="welcome_call"
+                                                                           value="{{\App\Call::WELCOME}}"
                                                                            id="welcome_call"/>
                                                                     <label for="welcome_call">
                                                                         <span> </span>Successful
@@ -373,7 +373,7 @@
                                                                            @if (!empty($call) && $call->status === \App\Call::OTHER) checked
                                                                            @endif
                                                                            name="other_call"
-                                                                           value="other_call"
+                                                                           value="{{\App\Call::OTHER}}"
                                                                            id="other_call"/>
                                                                     <label for="other_call">
                                                                         <span> </span>Successful
@@ -576,7 +576,6 @@
                 </div>
             </div>
         </div>
-        </div>
 
     </form>
 
@@ -623,6 +622,39 @@
         </div>
     </div>
 
+    <div class="modal fade" id="saving-draft" tabindex="-1" role="dialog"
+         aria-labelledby="saving-draft-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="confirm-note-create-label">Care Plan needs approval</h3>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Before saving note, please ensure Care Plan is assessment-driven and ready for Dr. review,
+                        then click "Ready for Dr.".
+                    </p>
+                </div>
+                <div class="modal-footer text-center">
+                    <div class="row text-center">
+                        <div class="col-md-6">
+                            <a class="disabled btn btn-success" id="saving-draft-visit-careplan-link"
+                               href="{{route('patient.careplan.print', ['patientId' => $patient->id])}}">
+                                Visit Care Plan
+                                <span id="saving-draft-loader" class="fa fa-spinner fa-spin"></span>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <button id="saving-draft-ok-button" type="button" class="btn btn-success">
+                                Stay on this page
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div>
         <br/>
     </div>
@@ -642,6 +674,7 @@
             const isEditingCompleteTask = @json(!empty($call) && !empty($call->sub_type));
             const editingTaskType = isEditingCompleteTask ? @json(optional($call)->sub_type) : undefined;
             const disableAutoSave = @json(!empty($note) && $note->status == \App\Note::STATUS_COMPLETE);
+            const hasRnApprovedCarePlan = @json($hasRnApprovedCarePlan);
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
@@ -733,7 +766,7 @@
                     const startDate = Date.now();
 
                     function phoneSessionChange(e) {
-                        if (e) {
+                        if (e && e.currentTarget) {
                             if (e.currentTarget.checked) {
                                 $('#task-label').hide();
                                 $('#collapseOne').show();
@@ -767,11 +800,18 @@
 
                     let phoneEl = $('#phone');
                     phoneEl.change(phoneSessionChange);
-                    phoneEl.prop('checked', @json(!empty($call) && empty($call->sub_type)));
+                    //successful_clinical_call might be set but no $call. This can happen when we have draft notes
+                    const hasClinicalCall = @json(!empty($note) && $note->successful_clinical_call == 1);
+                    const hasPhoneSession = @json( (!empty($call) && empty($call->sub_type))) || hasClinicalCall;
+                    phoneEl.prop('checked', hasPhoneSession);
                     phoneEl.trigger('change');
 
+                    if (hasClinicalCall) {
+                        $('#reached').prop('checked', true);
+                    }
+
                     function associateWithTaskChange(e) {
-                        if (!e) {
+                        if (!e || !e.currentTarget) {
                             return;
                         }
                         if (e.currentTarget.checked) {
@@ -865,7 +905,7 @@
                         let notifyCareteamEl = $('#notify-careteam');
                         let whoIsNotifiedEl = $('#who-is-notified');
 
-                        if (e) {
+                        if (e && e.currentTarget) {
                             if (e.currentTarget.checked) {
                                 notifyCareteamEl.prop("checked", true);
                                 notifyCareteamEl.prop("disabled", true);
@@ -942,7 +982,12 @@
                             callIsSuccess = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value === "reached";
                         } else {
                             //checkbox
-                            callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
+                            if (form['welcome_call']) {
+                                callIsSuccess = form['welcome_call'].checked;
+                            }
+                            if (!callIsSuccess && form['other_call']) {
+                                callIsSuccess = form['other_call'].checked;
+                            }
                         }
 
                         if (!callHasStatus) {
@@ -951,6 +996,17 @@
                                 alert('Please select whether patient was reached or not.');
                                 return;
                             }
+                        }
+
+                        // ROAD-39 RN must approve care plan before making a successful welcome call
+                        if (userIsCareCoach && callIsSuccess && !hasRnApprovedCarePlan) {
+                            showSavingDraftModal();
+                            saveDraft()
+                                .then(() => {
+                                    $('#saving-draft-loader').addClass('hidden');
+                                    $('#saving-draft-visit-careplan-link').removeClass('disabled');
+                                })
+                            return;
                         }
 
                         if (isAssociatedWithTask && !callHasTask) {
@@ -1007,6 +1063,10 @@
                         confirmSubmitForm();
                     });
 
+                    $(document).on("click", "#saving-draft-ok-button", function (event) {
+                        $('#saving-draft').modal('hide');
+                    });
+
                     function confirmSubmitForm() {
 
                         if (!conditionsAttested && callIsSuccess && userIsCareCoach) {
@@ -1033,7 +1093,7 @@
 
                         if (noteId) {
                             $('<input />').attr('type', 'hidden')
-                                .attr('name', "noteId")
+                                .attr('name', "note_id")
                                 .attr('value', noteId)
                                 .appendTo(form);
                         }
@@ -1045,12 +1105,17 @@
                         $('#confirm-task-completed').modal('show');
                     }
 
+                    function showSavingDraftModal() {
+                        $('#saving-draft').modal('show');
+                    }
+
                     const validateEmailBody = async () => {
                         return await window.axios
                             .post(validateEmailBodyUrl, {
                                 //validate subject as well
                                 patient_email_subject: $("[id='email-subject']").val(),
-                                patient_email_body: $("[id='patient-email-body-input']").val()
+                                patient_email_body: $("[id='patient-email-body-input']").val(),
+                                custom_patient_email: $("[id='custom-patient-email']").val()
                             })
                             .then((response) => {
                                 if (response.data.status == 400) {
@@ -1124,7 +1189,7 @@
 
                         isSavingDraft = true;
 
-                        window.axios
+                        return window.axios
                             .post(saveDraftUrl, {
                                 patient_id: $('#patient_id').val(),
                                 note_id: noteId,

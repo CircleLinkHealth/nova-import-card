@@ -6,10 +6,10 @@
 
 namespace App\Rules;
 
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Str;
 
-class DoesNotHaveBothTypesOfDiabetes implements Rule
+class ValidatePatientCustomEmail implements Rule
 {
     /**
      * Create a new rule instance.
@@ -27,7 +27,7 @@ class DoesNotHaveBothTypesOfDiabetes implements Rule
      */
     public function message()
     {
-        return 'The Care Plan has both Diabetes Type 1 and Diabetes Type 2. Please confirm that this is accurate by clicking "Approve" and confirm conditions in the modal, or choose the correct type of Diabetes for the patient. ';
+        return 'Email is invalid.';
     }
 
     /**
@@ -40,8 +40,16 @@ class DoesNotHaveBothTypesOfDiabetes implements Rule
      */
     public function passes($attribute, $value)
     {
-        //if both Diabetes types are present fail
-        if ($value->firstWhere('cpmProblem.name', CpmProblem::DIABETES_TYPE_1) && $value->firstWhere('cpmProblem.name', CpmProblem::DIABETES_TYPE_2)) {
+        // invalid email
+        if (empty($value)) {
+            return false;
+        }
+
+        if ( ! Str::contains($value, '@')) {
+            return false;
+        }
+
+        if (Str::contains($value, ['@careplanmanager.com', '@example.com', '@noEmail.com'])) {
             return false;
         }
 

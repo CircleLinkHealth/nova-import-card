@@ -14,9 +14,11 @@ use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Notification;
 use PrepareDataForReEnrollmentTestSeeder;
 use Tests\DuskTestCase;
+use Tests\Helpers\CustomerTestCaseHelper;
 
-class SelfEnrollmentDuskTestTest extends DuskTestCase
+class SelfEnrollmentDuskTest extends DuskTestCase
 {
+    use CustomerTestCaseHelper;
     /**
      * @var
      */
@@ -64,13 +66,13 @@ class SelfEnrollmentDuskTestTest extends DuskTestCase
     private function createEnrollees(int $number = 1)
     {
         if (1 === $number) {
-            return $this->factory()->createEnrollee($this->practice());
+            return $this->factory()->createEnrollee($this->practice(), $this->provider());
         }
 
         $coll = collect();
 
         for ($i = 0; $i < $number; ++$i) {
-            $coll->push($this->factory()->createEnrollee($this->practice()));
+            $coll->push($this->factory()->createEnrollee($this->practice(), $this->provider()));
         }
 
         return $coll;

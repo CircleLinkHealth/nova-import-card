@@ -7,7 +7,7 @@
 namespace App\Listeners;
 
 use App\AppConfig\DMDomainForAutoApproval;
-use App\Events\CarePlanWasQAApproved;
+use App\Events\CarePlanWasRNApproved;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
 use App\Services\CarePlanApprovalRequestsReceivers;
 use CircleLinkHealth\Customer\Entities\User;
@@ -35,7 +35,7 @@ class SendCarePlanForDMProviderApproval implements ShouldQueue
      *
      * @return void
      */
-    public function handle(CarePlanWasQAApproved $event)
+    public function handle(CarePlanWasRNApproved $event)
     {
         if ($this->shouldBail($event)) {
             return;
@@ -61,7 +61,7 @@ class SendCarePlanForDMProviderApproval implements ShouldQueue
 
     private function shouldBail($event): bool
     {
-        if (CarePlan::QA_APPROVED !== $event->patient->carePlan->status) {
+        if (CarePlan::RN_APPROVED !== $event->patient->carePlan->status) {
             return true;
         }
 

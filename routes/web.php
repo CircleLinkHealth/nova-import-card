@@ -902,12 +902,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('approve-careplan/{viewNext?}', [
             'uses' => 'ProviderController@approveCarePlan',
             'as'   => 'patient.careplan.approve',
-        ])->middleware('permission:care-plan-approve,care-plan-qa-approve');
+        ])->middleware('permission:care-plan-approve,care-plan-qa-approve,care-plan-rn-approve');
 
         Route::post('not-eligible', [
             'uses' => 'ProviderController@removePatient',
             'as'   => 'patient.careplan.not.eligible',
-        ])->middleware('permission:care-plan-approve,care-plan-qa-approve');
+        ])->middleware('permission:care-plan-approve,care-plan-qa-approve,care-plan-rn-approve');
 
         Route::get('view-careplan/pdf', [
             'uses' => 'ReportsController@viewPdfCarePlan',

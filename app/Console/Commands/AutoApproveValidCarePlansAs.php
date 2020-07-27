@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
@@ -81,11 +82,14 @@ class AutoApproveValidCarePlansAs extends Command
                 }
                 $needsQA = $this->process($enrollee->user, $approver);
                 if ( ! $this->option('dry') && ! $needsQA) {
+                    $enrollee->user->patientInfo->ccm_status = Patient::ENROLLED;
                     $enrollee->status = Enrollee::ENROLLED;
-                    $enrollee->save();
                 }
                 if ($enrollee->isDirty()) {
                     $enrollee->save();
+                }
+                if ($enrollee->user->patientInfo->isDirty()) {
+                    $enrollee->user->patientInfo->save();
                 }
             });
         });
@@ -101,7 +105,7 @@ class AutoApproveValidCarePlansAs extends Command
     {
         return Enrollee::where('status', Enrollee::CONSENTED)->whereHas('practice', function ($q) {
             $q->activeBillable();
-        })->with('user');
+        })->with('user.patientInfo');
     }
 
     private function log(array $array)

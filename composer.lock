@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f0cc42fc9c0bcc05f6485a42260451d2",
+    "content-hash": "5a1fa9cb2b7ff06344360dfde53b345d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1113,11 +1113,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-road_204_migrations",
+            "version": "v2.2.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "ed34873aa094c275e85a062ffe1cbb88e4a2ddef"
+                "reference": "9433c4422dcc8a5a6cec8bfd9d7e8d9d4b5baa82"
             },
             "type": "laravel-module",
             "extra": {
@@ -1139,15 +1139,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-27T18:23:16+00:00"
+            "time": "2020-07-23T10:34:04+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.0.2",
+            "version": "v3.1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "02255882b1b0693dd4ec5d3ac80edd0c23d6bc6d"
+                "reference": "57f13d849cd1f564b6430d21934fcdc0ba0b6301"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1181,15 +1181,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-09T06:38:44+00:00"
+            "time": "2020-07-25T02:41:31+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-road_204",
+            "version": "dev-Road-251_eligibility",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4701863e8548165f9cbc2046f66371d939a5a756"
+                "reference": "a8f7d539850978c7ab63a191d9dcd3720e9cb5a2"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1214,7 +1214,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-22T16:50:42+00:00"
+            "time": "2020-07-27T19:53:48+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1505,11 +1505,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.7.1",
+            "version": "v1.7.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "535ca235504786d5987615e2fb92b8b30863d628"
+                "reference": "7bc78d375ffbc48708ca9f11143a22bf40ee0ac0"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1523,7 +1523,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-21T21:22:48+00:00"
+            "time": "2020-07-23T10:35:28+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -3148,16 +3148,16 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.11.0",
+            "version": "v1.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "f6752236dbb2d641d50dffee789e553e2fda129d"
+                "reference": "bb959e91bd8ffbd352ab76cbf11d656ce6435088"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/f6752236dbb2d641d50dffee789e553e2fda129d",
-                "reference": "f6752236dbb2d641d50dffee789e553e2fda129d",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/bb959e91bd8ffbd352ab76cbf11d656ce6435088",
+                "reference": "bb959e91bd8ffbd352ab76cbf11d656ce6435088",
                 "shasum": ""
             },
             "require": {
@@ -3196,7 +3196,7 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2020-07-22T18:24:05+00:00"
+            "time": "2020-07-27T18:33:35+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -16000,7 +16000,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20
