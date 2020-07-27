@@ -557,7 +557,7 @@ class PatientCareplanController extends Controller
         if ($v->fails()) {
             return redirect()->back()->withErrors($v->errors())->withInput($request->input());
         }
-        $role      = Role::byName('participant')->id;
+        $role      = Role::byName('participant');
         $newUserId = Str::random(15);
 
         $carePlanStatus = CarePlan::DRAFT;
