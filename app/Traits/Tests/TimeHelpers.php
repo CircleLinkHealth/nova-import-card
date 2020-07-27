@@ -7,14 +7,20 @@
 namespace App\Traits\Tests;
 
 use App\Call;
+use App\Http\Controllers\NotesController;
 use App\Jobs\StoreTimeTracking;
 use App\Note;
+use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Tests\Helpers\MakesSafeRequests;
 
 trait TimeHelpers
 {
+    use MakesSafeRequests;
+
     /**
      * Add billable or not to a patient and credit nurse.
      *
@@ -22,6 +28,7 @@ trait TimeHelpers
      * @param mixed      $enrolleeId
      * @param mixed|null $activityName
      * @param mixed      $forceSkip
+     * @param mixed      $withPhoneSession
      */
     private function addTime(
         User $nurse,
@@ -33,31 +40,18 @@ trait TimeHelpers
         Carbon $startTime = null,
         $enrolleeId = 0,
         $activityName = null,
-        $forceSkip = false
-    ) {
-        if ($withSuccessfulCall) {
-            /** @var Note $fakeNote */
-            $fakeNote               = \factory(Note::class)->make();
-            $fakeNote->author_id    = $nurse->id;
-            $fakeNote->patient_id   = $patient->id;
-            $fakeNote->status       = Note::STATUS_COMPLETE;
-            $fakeNote->performed_at = $startTime ?? now();
-            $fakeNote->save();
-
-            /** @var Call $fakeCall */
-            $fakeCall                  = \factory(Call::class)->make();
-            $fakeCall->note_id         = $fakeNote->id;
-            $fakeCall->status          = Call::REACHED;
-            $fakeCall->inbound_cpm_id  = $patient->id;
-            $fakeCall->outbound_cpm_id = $nurse->id;
-            $fakeCall->called_date     = $startTime ?? now();
-            $fakeCall->save();
-        }
-
+        $forceSkip = false,
+        $withPhoneSession = false
+    ): ?Note {
         if ( ! $activityName) {
             $activityName = $withSuccessfulCall
                 ? 'Patient Note Creation'
                 : 'test';
+        }
+
+        $note = null;
+        if ('Patient Note Creation' === $activityName || $withPhoneSession || $withSuccessfulCall) {
+            $note = $this->createNote($nurse, $patient->id, $withPhoneSession, $withSuccessfulCall, $startTime);
         }
 
         $seconds = $minutes * 60;
@@ -83,5 +77,39 @@ trait TimeHelpers
         ]);
 
         StoreTimeTracking::dispatchNow($bag);
+
+        return $note;
+    }
+
+    private function createNote(User $author, $patientId, $phoneSession = false, $successfulCall = false, Carbon $startTime = null): ?Note
+    {
+        $this->be($author);
+        /** @var NotesController $controller */
+        $controller = app(NotesController::class);
+
+        $args = [
+            'body'       => 'test',
+            'patient_id' => $patientId,
+        ];
+
+        if ($startTime) {
+            $args['performed_at'] = $startTime;
+        }
+
+        if ($phoneSession) {
+            $args['phone']       = 1;
+            $args['call_status'] = $successfulCall ? Call::REACHED : Call::NOT_REACHED;
+        }
+
+        $req = $this->safeRequest(
+            route('patient.note.store', ['patientId' => $patientId]),
+            'POST',
+            $args
+        );
+        TestResponse::fromBaseResponse($controller->store($req, app(SchedulerService::class), $patientId));
+
+        return Note::where('patient_id', '=', $patientId)
+            ->orderBy('created_at', 'desc')
+            ->first();
     }
 }
