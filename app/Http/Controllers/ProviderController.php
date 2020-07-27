@@ -52,20 +52,25 @@ class ProviderController extends Controller
             ]));
         }
 
-        if ($user->canQAApproveCarePlans()) {
-            /** @var CarePlan $carePlan */
-            $carePlan = CarePlan::where('user_id', $patientId)
-                ->firstOrFail();
+        /** @var CarePlan $carePlan */
+        $carePlan = CarePlan::where('user_id', $patientId)
+            ->firstOrFail();
 
-            if (CarePlan::DRAFT == $carePlan->status) {
-                $validator = $carePlan->validator($request->has('confirm_diabetes_conditions'));
-                if ($validator->fails()) {
-                    return redirect()->back()->with(['errors' => $validator->errors()]);
-                }
+        if ($user->canQAApproveCarePlans() && CarePlan::DRAFT == $carePlan->status) {
+            $validator = $carePlan->validator($request->has('confirm_diabetes_conditions'));
+            if ($validator->fails()) {
+                return redirect()->back()->with(['errors' => $validator->errors()]);
             }
         }
 
+        $oldStatus = $carePlan->status;
+
         event(new CarePlanWasApproved(User::find($patientId), $user));
+        if ( ! $carePlan->isRnApprovalEnabled() && in_array($oldStatus, [CarePlan::DRAFT, CarePlan::QA_APPROVED])) {
+            //in case we QA Approve and we have to RN Approve at the same time
+            event(new CarePlanWasApproved(User::find($patientId), $user));
+        }
+
         $viewNext = (bool) $viewNext;
 
         if ($viewNext) {

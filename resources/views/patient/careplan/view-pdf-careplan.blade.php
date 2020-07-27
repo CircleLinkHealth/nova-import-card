@@ -5,10 +5,10 @@
 
 <?php
 if (isset($patient)) {
-    $seconds     = $patient->getCcmTime();
-    $H           = floor($seconds / 3600);
-    $i           = ($seconds / 60) % 60;
-    $s           = $seconds % 60;
+    $seconds = $patient->getCcmTime();
+    $H = floor($seconds / 3600);
+    $i = ($seconds / 60) % 60;
+    $s = $seconds % 60;
     $monthlyTime = sprintf('%02d:%02d:%02d', $H, $i, $s);
 } else {
     $monthlyTime = '';
@@ -54,7 +54,7 @@ if (isset($patient)) {
                         @else
                             <?php
                             $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-                            $ccmCountableUser        = auth()->user()->isCCMCountable();
+                            $ccmCountableUser = auth()->user()->isCCMCountable();
                             ?>
                             <time-tracker ref="TimeTrackerApp"
                                           :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
@@ -68,13 +68,9 @@ if (isset($patient)) {
             </div>
         </div>
 
-        <pdf-careplans mode="pdf">
-            <template slot="buttons">
-                @if(auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']) && $patient->carePlan && $patient->carePlan->mode == CircleLinkHealth\SharedModels\Entities\CarePlan::PDF)
-                    <a href="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan ? $patient->carePlan->id : 0])}}"
-                       class="btn revert-btn inline-block">REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA</a>
-                @endif
-            </template>
+        <pdf-careplans mode="pdf"
+                       route-switch-to-web="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan ? $patient->carePlan->id : 0])}}"
+                       :can-switch-to-web="@json(auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']) && $patient->carePlan && $patient->carePlan->mode == CircleLinkHealth\SharedModels\Entities\CarePlan::PDF)">
         </pdf-careplans>
     </div>
 @endsection

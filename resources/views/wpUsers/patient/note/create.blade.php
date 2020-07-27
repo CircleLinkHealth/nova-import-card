@@ -675,6 +675,7 @@
             const editingTaskType = isEditingCompleteTask ? @json(optional($call)->sub_type) : undefined;
             const disableAutoSave = @json(!empty($note) && $note->status == \App\Note::STATUS_COMPLETE);
             const hasRnApprovedCarePlan = @json($hasRnApprovedCarePlan);
+            const shouldRnApprove = @json($shouldRnApprove);
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
@@ -999,7 +1000,7 @@
                         }
 
                         // ROAD-39 RN must approve care plan before making a successful welcome call
-                        if (userIsCareCoach && callIsSuccess && !hasRnApprovedCarePlan) {
+                        if (userIsCareCoach && callIsSuccess && shouldRnApprove && !hasRnApprovedCarePlan) {
                             showSavingDraftModal();
                             saveDraft()
                                 .then(() => {
