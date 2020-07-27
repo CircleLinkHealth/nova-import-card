@@ -96,7 +96,7 @@
                 </div>
                 </div>
             </div>
-<br>
+
             <a v-if="!loading && this.newInputs.length === 0"
                class="glyphicon glyphicon-plus-sign add-new-number"
                title="Add Phone Number"
@@ -110,7 +110,7 @@
 <script>
     import LoaderComponent from "./loader";
     import axios from "../bootstrap-axios";
-    import {Event} from "vue-tables-2";
+    import EventBus from '../admin/time-tracker/comps/event-bus'
     import CallNumber from "./call-number";
 
     export default {
@@ -163,7 +163,7 @@
 
         methods: {
             selectedNumber(number){
-                // Event.$on('call-number:kolos', number);
+               EventBus.$emit("selectedNumber:toCall", number);
             },
 
             numberIsPrimary(number){

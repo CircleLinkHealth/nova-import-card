@@ -66,26 +66,36 @@
 <!--                            </template>-->
 <!--                        </div>-->
 <!--                    </div>-->
+            <div class="row" style="padding-top: 25px;">
+            <div class="col-xs-12">
+                <label>Selected Phone Number To Call</label>
+            </div>
+            <div class="col-xs-12">
+                <div class="col-xs-9 no-padding">
+                    <input name="selected-number"
+                           class="form-control selected-number"
+                           style="width: 500px;"
+                           :value="dropdownNumber"
+                           disabled/>
+                </div>
 
-            <!--    Need    a selectedPatientNumber     -->
-                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
+                <div class="col-xs-3 no-padding">
                         <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
                                 :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
                                 :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
                         </button>
-<!--                        <button class="btn btn-danger" @click="saveNewNumber"-->
-<!--                                :disabled="disableSaveButton">-->
-<!--                            Save-->
-<!--                        </button>-->
+
                         <loader v-if="saving"></loader>
-                        <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
+                        <button id="callButton" class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
                                 @click="toggleMuteMessage(selectedPatientNumber)">
                             <i class="fa fa-fw"
                                :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>
                         </button>
                     </div>
+            </div>
+            </div>
 <!--                </div>-->
 <!--            </div>-->
 
@@ -106,7 +116,7 @@
                                :value="clinicalEscalationNumber && clinicalEscalationNumber.length > 0 ? clinicalEscalationNumber : 'Not found'"
                                disabled/>
                     </div>
-                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px;">
+                    <div class="col-xs-3 no-padding">
                         <button class="btn btn-circle" @click="toggleOtherCallMessage(clinicalEscalationNumber)"
                                 :disabled="!ready || !clinicalEscalationNumber || clinicalEscalationNumber.length === 0
                                                                      || (!allowConference && !onPhone[clinicalEscalationNumber] && isCurrentlyOnPhone)
@@ -241,7 +251,7 @@
                 connection: null,
                 //twilio device
                 device: null,
-                dropdownNumber: this.defaultDropdownNumber,
+                dropdownNumber: '',
                 patientUnlistedNumber: '',
                 otherUnlistedNumber: '',
                 callSids: {},
@@ -252,10 +262,10 @@
             }
         },
         computed: {
-            patientNumbers(){
-              return this.$refs.editPatientNumber.patientPhoneNumbers;
+            patientNumbers() {
+                return this.$refs.editPatientNumber.patientPhoneNumbers;
             },
-            disableSaveButton(){
+            disableSaveButton() {
                 if (this.dropdownNumber === 'patientUnlisted') {
                     return this.saving ||
                         isNaN(this.patientUnlistedNumber.toString())
@@ -278,10 +288,9 @@
                 }
                 return isNaN(this.otherUnlistedNumber.toString()) || this.otherUnlistedNumber.toString().length !== 10;
             },
+
             selectedPatientNumber() {
-                if (this.dropdownNumber === 'patientUnlisted') {
-                    return this.patientUnlistedNumber;
-                } else {
+                if (this.dropdownNumber.length !== 0) {
                     return this.dropdownNumber;
                 }
             },
@@ -291,12 +300,9 @@
             isCurrentlyOnConference() {
                 return Object.values(this.onPhone).filter(x => x).length > 1;
             },
+
         },
         methods:{
-            kolos(number){
-                console.log(".skfsdkfsfgasf/asfasf");
-            },
-
             // resetData(){
             //     this.patientNumbers = [];
             //     this.phoneTypes = [];
@@ -343,10 +349,6 @@
 
             // resetToDefaultView(){
             // this.dropdownNumber = this.defaultDropdownNumber;
-            // },
-
-            // defaultDropdownNumber(){
-            //     return this.patientNumbers !== [] ? this.patientNumbers[0] : 'patientUnlisted';
             // },
 
             getUrl: function (path) {
@@ -956,6 +958,9 @@
         },
         mounted() {
             self.initTwilio();
+            EventBus.$on("selectedNumber:toCall", function (number) {
+                self.dropdownNumber = number;
+            });
         }
     }
 </script>
@@ -982,5 +987,13 @@
 
     .error-logs {
         color: red;
+    }
+    .call-button{
+        float: right;
+    }
+    .selected-number{
+        font-weight: bolder;
+        font-size: 20px;
+        padding: 10px;
     }
 </style>

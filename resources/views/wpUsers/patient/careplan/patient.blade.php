@@ -161,8 +161,7 @@ $user_info = [];
                                                 @else
                                                     <edit-patient-number
                                                             :user-id="{{$patient->id}}"
-                                                            error-message="{{$errors->first('home_phone_number')}}"
-                                                            :call-enabled=false>
+                                                            error-message="{{$errors->first('home_phone_number')}}">
                                                     </edit-patient-number>
                                                 @endif
 
