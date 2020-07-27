@@ -105,7 +105,7 @@ class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
      */
     public function setNumberAttribute($value)
     {
-        $this->attributes['number'] = (new StringManipulation())->formatPhoneNumberE164($value);
+        $this->attributes['number'] = isProductionEnv() ? (new StringManipulation())->formatPhoneNumberE164($value) : $value;
     }
 
     public function user()
