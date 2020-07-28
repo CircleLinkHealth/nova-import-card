@@ -7,11 +7,14 @@
 namespace Tests\Feature;
 
 use App\Call;
+use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Tests\Concerns\TwilioFake\Twilio;
 use Tests\CustomerTestCase;
 
@@ -35,6 +38,15 @@ class InboundSmsAndMailTest extends CustomerTestCase
                 'temporary_to'            => null,
             ]
         );
+        //need to have an entry in db to actually handle inbound sms/mail
+        DatabaseNotification::create([
+            'id'              => Str::random(36),
+            'type'            => PatientUnsuccessfulCallNotification::class,
+            'notifiable_id'   => $patient->id,
+            'notifiable_type' => get_class($patient),
+            'created_at'      => now(),
+            'updated_at'      => now(),
+        ]);
     }
 
     /**
