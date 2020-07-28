@@ -6,9 +6,11 @@
 
 namespace App\Jobs;
 
+use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\PostmarkInboundMail;
 use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -61,18 +63,31 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         $user = User::whereEmail($email)->first();
 
         if ( ! $user) {
-            sendSlackMessage('#carecoach_ops', "Could not find patient from inbound mail. See database record id[$recordId]");
+            sendSlackMessage('#carecoach_ops_alerts', "Could not find patient from inbound mail. See database record id[$recordId]");
+
+            return;
+        }
+
+        // 2. check that we have sent an unsuccessful call notification to this patient in the last 2 weeks
+        $hasNotification = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
+            ->whereIn('notifiable_type', [User::class, \App\User::class])
+            ->where('notifiable_id', '=', $user->id)
+            ->where('created_at', '>=', now()->subDays(14))
+            ->exists();
+
+        if ( ! $hasNotification) {
+            sendSlackMessage('#carecoach_ops_alerts', "Could not find unsuccessful call notification from inbound mail. See database record id[$recordId]");
 
             return;
         }
 
         try {
-            // 2. create call for nurse with ASAP flag
+            // 3. create call for nurse with ASAP flag
             /** @var SchedulerService $service */
             $service = app(SchedulerService::class);
             $task    = $service->scheduleAsapCallbackTask($user, $this->input['TextBody'], 'postmark_inbound_mail');
         } catch (\Exception $e) {
-            sendSlackMessage('#carecoach_ops', "{$e->getMessage()}. See database record id[$recordId]");
+            sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
 
             return;
         }
@@ -88,7 +103,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
             ->select(['id', 'first_name'])
             ->first();
 
-        // 3. reply to patient
+        // 4. reply to patient
         $user->notify(new PatientUnsuccessfulCallReplyNotification($careCoach->first_name, ['mail']));
     }
 
