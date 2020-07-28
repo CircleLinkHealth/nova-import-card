@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4a07be15f637e47f2d8c85f8846a324c",
+    "content-hash": "4ec1388b9b62d0a49389d8e425b896f1",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1123,7 +1123,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "b7ae9f8b4c511dd542e16162ebd236478b2b78d0"
+                "reference": "0bbd720ca81f9ab912b109c72a00f4074c556849"
             },
             "type": "laravel-module",
             "extra": {
@@ -1145,15 +1145,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-23T15:56:20+00:00"
+            "time": "2020-07-28T13:21:53+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.1.0",
+            "version": "dev-ROAD-218-enrollment-kpis",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "57f13d849cd1f564b6430d21934fcdc0ba0b6301"
+                "reference": "90418d9bf270bcca22a5b6a183a214b535295089"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1187,7 +1187,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-25T02:41:31+00:00"
+            "time": "2020-07-28T13:21:54+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -16762,6 +16762,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20
     },
