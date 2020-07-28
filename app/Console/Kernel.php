@@ -96,7 +96,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(AssignUnassignedPatientsToStandByNurse::class)->twiceDaily(8, 14);
         $schedule->command(RemoveDuplicateScheduledCalls::class)
             ->everyTenMinutes()
-            ->between('8:00', '19:00');
+            ->between(6, 23);
 
         $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])->dailyAt('10:27');
         $schedule->command(EnrollmentFinalAction::class)->dailyAt('08:27');
@@ -166,7 +166,7 @@ class Kernel extends ConsoleKernel
             ->twiceDaily(12, 16);
 
         $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
-            ->twiceDaily(7, 21);
+            ->twiceDaily('6:10', 21);
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
