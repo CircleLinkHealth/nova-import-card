@@ -2152,3 +2152,16 @@ if ( ! function_exists('opsDashboardAlertWatchers')) {
         return AppConfig::pull('ops_dashboard_alert_watchers', '');
     }
 }
+
+if ( ! function_exists('isUnsuccessfulCallPatientNotificationEnabled')) {
+    function isUnsuccessfulCallPatientNotificationEnabled()
+    {
+        $key = 'enable_unsuccessful_call_patient_notification';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            $val = AppConfig::set($key, false);
+        }
+
+        return $val;
+    }
+}

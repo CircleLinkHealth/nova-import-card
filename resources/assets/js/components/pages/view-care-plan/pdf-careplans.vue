@@ -22,6 +22,7 @@
             'isAdmin',
             'isCareCoach',
             'providerCanApproveOwnCarePlans',
+            'rnApprovalEnabled',
             'showReadyForDrButton',
             'readyForDrButtonDisabled',
             'readyForDrButtonAlreadyClicked',
@@ -33,6 +34,8 @@
             'routeCarePlanNotEligible',
             'patientCarePlanPdfsHasItems',
             'shouldShowApprovalButton',
+            'routeSwitchToWeb',
+            'canSwitchToWeb'
         ],
 
         created() {
@@ -118,9 +121,10 @@
             approveButtonName() {
                 switch (this.careplanStatus) {
                     case 'draft':
-                        return 'QA Approve';
+                        //if rn approval feature is not enabled, we qa and rn approve at the same time
+                        return this.rnApprovalEnabled ? 'QA Approve' : 'QA/RN Approve';
                     case 'qa_approved':
-                        return 'RN Approve'
+                        return this.rnApprovalEnabled ? 'RN Approve' : 'Approve';
                     default:
                         return 'Approve';
                 }
@@ -129,7 +133,7 @@
         methods: Object.assign({},
             mapActions(['destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
             {
-                preventFormSubmitAndShowConfirmDiabetesModalIfYouShould(e){
+                preventFormSubmitAndShowConfirmDiabetesModalIfYouShould(e) {
                     e.preventDefault();
                     const form = e.target;
 
@@ -240,7 +244,7 @@
 
 <template>
     <div class="col-md-12" style="padding-top: 2%;" v-cloak>
-        <div class="row">
+        <div class="row" v-if="mode === Modes.Web">
             <div class="col-md-5 text-left">
                 <template v-if="isProvider">
                     <form id="form-provider-approve" class="inline-block" style="text-align: left"
@@ -330,7 +334,15 @@
             </div>
         </div>
 
-        <div class="row" v-if="patientCarePlan.mode == 'pdf'">
+        <div class="row" v-if="mode === Modes.Pdf">
+            <div class="col-md-5 text-left" v-if="canSwitchToWeb">
+                <a :href="routeSwitchToWeb" class="btn revert-btn inline-block">
+                    REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA
+                </a>
+            </div>
+        </div>
+
+        <div class="row" v-if="patientCarePlan.mode === 'pdf'">
             <div class="col-md-12 list-group">
                 <div class="list-group-item list-group-item-action top-20" v-for="(pdf, index) in patientCarePlan.pdfs"
                      :key="index">
@@ -407,7 +419,7 @@
             <template slot="body">
                 Clicking here sends the Care Plan to Dr., so please ensure this is an assessment-driven
                 Care Plan per CircleLink <a style="color: #337ab7;"
-                    href="https://circlelinkhealth.zendesk.com/hc/en-us/articles/360040849551-CCM-1st-Call-Script-Welcome-and-History">guidelines</a>.
+                                            href="https://circlelinkhealth.zendesk.com/hc/en-us/articles/360040849551-CCM-1st-Call-Script-Welcome-and-History">guidelines</a>.
                 You must perform and draft a welcome call note before approving.
             </template>
             <template slot="footer">

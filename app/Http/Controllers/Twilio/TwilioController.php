@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\Twilio;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessTwilioInboundSmsJob;
 use CircleLinkHealth\Core\Jobs\ProcessTwilioSmsStatusCallbackJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +16,16 @@ class TwilioController extends Controller
 {
     public function __construct()
     {
+    }
+
+    /**
+     * Route called from Twilio whenever we receive an SMS.
+     */
+    public function smsInbound(Request $request)
+    {
+        ProcessTwilioInboundSmsJob::dispatch($request->all());
+
+        return $this->responseWithXmlType(response(''));
     }
 
     /**
