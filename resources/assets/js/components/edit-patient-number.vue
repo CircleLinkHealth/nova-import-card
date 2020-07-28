@@ -193,7 +193,6 @@
                     phoneId:phoneNumberId,
                     patientUserId:this.userId,
                 }).then((response => {
-                        console.log(response.data);
                         this.getPhoneNumbers();
                         this.loading = false;
                     })).catch((error) => {
@@ -249,10 +248,6 @@
                 this.newInputs.push(arr);
             },
 
-            isTheFirstPhoneNumber(){
-            return this.patientPhoneNumbers.length === 0;
-            },
-
             saveNewNumber(){
                 this.loading = true;
                 if (this.newPhoneType.length === 0){
@@ -264,7 +259,7 @@
                 }
 
                 // If it is the first number then make it primary.
-                if (this.isTheFirstPhoneNumber){
+                if (this.patientPhoneNumbers.length === 0){
                     this.makeNewNumberPrimary = true;
                 }
 
@@ -275,7 +270,6 @@
                     makePrimary:this.makeNewNumberPrimary
                 })
                     .then((response => {
-                        console.log(response.data);
                         this.getPhoneNumbers();
                         if (response.data.hasOwnProperty('message')){
                             alert(response.data.message);
@@ -289,8 +283,6 @@
 
             removeInputField(index){
                 this.loading = true;
-              console.log(index);
-              console.log(this.newInputs[index]);
               this.newInputs.splice(index, 1);
               this.loading = false;
 
@@ -303,7 +295,6 @@
                     phoneId:phoneNumberId
                 })
                     .then((response => {
-                        console.log(response.data);
                         this.getPhoneNumbers();
                         this.loading = false;
                         if (response.data.hasOwnProperty('message')){

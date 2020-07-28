@@ -186,13 +186,9 @@ class PatientController extends Controller
         $phoneNumber = formatPhoneNumberE164($phoneNumber);
         /** @var User $patientUser */
         $patientUser  = User::with('patientInfo', 'phoneNumbers')->where('id', $userId)->firstOrFail();
-        $phoneNumbers = /*$this->getAllNumbersOfPatient($patientUser->id)*/ $patientUser->phoneNumbers;
+        $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id);
         $locationId   = optional($patientUser->patientInfo)->location->id ?? null;
-        $numberExists = false;
-
-        if ( ! is_null($patientUser->phoneNumbers->where('type', $phoneType)->first())) {
-            $numberExists = true;
-        }
+        $numberExists = $patientUser->phoneNumbers()->where('type', $phoneType)->exists();
 
         if (is_null($locationId)) {
             $patientWithPractice = $patientUser->loadMissing('primaryPractice');
@@ -208,7 +204,7 @@ class PatientController extends Controller
         if ($numberExists) {
             return response()->json(
                 [
-                    'message' => "The same Phone Type Number with '$phoneType' already exists for this patient",
+                    'message' => "The Phone Type Number '$phoneType' already exists for this patient",
                 ],
             );
         }
