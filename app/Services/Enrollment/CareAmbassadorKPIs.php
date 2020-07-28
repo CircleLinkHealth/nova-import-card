@@ -90,7 +90,6 @@ class CareAmbassadorKPIs
             ->setCallsPerHour()
             ->setConversion()
             ->setPerCost()
-            ->setPatientEarnings()
             ->toArray();
     }
 
