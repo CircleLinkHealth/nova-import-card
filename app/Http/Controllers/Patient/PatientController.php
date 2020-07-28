@@ -547,7 +547,7 @@ class PatientController extends Controller
                 $observation->description
             ),
             'obs_value'      => $observation->obs_value,
-            'dm_alert_level' => empty($observation->alert_level) ? 'default' : $observation->alert_level,
+            'dm_alert_level' => empty($alertLevel = $observation->getAlertLevel()) ? 'default' : $alertLevel,
             'obs_unit'       => $observation->obs_unit,
             'obs_message_id' => $observation->obs_message_id,
             'comment_date'   => Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A'),

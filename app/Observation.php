@@ -88,43 +88,64 @@ class Observation extends BaseModel
         return $this->belongsTo(\App\Comment::class);
     }
 
-    public function getAlertLevelAttribute()
+    public function getAlertLevel()
     {
-        if ($this->obs_value) {
-            $value = preg_split('/\\/|\\_/', $this->obs_value)[0];
+        if ( ! $this->obs_value) {
+            return;
+        }
+        $value = preg_split('/\\/|\\_/', $this->obs_value)[0];
 
-            if (ObservationConstants::BLOOD_PRESSURE == $this->obs_key) {
-                if ($value < 80 || $value >= 180) {
-                    return 'danger';
-                }
-                if (($value >= 80 && $value < 100) || ($value >= 130 && $value < 180)) {
-                    return 'warning';
-                }
-
-                return 'success';
+        if (ObservationConstants::BLOOD_PRESSURE == $this->obs_key) {
+            if ($value = (int) $value < 80 || $value >= 180) {
+                return 'danger';
             }
-            if (ObservationConstants::BLOOD_SUGAR == $this->obs_key) {
-                if ($value < 60 || $value >= 350) {
-                    return 'danger';
-                }
-                if (($value >= 60 && $value < 80) || ($value >= 140 && $value < 350)) {
-                    return 'warning';
-                }
-
-                return 'success';
+            if (($value >= 80 && $value < 100) || ($value >= 130 && $value < 180)) {
+                return 'warning';
             }
-            if (ObservationConstants::CIGARETTE_COUNT == $this->obs_key) {
-                if ($value < 4) {
-                    return 'success';
-                }
 
+            return 'success';
+        }
+        if (ObservationConstants::BLOOD_SUGAR == $this->obs_key) {
+            if ($value = (int) $value < 60 || $value >= 350) {
+                return 'danger';
+            }
+            if (($value >= 60 && $value < 80) || ($value >= 140 && $value < 350)) {
+                return 'warning';
+            }
+
+            return 'success';
+        }
+        if (ObservationConstants::A1C == $this->obs_key) {
+            if ($value = (float) $value > $diabetesLevel = 7.1) {
                 return 'danger';
             }
 
-            return $this->severity;
+            if ($value >= $normalLevel = 5.7 && $value <= $diabetesLevel) {
+                return 'warning';
+            }
+
+            return 'success';
+        }
+        if (ObservationConstants::CIGARETTE_COUNT == $this->obs_key) {
+            if ($value = (int) $value < 4) {
+                return 'success';
+            }
+
+            return 'danger';
+        }
+        if (ObservationConstants::MEDICATIONS_ADHERENCE_OBSERVATION_TYPE == $this->obs_key) {
+            if ('Y' === $value = (string) strtoupper($value)) {
+                return 'success';
+            }
+
+            if ('N' === $value) {
+                return 'danger';
+            }
+
+            return;
         }
 
-        return $name ?? null;
+        return $this->severity;
     }
 
     public function getAlertLogAttribute()
