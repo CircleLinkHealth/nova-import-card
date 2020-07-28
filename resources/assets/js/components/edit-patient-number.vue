@@ -99,7 +99,8 @@
                 </div>
             </div>
 
-            <a v-if="!loading && this.newInputs.length === 0"
+<!-- this.patientPhoneNumbers.length < 3 is not really dynamic. We only have 3 phone types for now     -->
+            <a v-if="!loading && this.newInputs.length === 0 && this.patientPhoneNumbers.length < 3"
                class="glyphicon glyphicon-plus-sign add-new-number"
                title="Add Phone Number"
                @click="addPhoneField()">
