@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Call;
 use App\Contracts\ReportFormatter;
+use App\Events\CarePlanWasApproved;
 use App\Events\NoteFinalSaved;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Http\Requests\NotesReport;
@@ -15,6 +16,7 @@ use App\Jobs\SendSingleNotification;
 use App\Note;
 use App\Rules\PatientEmailAttachments;
 use App\Rules\PatientEmailDoesNotContainPhi;
+use App\Rules\ValidatePatientCustomEmail;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
@@ -70,6 +72,9 @@ class NotesController extends Controller
         // patient view
         /** @var User $patient */
         $patient = User::with([
+            'carePlan' => function ($q) {
+                return $q->select(['id', 'user_id', 'status', 'created_at']);
+            },
             'patientSummaries' => function ($q) {
                 return $q->where('month_year', Carbon::now()->startOfMonth());
             },
@@ -145,27 +150,22 @@ class NotesController extends Controller
             return response('You can only edit DRAFT notes.', 401);
         }
 
-        //if we are editing a note, no need to fetch tasks
-        if ($existingNote && Note::STATUS_COMPLETE === $existingNote->status) {
-            $nurse_patient_tasks = [];
-        } else {
-            $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
-                ->where('type', '=', 'task')
-                ->where('inbound_cpm_id', '=', $patientId)
-                ->where('outbound_cpm_id', '=', $author_id)
-                ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
-                )
-                ->get();
-        }
+        $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
+            ->where('type', '=', 'task')
+            ->where('inbound_cpm_id', '=', $patientId)
+            ->where('outbound_cpm_id', '=', $author_id)
+            ->select(
+                [
+                    'id',
+                    'type',
+                    'sub_type',
+                    'attempt_note',
+                    'scheduled_date',
+                    'window_start',
+                    'window_end',
+                ]
+            )
+            ->get();
 
         // we used to send $meds for Phoenix Heart
         // removed server side implementation because it could use optimization
@@ -195,6 +195,14 @@ class NotesController extends Controller
             $answerFromMoreInfo = $this->getAnswerFromSelfEnrolmentSurvey($patientId);
         }
 
+        // RN Approval Flow - session must have SESSION_RN_APPROVED_KEY
+        $shouldRnApprove = $patient->carePlan->shouldRnApprove($author);
+        $hasRnApprovedCp = false;
+        if ($shouldRnApprove) {
+            $approvedId      = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
+            $hasRnApprovedCp = $approvedId && $approvedId == $author->id;
+        }
+
         $view_data = [
             'userTime'                        => $performedAt->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
             'program_id'                      => $patient->program_id,
@@ -222,6 +230,8 @@ class NotesController extends Controller
             'hasSuccessfulCall'               => $hasSuccessfulCall,
             'attestationRequirements'         => $this->getAttestationRequirementsIfYouShould($patient),
             'shouldShowForwardNoteSummaryBox' => is_null($existingNote) || 'draft' === optional($existingNote)->status,
+            'shouldRnApprove'                 => $shouldRnApprove,
+            'hasRnApprovedCarePlan'           => $hasRnApprovedCp,
         ];
 
         return view('wpUsers.patient.note.create', $view_data);
@@ -546,13 +556,45 @@ class NotesController extends Controller
 
         $input = $request->allSafe();
 
-        $patient = User::findOrFail($patientId);
+        /** @var User $author */
+        $author = auth()->user();
+
+        /** @var User $patient */
+        $patient = User::with(
+            [
+                'carePlan' => function ($q) {
+                    $q->select(['id', 'user_id', 'status', 'created_at']);
+                },
+            ]
+        )->findOrFail($patientId);
 
         if ( ! isset($input['body']) || null === $input['body']) {
             return redirect()
                 ->back()
                 ->withErrors(['Cannot create note with empty body.'])
                 ->withInput();
+        }
+
+        // RN Approval Flow - session must have SESSION_RN_APPROVED_KEY
+        $hasRnApprovedCp = false;
+        if ($patient->carePlan->shouldRnApprove($author) &&
+            isset($input['call_status']) && Call::REACHED === $input['call_status']) {
+            $approvedId      = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
+            $hasRnApprovedCp = $approvedId && $approvedId == auth()->id();
+            if ( ! $hasRnApprovedCp) {
+                $errors = ['Cannot save note. Please click on Ready For Dr. in View Care Plan.'];
+                try {
+                    $input['status'] = 'draft';
+                    $this->saveNote($patient, $input);
+                } catch (\Exception $exception) {
+                    $errors[] = $exception->getMessage();
+                }
+
+                return redirect()
+                    ->back()
+                    ->withErrors($errors)
+                    ->withInput();
+            }
         }
 
         // validating attested problems by nurse. Checking existence since we are about to attach them below
@@ -578,47 +620,27 @@ class NotesController extends Controller
             sendPatientBhiUnattestedWarning($patientId);
         }
 
-        $editingNoteId = ! empty($input['noteId'])
-            ? $input['noteId']
-            : null;
-
-        $input['status'] = 'complete';
-
         $shouldSendPatientEmail = isset($input['email-patient']);
-
         if ($shouldSendPatientEmail) {
             Validator::make($input, [
-                'email-subject'      => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
-                'patient-email-body' => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
-                'attachments'        => ['sometimes', new PatientEmailAttachments()],
+                'email-subject'        => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'patient-email-body'   => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'attachments'          => ['sometimes', new PatientEmailAttachments()],
+                'custom_patient_email' => [
+                    'sometimes',
+                    new ValidatePatientCustomEmail(),
+                ],
             ])->validate();
         }
 
-        //Performed By field is removed from the form (per CPM-1172)
-        $input['author_id'] = auth()->id();
-
-        //performed_at entered in patient's timezone and stored in app's timezone
-        $input['performed_at'] = array_key_exists('performed_at', $input) ? Carbon::parse(
-            $input['performed_at'],
-            $patient->timezone
-        )->setTimezone(config('app.timezone'))->toDateTimeString() : now()->toDateTimeString();
-
-        $noteIsAlreadyComplete = false;
-        if ($editingNoteId) {
-            $note                  = Note::findOrFail($editingNoteId);
-            $noteIsAlreadyComplete = Note::STATUS_COMPLETE === $note->status;
-
-            //CPM-1061 Notes cannot be editable (to be NCQA compliant)
-            if ($noteIsAlreadyComplete) {
-                return redirect()
-                    ->back()
-                    ->withErrors(['Cannot edit note. Please use create addendum to make corrections.'])
-                    ->withInput();
-            }
-
-            $note = $this->service->editNote($note, $input);
-        } else {
-            $note = $this->service->editNote(new Note($input), $input);
+        try {
+            $input['status'] = 'complete';
+            $note            = $this->saveNote($patient, $input);
+        } catch (\Exception $exception) {
+            return redirect()
+                ->back()
+                ->withErrors([$exception->getMessage()])
+                ->withInput();
         }
 
         event(new NoteFinalSaved($note, [
@@ -626,6 +648,10 @@ class NotesController extends Controller
             'notifyCLH'      => $input['notify_circlelink_support'] ?? false,
             'forceNotify'    => false,
         ]));
+
+        if ($hasRnApprovedCp) {
+            event(new CarePlanWasApproved($patient, $author));
+        }
 
         if ($shouldSendPatientEmail) {
             $this->sendPatientEmail($input, $patient, $note);
@@ -649,12 +675,12 @@ class NotesController extends Controller
          *   - if any other role: store a call
          */
 
-        if ( ! $noteIsAlreadyComplete && $is_task) {
+        if ($is_task) {
             $task_id     = $input['task_id'];
             $task_status = $input['task_status'];
             $call        = Call::find($task_id);
             if ($call) {
-                if ('done' === $task_status) {
+                if (Call::DONE === $task_status) {
                     if ('Call Back' === $call->sub_type) {
                         if ( ! isset($input['call_status'])) {
                             return redirect()
@@ -677,7 +703,7 @@ class NotesController extends Controller
                             $note->performed_at
                         );
                     } else {
-                        $call->status = 'done';
+                        $call->status = Call::DONE;
                     }
                 }
 
@@ -701,14 +727,12 @@ class NotesController extends Controller
                     return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
                         'messages',
                         [
-                            $noteIsAlreadyComplete
-                                ? 'Successfully Edited Note'
-                                : 'Successfully Created Note',
+                            'Successfully Created Note',
                         ]
                     );
                 }
 
-                if ( ! $noteIsAlreadyComplete && $is_phone_session) {
+                if ($is_phone_session) {
                     if ( ! isset($input['call_status'])) {
                         return redirect()
                             ->back()
@@ -717,7 +741,7 @@ class NotesController extends Controller
                     }
 
                     $call_status = $input['call_status'];
-                    $is_saas     = auth()->user()->isSaas();
+                    $is_saas     = $author->isSaas();
                     $prediction  = null;
 
                     if (Call::REACHED == $call_status) {
@@ -760,15 +784,15 @@ class NotesController extends Controller
             }
 
             //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
-            if ( ! $noteIsAlreadyComplete && $is_phone_session) {
-                if (isset($input['call_status']) && 'reached' == $input['call_status']) {
-                    if (auth()->user()->isProvider()) {
+            if ($is_phone_session) {
+                if (isset($input['call_status']) && Call::REACHED == $input['call_status']) {
+                    if ($author->isProvider()) {
                         $this->service->storeCallForNote(
                             $note,
-                            'reached',
+                            Call::REACHED,
                             $patient,
-                            Auth::user(),
-                            Auth::user()->id,
+                            $author,
+                            $author->id,
                             null
                         );
 
@@ -779,14 +803,14 @@ class NotesController extends Controller
                     }
                 }
 
-                if (auth()->user()->hasRole('no-ccm-care-center')) {
+                if ($author->hasRole('no-ccm-care-center')) {
                     if (isset($input['welcome_call'])) {
                         $this->service->storeCallForNote(
                             $note,
                             'welcome call',
                             $patient,
-                            auth()->user(),
-                            auth()->user()->id,
+                            $author,
+                            $author->id,
                             null
                         );
 
@@ -797,8 +821,8 @@ class NotesController extends Controller
                             $note,
                             'welcome attempt',
                             $patient,
-                            auth()->user(),
-                            auth()->user()->id,
+                            $author,
+                            $author->id,
                             null
                         );
                     }
@@ -808,8 +832,8 @@ class NotesController extends Controller
                             $note,
                             'other call',
                             $patient,
-                            auth()->user(),
-                            auth()->user()->id,
+                            $author,
+                            $author->id,
                             null
                         );
                     }
@@ -820,9 +844,7 @@ class NotesController extends Controller
         return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
             'messages',
             [
-                $noteIsAlreadyComplete
-                    ? 'Successfully Edited Note'
-                    : 'Successfully Created Note',
+                'Successfully Created Note',
             ]
         );
     }
@@ -881,32 +903,13 @@ class NotesController extends Controller
 
         $patient = User::findOrFail($patientId);
 
-        $noteId = ! empty($input['note_id'])
-            ? $input['note_id']
-            : null;
-
-        //in case Performed By field is removed from the form (per CPM-165)
-        if ( ! isset($input['author_id'])) {
-            $input['author_id'] = auth()->id();
-        }
-
-        $input['performed_at'] = array_key_exists('performed_at', $input) ? Carbon::parse(
-            $input['performed_at'],
-            $patient->timezone
-        )->setTimezone(config('app.timezone'))->toDateTimeString() : now()->toDateTimeString();
-
-        if ($noteId) {
-            $note = Note::find($noteId);
-            if ( ! $note) {
-                return response()->json(['error' => "could not find note with id $noteId"]);
+        try {
+            if ( ! isset($input['status'])) {
+                $input['status'] = 'draft';
             }
-            if (Note::STATUS_COMPLETE === $note->status) {
-                return response()->json(['error' => "cannot edit note with status 'complete': $noteId"]);
-            }
-            $note = $this->service->editNote($note, $input);
-        } else {
-            $input['status'] = 'draft';
-            $note            = Note::create($input);
+            $note = $this->saveNote($patient, $input);
+        } catch (\Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()]);
         }
 
         return response()->json(['message' => 'success', 'note_id' => $note->id]);
@@ -1035,6 +1038,45 @@ class NotesController extends Controller
         )
             ->flatten()
             ->all();
+    }
+
+    /**
+     * @param $input
+     *
+     * @throws \Exception
+     */
+    private function saveNote(User $patient, $input): ?Note
+    {
+        //note_id comes from form, noteId comes from route
+        $noteId = $input['note_id'] ?? ($input['noteId'] ?? null);
+
+        //in case Performed By field is removed from the form (per CPM-165)
+        if ( ! isset($input['author_id'])) {
+            $input['author_id'] = auth()->id();
+        }
+
+        $input['performed_at'] = array_key_exists('performed_at', $input) ? Carbon::parse(
+            $input['performed_at'],
+            $patient->timezone
+        )->setTimezone(config('app.timezone'))->toDateTimeString() : now()->toDateTimeString();
+
+        if ($noteId) {
+            $note = Note::find($noteId);
+            if ( ! $note) {
+                throw new \Exception("Could not find note with id $noteId");
+            }
+            if (Note::STATUS_COMPLETE === $note->status) {
+                throw new \Exception('Cannot edit note. Please use create addendum to make corrections.');
+            }
+            $note = $this->service->editNote($note, $input);
+        } else {
+            if (isset($input['call_status']) && Call::REACHED === $input['call_status']) {
+                $input['successful_clinical_call'] = 1;
+            }
+            $note = Note::create($input);
+        }
+
+        return $note;
     }
 
     private function sendPatientEmail($input, $patient, $note)

@@ -12,7 +12,8 @@
 
     <link href="{{ mix('/css/patientsearch.css') }}" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css" integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css"
+          integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous"/>
 
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
 
@@ -23,7 +24,9 @@
     <link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
     @if(!isset($isPdf))
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css" integrity="sha256-iWTx/iC9IoKaoSKD5+WVFef8ZYNIgQ4AxVpMbBw2hig=" crossorigin="anonymous" />
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css"
+              integrity="sha256-iWTx/iC9IoKaoSKD5+WVFef8ZYNIgQ4AxVpMbBw2hig=" crossorigin="anonymous"/>
     @endif
 
 <!-- Fonts -->
@@ -41,6 +44,19 @@
     <style>
         span.twitter-typeahead .twitter-typeahead {
             position: absolute !important;
+        }
+    </style>
+    <style>
+        .custom-tooltip {
+            display: none;
+            z-index: 9999999;
+            position: absolute;
+            border: 1px solid #333;
+            background-color: #161616;
+            border-radius: 5px;
+            padding: 10px;
+            color: #fff;
+            font-size: 12px;
         }
     </style>
     @stack('styles')
@@ -80,7 +96,8 @@
 
 <script type="text/javascript" src="{{mix('compiled/js/app-provider-ui.js')}}"></script>
 <script type="text/javascript" src="{{ mix('compiled/js/issue-688.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js" integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js"
+        integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
 
 @stack('scripts')
@@ -91,11 +108,59 @@
         try {
             //bootstrap selectpicker is found in issue-688.js (see webpack.mix.js)
             $('.selectpicker').selectpicker('refresh');
-        }
-        catch (e) {
+        } catch (e) {
             console.debug(e);
         }
     });
+</script>
+<script>
+    (function ($) {
+        const maxAttempts = 5;
+        const registered = [];
+
+        function setupTooltips(attempt) {
+            if (attempt >= maxAttempts) {
+                return;
+            }
+
+            //try again because some elements are rendered on server side (blade.php) and some on client side (vue.js)
+            //vue.js rendering depends on client machine performance
+            setTimeout(() => setupTooltips(attempt + 1), 500 * attempt);
+            $('.with-tooltip')
+                .each(function (index) {
+                    if (registered[this]) {
+                        return;
+                    }
+                    registered[this] = 1;
+                    $(this).hover(function () {
+                        // Hover over code
+                        var title = $(this).attr('title');
+
+                        $(this)
+                            .data('tipText', title)
+                            .removeAttr('title');
+
+                        $('<p class="custom-tooltip"></p>')
+                            .text(title)
+                            .appendTo('body')
+                            .fadeIn('slow');
+
+                    }, function () {
+                        // Hover out code
+                        $(this).attr('title', $(this).data('tipText'));
+                        $('.custom-tooltip').remove();
+                    })
+                        .mousemove(function (e) {
+                            var mousex = e.pageX + 20; //Get X coordinates
+                            var mousey = e.pageY + 10; //Get Y coordinates
+                            $('.custom-tooltip').css({top: mousey, left: mousex})
+                        });
+                });
+
+        }
+
+        setupTooltips(1);
+    })(jQuery);
 </script>
 @endif
 

@@ -6,7 +6,7 @@
 
 namespace App\Listeners;
 
-use App\Events\CarePlanWasQAApproved;
+use App\Events\CarePlanWasRNApproved;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -20,7 +20,7 @@ class AutoApproveCarePlan implements ShouldQueue
      *
      * @return void
      */
-    public function handle(CarePlanWasQAApproved $event)
+    public function handle(CarePlanWasRNApproved $event)
     {
         if ( ! $this->shouldAutoApprove($event)) {
             return;
@@ -31,7 +31,7 @@ class AutoApproveCarePlan implements ShouldQueue
         $event->patient->carePlan->save();
     }
 
-    private function shouldAutoApprove(CarePlanWasQAApproved $event): bool
+    private function shouldAutoApprove(CarePlanWasRNApproved $event): bool
     {
         return (bool) $event->patient->primaryPractice->cpmSettings()->auto_approve_careplans;
     }

@@ -36,31 +36,11 @@ class AwvNotifyBillingProviderOfCareDocument implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param mixed $patientReportdata
      */
     public function __construct(int $patientUserId, int $reportMediaId)
     {
         $this->patientUserId = $patientUserId;
         $this->reportMediaId = $reportMediaId;
-    }
-
-    public static function createFromAwvPatientReport(?string $patientReportdata)
-    {
-        $decoded = json_decode($patientReportdata, true);
-
-        if ( ! is_array($decoded) || empty($decoded)) {
-            throw new \Exception('Invalid patient report data received from AWV');
-        }
-
-        if ( ! array_keys_exist([
-            'patient_id',
-            'report_media_id',
-        ], $decoded)) {
-            throw new \Exception('There are keys missing from patient report data received from AWV.');
-        }
-
-        return new static($decoded['patient_id'], $decoded['report_media_id']);
     }
 
     /**

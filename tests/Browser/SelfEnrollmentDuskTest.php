@@ -15,7 +15,7 @@ use Notification;
 use PrepareDataForReEnrollmentTestSeeder;
 use Tests\DuskTestCase;
 
-class SelfEnrollmentDuskTestTest extends DuskTestCase
+class SelfEnrollmentDuskTest extends DuskTestCase
 {
     /**
      * Helper to create fake Enrollees.

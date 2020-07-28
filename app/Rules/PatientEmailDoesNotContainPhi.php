@@ -35,7 +35,8 @@ class PatientEmailDoesNotContainPhi implements Rule
      */
     public function __construct(User $patientUser)
     {
-        $this->patientUser = $patientUser;
+        $this->patientUser            = $patientUser;
+        $this->transformable['state'] = array_map('strtolower', array_change_key_case(usStatesArrayForDropdown(), CASE_LOWER));
     }
 
     /**

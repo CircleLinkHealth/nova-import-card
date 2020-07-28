@@ -1,13 +1,12 @@
 <script>
-    import {mapActions, mapGetters} from 'vuex'
-    import {getPatientCarePlan, destroyPdf, uploadPdfCarePlan, addNotification} from '../../../store/actions'
-    import {patientCarePlan} from '../../../store/getters'
+    import {mapActions} from 'vuex'
+    import {addNotification, destroyPdf, uploadPdfCarePlan} from '../../../store/actions'
     import modal from '../../shared/modal.vue'
     import Dropzone from 'vue2-dropzone'
 
     import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
     import CarePlanApi from '../../../api/patient-care-plan'
-    import { rootUrl } from '../../../app.config'
+    import {rootUrl} from '../../../app.config'
 
     export default {
         components: {
@@ -17,7 +16,26 @@
         },
 
         props: [
-            'mode'
+            'careplanStatus',
+            'mode',
+            'isProvider',
+            'isAdmin',
+            'isCareCoach',
+            'providerCanApproveOwnCarePlans',
+            'rnApprovalEnabled',
+            'showReadyForDrButton',
+            'readyForDrButtonDisabled',
+            'readyForDrButtonAlreadyClicked',
+            'routeApproveOwn',
+            'routeApprove',
+            'routeApproveViewNext',
+            'routeSwitchToPdf',
+            'routePrintCarePlan',
+            'routeCarePlanNotEligible',
+            'patientCarePlanPdfsHasItems',
+            'shouldShowApprovalButton',
+            'routeSwitchToWeb',
+            'canSwitchToWeb'
         ],
 
         created() {
@@ -39,30 +57,17 @@
 
             //update problems if they have changed in care-areas modal
             App.$on('patient-problems-updated', (problems) => {
-                let problemNames = problems.map(function(problem){
+                let problemNames = problems.map(function (problem) {
                     return problem.name;
                 });
                 this.patientProblemNames = problemNames;
             });
 
-            $('#form-approve').submit(function (e) {
-                e.preventDefault();
-                const form = this;
+            $('#form-approve').submit(self.preventFormSubmitAndShowConfirmDiabetesModalIfYouShould)
 
-                if (self.patientHasBothTypesOfDiabetes && self.patientCarePlan.status === 'draft') {
-                    $(":input").each(function() {
-                        if ($(this).attr('name') === "confirm_diabetes_conditions") {
-                            form.submit();
-                        }
-                    });
+            $('#form-approve-next').submit(self.preventFormSubmitAndShowConfirmDiabetesModalIfYouShould)
 
-                    App.$emit('show-diabetes-check-modal');
-
-                    return;
-                } else {
-                    form.submit();
-                }
-            })
+            $('#form-provider-approve').submit(self.preventFormSubmitAndShowConfirmDiabetesModalIfYouShould)
 
         },
         data() {
@@ -70,6 +75,7 @@
                 patientId: $('meta[name="patient_id"]').attr('content'),
                 patientCareplanId: $('meta[name="patient_careplan_id"]').attr('content'),
                 showUploadModal: false,
+                showReadyForDrModal: false,
                 modeBeforeUpload: '',
                 apiUrl: null,
                 csrfToken: document.head.querySelector('meta[name="csrf-token"]').content,
@@ -97,10 +103,54 @@
             patientHasBothTypesOfDiabetes() {
                 return this.patientProblemNames.includes('Diabetes Type 1') && this.patientProblemNames.includes('Diabetes Type 2');
             },
+            providerCanApproveOwnCarePlansSubmitButtonText() {
+                return this.providerCanApproveOwnCarePlans ? "View all Practice Care Plans" : "View Assigned Care Plans Only";
+            },
+            csrfInput() {
+                return `<input type="hidden" name="_token" value="${this.csrfToken}">`;
+            },
+            readyForDrButtonTooltip() {
+                if (this.readyForDrButtonDisabled) {
+                    return 'Successful welcome call note required';
+                }
+                if (this.readyForDrButtonAlreadyClicked) {
+                    return 'You have approved this Care Plan. Please proceed to save clinical note!';
+                }
+                return '';
+            },
+            approveButtonName() {
+                switch (this.careplanStatus) {
+                    case 'draft':
+                        //if rn approval feature is not enabled, we qa and rn approve at the same time
+                        return this.rnApprovalEnabled ? 'QA Approve' : 'QA/RN Approve';
+                    case 'qa_approved':
+                        return this.rnApprovalEnabled ? 'RN Approve' : 'Approve';
+                    default:
+                        return 'Approve';
+                }
+            }
         },
         methods: Object.assign({},
             mapActions(['destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
             {
+                preventFormSubmitAndShowConfirmDiabetesModalIfYouShould(e) {
+                    e.preventDefault();
+                    const form = e.target;
+
+                    if (self.patientHasBothTypesOfDiabetes) {
+                        $(":input").each(function () {
+                            if ($(this).attr('name') === "confirm_diabetes_conditions") {
+                                form.submit();
+                            }
+                        });
+
+                        App.$emit('show-diabetes-check-modal');
+
+                        return;
+                    } else {
+                        form.submit();
+                    }
+                },
                 getPatientCarePlan(patientId) {
                     if (!patientId) {
                         return
@@ -129,6 +179,9 @@
 
                 openModal() {
                     this.showUploadModal = true
+                },
+                openReadyForDrModal() {
+                    this.showReadyForDrModal = true;
                 },
                 deletePdf(pdf) {
                     let disassociate = confirm('Are you sure you want to delete this CarePlan?');
@@ -178,6 +231,12 @@
                         timeout: true
                     })
                 },
+
+                notEligibleClick() {
+                    if (confirm('CAUTION: Clicking "confirm" will delete this patient’s entire record from Care Plan Manager. This action cannot be undone. Do you want to delete this patients entire record?')) {
+                        document.getElementById('not-eligible-form').submit();
+                    }
+                }
             }
         ),
     }
@@ -185,21 +244,108 @@
 
 <template>
     <div class="col-md-12" style="padding-top: 2%;" v-cloak>
-        <div class="row">
-            <div class="col-md-3 text-left">
-                <slot name="careplanViewOptions"></slot>
+        <div class="row" v-if="mode === Modes.Web">
+            <div class="col-md-5 text-left">
+                <template v-if="isProvider">
+                    <form id="form-provider-approve" class="inline-block" style="text-align: left"
+                          :action="routeApproveOwn"
+                          method="POST">
+                        <div v-html="csrfInput"></div>
+                        <input class="btn btn-sm btn-info" aria-label="..."
+                               type="submit"
+                               :value="providerCanApproveOwnCarePlansSubmitButtonText">
+                    </form>
+                </template>
             </div>
-            <div class="col-md-9 text-right">
-                <slot name="buttons"></slot>
+            <div class="col-md-2 text-center">
+                <template v-if="showReadyForDrButton">
+                    <form id="form-approve"
+                          :class="{'with-tooltip': readyForDrButtonDisabled || readyForDrButtonAlreadyClicked}"
+                          :title="readyForDrButtonTooltip"
+                          :action="routeApprove"
+                          method="POST" style="display: inline">
+                        <div v-html="csrfInput"></div>
+                        <button class="btn btn-success btn-sm inline-block"
+                                aria-label="..."
+                                form="form-approve"
+                                type="submit"
+                                id="btn-rn-approve"
+                                :disabled="readyForDrButtonDisabled || readyForDrButtonAlreadyClicked"
+                                role="button">
+                            Ready for Dr.
+                        </button>
+                    </form>
+                    <button @click="openReadyForDrModal" class="btn btn-xs btn-info">
+                        <i class="fa fa-question-circle">
+
+                        </i>
+                    </button>
+
+                </template>
+            </div>
+            <div class="col-md-5 text-right">
+                <a v-if="patientCarePlanPdfsHasItems" :href="routeSwitchToPdf"
+                   class="btn btn-info btn-sm inline-block">PDF CarePlans</a>
+                <template v-if="shouldShowApprovalButton">
+                    <form v-if="!isCareCoach"
+                          id="form-approve"
+                          :action="routeApprove"
+                          method="POST" style="display: inline">
+                        <div v-html="csrfInput"></div>
+                        <button class="btn btn-info btn-sm inline-block"
+                                aria-label="..."
+                                form="form-approve"
+                                type="submit"
+                                role="button">
+                            {{approveButtonName}}
+                        </button>
+                    </form>
+
+                    <template v-if="isProvider || isAdmin">
+                        <form id="form-approve-next"
+                              :action="routeApproveViewNext"
+                              method="POST" style="display: inline">
+                            <div v-html="csrfInput"></div>
+                            <input class="btn btn-success btn-sm inline-block"
+                                   aria-label="..."
+                                   type="submit"
+                                   role="button" :value="approveButtonName + ' and View Next'">
+                        </form>
+
+                        <form :action="routeCarePlanNotEligible"
+                              method="POST" id="not-eligible-form" style="display: inline">
+                            <div v-html="csrfInput"></div>
+                            <button type="button" style="margin-right:10px;"
+                                    @click="notEligibleClick"
+                                    class="btn btn-danger btn-sm text-right">
+                                Not Eligible
+                            </button>
+                        </form>
+
+                    </template>
+
+                </template>
                 <!--<a :href="assessmentUrl" v-if="patientCarePlan.status == 'provider_approved'" class="btn btn-info btn-sm inline-block">View Assessment</a>-->
                 <a @click="openModal()" class="btn btn-info btn-sm inline-block">Upload PDF</a>
-                <slot></slot>
+                <a class="btn btn-info btn-sm inline-block" aria-label="..."
+                   role="button"
+                   :href="routePrintCarePlan">Print
+                    This Page</a>
             </div>
         </div>
 
-        <div class="row" v-if="patientCarePlan.mode == 'pdf'">
+        <div class="row" v-if="mode === Modes.Pdf">
+            <div class="col-md-5 text-left" v-if="canSwitchToWeb">
+                <a :href="routeSwitchToWeb" class="btn revert-btn inline-block">
+                    REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA
+                </a>
+            </div>
+        </div>
+
+        <div class="row" v-if="patientCarePlan.mode === 'pdf'">
             <div class="col-md-12 list-group">
-                <div class="list-group-item list-group-item-action top-20" v-for="(pdf, index) in patientCarePlan.pdfs" :key="index">
+                <div class="list-group-item list-group-item-action top-20" v-for="(pdf, index) in patientCarePlan.pdfs"
+                     :key="index">
                     <h3 class="pdf-title">
                         <a :href="pdf.url" target="_blank">{{pdf.label}} </a>
                         <button @click="deletePdf(pdf)" class="btn btn-xs btn-danger problem-delete-btn">
@@ -214,13 +360,15 @@
                                 <div>
                                     Sorry, your browser does not support PDF Embeds ...
 
-                                    Please update it as soon as possible, or click <a :href="pdf.url">here</a> to download the PDF
+                                    Please update it as soon as possible, or click <a :href="pdf.url">here</a> to
+                                    download the PDF
                                 </div>
                             </iframe>
                         </object>
                     </div>
                 </div>
-                <div class="list-group-item list-group-item-action top-20 pointer" @click="openModal()" v-if="patientCarePlan.pdfs.length === 0">
+                <div class="list-group-item list-group-item-action top-20 pointer" @click="openModal()"
+                     v-if="patientCarePlan.pdfs.length === 0">
                     <h3 class="pdf-title text-center">
                         No PDF files uploaded yet ... Click to upload
                     </h3>
@@ -232,7 +380,8 @@
             <div class="col-md-12">
                 <center>
                     <h3>
-                        This Careplan is in Web mode. Click <a :href="viewCareplanUrl">here</a> to access it, or <a :href="pdfSwitchUrl">here</a> to switch to PDF mode.
+                        This Careplan is in Web mode. Click <a :href="viewCareplanUrl">here</a> to access it, or <a
+                            :href="pdfSwitchUrl">here</a> to switch to PDF mode.
                     </h3>
                 </center>
             </div>
@@ -261,6 +410,21 @@
             <template slot="footer">
             </template>
         </modal>
+
+        <modal v-show="showReadyForDrModal">
+            <template slot="header">
+                <button type="button" class="close" @click="showReadyForDrModal = false">×</button>
+                <h4 class="modal-title">Care Plan Ready For Dr.</h4>
+            </template>
+            <template slot="body">
+                Clicking here sends the Care Plan to Dr., so please ensure this is an assessment-driven
+                Care Plan per CircleLink <a style="color: #337ab7;"
+                                            href="https://circlelinkhealth.zendesk.com/hc/en-us/articles/360040849551-CCM-1st-Call-Script-Welcome-and-History">guidelines</a>.
+                You must perform and draft a welcome call note before approving.
+            </template>
+            <template slot="footer">
+            </template>
+        </modal>
     </div>
 </template>
 
@@ -275,5 +439,11 @@
 
     .pointer {
         cursor: pointer;
+    }
+
+    #btn-rn-approve[disabled] {
+        background-color: #757575;
+        border-color: #3d3c3c;
+        opacity: 0.4;
     }
 </style>
