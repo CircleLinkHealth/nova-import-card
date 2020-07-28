@@ -19,19 +19,23 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Carbon\Carbon                           $created_at
  * @property \Carbon\Carbon                           $updated_at
  * @property \CircleLinkHealth\Customer\Entities\User $user
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereAlert($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereCreatedAt($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereMemberUserId($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereType($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereUpdatedAt($value)
- * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereUserId($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereAlert($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereMemberUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereUserId($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson query()
- * @property int|null                                                                                    $revision_history_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson query()
+ *
+ * @property int|null $revision_history_count
  */
 class CarePerson extends BaseModel
 {
@@ -70,6 +74,11 @@ class CarePerson extends BaseModel
      * @var string
      */
     protected $table = 'patient_care_team_members';
+
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 
     public function user()
     {
