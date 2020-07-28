@@ -6,7 +6,6 @@
 
 namespace App\Services\Enrollment;
 
-use App\CareAmbassadorLog;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -197,10 +196,7 @@ class CareAmbassadorKPIs
 
     private function setTotalSeconds()
     {
-        $this->totalSeconds = CareAmbassadorLog::where('enroller_id', $this->careAmbassadorModel->id)
-            ->where('day', '>=', $this->start)
-            ->where('day', '<=', $this->end)
-            ->sum('total_time_in_system');
+        $this->totalSeconds = $this->enrolleesAssigned->sum('total_time');
 
         return $this;
     }
