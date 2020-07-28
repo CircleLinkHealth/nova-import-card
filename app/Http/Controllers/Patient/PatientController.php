@@ -377,7 +377,7 @@ class PatientController extends Controller
                     ->whereNotNull('obs_value')
                     ->where('obs_value', '!=', '')
                     ->orderBy('obs_date', 'desc')
-                    ->take(20);
+                    ->take(40);
             },
             'patientSummaries',
         ])

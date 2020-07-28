@@ -133,7 +133,7 @@ class Observation extends BaseModel
 
             return 'danger';
         }
-        if (ObservationConstants::MEDICATIONS_ADHERENCE_OBSERVATION_TYPE == $this->obs_key) {
+        if (in_array($this->obs_key, [ObservationConstants::MEDICATIONS_ADHERENCE_OBSERVATION_TYPE, ObservationConstants::LIFESTYLE_OBSERVATION_TYPE, 'Other'])) {
             if ('Y' === $value = (string) strtoupper($value)) {
                 return 'success';
             }
