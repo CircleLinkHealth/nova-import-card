@@ -33,8 +33,8 @@
             <div class="row">
                 <div class="col-xs-12">
                     <edit-patient-number ref="editPatientNumber"
-                                         :user-id="326"
-                                         error-message="SHould Pass Error Mesg"
+                                         :user-id="inboundUserId"
+                                         error-message=""
                                          :call-enabled=true>
                     </edit-patient-number>
 
