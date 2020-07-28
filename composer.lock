@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "56822c835c825e4891a5739feadd0a7d",
+    "content-hash": "cbe4c8559e699b78c11d50a93f4c1441",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.147.6",
+            "version": "3.147.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "a487671fc722b839c647d7dc4907bfb485f956db"
+                "reference": "0d637e7cbc795996a75531ed8dd2272f2672b2f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a487671fc722b839c647d7dc4907bfb485f956db",
-                "reference": "a487671fc722b839c647d7dc4907bfb485f956db",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0d637e7cbc795996a75531ed8dd2272f2672b2f2",
+                "reference": "0d637e7cbc795996a75531ed8dd2272f2672b2f2",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-07-27T18:13:59+00:00"
+            "time": "2020-07-28T18:13:27+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1131,11 +1131,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.2.9",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "b83d0ccd583a166e151c6e4032a77a3f0108a9a9"
+                "reference": "406b22bb93177c9686071943edefb889a0f5d2e8"
             },
             "type": "laravel-module",
             "extra": {
@@ -1157,15 +1157,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-28T17:58:13+00:00"
+            "time": "2020-07-28T22:55:55+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.1.1",
+            "version": "v3.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f9570b5dd73c9461dc6c857720a3d2ea8c6f9055"
+                "reference": "eeafe081c58e624a0d451423a4e9a6c11c45402a"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1199,7 +1199,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-27T23:45:08+00:00"
+            "time": "2020-07-28T17:58:13+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1545,11 +1545,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.2.5",
+            "version": "v1.2.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "ba8187d0fd5a21ad481ce76805cb4f46b37da9fd"
+                "reference": "8d802b9b97247a3b2f7fc307af0e154f20ee2109"
             },
             "type": "laravel-module",
             "extra": {
@@ -1574,7 +1574,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-01T15:15:04+00:00"
+            "time": "2020-07-28T23:38:29+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
