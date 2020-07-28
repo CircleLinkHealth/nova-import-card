@@ -12,6 +12,7 @@ use App\Http\Controllers\NotesController;
 use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Facades\Notification;
 use Illuminate\Support\Facades\Mail;
@@ -28,6 +29,7 @@ class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        AppConfig::set('enable_unsuccessful_call_patient_notification', true);
         Notification::fake();
         Mail::fake();
         Twilio::fake();
