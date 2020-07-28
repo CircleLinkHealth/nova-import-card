@@ -53,6 +53,7 @@ class EnrollmentBaseLetter extends Controller
 
     /**
      * EnrollmentBaseLetter constructor.
+     *
      * @param $practiceLetterView
      */
     public function __construct(Practice $practice, User $user, bool $isSurveyOnlyUser, Enrollee $enrollee, bool $hideButtons, \ReflectionClass $practiceLetterView)

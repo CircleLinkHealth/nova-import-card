@@ -1940,6 +1940,11 @@ Route::group([
         'uses' => 'Twilio\TwilioController@smsStatusCallback',
         'as'   => 'twilio.sms.status',
     ]);
+
+    Route::post('/sms/inbound', [
+        'uses' => 'Twilio\TwilioController@smsInbound',
+        'as'   => 'twilio.sms.inbound',
+    ]);
 });
 
 Route::group([
@@ -1957,6 +1962,11 @@ Route::group([
     Route::post('/status', [
         'uses' => 'PostmarkController@statusCallback',
         'as'   => 'postmark.status',
+    ]);
+
+    Route::post('/inbound', [
+        'uses' => 'PostmarkController@inbound',
+        'as'   => 'postmark.inbound',
     ]);
 });
 
