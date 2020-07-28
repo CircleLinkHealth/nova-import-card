@@ -14,11 +14,11 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -180,7 +180,19 @@ trait UserHelpers
 
     public function makePatientMonthlyRecord(Patient $patient)
     {
-        return (app(PatientWriteRepository::class))->updateCallLogs($patient, true);
+        return PatientMonthlySummary::updateOrCreate(
+            [
+                'month_year' => now()->startOfMonth()->toDateString(),
+                'patient_id' => $patient->user_id,
+            ],
+            [
+                'ccm_time'                            => 0,
+                'bhi'                                 => 0,
+                'no_of_calls'                         => 0,
+                'no_of_successful_calls'              => 0,
+                'no_call_attempts_since_last_success' => 0,
+            ]
+        );
     }
 
     public function setupUser($practiceId, $roles, $ccmStatus = 'enrolled')
