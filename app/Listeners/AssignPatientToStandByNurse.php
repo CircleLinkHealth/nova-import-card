@@ -60,7 +60,7 @@ class AssignPatientToStandByNurse
             return PatientNurse::updateOrCreate(
                 ['patient_user_id' => $patient->id],
                 [
-                    'nurse_user_id'           => $nurseId,
+                    'nurse_user_id'           => StandByNurseUser::id(),
                     'temporary_nurse_user_id' => null,
                     'temporary_from'          => null,
                     'temporary_to'            => null,
