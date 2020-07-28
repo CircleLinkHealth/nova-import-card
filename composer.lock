@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "05c6aecbfe52bfa3c416d5e1afa98719",
+    "content-hash": "06b20163eb625a2714438a7bed9a95a2",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1161,11 +1161,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.1.1",
+            "version": "v3.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f9570b5dd73c9461dc6c857720a3d2ea8c6f9055"
+                "reference": "eeafe081c58e624a0d451423a4e9a6c11c45402a"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1199,7 +1199,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-27T23:45:08+00:00"
+            "time": "2020-07-28T17:58:13+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1545,11 +1545,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.2.5",
+            "version": "v1.2.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "ba8187d0fd5a21ad481ce76805cb4f46b37da9fd"
+                "reference": "8d802b9b97247a3b2f7fc307af0e154f20ee2109"
             },
             "type": "laravel-module",
             "extra": {
@@ -1574,7 +1574,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-01T15:15:04+00:00"
+            "time": "2020-07-28T23:38:29+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
