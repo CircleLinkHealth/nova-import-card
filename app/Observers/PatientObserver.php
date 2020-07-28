@@ -131,6 +131,10 @@ class PatientObserver
 
     private function sendUnsuccessfulCallNotificationToPatient(Patient $patient)
     {
+        if ( ! isUnsuccessfulCallPatientNotificationEnabled()) {
+            return;
+        }
+
         if (Patient::ENROLLED !== $patient->ccm_status) {
             return;
         }
@@ -144,6 +148,7 @@ class PatientObserver
         if ( ! $call) {
             return;
         }
+
         $call->inboundUser->notify(new PatientUnsuccessfulCallNotification($call, false));
     }
 

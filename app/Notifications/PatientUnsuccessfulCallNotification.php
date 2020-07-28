@@ -145,7 +145,10 @@ class PatientUnsuccessfulCallNotification extends Notification
         $mailMessage           = new MailMessage();
         $mailMessage->viewData = ['excludeLogo' => true, 'practiceName' => $this->practice];
 
+        $fromAddress = config('mail.from-with-inbound.address') ?? config('mail.from.address');
+
         return $mailMessage
+            ->from($fromAddress, config('mail.from-with-inbound.name'))
             ->subject($subject)
             ->greeting($line1)
             ->line($line2)
