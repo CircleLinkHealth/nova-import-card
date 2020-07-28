@@ -716,9 +716,7 @@ class UserRepository
 
     private function isPatient(ParameterBag $params): bool
     {
-        $participantRoleId = \Cache::remember('participant_role_id', 2, function () {
-            return Role::where('name', 'participant')->value('id');
-        });
+        $participantRoleId = Role::byName('participant')->id;
 
         if (is_array($params->get('roles')) && in_array($participantRoleId, $params->get('roles'))) {
             return true;

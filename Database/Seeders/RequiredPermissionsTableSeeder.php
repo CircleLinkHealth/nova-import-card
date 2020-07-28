@@ -57,12 +57,17 @@ class RequiredPermissionsTableSeeder extends Seeder
             [
                 'name'         => 'care-plan-approve',
                 'display_name' => 'Approve all Careplans for a given Practice.',
-                'description'  => 'Can approve CarePlans with status qa_approved. Changes the CarePlan status to provider_approved.',
+                'description'  => 'Can approve CarePlans with status rn_approved. Changes the CarePlan status to provider_approved.',
             ],
             [
                 'name'         => 'care-plan-qa-approve',
                 'display_name' => 'CLH Approve Careplan',
                 'description'  => 'Can approve CarePlans with status draft. Changes the CarePlan status to qa_approved.',
+            ],
+            [
+                'name'         => 'care-plan-rn-approve',
+                'display_name' => 'RN Approve Careplan',
+                'description'  => 'Can approve CarePlans with status qa_approved. Changes the CarePlan status to rn_approved.',
             ],
             [
                 'name'         => 'users-edit-self',

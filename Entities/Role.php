@@ -70,7 +70,7 @@ class Role extends CerberusRole
     public static function byName(string $name)
     {
         return \Cache::remember("cached_role_$name", 2, function () use ($name) {
-            return Role::where('name', $name)->first();
+            return Role::where('name', $name)->firstOrFail();
         });
     }
 
