@@ -123,6 +123,7 @@ class CallsDashboardController extends Controller
     {
         NurseCareRateLog::whereBetween('created_at', [$note->created_at->copy()->startOfDay(), $note->updated_at->copy()->endOfDay()])
             ->where('nurse_id', '=', $nurse->nurseInfo->id)
+            ->where('patient_user_id', '=', $note->patient_id)
             ->whereHas('activity', function ($q) {
                 $q->whereIn('type', ['Patient Note Creation', 'Patient Note Edit']);
             })
