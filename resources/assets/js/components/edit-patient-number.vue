@@ -7,9 +7,10 @@
                 <div class="numbers">
                     <div v-if="callEnabled" style="margin-top: 7px;">
                         <input name="isPrimary"
-                               class="is-primary"
+                               class="to-call"
                                @click="selectedNumber(number.number)"
-                               type="radio">
+                               type="radio"
+                               :checked="numberIsPrimary(number)">
                     </div>
 
                     <div  @mouseover="enableUpdateButton(index)" style="display: inline-flex;">
@@ -138,7 +139,8 @@
                 phoneTypes:[],
                 // saveBtnText:"Save Number",
                 markPrimaryEnabledForIndex:'',
-                makeNewNumberPrimary:false
+                makeNewNumberPrimary:false,
+                primaryNumber:'',
             }
         },
         computed:{
@@ -163,6 +165,19 @@
         },
 
         methods: {
+            emitPrimaryNumber(){
+                const primaryNumber =  this.patientPhoneNumbers.filter(n=>n.isPrimary).map(function (phone) {
+                    // Will always be just one primary number with current impl.
+                    return phone.number;
+                });
+
+                if(primaryNumber.length !== 0){
+                    this.primaryNumber =  primaryNumber[0];
+                    EventBus.$emit("selectedNumber:toCall", this.primaryNumber);
+                }
+
+            },
+
             selectedNumber(number){
                EventBus.$emit("selectedNumber:toCall", number);
             },
@@ -211,6 +226,7 @@
                     .then((response => {
                         this.patientPhoneNumbers.push(...response.data.phoneNumbers);
                         this.phoneTypes.push(...response.data.phoneTypes);
+                        this.emitPrimaryNumber();
                         this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
@@ -373,7 +389,7 @@
         margin-left: 15px;
     }
 
-    .is-primary{
+    .to-call{
         display: flex;
         margin-right: 10px;
     }

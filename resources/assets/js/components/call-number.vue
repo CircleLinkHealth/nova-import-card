@@ -49,23 +49,23 @@
                     <input name="selected-number"
                            class="form-control selected-number"
                            style="width: 500px;"
-                           :value="selectedPatientNumber"
+                           :value="patientNumberToCall"
                            disabled/>
                 </div>
 
                 <div class="col-xs-3 no-padding">
-                        <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
-                                :disabled="!ready || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
-                                :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
+                        <button class="btn btn-circle" @click="togglePatientCallMessage(patientNumberToCall)"
+                                :disabled="!ready || closeCountdown > 0 || (!onPhone[patientNumberToCall] && isCurrentlyOnPhone)"
+                                :class="onPhone[patientNumberToCall] ? 'btn-danger': 'btn-success'">
                             <i class="fa fa-fw fa-phone"
-                               :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
+                               :class="onPhone[patientNumberToCall] ? 'fa-close': 'fa-phone'"></i>
                         </button>
 
                         <loader v-if="saving"></loader>
-                        <button id="callButton" class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
-                                @click="toggleMuteMessage(selectedPatientNumber)">
+                        <button id="callButton" class="btn btn-circle btn-default" v-if="onPhone[patientNumberToCall]"
+                                @click="toggleMuteMessage(patientNumberToCall)">
                             <i class="fa fa-fw"
-                               :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>
+                               :class="muted[patientNumberToCall] ? 'fa-microphone-slash': 'fa-microphone'"></i>
                         </button>
                     </div>
             </div>
@@ -171,31 +171,25 @@
                 connection: null,
                 //twilio device
                 device: null,
-                dropdownNumber: '',
-                otherUnlistedNumber: '',
+                radioSelectedNumber: '',
                 callSids: {},
-                dropdownPhoneType:'',
                 saving:false,
-                phoneTypes:[],
             }
         },
         computed: {
-            patientNumbers() {
-                return this.$refs.editPatientNumber.patientPhoneNumbers;
-            },
-
-            selectedPatientNumber() {
-                if (this.dropdownNumber.length !== 0) {
-                    return "+1" + this.dropdownNumber;
-                }
-            },
             isCurrentlyOnPhone() {
                 return Object.values(this.onPhone).some(x => x);
             },
+
             isCurrentlyOnConference() {
                 return Object.values(this.onPhone).filter(x => x).length > 1;
             },
 
+            patientNumberToCall() {
+                if (this.radioSelectedNumber.length !== 0) {
+                    return "+1" + this.radioSelectedNumber;
+                }
+            },
         },
         methods:{
             getUrl: function (path) {
@@ -231,19 +225,6 @@
                 this.muted[number] = value;
                 if (this.device && this.device.activeConnection()) {
                     this.device.activeConnection().mute(value);
-                }
-            },
-
-            togglePatientCallMessage: function (number, isDebug) {
-                const isUnlisted = this.dropdownNumber === 'patientUnlisted';
-                let makeTheCall = true;
-
-                if (!this.onPhone[number] && isUnlisted && !confirm('This is a new number. Please confirm this is a patient-related call.')) {
-                    makeTheCall = false;
-                }
-
-                if (makeTheCall) {
-                    this.toggleCallMessage(number, isUnlisted, true, isDebug);
                 }
             },
 
@@ -561,7 +542,7 @@
             resetPhoneState: function () {
 
                 if (self.isCurrentlyOnPhone) {
-                    sendRequest("call_ended", {number: {value: self.selectedPatientNumber, muted: false}})
+                    sendRequest("call_ended", {number: {value: self.patientNumberToCall, muted: false}})
                         .then(() => {
 
                         })
@@ -717,7 +698,7 @@
                     } else {
                         status = self.device.status();
                         if ((status === "ready" || status === "busy") && self.isCurrentlyOnPhone) {
-                            number = self.selectedPatientNumber;
+                            number = self.patientNumberToCall;
 
                             //will only happen in debug mode
                             if (!self.onPhone[number]) {
@@ -765,8 +746,7 @@
 
                 registerHandler("mute_call", muteHandler);
                 registerHandler("unmute_call", muteHandler);
-            }
-
+            },
         },
         created() {
             self = this;
@@ -806,7 +786,7 @@
         mounted() {
             self.initTwilio();
             EventBus.$on("selectedNumber:toCall", function (number) {
-                self.dropdownNumber = number;
+                self.radioSelectedNumber = number;
             });
         }
     }
