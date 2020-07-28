@@ -40,32 +40,6 @@
 
                 </div>
             </div>
-<!--            <div class="row" v-if="dropdownNumber === 'patientUnlisted'" style="margin-top: 5px">-->
-<!--                <div class="col-xs-12">-->
-<!--                    <label>Please input a 10 digit US Phone Number</label>-->
-<!--                    <div class="col-xs-9 no-padding">-->
-<!--                        <div class="input-group">-->
-<!--                            <span class="input-group-addon">+1</span>-->
-
-<!--                            <template v-if="debug">-->
-<!--                                <input name="patient-unlisted-number"-->
-<!--                                       class="form-control"-->
-<!--                                       type="tel"-->
-<!--                                       style="width: 459px;"-->
-<!--                                       title="10-digit US Phone Number" placeholder="1234567890"-->
-<!--                                       v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>-->
-<!--                            </template>-->
-<!--                            <template v-else>-->
-<!--                                <input name="patient-unlisted-number"-->
-<!--                                       maxlength="10" minlength="10"-->
-<!--                                       class="form-control"-->
-<!--                                       type="tel"-->
-<!--                                       style="width: 459px;"-->
-<!--                                       title="10-digit US Phone Number" placeholder="1234567890"-->
-<!--                                       v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>-->
-<!--                            </template>-->
-<!--                        </div>-->
-<!--                    </div>-->
             <div class="row" style="padding-top: 25px;">
             <div class="col-xs-12">
                 <label>Selected Phone Number To Call</label>
@@ -81,7 +55,7 @@
 
                 <div class="col-xs-3 no-padding">
                         <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
-                                :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
+                                :disabled="!ready || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
                                 :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
@@ -96,9 +70,6 @@
                     </div>
             </div>
             </div>
-<!--                </div>-->
-<!--            </div>-->
-
             <br/>
 
             <div class="row" style="margin-top: 5px">
@@ -130,59 +101,8 @@
                 </div>
 
             </div>
-
-            <br/>
-
-            <div class="row" style="margin-top: 5px" v-if="allowConference" v-show="isCurrentlyOnPhone">
-
-                <div class="col-xs-12">
-                    <loader v-if="waitingForConference"></loader>
-                </div>
-
-                <div class="col-xs-12">
-                    <label>Add number to call</label>
-                </div>
-
-                <div class="col-xs-12">
-                    <div class="col-xs-9 no-padding">
-                        <div class="input-group">
-                            <span class="input-group-addon">+1</span>
-
-                            <template v-if="debug">
-                                <input name="other-number"
-                                       class="form-control"
-                                       type="tel"
-                                       title="10-digit US Phone Number" placeholder="1234567890"
-                                       v-model="otherUnlistedNumber"
-                                       :disabled="!ready || onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
-                            </template>
-                            <template v-else>
-                                <input name="other-number"
-                                       maxlength="10" minlength="10"
-                                       class="form-control"
-                                       type="tel"
-                                       title="10-digit US Phone Number" placeholder="1234567890"
-                                       v-model="otherUnlistedNumber"
-                                       :disabled="!ready || onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
-                            </template>
-
-                        </div>
-                    </div>
-                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
-                        <button class="btn btn-circle" @click="toggleOtherCallMessage(otherUnlistedNumber)"
-                                :disabled="invalidOtherUnlistedNumber || (!onPhone[otherUnlistedNumber] && isCurrentlyOnConference) || closeCountdown > 0"
-                                :class="onPhone[otherUnlistedNumber] ? 'btn-danger': 'btn-success'">
-                            <i class="fa fa-fw fa-phone"
-                               :class="onPhone[otherUnlistedNumber] ? 'fa-close': 'fa-phone'"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <br/>
-
+            <br>
             <call-numpad v-if="isCurrentlyOnPhone" :on-input="numpadInput"></call-numpad>
-
         </template>
 
     </div>
@@ -252,41 +172,16 @@
                 //twilio device
                 device: null,
                 dropdownNumber: '',
-                patientUnlistedNumber: '',
                 otherUnlistedNumber: '',
                 callSids: {},
                 dropdownPhoneType:'',
                 saving:false,
                 phoneTypes:[],
-                // patientNumbers:[],
             }
         },
         computed: {
             patientNumbers() {
                 return this.$refs.editPatientNumber.patientPhoneNumbers;
-            },
-            disableSaveButton() {
-                if (this.dropdownNumber === 'patientUnlisted') {
-                    return this.saving ||
-                        isNaN(this.patientUnlistedNumber.toString())
-                        || this.patientUnlistedNumber.toString().length !== 10;
-                }
-                return false;
-            },
-            invalidPatientUnlistedNumber() {
-                if (this.debug) {
-                    return false;
-                }
-                if (this.dropdownNumber === 'patientUnlisted') {
-                    return isNaN(this.patientUnlistedNumber.toString()) || this.patientUnlistedNumber.toString().length !== 10;
-                }
-                return false;
-            },
-            invalidOtherUnlistedNumber() {
-                if (this.debug) {
-                    return false;
-                }
-                return isNaN(this.otherUnlistedNumber.toString()) || this.otherUnlistedNumber.toString().length !== 10;
             },
 
             selectedPatientNumber() {
@@ -303,54 +198,6 @@
 
         },
         methods:{
-            // resetData(){
-            //     this.patientNumbers = [];
-            //     this.phoneTypes = [];
-            // },
-            
-            // getPhoneNumbers(){
-            //     this.loading = true;
-            //     this.resetData();
-            //     axios.post('/manage-patients/get-phones', {
-            //         userId:this.inboundUserId
-            //     })
-            //         .then((response => {
-            //             this.patientNumbers.push(...response.data.phoneNumbers);
-            //             this.phoneTypes.push(...response.data.phoneTypes);
-            //             this.loading = false;
-            //         })).catch((error) => {
-            //         this.loading = false;
-            //         console.log(error.message);
-            //     });
-            // },
-
-            // saveNewNumber(){
-            //     const type = this.dropdownPhoneType.length !== 0 ? this.dropdownPhoneType : 'mobile';
-            //     this.saving = true;
-            //     axios.post('/manage-patients/new/phone', {
-            //         phoneType:type,
-            //         phoneNumber:this.patientUnlistedNumber,
-            //         patientUserId:this.inboundUserId,
-            //     })
-            //         .then((response => {
-            //             console.log(response.data);
-            //             this.patientUnlistedNumber = '';
-            //             // this.getPhoneNumbers();
-            //             this.resetToDefaultView();
-            //             if (response.data.hasOwnProperty('message')){
-            //                 alert(response.data.message);
-            //             }
-            //             this.saving = false;
-            //     })).catch((error) => {
-            //         this.saving = false;
-            //         console.log(error.message);
-            //     });
-            // },
-
-            // resetToDefaultView(){
-            // this.dropdownNumber = this.defaultDropdownNumber;
-            // },
-
             getUrl: function (path) {
                 if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
                     if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
