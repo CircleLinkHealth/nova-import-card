@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 
 class FixToledoMakeSureProviderMatchesPracticePull extends Command
@@ -61,12 +62,27 @@ class FixToledoMakeSureProviderMatchesPracticePull extends Command
             ->join('practice_pull_demographics', function ($join) {
                 $join->on('practice_pull_demographics.mrn', '=', 'patient_info.mrn_number')
                     ->where('practice_id', '=', 235);
-            })->where('patient_care_team_members.member_user_id', '!=', 'practice_pull_demographics.billing_provider_user_id')
+            })->whereRaw('patient_care_team_members.member_user_id != practice_pull_demographics.billing_provider_user_id')
             ->chunkById(500, function ($users) {
                 \DB::transaction(function () use ($users) {
                     foreach ($users as $user) {
-                        if ($user->billing_provider_user_id) {
-                        }
+                        $carePerson = CarePerson::updateOrCreate([
+                            'user_id' => $user->id,
+                            'type'    => CarePerson::BILLING_PROVIDER,
+                        ], [
+                            'member_user_id' => $user->billing_provider_user_id,
+                        ]);
+
+                        $this->info("Patient[{$carePerson->user_id}] has B.Provider[{$carePerson->member_user_id}]");
+
+                        $updated = Ccda::whereNotNull('practice_id')
+                            ->whereNotNull('patient_mrn')
+                            ->where('practice_id', 235)
+                            ->where('patient_mrn', $user->mrn_number)->update([
+                                'billing_provider_id' => $user->billing_provider_user_id,
+                            ]);
+
+                        $this->info("$updated CCDAs updated for Patient[{$carePerson->user_id}]");
                     }
                 });
             }, 'users.id');
