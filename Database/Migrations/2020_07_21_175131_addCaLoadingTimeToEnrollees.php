@@ -5,8 +5,6 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class AddCaLoadingTimeToEnrollees extends Migration
 {
@@ -26,9 +24,47 @@ class AddCaLoadingTimeToEnrollees extends Migration
      */
     public function up()
     {
-        //get CAs with assigned enrollees where they have been called
-        //get all ca page timers where they don't have enrollee id
+        \CircleLinkHealth\Customer\Entities\User::ofType('care-ambassador')
+            ->with(['assignedEnrollees' => function ($e) {
+                $e->whereNotNull('last_attempt_at');
+            },
+                'pageTimersAsProvider' => function ($pt) {
+                    $pt->whereNull('enrollee_id');
+                }, ])
+            ->chunk(2, function ($caUsers) {
+                foreach ($caUsers as $ca) {
+                    $enrollees = $ca->assignedEnrollees->all();
 
-        //loop through activities taking enrollee by count index -> once max is reached do i - enrolleeCount
+                    if (empty($enrollees)) {
+                        continue;
+                    }
+
+                    $enrolleesCount = count($enrollees);
+
+                    $loadingTimers = $ca->pageTimersAsProvider->all();
+
+                    if (empty($loadingTimers)) {
+                        continue;
+                    }
+
+                    $loadingTimersCount = count($loadingTimers);
+
+                    $i = 0;
+                    $enrolleeIndex = 0;
+                    while ($i < $loadingTimersCount) {
+                        $timer = $loadingTimers[$i];
+
+                        $enrolleeIndex = $enrolleeIndex < $enrolleesCount ? $enrolleeIndex : $enrolleeIndex - $enrolleesCount;
+
+                        $enrollee = $enrollees[$enrolleeIndex];
+
+                        $timer->enrollee_id = $enrollee->id;
+                        $timer->save();
+
+                        ++$i;
+                        ++$enrolleeIndex;
+                    }
+                }
+            });
     }
 }
