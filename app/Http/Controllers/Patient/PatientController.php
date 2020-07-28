@@ -186,7 +186,7 @@ class PatientController extends Controller
         $phoneNumber = formatPhoneNumberE164($phoneNumber);
         /** @var User $patientUser */
         $patientUser  = User::with('patientInfo', 'phoneNumbers')->where('id', $userId)->firstOrFail();
-        $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id);
+        $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id); // @todo: you re doing the same query  on line 204.
         $locationId   = optional($patientUser->patientInfo)->location->id ?? null;
         $numberExists = $patientUser->phoneNumbers()->where('type', $phoneType)->exists();
 
