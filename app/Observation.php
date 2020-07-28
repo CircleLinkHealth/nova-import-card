@@ -6,6 +6,7 @@
 
 namespace App;
 
+use App\Services\Observations\ObservationConstants;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -78,6 +79,7 @@ class Observation extends BaseModel
         'obs_unit',
         'program_id',
         'legacy_obs_id',
+        'severity',
     ];
     protected $table = 'lv_observations';
 
@@ -91,7 +93,7 @@ class Observation extends BaseModel
         if ($this->obs_value) {
             $value = preg_split('/\\/|\\_/', $this->obs_value)[0];
 
-            if ('Blood_Pressure' == $this->obs_key) {
+            if (ObservationConstants::BLOOD_PRESSURE == $this->obs_key) {
                 if ($value < 80 || $value >= 180) {
                     return 'danger';
                 }
@@ -101,7 +103,7 @@ class Observation extends BaseModel
 
                 return 'success';
             }
-            if ('Blood_Sugar' == $this->obs_key) {
+            if (ObservationConstants::BLOOD_SUGAR == $this->obs_key) {
                 if ($value < 60 || $value >= 350) {
                     return 'danger';
                 }
@@ -111,19 +113,15 @@ class Observation extends BaseModel
 
                 return 'success';
             }
-            if ('Cigarettes' == $this->obs_key) {
+            if (ObservationConstants::CIGARETTE_COUNT == $this->obs_key) {
                 if ($value < 4) {
                     return 'success';
                 }
 
                 return 'danger';
             }
-            $meta = $this->meta->where('meta_key', '=', 'dm_alert_level')->first();
-            if (isset($meta)) {
-                return $meta->meta_value;
-            }
 
-            return '';
+            return $this->severity;
         }
 
         return $name ?? null;
