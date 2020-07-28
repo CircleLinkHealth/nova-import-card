@@ -144,6 +144,17 @@ class Observation extends BaseModel
 
             return;
         }
+        if (in_array($this->obs_key, [ObservationConstants::SYMPTOMS_OBSERVATION_TYPE])) {
+            if ($value = (int) $value <= 3) {
+                return 'success';
+            }
+            if ($value >= 4 && $value <= 6) {
+                return 'warning';
+            }
+            if ($value > 6) {
+                return 'danger';
+            }
+        }
 
         return $this->severity;
     }
