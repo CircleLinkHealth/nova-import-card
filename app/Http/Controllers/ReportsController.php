@@ -805,7 +805,7 @@ class ReportsController extends Controller
 
         /** @var User $user */
         $user                           = auth()->user();
-        $showReadyForDrButton           = CarePlan::QA_APPROVED === $patient->carePlan->status && $user->isCareCoach() && $user->canRNApproveCarePlans();
+        $showReadyForDrButton           = $patient->carePlan->shouldRnApprove($user);
         $readyForDrButtonDisabled       = false;
         $readyForDrButtonAlreadyClicked = false;
         if ($showReadyForDrButton) {
@@ -855,6 +855,7 @@ class ReportsController extends Controller
             ),
             'socialServicesMiscId'           => $cpmMiscs[CpmMisc::SOCIAL_SERVICES],
             'othersMiscId'                   => $cpmMiscs[CpmMisc::OTHER],
+            'rnApprovalEnabled'              => $patient->carePlan->isRnApprovalEnabled(),
             'showReadyForDrButton'           => $showReadyForDrButton,
             'readyForDrButtonDisabled'       => $readyForDrButtonDisabled,
             'readyForDrButtonAlreadyClicked' => $readyForDrButtonAlreadyClicked,
