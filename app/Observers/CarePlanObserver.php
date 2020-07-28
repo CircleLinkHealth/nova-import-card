@@ -8,6 +8,7 @@ namespace App\Observers;
 
 use App\Events\CarePlanWasProviderApproved;
 use App\Events\CarePlanWasQAApproved;
+use App\Events\CarePlanWasRNApproved;
 use App\Events\PdfableCreated;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
@@ -83,8 +84,6 @@ class CarePlanObserver
     public function saved(CarePlan $carePlan)
     {
         if ($this->shouldScheduleCall($carePlan)) {
-            $carePlan->provider_approver_id = null;
-            $carePlan->provider_date        = null;
             /** @var SchedulerService $schedulerService */
             $schedulerService = app()->make(SchedulerService::class);
             $schedulerService->ensurePatientHasScheduledCall($carePlan->patient, self::class);
@@ -96,12 +95,16 @@ class CarePlanObserver
         }
 
         if ($carePlan->isDirty('status')) {
+            if (CarePlan::RN_APPROVED == $carePlan->status) {
+                event(new CarePlanWasRNApproved($carePlan->patient));
+            }
+
             if (CarePlan::QA_APPROVED == $carePlan->status) {
-                event(new CarePlanWasQAApproved($carePlan->patient));
+                event(new CarePlanWasQAApproved($carePlan->patient->fresh('carePlan')));
             }
 
             if (CarePlan::PROVIDER_APPROVED == $carePlan->status) {
-                event(new CarePlanWasProviderApproved($carePlan->patient));
+                event(new CarePlanWasProviderApproved($carePlan->patient->fresh('carePlan')));
                 event(new PdfableCreated($carePlan));
             }
         }

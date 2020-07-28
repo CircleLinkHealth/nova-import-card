@@ -682,19 +682,17 @@ class SchedulerService
             $attestedProblems
         );
 
-        if (Call::IGNORED != $callStatus) {
-            $this->patientWriteRepository->updateCallLogs(
-                $patient->patientInfo,
-                Call::REACHED == $callStatus,
-                SchedulerService::CALL_BACK_TYPE === optional($scheduled_call)->sub_type
-            );
-        }
+        $this->patientWriteRepository->updateCallLogs(
+            $patient->patientInfo,
+            Call::REACHED == $callStatus,
+            ! is_null($scheduled_call) && SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type
+        );
 
         if (SchedulerService::getNextScheduledCall($patient->id, true)) {
             return null;
         }
 
-        $previousCall = $this->getPreviousCall($patient, $scheduled_call['id']);
+        $previousCall = $this->getPreviousCall($patient, optional($scheduled_call)->id);
 
         if (Call::REACHED == $callStatus) {
             $prediction = (new SuccessfulHandler(

@@ -42,7 +42,12 @@ class AssignPatientToStandByNurse
     {
         $scheduler = app()->make(SchedulerService::class);
 
-        if ($scheduler->hasScheduledCall($patient)) {
+        if ($nextCall = $scheduler->getScheduledCallForPatient($patient)) {
+            if ( ! $nextCall->outbound_cpm_id) {
+                $nextCall->outbound_cpm_id = StandByNurseUser::id();
+                $nextCall->save();
+            }
+
             return null;
         }
 
@@ -51,18 +56,6 @@ class AssignPatientToStandByNurse
 
     private static function makeStandByNursePrimary(User $patient)
     {
-        if (PatientNurse::where('patient_user_id', $patient->id)->exists()) {
-            return null;
-        }
-
-        if ( ! $nurseId = StandByNurseUser::id()) {
-            return null;
-        }
-
-        if ( ! User::where('id', $nurseId)->exists()) {
-            return null;
-        }
-
         try {
             return PatientNurse::updateOrCreate(
                 ['patient_user_id' => $patient->id],
@@ -95,7 +88,7 @@ class AssignPatientToStandByNurse
             return true;
         }
 
-        if ( ! in_array($patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::PROVIDER_APPROVED])) {
+        if ( ! in_array($patient->carePlan->status, [CarePlan::QA_APPROVED, CarePlan::RN_APPROVED, CarePlan::PROVIDER_APPROVED])) {
             return true;
         }
 

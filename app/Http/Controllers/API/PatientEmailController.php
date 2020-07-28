@@ -8,6 +8,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Rules\PatientEmailDoesNotContainPhi;
+use App\Rules\ValidatePatientCustomEmail;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
@@ -84,14 +85,21 @@ class PatientEmailController extends Controller
 
     public function validateEmailBody(Request $request, $patientId)
     {
+        $patient = User::findOrFail($patientId);
+
+        //todo: add default email validation as well (needs more refactoring will do in ROAD-235)
         $validator = \Validator::make($request->input(), [
             'patient_email_subject' => [
                 'sometimes',
-                new PatientEmailDoesNotContainPhi(User::findOrFail($patientId)),
+                new PatientEmailDoesNotContainPhi($patient),
             ],
             'patient_email_body' => [
                 'sometimes',
-                new PatientEmailDoesNotContainPhi(User::findOrFail($patientId)),
+                new PatientEmailDoesNotContainPhi($patient),
+            ],
+            'custom_patient_email' => [
+                'sometimes',
+                new ValidatePatientCustomEmail(),
             ],
         ]);
 

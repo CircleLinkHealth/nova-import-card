@@ -108,7 +108,7 @@ class PatientCcmStatusUpdateTest extends TestCase
 
     public function test_withdrawn_1st_call_status_is_saved_from_user_repository()
     {
-        $roles  = (array) Role::whereName('participant')->firstOrFail()->id;
+        $roles  = (array) Role::byName('participant')->id;
         $params = new ParameterBag([
             'program_id'       => $this->practice->id,
             'roles'            => $roles,

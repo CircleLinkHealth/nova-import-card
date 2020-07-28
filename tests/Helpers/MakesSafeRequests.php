@@ -23,6 +23,9 @@ trait MakesSafeRequests
             $content
         );
 
-        return SafeRequest::createFromBase($symfonyRequest);
+        $safeRequest = SafeRequest::createFromBase($symfonyRequest);
+        $safeRequest->setLaravelSession(app('session.store'));
+
+        return $safeRequest;
     }
 }

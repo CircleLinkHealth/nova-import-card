@@ -62,19 +62,17 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
                     $q->enrolled();
                 }
             )
-            ->with(['inboundScheduledCalls'])
+            ->doesntHave('inboundScheduledCalls')
+            ->with(['carePlan', 'patientInfo'])
             ->each(
                 function (User $patient) use ($schedulerService, &$fixed, &$loop) {
                     ++$loop;
-                    if ($patient->inboundScheduledCalls->isNotEmpty()) {
-                        return;
-                    }
-
-                    ++$fixed;
 
                     if ($this->shouldScheduleCall($patient)) {
                         $schedulerService->ensurePatientHasScheduledCall($patient, 'calls:check');
                     }
+
+                    ++$fixed;
                 }
             );
 

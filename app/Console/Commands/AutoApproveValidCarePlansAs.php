@@ -7,7 +7,9 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -52,7 +54,9 @@ class AutoApproveValidCarePlansAs extends Command
         }
 
         if ( ! $this->option('only-consented-enrollees')) {
-            User::patientsPendingCLHApproval($approver)->orderByDesc('id')->chunkById(50, function ($patients) use ($approver) {
+            User::patientsPendingCLHApproval($approver)->whereHas('practices', function ($q) {
+                $q->activeBillable();
+            })->orderByDesc('id')->chunkById(50, function ($patients) use ($approver) {
                 $patients->each(function (User $patient) use ($approver) {
                     $this->process($patient, $approver);
                 });
@@ -61,10 +65,31 @@ class AutoApproveValidCarePlansAs extends Command
 
         $this->consentedEnrollees()->orderByDesc('id')->chunkById(50, function ($patients) use ($approver) {
             $patients->each(function (Enrollee $enrollee) use ($approver) {
-                $needsQA = $this->process($enrollee->user, $approver);
-                if ( ! $this->option('dry') && ! $needsQA) {
+                if ( ! $enrollee->user) {
+                    $this->searchForExistingUser($enrollee);
+                }
+                if ( ! $enrollee->user) {
+                    ImportEnrollee::import($enrollee);
+                }
+                if ($enrollee->user && $enrollee->user->carePlan && in_array($enrollee->user->carePlan->status, [CarePlan::PROVIDER_APPROVED, CarePlan::QA_APPROVED])) {
                     $enrollee->status = Enrollee::ENROLLED;
                     $enrollee->save();
+
+                    return;
+                }
+                if (is_null($enrollee->user)) {
+                    return;
+                }
+                $needsQA = $this->process($enrollee->user, $approver);
+                if ( ! $this->option('dry') && ! $needsQA) {
+                    $enrollee->user->patientInfo->ccm_status = Patient::ENROLLED;
+                    $enrollee->status = Enrollee::ENROLLED;
+                }
+                if ($enrollee->isDirty()) {
+                    $enrollee->save();
+                }
+                if ($enrollee->user->patientInfo->isDirty()) {
+                    $enrollee->user->patientInfo->save();
                 }
             });
         });
@@ -80,7 +105,7 @@ class AutoApproveValidCarePlansAs extends Command
     {
         return Enrollee::where('status', Enrollee::CONSENTED)->whereHas('practice', function ($q) {
             $q->activeBillable();
-        })->has('user')->with('user');
+        })->with('user.patientInfo');
     }
 
     private function log(array $array)
@@ -127,7 +152,7 @@ class AutoApproveValidCarePlansAs extends Command
             'needs_qa'        => $needsQA,
         ]);
 
-        if ( ! $needsQA) {
+        if ( ! $needsQA && in_array($patient->carePlan->status, [CarePlan::DRAFT, '', null, CarePlan::QA_APPROVED])) {
             $patient->carePlan->status         = CarePlan::QA_APPROVED;
             $patient->carePlan->qa_approver_id = $approver->id;
             $patient->carePlan->qa_date        = now()->toDateTimeString();
@@ -150,5 +175,22 @@ class AutoApproveValidCarePlansAs extends Command
             $args['--without-transaction'] = true;
         }
         ReimportPatientMedicalRecord::for($patientUserId, $approverUserId, 'call', $args);
+    }
+
+    private function searchForExistingUser(Enrollee &$enrollee)
+    {
+        $user = User::ofType(['participant', 'survey-only'])
+            ->with('carePlan')
+            ->whereHas('patientInfo', function ($q) use ($enrollee) {
+                $q->where('mrn_number', $enrollee->mrn)
+                    ->where('birth_date', $enrollee->dob);
+            })->first();
+
+        if ($user
+            && FixEnsureCCDAPatientIdMatchesPatientInfo::compare(extractLetters(strtolower(trim($user->first_name.$user->last_name))), extractLetters(strtolower(trim($enrollee->first_name.$enrollee->last_name))))
+        ) {
+            $enrollee->user_id = $user->id;
+            $enrollee->setRelation('user', $user);
+        }
     }
 }

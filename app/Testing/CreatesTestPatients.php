@@ -28,7 +28,7 @@ abstract class CreatesTestPatients
     public function create()
     {
         $repo     = new UserRepository();
-        $role     = Role::whereName('participant')->firstOrFail();
+        $role     = Role::byName('participant');
         $problems = CpmProblem::get();
 
         foreach ($this->data() as $patientData) {

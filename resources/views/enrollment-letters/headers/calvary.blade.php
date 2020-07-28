@@ -1,10 +1,10 @@
 <div class="flow-text" style="max-height: 590px; overflow-y: scroll;">
     <div style="display: inline-flex">
         <div class="header">
-            {{$signatoryNameForHeader}}
-            <br>
-            {{$practiceName}}
-       @if($extraAddressValuesRequested)
+            <div class="logo" style="text-align: left;margin-bottom: -40px; opacity: 90%;">
+                @include('enrollment-letters.practiceLogo')
+            </div>
+            @if($extraAddressValuesExists)
                 <br>
                 {{$extraAddressValues[0]['address_line_1']}}
                 <br>
@@ -13,15 +13,12 @@
                 {{$extraAddressValues[0]['postal_code']}}
             @endif
         </div>
-        <div class="logo" style="{{$logoStyleRequest}}; opacity: 90%;">
-            @include('enrollment-consent.practiceLogo')
-        </div>
     </div>
 </div>
 
 <style>
     .header{
-        padding-right: 190px;
+        padding-right: 700px;
         font-size: 23px;
     }
 
