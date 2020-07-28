@@ -371,8 +371,6 @@
     }
     .numbers{
         display: inline-flex;
-        padding-right: 5px;
-        padding-left: 16px;
         padding-bottom: 10px;
     }
 
