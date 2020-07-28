@@ -5,10 +5,10 @@
 
 <?php
 if (isset($patient)) {
-    $seconds = $patient->getCcmTime();
-    $H = floor($seconds / 3600);
-    $i = ($seconds / 60) % 60;
-    $s = $seconds % 60;
+    $seconds     = $patient->getCcmTime();
+    $H           = floor($seconds / 3600);
+    $i           = ($seconds / 60) % 60;
+    $s           = $seconds % 60;
     $monthlyTime = sprintf('%02d:%02d:%02d', $H, $i, $s);
 } else {
     $monthlyTime = '';
@@ -54,7 +54,7 @@ if (isset($patient)) {
                         @else
                             <?php
                             $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-                            $ccmCountableUser = auth()->user()->isCCMCountable();
+                            $ccmCountableUser        = auth()->user()->isCCMCountable();
                             ?>
                             <time-tracker ref="TimeTrackerApp"
                                           :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"

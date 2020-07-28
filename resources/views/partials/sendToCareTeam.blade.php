@@ -65,7 +65,7 @@
             <div class="form-group">
                 <div class="no-padding-left no-padding-right">
                     <div id="email-patient-div" style="display: none;">
-                        <send-email-to-patient  :patient="{{$patient}}"></send-email-to-patient>
+                        <send-email-to-patient  patient-id="{{$patient->id}}" patient-email="{{$patient->email}}"></send-email-to-patient>
                     </div>
                 </div>
             </div>

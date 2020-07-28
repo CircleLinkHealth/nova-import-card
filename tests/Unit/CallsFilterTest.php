@@ -36,7 +36,7 @@ class CallsFilterTest extends TestCase
         $callData = [
             'inbound_cpm_id' => $patient->id,
             'scheduled_date' => $callDate->toDateString(),
-            'asap'           => true,
+            'asap'           => 1,
             'status'         => 'scheduled',
         ];
         $call1   = factory(Call::class)->create(array_merge($callData, ['outbound_cpm_id' => $nurse1->id]));

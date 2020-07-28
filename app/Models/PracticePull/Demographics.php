@@ -78,6 +78,7 @@ class Demographics extends BaseModel
         'location_id',
         'billing_provider_user_id',
         'practice_id',
+        'patient_user_id',
         'eligibility_job_id',
     ];
     protected $table = 'practice_pull_demographics';
