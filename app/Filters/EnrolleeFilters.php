@@ -134,6 +134,15 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->where('id', 'like', '%'.$id.'%');
     }
 
+    public function invited($invited)
+    {
+        if (empty($invited)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('invited', boolval($invited));
+    }
+
     public function isCsv()
     {
         return array_key_exists('csv', $this->filters());
