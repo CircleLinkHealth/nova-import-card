@@ -212,15 +212,15 @@ $medications = $medications
                     <li class="top-10">
                         @if ($medication['name'])
                             <h4>{{$medication['name']}}
-                                @if ($medication['group']['name'])
-                                    <label class="label label-secondary">{{$medication['group']['name']}}</label>
+                                @if (optional($medication['group'])['name'])
+                                    <label class="label label-secondary">{{optional($medication['group'])['name']}}</label>
                                 @endif
                             </h4>
                         @endif
                         @if (!$medication['name'])
                             <h4>- {{$medication['sig']}}
-                                @if ($medication['group']['name'])
-                                    <label class="label label-primary">{{$medication['group']['name']}}</label>
+                                @if (optional($medication['group'])['name'])
+                                    <label class="label label-primary">{{optional($medication['group'])['name']}}</label>
                                 @endif
                             </h4>
                         @endif
