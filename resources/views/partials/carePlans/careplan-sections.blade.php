@@ -213,14 +213,14 @@ $medications = $medications
                         @if ($medication['name'])
                             <h4>{{$medication['name']}}
                                 @if (optional($medication['group'])['name'])
-                                    <label class="label label-secondary">{{optional($medication['group'])['name']}}</label>
+                                    <label class="label label-secondary">{{$medication['group']['name']}}</label>
                                 @endif
                             </h4>
                         @endif
                         @if (!$medication['name'])
                             <h4>- {{$medication['sig']}}
                                 @if (optional($medication['group'])['name'])
-                                    <label class="label label-primary">{{optional($medication['group'])['name']}}</label>
+                                    <label class="label label-primary">{{$medication['group']['name']}}</label>
                                 @endif
                             </h4>
                         @endif
