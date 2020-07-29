@@ -90,6 +90,13 @@ return [
         'name'    => env('TRANSACTIONAL_MAIL_FROM_NAME', 'CircleLink Health'),
     ],
 
+    'from-with-inbound' => [
+        // we prefer to not have a default, because we don't want to have emails
+        // targeted to staging being processed by production inbound mail address
+        'address' => env('INBOUND_MAIL_FROM_ADDRESS', null /*'wellness@careplanmanager.com'*/),
+        'name'    => env('INBOUND_MAIL_FROM_NAME', 'CarePlan Manager'),
+    ],
+
     'marketing_from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'no-reply@circlelinkhealth.com'),
         'name'    => env('MAIL_FROM_NAME', 'CircleLink Health'),

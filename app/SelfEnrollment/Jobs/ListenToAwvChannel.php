@@ -27,6 +27,7 @@ class ListenToAwvChannel implements ShouldQueue
 
     /**
      * ListenToAwvChannel constructor.
+     *
      * @param $data
      * @param $channel
      */
@@ -41,6 +42,7 @@ class ListenToAwvChannel implements ShouldQueue
      * Execute the job.
      *
      * @throws \Exception
+     *
      * @return void
      */
     public function handle()

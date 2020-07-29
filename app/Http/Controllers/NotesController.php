@@ -32,7 +32,6 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
-use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -74,7 +73,7 @@ class NotesController extends Controller
         /** @var User $patient */
         $patient = User::with([
             'carePlan' => function ($q) {
-                return $q->select(['id', 'user_id', 'status']);
+                return $q->select(['id', 'user_id', 'status', 'created_at']);
             },
             'patientSummaries' => function ($q) {
                 return $q->where('month_year', Carbon::now()->startOfMonth());
@@ -102,7 +101,7 @@ class NotesController extends Controller
         $careteam_info = $patient
             ->careTeamMembers
             ->mapWithKeys(function (CarePerson $member) {
-                return [$member->member_user_id => $member->user->getFullName()];
+                return [$member->member_user_id => optional($member->user)->getFullName() ?? 'N/A'];
             })
             ->toArray();
         asort($careteam_info);
@@ -197,9 +196,9 @@ class NotesController extends Controller
         }
 
         // RN Approval Flow - session must have SESSION_RN_APPROVED_KEY
+        $shouldRnApprove = $patient->carePlan->shouldRnApprove($author);
         $hasRnApprovedCp = false;
-        if ($author->isCareCoach() &&
-            $patient->carePlan && CarePlan::QA_APPROVED === $patient->carePlan->status) {
+        if ($shouldRnApprove) {
             $approvedId      = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
             $hasRnApprovedCp = $approvedId && $approvedId == $author->id;
         }
@@ -231,6 +230,7 @@ class NotesController extends Controller
             'hasSuccessfulCall'               => $hasSuccessfulCall,
             'attestationRequirements'         => $this->getAttestationRequirementsIfYouShould($patient),
             'shouldShowForwardNoteSummaryBox' => is_null($existingNote) || 'draft' === optional($existingNote)->status,
+            'shouldRnApprove'                 => $shouldRnApprove,
             'hasRnApprovedCarePlan'           => $hasRnApprovedCp,
         ];
 
@@ -239,24 +239,18 @@ class NotesController extends Controller
 
     public function deleteDraft(Request $request, $patientId, $noteId)
     {
-        $note   = Note::findOrFail($noteId);
-        $errors = null;
+        $note = Note::findOrFail($noteId);
         if (Note::STATUS_DRAFT !== $note->status) {
-            $errors = ['You cannot delete a non-draft note'];
+            throw new \Exception('You cannot delete a non-draft note');
         }
 
         if ($note->author_id != auth()->id()) {
-            $errors = ['Only the author of the note can delete it'];
+            throw new \Exception('Only the author of the note can delete it');
         }
 
-        $redirect = redirect()->route('patient.note.index', ['patientId' => $patientId]);
-        if ($errors) {
-            $redirect->withErrors($errors);
-        } else {
-            $note->delete();
-        }
+        $note->delete();
 
-        return $redirect;
+        return redirect()->route('patient.note.index', ['patientId' => $patientId]);
     }
 
     public function download(Request $request, $patientId, $noteId)
@@ -492,7 +486,7 @@ class NotesController extends Controller
         $careteam_info = $patient
             ->careTeamMembers
             ->mapWithKeys(function (CarePerson $member) {
-                return [$member->member_user_id => $member->user->getFullName()];
+                return [$member->member_user_id => optional($member->user)->getFullName() ?? 'N/A'];
             })
             ->toArray();
         asort($careteam_info);
@@ -563,7 +557,7 @@ class NotesController extends Controller
         $patient = User::with(
             [
                 'carePlan' => function ($q) {
-                    $q->select(['id', 'user_id', 'status']);
+                    $q->select(['id', 'user_id', 'status', 'created_at']);
                 },
             ]
         )->findOrFail($patientId);
@@ -577,8 +571,7 @@ class NotesController extends Controller
 
         // RN Approval Flow - session must have SESSION_RN_APPROVED_KEY
         $hasRnApprovedCp = false;
-        if ($author->isCareCoach() &&
-            $patient->carePlan && CarePlan::QA_APPROVED === $patient->carePlan->status &&
+        if ($patient->carePlan->shouldRnApprove($author) &&
             isset($input['call_status']) && Call::REACHED === $input['call_status']) {
             $approvedId      = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
             $hasRnApprovedCp = $approvedId && $approvedId == auth()->id();

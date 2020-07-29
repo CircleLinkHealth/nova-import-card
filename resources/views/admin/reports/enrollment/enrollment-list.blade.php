@@ -20,7 +20,6 @@
                         </div>
                     </div>
                 </div>
-                <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
             </div>
         </div>
     </div>
