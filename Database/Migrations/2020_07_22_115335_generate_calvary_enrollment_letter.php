@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class PopulateToledoProvidersSignatures extends Migration
+class GenerateCalvaryEnrollmentLetter extends Migration
 {
     /**
      * Reverse the migrations.
@@ -24,6 +24,6 @@ class PopulateToledoProvidersSignatures extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', ['--class' => 'GenerateToledoSignatures']);
+        Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateCalvaryClinicLetter']);
     }
 }

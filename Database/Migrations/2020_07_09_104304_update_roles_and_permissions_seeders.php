@@ -4,10 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Eligibility\Database\Seeders\GenerateCommonwealthPainAssociatesPllcLetter;
 use Illuminate\Database\Migrations\Migration;
 
-class PopulateEnrollmentLetter extends Migration
+class UpdateRolesAndPermissionsSeeders extends Migration
 {
     /**
      * Reverse the migrations.
@@ -25,9 +24,13 @@ class PopulateEnrollmentLetter extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv() && isCpm()) {
+        if ( ! isUnitTestingEnv()) {
             Artisan::call('db:seed', [
-                '--class' => GenerateCommonwealthPainAssociatesPllcLetter::class,
+                '--class' => \CircleLinkHealth\Customer\Database\Seeders\RequiredPermissionsTableSeeder::class,
+            ]);
+
+            Artisan::call('db:seed', [
+                '--class' => \CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder::class,
             ]);
         }
     }

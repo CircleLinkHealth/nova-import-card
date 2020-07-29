@@ -4,11 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Eligibility\Database\Seeders\CreateEnrolleesSurveySeeder;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEnrolleesSurvey extends Migration
+class ChangeVarcharToTextInCallsTable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -17,7 +17,9 @@ class CreateEnrolleesSurvey extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('');
+        Schema::table('calls', function (Blueprint $table) {
+            $table->string('attempt_note')->change();
+        });
     }
 
     /**
@@ -27,10 +29,8 @@ class CreateEnrolleesSurvey extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv() && isCpm()) {
-            Artisan::call('db:seed', [
-                '--class' => CreateEnrolleesSurveySeeder::class,
-            ]);
-        }
+        Schema::table('calls', function (Blueprint $table) {
+            $table->text('attempt_note')->change();
+        });
     }
 }

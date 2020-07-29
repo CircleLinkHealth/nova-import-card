@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class GenerateToledoEnrollmentLetter extends Migration
+class UpdateRolesSeeder extends Migration
 {
     /**
      * Reverse the migrations.
@@ -24,6 +24,10 @@ class GenerateToledoEnrollmentLetter extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', ['--class' => 'GenerateToledoSelfEnrollmentLetter']);
+        if ( ! isUnitTestingEnv()) {
+            Artisan::call('db:seed', [
+                '--class' => \CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder::class,
+            ]);
+        }
     }
 }

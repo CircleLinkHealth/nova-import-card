@@ -4,11 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Eligibility\Database\Seeders\CreateEnrolleesSurveySeeder;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEnrolleesSurvey extends Migration
+class ChangePatientMonthlySummariesApprovedColumnToBooleanType extends Migration
 {
     /**
      * Reverse the migrations.
@@ -17,7 +17,6 @@ class CreateEnrolleesSurvey extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('');
     }
 
     /**
@@ -27,10 +26,10 @@ class CreateEnrolleesSurvey extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv() && isCpm()) {
-            Artisan::call('db:seed', [
-                '--class' => CreateEnrolleesSurveySeeder::class,
-            ]);
+        if (Schema::hasColumn('patient_monthly_summaries', 'approved')) {
+            Schema::table('patient_monthly_summaries', function (Blueprint $table) {
+                $table->boolean('approved')->nullable(false)->default(0)->change();
+            });
         }
     }
 }
