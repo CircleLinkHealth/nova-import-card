@@ -40,10 +40,12 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics query()
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Demographics query()
  * @mixin \Eloquent
+ *
  * @property int|null    $eligibility_job_id
  * @property string|null $facility_name
  */
@@ -78,6 +80,7 @@ class Demographics extends BaseModel
         'location_id',
         'billing_provider_user_id',
         'practice_id',
+        'patient_user_id',
         'eligibility_job_id',
     ];
     protected $table = 'practice_pull_demographics';

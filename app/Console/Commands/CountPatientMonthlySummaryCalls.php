@@ -46,6 +46,48 @@ class CountPatientMonthlySummaryCalls extends Command
         $this->callRepository = $callRepository;
     }
 
+    public function countCalls(Carbon $date, array $userIds)
+    {
+        $printComment = ! empty($this->output);
+
+        PatientMonthlySummary::where('month_year', $date)
+            ->when(
+                ! empty($userIds),
+                function ($q) use ($userIds) {
+                    $q->whereIn('patient_id', $userIds);
+                }
+            )
+            ->chunkById(500, function ($summaries) use ($date, $printComment) {
+                foreach ($summaries as $pms) {
+                    $noOfSuccessfulCalls = $this->callRepository->numberOfSuccessfulCalls(
+                        $pms->patient_id,
+                        $date
+                    );
+
+                    if ($noOfSuccessfulCalls != $pms->no_of_successful_calls) {
+                        if ($printComment) {
+                            $this->comment("user_id:{$pms->patient_id}:pms_id:{$pms->id} no_of_successful_calls changing from {$pms->no_of_successful_calls} to ${noOfSuccessfulCalls}");
+                        }
+                        $pms->no_of_successful_calls = $noOfSuccessfulCalls;
+                    }
+
+                    $noOfCalls = $this->callRepository->numberOfCalls($pms->patient_id, $date);
+
+                    if ($noOfCalls != $pms->no_of_calls) {
+                        if ($printComment) {
+                            $this->comment("user_id:{$pms->patient_id}:pms_id:{$pms->id} no_of_calls changing from {$pms->no_of_calls} to ${noOfCalls}");
+                        }
+                        $pms->no_of_calls = $noOfCalls;
+                    }
+
+                    if ($pms->isDirty()) {
+                        $pms->save();
+                        ++$this->changedCount;
+                    }
+                }
+            });
+    }
+
     /**
      * Execute the console command.
      *
@@ -59,51 +101,13 @@ class CountPatientMonthlySummaryCalls extends Command
             ? Carbon::parse($argument)->startOfMonth()
             : Carbon::now()->startOfMonth();
 
-        $userIds = $this->argument('userIds') ?? null;
-        if (null != $userIds) {
+        if ( ! empty($userIds = $this->argument('userIds') ?? [])) {
             $userIds = explode(',', $userIds);
         }
 
-        PatientMonthlySummary::orderBy('id')
-            ->whereMonthYear($date->toDateString())
-            ->when(
-                ! empty($userIds),
-                function ($q) use ($userIds) {
-                    $q->whereIn('patient_id', $userIds);
-                }
-            )
-            ->chunkById(500, function ($summaries) use ($date) {
-                foreach ($summaries as $pms) {
-                    $noOfSuccessfulCalls = $this->callRepository->numberOfSuccessfulCalls(
-                        $pms->patient_id,
-                        $date
-                    );
-
-                    if ($noOfSuccessfulCalls != $pms->no_of_successful_calls) {
-                        $this->comment("user_id:{$pms->patient_id}:pms_id:{$pms->id} no_of_successful_calls changing from {$pms->no_of_successful_calls} to ${noOfSuccessfulCalls}");
-                        $pms->no_of_successful_calls = $noOfSuccessfulCalls;
-                    }
-
-                    $noOfCalls = $this->callRepository->numberOfCalls($pms->patient_id, $date);
-
-                    if ($noOfCalls != $pms->no_of_calls) {
-                        $this->comment("user_id:{$pms->patient_id}:pms_id:{$pms->id} no_of_calls changing from {$pms->no_of_calls} to ${noOfCalls}");
-                        $pms->no_of_calls = $noOfCalls;
-                    }
-
-                    if ($pms->isDirty()) {
-                        $pms->save();
-                        $this->incrementCounter();
-                    }
-                }
-            });
+        $this->countCalls($date, $userIds);
 
         $this->info('Calls were counted successfully!');
         $this->info("{$this->changedCount} patient summaries changed.");
-    }
-
-    private function incrementCounter()
-    {
-        ++$this->changedCount;
     }
 }

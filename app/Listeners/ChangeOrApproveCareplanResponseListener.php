@@ -114,7 +114,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
 
             $newCallArgs = [
                 'note_id'        => $note->id,
-                'type'           => 'task',
+                'type'           => SchedulerService::TASK_TYPE,
                 'sub_type'       => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
                 'service'        => 'phone',
                 'status'         => 'scheduled',

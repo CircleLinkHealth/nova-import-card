@@ -346,6 +346,43 @@
                                                             </div>
                                                         </div>
                                                         <hr style="margin-top: 0; margin-bottom: 0">
+                                                    @else
+                                                        <div class="call-status-radios multi-input-wrapper"
+                                                             style="padding-bottom: 3px; display: none">
+                                                            <div>
+                                                                <div class="radio">
+                                                                    <input type="checkbox"
+                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                           @endif
+                                                                           @if (!empty($call) && $call->status === \App\Call::WELCOME) checked
+                                                                           @endif
+                                                                           name="welcome_call"
+                                                                           value="{{\App\Call::WELCOME}}"
+                                                                           id="welcome_call"/>
+                                                                    <label for="welcome_call">
+                                                                        <span> </span>Successful
+                                                                        Welcome Call
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="radio">
+                                                                    <input type="checkbox"
+                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                           @endif
+                                                                           @if (!empty($call) && $call->status === \App\Call::OTHER) checked
+                                                                           @endif
+                                                                           name="other_call"
+                                                                           value="{{\App\Call::OTHER}}"
+                                                                           id="other_call"/>
+                                                                    <label for="other_call">
+                                                                        <span> </span>Successful
+                                                                        Other
+                                                                        Patient Call
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     @endif
                                                     <div class="other-radios multi-input-wrapper"
                                                          style="padding-top: 3px; display: none">
@@ -638,6 +675,7 @@
             const editingTaskType = isEditingCompleteTask ? @json(optional($call)->sub_type) : undefined;
             const disableAutoSave = @json(!empty($note) && $note->status == \App\Note::STATUS_COMPLETE);
             const hasRnApprovedCarePlan = @json($hasRnApprovedCarePlan);
+            const shouldRnApprove = @json($shouldRnApprove);
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
@@ -729,7 +767,7 @@
                     const startDate = Date.now();
 
                     function phoneSessionChange(e) {
-                        if (e) {
+                        if (e && e.currentTarget) {
                             if (e.currentTarget.checked) {
                                 $('#task-label').hide();
                                 $('#collapseOne').show();
@@ -774,7 +812,7 @@
                     }
 
                     function associateWithTaskChange(e) {
-                        if (!e) {
+                        if (!e || !e.currentTarget) {
                             return;
                         }
                         if (e.currentTarget.checked) {
@@ -868,7 +906,7 @@
                         let notifyCareteamEl = $('#notify-careteam');
                         let whoIsNotifiedEl = $('#who-is-notified');
 
-                        if (e) {
+                        if (e && e.currentTarget) {
                             if (e.currentTarget.checked) {
                                 notifyCareteamEl.prop("checked", true);
                                 notifyCareteamEl.prop("disabled", true);
@@ -945,7 +983,12 @@
                             callIsSuccess = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value === "reached";
                         } else {
                             //checkbox
-                            callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
+                            if (form['welcome_call']) {
+                                callIsSuccess = form['welcome_call'].checked;
+                            }
+                            if (!callIsSuccess && form['other_call']) {
+                                callIsSuccess = form['other_call'].checked;
+                            }
                         }
 
                         if (!callHasStatus) {
@@ -957,7 +1000,7 @@
                         }
 
                         // ROAD-39 RN must approve care plan before making a successful welcome call
-                        if (userIsCareCoach && callIsSuccess && !hasRnApprovedCarePlan) {
+                        if (userIsCareCoach && callIsSuccess && shouldRnApprove && !hasRnApprovedCarePlan) {
                             showSavingDraftModal();
                             saveDraft()
                                 .then(() => {

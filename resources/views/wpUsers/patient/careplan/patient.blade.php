@@ -135,11 +135,16 @@ $user_info = [];
                                                     <div class="col-sm-6">
                                                         <div class="form-group {{ $errors->first('home_phone_number') ? 'has-error' : '' }}">
                                                             <label class="sr-only" for="telephone">Phone</label>
-                                                            <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                            <input type="tel" @if (isProductionEnv()) pattern='\d{3}[\-]\d{3}[\-]\d{4}' @endif
                                                                    class="form-control" name="home_phone_number"
                                                                    id="home_phone_number" placeholder="Telephone *"
                                                                    title="Please write a phone number in the format 123-345-7890"
-                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}">
+                                                                   @if (isProductionEnv())
+                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}"
+                                                                   @else
+                                                                   value="{{ old('home_phone_number') ?? $patient->getHomePhoneNumber() }}"
+                                                                   @endif>
+
                                                             <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
                                                         </div>
                                                     </div>
@@ -147,12 +152,16 @@ $user_info = [];
                                                         <div class="form-group {{ $errors->first('mobile_phone_number') ? 'has-error' : '' }}">
                                                             <label class="sr-only"
                                                                    for="mobile_phone_number">Phone</label>
-                                                            <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                            <input type="tel" @if (isProductionEnv()) pattern='\d{3}[\-]\d{3}[\-]\d{4}' @endif
                                                                    class="form-control" name="mobile_phone_number"
                                                                    id="mobile_phone_number"
                                                                    placeholder="Mobile Telephone *"
                                                                    title="Please write a phone number in the format 123-345-7890"
-                                                                   value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}">
+                                                                   @if (isProductionEnv())
+                                                                       value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}"
+                                                                   @else
+                                                                       value="{{ old('mobile_phone_number') ?? $patient->getMobilePhoneNumber() }}"
+                                                                   @endif>
                                                             <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
                                                         </div>
                                                     </div>
@@ -180,7 +189,7 @@ $user_info = [];
                                                 <span class="help-block">{{ $errors->first('city') }}</span>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('state') ? 'has-error' : '' }}">
-                                                {!! Form::select('state', $states, (old('state') ? old('state') : $patient->state ? $patient->state : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                                {!! Form::select('state', $states, (old('state') ? old('state') : ($patient->state ? $patient->state : '')), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                                 <span class="help-block">{{ $errors->first('state') }}</span>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-4 {{ $errors->first('zip') ? 'has-error' : '' }}">
@@ -269,7 +278,7 @@ $user_info = [];
                                                                     class="attention">*</span>:</label>
                                                     </div>
                                                     <div class="col-sm-12">
-                                                        {!! Form::select('timezone', timezones(), (old('timezone') ? old('timezone') : $patient->timezone ? $patient->timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                                        {!! Form::select('timezone', timezones(), (old('timezone') ? old('timezone') : ($patient->timezone ? $patient->timezone : 'America/New_York')), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                                     </div>
                                                 </div>
 
@@ -432,10 +441,8 @@ $user_info = [];
                                                     function onStatusChange(e) {
 
                                                         let ccmStatus = document.getElementById("ccm_status");
-                                                        if (!ccmStatus) {
-                                                            return;
-                                                        }
 
+                                                        console.log(ccmStatus);
                                                         if (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call") {
                                                             $('#withdrawn-reason').removeClass('hidden');
                                                             onReasonChange();
