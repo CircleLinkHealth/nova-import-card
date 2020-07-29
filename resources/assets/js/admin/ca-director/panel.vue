@@ -140,7 +140,7 @@
                 selectedEnrolleeIds: [],
                 hideAssigned: false,
                 isolateUploadedViaCsv: false,
-                columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'practice_name', 'provider_name', 'requested_callback', 'callback_note', 'total_time_spent', 'attempt_count', 'last_attempt_at',
+                columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'invited', 'practice_name', 'provider_name', 'requested_callback', 'callback_note', 'total_time_spent', 'attempt_count', 'last_attempt_at',
                     'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone', 'dob', 'preferred_days', 'preferred_window',
                     'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'provider_pronunciation', 'provider_sex', 'last_encounter', 'eligibility_job_id', 'medical_record_id', 'created_at'],
                 options: {
@@ -171,7 +171,7 @@
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['hideAssigned', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'source', 'requested_callback', 'eligibility_job_id', 'enrollment_non_responsive', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone', 'last_attempt_at', 'auto_enrollment_triggered', 'medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count'],
+                    filterable: ['hideAssigned', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'invited','source', 'requested_callback', 'eligibility_job_id', 'enrollment_non_responsive', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone', 'last_attempt_at', 'auto_enrollment_triggered', 'medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count'],
                     sortable: ['id', 'user_id', 'first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'source', 'created_at', 'state', 'city', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'last_attempt_at', 'care_ambassador_name', 'attempt_count', 'requested_callback'],
                 },
                 enrolleeStatusMap: {

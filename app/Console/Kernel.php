@@ -22,6 +22,7 @@ use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\EnrollmentFinalAction;
 use App\Console\Commands\FaxAuditReportsAtPracticePreferredDayTime;
+use App\Console\Commands\FixToledoMakeSureProviderMatchesPracticePull;
 use App\Console\Commands\GenerateReportForScheduledPAM;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
@@ -136,6 +137,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(AssignUnassignedPatientsToStandByNurse::class)
             ->twiceDaily(8, 14);
+
+        $schedule->command(FixToledoMakeSureProviderMatchesPracticePull::class)
+            ->twiceDaily(7, 18);
 
         //Run at 12:01am every 1st of month
         $schedule->command(ResetPatients::class)
