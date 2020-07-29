@@ -188,7 +188,7 @@
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
-    "circlelinkhealth/nurseinvoices-module": "dev-invoice-download-sentry",
+    "circlelinkhealth/nurseinvoices-module": "1.5.2",
     "circlelinkhealth/patientapi-module": "1.3.3",
     "circlelinkhealth/raygun-module": "1.1",
     "circlelinkhealth/revisionable-module": "6.1.1",
