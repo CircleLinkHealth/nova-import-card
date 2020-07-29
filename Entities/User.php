@@ -243,6 +243,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiChargeable()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiEligible()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withDownloadableInvoices($startDate, $endDate)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User notOfPracticeRequiringSpecialBhiConsent()
@@ -1780,17 +1781,33 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
-        $validCellNumbers = $this->phoneNumbers->whereNotNull('number')->where('number', '!=', '')->map(function ($phone) {
-            $number = formatPhoneNumberE164($phone->number);
+        $validCellNumbers = $this->phoneNumbers
+            ->whereNotNull('number')->where('number', '!=', '')
+            ->map(function ($phone) {
+                // when running tests, faker doesn't always produce valid us mobile phone number
+                $phoneNumber = \Propaganistas\LaravelPhone\PhoneNumber::make($phone->number, ['US', 'CY']);
+                try {
+                    //isOfType might throw, in that case we do not use the number
+                    if ( ! isProductionEnv() || $phoneNumber->isOfType('mobile')) {
+                        if ($this->isCypriotNumber($phoneNumber)) {
+                            return $phone->number;
+                        }
 
-            if (\Propaganistas\LaravelPhone\PhoneNumber::make($number, 'US')->isOfType('mobile')) {
-                return $number;
-            }
+                        return formatPhoneNumberE164($phone->number);
+                    }
+                } catch (NumberParseException $e) {
+                    Log::warning($e->getMessage());
 
-            return false;
-        })->filter()->unique()->values();
+                    return false;
+                }
 
-        return $validCellNumbers->first();
+                return false;
+            })
+            ->filter()
+            ->unique()
+            ->values();
+
+        return $validCellNumbers->first() ?? '';
     }
 
     public function getPreferredCcContactDays()
@@ -3288,6 +3305,49 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
+     * @param $query
+     *
+     * @return mixed
+     */
+    public function scopeWithDownloadableInvoices($query, Carbon $startDate, Carbon $endDate)
+    {
+        return $query->careCoaches()->with([
+            'nurseInfo' => function ($nurseInfo) use ($startDate, $endDate) {
+                $nurseInfo->with(
+                    [
+                        'invoices' => function ($invoice) use ($startDate) {
+                            $invoice->where('month_year', $startDate);
+                        },
+                    ]
+                );
+            },
+            'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
+                $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
+            },
+            'primaryPractice',
+        ])->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
+            $invoice->where('month_year', $startDate);
+        })
+            //            Need nurses that are currently active or used to be for selected month
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereHas(
+                    'nurseInfo',
+                    function ($info) {
+                        $info->where('status', 'active')->when(
+                            isProductionEnv(),
+                            function ($info) {
+                                $info->where('is_demo', false);
+                            }
+                        );
+                    }
+                )
+                    ->orWhereHas('pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
+                        $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
+                    });
+            });
+    }
+
+    /**
      * Get Scout index name for the model.
      *
      * @return string
@@ -4106,6 +4166,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
                 return $number;
             }
+        }
+    }
+
+    private function isCypriotNumber(\Propaganistas\LaravelPhone\PhoneNumber $phoneNumber)
+    {
+        try {
+            return $phoneNumber->isOfCountry('CY');
+        } catch (NumberParseException $e) {
+            return false;
         }
     }
 
