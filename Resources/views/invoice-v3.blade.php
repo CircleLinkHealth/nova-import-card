@@ -181,15 +181,20 @@ such as <style>, as they will not be parsed.--}}
             @foreach($timePerDay as $date => $row)
                 <tr>
                     <td><b>{{$date}}</b></td>
-                    <td>
-                        <nurse-invoice-daily-dispute
-                                :invoice-data="{{json_encode($row)}}"
-                                :invoice-id="{{$invoiceId}}"
-                                :day="{{json_encode(\Carbon\Carbon::parse($date)->copy()->toDateString())}}"
-                                :is-user-auth-to-daily-dispute="{{json_encode($isUserAuthToDailyDispute)}}"
-                                :can-be-disputed="{{json_encode($canBeDisputed)}}">
-                        </nurse-invoice-daily-dispute>
-                    </td>
+                    @if(isset($isPdf))
+                        <td>{{$row['formatted_time']}}</td>
+                    @else
+                        <td>
+                            <nurse-invoice-daily-dispute
+                                    :invoice-data="{{json_encode($row)}}"
+                                    :invoice-id="{{$invoiceId}}"
+                                    :day="{{json_encode(\Carbon\Carbon::parse($date)->copy()->toDateString())}}"
+                                    :is-user-auth-to-daily-dispute="{{json_encode($isUserAuthToDailyDispute)}}"
+                                    :can-be-disputed="{{json_encode($canBeDisputed)}}">
+                            </nurse-invoice-daily-dispute>
+                        </td>
+                    @endif
+
 
                     @if($variablePay)
                         @if(isset($altAlgoEnabled) && !$altAlgoEnabled)
