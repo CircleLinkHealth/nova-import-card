@@ -75,7 +75,7 @@ class NurseInvoicesDownloaded extends Notification
      */
     public function toMail($notifiable)
     {
-        $dateForMessage = Carbon::parse($this->date)->toDateString();
+        $dateForMessage = Carbon::parse($this->date)->format('M-Y');
         if (empty($this->mediaIds)) {
             return (new MailMessage())
                 ->line("No $this->downloadFormat were generated for $dateForMessage, for the selected practices");
