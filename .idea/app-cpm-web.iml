@@ -43,6 +43,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/consoletvs/charts" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/daltcore/lara-pdf-merger" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/danielme85/laravel-log-to-db" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/darkghosthunter/laraload" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/darkghosthunter/preloader" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/defuse/php-encryption" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dillingham/nova-button" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dnoegel/php-xdg-base-dir" />
