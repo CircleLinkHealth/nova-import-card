@@ -124,7 +124,6 @@
       <path value="$PROJECT_DIR$/vendor/mockery/mockery" />
       <path value="$PROJECT_DIR$/vendor/hamcrest/hamcrest-php" />
       <path value="$PROJECT_DIR$/vendor/spatie/temporary-directory" />
-      <path value="$PROJECT_DIR$/vendor/org_heigl/ghostscript" />
       <path value="$PROJECT_DIR$/vendor/intervention/image" />
       <path value="$PROJECT_DIR$/vendor/league/glide" />
       <path value="$PROJECT_DIR$/vendor/spatie/pdf-to-image" />

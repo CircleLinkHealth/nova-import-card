@@ -30,6 +30,7 @@ class EnrolleeCsvResource extends JsonResource
             '"'.$this->source.'",'.
             '"'.$this->enrollment_non_responsive.'",'.
             '"'.$this->auto_enrollment_triggered.'",'.
+            '"'.$this->invited.'",'.
             '"'.$this->practice_name.'",'.
             '"'.$this->provider_name.'",'.
             '"'.$this->lang.'",'.
