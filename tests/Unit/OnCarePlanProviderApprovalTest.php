@@ -15,12 +15,10 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Rules\DoesNotHaveBothTypesOfDiabetes;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Tests\Concerns\PhaxioFake\Phaxio;
-use Tests\Concerns\TwilioFake\Twilio;
 use Tests\CustomerTestCase;
 use Tests\Helpers\CarePlanHelpers;
 
@@ -141,6 +139,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
 
     public function test_it_forwards_careplan_when_provider_approved()
     {
+        Phaxio::fake();
         $this->carePlan->status = CarePlan::RN_APPROVED;
         $this->carePlan->save();
 
