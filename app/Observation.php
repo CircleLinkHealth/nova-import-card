@@ -120,13 +120,15 @@ class Observation extends BaseModel
             return 'success';
         }
         if (ObservationConstants::A1C == $this->obs_key) {
-            $value = (float) $value;
+            $value         = (float) $value;
+            $diabetesLevel = 7.1;
+            $normalLevel   = 5.7;
 
-            if ($value > $diabetesLevel = 7.1) {
+            if ($value > $diabetesLevel) {
                 return 'danger';
             }
 
-            if ($value >= $normalLevel = 5.7 && $value <= $diabetesLevel) {
+            if ($value >= $normalLevel && $value <= $diabetesLevel) {
                 return 'warning';
             }
 
