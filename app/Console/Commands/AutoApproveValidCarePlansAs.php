@@ -63,7 +63,11 @@ class AutoApproveValidCarePlansAs extends Command
             });
         }
 
-        $this->consentedEnrollees()->orderByDesc('id')->chunkById(50, function ($patients) use ($approver) {
+        $consentedCnt = $this->consentedEnrollees()->count();
+
+        $this->warn("$consentedCnt consented patients pending importing");
+
+        $this->consentedEnrollees()->orderByDesc('updated_at')->chunkById(50, function ($patients) use ($approver) {
             $patients->each(function (Enrollee $enrollee) use ($approver) {
                 if ( ! $enrollee->user) {
                     $this->searchForExistingUser($enrollee);
