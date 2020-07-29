@@ -261,8 +261,8 @@ class PhiMail implements DirectMail
     {
         $phiMailUser        = $dmUserAddress ? $dmUserAddress : config('services.emr-direct.user');
         $phiMailPass        = config('services.emr-direct.password');
-        $clientCertPath     = base_path(ltrim(config('services.emr-direct.conc-keys-pem-path'), '/'));
-        $serverCertPath     = base_path(ltrim(config('services.emr-direct.server-cert-pem-path'), '/'));
+        $clientCertPath     = base_path(config('services.emr-direct.conc-keys-pem-path'));
+        $serverCertPath     = base_path(config('services.emr-direct.server-cert-pem-path'));
         $clientCertFileName = config('services.emr-direct.client-cert-filename');
         $serverCertFileName = config('services.emr-direct.server-cert-filename');
 

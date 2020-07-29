@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use Circlelinkhealth\InvoicesDownload\InvoicesDownload;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
@@ -99,7 +100,9 @@ class NurseInvoice extends Resource
      */
     public function cards(Request $request)
     {
-        return [];
+        return [
+            new InvoicesDownload(),
+        ];
     }
 
     /**

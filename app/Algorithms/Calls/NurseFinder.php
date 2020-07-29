@@ -35,9 +35,9 @@ class NurseFinder
 
     public function __construct(
         Patient $patient,
-        Carbon $date,
-        $windowStart,
-        $windowEnd,
+        Carbon $date = null,
+        $windowStart = null,
+        $windowEnd = null,
         Call $previousCall = null
     ) {
         $this->patient     = $patient;
@@ -200,7 +200,7 @@ class NurseFinder
 //        $match['nurse'] = current(array_keys($this->nursesForPatient));
 
         $user               = auth()->user();
-        $isCurrentUserNurse = $user->isCareCoach();
+        $isCurrentUserNurse = optional($user)->isCareCoach() ?? false;
 
         $patientNurseUsers = $this->patient->getNurses();
         if ($patientNurseUsers) {

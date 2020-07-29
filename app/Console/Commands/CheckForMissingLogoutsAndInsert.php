@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\CalculateAndSaveLoginLogoutActivity;
 use App\Jobs\CheckLogoutEventAndSave;
+use App\LoginLogout;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -34,11 +34,6 @@ class CheckForMissingLogoutsAndInsert extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
         $date = $this->argument('forDate') ?? null;
@@ -49,8 +44,15 @@ class CheckForMissingLogoutsAndInsert extends Command
             $date = Carbon::yesterday();
         }
 
-        CheckLogoutEventAndSave::withChain([
-            new CalculateAndSaveLoginLogoutActivity($date),
-        ])->dispatch($date)->onQueue('low');
+        LoginLogout::where([
+            ['created_at', '>=', Carbon::parse($date)->startOfDay()],
+            ['created_at', '<=', Carbon::parse($date)->endOfDay()],
+        ])
+            ->orderBy('created_at', 'asc')
+            ->chunk(50, function ($yesterdaysActivities) use ($date) {
+                foreach ($yesterdaysActivities as $loginActivity) {
+                    CheckLogoutEventAndSave::dispatch($date, $loginActivity)->onQueue('low');
+                }
+            });
     }
 }

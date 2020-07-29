@@ -22,6 +22,7 @@ use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\EnrollmentFinalAction;
 use App\Console\Commands\FaxAuditReportsAtPracticePreferredDayTime;
+use App\Console\Commands\FixToledoMakeSureProviderMatchesPracticePull;
 use App\Console\Commands\GenerateReportForScheduledPAM;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
@@ -36,10 +37,14 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\SendSelfEnrollmentReminders;
+use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
 use App\Console\Commands\TuneScheduledCalls;
 use App\Notifications\NurseDailyReport;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
@@ -50,6 +55,7 @@ use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Artisan;
+use Laravel\Scout\Console\ImportCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -71,10 +77,28 @@ class Kernel extends ConsoleKernel
     }
 
     /**
-     * Define the application's command schedule.
+     * NOTE:
+     * Try to order the commands by time, in ascending order. i.e.:
+     * 09:00
+     * 09:10
+     * 10:15
+     * ...
+     * ...
+     * 23:55
+     * 23:59.
      */
     protected function schedule(Schedule $schedule)
     {
+        ini_set('max_execution_time', 300);
+        ini_set('memory_limit', '800M');
+
+        $schedule->command(SendMonthlyNurseInvoiceLAN::class)
+            ->everyMinute()
+            ->when(function () {
+                return SendMonthlyNurseInvoiceLAN::shouldSend();
+            })
+            ->onOneServer();
+
         $schedule->command(CheckEmrDirectInbox::class)
             ->everyTwoMinutes();
 
@@ -86,46 +110,103 @@ class Kernel extends ConsoleKernel
             ->everyFiveMinutes()
             ->between('8:00', '23:00');
 
-        $schedule->command(AssignUnassignedPatientsToStandByNurse::class)->twiceDaily(8, 14);
-        $schedule->command(RemoveDuplicateScheduledCalls::class)
-            ->everyTenMinutes()
-            ->between('8:00', '19:00');
-
-        $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])->dailyAt('10:27');
-        $schedule->command(EnrollmentFinalAction::class)->dailyAt('08:27');
-
-        $schedule->command('horizon:snapshot')->everyFifteenMinutes();
-
         $schedule->command(ProcessNextEligibilityBatchChunk::class)
             ->everyFiveMinutes()
             ->withoutOverlapping();
 
-        $schedule->command(RescheduleMissedCalls::class)->everyFifteenMinutes()->onOneServer();
+        $schedule->command(RemoveDuplicateScheduledCalls::class)
+            ->everyTenMinutes()
+            ->between('8:00', '19:00');
 
-        $schedule->command(CheckEnrolledPatientsForScheduledCalls::class)->dailyAt('00:10')->onOneServer();
+        $schedule->command(RescheduleMissedCalls::class)
+            ->everyFifteenMinutes()
+            ->onOneServer();
 
-        $schedule->command(TuneScheduledCalls::class)->dailyAt('00:15')->onOneServer();
+        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)
+            ->everyFifteenMinutes()
+            ->onOneServer();
 
-        //family calls will be scheduled in RescheduleMissedCalls
-        //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30')->onOneServer();
+        $schedule->command('horizon:snapshot')
+            ->everyFifteenMinutes();
 
-        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFifteenMinutes()->onOneServer();
+        $schedule->command(OverwriteNBIPatientMRN::class)
+            ->everyThirtyMinutes();
 
-        $schedule->command(SendCarePlanApprovalReminders::class)
-            ->weekdays()
-            ->at('08:00')->onOneServer();
+        $schedule->command(OverwriteNBIImportedData::class)
+            ->hourly();
 
-        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
-            ->weeklyOn(1, '10:00')->onOneServer();
+        $schedule->command(AssignUnassignedPatientsToStandByNurse::class)
+            ->twiceDaily(8, 14);
 
-        $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
-            ->dailyAt('22:30')->onOneServer();
+        $schedule->command(FixToledoMakeSureProviderMatchesPracticePull::class)
+            ->twiceDaily(7, 18);
+
+        //Run at 12:01am every 1st of month
+        $schedule->command(ResetPatients::class)
+            ->cron('1 0 1 * *')
+            ->onOneServer();
+
+        $schedule->command(CheckEnrolledPatientsForScheduledCalls::class)
+            ->dailyAt('00:10')
+            ->onOneServer();
+
+        $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)
+            ->dailyAt('00:10')
+            ->onOneServer();
+
+        $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)
+            ->dailyAt('00:10')
+            ->onOneServer();
+
+        $schedule->command(TuneScheduledCalls::class)
+            ->dailyAt('00:15')
+            ->onOneServer();
+
+        //Run at 12:45am every 1st of month
+        $schedule->command(
+            CreateApprovableBillablePatientsReport::class,
+            ['--reset-actor', '--auto-attest', now()->subMonth()->startOfMonth()->toDateString()]
+        )
+            ->cron('45 0 1 * *')
+            ->onOneServer();
+
+        $schedule->command(
+            NursesPerformanceDailyReport::class,
+            [now()->yesterday()->startOfDay()->toDateString(), '--notify']
+        )->dailyAt('00:55')
+            ->onOneServer(); // Dont really know if that will help the prob. #CPM-2303
+
+        $schedule->command(CheckUserTotalTimeTracked::class)
+            ->dailyAt('01:10')
+            ->onOneServer();
 
         $schedule->command(GetCcds::class)
-            ->dailyAt('03:00')->onOneServer();
+            ->dailyAt('03:00')
+            ->onOneServer();
+
+        $schedule->command(ImportCommand::class, [
+            User::class,
+        ])->dailyAt('03:05');
+
+        $schedule->command(ImportCommand::class, [
+            Practice::class,
+        ])->dailyAt('03:10');
+
+        $schedule->command(ImportCommand::class, [
+            Location::class,
+        ])->dailyAt('03:15');
+
+        $schedule->command(CheckForMissingLogoutsAndInsert::class)
+            ->dailyAt('04:00');
+
+        $schedule->command(CareplanEnrollmentAdminNotification::class)
+            ->dailyAt('07:00')
+            ->onOneServer();
 
         $schedule->command(EmailRNDailyReport::class)
-            ->dailyAt('07:05')->onOneServer()->after(function () {
+            ->dailyAt('07:05')
+            ->onOneServer()
+            ->after(function () {
                 if ( ! DatabaseNotification::where('type', NurseDailyReport::class)->where(
                     'created_at',
                     '>=',
@@ -135,31 +216,79 @@ class Kernel extends ConsoleKernel
                 }
             });
 
-        $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
-            ->dailyAt('23:40')->onOneServer();
+        $schedule->command(SendCarePlanApprovalReminders::class)
+            ->weekdays()
+            ->at('08:00')
+            ->onOneServer();
 
-        $schedule->command(QueueGenerateOpsDailyReport::class)
-            ->dailyAt('23:30')->onOneServer();
+        $schedule->command(QueueSendAuditReports::class)
+            ->monthlyOn(1, '08:00')
+            ->onOneServer();
 
-        //Run at 12:01am every 1st of month
-        $schedule->command(ResetPatients::class)
-            ->cron('1 0 1 * *')->onOneServer();
+        $schedule->command(CheckForDraftCarePlans::class)
+            ->dailyAt('08:00')
+            ->onOneServer();
 
-        //Run at 12:45am every 1st of month
-        $schedule->command(
-            CreateApprovableBillablePatientsReport::class,
-            ['--reset-actor', '--auto-attest', now()->subMonth()->startOfMonth()->toDateString()]
-        )
-            ->cron('45 0 1 * *')->onOneServer();
+        $schedule->command(CheckForDraftNotesAndQAApproved::class)
+            ->dailyAt('08:10')
+            ->onOneServer();
+
+        $schedule->command(EnrollmentFinalAction::class)
+            ->dailyAt('08:27');
+
+        $schedule->command(SendMonthlyNurseInvoiceFAN::class)
+            ->monthlyOn(1, '08:30')
+            ->onOneServer();
+
+        $schedule->command(SendResolveInvoiceDisputeReminder::class)
+            ->dailyAt('08:35')
+            ->skip(function () {
+                return SendResolveInvoiceDisputeReminder::shouldSkip();
+            })
+            ->onOneServer();
+
+        $schedule->command(SendUnsuccessfulCallPatientsReminderNotification::class)
+            ->dailyAt('10:00')
+            ->onOneServer();
+
+        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
+            ->weeklyOn(1, '10:00')
+            ->onOneServer();
+
+        $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])
+            ->dailyAt('10:27');
+
+        $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
+            ->dailyAt('21:00');
+
+        $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
+            ->dailyAt('22:30')
+            ->onOneServer();
 
         $schedule->command(
             CreateApprovableBillablePatientsReport::class,
             ['--reset-actor', now()->startOfMonth()->toDateString()]
         )
-            ->dailyAt('23:00');
+            ->twiceDaily(12, 16);
 
         $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
-            ->dailyAt('21:00');
+            ->twiceDaily(7, 21);
+
+        $schedule->command(QueueGenerateOpsDailyReport::class)
+            ->dailyAt('23:30')
+            ->onOneServer();
+
+        $schedule->command(GenerateReportForScheduledPAM::class)
+            ->monthlyOn(date('t'), '23:30');
+
+        $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
+            ->dailyAt('23:40')
+            ->onOneServer();
+
+        $schedule->command(QueueGenerateNurseDailyReport::class)
+            ->dailyAt('23:45')
+            ->withoutOverlapping()
+            ->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
@@ -167,17 +296,6 @@ class Kernel extends ConsoleKernel
 //                '--variable-time' => true,
 //            ]
 //        )->monthlyOn(1, '5:0')->onOneServer();
-
-        $schedule->command(QueueGenerateNurseDailyReport::class)
-            ->dailyAt('23:45')
-            ->withoutOverlapping()->onOneServer();
-
-        $schedule->command(CareplanEnrollmentAdminNotification::class)
-            ->dailyAt('07:00')
-            ->onOneServer();
-
-        $schedule->command(QueueSendAuditReports::class)
-            ->monthlyOn(1, '08:00')->onOneServer();
 
         //uncomment when ready
 //        $schedule->command(DownloadTwilioRecordings::class)
@@ -205,6 +323,18 @@ class Kernel extends ConsoleKernel
         })->onOneServer();
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30')->onOneServer();
         $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)->dailyAt('00:10')->onOneServer();
+
+        $schedule->command(ImportCommand::class, [
+            User::class,
+        ])->dailyAt('03:05');
+
+        $schedule->command(ImportCommand::class, [
+            Practice::class,
+        ])->dailyAt('03:10');
+
+        $schedule->command(ImportCommand::class, [
+            Location::class,
+        ])->dailyAt('03:15');
 
         $schedule->command(CheckUserTotalTimeTracked::class)
             ->dailyAt('01:10')
