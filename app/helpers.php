@@ -862,7 +862,9 @@ if ( ! function_exists('defaultCarePlanTemplate')) {
      */
     function getDefaultCarePlanTemplate(): ?CarePlanTemplate
     {
-        return CarePlanTemplate::findOrFail(AppConfig::pull('default_care_plan_template_id'));
+        return \Illuminate\Support\Facades\Cache::remember('default_care_plan_template_object', 2, function () {
+            return CarePlanTemplate::findOrFail(AppConfig::pull('default_care_plan_template_id'));
+        });
     }
 }
 if ( ! function_exists('authUserCanSendPatientEmail')) {
