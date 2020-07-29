@@ -434,7 +434,6 @@ class PatientController extends Controller
                     if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
                         $observation['items_text']  = $description;
                         $observation['description'] = $description;
-                        $observation['obs_key']     = $description;
                     }
                     $obs_by_pcp['obs_symptoms'][] = $this->prepareForWebix($observation);
                     break;
