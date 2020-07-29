@@ -6,6 +6,7 @@
 
 namespace App\Services;
 
+use App\Call;
 use App\CallViewNurses;
 
 class CallService
@@ -22,11 +23,11 @@ class CallService
         $calls = CallViewNurses::where('nurse_id', '=', $nurseId);
 
         if ('completed' === $dropdownStatus && 'all' === $filterPriority) {
-            $calls->whereIn('status', ['reached', 'done']);
+            $calls->whereIn('status', [Call::REACHED, Call::DONE]);
         }
 
         if ('scheduled' === $dropdownStatus && 'all' === $filterPriority) {
-            $calls->where('status', '=', 'scheduled');
+            $calls->where('status', '=', Call::SCHEDULED);
         }
 
         if ('all' !== $filterPriority) {
@@ -35,7 +36,7 @@ class CallService
             $calls->where(function ($query) use ($today) {
                 $query->where(
                     [
-                        ['status', '=', 'scheduled'],
+                        ['status', '=', Call::SCHEDULED],
                         ['scheduled_date', '<=', $today],
                     ]
                 )->orWhere(

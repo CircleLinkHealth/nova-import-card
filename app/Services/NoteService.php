@@ -120,6 +120,10 @@ class NoteService
             $requestInput['logger_id'] = auth()->id();
         }
 
+        if (isset($requestInput['call_status']) && Call::REACHED === $requestInput['call_status']) {
+            $note->successful_clinical_call = 1;
+        }
+
         $note->logger_id = $requestInput['logger_id'];
         $note->isTCM     = isset($requestInput['tcm'])
             ? 'true' === $requestInput['tcm']
@@ -431,7 +435,7 @@ class NoteService
     }
 
     public function storeCallForNote(
-        $note,
+        Note $note,
         $status,
         User $patient,
         User $author,
@@ -439,6 +443,11 @@ class NoteService
         $scheduler,
         $attemptNote = ''
     ) {
+        if ( ! $note->successful_clinical_call) {
+            $note->successful_clinical_call = 1;
+            $note->save();
+        }
+
         if ('inbound' == $phone_direction) {
             $outbound_num  = $patient->getPrimaryPhone();
             $outbound_id   = $patient->id;

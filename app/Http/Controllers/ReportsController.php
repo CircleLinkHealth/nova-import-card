@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\ReportFormatter;
 use App\Http\Requests\GetUnder20MinutesReport;
+use App\Note;
 use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanAssessmentService;
@@ -19,7 +20,6 @@ use App\Services\ReportsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
@@ -787,9 +787,10 @@ class ReportsController extends Controller
         ini_set('memory_limit', '512M');
 
         if ( ! $patientId) {
-            return 'Patient Not Found..';
+            return response('Patient Not Found..', 400);
         }
 
+        /** @var User $patient */
         $patient = User::with(PatientCareplanRelations::get())->findOrFail($patientId);
 
         if (CarePlan::PDF == $patient->getCareplanMode()) {
@@ -798,8 +799,23 @@ class ReportsController extends Controller
 
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport($patient);
 
-        if ( ! $careplan) {
-            return 'Careplan not found...';
+        if ( ! $patient->carePlan || ! $careplan) {
+            return response('Careplan not found...', 400);
+        }
+
+        /** @var User $user */
+        $user                           = auth()->user();
+        $showReadyForDrButton           = $patient->carePlan->shouldRnApprove($user);
+        $readyForDrButtonDisabled       = false;
+        $readyForDrButtonAlreadyClicked = false;
+        if ($showReadyForDrButton) {
+            $readyForDrButtonDisabled = ! Note::whereStatus(Note::STATUS_DRAFT)
+                ->where('patient_id', '=', $patient->id)
+                ->where('successful_clinical_call', '=', 1)
+                ->exists();
+
+            $approvedBy                     = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
+            $readyForDrButtonAlreadyClicked = $approvedBy && $approvedBy == $user->id;
         }
 
 //        To phase out
@@ -814,6 +830,7 @@ class ReportsController extends Controller
 
         $args = [
             'patient'                 => $patient,
+            'careplanStatus'          => $patient->carePlan->status,
             'problems'                => $careplan[$patientId]['problems'],
             'problemNames'            => $careplan[$patientId]['problem'],
             'biometrics'              => $careplan[$patientId]['bio_data'],
@@ -831,13 +848,17 @@ class ReportsController extends Controller
             'careplan'                => array_merge(
                 $careplanService->careplan($patient),
                 //vue front end expects this format
-            ['other' => [
-                ['name' => $careplan[$patientId]['other']],
-            ],
-            ]
+                ['other' => [
+                    ['name' => $careplan[$patientId]['other']],
+                ],
+                ]
             ),
-            'socialServicesMiscId' => $cpmMiscs[CpmMisc::SOCIAL_SERVICES],
-            'othersMiscId'         => $cpmMiscs[CpmMisc::OTHER],
+            'socialServicesMiscId'           => $cpmMiscs[CpmMisc::SOCIAL_SERVICES],
+            'othersMiscId'                   => $cpmMiscs[CpmMisc::OTHER],
+            'rnApprovalEnabled'              => $patient->carePlan->isRnApprovalEnabled(),
+            'showReadyForDrButton'           => $showReadyForDrButton,
+            'readyForDrButtonDisabled'       => $readyForDrButtonDisabled,
+            'readyForDrButtonAlreadyClicked' => $readyForDrButtonAlreadyClicked,
         ];
 
         return view(

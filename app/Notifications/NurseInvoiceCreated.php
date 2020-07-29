@@ -44,7 +44,7 @@ class NurseInvoiceCreated extends Notification
 
             'sender_id'    => auth()->user()->id ?? null,
             'sender_type'  => User::class,
-            'sender_email' => 'no-reply@circlelinkhealth.com',
+            'sender_email' => 'no-reply@careplanmanager.com',
 
             'receiver_type'  => $notifiable->id,
             'receiver_id'    => get_class($notifiable),

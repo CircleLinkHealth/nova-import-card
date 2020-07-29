@@ -5,7 +5,7 @@
     <div class="container">
         <div class="practice-logo">
             <div class="logo">
-                @include('enrollment-consent.practiceLogo', compact('practiceLogoSrc'))
+                @include('enrollment-letters.practiceLogo', compact('practiceLogoSrc'))
             </div>
         </div>
        <div class="message">

@@ -6,6 +6,7 @@
 
 namespace App\Services\Calls;
 
+use App\Algorithms\Calls\NurseFinder;
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
@@ -13,6 +14,7 @@ use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Note;
 use App\Services\NoteService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\Family;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -27,6 +29,8 @@ class SchedulerService
     const CALL_BACK_TYPE                              = 'Call Back';
     const CALL_TYPE                                   = 'call';
     const PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE = 'Provider Request For Care Plan Approval';
+    const SCHEDULE_NEXT_CALL_PER_PATIENT_SMS          = 'Schedule Next Call per patient\'s SMS';
+    const TASK_TYPE                                   = 'task';
 
     /**
      * @var NoteService
@@ -103,15 +107,60 @@ class SchedulerService
         );
     }
 
-    public static function getNextScheduledCall($patientId, $excludeToday = false)
+    public static function getAsapTaskSince($patientId, $taskName, Carbon $since = null)
     {
-        return Call::where(
-            function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
-            }
-        )
-            ->where('inbound_cpm_id', $patientId)
+        if ( ! $since) {
+            $since = now();
+        }
+
+        return Call::where('inbound_cpm_id', $patientId)
+            ->where('type', '=', 'task')
+            ->where('sub_type', '=', $taskName)
+            ->where('asap', '=', 1)
+            ->where('scheduled_date', '>=', $since->toDateString())
+            ->orderBy('scheduled_date', 'desc')
+            ->first();
+    }
+
+    public static function getLastUnsuccessfulCall($patientId, $calledDate = null, $withParticipants = true): ?Call
+    {
+        if ( ! $calledDate) {
+            $calledDate = now();
+        }
+
+        return Call::when($withParticipants, function ($q) {
+            return $q->with([
+                'inboundUser' => function ($q) {
+                    $q->without(['roles', 'perms'])
+                        ->with([
+                            'billingProvider' => function ($q) {
+                                $q->with([
+                                    'user' => function ($q) {
+                                        $q->without(['roles', 'perms'])
+                                            ->select(['id', 'last_name']);
+                                    },
+                                ]);
+                            },
+                            'primaryPractice' => function ($q) {
+                                $q->select(['id', 'display_name']);
+                            },
+                        ]);
+                },
+                'outboundUser' => function ($q) {
+                    $q->without(['roles', 'perms'])
+                        ->select(['id', 'first_name']);
+                },
+            ]);
+        })
+            ->whereInboundCpmId($patientId)
+            ->where('status', '=', Call::NOT_REACHED)
+            ->whereBetween('called_date', [$calledDate->copy()->startOfDay(), $calledDate->copy()->endOfDay()])
+            ->first();
+    }
+
+    public static function getNextScheduledActivities($patientId, $excludeToday)
+    {
+        return Call::where('inbound_cpm_id', $patientId)
             ->where('status', '=', Call::SCHEDULED)
             ->when(
                 $excludeToday,
@@ -122,7 +171,24 @@ class SchedulerService
                     $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
                 }
             )
-            ->orderBy('scheduled_date', 'desc')
+            ->orderBy('scheduled_date', 'desc');
+    }
+
+    public static function getNextScheduledActivity($patientId, $subType, $excludeToday = false)
+    {
+        return self::getNextScheduledActivities($patientId, $excludeToday)
+            ->where('type', '=', 'task')
+            ->where('sub_type', '=', $subType)
+            ->first();
+    }
+
+    public static function getNextScheduledCall($patientId, $excludeToday = false): ?Call
+    {
+        return self::getNextScheduledActivities($patientId, $excludeToday)
+            ->where(function ($q) {
+                $q->whereNull('type')
+                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
+            })
             ->first();
     }
 
@@ -340,6 +406,83 @@ class SchedulerService
         })
             ->where('status', '=', 'scheduled')
             ->delete();
+    }
+
+    /**
+     * @param $taskNote
+     * @param $scheduler
+     * @param null $phoneNumber
+     *
+     * @throws \Exception
+     */
+    public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null): Call
+    {
+        // check if there is already a task scheduled
+        /** @var Call $existing */
+        $existing = Call::where('type', '=', SchedulerService::TASK_TYPE)
+            ->where('sub_type', '=', SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS)
+            ->where('status', '=', Call::SCHEDULED)
+            ->where('inbound_cpm_id', '=', $patient->id)
+            ->first();
+
+        if ($existing) {
+            $existing->attempt_note = "{$existing->attempt_note}\n{$taskNote}";
+            $existing->asap         = true;
+            $existing->save();
+
+            return $existing;
+        }
+
+        $scheduledDate = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
+            $patient->patientInfo,
+            now()
+        );
+
+        $nurseId     = null;
+        $nurseFinder = (new NurseFinder($patient->patientInfo))->find();
+        if ($nurseFinder && isset($nurseFinder['nurse'])) {
+            $nurseId = $nurseFinder['nurse'];
+        }
+        if ( ! $nurseId) {
+            $nurseId = StandByNurseUser::id();
+        }
+
+        if ( ! $nurseId) {
+            throw new \Exception("could not find nurse for patient[$patient->id]");
+        }
+
+        return Call::create(
+            [
+                'type'                  => SchedulerService::TASK_TYPE,
+                'sub_type'              => SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS,
+                'status'                => Call::SCHEDULED,
+                'attempt_note'          => $taskNote,
+                'scheduler'             => $scheduler,
+                'is_manual'             => false,
+                'inbound_phone_number'  => $phoneNumber ?? '',
+                'outbound_phone_number' => '',
+                'inbound_cpm_id'        => $patient->id,
+                'outbound_cpm_id'       => $nurseId,
+                'call_time'             => 0,
+                'asap'                  => true,
+                'is_cpm_outbound'       => true,
+                'scheduled_date'        => $scheduledDate['day'],
+            ]
+        );
+    }
+
+    /**
+     * @param $phoneNumber
+     * @param $taskNote
+     * @param $scheduler
+     *
+     * @throws \Exception
+     *
+     * @return Call|\Illuminate\Database\Eloquent\Model
+     */
+    public function scheduleAsapCallbackTaskFromSms(User $patient, $phoneNumber, $taskNote, $scheduler)
+    {
+        return $this->scheduleAsapCallbackTask($patient, $taskNote, $scheduler, $phoneNumber);
     }
 
     public function storeScheduledCall(
@@ -684,21 +827,18 @@ class SchedulerService
             $attestedProblems
         );
 
-        if (Call::IGNORED != $callStatus) {
-            $isCallBack = null != $scheduled_call && SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type;
-            $this->patientWriteRepository->updateCallLogs(
-                $patient->patientInfo,
-                Call::REACHED == $callStatus,
-                $isCallBack
-            );
-        }
+        $this->patientWriteRepository->updateCallLogs(
+            $patient->patientInfo,
+            Call::REACHED == $callStatus,
+            ! is_null($scheduled_call) && SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type
+        );
 
         $nextCall = SchedulerService::getNextScheduledCall($patient->id, true);
         if ($nextCall) {
             return null;
         }
 
-        $previousCall = $this->getPreviousCall($patient, $scheduled_call['id']);
+        $previousCall = $this->getPreviousCall($patient, optional($scheduled_call)->id);
 
         if (Call::REACHED == $callStatus) {
             $prediction = (new SuccessfulHandler(

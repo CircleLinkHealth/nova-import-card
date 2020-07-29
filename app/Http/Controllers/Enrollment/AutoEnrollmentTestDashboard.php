@@ -143,7 +143,7 @@ class AutoEnrollmentTestDashboard extends Controller
      */
     public function sendInvitesPanelTest()
     {
-        return view('enrollment-consent.unreachablesInvitationPanel');
+        return view('enrollment-letters.unreachablesInvitationPanel');
     }
 
     public function sendPatientsReminderTestMethod()
@@ -160,15 +160,15 @@ class AutoEnrollmentTestDashboard extends Controller
     /**
      * @return string
      */
-    public function triggerEnrollmentSeederTest()
+    public function triggerEnrollmentSeederTest(Request $request)
     {
         try {
-            Artisan::call('db:seed', ['--class' => 'PrepareDataForReEnrollmentTestSeeder']);
+            Artisan::call('create:selfEnrollmentTestData', ['practiceName' => $request->input('practice-select')]);
         } catch (\Exception $e) {
             return 'Somethings Wrong. Please try one more time...';
         }
 
-        return 'You can go back and proceed to Step 2.';
+        return 'You can go back and proceed';
     }
 
     private function deleteTestAwvUser(User $user, $surveyInstance)

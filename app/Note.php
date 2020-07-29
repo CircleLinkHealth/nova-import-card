@@ -42,46 +42,54 @@ use Illuminate\Support\Facades\Cache;
  * @property \CircleLinkHealth\Customer\Entities\User                        $patient
  * @property \CircleLinkHealth\Customer\Entities\User                        $program
  * @property string                                                          $status
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereAuthorId($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereBody($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereCreatedAt($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereDidMedicationRecon($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereId($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereIsTCM($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereLoggerId($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\Note wherePatientId($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\Note wherePerformedAt($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereType($value)
- * @method   static                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereUpdatedAt($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereDidMedicationRecon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereIsTCM($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereLoggerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note wherePerformedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \CircleLinkHealth\Customer\Entities\User|null                                                                   $logger
- * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                     $revisionHistory
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note emergency($yes = true)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note filter(\App\Filters\QueryFilters $filters)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note forwarded(\Carbon\Carbon $from = null, \Carbon\Carbon $to = null, $excludePatientSupport = true)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note forwardedTo($notifiableType, $notifiableId, \Carbon\Carbon $from = null, \Carbon\Carbon $to = null)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note newModelQuery()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note newQuery()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note patientPractice($practiceId)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note query()
+ *
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                               $logger
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note emergency($yes = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note filter(\App\Filters\QueryFilters $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note forwarded(\Carbon\Carbon $from = null, \Carbon\Carbon $to = null, $excludePatientSupport = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note forwardedTo($notifiableType, $notifiableId, \Carbon\Carbon $from = null, \Carbon\Carbon $to = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note patientPractice($practiceId)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note query()
+ *
  * @property string|null                                                                                                     $summary_type
  * @property string|null                                                                                                     $deleted_at
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
- * @method   static                                                                                                          bool|null forceDelete()
- * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\App\Note onlyTrashed()
- * @method   static                                                                                                          bool|null restore()
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereDeletedAt($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereStatus($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereSummary($value)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereSummaryType($value)
- * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\App\Note withTrashed()
- * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\App\Note withoutTrashed()
- * @property int|null                                                                                                        $addendums_count
- * @property int|null                                                                                                        $notifications_count
- * @property int|null                                                                                                        $revision_history_count
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\Note whereSuccessStory($value)
- * @property int                                                                                                             $success_story
- * @property int                                                                                                             $successful_clinical_call
+ *
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Note onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereSummaryType($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Note withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Note withoutTrashed()
+ *
+ * @property int|null $addendums_count
+ * @property int|null $notifications_count
+ * @property int|null $revision_history_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereSuccessStory($value)
+ *
+ * @property int $success_story
+ * @property int $successful_clinical_call
  */
 class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport, AttachableToNotification
 {
@@ -113,6 +121,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         'performed_at',
         'status',
         'success_story',
+        'successful_clinical_call',
     ];
 
     protected $table = 'notes';
