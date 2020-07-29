@@ -118,7 +118,7 @@ trait UserHelpers
         if ('participant' == $roleName && isCpm()) {
             $user->carePlan()->updateOrCreate(
                 [
-                    'care_plan_template_id' => \CircleLinkHealth\Core\Entities\AppConfig::pull('default_care_plan_template_id'),
+                    'care_plan_template_id' => getDefaultCarePlanTemplate()->id,
                 ],
                 [
                     'status' => 'draft',
