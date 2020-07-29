@@ -219,50 +219,6 @@ class ReportsController extends Controller
         return view('reports.billing', $data);
     }
 
-    public function biometricsCharts(
-        Request $request,
-        $patientId = false
-    ) {
-        $patient = User::find($patientId);
-
-        $biometrics = [
-            'Weight',
-            'Blood_Sugar',
-            'Blood_Pressure',
-        ];
-        $biometrics_data  = [];
-        $biometrics_array = [];
-
-        foreach ($biometrics as $biometric) {
-            $biometrics_data[$biometric] = $this->service->getBiometricsData($biometric, $patient);
-        }            //debug($biometrics_data);
-
-        foreach ($biometrics_data as $key => $value) {
-            $bio_name                            = $key;
-            $count                               = 1;
-            $biometrics_array[$bio_name]['data'] = '';
-            if ($value) {
-                foreach ($value as $key => $value) {
-                    $biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval(
-                        $value->Avg
-                    ).'} ,';
-                    ++$count;
-                }
-            } else {
-                //no data
-                $biometrics_array[$bio_name]['data'] = '';
-            }//debug($biometrics_array);
-        }
-
-        return view(
-            'wpUsers.patient.biometric-chart',
-            [
-                'patient'          => $patient,
-                'biometrics_array' => $biometrics_array,
-            ]
-        );
-    }
-
     public function excelReportUnreachablePatients()
     {
         $users = $this->patientReadRepository->unreachable()->fetch();
