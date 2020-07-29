@@ -105,15 +105,15 @@ class VariablePayCalculator
             }
 
             $totalPay += $patientPayCalculation->pay;
-            if ($patientPayCalculation->visits->isNotEmpty()) {
+            if (optional($patientPayCalculation->visits)->isNotEmpty()) {
                 $visits->put($patientUserId, $patientPayCalculation->visits);
             }
 
-            if ($patientPayCalculation->bhiVisits->isNotEmpty()) {
+            if (optional($patientPayCalculation->bhiVisits)->isNotEmpty()) {
                 $bhiVisits->put($patientUserId, $patientPayCalculation->bhiVisits);
             }
 
-            if ($patientPayCalculation->pcmVisits->isNotEmpty()) {
+            if (optional($patientPayCalculation->pcmVisits)->isNotEmpty()) {
                 $pcmVisits->put($patientUserId, $patientPayCalculation->pcmVisits);
             }
         });
