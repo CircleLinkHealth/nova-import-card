@@ -105,15 +105,15 @@ class VariablePayCalculator
             }
 
             $totalPay += $patientPayCalculation->pay;
-            if ( ! empty($patientPayCalculation->visits)) {
+            if ($patientPayCalculation->visits->isNotEmpty()) {
                 $visits->put($patientUserId, $patientPayCalculation->visits);
             }
 
-            if ( ! empty($patientPayCalculation->bhiVisits)) {
+            if ($patientPayCalculation->bhiVisits->isNotEmpty()) {
                 $bhiVisits->put($patientUserId, $patientPayCalculation->bhiVisits);
             }
 
-            if ( ! empty($patientPayCalculation->pcmVisits)) {
+            if ($patientPayCalculation->pcmVisits->isNotEmpty()) {
                 $pcmVisits->put($patientUserId, $patientPayCalculation->pcmVisits);
             }
         });
@@ -312,7 +312,7 @@ class VariablePayCalculator
 
         $totalCcm = $patientSummary->ccm_time;
         $totalBhi = $patientSummary->bhi_time;
-        $ranges   = $this->separateTimeAccruedInRanges($patientCareRateLogs);
+        $ranges   = $this->separateTimeAccruedInRanges($patientCareRateLogs, $patientIsPcm);
 
         if ($visitFeeBased) {
             return $this->getPayForPatientWithVisitFeeAlgo(
