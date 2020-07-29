@@ -83,7 +83,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *
  * @property int                                                                                                             $id
  * @property int|null                                                                                                        $saas_account_id
- * @property int                                                                                                             $skip_browser_checks                          Skip compatible browser checks when the user logs in
+ * @property int                                                                                                             $skip_browser_checks                                                                                                                                                    Skip compatible browser checks when the user logs in
  * @property int                                                                                                             $count_ccm_time
  * @property string                                                                                                          $username
  * @property string                                                                                                          $program_id
@@ -291,19 +291,17 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withoutTrashed()
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null $enrollmentInvitationLinks
  * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $enrollableInfoRequest
  * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                       $loginEvents
  * @property int|null                                                                          $login_events_count
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                              $enrollee
  * @property int|null                                                                          $enrollment_invitation_links_count
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInviteReminder(\Carbon\Carbon $date = null, $has = true)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingCLHApproval(\CircleLinkHealth\Customer\Entities\User $approver)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingProviderApproval(\CircleLinkHealth\Customer\Entities\User $approver)
+ * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
+ * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInviteReminder(\Carbon\Carbon $date = null, $has = true)
+ * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
+ * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingCLHApproval(\CircleLinkHealth\Customer\Entities\User $approver)
+ * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingProviderApproval(\CircleLinkHealth\Customer\Entities\User $approver)
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -703,7 +701,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
                 if ($user->isParticipant()) {
                     $user->patientInfo()->restore();
-                    $user->patientSummaries()->restore();
                     $user->carePlan()->restore();
                     $user->careTeamMembers()->get()->each(function ($ctm) {
                         $ctm->restore();
@@ -765,6 +762,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function canQAApproveCarePlans()
     {
         return $this->hasPermissionForSite('care-plan-qa-approve', $this->getPrimaryPracticeId());
+    }
+
+    public function canRNApproveCarePlans()
+    {
+        return $this->hasPermissionForSite('care-plan-rn-approve', $this->getPrimaryPracticeId());
     }
 
     /**
@@ -1772,17 +1774,33 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
-        $validCellNumbers = $this->phoneNumbers->whereNotNull('number')->where('number', '!=', '')->map(function ($phone) {
-            $number = formatPhoneNumberE164($phone->number);
+        $validCellNumbers = $this->phoneNumbers
+            ->whereNotNull('number')->where('number', '!=', '')
+            ->map(function ($phone) {
+                // when running tests, faker doesn't always produce valid us mobile phone number
+                $phoneNumber = \Propaganistas\LaravelPhone\PhoneNumber::make($phone->number, ['US', 'CY']);
+                try {
+                    //isOfType might throw, in that case we do not use the number
+                    if ( ! isProductionEnv() || $phoneNumber->isOfType('mobile')) {
+                        if ($this->isCypriotNumber($phoneNumber)) {
+                            return $phone->number;
+                        }
 
-            if (\Propaganistas\LaravelPhone\PhoneNumber::make($number, 'US')->isOfType('mobile')) {
-                return $number;
-            }
+                        return formatPhoneNumberE164($phone->number);
+                    }
+                } catch (NumberParseException $e) {
+                    Log::warning($e->getMessage());
 
-            return false;
-        })->filter()->unique()->values();
+                    return false;
+                }
 
-        return $validCellNumbers->first();
+                return false;
+            })
+            ->filter()
+            ->unique()
+            ->values();
+
+        return $validCellNumbers->first() ?? '';
     }
 
     public function getPreferredCcContactDays()
@@ -3182,7 +3200,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->whereHas(
                 'carePlan',
                 function ($q) {
-                    $q->whereIn('status', [CarePlan::QA_APPROVED]);
+                    $q->whereIn('status', [CarePlan::RN_APPROVED]);
                 }
             )
             ->intersectPracticesWith($approver)
@@ -4141,6 +4159,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
                 return $number;
             }
+        }
+    }
+
+    private function isCypriotNumber(\Propaganistas\LaravelPhone\PhoneNumber $phoneNumber)
+    {
+        try {
+            return $phoneNumber->isOfCountry('CY');
+        } catch (NumberParseException $e) {
+            return false;
         }
     }
 

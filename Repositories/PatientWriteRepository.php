@@ -99,7 +99,7 @@ class PatientWriteRepository
             $forDate = Carbon::now();
         }
         // get record for month
-        $day_start = Carbon::parse($forDate->firstOfMonth())->format('Y-m-d');
+        $day_start = $forDate->firstOfMonth()->format('Y-m-d');
         $record    = PatientMonthlySummary::where('patient_id', $patient->user_id)
             ->where('month_year', $day_start)
             ->first();

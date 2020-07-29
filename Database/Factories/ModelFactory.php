@@ -346,7 +346,7 @@ $factory->define(Call::class, function (Faker\Generator $faker) {
         'note_id'         => null,
         'is_cpm_outbound' => 1,
         'service'         => 'phone',
-        'status'          => $faker->randomElement(['scheduled', 'reached', 'done']),
+        'status'          => $faker->randomElement([Call::SCHEDULED, Call::REACHED, Call::DONE]),
         'scheduler'       => null, // to be filled in during test
     ];
 });
