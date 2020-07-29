@@ -10,9 +10,9 @@
     }
 
     @media (max-width: 490px) {
-    .practice-logo img{
-        height: 90px;
-    }
+        .practice-logo img{
+            height: 90px;
+        }
 
     }
 
