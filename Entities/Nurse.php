@@ -308,7 +308,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         $nurseHolidays = $this->holidays->where('date', '>=', $startCarbon->copy()->startOfDay())
             ->where('date', '<=', $endCarbon->copy()->endOfDay());
 
-        if (empty($companyHolidays->all())) {
+        if ($companyHolidays->isEmpty()) {
             return $nurseHolidays;
         }
 
