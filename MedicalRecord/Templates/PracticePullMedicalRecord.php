@@ -262,7 +262,7 @@ class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
                 ],
             ],
             'location' => (object) [
-                'name'    => null,
+                'name'    => $demos->facility_name,
                 'address' => (object) [
                     'street'  => [],
                     'city'    => null,
