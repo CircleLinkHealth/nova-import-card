@@ -13,7 +13,7 @@ if (isset($patient)) {
 } else {
     $monthlyTime = '';
 }
-$canSwitchToWeb = $patient->carePlan && $patient->carePlan->mode == CircleLinkHealth\SharedModels\Entities\CarePlan::PDF && auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']);
+$canSwitchToWeb = $patient->carePlan && CircleLinkHealth\SharedModels\Entities\CarePlan::PDF == $patient->carePlan->mode && auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']);
 ?>
 
 <style>
