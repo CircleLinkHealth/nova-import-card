@@ -34,6 +34,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/invoices-download" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stdio-react" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stream-filter" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/term-react" />

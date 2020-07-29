@@ -124,6 +124,7 @@
       <path value="$PROJECT_DIR$/vendor/mockery/mockery" />
       <path value="$PROJECT_DIR$/vendor/hamcrest/hamcrest-php" />
       <path value="$PROJECT_DIR$/vendor/spatie/temporary-directory" />
+      <path value="$PROJECT_DIR$/vendor/org_heigl/ghostscript" />
       <path value="$PROJECT_DIR$/vendor/intervention/image" />
       <path value="$PROJECT_DIR$/vendor/league/glide" />
       <path value="$PROJECT_DIR$/vendor/spatie/pdf-to-image" />
@@ -308,6 +309,7 @@
       <path value="$PROJECT_DIR$/vendor/wildbit/swiftmailer-postmark" />
       <path value="$PROJECT_DIR$/vendor/rennokki/laravel-eloquent-query-cache" />
       <path value="$PROJECT_DIR$/vendor/suenerds/nova-searchable-belongs-to-filter" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/invoices-download" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />
