@@ -27,7 +27,7 @@ $healthNote     = $data['healthGoalNote'];
     });
 
     $problemsWithInstructions = $ccdProblems->filter(function ($ccd) {
-        return $ccd['instruction']['name'];
+        return optional($ccd['instruction'])['name'];
     });
 
     $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
