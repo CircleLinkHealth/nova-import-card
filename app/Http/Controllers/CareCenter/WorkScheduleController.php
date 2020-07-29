@@ -151,6 +151,12 @@ class WorkScheduleController extends Controller
         $window = $this->nurseContactWindows
             ->find($windowId);
 
+        if (empty($window)) {
+            return response()->json([
+                'error' => 'window does not exist',
+            ], 400);
+        }
+
         $this->destroyWindowValidation($window);
         //  Delete
         $deleteRecurringEvents ? $this->multipleDelete($window) : $this->singleDelete($window);
