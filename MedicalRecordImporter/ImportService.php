@@ -78,10 +78,7 @@ class ImportService
             $ccda->location_id = $enrollee->location_id;
         }
         if ( ! $ccda->billing_provider_id) {
-            $ccda->billing_provider_id = $enrollee->billing_provider_user_id;
-        }
-        if ($ccda->isDirty()) {
-            $ccda->save();
+            $ccda->billing_provider_id = $enrollee->provider_id;
         }
 
         return $ccda;
