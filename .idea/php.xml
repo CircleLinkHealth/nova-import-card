@@ -308,6 +308,7 @@
       <path value="$PROJECT_DIR$/vendor/wildbit/swiftmailer-postmark" />
       <path value="$PROJECT_DIR$/vendor/rennokki/laravel-eloquent-query-cache" />
       <path value="$PROJECT_DIR$/vendor/suenerds/nova-searchable-belongs-to-filter" />
+      <path value="$PROJECT_DIR$/vendor/org_heigl/ghostscript" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />
