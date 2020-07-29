@@ -55,7 +55,7 @@ class AutoApproveValidCarePlansAs extends Command
 
         if ( ! $this->option('only-consented-enrollees')) {
             User::patientsPendingCLHApproval($approver)->whereHas('practices', function ($q) {
-                $q->activeBillable();
+                $q->activeBillable()->whereIsDemo(0);
             })->orderByDesc('id')->chunkById(50, function ($patients) use ($approver) {
                 $patients->each(function (User $patient) use ($approver) {
                     $this->process($patient, $approver);
@@ -71,7 +71,7 @@ class AutoApproveValidCarePlansAs extends Command
                 if ( ! $enrollee->user) {
                     ImportEnrollee::import($enrollee);
                 }
-                if ($enrollee->user && $enrollee->user->carePlan && in_array($enrollee->user->carePlan->status, [CarePlan::PROVIDER_APPROVED, CarePlan::QA_APPROVED])) {
+                if ($enrollee->user && $enrollee->user->carePlan && in_array($enrollee->user->carePlan->status, [CarePlan::PROVIDER_APPROVED, CarePlan::QA_APPROVED, CarePlan::RN_APPROVED])) {
                     $enrollee->status = Enrollee::ENROLLED;
                     $enrollee->save();
 
@@ -104,8 +104,8 @@ class AutoApproveValidCarePlansAs extends Command
     private function consentedEnrollees()
     {
         return Enrollee::where('status', Enrollee::CONSENTED)->whereHas('practice', function ($q) {
-            $q->activeBillable();
-        })->with('user.patientInfo');
+            $q->activeBillable()->whereIsDemo(0);
+        })->with('user.patientInfo')->orderByDesc('id');
     }
 
     private function log(array $array)
@@ -134,7 +134,8 @@ class AutoApproveValidCarePlansAs extends Command
         $needsQA = true;
 
         if ( ! is_null($patient->carePlan)) {
-            $needsQA = $patient->carePlan->validator()->fails();
+            $val     = $patient->carePlan->validator();
+            $needsQA = $val->fails();
         }
 
         if ($needsQA && $this->option('reimport')) {
@@ -142,7 +143,8 @@ class AutoApproveValidCarePlansAs extends Command
             $this->reimport($patient->id, $approver->id);
             $patient = $patient->fresh('carePlan');
             if ( ! is_null($patient->carePlan)) {
-                $needsQA = $patient->carePlan->validator()->fails();
+                $val     = $patient->carePlan->validator();
+                $needsQA = $val->fails();
             }
         }
 

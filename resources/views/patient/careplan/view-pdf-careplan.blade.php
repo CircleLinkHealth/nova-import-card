@@ -13,6 +13,7 @@ if (isset($patient)) {
 } else {
     $monthlyTime = '';
 }
+$canSwitchToWeb = $patient->carePlan && CircleLinkHealth\SharedModels\Entities\CarePlan::PDF == $patient->carePlan->mode && auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']);
 ?>
 
 <style>
@@ -70,7 +71,7 @@ if (isset($patient)) {
 
         <pdf-careplans mode="pdf"
                        route-switch-to-web="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan ? $patient->carePlan->id : 0])}}"
-                       :can-switch-to-web="@json(auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']) && $patient->carePlan && $patient->carePlan->mode == CircleLinkHealth\SharedModels\Entities\CarePlan::PDF)">
+                       :can-switch-to-web="@json($canSwitchToWeb)">
         </pdf-careplans>
     </div>
 @endsection

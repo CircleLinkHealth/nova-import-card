@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "baeb7606cc9fc92ef5a9b53d030d6a9b",
+    "content-hash": "f3e39920de629080a71bde689dfda4b9",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.147.7",
+            "version": "3.147.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0d637e7cbc795996a75531ed8dd2272f2672b2f2"
+                "reference": "b121ee1d69d3a1200ebc22d937cd40043b96a940"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0d637e7cbc795996a75531ed8dd2272f2672b2f2",
-                "reference": "0d637e7cbc795996a75531ed8dd2272f2672b2f2",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b121ee1d69d3a1200ebc22d937cd40043b96a940",
+                "reference": "b121ee1d69d3a1200ebc22d937cd40043b96a940",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-07-28T18:13:27+00:00"
+            "time": "2020-07-29T18:16:33+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1203,11 +1203,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.2.0",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "c19ea23c641eeec46cdf14e7f27cc230e43f3c1f"
+                "reference": "c5f45e1ad8e8eaccdb144733bd4d9b1da97d00a2"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1232,7 +1232,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-27T20:22:37+00:00"
+            "time": "2020-07-29T19:04:49+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1382,7 +1382,7 @@
         },
         {
             "name": "circlelinkhealth/invoices-download",
-            "version": "dev-ROAD-148_download_invoices",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
@@ -1418,11 +1418,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.5.0",
+            "version": "v1.5.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "445c9462bb222272680494f85222d8e81130dcda"
+                "reference": "8284db51bf209652288f6c10d30abcb9341eddf4"
             },
             "type": "laravel-module",
             "extra": {
@@ -1445,7 +1445,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-29T00:54:13+00:00"
+            "time": "2020-07-29T10:01:08+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
