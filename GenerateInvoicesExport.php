@@ -8,7 +8,6 @@ namespace Modules\Nurseinvoices;
 
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Core\Services\PdfService;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\NurseInvoices\Exports\InvoicesExportFormat;
 use Illuminate\Support\Carbon;
