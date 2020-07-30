@@ -304,6 +304,9 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingCLHApproval(\CircleLinkHealth\Customer\Entities\User $approver)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingProviderApproval(\CircleLinkHealth\Customer\Entities\User $approver)
+ *
+ * @property \CircleLinkHealth\Eligibility\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection $assignedEnrollees
+ * @property int|null                                                                                   $assigned_enrollees_count
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -3324,7 +3327,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
                 $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
             },
-            'primaryPractice',
         ])->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
             $invoice->where('month_year', $startDate);
         })
