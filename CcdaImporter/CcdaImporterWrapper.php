@@ -508,6 +508,10 @@ class CcdaImporterWrapper
                 return null;
             }
 
+            if ( ! is_array($location)) {
+                $location = (array) $location;
+            }
+
             $address = $location['street'] ?? null;
 
             if (empty($address[0] ?? null)) {
