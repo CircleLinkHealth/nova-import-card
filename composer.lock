@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a235dc73e94233be29090b4a79df55df",
+    "content-hash": "51ae86d1f8ec5e6a8c229db67f61b49c",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.147.8",
+            "version": "3.147.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b121ee1d69d3a1200ebc22d937cd40043b96a940"
+                "reference": "da548c59c87b0a54d2cd1a43e5e149e56ca2569b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b121ee1d69d3a1200ebc22d937cd40043b96a940",
-                "reference": "b121ee1d69d3a1200ebc22d937cd40043b96a940",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/da548c59c87b0a54d2cd1a43e5e149e56ca2569b",
+                "reference": "da548c59c87b0a54d2cd1a43e5e149e56ca2569b",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-07-29T18:16:33+00:00"
+            "time": "2020-07-30T18:13:38+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1418,11 +1418,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.5.4",
+            "version": "v1.5.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "eeacce7626d40058c916b05116ea458baacb1f33"
+                "reference": "a99ff081e554527bde048363cb101b645e873789"
             },
             "type": "laravel-module",
             "extra": {
@@ -1445,7 +1445,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-30T12:45:36+00:00"
+            "time": "2020-07-30T20:09:59+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -14633,21 +14633,21 @@
         },
         {
             "name": "nwidart/laravel-modules",
-            "version": "7.1.0",
+            "version": "7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "245426d4d0c0293a44e4cc8cc44d1c5d50e0d0ba"
+                "reference": "8980876d63096951e067bcaf8649d591d4c7f0da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/245426d4d0c0293a44e4cc8cc44d1c5d50e0d0ba",
-                "reference": "245426d4d0c0293a44e4cc8cc44d1c5d50e0d0ba",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/8980876d63096951e067bcaf8649d591d4c7f0da",
+                "reference": "8980876d63096951e067bcaf8649d591d4c7f0da",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": "^7.2.5"
+                "php": ">=7.2.5"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.16",
@@ -14706,7 +14706,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-04-14T17:21:11+00:00"
+            "time": "2020-07-30T17:10:13+00:00"
         },
         {
             "name": "orangehill/iseed",
