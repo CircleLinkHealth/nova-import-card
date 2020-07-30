@@ -72,6 +72,7 @@ class ExportAndDispatchInvoices implements ShouldQueue
                 });
             });
 
+        // This will create one CSV or PDF per practice.
         $invoicesPerPractice = $invoices->flatten(1)->groupBy('practice_id');
 
         if (empty($invoicesPerPractice)) {
