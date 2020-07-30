@@ -103,7 +103,7 @@ export default {
                 this.loading = false;
             });
         },
-        //This i better to be moved to BE. But can't npm run dev.
+
         setMonthsForDropdown() {
             let dateStart = moment(limitDate);
             let dateEnd = moment();
