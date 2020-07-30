@@ -65,7 +65,6 @@ class GenerateInvoicesExport
     public function generateInvoicePdf()
     {
         $data = [];
-//        Export invoices to pdf grouped by practice.
         foreach ($this->invoices as $invoicesData) {
             $invoicesForMonth = Carbon::parse($this->date)->format('M-Y');
             $downloadName     = $invoicesForMonth;
