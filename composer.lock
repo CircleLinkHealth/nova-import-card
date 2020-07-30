@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "805cf1abac6b9825c47d79cbc0d4d593",
+    "content-hash": "77f5de5ccaf4cf9d71bec90653f5e460",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.147.7",
+            "version": "3.147.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0d637e7cbc795996a75531ed8dd2272f2672b2f2"
+                "reference": "b121ee1d69d3a1200ebc22d937cd40043b96a940"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0d637e7cbc795996a75531ed8dd2272f2672b2f2",
-                "reference": "0d637e7cbc795996a75531ed8dd2272f2672b2f2",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b121ee1d69d3a1200ebc22d937cd40043b96a940",
+                "reference": "b121ee1d69d3a1200ebc22d937cd40043b96a940",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-07-28T18:13:27+00:00"
+            "time": "2020-07-29T18:16:33+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1094,11 +1094,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.7.0",
+            "version": "v1.7.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "834d6305233fa5b3275f43a6f28ee0fa26eb6183"
+                "reference": "0e0435fdf5c1b1a68f9d3c2a2c52636ef91479e5"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1127,15 +1127,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-29T12:42:44+00:00"
+            "time": "2020-07-30T02:05:16+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-observation-fixes",
+            "version": "v2.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "4758a4b83160bc6f3031ebdbf4ded36f49e18cc0"
+                "reference": "07e041d89bdb92970a85a4fd58d3bfd8dcfe7b15"
             },
             "type": "laravel-module",
             "extra": {
@@ -1157,15 +1157,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-28T13:49:11+00:00"
+            "time": "2020-07-30T02:32:08+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-observation-fixes",
+            "version": "v3.1.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "8fddbe047af657a4c8ba84a390e8dacc1896feb7"
+                "reference": "33cb2359c8a1fdde148d5196287d2c0363a64bdf"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1199,15 +1199,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-29T02:19:39+00:00"
+            "time": "2020-07-30T02:33:26+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.2.0",
+            "version": "v3.2.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "c19ea23c641eeec46cdf14e7f27cc230e43f3c1f"
+                "reference": "8a1b4c63199f3c2dbfb9c2b2ef461af13aae069e"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1232,7 +1232,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-27T20:22:37+00:00"
+            "time": "2020-07-30T02:05:15+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1382,7 +1382,7 @@
         },
         {
             "name": "circlelinkhealth/invoices-download",
-            "version": "dev-ROAD-148_download_invoices",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
@@ -1418,11 +1418,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.5.0",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "445c9462bb222272680494f85222d8e81130dcda"
+                "reference": "f98e0d6724d77a9d8bb35541ff04a4ce8fc8c696"
             },
             "type": "laravel-module",
             "extra": {
@@ -1445,7 +1445,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-29T00:54:13+00:00"
+            "time": "2020-07-29T20:19:42+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -17081,8 +17081,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },

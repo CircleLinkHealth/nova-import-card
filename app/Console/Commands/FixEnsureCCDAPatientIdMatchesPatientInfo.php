@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use CircleLinkHealth\Core\Helpers\StringHelpers;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -35,20 +36,6 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
     public function __construct()
     {
         parent::__construct();
-    }
-
-    public static function compare($textone, $texttwo)
-    {
-        $arr1 = str_split($textone);
-        $arr2 = str_split($texttwo);
-
-        sort($arr1);
-        sort($arr2);
-
-        $text1Sorted = implode('', $arr1);
-        $text2Sorted = implode('', $arr2);
-
-        return $text1Sorted == $text2Sorted;
     }
 
     /**
@@ -118,7 +105,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
 
                     if (
                         $ccd->patient_mrn == $ccd->patient->patientInfo->mrn_number
-                        && self::compare(strtolower(trim($ccd->patient_first_name.$ccd->patient_last_name)), strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name)))
+                        && StringHelpers::areSameStringsIfYouCompareOnlyLetters($ccd->patient_first_name.$ccd->patient_last_name, $ccd->patient->first_name.$ccd->patient->last_name)
                         && $ccd->practice_id == $ccd->patient->program_id
                         && $ccd->patient->patientInfo->birth_date->isSameDay($safeDob)
                     ) {
@@ -129,7 +116,7 @@ class FixEnsureCCDAPatientIdMatchesPatientInfo extends Command
 
                     if (
                         $ccd->bluebuttonJson()->demographics->mrn_number == $ccd->patient->patientInfo->mrn_number
-                        && self::compare(strtolower(trim(($ccd->bluebuttonJson()->demographics->name->given[0] ?? '').$ccd->bluebuttonJson()->demographics->name->family)), strtolower(trim($ccd->patient->first_name.$ccd->patient->last_name)))
+                        && StringHelpers::areSameStringsIfYouCompareOnlyLetters($ccd->bluebuttonJson()->demographics->name->given[0] ?? ''.$ccd->bluebuttonJson()->demographics->name->family, $ccd->patient->first_name.$ccd->patient->last_name)
                         && $ccd->practice_id == $ccd->patient->program_id
                         && $ccd->patient->patientInfo->birth_date->isSameDay($safeDob)
                     ) {

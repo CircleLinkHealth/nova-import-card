@@ -51,7 +51,7 @@ class AssignPatientToStandByNurse
             return null;
         }
 
-        return $scheduler->storeScheduledCall($patient->id, '09:00', '17:00', now(), 'system - patient status changed to enrolled', StandByNurseUser::id());
+        return $scheduler->storeScheduledCall($patient->id, '09:00', '17:00', now()->isAfter(now()->setTime(15, 0)) ? now()->addDay() : now(), 'system - patient status changed to enrolled', StandByNurseUser::id());
     }
 
     private static function makeStandByNursePrimary(User $patient)

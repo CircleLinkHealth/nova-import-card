@@ -414,10 +414,10 @@ class SelfEnrollmentController extends Controller
             $practiceNumber = formatPhoneNumber($practiceNumber);
         }
 
-        $providerName    = optional($enrollee->provider)->last_name;
-        $practiceName    = $enrollee->practice->display_name;
-        $practiceLogoSrc = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
-        $practiceLetter  = EnrollmentInvitationLetter::wherePracticeId($enrollee->practice_id)->first();
+        $providerName        = optional($enrollee->provider)->last_name;
+        $practiceDisplayName = $enrollee->practice->display_name;
+        $practiceLogoSrc     = self::ENROLLMENT_LETTER_DEFAULT_LOGO;
+        $practiceLetter      = EnrollmentInvitationLetter::wherePracticeId($enrollee->practice_id)->first();
 
         if (empty($providerName)) {
             Log::info("Enrollee with id [$enrollee->id] does not have a provider");
@@ -432,7 +432,7 @@ class SelfEnrollmentController extends Controller
         return view('Enrollment.enrollmentInfoRequested', compact(
             'practiceNumber',
             'providerName',
-            'practiceName',
+            'practiceDisplayName',
             'practiceLogoSrc',
             'isSurveyOnly',
             'enrollee'
