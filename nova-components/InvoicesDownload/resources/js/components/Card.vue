@@ -15,16 +15,16 @@
                     </vue-select>
                 </div>
 
-                <div class="dropdown">
+                <div class="dropdown" style="min-width: 200px;">
                     <vue-select name="downloadFormat"
                                 id="downloadFormat"
                                 placeholder="Download Format"
-                                v-model="formatsSelected"
+                                v-model="formatSelected"
                                 :options="downloadFormats">
                     </vue-select>
                 </div>
             </div>
-            <div class="button" style="text-align: center;">
+            <div class="button" style="text-align: center; padding: 10px;">
                 <a class="btn btn-default btn-primary ml-auto mt-auto"
                    style="cursor: pointer; background-color: #4baf50" @click="downloadInvoices()">Download Invoices</a>
             </div>
@@ -65,7 +65,7 @@ export default {
             errors:null,
             months:[],
             monthSelected:[],
-            formatsSelected:[],
+            formatSelected:[],
             downloadFormats:[
                 {
                     label:'CSV',
@@ -91,7 +91,7 @@ export default {
         downloadInvoices(){
             this.loading = true;
             Nova.request().post('/nova-vendor/invoices-download/download', {
-                downloadFormats:this.formatsSelected,
+                downloadFormat:this.formatSelected,
                 date:this.monthSelected
             }).then(response => {
                 this.$toasted.success(response.data.message);

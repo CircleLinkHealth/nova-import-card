@@ -20,22 +20,21 @@ class InvoicesDownloadController
             throw new \Exception('Auth user not found');
         }
 
-        $downloadFormats = $request->input('downloadFormats');
-        $date            = $request->input('date');
+        $downloadFormat = $request->input('downloadFormat');
+        $date           = $request->input('date');
 
         if (empty($date)) {
             throw new \Exception('Month to download invoices for is required');
         }
 
-        if (empty($downloadFormats)) {
+        if (empty($downloadFormat)) {
             throw new \Exception('Month to download invoices for is required');
         }
 
-        $downloadFormatsValues = $this->getDownloadFormats($downloadFormats);
-        $month                 = Carbon::parse($date['label'])->startOfMonth();
-        $monthToHuman          = Carbon::parse($month)->format('M-Y');
+        $month        = Carbon::parse($date['label'])->startOfMonth();
+        $monthToHuman = Carbon::parse($month)->format('M-Y');
 
-        ExportAndDispatchInvoices::dispatch($downloadFormatsValues, $month, $auth)->onQueue('low');
+        ExportAndDispatchInvoices::dispatch($downloadFormat['value'], $month, $auth)->onQueue('low');
 
         return response()->json(
             [
@@ -43,29 +42,5 @@ class InvoicesDownloadController
             ],
             200
         );
-    }
-
-    /**
-     * @return array
-     */
-    private function getDownloadFormats(array $downloadFormats)
-    {
-        return collect($downloadFormats)->pluck('value')->toArray();
-    }
-
-    /**
-     * @return array
-     */
-    private function getPracticesIds(array $practices)
-    {
-        return collect($practices)->pluck('value')->toArray();
-    }
-
-    /**
-     * @return array
-     */
-    private function getPracticesNames(array $practices)
-    {
-        return  collect($practices)->pluck('label')->toArray();
     }
 }
