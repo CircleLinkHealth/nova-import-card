@@ -41,7 +41,7 @@ class InvoicesDownloadController
         $practiceIds           = $this->getPracticesIds($practices);
         $practiceNamesForUi    = implode(',', $this->getPracticesNames($practices));
         $downloadFormatsValues = $this->getDownloadFormats($downloadFormats);
-        $month                 = Carbon::parse($date['value'])->startOfMonth();
+        $month                 = Carbon::parse($date['label'])->startOfMonth();
         $monthToString         = Carbon::parse($month)->toDateString();
 
         ExportAndDispatchInvoices::dispatch($practiceIds, $downloadFormatsValues, $month, $auth)->onQueue('low');

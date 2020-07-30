@@ -866,10 +866,6 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware([
             'permission:patient.read,patientProblem.read,misc.read,observation.read,patientSummary.read',
         ]);
-        Route::get('summary-biochart', [
-            'uses' => 'ReportsController@biometricsCharts',
-            'as'   => 'patient.charts',
-        ])->middleware('permission:patient.read,biometric.read');
         Route::get('alerts', [
             'uses' => 'Patient\PatientController@showPatientAlerts',
             'as'   => 'patient.alerts',
