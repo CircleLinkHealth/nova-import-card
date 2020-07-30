@@ -23,12 +23,12 @@ class InvoicesDownloadController
         }
 
         $downloadFormats = $request->input('downloadFormats');
-        $practices       = $request->input('practices');
-        $date            = $request->input('date');
+//        $practices       = $request->input('practices');
+        $date = $request->input('date');
 
-        if (empty($practices)) {
-            throw new \Exception('Practices field is required');
-        }
+//        if (empty($practices)) {
+//            throw new \Exception('Practices field is required');
+//        }
 
         if (empty($date)) {
             throw new \Exception('Month to download invoices for is required');
@@ -38,18 +38,17 @@ class InvoicesDownloadController
             throw new \Exception('Month to download invoices for is required');
         }
 
-        $practiceIds           = $this->getPracticesIds($practices);
-        $practiceNamesForUi    = implode(',', $this->getPracticesNames($practices));
+//        $practiceIds           = $this->getPracticesIds($practices);
+//        $practiceNamesForUi    = implode(',', $this->getPracticesNames($practices));
         $downloadFormatsValues = $this->getDownloadFormats($downloadFormats);
         $month                 = Carbon::parse($date['label'])->startOfMonth();
         $monthToString         = Carbon::parse($month)->toDateString();
 
-        ExportAndDispatchInvoices::dispatch($practiceIds, $downloadFormatsValues, $month, $auth)->onQueue('low');
+        ExportAndDispatchInvoices::dispatch(/*$practiceIds*/ $downloadFormatsValues, $month, $auth)->onQueue('low');
 
         return response()->json(
             [
-                'message' => "We are exporting invoices for $monthToString, for the following practices:$practiceNamesForUi.
-                 Will be send to your email when exporting is done!",
+                'message' => "We are exporting invoices for $monthToString. An email will be send to you when exporting is done!",
             ],
             200
         );
@@ -60,12 +59,12 @@ class InvoicesDownloadController
      */
     public function handle()
     {
-        return Practice::active()
-            ->with('nurses')
-            ->authUserCanAccess()
-            ->whereHas('nurses')
-            ->select(DB::raw('id as value'), DB::raw('display_name as label'))
-            ->get();
+//        return Practice::active()
+//            ->with('nurses')
+//            ->authUserCanAccess()
+//            ->whereHas('nurses')
+//            ->select(DB::raw('id as value'), DB::raw('display_name as label'))
+//            ->get();
     }
 
     /**
@@ -73,7 +72,7 @@ class InvoicesDownloadController
      */
     private function getDownloadFormats(array $downloadFormats)
     {
-        return collect($downloadFormats)->pluck('label')->toArray();
+        return collect($downloadFormats)->pluck('value')->toArray();
     }
 
     /**

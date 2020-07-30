@@ -18,5 +18,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/dropdown-practices', InvoicesDownloadController::class.'@handle');
 Route::post('/download', InvoicesDownloadController::class.'@downloadInvoices');
