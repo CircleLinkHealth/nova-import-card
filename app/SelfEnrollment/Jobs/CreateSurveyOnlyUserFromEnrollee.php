@@ -21,6 +21,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Modules\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
@@ -78,6 +79,10 @@ class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
         }
 
         $email = self::sanitizeEmail($this->enrollee);
+
+        if ( ! $this->enrollee->provider_id && $this->enrollee->referring_provider_name) {
+            $this->enrollee->provider_id = optional(CcdaImporterWrapper::searchBillingProvider($this->enrollee->referring_provider_name, $this->enrollee->practice_id))->id;
+        }
 
         //Naive way to validate it will not break in UserRepository when creating the User and halt sendng the auto-enrollment invites
         if ( ! $email || ! $this->enrollee->practice_id || ! $this->enrollee->provider_id || ! $this->enrollee->first_name || ! $this->enrollee->last_name || ! $this->enrollee->dob || ! $this->enrollee->mrn) {

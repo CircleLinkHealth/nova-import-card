@@ -7,10 +7,9 @@
 namespace App\Console\Commands;
 
 use App\Models\PracticePull\Demographics;
-use App\Search\ProviderByName;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
+use Modules\Eligibility\CcdaImporter\CcdaImporterWrapper;
 
 class FixToledoAddProviderToEnrollees extends Command
 {
@@ -56,14 +55,8 @@ class FixToledoAddProviderToEnrollees extends Command
 
                     $this->warn("Updating $enrollee->id");
 
-                    if (empty($p->billing_provider_user_id) && $name = explode(' ', $p->referring_provider_name)) {
-                        if (count($name) >= 2) {
-                            $p->billing_provider_user_id = User::ofType('provider')->ofPractice($enrollee->practice_id)->where('first_name', $name[0])->where('last_name', $name[1])->value('id');
-                        }
-                    }
-
-                    if (empty($p->billing_provider_user_id)) {
-                        $p->billing_provider_user_id = optional(ProviderByName::first($p->referring_provider_name))->id;
+                    if (empty($p->billing_provider_user_id) && ! empty($p->referring_provider_name)) {
+                        $p->billing_provider_user_id = CcdaImporterWrapper::searchBillingProvider($p->referring_provider_name, $enrollee->practice_id);
                     }
 
                     if (empty($p->billing_provider_user_id)) {
