@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use CircleLinkHealth\Core\Helpers\StringHelpers;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -67,7 +68,7 @@ class AutoApproveValidCarePlansAs extends Command
 
         $this->warn("$consentedCnt consented patients pending importing");
 
-        $this->consentedEnrollees()->orderByDesc('updated_at')->chunkById(50, function ($patients) use ($approver) {
+        $this->consentedEnrollees()->orderBy('consented_at')->chunkById(50, function ($patients) use ($approver) {
             $patients->each(function (Enrollee $enrollee) use ($approver) {
                 if ( ! $enrollee->user) {
                     $this->searchForExistingUser($enrollee);
@@ -82,6 +83,12 @@ class AutoApproveValidCarePlansAs extends Command
                     return;
                 }
                 if (is_null($enrollee->user)) {
+                    $this->log([
+                        'link'            => "Enrollee[{$enrollee->id}] - No User found.",
+                        'patient_user_id' => "Enrollee[{$enrollee->id}] - No User found.",
+                        'needs_qa'        => true,
+                    ]);
+
                     return;
                 }
                 $needsQA = $this->process($enrollee->user, $approver);
@@ -109,7 +116,7 @@ class AutoApproveValidCarePlansAs extends Command
     {
         return Enrollee::where('status', Enrollee::CONSENTED)->whereHas('practice', function ($q) {
             $q->activeBillable()->whereIsDemo(0);
-        })->with('user.patientInfo')->orderByDesc('id');
+        })->with('user.patientInfo');
     }
 
     private function log(array $array)
@@ -156,6 +163,7 @@ class AutoApproveValidCarePlansAs extends Command
             'link'            => route('patient.careplan.print', [$patient->id]),
             'patient_user_id' => $patient->id,
             'needs_qa'        => $needsQA,
+            'errors'          => $val->errors(),
         ]);
 
         if ( ! $needsQA && in_array($patient->carePlan->status, [CarePlan::DRAFT, '', null, CarePlan::QA_APPROVED])) {
@@ -193,7 +201,7 @@ class AutoApproveValidCarePlansAs extends Command
             })->first();
 
         if ($user
-            && FixEnsureCCDAPatientIdMatchesPatientInfo::compare(extractLetters(strtolower(trim($user->first_name.$user->last_name))), extractLetters(strtolower(trim($enrollee->first_name.$enrollee->last_name))))
+            && StringHelpers::areSameStringsIfYouCompareOnlyLetters($user->first_name.$user->last_name, $enrollee->first_name.$enrollee->last_name)
         ) {
             $enrollee->user_id = $user->id;
             $enrollee->setRelation('user', $user);
