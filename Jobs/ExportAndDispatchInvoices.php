@@ -66,35 +66,34 @@ class ExportAndDispatchInvoices implements ShouldQueue
             ->chunk(20, function ($users) use ($startDate, $endDate, &$invoices) {
                 $invoices[] = $users->transform(function ($user) {
                     return [
-                        'data'        => $user->nurseInfo->invoices,
-                        'practice_id' => $user->primaryPractice->id,
+                        'data' => $user->nurseInfo->invoices,
                     ];
                 });
             });
 
         // This will create one CSV or PDF per practice.
-        $invoicesPerPractice = $invoices->flatten(1)->groupBy('practice_id');
+//        $invoicesPerPractice = $invoices->flatten(1)->groupBy('practice_id');
 
-        if (empty($invoicesPerPractice)) {
+        if ($invoices->isEmpty()) {
             //            Code execution will continue. It will dispatch a Notification with info that nothing was generated.
             Log::warning("Invoices to download for {$startDate} not found");
         }
 
-        $this->generateInvoicesFormatAndDispatch($invoicesPerPractice, $startDate);
+        $this->generateInvoicesFormatAndDispatch($invoices, $startDate);
     }
 
-    private function generateInvoicesFormatAndDispatch(Collection $invoicesPerPractice, Carbon $startDate)
+    private function generateInvoicesFormatAndDispatch(Collection $invoices, Carbon $startDate)
     {
         foreach ($this->downloadFormats as $downloadFormat) {
             $mediaIds = [];
 
             if (0 == strcasecmp(NurseInvoice::PDF_DOWNLOAD_FORMAT, $downloadFormat)) {
-                $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $downloadFormat, $startDate))->generateInvoicePdf();
+                $invoiceDocument = (new GenerateInvoicesExport($invoices, $downloadFormat, $startDate))->generateInvoicePdf();
                 $mediaIds        = collect($invoiceDocument)->pluck('mediaIds')->flatten()->toArray();
             }
 
             if (0 == strcasecmp(NurseInvoice::CSV_DOWNLOAD_FORMAT, $downloadFormat)) {
-                $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $downloadFormat, $startDate))->generateInvoiceCsv();
+                $invoiceDocument = (new GenerateInvoicesExport($invoices, $downloadFormat, $startDate))->generateInvoiceCsv();
                 $mediaIds        = collect($invoiceDocument)->pluck('id')->toArray();
             }
 
