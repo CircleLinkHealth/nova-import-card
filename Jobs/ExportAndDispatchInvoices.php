@@ -30,25 +30,21 @@ class ExportAndDispatchInvoices implements ShouldQueue
      */
     private $auth;
     /**
-     * @var string
+     * @var array
      */
     private $downloadFormats;
-
-    private $month;
-
     /**
-     * @var int
+     * @var Carbon
      */
-    private $practiceIds;
+    private $month;
 
     /**
      * Create a new job instance.
      *
      * @param string $downloadFormats
      */
-    public function __construct(array $practiceIds, array $downloadFormats, Carbon $month, User $auth)
+    public function __construct(array $downloadFormats, Carbon $month, User $auth)
     {
-        $this->practiceIds     = $practiceIds;
         $this->downloadFormats = $downloadFormats;
         $this->month           = $month;
         $this->auth            = $auth;
@@ -66,7 +62,6 @@ class ExportAndDispatchInvoices implements ShouldQueue
 
         $invoices = collect();
         User::withDownloadableInvoices($startDate, $endDate)
-            ->whereIn('program_id', $this->practiceIds)
             ->select('id', 'program_id')
             ->chunk(20, function ($users) use ($startDate, $endDate, &$invoices) {
                 $invoices[] = $users->transform(function ($user) {
