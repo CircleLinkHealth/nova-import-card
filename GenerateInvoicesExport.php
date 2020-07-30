@@ -39,7 +39,7 @@ class GenerateInvoicesExport
 
     public function generateInvoiceCsv()
     {
-        $month        = Carbon::parse($this->date)->toDateString();
+        $month        = Carbon::parse($this->date)->format('M-Y');
         $medias       = [];
         $downloadName = "$month.csv";
 
@@ -67,8 +67,8 @@ class GenerateInvoicesExport
         $data = [];
 //        Export invoices to pdf grouped by practice.
         foreach ($this->invoices as $invoicesData) {
-            $invoicesForMonth = Carbon::parse($this->date)->toDateString();
-            $downloadName     = trim("$invoicesForMonth").'-pdf';
+            $invoicesForMonth = Carbon::parse($this->date)->format('M-Y');
+            $downloadName     = $invoicesForMonth;
             $pdfInvoices      = $this->makeInvoicesPdf($downloadName, $invoicesData);
 
             $data[] = [
