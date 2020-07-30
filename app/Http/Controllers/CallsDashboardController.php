@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\Call;
 use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Note;
+use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Services\NoteService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -65,7 +66,7 @@ class CallsDashboardController extends Controller
             ->find($request['nurseId']);
         $phone_direction = $request['direction'];
 
-        $service->storeCallForNote(
+        $call = $service->storeCallForNote(
             $note,
             $status,
             $patient,
@@ -83,6 +84,11 @@ class CallsDashboardController extends Controller
         $this->updatePatientInfo($patient->patientInfo, Call::REACHED === $status);
 
         $message = 'Call Successfully Added to Note! Nurse invoice is being re-generated. Patient calls are being re-counted!';
+
+        if ('yes' === $request->input('notify-patient', 'no')) {
+            $patient->notify(new PatientUnsuccessfulCallNotification($call, false));
+            $message .= ' We will also send sms/email notifications to patient!';
+        }
 
         return redirect()->route('CallsDashboard.index')->with('msg', $message);
     }
@@ -121,9 +127,16 @@ class CallsDashboardController extends Controller
         $this->reCalculatePms($call->inbound_cpm_id, $call->note->created_at->toDateString());
         $this->updatePatientInfo($call->inboundUser->patientInfo, Call::REACHED === $newStatus);
 
+        $message = 'Call Status successfully changed! Nurse invoice is being re-generated. Patient calls are being re-counted!';
+
+        if ('yes' === $request->input('notify-patient', 'no')) {
+            $call->inboundUser->notify(new PatientUnsuccessfulCallNotification($call, false));
+            $message .= ' We will also send sms/email notifications to patient!';
+        }
+
         return redirect()
             ->route('CallsDashboard.create', ['noteId' => $request['noteId']])
-            ->with('msg', 'Call Status successfully changed! Nurse invoice is being re-generated. Patient calls are being re-counted!');
+            ->with('msg', $message);
     }
 
     public function index()
