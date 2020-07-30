@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41ca38653f3bc735f37e69b72eafb188",
+    "content-hash": "2d2033f841f50c18af0b982210e7ffb2",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1137,11 +1137,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.1.3",
+            "version": "dev-nurse-invoice-download-no-practice",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f1edc1499c8d982458a6a179450f9df0c83c99cd"
+                "reference": "1e139d1aec2fc087cb8bf8905afe5bfd6087512d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1175,7 +1175,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-29T00:58:22+00:00"
+            "time": "2020-07-30T10:58:17+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1383,7 +1383,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "3847f7bd23c6a00f17a65cc5a44b5e9cd7ccdb3c"
+                "reference": "3bb26e03d79551afc4a591d8148336b7ec98905f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1406,7 +1406,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-30T10:13:00+00:00"
+            "time": "2020-07-30T10:58:16+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -16015,6 +16015,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/nurseinvoices-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "orangehill/iseed": 20

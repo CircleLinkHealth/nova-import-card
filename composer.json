@@ -182,7 +182,7 @@
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "1.7.1",
     "circlelinkhealth/cpm-migrations-module": "2.3.0",
-    "circlelinkhealth/customer-module": "3.1.3",
+    "circlelinkhealth/customer-module": "dev-nurse-invoice-download-no-practice",
     "circlelinkhealth/eligibility-module": "3.2.3",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
