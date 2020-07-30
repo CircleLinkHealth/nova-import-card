@@ -252,7 +252,15 @@ class ImportEnrollee
             ->where('patient_mrn', $enrollee->mrn)
             ->where('patient_dob', $enrollee->dob->toDateString())
             ->first()) {
-            if (StringHelpers::areSameStringsIfYouCompareOnlyLetters($ccda->patient_last_name.$ccda->patient_first_name, $enrollee->last_name.$enrollee->first_name)) {
+            $ccdaConcName     = $ccda->patient_last_name.$ccda->patient_first_name;
+            $enrolleeConcName = $enrollee->last_name.$enrollee->first_name;
+
+            // Ensure we have either an exact or partial match
+            // Sometimes we may have gotten enrollee from a CSV provided by the practice, so the name may differe by a , or .
+            if (
+                $ccdaConcName === $enrolleeConcName
+                || StringHelpers::areSameStringsIfYouCompareOnlyLetters($ccdaConcName, $enrolleeConcName)
+            ) {
                 $enrollee->medical_record_id = $ccda->id;
 
                 return $ccda;
