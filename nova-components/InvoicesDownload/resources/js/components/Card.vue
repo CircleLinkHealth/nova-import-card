@@ -6,17 +6,6 @@
             <loader v-if="loading" width="30"></loader>
 
             <div style="display: inline-flex;">
-                <div class="dropdown" style="padding-right: 10px; padding-bottom: 10px;">
-                    <vue-select name="practices"
-                                id="practices"
-                                placeholder="Select Practices"
-                                multiple
-                                v-model="practicesSelected"
-                                :options="practices"
-                                @input="limiter">
-                    </vue-select>
-                </div>
-
                 <div class="dropdown" style="padding-right: 10px;">
                     <vue-select name="months"
                                 id="months"
@@ -30,7 +19,6 @@
                     <vue-select name="downloadFormat"
                                 id="downloadFormat"
                                 placeholder="Download Format"
-                                multiple
                                 v-model="formatsSelected"
                                 :options="downloadFormats">
                     </vue-select>
@@ -73,8 +61,6 @@ export default {
 
     data() {
         return {
-            practicesSelected:[],
-            practices:[],
             loading:false,
             errors:null,
             months:[],
@@ -102,23 +88,9 @@ export default {
             }
         },
 
-        setPracticesForDropdown(){
-            this.loading = true;
-            Nova.request().get('/nova-vendor/invoices-download/dropdown-practices').then(response => {
-                this.practices = response.data
-                this.$toasted.success(response.data.message);
-                this.loading = false;
-            }).catch(error => {
-                console.log(error);
-                this.$toasted.error(error.response.data);
-                this.loading = false;
-            });
-        },
-
         downloadInvoices(){
             this.loading = true;
             Nova.request().post('/nova-vendor/invoices-download/download', {
-                practices:this.practicesSelected,
                 downloadFormats:this.formatsSelected,
                 date:this.monthSelected
             }).then(response => {
@@ -149,16 +121,11 @@ export default {
     },
 
     mounted() {
-        this.setPracticesForDropdown();
         this.setMonthsForDropdown();
     },
 }
 </script>
 <style>
-    #practices > div{
-        min-width: 180px;
-    }
-
     #months > div{
         min-width: 180px;
     }
