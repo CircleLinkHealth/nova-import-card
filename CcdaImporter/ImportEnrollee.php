@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
+use CircleLinkHealth\Core\Helpers\StringHelpers;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -43,6 +44,10 @@ class ImportEnrollee
         //import from AthenaAPI
         if ($enrollee->targetPatient) {
             return $static->importTargetPatient($enrollee);
+        }
+
+        if ($ccda = self::matchCcda($enrollee)) {
+            return $importService->importExistingCcda($enrollee->medical_record_id, $enrollee);
         }
 
         //import from eligibility jobs
@@ -237,5 +242,23 @@ class ImportEnrollee
         \Log::warning($message);
 
         sendSlackMessage('#parse_enroll_import', $message);
+    }
+
+    private static function matchCcda(Enrollee &$enrollee): ?Ccda
+    {
+        if ($ccda = Ccda::whereNotNull('practice_id')
+            ->where('practice_id', $enrollee->practice_id)
+            ->where('patient_last_name', $enrollee->last_name)
+            ->where('patient_mrn', $enrollee->mrn)
+            ->where('patient_dob', $enrollee->dob->toDateString())
+            ->first()) {
+            if (StringHelpers::areSameStringsIfYouCompareOnlyLetters($ccda->patient_last_name.$ccda->patient_first_name, $enrollee->last_name.$enrollee->first_name)) {
+                $enrollee->medical_record_id = $ccda->id;
+
+                return $ccda;
+            }
+        }
+
+        return null;
     }
 }
