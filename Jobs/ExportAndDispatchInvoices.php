@@ -30,25 +30,21 @@ class ExportAndDispatchInvoices implements ShouldQueue
      */
     private $auth;
     /**
-     * @var string
+     * @var array
      */
     private $downloadFormats;
-
-    private $month;
-
     /**
-     * @var int
+     * @var Carbon
      */
-    private $practiceIds;
+    private $month;
 
     /**
      * Create a new job instance.
      *
      * @param string $downloadFormats
      */
-    public function __construct(array $practiceIds, array $downloadFormats, Carbon $month, User $auth)
+    public function __construct(array $downloadFormats, Carbon $month, User $auth)
     {
-        $this->practiceIds     = $practiceIds;
         $this->downloadFormats = $downloadFormats;
         $this->month           = $month;
         $this->auth            = $auth;
@@ -66,39 +62,38 @@ class ExportAndDispatchInvoices implements ShouldQueue
 
         $invoices = collect();
         User::withDownloadableInvoices($startDate, $endDate)
-            ->whereIn('program_id', $this->practiceIds)
             ->select('id', 'program_id')
             ->chunk(20, function ($users) use ($startDate, $endDate, &$invoices) {
                 $invoices[] = $users->transform(function ($user) {
                     return [
-                        'data'        => $user->nurseInfo->invoices,
-                        'practice_id' => $user->primaryPractice->id,
+                        'data' => $user->nurseInfo->invoices,
                     ];
                 });
             });
 
-        $invoicesPerPractice = $invoices->flatten(1)->groupBy('practice_id');
+        // This will create one CSV or PDF per practice.
+//        $invoicesPerPractice = $invoices->flatten(1)->groupBy('practice_id');
 
-        if (empty($invoicesPerPractice)) {
+        if ($invoices->isEmpty()) {
             //            Code execution will continue. It will dispatch a Notification with info that nothing was generated.
             Log::warning("Invoices to download for {$startDate} not found");
         }
 
-        $this->generateInvoicesFormatAndDispatch($invoicesPerPractice, $startDate);
+        $this->generateInvoicesFormatAndDispatch($invoices, $startDate);
     }
 
-    private function generateInvoicesFormatAndDispatch(Collection $invoicesPerPractice, Carbon $startDate)
+    private function generateInvoicesFormatAndDispatch(Collection $invoices, Carbon $startDate)
     {
         foreach ($this->downloadFormats as $downloadFormat) {
             $mediaIds = [];
 
             if (0 == strcasecmp(NurseInvoice::PDF_DOWNLOAD_FORMAT, $downloadFormat)) {
-                $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $downloadFormat, $startDate))->generateInvoicePdf();
+                $invoiceDocument = (new GenerateInvoicesExport($invoices, $downloadFormat, $startDate))->generateInvoicePdf();
                 $mediaIds        = collect($invoiceDocument)->pluck('mediaIds')->flatten()->toArray();
             }
 
             if (0 == strcasecmp(NurseInvoice::CSV_DOWNLOAD_FORMAT, $downloadFormat)) {
-                $invoiceDocument = (new GenerateInvoicesExport($invoicesPerPractice, $downloadFormat, $startDate))->generateInvoiceCsv();
+                $invoiceDocument = (new GenerateInvoicesExport($invoices, $downloadFormat, $startDate))->generateInvoiceCsv();
                 $mediaIds        = collect($invoiceDocument)->pluck('id')->toArray();
             }
 

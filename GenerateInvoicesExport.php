@@ -9,11 +9,10 @@ namespace Modules\Nurseinvoices;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\NurseInvoices\Exports\InvoicesExportFormat;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
-use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 
 class GenerateInvoicesExport
 {
@@ -26,33 +25,35 @@ class GenerateInvoicesExport
     /**
      * @var Collection
      */
-    private $invoicesPerPractice;
+    private $invoices;
 
     /**
      * GenerateInvoicesExport constructor.
      */
-    public function __construct(Collection $invoicesPerPractice, string $downloadFormat, \Carbon\Carbon $date)
+    public function __construct(Collection $invoices, string $downloadFormat, \Carbon\Carbon $date)
     {
-        $this->invoicesPerPractice = $invoicesPerPractice;
-        $this->date                = $date;
-        $this->downloadFormat      = $downloadFormat;
+        $this->invoices       = $invoices;
+        $this->date           = $date;
+        $this->downloadFormat = $downloadFormat;
     }
 
     public function generateInvoiceCsv()
     {
-        $month  = Carbon::parse($this->date)->toDateString();
-        $medias = [];
-        foreach ($this->invoicesPerPractice as $practiceId => $invoices) {
-            $practice     = Practice::findOrFail($practiceId);
-            $downloadName = trim($practice->display_name).'-'.$month;
-            $medias[]     = (new FromArray(
-                "$downloadName.csv",
+        $month        = Carbon::parse($this->date)->format('M-Y');
+        $medias       = [];
+        $downloadName = "$month.csv";
+
+        $model = SaasAccount::whereSlug('circlelink-health')->firstOrFail();
+
+        foreach ($this->invoices as $invoicesData) {
+            $medias[] = (new FromArray(
+                "$downloadName",
                 (new InvoicesExportFormat(
-                    $invoices
+                    $invoicesData
                 ))->toCsvArray(),
                 [
                 ]
-            ))->storeAndAttachMediaTo($practice, $downloadName);
+            ))->storeAndAttachMediaTo($model, $downloadName);
         }
 
         return $medias;
@@ -64,12 +65,10 @@ class GenerateInvoicesExport
     public function generateInvoicePdf()
     {
         $data = [];
-//        Export invoices to pdf grouped by practice.
-        foreach ($this->invoicesPerPractice as $practiceId => $invoices) {
-            $practice         = Practice::find($practiceId);
-            $invoicesForMonth = Carbon::parse($this->date)->toDateString();
-            $downloadName     = trim("$invoicesForMonth").'-pdf'.'-'.$practice->display_name;
-            $pdfInvoices      = $this->makeInvoicesPdf($downloadName, $practice, $invoices);
+        foreach ($this->invoices as $invoicesData) {
+            $invoicesForMonth = Carbon::parse($this->date)->format('M-Y');
+            $downloadName     = $invoicesForMonth;
+            $pdfInvoices      = $this->makeInvoicesPdf($downloadName, $invoicesData);
 
             $data[] = [
                 'invoice_url' => $pdfInvoices->getUrl(),
@@ -81,15 +80,11 @@ class GenerateInvoicesExport
     }
 
     /**
-     * @throws FileCannotBeAdded
-     * @throws FileCannotBeAdded\DiskDoesNotExist
-     * @throws FileCannotBeAdded\FileDoesNotExist
-     * @throws FileCannotBeAdded\FileIsTooBig
-     * @throws InvalidConversion
+     * @throws \Exception
      *
-     * @return \Spatie\MediaLibrary\Models\Media
+     * @return mixed
      */
-    private function makeInvoicesPdf(string $downloadName, Practice $practice, Collection $invoices)
+    private function makeInvoicesPdf(string $downloadName, Collection $invoices)
     {
         $pdfService = app(PdfService::class);
         $path       = storage_path("download/$downloadName.pdf");
@@ -97,7 +92,8 @@ class GenerateInvoicesExport
         $pdfInvoices = (new InvoicesExportFormat($invoices))->exportToPdf($pdfService);
         $pdfService->mergeFiles($pdfInvoices, $path);
 
-        return $practice
+        return SaasAccount::whereSlug('circlelink-health')
+            ->firstOrFail()
             ->addMedia($path)
             ->toMediaCollection("$downloadName");
     }
