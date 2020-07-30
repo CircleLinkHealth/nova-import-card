@@ -19,7 +19,6 @@
                     <vue-select name="downloadFormat"
                                 id="downloadFormat"
                                 placeholder="Download Format"
-                                multiple
                                 v-model="formatsSelected"
                                 :options="downloadFormats">
                     </vue-select>
@@ -62,8 +61,6 @@ export default {
 
     data() {
         return {
-            // practicesSelected:[],
-            practices:[],
             loading:false,
             errors:null,
             months:[],
@@ -94,7 +91,6 @@ export default {
         downloadInvoices(){
             this.loading = true;
             Nova.request().post('/nova-vendor/invoices-download/download', {
-                // practices:this.practicesSelected,
                 downloadFormats:this.formatsSelected,
                 date:this.monthSelected
             }).then(response => {
@@ -107,7 +103,7 @@ export default {
                 this.loading = false;
             });
         },
-        //Want to move this to BE. But can't npm run dev.
+        //This i better to be moved to BE. But can't npm run dev.
         setMonthsForDropdown() {
             let dateStart = moment(limitDate);
             let dateEnd = moment();
@@ -130,10 +126,6 @@ export default {
 }
 </script>
 <style>
-    #practices > div{
-        min-width: 180px;
-    }
-
     #months > div{
         min-width: 180px;
     }

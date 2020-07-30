@@ -23,12 +23,7 @@ class InvoicesDownloadController
         }
 
         $downloadFormats = $request->input('downloadFormats');
-//        $practices       = $request->input('practices');
-        $date = $request->input('date');
-
-//        if (empty($practices)) {
-//            throw new \Exception('Practices field is required');
-//        }
+        $date            = $request->input('date');
 
         if (empty($date)) {
             throw new \Exception('Month to download invoices for is required');
@@ -38,13 +33,11 @@ class InvoicesDownloadController
             throw new \Exception('Month to download invoices for is required');
         }
 
-//        $practiceIds           = $this->getPracticesIds($practices);
-//        $practiceNamesForUi    = implode(',', $this->getPracticesNames($practices));
         $downloadFormatsValues = $this->getDownloadFormats($downloadFormats);
         $month                 = Carbon::parse($date['label'])->startOfMonth();
         $monthToString         = Carbon::parse($month)->toDateString();
 
-        ExportAndDispatchInvoices::dispatch(/*$practiceIds*/ $downloadFormatsValues, $month, $auth)->onQueue('low');
+        ExportAndDispatchInvoices::dispatch($downloadFormatsValues, $month, $auth)->onQueue('low');
 
         return response()->json(
             [
