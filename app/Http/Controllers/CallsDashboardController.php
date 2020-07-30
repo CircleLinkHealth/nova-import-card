@@ -11,6 +11,7 @@ use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Note;
 use App\Services\NoteService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use Illuminate\Http\Request;
@@ -38,7 +39,14 @@ class CallsDashboardController extends Controller
     public function createCall(Request $request, NoteService $service)
     {
         /** @var Note $note */
-        $note = Note::with(['patient', 'author', 'call'])
+        $note = Note::with([
+            'patient' => function ($q) {
+                $q->without(['roles', 'perms'])
+                    ->with(['patientInfo']);
+            },
+            'author',
+            'call',
+        ])
             ->where('id', $request['noteId'])
             ->first();
         $call = $note->call;
@@ -46,9 +54,8 @@ class CallsDashboardController extends Controller
             return view('admin.CallsDashboard.edit', compact(['note', 'call']));
         }
 
-        $status = $request['status'];
-        /** @var User $patient */
-        $patient = User::find($note->patient_id);
+        $status  = $request['status'];
+        $patient = $note->patient;
         /** @var User $nurse */
         $nurse = User::with([
             'nurseInfo' => function ($q) {
@@ -73,6 +80,7 @@ class CallsDashboardController extends Controller
         }
 
         $this->reCalculatePms($patient->id, $note->created_at->toDateString());
+        $this->updatePatientInfo($patient->patientInfo, Call::REACHED === $status);
 
         $message = 'Call Successfully Added to Note! Nurse invoice is being re-generated. Patient calls are being re-counted!';
 
@@ -105,9 +113,13 @@ class CallsDashboardController extends Controller
         $call->note->save();
         $call->status = $newStatus;
         $call->save();
+
+        //nurse invoice
         $this->modifyNurseCareRateLogs($call->outboundUser, $call->note, $oldStatus, $newStatus);
 
+        //patient info
         $this->reCalculatePms($call->inbound_cpm_id, $call->note->created_at->toDateString());
+        $this->updatePatientInfo($call->inboundUser->patientInfo, Call::REACHED === $newStatus);
 
         return redirect()
             ->route('CallsDashboard.create', ['noteId' => $request['noteId']])
@@ -145,5 +157,13 @@ class CallsDashboardController extends Controller
             'date'    => $forDate,
             'userIds' => "$patientId",
         ]);
+    }
+
+    private function updatePatientInfo(Patient $patient, bool $successfulCall)
+    {
+        if ($successfulCall) {
+            $patient->no_call_attempts_since_last_success = 0;
+            $patient->save();
+        }
     }
 }
