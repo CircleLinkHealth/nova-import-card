@@ -7,9 +7,7 @@
 namespace Circlelinkhealth\InvoicesDownload;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
-use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class InvoicesDownloadController
@@ -35,29 +33,16 @@ class InvoicesDownloadController
 
         $downloadFormatsValues = $this->getDownloadFormats($downloadFormats);
         $month                 = Carbon::parse($date['label'])->startOfMonth();
-        $monthToString         = Carbon::parse($month)->toDateString();
+        $monthToHuman          = Carbon::parse($month)->format('M-Y');
 
         ExportAndDispatchInvoices::dispatch($downloadFormatsValues, $month, $auth)->onQueue('low');
 
         return response()->json(
             [
-                'message' => "We are exporting invoices for $monthToString. An email will be send to you when exporting is done!",
+                'message' => "We are exporting invoices for $monthToHuman. An email will be send to you when exporting is done!",
             ],
             200
         );
-    }
-
-    /**
-     * @return mixed
-     */
-    public function handle()
-    {
-//        return Practice::active()
-//            ->with('nurses')
-//            ->authUserCanAccess()
-//            ->whereHas('nurses')
-//            ->select(DB::raw('id as value'), DB::raw('display_name as label'))
-//            ->get();
     }
 
     /**
