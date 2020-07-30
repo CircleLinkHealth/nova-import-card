@@ -438,8 +438,12 @@ class SchedulerService
             now()
         );
 
+        $previousCall = Call::where('inbound_cpm_id', '=', $patient->id)
+            ->orderBy('scheduled_date', 'desc')
+            ->first();
+
         $nurseId     = null;
-        $nurseFinder = (new NurseFinder($patient->patientInfo))->find();
+        $nurseFinder = (new NurseFinder($patient->patientInfo, null, null, null, $previousCall))->find();
         if ($nurseFinder && isset($nurseFinder['nurse'])) {
             $nurseId = $nurseFinder['nurse'];
         }

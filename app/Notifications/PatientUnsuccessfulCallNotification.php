@@ -179,7 +179,7 @@ class PatientUnsuccessfulCallNotification extends Notification
             $part2 = "Nurse $this->nurseFirstName tried calling 2 days ago. ";
         }
 
-        $part3 = "What day and time would be best to call you back?\n\n(we'll forward your response to nurse $this->nurseFirstName)";
+        $part3 = "What day and time would be best to call you back?\n\n(we'll forward your response to Nurse $this->nurseFirstName)";
 
         return (new TwilioSmsMessage())
             ->content($part1.$part2.$part3);
