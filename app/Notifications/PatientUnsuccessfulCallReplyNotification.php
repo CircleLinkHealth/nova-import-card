@@ -57,7 +57,10 @@ class PatientUnsuccessfulCallReplyNotification extends Notification
      */
     public function toMail($notifiable)
     {
+        $fromAddress = config('mail.from-with-inbound.address') ?? config('mail.from.address');
+
         return (new MailMessage())
+            ->from($fromAddress, config('mail.from-with-inbound.name'))
             ->subject('We have received your message!')
             ->line($this->getMessage());
     }
