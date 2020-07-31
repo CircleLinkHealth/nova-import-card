@@ -166,6 +166,7 @@ class OpsDashboardTest extends \Tests\TestCase
 
     public function test_patient_ccm_status_revisions_are_stored()
     {
+        $initialStatus                          = $this->patient->patientInfo->ccm_status;
         $this->patient->patientInfo->ccm_status = Patient::PAUSED;
         $this->patient->patientInfo->save();
 
@@ -180,6 +181,7 @@ class OpsDashboardTest extends \Tests\TestCase
 
         $latestRevision = $revisions->sortBy('created_at')->last();
         $this->assertEquals($latestRevision->new_value, Patient::PAUSED);
+        $this->assertEquals($latestRevision->old_value, $initialStatus);
     }
 
     /**
