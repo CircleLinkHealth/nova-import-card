@@ -59,8 +59,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereUpdatedAt($value)
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereUserId($value)
  * @mixin \Eloquent
- * @property int|null $meta_count
- * @property int|null $revision_history_count
+ * @property int|null    $meta_count
+ * @property int|null    $revision_history_count
+ * @property string|null $severity
  */
 class Observation extends BaseModel
 {
