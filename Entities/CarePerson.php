@@ -35,7 +35,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson query()
  *
- * @property int|null $revision_history_count
+ * @property int|null                                 $revision_history_count
+ * @property \CircleLinkHealth\Customer\Entities\User $patient
  */
 class CarePerson extends BaseModel
 {
