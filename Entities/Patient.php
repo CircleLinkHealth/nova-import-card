@@ -657,6 +657,11 @@ class Patient extends BaseModel
         return $result;
     }
 
+    public function patientCcmStatusRevisions()
+    {
+        return $this->hasMany(PatientCcmStatusRevision::class, 'patient_info_id');
+    }
+
     public function safe()
     {
         return [

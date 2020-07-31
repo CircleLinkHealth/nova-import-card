@@ -4,12 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App;
+namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Entries for the db table are created from SQL triggers existing on the patient_info table.
+ */
 class PatientCcmStatusRevision extends Model
 {
     protected $fillable = [];
@@ -24,5 +26,16 @@ class PatientCcmStatusRevision extends Model
     public function patientUser()
     {
         return $this->belongsTo(User::class, 'patient_user_id');
+    }
+
+    public function scopeOfDate($query, Carbon $startDate, Carbon $endDate = null)
+    {
+        $startDate = $startDate->copy()->startOfDay();
+        $endDate   = $endDate ? $endDate->copy()->endOfDay() : $startDate->copy()->endOfDay();
+
+        return $query->where([
+            ['created_at', '>=', $startDate],
+            ['created_at', '<=', $endDate],
+        ]);
     }
 }
