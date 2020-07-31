@@ -60,7 +60,13 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         // 1. read source email, find patient
         $email = $this->input['From'];
         /** @var User $user */
-        $user = User::whereEmail($email)->first();
+        $user = User::whereEmail($email)
+            ->with([
+                'primaryPractice' => function ($q) {
+                    $q->select(['id', 'display_name']);
+                },
+            ])
+            ->first();
 
         if ( ! $user) {
             sendSlackMessage('#carecoach_ops_alerts', "Could not find patient from inbound mail. See database record id[$recordId]");
@@ -84,8 +90,9 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         try {
             // 3. create call for nurse with ASAP flag
             /** @var SchedulerService $service */
-            $service = app(SchedulerService::class);
-            $task    = $service->scheduleAsapCallbackTask($user, $this->input['TextBody'], 'postmark_inbound_mail');
+            $service        = app(SchedulerService::class);
+            $textBodyParsed = \EmailReplyParser\EmailReplyParser::parseReply($this->input['TextBody']);
+            $task           = $service->scheduleAsapCallbackTask($user, $textBodyParsed, 'postmark_inbound_mail');
         } catch (\Exception $e) {
             sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
 
@@ -104,7 +111,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
             ->first();
 
         // 4. reply to patient
-        $user->notify(new PatientUnsuccessfulCallReplyNotification($careCoach->first_name, ['mail']));
+        $user->notify(new PatientUnsuccessfulCallReplyNotification($careCoach->first_name, $user->primaryPractice->display_name, ['mail']));
     }
 
     private function storeRawLogs(): ?int

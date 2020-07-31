@@ -455,12 +455,14 @@ class SchedulerService
             throw new \Exception("could not find nurse for patient[$patient->id]");
         }
 
+        $nowString = now()->toDateTimeString();
+
         return Call::create(
             [
                 'type'                  => SchedulerService::TASK_TYPE,
                 'sub_type'              => SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS,
                 'status'                => Call::SCHEDULED,
-                'attempt_note'          => $taskNote,
+                'attempt_note'          => "Email/SMS Response at $nowString: $taskNote",
                 'scheduler'             => $scheduler,
                 'is_manual'             => false,
                 'inbound_phone_number'  => $phoneNumber ?? '',
