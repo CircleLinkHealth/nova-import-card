@@ -31,8 +31,9 @@ class CreatePatientCcmStatusRevisionsTable extends Migration
             $table->id();
             $table->unsignedInteger('patient_info_id')->nullable();
             $table->unsignedInteger('patient_user_id')->nullable();
-            $table->string('old_ccm_status')->nullable();
-            $table->string('new_ccm_status')->nullable();
+            $table->string('action')->nullable();
+            $table->string('old_value')->nullable();
+            $table->string('new_value')->nullable();
 
             $table->timestamps();
 
