@@ -127,23 +127,27 @@ class OpsDashboardReport
 
         switch ($ccmStatus) {
             case Patient::TO_ENROLL:
+                //this is not currently used, but leaving here as part of legacy code
                 $this->report->g0506ToEnrollIds[] = $patientId;
                 break;
             case Patient::PAUSED:
                 $this->report->pausedIds[] = $patientId;
                 if ($patientWasEnrolledPriorDay) {
+                    $this->report->pausedIdsForDate[] = $patientId;
                     $this->report->incrementPausedCount();
                 }
                 break;
             case in_array($ccmStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]):
                 $this->report->withdrawnIds[] = $patientId;
                 if ($patientWasEnrolledPriorDay) {
+                    $this->report->withdrawnIdsForDate[] = $patientId;
                     $this->report->incrementWithdrawnCount();
                 }
                 break;
             case Patient::UNREACHABLE:
                 $this->report->unreachableIds[] = $patientId;
                 if ($patientWasEnrolledPriorDay) {
+                    $this->report->unreachableIdsForDate[] = $patientId;
                     $this->report->incrementUnreachableCount();
                 }
                 break;
@@ -225,6 +229,7 @@ class OpsDashboardReport
     {
         if (isset($this->priorDayReportData['enrolled_patient_ids'])) {
             $deletedIds = User::onlyTrashed()
+                ->scopeOfType('participant')
                 ->ofPractice($this->practice->id)
                 ->where([
                     ['deleted_at', '>=', $this->date->copy()->subDay()],
@@ -235,7 +240,7 @@ class OpsDashboardReport
                 ->toArray();
 
             $this->report->deletedCount = count($deletedIds);
-            $this->report->deletedIds[] = $deletedIds;
+            $this->report->deletedIds   = $deletedIds;
         }
 
         return $this;

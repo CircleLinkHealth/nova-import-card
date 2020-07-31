@@ -36,6 +36,7 @@ class OpsDashboardPracticeReportData
     public $lostAddedCalculatedUsingRevisions = false;
     public $pausedCount                       = 0;
     public $pausedIds                         = [];
+    public $pausedIdsForDate                  = [];
     public $priorDayReportUpdatedAt           = 'N/A';
     public $priorDayTotals                    = 'N/A';
     public $reportUpdatedAt                   = 'N/A';
@@ -57,8 +58,10 @@ class OpsDashboardPracticeReportData
     public $twentyPlusMinsCount               = 0;
     public $unreachableCount                  = 0;
     public $unreachableIds                    = [];
+    public $unreachableIdsForDate             = [];
     public $withdrawnCount                    = 0;
     public $withdrawnIds                      = [];
+    public $withdrawnIdsForDate               = [];
     public $zeroMinsCount                     = 0;
     public $zeroToFiveMinsCount               = 0;
 
@@ -272,12 +275,14 @@ class OpsDashboardPracticeReportData
             'lost_added_calculated_using_revisions' => $this->lostAddedCalculatedUsingRevisions,
 
             //to help us debug
-            //delta ids
-            'added_ids'       => $this->addedIds,
-            'deleted_ids'     => $this->deletedIds,
-            'withdrawn_ids'   => $this->withdrawnIds,
-            'paused_ids'      => $this->pausedIds,
-            'unreachable_ids' => $this->unreachableIds,
+            'added_ids'                => $this->addedIds,
+            'deleted_ids'              => $this->deletedIds,
+            'total_withdrawn_ids'      => $this->withdrawnIds,
+            'total_paused_ids'         => $this->pausedIds,
+            'total_unreachable_ids'    => $this->unreachableIds,
+            'withdrawn_ids_for_date'   => $this->withdrawnIdsForDate,
+            'unreachable_ids_for_date' => $this->unreachableIdsForDate,
+            'paused_ids_for_date'      => $this->pausedIdsForDate,
 
             //revision info
             'revisions_added_ids'       => $this->revisionsAddedIds,
