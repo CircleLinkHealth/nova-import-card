@@ -229,8 +229,10 @@ class OpsDashboardReport
     {
         if (isset($this->priorDayReportData['enrolled_patient_ids'])) {
             $deletedIds = User::onlyTrashed()
-                ->scopeOfType('participant')
                 ->ofPractice($this->practice->id)
+                ->whereHas('patientInfo', function ($pi) {
+                    $pi->withTrashed();
+                })
                 ->where([
                     ['deleted_at', '>=', $this->date->copy()->subDay()],
                     ['deleted_at', '<=', $this->date],
