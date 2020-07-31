@@ -39,4 +39,27 @@ class EmailReplyParserTest extends TestCase
         $visibleText = \EmailReplyParser\EmailReplyParser::parseReply($emailBody);
         self::assertEquals('Test response', $visibleText);
     }
+
+    public function test_email_reply_is_parsed_correctly_2()
+    {
+        $emailBody = 'Please call me on following days/hrs
+
+- Monday 1pm - 3pm
+-Thursday 1pm - 3pm
+
+Thanks';
+        $visibleText = \EmailReplyParser\EmailReplyParser::read($emailBody);
+        $text        = '';
+        foreach ($visibleText->getFragments() as $fragment) {
+            if ($fragment->isQuoted()) {
+                continue;
+            }
+            $text .= $fragment->getContent();
+        }
+
+        self::assertStringContainsString('Please call me on following days/hrs', $text);
+        self::assertStringContainsString('- Monday 1pm - 3pm', $text);
+        self::assertStringContainsString('-Thursday 1pm - 3pm', $text);
+        self::assertStringContainsString('Thanks', $text);
+    }
 }

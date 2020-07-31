@@ -90,9 +90,8 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         try {
             // 3. create call for nurse with ASAP flag
             /** @var SchedulerService $service */
-            $service        = app(SchedulerService::class);
-            $textBodyParsed = \EmailReplyParser\EmailReplyParser::parseReply($this->input['TextBody']);
-            $task           = $service->scheduleAsapCallbackTask($user, $textBodyParsed, 'postmark_inbound_mail');
+            $service = app(SchedulerService::class);
+            $task    = $service->scheduleAsapCallbackTask($user, $this->filterEmailBody($this->input['TextBody']), 'postmark_inbound_mail');
         } catch (\Exception $e) {
             sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
 
@@ -112,6 +111,20 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
 
         // 4. reply to patient
         $user->notify(new PatientUnsuccessfulCallReplyNotification($careCoach->first_name, $user->primaryPractice->display_name, ['mail']));
+    }
+
+    private function filterEmailBody($emailBody): string
+    {
+        $textBodyParsed = \EmailReplyParser\EmailReplyParser::read($emailBody);
+        $text           = '';
+        foreach ($textBodyParsed->getFragments() as $fragment) {
+            if ($fragment->isQuoted()) {
+                continue;
+            }
+            $text .= $fragment->getContent();
+        }
+
+        return $text;
     }
 
     private function storeRawLogs(): ?int
