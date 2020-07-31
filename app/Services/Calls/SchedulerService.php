@@ -455,12 +455,14 @@ class SchedulerService
             throw new \Exception("could not find nurse for patient[$patient->id]");
         }
 
+        $nowString = now()->toDateTimeString();
+
         return Call::create(
             [
                 'type'                  => SchedulerService::TASK_TYPE,
                 'sub_type'              => SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS,
                 'status'                => Call::SCHEDULED,
-                'attempt_note'          => $taskNote,
+                'attempt_note'          => "Email/SMS Response at $nowString: $taskNote",
                 'scheduler'             => $scheduler,
                 'is_manual'             => false,
                 'inbound_phone_number'  => $phoneNumber ?? '',
@@ -766,9 +768,9 @@ class SchedulerService
      * @param $status
      * @param mixed $attestedProblems
      */
-    public function updateCallWithNote(
+    public function updateOrCreateCallWithNote(
         Note $note,
-        $call,
+        ?Call $call,
         $status,
         $attestedProblems = null
     ) {
@@ -796,6 +798,8 @@ class SchedulerService
         if ($attestedProblems) {
             event(new CallIsReadyForAttestedProblemsAttachment($call, $attestedProblems));
         }
+
+        return $call;
     }
 
     /**
@@ -820,13 +824,9 @@ class SchedulerService
         $callStatus,
         $attestedProblems = null
     ) {
-        $scheduled_call = $this->getTodaysCall($patient->id);
-
-        $note = Note::find($noteId);
-
-        $this->updateCallWithNote(
-            $note,
-            $scheduled_call,
+        $scheduled_call = $this->updateOrCreateCallWithNote(
+            $note = Note::find($noteId),
+            $scheduled_call = $this->getTodaysCall($patient->id),
             $callStatus,
             $attestedProblems
         );
@@ -837,8 +837,7 @@ class SchedulerService
             ! is_null($scheduled_call) && SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type
         );
 
-        $nextCall = SchedulerService::getNextScheduledCall($patient->id, true);
-        if ($nextCall) {
+        if (SchedulerService::getNextScheduledCall($patient->id, true)) {
             return null;
         }
 

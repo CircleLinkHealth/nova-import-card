@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory as Faker;
@@ -37,7 +38,22 @@ abstract class CreatesTestPatients
             $patientData['roles'] = [$role->id];
             $bag                  = new ParameterBag($patientData);
 
-            $user = $repo->createNewUser($bag);
+            try {
+                $user = $repo->createNewUser($bag);
+            } catch (PatientAlreadyExistsException $e) {
+                echo $e->getMessage();
+                echo 'continuing ...';
+                continue;
+            }
+
+            $user->carePlan()->updateOrCreate(
+                [
+                    'care_plan_template_id' => getDefaultCarePlanTemplate()->id,
+                ],
+                [
+                    'status' => 'draft',
+                ]
+            );
 
             $this->createAndAttachProblems($problems, $user, $patientData);
 

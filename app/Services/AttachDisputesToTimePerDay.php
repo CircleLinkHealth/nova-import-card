@@ -7,6 +7,7 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -85,19 +86,21 @@ class AttachDisputesToTimePerDay
      *
      * @return mixed
      */
-    public function putDisputesToTimePerDay($invoice)
+    public function putDisputesToTimePerDay(NurseInvoice $invoice)
     {
         $dailyDisputes = $this->getNurseDailyDisputes($invoice);
 
-        $timePerDay = $invoice->invoice_data['timePerDay'];
+        if ( ! is_array($invoice->invoice_data)) {
+            $invoice->invoice_data = [];
+        }
+
+        $timePerDay = $invoice->invoice_data['timePerDay'] ?? [];
 
         foreach ($dailyDisputes as $day => $disputes) {
-            if (array_key_exists($day, $timePerDay)) {
-                $timePerDay[$day]['suggestedTime']         = $disputes['suggestedTime'];
-                $timePerDay[$day]['disputedFormattedTime'] = $disputes['disputedFormattedTime'];
-                $timePerDay[$day]['status']                = $disputes['status'];
-                $timePerDay[$day]['invalidated']           = $disputes['invalidated'];
-            }
+            $timePerDay[$day]['suggestedTime']         = $disputes['suggestedTime'] ?? null;
+            $timePerDay[$day]['disputedFormattedTime'] = $disputes['disputedFormattedTime'] ?? null;
+            $timePerDay[$day]['status']                = $disputes['status'] ?? null;
+            $timePerDay[$day]['invalidated']           = $disputes['invalidated'] ?? null;
         }
 
         $timePerDayWithDisputes                = $timePerDay;

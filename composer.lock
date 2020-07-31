@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "51ae86d1f8ec5e6a8c229db67f61b49c",
+    "content-hash": "d7d3aa2f06c414d428ebcb77c3f58b0f",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1131,11 +1131,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.3.0",
+            "version": "v2.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "406b22bb93177c9686071943edefb889a0f5d2e8"
+                "reference": "07e041d89bdb92970a85a4fd58d3bfd8dcfe7b15"
             },
             "type": "laravel-module",
             "extra": {
@@ -1157,15 +1157,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-28T22:55:55+00:00"
+            "time": "2020-07-30T02:32:08+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "8bcadf17de42fb57ae7e4e0435308af03c4844ab"
+                "reference": "30e7c203433c6f8d019d1b353d88ab90c2977106"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1199,7 +1199,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-30T12:43:57+00:00"
+            "time": "2020-07-31T10:07:22+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1855,7 +1855,7 @@
         },
         {
             "name": "daltcore/lara-pdf-merger",
-            "version": "dev-master",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git",
@@ -12670,6 +12670,54 @@
             "time": "2019-07-07T18:41:29+00:00"
         },
         {
+            "name": "willdurand/email-reply-parser",
+            "version": "2.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/willdurand/EmailReplyParser.git",
+                "reference": "642bec19af70c2bf2f2611301349107fe2e6dd08"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/willdurand/EmailReplyParser/zipball/642bec19af70c2bf2f2611301349107fe2e6dd08",
+                "reference": "642bec19af70c2bf2f2611301349107fe2e6dd08",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35|^5.7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "EmailReplyParser\\": "src/EmailReplyParser"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Durand",
+                    "email": "will+git@drnd.me"
+                }
+            ],
+            "description": "Port of the cool GitHub's EmailReplyParser library in PHP",
+            "keywords": [
+                "email",
+                "reply-parser"
+            ],
+            "time": "2020-03-24T16:04:10+00:00"
+        },
+        {
             "name": "yajra/laravel-datatables-oracle",
             "version": "v9.10.2",
             "source": {
@@ -14044,6 +14092,50 @@
                 "test"
             ],
             "time": "2020-07-09T08:09:16+00:00"
+        },
+        {
+            "name": "heroku/heroku-buildpack-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/heroku/heroku-buildpack-php.git",
+                "reference": "11809152efa1c7fbe2101d28ef530d689d1e56b9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/heroku/heroku-buildpack-php/zipball/11809152efa1c7fbe2101d28ef530d689d1e56b9",
+                "reference": "11809152efa1c7fbe2101d28ef530d689d1e56b9",
+                "shasum": ""
+            },
+            "bin": [
+                "bin/heroku-hhvm-apache2",
+                "bin/heroku-hhvm-nginx",
+                "bin/heroku-php-apache2",
+                "bin/heroku-php-nginx"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Zuelke",
+                    "email": "dz@heroku.com"
+                }
+            ],
+            "description": "Toolkit for starting a PHP application locally, with or without foreman, using the same config for PHP/HHVM and Apache2/Nginx as on Heroku",
+            "homepage": "https://github.com/heroku/heroku-buildpack-php",
+            "keywords": [
+                "apache",
+                "apache2",
+                "foreman",
+                "heroku",
+                "hhvm",
+                "nginx",
+                "php"
+            ],
+            "time": "2020-07-09T18:00:35+00:00"
         },
         {
             "name": "jkocik/laravel-profiler",
@@ -17037,13 +17129,13 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "daltcore/lara-pdf-merger": 20,
+        "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "~7.3.16",
+        "php": "^7.4",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",

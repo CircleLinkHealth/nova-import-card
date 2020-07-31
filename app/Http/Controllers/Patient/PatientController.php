@@ -10,6 +10,7 @@ use App\Console\Commands\AutoApproveValidCarePlansAs;
 use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
+use App\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
@@ -330,7 +331,11 @@ class PatientController extends Controller
             abort(403);
         }
 
-        return view('wpUsers.patient.observation.create', ['patient' => $patient]);
+        return view('wpUsers.patient.observation.create', [
+            'patient'                  => $patient,
+            'acceptedObservationTypes' => collect(ObservationConstants::ACCEPTED_OBSERVATION_TYPES)->sortBy('display_name'),
+            'observationCatecories'    => collect(ObservationConstants::CATEGORIES)->sortBy('display_name'),
+        ]);
     }
 
     /**
@@ -360,9 +365,7 @@ class PatientController extends Controller
         Request $request,
         $patientId
     ) {
-        $messages = \Session::get('messages');
-
-        $wpUser = User::with([
+        $patientUser = User::with([
             'primaryPractice',
             'ccdProblems' => function ($q) {
                 $q->with('cpmProblem.cpmInstructions')
@@ -371,65 +374,19 @@ class PatientController extends Controller
             'observations' => function ($q) {
                 $q->where('obs_unit', '!=', 'invalid')
                     ->where('obs_unit', '!=', 'scheduled')
-                    ->with([
-                        'meta',
-                        'question.careItems',
-                    ])
+                    ->whereNotNull('obs_value')
+                    ->where('obs_value', '!=', '')
                     ->orderBy('obs_date', 'desc')
-                    ->take(100);
+                    ->take(40);
             },
             'patientSummaries',
         ])
             ->where('id', $patientId)
-            ->first();
+            ->firstOrFail();
 
-        if ( ! $wpUser) {
-            return response('User not found', 401);
-        }
+        $detailSection = $request->input('detail', '');
 
-        // program
-        $program = $wpUser->primaryPractice;
-
-        $problems = $wpUser->getProblemsToMonitor();
-
-        $params        = $request->all();
-        $detailSection = '';
-        if (isset($params['detail'])) {
-            $detailSection = $params['detail'];
-        }
-
-        $sections = [
-            [
-                'section'           => 'obs_biometrics',
-                'id'                => 'obs_biometrics_dtable',
-                'title'             => 'Biometrics',
-                'col_name_question' => 'Reading Type',
-                'col_name_severity' => 'Reading',
-            ],
-            [
-                'section'           => 'obs_medications',
-                'id'                => 'obs_medications_dtable',
-                'title'             => 'Medications',
-                'col_name_question' => 'Medication',
-                'col_name_severity' => 'Adherence',
-            ],
-            [
-                'section'           => 'obs_symptoms',
-                'id'                => 'obs_symptoms_dtable',
-                'title'             => 'Symptoms',
-                'col_name_question' => 'Symptom',
-                'col_name_severity' => 'Severity',
-            ],
-            [
-                'section'           => 'obs_lifestyle',
-                'id'                => 'obs_lifestyle_dtable',
-                'title'             => 'Lifestyle',
-                'col_name_question' => 'Question',
-                'col_name_severity' => 'Response',
-            ],
-        ];
-
-        $observations = $wpUser->observations;
+        $observations = $patientUser->observations;
 
         // build array of pcp
         $obs_by_pcp = [
@@ -448,107 +405,90 @@ class PatientController extends Controller
             }
             $observation['parent_item_text'] = '---';
             switch ($observation['obs_key']) {
-                case 'A1c':
-                    $observation['description']     = 'A1c';
-                    $obs_by_pcp['obs_biometrics'][] = $observation;
-                    break;
-                case 'HSP_ER':
-                case 'HSP_HOSP':
+                case ObservationConstants::A1C:
+                    $observation['description']     = ObservationConstants::A1C;
+                    $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Cigarettes':
-                    $observation['description']     = 'Smoking (# per day)';
-                    $obs_by_pcp['obs_biometrics'][] = $observation;
+                case ObservationConstants::CIGARETTE_COUNT:
+                if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                    $observation['description'] = $description;
+                }
+                    $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Blood_Pressure':
                 case 'Blood_Sugar':
-                case 'Weight':
-                    $observation['description']     = $observation['obs_key'];
-                    $obs_by_pcp['obs_biometrics'][] = $observation;
+                case ObservationConstants::BLOOD_PRESSURE:
+                case ObservationConstants::BLOOD_SUGAR:
+                case ObservationConstants::WEIGHT:
+                $observation['description']         = $observation['obs_key'];
+                    $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
-                case 'Adherence':
-                    $question = $observation->question;
-                    // find carePlanItem with qid
-                    if ($question) {
-                        $item = $question->careItems->first();
-                        if ($item) {
-                            $observation['description'] = $item->display_name;
-                        }
+                case ObservationConstants::MEDICATIONS_ADHERENCE_OBSERVATION_TYPE:
+                    if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                        $observation['description'] = $description;
                     }
-                    $obs_by_pcp['obs_medications'][] = $observation;
+                    $obs_by_pcp['obs_medications'][] = $this->prepareForWebix($observation);
                     break;
-                case 'Symptom':
-                case 'Severity':
-                    // get description
-                    $question = $observation->question;
-                    if ($question) {
-                        $observation['items_text']  = $question->description;
-                        $observation['description'] = $question->description;
-                        $observation['obs_key']     = $question->description;
+                case ObservationConstants::SYMPTOMS_OBSERVATION_TYPE:
+                    if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                        $observation['items_text']  = $description;
+                        $observation['description'] = $description;
                     }
-                    $obs_by_pcp['obs_symptoms'][] = $observation;
+                    $obs_by_pcp['obs_symptoms'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Other':
-                case 'Call':
-                    // only y/n responses, skip anything that is a number as its assumed it is response to a list
-                    $question = $observation->question;
-                    // find carePlanItem with qid
-                    if ($question) {
-                        $item = $question->careItems->first();
-                        if ($item) {
-                            $observation['description'] = $item->display_name;
-                        }
-                    }
-                    if (('Call' == $observation['obs_key']) || ( ! is_numeric($observation['obs_value']))) {
-                        $obs_by_pcp['obs_lifestyle'][] = $observation;
-                    }
-                    break;
+                case ObservationConstants::LIFESTYLE_OBSERVATION_TYPE:
+                if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                    $observation['description'] = $description;
+                }
+                $obs_by_pcp['obs_lifestyle'][] = $this->prepareForWebix($observation);
+                break;
                 default:
                     break;
             }
         }
 
-        $observation_json = [];
-        foreach ($obs_by_pcp as $section => $observations) {
-            $o                          = 0;
-            $observation_json[$section] = 'data:[';
-            foreach ($observations as $observation) {
-                // limit to 3 if not detail
-                if (empty($detailSection)) {
-                    if ($o >= 3) {
-                        continue 1;
-                    }
-                }
-                // set default
-                $alertLevel = 'default';
-                if ( ! empty($observation->alert_level)) {
-                    $alertLevel = $observation->alert_level;
-                }
-                // lastly format json
-                $observation_json[$section] .= "{ obs_key:'".$observation->obs_key."', ".
-                                               "description:'".str_replace(
-                                                   '_',
-                                                   ' ',
-                                                   $observation->description
-                                               )."', ".
-                                               "obs_value:'".$observation->obs_value."', ".
-                                               "dm_alert_level:'".$alertLevel."', ".
-                                               "obs_unit:'".$observation->obs_unit."', ".
-                                               "obs_message_id:'".$observation->obs_message_id."', ".
-                                               "comment_date:'".Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A')."', ".'},';
-                ++$o;
-            }
-            $observation_json[$section] .= '],';
-        }
-
         return view('wpUsers.patient.summary', [
-            'program'          => $program,
-            'patient'          => $wpUser,
-            'wpUser'           => $wpUser,
-            'sections'         => $sections,
+            'program'          => $patientUser->primaryPractice,
+            'patient'          => $patientUser,
+            'wpUser'           => $patientUser,
             'detailSection'    => $detailSection,
-            'observation_data' => $observation_json,
-            'messages'         => $messages,
-            'problems'         => $problems,
+            'observation_data' => collect($obs_by_pcp)->transform(function ($obsType) {
+                return json_encode($obsType);
+            }),
+            'problems' => $patientUser->getProblemsToMonitor(),
+            'filter'   => '',
+            'sections' => [
+                [
+                    'section'           => 'obs_biometrics',
+                    'id'                => 'obs_biometrics_dtable',
+                    'title'             => 'Biometrics',
+                    'col_name_question' => 'Reading Type',
+                    'col_name_severity' => 'Reading',
+                ],
+                [
+                    'section'           => 'obs_medications',
+                    'id'                => 'obs_medications_dtable',
+                    'title'             => 'Medications',
+                    'col_name_question' => 'Medication',
+                    'col_name_severity' => 'Adherence',
+                ],
+                [
+                    'section'           => 'obs_symptoms',
+                    'id'                => 'obs_symptoms_dtable',
+                    'title'             => 'Symptoms',
+                    'col_name_question' => 'Symptom',
+                    'col_name_severity' => 'Severity',
+                ],
+                [
+                    'section'           => 'obs_lifestyle',
+                    'id'                => 'obs_lifestyle_dtable',
+                    'title'             => 'Lifestyle',
+                    'col_name_question' => 'Question',
+                    'col_name_severity' => 'Response',
+                ],
+            ],
         ]);
     }
 
@@ -594,5 +534,22 @@ class PatientController extends Controller
         (new TestPatients())->create();
 
         return redirect()->back();
+    }
+
+    private function prepareForWebix($observation)
+    {
+        return [
+            'obs_key'     => $observation->obs_key,
+            'description' => str_replace(
+                '_',
+                ' ',
+                $observation->description
+            ),
+            'obs_value'      => $observation->obs_value,
+            'dm_alert_level' => empty($alertLevel = $observation->getAlertLevel()) ? 'default' : $alertLevel,
+            'obs_unit'       => $observation->obs_unit,
+            'obs_message_id' => $observation->obs_message_id,
+            'comment_date'   => Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A'),
+        ];
     }
 }
