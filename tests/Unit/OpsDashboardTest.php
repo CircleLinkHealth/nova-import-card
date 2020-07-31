@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Tests\Helpers\CarePlanHelpers;
 
@@ -161,6 +162,24 @@ class OpsDashboardTest extends \Tests\TestCase
         $this->assertTrue(-3 === $dbReport2Data['Delta']);
         $this->assertTrue($dbReport2Data['Prior Day totals'] === $dbReport1Data['Total']);
         $this->assertTrue($dbReport1Data['Total'] + $dbReport2Data['Delta'] === $dbReport2Data['Total']);
+    }
+
+    public function test_patient_ccm_status_revisions_are_stored()
+    {
+        $this->patient->patientInfo->ccm_status = Patient::PAUSED;
+        $this->patient->patientInfo->save();
+
+        /**
+         * @var Collection
+         * */
+        $revisions = $this->patient->patientInfo->patientCcmStatusRevisions()
+            ->ofDate(Carbon::today())
+            ->get();
+
+        $this->assertTrue($revisions->isNotEmpty());
+
+        $latestRevision = $revisions->sortBy('created_at')->last();
+        $this->assertEquals($latestRevision->new_value, Patient::PAUSED);
     }
 
     /**
