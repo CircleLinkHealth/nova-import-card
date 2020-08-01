@@ -17,6 +17,9 @@ class AddIndexesToPatientCcmStatusRevisionsTable extends Migration
      */
     public function down()
     {
+        Schema::table('patient_ccm_status_revisions', function (Blueprint $table) {
+            $table->dropIndex('created_at_index');
+        });
     }
 
     /**
