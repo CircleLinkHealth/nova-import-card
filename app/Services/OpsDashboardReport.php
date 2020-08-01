@@ -18,12 +18,30 @@ class OpsDashboardReport
 {
     const DEFAULT_TIME_GOAL = '35';
 
+    /**
+     * @var
+     */
     protected $calculateLostAddedUsingRevisionsOnly;
 
     /**
      * @var Carbon
      */
     protected $date;
+
+    /**
+     * @var bool
+     */
+    protected $dateIsStartOfMonth;
+
+    /**
+     * @var array
+     */
+    protected $monthEnrolledIds = [];
+
+    /**
+     * @var array
+     */
+    protected $monthReportData = [];
     /**
      * @var
      */
@@ -48,9 +66,10 @@ class OpsDashboardReport
      */
     public function __construct(Practice $practice, Carbon $date)
     {
-        $this->practice = $practice;
-        $this->date     = $date;
-        $this->report   = new OpsDashboardPracticeReportData();
+        $this->practice           = $practice;
+        $this->date               = $date;
+        $this->dateIsStartOfMonth = $date->toDateString() === $date->copy()->startOfMonth()->toDateString();
+        $this->report             = new OpsDashboardPracticeReportData();
     }
 
     /**
@@ -97,6 +116,8 @@ class OpsDashboardReport
     public function getReport(): array
     {
         return $this->getPatients()
+            ->setMonthReportData()
+            ->setMonthEnrolledIds()
             ->setPriorDayReportData()
             ->countDeletedPatients()
             ->generateStatsFromPatientCollection()
@@ -127,32 +148,39 @@ class OpsDashboardReport
 
         switch ($ccmStatus) {
             case Patient::TO_ENROLL:
+                //this is not currently used, but leaving here as part of legacy code
                 $this->report->g0506ToEnrollIds[] = $patientId;
                 break;
             case Patient::PAUSED:
                 $this->report->pausedIds[] = $patientId;
                 if ($patientWasEnrolledPriorDay) {
+                    $this->report->pausedIdsForDate[] = $patientId;
                     $this->report->incrementPausedCount();
                 }
                 break;
             case in_array($ccmStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]):
                 $this->report->withdrawnIds[] = $patientId;
                 if ($patientWasEnrolledPriorDay) {
+                    $this->report->withdrawnIdsForDate[] = $patientId;
                     $this->report->incrementWithdrawnCount();
                 }
                 break;
             case Patient::UNREACHABLE:
                 $this->report->unreachableIds[] = $patientId;
                 if ($patientWasEnrolledPriorDay) {
+                    $this->report->unreachableIdsForDate[] = $patientId;
                     $this->report->incrementUnreachableCount();
                 }
                 break;
         }
     }
 
+    /**
+     * @param $patient
+     */
     private function categorizePatientByStatusUsingRevisions($patient)
     {
-        $revisionHistory = $patient->patientInfo->revisionHistory->sortByDesc('created_at');
+        $revisionHistory = $patient->patientInfo->patientCcmStatusRevisions->sortByDesc('created_at');
 
         if ($revisionHistory->isEmpty()) {
             return;
@@ -181,12 +209,6 @@ class OpsDashboardReport
 
     private function consolidateStatsUsingPriorDayReport(): array
     {
-        if ($this->shouldCalculateLostAddedUsingRevisionsOnly()) {
-            $this->report->setDeltasUsingRevisionCounts();
-
-            return $this->report->toArray();
-        }
-
         $alerts = [];
         if ( ! $this->report->totalsAreMatching()) {
             $alerts[] = 'Totals are not matching.';
@@ -221,11 +243,17 @@ class OpsDashboardReport
         return $this->report->toArray();
     }
 
+    /**
+     * @return $this
+     */
     private function countDeletedPatients()
     {
         if (isset($this->priorDayReportData['enrolled_patient_ids'])) {
             $deletedIds = User::onlyTrashed()
                 ->ofPractice($this->practice->id)
+                ->whereHas('patientInfo', function ($pi) {
+                    $pi->withTrashed();
+                })
                 ->where([
                     ['deleted_at', '>=', $this->date->copy()->subDay()],
                     ['deleted_at', '<=', $this->date],
@@ -235,7 +263,7 @@ class OpsDashboardReport
                 ->toArray();
 
             $this->report->deletedCount = count($deletedIds);
-            $this->report->deletedIds[] = $deletedIds;
+            $this->report->deletedIds   = $deletedIds;
         }
 
         return $this;
@@ -262,6 +290,11 @@ class OpsDashboardReport
                 if ( ! $patientWasEnrolledPriorDay) {
                     $this->report->addedIds[] = $patientId;
                     $this->report->incrementAddedCount();
+
+                    if ($this->patientIsUniqueAddedForMonth($patientId)) {
+                        $this->report->uniqueAddedIds[] = $patientId;
+                        $this->report->incrementUniqueAddedCount();
+                    }
                 }
 
                 $pms = $patient->patientSummaries->first();
@@ -291,12 +324,20 @@ class OpsDashboardReport
         return $this;
     }
 
+    private function patientIsUniqueAddedForMonth($patientId): bool
+    {
+        if ($this->dateIsStartOfMonth) {
+            return true;
+        }
+
+        //if patient has been found enrolled in a previous report of the month then they are not unique
+        return ! in_array($patientId, $this->monthEnrolledIds);
+    }
+
     /**
      * @param $patientId
-     *
-     * @return bool
      */
-    private function patientWasEnrolledPriorDay($patientId)
+    private function patientWasEnrolledPriorDay($patientId): bool
     {
         if (array_key_exists('enrolled_patient_ids', $this->priorDayReportData)) {
             return in_array($patientId, $this->priorDayReportData['enrolled_patient_ids']);
@@ -308,12 +349,57 @@ class OpsDashboardReport
     /**
      * @return $this
      */
-    private function setPriorDayReportData()
+    private function setMonthEnrolledIds()
     {
-        $priorDayReport = OpsDashboardPracticeReport::where('practice_id', $this->practice->id)
-            ->where('date', $this->date->copy()->subDay()->toDateString())
+        $this->monthEnrolledIds = $this->monthReportData
+            ->pluck('data.enrolled_patient_ids')
+            ->filter()
+            ->flatten()
+            ->toArray();
+
+        return $this;
+    }
+
+    /**
+     * We need month report data for:
+     * 1) Checking enrolled_patient_ids for the whole month when trying to decide if a patient is uniquely added
+     * 2) Checking prior day report enrolled_patient_ids to determine if a patient is simply added, and check DB data field
+     * to see if we have the report keys we need to generate the report.
+     *
+     * If the date we're generating this for is the 1st of a month, we:
+     * 1) Will not be checking the whole month for uniquely added IDs, which also means all added ids will be considered unique for the month
+     * 2) We will however load the previous day (last day of previous month), to determine if a patient was simply added.
+     *
+     * @return $this
+     */
+    private function setMonthReportData()
+    {
+        $this->monthReportData = OpsDashboardPracticeReport::where('practice_id', $this->practice->id)
+            ->when($this->dateIsStartOfMonth, function ($q) {
+                $q->where('date', $this->date->copy()->subDay(1)->toDateString());
+            })
+            ->when( ! $this->dateIsStartOfMonth, function ($q) {
+                $q->where([
+                    ['date', '>=', $this->date->copy()->startOfMonth()->toDateString()],
+                    //leave this here as a safeguard for potentially have to reprocess for a date
+                    ['date', '<', $this->date->toDateString()],
+                ]);
+            })
             ->whereNotNull('data')
             ->where('is_processed', 1)
+            ->get();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function setPriorDayReportData()
+    {
+        $priorDayReport = $this->monthReportData
+            //todo: implement ->whereDay() or ->whereSameDate OR ->whereDate() collection macro that checks day match on carbon attribute
+            ->where('date', $this->date->copy()->subDay()->startOfDay())
             ->first();
 
         if ($priorDayReport) {

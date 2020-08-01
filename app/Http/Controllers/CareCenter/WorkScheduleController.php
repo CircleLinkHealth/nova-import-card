@@ -302,7 +302,7 @@ class WorkScheduleController extends Controller
             });
 
         $eventsForSelectedNurse = $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse)->toArray();
-        $holidaysData           = $nurse->nurseInfo->getUpcomingHolidayDates()->flatten();
+        $holidaysData           = optional($nurse->nurseInfo->getUpcomingHolidayDates())->flatten();
         $holidays               = $this->fullCalendarService->prepareHolidaysData($holidaysData, $nurse, $startDate, $endDate)->toArray();
 
         return response()->json([

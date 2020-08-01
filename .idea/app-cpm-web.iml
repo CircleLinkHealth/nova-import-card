@@ -271,6 +271,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/waynestate/nova-ckeditor4-field" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/webmozart/assert" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/wildbit/swiftmailer-postmark" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/willdurand/email-reply-parser" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/yajra/laravel-datatables-oracle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/yosymfony/resource-watcher" />
       <excludePattern pattern=".php_cs.cache" />

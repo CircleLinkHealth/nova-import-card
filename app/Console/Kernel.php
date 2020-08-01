@@ -272,7 +272,7 @@ class Kernel extends ConsoleKernel
             ->twiceDaily(12, 16);
 
         $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
-            ->twiceDaily('6:10', 21);
+            ->twiceDaily(6, 21);
 
         $schedule->command(QueueGenerateOpsDailyReport::class)
             ->dailyAt('23:30')
