@@ -29,6 +29,8 @@ class AddPatientCcmStatusTriggers extends Migration
     {
         //on insert
         DB::unprepared("
+        set global log_bin_trust_function_creators=1;
+        
         CREATE TRIGGER patient_info_ccm_status_after_insert AFTER INSERT ON `patient_info`
         FOR EACH ROW
         BEGIN
@@ -39,6 +41,8 @@ class AddPatientCcmStatusTriggers extends Migration
 
         //on update
         DB::unprepared("
+        set global log_bin_trust_function_creators=1;
+        
         CREATE TRIGGER patient_info_ccm_status_before_update BEFORE UPDATE ON `patient_info`
         FOR EACH ROW
         BEGIN
