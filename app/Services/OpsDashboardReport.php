@@ -354,7 +354,8 @@ class OpsDashboardReport
         $this->monthEnrolledIds = $this->monthReportData
             ->pluck('data.enrolled_patient_ids')
             ->filter()
-            ->flatten();
+            ->flatten()
+            ->toArray();
 
         return $this;
     }
