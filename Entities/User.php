@@ -4047,6 +4047,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $invoice && $now->lte(NurseInvoiceDisputeDeadline::for($invoiceMonth));
     }
 
+    public function shouldShowPcmBadge()
+    {
+        // cache for 24 hours
+        return Cache::remember("{$this->id}_pcm_badge", 60 * 24, function () {
+            return isPatientPcmBadgeEnabled() && $this->isPcm();
+        });
+    }
+
     /**
      * Get the indexable data array for the model.
      *
