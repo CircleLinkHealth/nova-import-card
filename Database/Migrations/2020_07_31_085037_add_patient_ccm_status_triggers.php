@@ -43,6 +43,7 @@ class AddPatientCcmStatusTriggers extends Migration
         DB::unprepared("
         
         CREATE TRIGGER patient_info_ccm_status_before_update BEFORE UPDATE ON `patient_info`
+        DETERMINISTIC
         FOR EACH ROW
         BEGIN
         IF NEW.ccm_status <> OLD.ccm_status THEN
