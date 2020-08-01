@@ -588,21 +588,16 @@ class Practice extends BaseModel implements HasMedia
         );
     }
 
-    public function scopeOpsDashboardQuery($query, Carbon $startOfMonth, Carbon $revisionsFromDate)
+    public function scopeOpsDashboardQuery($query, Carbon $startOfMonth)
     {
         return $query->with([
-            'patients' => function ($p) use ($startOfMonth, $revisionsFromDate) {
+            'patients' => function ($p) use ($startOfMonth) {
                 $p->with([
                     'patientSummaries' => function ($s) use ($startOfMonth) {
                         $s->where('month_year', $startOfMonth);
                     },
-                    'patientInfo.revisionHistory' => function ($r) use ($revisionsFromDate) {
-                        $r->where('key', 'ccm_status')
-                            ->where(
-                                'created_at',
-                                '>=',
-                                $revisionsFromDate
-                            );
+                    'patientInfo.patientCcmStatusRevisions' => function ($r) use ($startOfMonth) {
+                        $r->ofDate($startOfMonth, Carbon::now());
                     },
                 ])
                     ->isNotDemo();

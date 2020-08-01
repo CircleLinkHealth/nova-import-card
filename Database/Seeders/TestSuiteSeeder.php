@@ -18,7 +18,7 @@ class TestSuiteSeeder extends Seeder
     public function run()
     {
         Model::unguard();
-        
+
         //Order is important here. Do not re-arrange unless you know what you are doing!
         $this->call(SaasAccountsSeeder::class);
         $this->call(CpmProblemsTableSeeder::class);

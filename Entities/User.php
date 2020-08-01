@@ -2446,6 +2446,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(PatientAWVSummary::class, 'user_id');
     }
 
+    public function patientCcmStatusRevisions()
+    {
+        return $this->hasMany(PatientCcmStatusRevision::class, 'patient_user_id');
+    }
+
     public function patientInfo()
     {
         return $this->hasOne(Patient::class, 'user_id', 'id');

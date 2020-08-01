@@ -121,6 +121,7 @@ use Illuminate\Support\Facades\DB;
  * @property int|null                                                                                         $attested_problems_count
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $allChargeableServices
  * @property int|null                                                                                         $all_chargeable_services_count
+ * @property int                                                                                              $should_process
  */
 class PatientMonthlySummary extends BaseModel
 {
