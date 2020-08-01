@@ -209,12 +209,6 @@ class OpsDashboardReport
 
     private function consolidateStatsUsingPriorDayReport(): array
     {
-//        if ($this->shouldCalculateLostAddedUsingRevisionsOnly()) {
-//            $this->report->setDeltasUsingRevisionCounts();
-//
-//            return $this->report->toArray();
-//        }
-
         $alerts = [];
         if ( ! $this->report->totalsAreMatching()) {
             $alerts[] = 'Totals are not matching.';
@@ -296,6 +290,11 @@ class OpsDashboardReport
                 if ( ! $patientWasEnrolledPriorDay) {
                     $this->report->addedIds[] = $patientId;
                     $this->report->incrementAddedCount();
+
+                    if ($this->patientIsUniqueAddedForMonth($patientId)) {
+                        $this->report->uniqueAddedIds[] = $patientId;
+                        $this->report->incrementUniqueAddedCount();
+                    }
                 }
 
                 $pms = $patient->patientSummaries->first();
@@ -325,12 +324,20 @@ class OpsDashboardReport
         return $this;
     }
 
+    private function patientIsUniqueAddedForMonth($patientId): bool
+    {
+        if ($this->dateIsStartOfMonth) {
+            return true;
+        }
+
+        //if patient has been found enrolled in a previous report of the month then they are not unique
+        return ! in_array($patientId, $this->monthEnrolledIds);
+    }
+
     /**
      * @param $patientId
-     *
-     * @return bool
      */
-    private function patientWasEnrolledPriorDay($patientId)
+    private function patientWasEnrolledPriorDay($patientId): bool
     {
         if (array_key_exists('enrolled_patient_ids', $this->priorDayReportData)) {
             return in_array($patientId, $this->priorDayReportData['enrolled_patient_ids']);

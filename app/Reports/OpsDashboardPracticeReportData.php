@@ -22,8 +22,7 @@ class OpsDashboardPracticeReportData
 
     const TEN_MINUTES = 600;
 
-    const TWENTY_MINUTES = 1200;
-
+    const TWENTY_MINUTES                      = 1200;
     public $addedCount                        = 0;
     public $addedIds                          = [];
     public $deletedCount                      = 0;
@@ -56,14 +55,17 @@ class OpsDashboardPracticeReportData
     public $totalWithdrawnCount               = 0;
     public $twentyPlusBhiMinsCount            = 0;
     public $twentyPlusMinsCount               = 0;
-    public $unreachableCount                  = 0;
-    public $unreachableIds                    = [];
-    public $unreachableIdsForDate             = [];
-    public $withdrawnCount                    = 0;
-    public $withdrawnIds                      = [];
-    public $withdrawnIdsForDate               = [];
-    public $zeroMinsCount                     = 0;
-    public $zeroToFiveMinsCount               = 0;
+    public $uniqueAddedCount                  = 0;
+
+    public $uniqueAddedIds        = [];
+    public $unreachableCount      = 0;
+    public $unreachableIds        = [];
+    public $unreachableIdsForDate = [];
+    public $withdrawnCount        = 0;
+    public $withdrawnIds          = [];
+    public $withdrawnIdsForDate   = [];
+    public $zeroMinsCount         = 0;
+    public $zeroToFiveMinsCount   = 0;
 
     public function addedCountIsMatching()
     {
@@ -201,6 +203,11 @@ class OpsDashboardPracticeReportData
         ++$this->twentyPlusMinsCount;
     }
 
+    public function incrementUniqueAddedCount(): void
+    {
+        ++$this->uniqueAddedCount;
+    }
+
     public function incrementUnreachableCount(): void
     {
         ++$this->unreachableCount;
@@ -251,11 +258,12 @@ class OpsDashboardPracticeReportData
             'Total'            => $this->totalCount,
             'Prior Day totals' => $this->priorDayTotals,
             //How many patients have been added or lost for this date
-            'Added'       => $this->addedCount,
-            'Paused'      => $this->pausedCount,
-            'Unreachable' => $this->unreachableCount,
-            'Withdrawn'   => $this->withdrawnCount,
-            'Deleted'     => $this->deletedCount,
+            'Added'        => $this->addedCount,
+            'Unique Added' => $this->uniqueAddedCount,
+            'Paused'       => $this->pausedCount,
+            'Unreachable'  => $this->unreachableCount,
+            'Withdrawn'    => $this->withdrawnCount,
+            'Deleted'      => $this->deletedCount,
             //all patients added minus all patients lost
             'Delta'           => $this->getDelta(),
             'G0506 To Enroll' => $this->g0506ToEnrollCount,
@@ -276,6 +284,7 @@ class OpsDashboardPracticeReportData
 
             //to help us debug
             'added_ids'                => $this->addedIds,
+            'unique_added_ids'         => $this->uniqueAddedIds,
             'deleted_ids'              => $this->deletedIds,
             'total_withdrawn_ids'      => $this->withdrawnIds,
             'total_paused_ids'         => $this->pausedIds,
