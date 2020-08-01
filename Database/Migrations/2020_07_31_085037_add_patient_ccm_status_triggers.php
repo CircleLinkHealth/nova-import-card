@@ -32,8 +32,8 @@ class AddPatientCcmStatusTriggers extends Migration
         CREATE TRIGGER patient_info_ccm_status_after_insert AFTER INSERT ON `patient_info`
         FOR EACH ROW
         BEGIN
-            INSERT INTO patient_ccm_status_revisions(patient_info_id,patient_user_id,action,new_value,created_at,updated_at)
-            VALUES (NEW.id,NEW.user_id,'insert',NEW.ccm_status,now(),now());
+            INSERT INTO patient_ccm_status_revisions(patient_info_id,patient_user_id,action,new_value)
+            VALUES (NEW.id,NEW.user_id,'insert',NEW.ccm_status);
         END
         ");
 
@@ -43,8 +43,8 @@ class AddPatientCcmStatusTriggers extends Migration
         FOR EACH ROW
         BEGIN
         IF NEW.ccm_status <> OLD.ccm_status THEN
-            INSERT INTO patient_ccm_status_revisions(patient_info_id,patient_user_id,action,old_value,new_value,created_at,updated_at)
-            VALUES (NEW.id,NEW.user_id,'update',OLD.ccm_status,NEW.ccm_status,now(),now());
+            INSERT INTO patient_ccm_status_revisions(patient_info_id,patient_user_id,action,old_value,new_value)
+            VALUES (NEW.id,NEW.user_id,'update',OLD.ccm_status,NEW.ccm_status);
             END IF;
         END
         ");

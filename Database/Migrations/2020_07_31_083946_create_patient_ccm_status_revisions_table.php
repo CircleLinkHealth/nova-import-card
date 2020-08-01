@@ -35,7 +35,7 @@ class CreatePatientCcmStatusRevisionsTable extends Migration
             $table->string('old_value')->nullable();
             $table->string('new_value')->nullable();
 
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
 
             $table->foreign('patient_info_id')
                 ->references('id')
