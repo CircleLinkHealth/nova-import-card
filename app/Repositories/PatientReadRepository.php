@@ -50,26 +50,34 @@ class PatientReadRepository
             ->with([
                 'carePlan',
                 'phoneNumbers',
-                'patientInfo',
+                'patientInfo.location',
                 'primaryPractice',
                 'providerInfo',
+                'billingProvider',
                 'observations' => function ($q) {
                     $q
                         ->latest();
                 },
             ])
+            ->when(array_key_exists('patientsPendingAuthUserApproval', $filtersInput), function ($q) {
+                if (auth()->user()->isProvider()) {
+                    $q->patientsPendingProviderApproval(auth()->user());
+                } elseif (auth()->user()->isAdmin()) {
+                    $q->patientsPendingCLHApproval(auth()->user());
+                }
+            })
             ->when(
-                auth()->user()->hasRole('provider') && 'false' == $showPracticePatients,
+                auth()->user()->isProvider() && 'false' == $showPracticePatients,
                 function ($query) {
                     $query->whereHas('careTeamMembers', function ($subQuery) {
                         $subQuery->where('member_user_id', auth()->user()->id)
                             ->whereIn(
                                 'type',
                                 [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-                                           );
+                            );
                     });
                 }
-                      )
+            )
             ->whereHas('patientInfo')
             ->intersectPracticesWith(auth()->user())
             ->filter($filters);

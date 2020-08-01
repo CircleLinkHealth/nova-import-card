@@ -6,6 +6,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Call;
+use App\Models\Addendum;
 use App\Services\CallService;
 use App\Services\NoteService;
 use Carbon\Carbon;
@@ -54,7 +56,9 @@ class PatientCallListController extends Controller
         }
 
         $dropdownStatusClass = 'all' !== $filterPriority
-            ? ['disabled' => 'disable', 'class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']
+            ? ['disabled' => 'disable',
+                'class'   => 'form-control select-picker',
+                'style'   => 'width:32%; margin-left:-55%;', ]
             : ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;'];
 
         $calls = $this->service->filterCalls($dropdownStatus, $filterPriority, $today, $nurseId);
@@ -62,11 +66,28 @@ class PatientCallListController extends Controller
         return view('patientCallList.index', compact([
             'draftNotes',
             'calls',
-            'dateFilter',
             'dropdownStatus',
             'filterPriority',
             'dropdownStatusClass',
         ]));
+    }
+
+    /**
+     * @param $callId
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function markAddendumActivitiesDone($callId)
+    {
+        $call   = Call::findOrFail($callId);
+        $noteId = $call->note_id;
+
+        $addendum = Addendum::where('addendumable_id', $noteId)->first();
+
+        $addendum->markActivitiesAsDone();
+        $addendum->markAllAttachmentNotificationsAsRead();
+
+        return redirect(route('patient.note.view', ['patientId' => $call->inbound_cpm_id, 'noteId' => $noteId]));
     }
 
     /**

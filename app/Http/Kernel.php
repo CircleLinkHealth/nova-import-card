@@ -7,27 +7,22 @@
 namespace App\Http;
 
 use App\Http\Middleware\ACL\ProviderDashboardACL;
-use App\Http\Middleware\AddResponseOriginal;
+use App\Http\Middleware\AdminOrPracticeStaff;
+use App\Http\Middleware\CareAmbassadorAPI;
 use App\Http\Middleware\CheckCarePlanMode;
-use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\CheckOnboardingInvite;
-use App\Http\Middleware\CheckWebSocketServer;
-use App\Http\Middleware\DummyPlaceholder;
+use App\Http\Middleware\CheckPatientUserData;
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\EnrollmentCenter;
 use App\Http\Middleware\LogoutIfAccessDisabled;
 use App\Http\Middleware\PatientProgramSecurity;
-use App\Http\Middleware\RedirectIfAuthenticated;
-use App\Http\Middleware\TrustProxies;
+use App\Http\Middleware\SentryContext;
 use App\Http\Middleware\VerifyCsrfToken;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
-use Illuminate\Auth\Middleware\Authenticate;
-use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
-use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Http\Middleware\FrameGuard;
 use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
@@ -43,9 +38,14 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        CheckForMaintenanceMode::class,
-        TrustProxies::class,
+        \App\Http\Middleware\TrustProxies::class,
+        \Fruitcake\Cors\HandleCors::class,
+        \App\Http\Middleware\CheckForMaintenanceMode::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         FrameGuard::class,
+        SentryContext::class,
     ];
 
     /**
@@ -55,11 +55,10 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            //NOTE: This makes LaravelCaffeineDripMiddleware compatible with CacheResponse
-            AddResponseOriginal::class,
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
             SubstituteBindings::class,
@@ -72,7 +71,7 @@ class Kernel extends HttpKernel
         ],
         'api' => [
             'throttle:60,1',
-            'bindings',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
 
@@ -83,24 +82,28 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         //Laravel Middleware
-        'auth'       => Authenticate::class,
-        'auth.basic' => AuthenticateWithBasicAuth::class,
-        'bindings'   => SubstituteBindings::class,
-        'can'        => Authorize::class,
-        'guest'      => RedirectIfAuthenticated::class,
-        'signed'     => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle'   => ThrottleRequests::class,
+        'auth'             => \App\Http\Middleware\Authenticate::class,
+        'auth.basic'       => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings'         => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'cache.headers'    => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        'can'              => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest'            => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
+        'signed'           => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'throttle'         => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'verified'         => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         //CLH Middleware
         'ability'                => CerberusAbility::class,
         'permission'             => CerberusPermission::class,
         'patientProgramSecurity' => PatientProgramSecurity::class,
-        'checkWebSocketServer'   => CheckWebSocketServer::class,
         'providerDashboardACL'   => ProviderDashboardACL::class,
         'role'                   => CerberusRole::class,
         'verify.invite'          => CheckOnboardingInvite::class,
         'check.careplan.mode'    => CheckCarePlanMode::class,
-        'doNotCacheResponse'     => DummyPlaceholder::class,
-        'cacheResponse'          => DummyPlaceholder::class,
+        'checkPatientUserData'   => CheckPatientUserData::class,
+        'enrollmentCenter'       => EnrollmentCenter::class,
+        'careAmbassadorAPI'      => CareAmbassadorAPI::class,
+        'adminOrPracticeStaff'   => AdminOrPracticeStaff::class,
     ];
 }

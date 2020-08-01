@@ -55,7 +55,7 @@
                     problem_code_system_id: null,
                     selectedCode: 'Select a Code'
                 }
-                problem.instruction = problem.instruction || (this.allCpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id)) || {}).instruction || {}
+                problem.instruction = problem.instruction || (problem.should_show_default_instruction ? (this.allCpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id)) || {}).instruction: {}) || {}
                 problem.type = 'ccd'
                 problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
                 problem.icd10 = ((problem.codes.find(c => c.code_system_name == 'ICD-10') || {}).code || null)
@@ -107,6 +107,7 @@
 
             Event.$on('full-conditions:add', (ccdProblem) => {
                 if (ccdProblem) this.ccdProblems.push(this.setupCcdProblem(ccdProblem))
+                App.$emit('patient-problems-updated', this.ccdProblems);
             })
 
             Event.$on('full-conditions:remove', (id) => {

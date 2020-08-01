@@ -6,10 +6,9 @@
 
 namespace App\Services\CPM;
 
-use App\Models\CPM\CpmInstruction;
-use App\Models\CPM\CpmProblem;
-use App\Models\CPM\CpmProblemUser;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
+use CircleLinkHealth\SharedModels\Entities\CpmProblemUser;
 
 class CpmProblemUserService
 {
@@ -29,7 +28,11 @@ class CpmProblemUserService
     {
         $problemUser = $this->create($patientId, $cpmProblemId, null);
         if ($problemUser) {
-            return $this->cpmProblemService->setupProblem(CpmProblem::with(['cpmInstructions' => function($q) { $q->latest(); },'snomedMaps',])->find($cpmProblemId));
+            return $this->cpmProblemService->setupProblem(
+                \CircleLinkHealth\SharedModels\Entities\CpmProblem::with(['cpmInstructions' => function ($q) {
+                    $q->latest();
+                }, 'snomedMaps'])->find($cpmProblemId)
+            );
         }
 
         return $problemUser;
@@ -40,11 +43,11 @@ class CpmProblemUserService
      * @param $cpmProblemId
      * @param null $instructionId
      *
-     * @return CpmProblemUser|null
+     * @return \CircleLinkHealth\SharedModels\Entities\CpmProblemUser|null
      */
     public function create(int $patientId, int $cpmProblemId, int $instructionId = null)
     {
-        return CpmProblemUser::firstOrCreate([
+        return \CircleLinkHealth\SharedModels\Entities\CpmProblemUser::firstOrCreate([
             'patient_id'     => $patientId,
             'cpm_problem_id' => $cpmProblemId,
         ], [

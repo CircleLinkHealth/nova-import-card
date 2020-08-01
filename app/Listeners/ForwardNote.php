@@ -8,9 +8,13 @@ namespace App\Listeners;
 
 use App\Events\NoteFinalSaved;
 use App\Services\NoteService;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
-class ForwardNote
+class ForwardNote implements ShouldQueue
 {
+    use InteractsWithQueue;
+
     /**
      * @var NoteService
      */
@@ -18,8 +22,6 @@ class ForwardNote
 
     /**
      * Create the event listener.
-     *
-     * @param NoteService $noteService
      */
     public function __construct(NoteService $noteService)
     {

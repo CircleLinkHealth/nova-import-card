@@ -6,12 +6,11 @@
 
 namespace App\Services\CCD;
 
-use App\Models\CCD\Problem as CcdProblem;
-use App\Models\CPM\CpmProblem;
-use App\Models\ProblemCode;
 use App\Repositories\CcdProblemRepository;
 use App\Services\CPM\CpmInstructionService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
+use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 
 class CcdProblemService
 {
@@ -110,16 +109,22 @@ class CcdProblemService
             ? $userId
             : User::findOrFail($userId);
 
-        $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes']);
+        $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes', 'ccdProblems.cpmProblem']);
 
         //exclude generic diabetes type
-        $diabetes = \Cache::remember('cpm_problem_diabetes', 1440, function () {
-            return CpmProblem::where('name', 'Diabetes')->first();
-        });
+        $diabetes = genericDiabetes();
+
+        //If patient has been imported via UPG0506 using instructions from the PDF, we need to show ONLY those instructions, avoiding default instructions attached to CPM Problems
+        //Check will happen in the front-end
+        $shouldShowDefaultInstructions = ! $user->patientIsUPG0506();
 
         return $user->ccdProblems
             ->where('cpm_problem_id', '!=', $diabetes->id)
-            ->map([$this, 'setupProblem']);
+            ->map(function ($p) use ($shouldShowDefaultInstructions) {
+                return $this->setupProblem($p, $shouldShowDefaultInstructions);
+            })
+            ->filter()
+            ->values();
     }
 
     public function getPatientProblemsValues($userId)
@@ -148,17 +153,20 @@ class CcdProblemService
         return $problems;
     }
 
-    public function setupProblem($p)
+    public function setupProblem($p, $shouldShowDefaultInstruction = true)
     {
         if ($p) {
             return [
-                'id'            => $p->id,
-                'name'          => $p->name,
-                'original_name' => $p->original_name,
-                'cpm_id'        => $p->cpm_problem_id,
-                'codes'         => $p->codes,
-                'is_monitored'  => $p->is_monitored,
-                'instruction'   => $p->cpmInstruction,
+                'id'                              => $p->id,
+                'name'                            => $p->name ?? '',
+                'original_name'                   => $p->original_name ?? '',
+                'cpm_id'                          => $p->cpm_problem_id,
+                'codes'                           => $p->codes,
+                'code'                            => $p->icd10code() ?? '',
+                'is_monitored'                    => $p->is_monitored,
+                'is_behavioral'                   => $p->isBehavioral(),
+                'instruction'                     => $p->cpmInstruction,
+                'should_show_default_instruction' => $shouldShowDefaultInstruction,
             ];
         }
     }

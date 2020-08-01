@@ -6,8 +6,8 @@
 
 namespace App\Exports;
 
-use App\Traits\AttachableAsMedia;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Illuminate\Contracts\Support\Responsable;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -30,8 +30,6 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
 
     /**
      * NurseInvoiceCsv constructor.
-     *
-     * @param Carbon $date
      */
     public function __construct(Carbon $date)
     {
@@ -41,8 +39,6 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
 
     /**
      * Collect all invoices for given date from nurse_invoices table.
-     *
-     * @return array
      */
     public function array(): array
     {
@@ -64,17 +60,11 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
         return $invoicesData;
     }
 
-    /**
-     * @return string
-     */
     public function getFilename(): string
     {
         return $this->filename;
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         return [
@@ -104,8 +94,6 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
 
     /**
      * @param string $filename
-     *
-     * @return NurseInvoiceCsv
      */
     public function setFilename(string $filename = null): NurseInvoiceCsv
     {

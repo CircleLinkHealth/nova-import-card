@@ -5,22 +5,18 @@
                 <script>
 
                     function onStatusChange(e) {
-
                         let ccmStatus = document.getElementById("ccm_status");
 
-                        if (ccmStatus.value === "withdrawn") {
+                        if (ccmStatus && (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call")) {
                             $('#header-withdrawn-reason').removeClass('hidden');
                             onReasonChange();
-                            console.log('test');
                         } else {
                             $('#header-withdrawn-reason').addClass('hidden');
                             $('#header-withdrawn-reason-other').addClass('hidden');
                         }
-
                     }
 
                     function onReasonChange(e) {
-
                         let reason = document.getElementById("withdrawn_reason");
                         let reasonOther = document.getElementById('withdrawn_reason_other');
 
@@ -31,7 +27,6 @@
                             $('#header-withdrawn-reason-other').addClass('hidden');
                             reasonOther.removeAttribute('required');
                         }
-
                     }
 
                     $('document').ready(function () {
@@ -50,12 +45,42 @@
             @endpush
             <div class="col-sm-8" style="line-height: 22px;">
                 <span style="font-size: 30px;">
-                    <a href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
+                    <a href="{{ route('patient.summary', [$patient->id]) }}">
                     {{$patient->getFullName()}}
-                    </a> </span>
+                    </a>
+                </span>
 
-                <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}" style="padding-right: 2%;"><span
-                            class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a>
+                <a href="{{ route('patient.demographics.show', [$patient->id]) }}"
+                   style="padding-right: 5px; vertical-align: top">
+                    <span class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span>
+                </a>
+
+                <span style="font-size: 15px;">
+                    (Patient ID: {{$patient->id}})
+                </span>
+
+                @if ($patient->shouldShowCcmPlusBadge())
+                    <h4 style="display: inline">
+                        <span class="label label-success with-tooltip"
+                              data-placement="top"
+                              title="This patient is eligible for additional CCM reimbursements if CCM time is over 40 and/or 60 minutes"
+                              style="vertical-align: top; margin-right: 3px">
+                            CCM+
+                        </span>
+                    </h4>
+                @endif
+
+                @if ($patient->shouldShowPcmBadge())
+                    <h4 style="display: inline">
+                        <span class="label label-success with-tooltip"
+                              data-placement="top"
+                              title="This patient is eligible for PCM reimbursement, therefore minimum time is 30 minutes (instead of 20)."
+                              style="vertical-align: top; margin-right: 3px">
+                            PCM
+                        </span>
+                    </h4>
+                @endif
+
                 {{-- red flag.indication patient is BHI eligible--}}
                 @if(isset($patient) && auth()->check()
                 && !isset($isPdf)
@@ -87,6 +112,9 @@
                         </li>
                         <li class="inline-block">{{formatPhoneNumber($patient->getPhone()) ?? 'N/A'}} </li>
                     </b>
+                    <li style="margin-bottom: 10px">
+                        <patient-spouse :patient-id="{{json_encode($patient->id, JSON_HEX_QUOT)}}"></patient-spouse>
+                    </li>
                     <li><span> <b>Billing Dr.</b>: {{$provider}}  </span></li>
                     @if($regularDoctor)
                         <li><span> <b>Regular Dr.</b>: {{$regularDoctor->getFullName()}}  </span></li>
@@ -108,13 +136,19 @@
                                 :patient-preferences="{{json_encode($patient->patientInfo()->exists() ? $patient->patientInfo->getPreferences() : new stdClass,JSON_HEX_QUOT)}}"
                                 :is-care-center="{{json_encode(Auth::user()->isCareCoach()), JSON_HEX_QUOT}}">
                         </patient-next-call>
+                        <attest-call-conditions-modal
+                                patient-id="{{$patient->id}}"
+                                @if(isset($attestationRequirements)) :attestation-requirements="{{json_encode($attestationRequirements)}}" @endif
+                        ></attest-call-conditions-modal>
                     </li>
                 </ul>
                 <?php
+
                 $ccdProblemService = app(App\Services\CCD\CcdProblemService::class);
 
                 $ccdProblems = $ccdProblemService->getPatientProblems($patient);
 
+                $enableBhiAttestation = auth()->user()->isCareCoach() && (isset($patientIsBhiEligible) && true === $patientIsBhiEligible);
                 $ccdMonitoredProblems = $ccdProblems
                     ->where('is_monitored', 1)
                     ->unique('name')
@@ -127,10 +161,18 @@
                         style="margin-top: -8px; margin-bottom: 20px !important; margin-left: -20px !important;">
                         @foreach($ccdMonitoredProblems as $problem)
                             @if($problem['name'] != 'Diabetes')
-                                <li class="inline-block"><input type="checkbox" id="item27" name="condition27"
+                                <li
+                                        @if(($problem['is_behavioral'] ?? false) && $enableBhiAttestation)
+                                        title="BHI Condition: Switch to BHI timer when discussing with patient"
+                                        class="with-bhi-tooltip bhi-problem inline-block"
+                                                @else
+                                                class="inline-block"
+                                                @endif
+                                ><input type="checkbox" id="item-{{$problem['id']}}"
+                                                                name="item-{{$problem['id']}}"
                                                                 value="Active"
                                                                 checked="checked" disabled="disabled">
-                                    <label for="condition27"><span> </span>{{$problem['name']}}</label>
+                                    <label @if(($problem['is_behavioral'] ?? false) && $enableBhiAttestation) class="bhi-problem" @endif for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
                                 </li>
                             @endif
                         @endforeach
@@ -144,7 +186,7 @@
                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
                         @if (isset($disableTimeTracking) && $disableTimeTracking)
                             <div class="color-grey">
-                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
                                     <server-time-display url="{{config('services.ws.server-url')}}"
                                                          patient-id="{{$patient->id}}"
                                                          provider-id="{{auth()->id()}}"
@@ -153,10 +195,8 @@
                             </div>
                         @else
                             <?php
-                            $noLiveCountTimeTracking = $useOldTimeTracker
-                                ? true
-                                : (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
-                            $ccmCountableUser = auth()->user()->isCCMCountable();
+                            $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
+                            $ccmCountableUser        = auth()->user()->isCCMCountable();
                             ?>
                             @if ($noLiveCountTimeTracking)
                                 <div class="color-grey">
@@ -167,7 +207,7 @@
                                             </div>
                                             <div>
                                                  <a id="monthly-time-static"
-                                                    href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                                    href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
                                                     {{$monthlyTime}}
                                                 </a>
                                             </div>
@@ -179,7 +219,7 @@
                                                 </div>
                                                 <div>
                                                      <a id="monthly-bhi-time-static"
-                                                        href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                                        href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
                                                         {{$monthlyBhiTime}}
                                                      </a>
                                                 </div>
@@ -212,60 +252,14 @@
 
                 <span class="sometimes-hidden" style="font-size:15px"></span>
 
-                @if(auth()->user()->isAdmin())
-                    @include('partials.viewCcdaButton')
-                @endif
                 <div id="header-perform-status-select" class="ccm-status col-xs-offset-3">
-                    @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
-                        <li class="inline-block">
-                            <select id="ccm_status" name="ccm_status" class="selectpickerX dropdownValid form-control"
-                                    data-size="2"
-                                    style="width: 135px">
-                                <option style="color: #47beab"
-                                        value="enrolled" {{$patient->getCcmStatus() == 'enrolled' ? 'selected' : ''}}>
-                                    Enrolled
-                                </option>
-                                <option class="withdrawn"
-                                        value="withdrawn" {{$patient->getCcmStatus() == 'withdrawn' ? 'selected' : ''}}>
-                                    Withdrawn
-                                </option>
-                                <option class="paused"
-                                        value="paused" {{$patient->getCcmStatus() == 'paused' ? 'selected' : ''}}>
-                                    Paused
-                                </option>
-                            </select>
-                        </li>
-                    @else
-                        <li style="font-size: 18px" id="ccm_status"
-                            class="inline-block col-xs-pull-1 {{$patient->getCcmStatus()}}"><?= (empty($patient->getCcmStatus()))
-                                ? 'N/A'
-                                : ucwords($patient->getCcmStatus()); ?></li>
-                    @endif
+                    @include('partials.patient.ccm-status')
                     <br/>
                 </div>
-                @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
-                    <div id="header-withdrawn-reason" class="hidden" style="padding-top: 10px;">
+                @include('partials.patient.withdrawn-reason')
 
-                        <div class="col-md-12"
-                             style="padding-right: 0 !important;">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>
-                        <div class="col-sm-12" style="padding-right: 0 !important;">
-                            <div id="header-perform-reason-select">
-
-                                {!! Form::select('withdrawn_reason', $withdrawnReasons, ! array_key_exists($patientWithdrawnReason, $withdrawnReasons) && $patientWithdrawnReason != null ? 'Other' : $patientWithdrawnReason, ['class' => 'selectpickerX dropdownValid form-control', 'style' => 'width:100%;']) !!}
-
-                            </div>
-                        </div>
-                    </div>
-                    <div id="header-withdrawn-reason-other" class="form-group hidden">
-                        <div class="col-md-12" style="padding-right: 0 !important;">
-                            <div>
-                                <textarea id="withdrawn_reason_other" rows="1" cols="100" style="resize: none;"
-                                          placeholder="Enter Reason..." name="withdrawn_reason_other"
-                                          required="required"
-                                          class="form-control">{{! array_key_exists($patientWithdrawnReason, $withdrawnReasons) ? $patientWithdrawnReason : null}}</textarea>
-                            </div>
-                        </div>
-                    </div>
+                @if(auth()->user()->isAdmin())
+                    @include('partials.viewCcdaButton')
                 @endif
             </div>
 
@@ -323,16 +317,61 @@
             -webkit-animation: bounce 0.65s 4;
         }
 
+        .bhi-tooltip {
+            display: none;
+            z-index: 9999999;
+            position: absolute;
+            border: 1px solid #333;
+            background-color: #5cc0dd;
+            border-radius: 5px;
+            padding: 10px;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .bhi-problem {
+            color: #5cc0dd !important;
+            font-weight: bolder;
+        }
+
     </style>
 
 @endpush
 
 @push('scripts')
     <script>
+        window.enableBhiAttestation = @json([
+    'patientIsBhiEligible' => $enableBhiAttestation
+    ]);
         (function ($) {
             $('.glyphicon-flag').click(function (e) {
                 $(".load-hidden-bhi, .modal-mask").show();
             });
+
+            $('.with-bhi-tooltip')
+                .hover(function () {
+                    // Hover over code
+                    var title = $(this).attr('title');
+
+                    $(this)
+                        .data('tipText', title)
+                        .removeAttr('title');
+
+                    $('<p class="bhi-tooltip"></p>')
+                        .text(title)
+                        .appendTo('body')
+                        .fadeIn('slow');
+
+                }, function () {
+                    // Hover out code
+                    $(this).attr('title', $(this).data('tipText'));
+                    $('.bhi-tooltip').remove();
+                })
+                .mousemove(function (e) {
+                    var mousex = e.pageX + 20; //Get X coordinates
+                    var mousey = e.pageY + 10; //Get Y coordinates
+                    $('.bhi-tooltip').css({top: mousey, left: mousex})
+                });
 
         })(jQuery);
     </script>

@@ -6,10 +6,10 @@
 
 namespace App\Console\Commands;
 
-use App\CarePlan;
 use App\Notifications\SendAssessmentNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Console\Command;
 
 class CareplanEnrollmentAdminNotification extends Command

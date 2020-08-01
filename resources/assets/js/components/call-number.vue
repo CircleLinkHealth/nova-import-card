@@ -1,6 +1,6 @@
 <template>
     <div>
-        <loader v-if="waiting"></loader>
+        <loader v-if="waiting && device === null"></loader>
         <div v-if="debug">
             <button class="btn btn-circle" @click="togglePatientCallMessage('debug', true)"
                     :class="isCurrentlyOnPhone ? 'btn-danger': 'btn-success'">
@@ -29,7 +29,7 @@
         <div v-show="closeCountdown > 0">This window will close in <span
                 class="countdown-seconds">{{closeCountdown}}</span> seconds.
         </div>
-        <template v-if="!waiting">
+        <template v-if="!(waiting && device === null)">
             <div class="row">
                 <div class="col-xs-12">
                     <div class="col-xs-9 no-padding">
@@ -174,15 +174,7 @@
 
             <br/>
 
-            <div class="row" v-show="isCurrentlyOnPhone">
-                <input class="form-control" type="text" placeholder="Numeric Keypad" @focus="numpadShow"/>
-                <vue-touch-keyboard v-if="numpadVisible"
-                                    :layout="numpadCustomLayout"
-                                    :change="numpadChanged"
-                                    :cancel="numpadHide"
-                                    :accept="numpadDone"
-                                    :input="numpadInputElement"/>
-            </div>
+            <call-numpad v-if="isCurrentlyOnPhone" :on-input="numpadInput"></call-numpad>
 
         </template>
 
@@ -194,12 +186,8 @@
     import LoaderComponent from '../components/loader';
     import {registerHandler, sendRequest} from "./bc-job-manager";
     import {Logger} from '../logger-logdna';
-
-    import Twilio from 'twilio-client';
-    import VueTouchKeyboard from "vue-touch-keyboard";
-
-    require("vue-touch-keyboard/dist/vue-touch-keyboard.css");
-    window.Vue.use(VueTouchKeyboard);
+    import CallNumpad from './call-numpad';
+    import {Device} from 'twilio-client';
 
     let self;
 
@@ -209,6 +197,7 @@
         name: 'call-number',
         components: {
             loader: LoaderComponent,
+            'call-numpad': CallNumpad
         },
         props: {
             cpmToken: {
@@ -230,6 +219,7 @@
             allowConference: Boolean,
             inboundUserId: String,
             outboundUserId: String,
+            source: String,
             patientNumbers: {
                 type: Object,
                 default: {}
@@ -241,24 +231,6 @@
         },
         data() {
             return {
-                numpadRegex: new RegExp('[0-9]|[*]|#'),
-                numpadVisible: false,
-                numpadInputElement: null,
-                numpadCustomLayout: {
-
-                    _meta: {
-                        "backspace": {func: "backspace", classes: "control"},
-                        "accept": {func: "accept", text: "Hide", classes: "control featured"},
-                        "zero": {key: "0", width: 130}
-                    },
-
-                    default: [
-                        "1 2 3",
-                        "4 5 6",
-                        "7 8 9",
-                        "* {zero} # {backspace} {accept}"
-                    ]
-                },
                 ready: false,
                 waiting: false,
                 waitingForConference: false,
@@ -324,28 +296,11 @@
                 return rootUrl(path);
             },
 
-            numpadChanged: function (allInput, lastInput) {
-
-                if (!lastInput || lastInput.length > 1 || !this.numpadRegex.test(lastInput)) {
-                    return;
-                }
+            numpadInput: function (allInput, lastInput) {
                 if (this.connection) {
                     console.debug('Sending digits to twilio', lastInput.toString());
                     this.connection.sendDigits(lastInput.toString());
                 }
-            },
-
-            numpadDone: function (val) {
-                this.numpadHide();
-            },
-
-            numpadShow: function (e) {
-                this.numpadInputElement = e.target;
-                this.numpadVisible = true;
-            },
-
-            numpadHide: function () {
-                this.numpadVisible = false;
             },
 
             toggleMuteMessage: function (number) {
@@ -427,26 +382,30 @@
                             this.queuedNumbersForConference.push({number, isUnlisted, isCallToPatient});
                             this.createConference();
                         } else {
-                            this.log = 'Calling ' + number;
-                            this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
+                            this.initTwilio()
+                                .then(() => {
+                                    this.log = 'Calling ' + number;
+                                    this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
 
-                            this.connection.on('warning', (warningName) => {
-                                const temp = new Set(self.warningEvents);
-                                temp.add(warningName);
-                                self.warningEvents = Array.from(temp);
-                                Logger.warn(`WARNING: ${warningName}`, {meta: {'connection': 'warning'}});
-                            });
+                                    this.connection.on('warning', (warningName) => {
+                                        const temp = new Set(self.warningEvents);
+                                        temp.add(warningName);
+                                        self.warningEvents = Array.from(temp);
+                                        Logger.warn(`WARNING: ${warningName}`, {meta: {'connection': 'warning'}});
+                                    });
 
-                            this.connection.on('warning-cleared', (warningName) => {
-                                const temp = new Set(self.warningEvents);
-                                temp.delete(warningName);
-                                self.warningEvents = Array.from(temp);
-                                Logger.warn(`WARNING-CLEARED: ${warningName}`, {meta: {'connection': 'warning-cleared'}});
-                            });
+                                    this.connection.on('warning-cleared', (warningName) => {
+                                        const temp = new Set(self.warningEvents);
+                                        temp.delete(warningName);
+                                        self.warningEvents = Array.from(temp);
+                                        Logger.warn(`WARNING-CLEARED: ${warningName}`, {meta: {'connection': 'warning-cleared'}});
+                                    });
+                                })
+                                .catch(err => {
 
+                                });
                         }
                     }
-
 
                     EventBus.$emit('tracker:call-mode:enter');
 
@@ -506,6 +465,7 @@
                     IsCallToPatient: isCallToPatient ? 1 : 0,
                     InboundUserId: this.inboundUserId,
                     OutboundUserId: this.outboundUserId,
+                    Source: this.source
                 };
             },
             createConference: function () {
@@ -745,64 +705,69 @@
                 self.log = "Fetching token from server";
                 self.ready = false;
                 self.waiting = true;
-                self.axios.get(url, {withCredentials: true})
-                    .then(response => {
-                        self.log = 'Initializing Twilio';
-                        self.device = new Twilio.Device(response.data.token, {
-                            closeProtection: true, //show warning when closing the page with active call - NOT WORKING
-                            debug: true,
-                            warnings: true,
-                            region: 'us1' //default to US East Coast (Virginia)
+                return new Promise((resolve, reject) => {
+                    self.axios.get(url, {withCredentials: true})
+                        .then(response => {
+                            self.log = 'Initializing Twilio';
+                            self.device = new Device(response.data.token, {
+                                closeProtection: true, //show warning when closing the page with active call - NOT WORKING
+                                debug: true,
+                                warnings: true,
+                                edge: ['ashburn', 'roaming'],
+                            });
+
+                            self.device.on('disconnect', () => {
+                                //exit call mode when all calls are disconnected
+                                EventBus.$emit('tracker:call-mode:exit');
+                                console.log('twilio device: disconnect');
+
+                                self.reportWarnings();
+                                self.resetPhoneState();
+                                self.connection = null;
+                                self.log = 'Call ended.';
+
+                                self.closeWindow(self.endCallWindowCloseDelay, false);
+
+                                //make sure UI on the other page is up to date
+                                sendRequest('call_ended', {number: {value: '', muted: false}})
+                                    .then(() => {
+
+                                    })
+                                    .catch(err => console.error(err));
+
+                            });
+
+                            self.device.on('offline', () => {
+                                //this event can be raised on a temporary disconnection
+                                //we should disable any actions when this event is fired
+                                console.log('twilio device: offline');
+                                self.twilioOffline();
+                                self.log = 'Offline.';
+                            });
+
+                            self.device.on('error', (err) => {
+                                self.reportError(err.code, err.message);
+                                self.resetPhoneState();
+                                self.log = err.message;
+                            });
+
+                            self.device.on('ready', () => {
+                                console.log('twilio device: ready');
+                                self.log = 'Ready to make call';
+                                self.twilioOnline();
+                                resolve();
+                            });
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            self.hasError = true;
+                            self.log = 'There was an error. Please refresh the page. If the issue persists please let CLH know via slack.';
+                            self.ready = false;
+                            self.waiting = false;
+                            reject(error);
                         });
+                });
 
-                        self.device.on('disconnect', () => {
-                            //exit call mode when all calls are disconnected
-                            EventBus.$emit('tracker:call-mode:exit');
-                            console.log('twilio device: disconnect');
-
-                            self.reportWarnings();
-                            self.resetPhoneState();
-                            self.connection = null;
-                            self.log = 'Call ended.';
-
-                            self.closeWindow(self.endCallWindowCloseDelay, false);
-
-                            //make sure UI on the other page is up to date
-                            sendRequest('call_ended', {number: {value: '', muted: false}})
-                                .then(() => {
-
-                                })
-                                .catch(err => console.error(err));
-
-                        });
-
-                        self.device.on('offline', () => {
-                            //this event can be raised on a temporary disconnection
-                            //we should disable any actions when this event is fired
-                            console.log('twilio device: offline');
-                            self.twilioOffline();
-                            self.log = 'Offline.';
-                        });
-
-                        self.device.on('error', (err) => {
-                            self.reportError(err.code, err.message);
-                            self.resetPhoneState();
-                            self.log = err.message;
-                        });
-
-                        self.device.on('ready', () => {
-                            console.log('twilio device: ready');
-                            self.log = 'Ready to make call';
-                            self.twilioOnline();
-                        });
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        self.hasError = true;
-                        self.log = 'There was an error. Please refresh the page. If the issue persists please let CLH know via slack.';
-                        self.ready = false;
-                        self.waiting = false;
-                    });
             },
             reportWarnings: function () {
                 if (self.warningEvents.length === 0) {
@@ -954,9 +919,5 @@
 
     .error-logs {
         color: red;
-    }
-
-    .vue-touch-keyboard {
-        margin-top: 3px;
     }
 </style>

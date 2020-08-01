@@ -3,8 +3,12 @@
         <div class="row">
             <div class="col-sm-12 text-right pad-10">
                 <div class="col-sm-6 text-left" v-if="this.showProviderPatientsButton">
-                    <button v-if="this.showPracticePatients" class="btn btn-info btn-xs" @click="togglePracticePatients">Show My Patients</button>
-                    <button v-if="!this.showPracticePatients" class="btn btn-info btn-xs" @click="togglePracticePatients">Show Practice Patients</button>
+                    <button v-if="this.showPracticePatients" class="btn btn-info btn-xs"
+                            @click="togglePracticePatients">Show My Patients
+                    </button>
+                    <button v-if="!this.showPracticePatients" class="btn btn-info btn-xs"
+                            @click="togglePracticePatients">Show Practice Patients
+                    </button>
                 </div>
                 <div v-bind:class="{'col-sm-6': this.showProviderPatientsButton}">
                     <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
@@ -17,49 +21,46 @@
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options"
                         id="patient-list-table">
             <template slot="name" slot-scope="props">
-                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')" target="_blank">{{props.row.name}}</a>
+                <div><a class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')" target="_blank">{{props.row.name}}</a>
                 </div>
             </template>
             <template slot="provider" slot-scope="props">
                 <div>{{ props.row.provider_name }}</div>
             </template>
-            <template slot="program" slot-scope="props">
-                <div>{{ props.row.program_name }}</div>
+            <template slot="practice" slot-scope="props">
+                <div>{{ props.row.practice_name }}</div>
             </template>
-            <template slot="filter__program">
+            <template slot="filter__practice">
+                <div>
+                </div>
+            </template>
+            <template slot="location" slot-scope="props">
+                <div>{{ props.row.location_name }}</div>
+            </template>
+            <template slot="filter__location">
                 <div>
                 </div>
             </template>
             <template slot="ccmStatus" slot-scope="props">
                 <div>
-                    {{
-                    (({
-                    enrolled: 'Enrolled',
-                    to_enroll: 'To Enroll',
-                    patient_rejected: 'Patient Declined',
-                    withdrawn: 'Withdrawn',
-                    paused: 'Paused',
-                    unreachable: 'Unreachable',
-                    })[props.row.ccmStatus] || props.row.ccmStatus)
-                    }}
+                    {{ccmStatusMap[props.row.ccmStatus] || props.row.ccmStatus}}
                 </div>
             </template>
             <template slot="h__ccmStatusDate" slot-scope="props">
                 CCM Status Change
             </template>
             <template slot="careplanStatus" slot-scope="props">
-                <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
-                    {{
-                    (({
-                    qa_approved: 'Approve Now',
-                    to_enroll: 'To Enroll',
-                    provider_approved: 'Provider Approved',
-                    none: 'None',
-                    draft: 'Draft',
-                    g0506: 'G0506'
-                    })[props.row.careplanStatus] || props.row.careplanStatus)
-                    }}
+                <a v-if="canApproveCareplans && props.row.careplanStatus === 'rn_approved'" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
+                    <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
                 </a>
+
+                <a v-else-if="isAdmin && (props.row.careplanStatus === 'draft' || props.row.careplanStatus === 'qa_approved')" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
+                    <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
+                </a>
+
+                <p v-else>
+                    {{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}
+                </p>
             </template>
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
@@ -77,7 +78,8 @@
                 Withdrawn Reason
             </template>
             <template slot="withdrawnReason" slot-scope="props">
-                <div class="withdrawn-reason-column"><span :title="props.row.withdrawnReason">{{ props.row.withdrawnReason }}</span></div>
+                <div class="withdrawn-reason-column"><span :title="props.row.withdrawnReason">{{ props.row.withdrawnReason }}</span>
+                </div>
             </template>
             <template slot="h__dob" slot-scope="props">
                 Date of Birth
@@ -97,21 +99,21 @@
         </v-client-table>
         <div class="row">
             <div class="col-sm-8">
-                <input type="button" class="btn btn-success"
+                <input type="button" class="btn btn-patients-table"
                        :value="'Show by ' + (nameDisplayType ? 'First' : 'Last') + ' Name'"
                        @click="changeNameDisplayType">
                 <span class="pad-10"></span>
 
-                <a class="btn btn-success" :class="{ disabled: loaders.pdf }" @click="exportPdf"
+                <a v-if="! this.hideDownloadButtons" class="btn btn-patients-table" :class="{ disabled: loaders.pdf }" @click="exportPdf"
                    :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
                 <span class="pad-10"></span>
 
-                <input type="button" class="btn btn-success" :class="{ disabled: loaders.excel }"
+                <input v-if="! this.hideDownloadButtons" type="button" class="btn btn-patients-table" :class="{ disabled: loaders.excel }"
                        :value="exportCSVText" @click="exportCSV">
                 <span class="pad-10"></span>
 
-                <input type="button" class="btn btn-success"
-                       :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Program'"
+                <input type="button" class="btn btn-patients-table"
+                       :value="(columns.includes('practice') ? 'Hide' : 'Show') + ' Practice'"
                        @click="toggleProgramColumn">
             </div>
         </div>
@@ -144,60 +146,117 @@
             loader
         },
         props: {
+            isAdmin: {
+                type: Boolean,
+                required: true,
+            },
             showProviderPatientsButton: {
                 type: Boolean,
                 required: true,
-            }
+            },
+            urlFilter: {
+                type: String,
+                required: false,
+                default: () => ''
+            },
+            hideDownloadButtons: {
+                type: Boolean,
+                required: false,
+                default: false
+            },
+            canApproveCareplans: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
         },
         data() {
+            let carePlanStatusMap;
+            if (this.isAdmin) {
+                carePlanStatusMap = {
+                    to_enroll: 'To Enroll',
+                    qa_approved: 'CLH Approved',
+                    rn_approved: 'RN Approved',
+                    provider_approved: 'Provider Approved',
+                    none: 'None',
+                    draft: 'Approve Now',
+                    g0506: 'G0506'
+                };
+            } else {
+                carePlanStatusMap = {
+                    rn_approved: 'Approve Now',
+                    provider_approved: 'Approved',
+                };
+            }
+
             return {
                 pagination: null,
                 tableData: [],
                 practices: [],
                 providersForSelect: [],
+                locationsForSelect: [],
                 showPracticePatients: false,
                 nameDisplayType: NameDisplayType.FirstName,
-                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
+                columns: ['name', 'provider', 'location', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
                 loaders: {
                     next: false,
                     practices: null,
                     providers: false,
+                    locations: false,
                     excel: false,
                     pdf: false
                 },
                 tokens: {
                     next: null
                 },
-                exportCSVText: 'Export as CSV'
+                exportCSVText: 'Export as CSV',
+                ccmStatusMap: {
+                    enrolled: 'Enrolled',
+                    to_enroll: 'To Enroll',
+                    patient_rejected: 'Patient Declined',
+                    withdrawn: 'Withdrawn',
+                    withdrawn_1st_call: 'Withdrawn 1st Call',
+                    paused: 'Paused',
+                    unreachable: 'Unreachable',
+                },
+                carePlanStatusMap
             }
         },
         computed: {
             options() {
+
+                let careplanStatus = [
+                    {id: 'rn_approved', text: this.carePlanStatusMap['rn_approved']},
+                    {id: 'provider_approved', text: this.carePlanStatusMap['provider_approved']},
+                ];
+                if (this.isAdmin) {
+                    careplanStatus.push({id: '', text: this.carePlanStatusMap['none']});
+                    careplanStatus.push({id: 'g0506', text: this.carePlanStatusMap['g0506']});
+                    careplanStatus.push({id: 'draft', text: this.carePlanStatusMap['draft']});
+                    careplanStatus.push({id: 'qa_approved', text: this.carePlanStatusMap['qa_approved']});
+                }
+
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus','withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
-                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
+                    sortable: ['name', 'provider', 'practice', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
+                    filterable: ['name', 'provider', 'practice', 'location', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
                     listColumns: {
                         provider: this.providersForSelect,
+                        location: this.locationsForSelect,
                         ccmStatus: [
                             {id: 'enrolled', text: 'Enrolled'},
                             {id: 'paused', text: 'Paused'},
                             {id: 'withdrawn', text: 'Withdrawn'},
+                            {id: 'withdrawn_1st_call', text: 'Wthdrn 1st Call'},
                             {id: 'to_enroll', text: 'To Enroll'},
                             {id: 'unreachable', text: 'Unreachable'},
                             {id: 'patient_rejected', text: 'Patient Rejected'}
                         ],
-                        careplanStatus: [
-                            {id: '', text: 'none'},
-                            {id: 'qa_approved', text: 'QA Approved'},
-                            {id: 'provider_approved', text: 'Provider Approved'},
-                            {id: 'g0506', text: 'G0506'},
-                            {id: 'draft', text: 'Draft'}
-                        ],
-                        program: this.practices.map(practice => ({
+                        careplanStatus,
+                        practice: this.practices.map(practice => ({
                             id: practice.id,
                             text: practice.display_name
-                        })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
+                        })).sort((p1, p2) => p1.text > p2.text ? 1 : -1).distinct(practice => practice.id)
                     },
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -206,6 +265,7 @@
                     customSorting: {
                         name: (ascending) => iSort,
                         provider: (ascending) => iSort,
+                        location: (ascending) => iSort,
                         ccmStatus: (ascending) => iSort,
                         ccmStatusDate: (ascending) => iSort,
                         careplanStatus: (ascending) => iSort,
@@ -217,8 +277,9 @@
                         registeredOn: (ascending) => iSort,
                         bhi: (ascending) => iSort,
                         ccm: (ascending) => iSort,
-                        program: (ascending) => iSort
-                    }
+                        practice: (ascending) => iSort
+                    },
+                    noResults: 'No patients match these criteria at this time.'
                 }
             }
         },
@@ -229,7 +290,7 @@
             },
             columnMapping(name) {
                 const columns = {
-                    program: 'practice'
+
                 }
                 return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
             },
@@ -242,10 +303,11 @@
                     value: query[key]
                 })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}&${this.urlFilter}`)
                 } else {
-                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}&${this.urlFilter}`)
                 }
             },
             filterData() {
@@ -262,14 +324,14 @@
                 }, {})
             },
             toggleProgramColumn() {
-                if (this.columns.indexOf('program') >= 0) {
-                    this.columns.splice(this.columns.indexOf('program'), 1)
+                if (this.columns.indexOf('practice') >= 0) {
+                    this.columns.splice(this.columns.indexOf('practice'), 1)
                 } else {
-                    this.columns.splice(2, 0, 'program')
+                    this.columns.splice(2, 0, 'practice')
                 }
             },
             togglePracticePatients() {
-                this.showPracticePatients = ! this.showPracticePatients
+                this.showPracticePatients = !this.showPracticePatients
                 this.activateFilters()
             },
             activateFilters() {
@@ -293,7 +355,6 @@
             },
             getPractices() {
                 return this.loaders.practices = this.axios.get(rootUrl('api/practices')).then(response => {
-                    console.log('patient-list:practices', response.data)
                     this.practices = response.data
                     this.loaders.practices = null
                     return this.practices
@@ -305,7 +366,6 @@
             getProviders() {
                 this.loaders.providers = true
                 return this.axios.get(rootUrl('api/providers/list')).then(response => {
-                    console.log('patient-list:providers', response.data)
                     this.providersForSelect = (response.data || []).map(provider => ({
                         id: provider.user_id,
                         text: provider.name
@@ -317,11 +377,25 @@
                     this.loaders.providers = false
                 })
             },
+            getLocations() {
+                this.loaders.locations = true
+                return this.axios.get(rootUrl('api/locations/list')).then(response => {
+                    this.locationsForSelect = (response.data || []).map(location => ({
+                        id: location.id,
+                        text: location.name
+                    })).filter(location => !!location.text).sort((a, b) => a.text < b.text ? -1 : 1)
+                    this.loaders.locations = false
+                    return this.locationsForSelect
+                }).catch(err => {
+                    console.error('patient-list:locations', err)
+                    this.loaders.locations = false
+                })
+            },
             getStatusDate(patient) {
                 if (patient.patient_info.ccm_status === 'paused') {
                     return moment(patient.patient_info.date_paused).format('MM-DD-YYYY')
                 }
-                if (patient.patient_info.ccm_status === 'withdrawn') {
+                if (patient.patient_info.ccm_status === 'withdrawn'|| patient.patient_info.ccm_status === 'withdrawn_1st_call') {
                     return moment(patient.patient_info.date_withdrawn).format('MM-DD-YYYY')
                 }
                 if (patient.patient_info.ccm_status === 'unreachable') {
@@ -339,11 +413,10 @@
                         this.tokens.next = c
                     })
                 }).then(response => {
-                    if(!response){
+                    if (!response) {
                         //request was cancelled
                         return;
                     }
-                    console.log('patient-list', response.data)
                     const pagination = response.data
                     const ids = this.tableData.map(patient => patient.id)
                     this.pagination = {
@@ -358,8 +431,13 @@
                         total: pagination.meta.total
                     }
                     const patients = (pagination.data || []).map(patient => {
-                        if (((patient.careplan || {}).status || '').startsWith('{')) {
-                            (patient.careplan || {}).status = JSON.parse((patient.careplan || {}).status).status
+                        if (patient.careplan &&
+                            typeof patient.careplan.status === "string" &&
+                            patient.careplan.status.startsWith('{')) {
+                            const statusObj = JSON.parse(patient.careplan.status);
+                            if (statusObj && statusObj.status) {
+                                patient.careplan.status = statusObj.status;
+                            }
                         }
                         if (patient.patient_info) {
                             if (patient.patient_info.created_at) patient.patient_info.created_at = patient.patient_info.created_at.split('T')[0]
@@ -375,12 +453,14 @@
                         patient.lastName = patient.name.split(' ').slice(1).join(' ')
                         patient.provider = patient.billing_provider_id
                         patient.provider_name = patient.billing_provider_name
+                        patient.location = patient.location_id || 'N/A'
+                        patient.location_name = patient.location_name || 'N/A'
                         patient.ccmStatus = (patient.patient_info || {}).ccm_status || 'none'
                         patient.careplanStatus = (patient.careplan || {}).status || 'none'
                         patient.dob = (patient.patient_info || {}).birth_date || ''
                         patient.sort_dob = new Date((patient.patient_info || {}).birth_date || '')
-                        patient.program = patient.program_id
-                        patient.program_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
+                        patient.practice = patient.program_id
+                        patient.practice_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                         patient.age = (patient.patient_info || {}).age || ''
                         patient.mrn = (patient.patient_info || {}).mrn_number || ''
                         patient.withdrawnReason = (patient.patient_info || {}).withdrawn_reason || ''
@@ -410,7 +490,7 @@
                         // loadColumnList(this.options.listColumns.provider, patient.provider)
                         //loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
                         //loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
-                        // loadColumnList(this.options.listColumns.program, patient.program)
+                        // loadColumnList(this.options.listColumns.practice, patient.practice)
                         return patient
                     })
 
@@ -460,8 +540,17 @@
             exportCSV() {
                 let patients = []
                 this.loaders.excel = true
+
+                const $table = this.$refs.tblPatientList
+                const query = $table.$data.query
+                const filters = Object.keys(query).map(key => ({
+                    key,
+                    value: query[key]
+                })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
+                const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+
                 const download = (page = 1) => {
-                    return this.axios.get(rootUrl(`api/patients?rows=50&page=${page}&csv&showPracticePatients=${this.showPracticePatients}`)).then(response => {
+                    return this.axios.get( rootUrl(`api/patients?rows=50&page=${page}&csv${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)).then(response => {
                         const pagination = response.data
                         patients = patients.concat(pagination.data)
                         this.exportCSVText = `Export as CSV (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`
@@ -473,7 +562,7 @@
                 }
                 return download().then(res => {
 
-                    const str = 'name,provider,program,ccm status,careplan status, withdrawn reason, dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
+                    const str = 'name,provider,practice,location,ccm status,careplan status, withdrawn reason, dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
                         + patients.join('\n');
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);
@@ -516,7 +605,8 @@
 
                 ([...(careplanStatusSelect.querySelectorAll('option') || [])]).forEach(option => {
                     option.innerText = ({
-                        qa_approved: 'Approve Now',
+                        qa_approved: 'CLH Approved',
+                        rn_approved: 'Approve Now',
                         to_enroll: 'To Enroll',
                         provider_approved: 'Provider Approved',
                         none: 'None',
@@ -561,6 +651,7 @@
             })
 
             this.getProviders()
+            this.getLocations()
 
             /**
              * listen to table pagination event and ...
@@ -571,12 +662,13 @@
                 this.getPatients()
             })
 
-
             Event.$on('vue-tables.filter::name', this.activateFilters)
 
             Event.$on('vue-tables.filter::provider', this.activateFilters)
 
-            Event.$on('vue-tables.filter::program', this.activateFilters)
+            Event.$on('vue-tables.filter::practice', this.activateFilters)
+
+            Event.$on('vue-tables.filter::location', this.activateFilters)
 
             Event.$on('vue-tables.filter::ccmStatus', this.activateFilters)
 
@@ -620,6 +712,16 @@
         overflow: hidden;
         white-space: nowrap;
     }
+
+    .btn-patients-table {
+        color: #fff;
+        background-color: #47beaa;
+        border-color: #47beaa;
+    }
+
+    #patient-list-table > div.table-responsive > table > thead {
+        background-color: #d2e2ef !important;
+    }
 </style>
 
 <style scoped>
@@ -628,6 +730,11 @@
     }
 
     a[href]:hover {
+        text-decoration: underline;
+    }
+
+    .in-table-link {
+        color: #337ab7 !important;
         text-decoration: underline;
     }
 </style>

@@ -112,7 +112,7 @@
                                             minWidth:150,
                                             template: "<a href='<?php echo route(
     'patient.activity.providerUIIndex',
-    ['patient' => '#patient_id#']
+    ['patientId' => '#patient_id#']
 ); ?>'>#patient_name#</a>"
 
                                         },
@@ -131,6 +131,12 @@
                                         {
                                             id: "dob",
                                             header: ["DOB", {content: "textFilter", placeholder: "Filter"}],
+                                            adjust: true,
+                                            sort: 'string'
+                                        },
+                                        {
+                                            id: "mrn",
+                                            header: ["MRN", "(Medical Rec Number)"],
                                             adjust: true,
                                             sort: 'string'
                                         },
@@ -293,9 +299,12 @@
                                 obs_alerts_dtable.sort('#patient_name#');
                                 obs_alerts_dtable.hideColumn("site");
 
-                                webix.event(window, "resize", function () {
-                                    obs_alerts_dtable.adjust();
-                                })
+                                const debounced = _.debounce(() => {
+                                    if (typeof obs_alerts_dtable !== 'undefined') {
+                                        obs_alerts_dtable.adjust();
+                                    }
+                                }, 1000);
+                                webix.event(window, "resize", debounced);
                             </script>
                         @endpush
 
@@ -310,6 +319,7 @@
                                            'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
                                            'site':             { header:'Program',    width:150, sort:'string', template: webix.template('#site#')},
                                            'dob':              { header:'DOB',    width:100, sort:'string', template: webix.template('#dob#')},
+                                           'mrn':              { header:'MRN',    width:100, sort:'string', template: webix.template('#mrn#')},
 
                                            'colsum_careplan':  { header: 'CarePlan (Min:Sec)', width: 70, sort: 'int',
                                            template:function (obj) {
@@ -381,7 +391,15 @@
                         @endif
                         @push('scripts')
                             <script type="text/javascript">
-                                window.onload = filterText('Enrolled');
+                                function onLoad() {
+                                    if (typeof filterText === 'undefined' || typeof obs_alerts_dtable === 'undefined') {
+                                        setTimeout(() => onLoad(), 200);
+                                        return;
+                                    }
+                                    filterText('Enrolled');
+                                }
+
+                                window.onload = onLoad;
                             </script>
                         @endpush
 

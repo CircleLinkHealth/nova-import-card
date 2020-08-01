@@ -12,8 +12,6 @@ trait WithNonImported
 {
     /**
      * Apply the scope to a given Eloquent query builder.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
      */
     public function scopeWithNonImported(Builder $builder)
     {

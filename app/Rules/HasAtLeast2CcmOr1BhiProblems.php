@@ -8,6 +8,13 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
+/**
+ * DEPRECATED.
+ *
+ * Replaced with {@link HasEnoughProblems}
+ *
+ * Class HasAtLeast2CcmOr1BhiProblems
+ */
 class HasAtLeast2CcmOr1BhiProblems implements Rule
 {
     /**

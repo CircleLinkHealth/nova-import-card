@@ -6,16 +6,16 @@
 
 namespace App\Http\Controllers;
 
-use App\CLH\Repositories\UserRepository;
 use App\Notifications\EhrReportWriterNotification;
-use App\Services\CCD\ProcessEligibilityService;
-use App\Services\GoogleDrive;
-use App\Traits\ValidatesEligibility;
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Storage;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class EhrReportWriterController extends Controller
 {
@@ -23,9 +23,12 @@ class EhrReportWriterController extends Controller
 
     private $googleDrive;
 
-    public function __construct(GoogleDrive $googleDrive)
+    private $repo;
+
+    public function __construct(GoogleDrive $googleDrive, UserRepository $repo)
     {
         $this->googleDrive = $googleDrive;
+        $this->repo        = $repo;
     }
 
     public function downloadCsvTemplate($name)
@@ -91,8 +94,6 @@ class EhrReportWriterController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function notifyReportWriter(Request $request)
@@ -119,13 +120,8 @@ class EhrReportWriterController extends Controller
          * */
         $user = auth()->user();
 
-        if ( ! $user->ehrReportWriterInfo) {
-            $params = new ParameterBag([
-                'user_id' => $user->id,
-            ]);
-
-            $repo = new UserRepository();
-            $repo->saveOrUpdateEhrReportWriterInfo($user, $params);
+        if ( ! $user->ehrReportWriterInfo || empty(optional($user->ehrReportWriterInfo)->google_drive_folder_path)) {
+            $this->repo->saveOrUpdateEhrReportWriterInfo($user);
 
             $user->load('ehrReportWriterInfo');
         }
@@ -134,9 +130,6 @@ class EhrReportWriterController extends Controller
     }
 
     /**
-     * @param Request                   $request
-     * @param ProcessEligibilityService $service
-     *
      * @return $this
      */
     public function submitFile(Request $request, ProcessEligibilityService $service)
@@ -147,6 +140,12 @@ class EhrReportWriterController extends Controller
 
         if ( ! $user->ehrReportWriterInfo) {
             $messages['errors'][] = 'You need to be an EHR Report Writer to use this feature.';
+
+            return redirect()->back()->withErrors($messages);
+        }
+
+        if (empty($user->ehrReportWriterInfo->google_drive_folder_path)) {
+            $messages['errors'][] = 'You do not have a google folder. Please click at "My Google Drive Folder" - this will create a folder for you and redirect you to it.';
 
             return redirect()->back()->withErrors($messages);
         }
@@ -203,15 +202,21 @@ class EhrReportWriterController extends Controller
             }
         }
         if (empty($messages)) {
-            $messages['success'][] = 'Thanks! CLH will review the file and get back to you. This may take a few business days.';
+            if (auth()->user()->isAdmin()) {
+                $messages['success'][] = link_to_route(
+                    'eligibility.batch.show',
+                    'Click here to view Batch',
+                    [$batch->id]
+                );
+            } else {
+                $messages['success'][] = 'Thanks! CLH will review the file and get back to you. This may take a few business days.';
+            }
         }
 
         return redirect()->back()->withErrors($messages);
     }
 
     /**
-     * @param Request $request
-     *
      * @return $this
      */
     public function validateJson(Request $request)
@@ -261,12 +266,14 @@ class EhrReportWriterController extends Controller
     }
 
     /**
-     * @param EhrReportWriterInfo $info
-     *
      * @return \Illuminate\Support\Collection
      */
     private function getUnprocessedFilesFromGoogleFolder(EhrReportWriterInfo $info)
     {
+        if (empty($info->google_drive_folder_path)) {
+            return null;
+        }
+
         try {
             $files    = [];
             $contents = $this->googleDrive->getContents($info->google_drive_folder_path);
@@ -275,7 +282,7 @@ class EhrReportWriterController extends Controller
                 return null;
             }
             foreach ($contents as $file) {
-                if (starts_with($file['name'], 'processed')) {
+                if (Str::startsWith($file['name'], 'processed')) {
                     continue;
                 }
                 $files[] = $file;

@@ -6,11 +6,10 @@
 
 namespace Tests\Helpers;
 
-use App\CLH\Helpers\StringManipulation;
-use App\Models\CPM\Biometrics\CpmWeight;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmWeight;
 use Faker\Factory;
 use Laravel\Dusk\Browser;
 
@@ -116,7 +115,7 @@ trait CarePlanHelpers
             'user_id'     => $patient->id,
         ]);
 
-        $ccda = \App\Models\MedicalRecords\Ccda::create([
+        $ccda = \CircleLinkHealth\SharedModels\Entities\Ccda::create([
             'user_id'   => $patient->id,
             'vendor_id' => 1,
             'source'    => 'test',
@@ -124,7 +123,7 @@ trait CarePlanHelpers
             'json'      => 'test',
         ]);
 
-        factory(\App\Models\CCD\CcdInsurancePolicy::class, 3)->create([
+        factory(\CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy::class, 3)->create([
             'patient_id' => $patient->id,
             'ccda_id'    => $ccda->id,
         ]);
@@ -179,19 +178,19 @@ trait CarePlanHelpers
         }
 
         if (count($patient->cpmBiometrics()->where('type', 1)->first())) {
-            $bloodPressure = factory(\App\Models\CPM\Biometrics\CpmBloodPressure::class)->create([
+            $bloodPressure = factory(\CircleLinkHealth\SharedModels\Entities\CpmBloodPressure::class)->create([
                 'patient_id' => $patient->id,
             ]);
         }
 
         if (count($patient->cpmBiometrics()->where('type', 2)->first())) {
-            $bloodSugar = factory(\App\Models\CPM\Biometrics\CpmBloodSugar::class)->create([
+            $bloodSugar = factory(\CircleLinkHealth\SharedModels\Entities\CpmBloodSugar::class)->create([
                 'patient_id' => $patient->id,
             ]);
         }
 
         if (count($patient->cpmBiometrics()->where('type', 3)->first())) {
-            $smoking = factory(\App\Models\CPM\Biometrics\CpmSmoking::class)->create([
+            $smoking = factory(\CircleLinkHealth\SharedModels\Entities\CpmSmoking::class)->create([
                 'patient_id' => $patient->id,
             ]);
         }
@@ -408,15 +407,15 @@ trait CarePlanHelpers
         ];
         $object->language          = $languageCollection[array_rand($languageCollection, 1)];
         $object->dob               = $faker->date();
-        $object->homePhone         = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
-        $object->cellPhone         = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
+        $object->homePhone         = (new \CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($faker->phoneNumber);
+        $object->cellPhone         = (new \CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($faker->phoneNumber);
         $object->email             = $faker->email;
         $object->streetAddress     = $faker->streetAddress;
         $object->city              = $faker->city;
         $object->state             = $faker->stateAbbr;
         $object->zip               = $faker->postcode;
         $object->agentName         = $faker->name;
-        $object->agentPhone        = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
+        $object->agentPhone        = (new \CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($faker->phoneNumber);
         $object->agentRelationship = 'Next of Kin';
         $object->agentEmail        = $faker->email;
         $object->contactMethod     = 'CCT';
@@ -497,7 +496,6 @@ trait CarePlanHelpers
     /**
      * Check that the User's CpmEntities appear on the page.
      *
-     * @param User $patient
      * @param $relationship //for example 'cpmProblems'
      * @param array $exclude //names to exclude
      */

@@ -7,14 +7,14 @@
 namespace App\Providers;
 
 use App\Contracts\Efax;
-use App\Services\Phaxio\PhaxioService;
+use App\Services\Phaxio\PhaxioFaxService;
+use App\Services\Phaxio\PhaxioFaxServiceLogger;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
-use Phaxio\Phaxio;
+use Phaxio;
 
-class FaxServiceProvider extends ServiceProvider
+class FaxServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    protected $defer = true;
-
     /**
      * Bootstrap the application services.
      */
@@ -34,16 +34,12 @@ class FaxServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(Efax::class, function () {
-            $config = config('phaxio');
+        $this->app->singleton(Efax::class, function () {
+            $config = config('services.phaxio');
 
-            $mode = isProductionEnv()
-                ? 'production'
-                : 'test';
+            $phaxio = new Phaxio($config['key'], $config['secret'], $config['host']);
 
-            $phaxio = new Phaxio($config[$mode]['key'], $config[$mode]['secret'], $config['host']);
-
-            return new PhaxioService($phaxio);
+            return new PhaxioFaxServiceLogger(new PhaxioFaxService($phaxio));
         });
     }
 }

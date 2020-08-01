@@ -45,16 +45,38 @@
                 margin-right: 10px;
                 display: table-cell;
             }
+
+            .download-note-pdf-btn {
+                font-size: 18px;
+                color: #fff;
+                background-color: #4fb2e3;
+                border-color: #4fb2e3;
+            }
         </style>
     @endpush
 
     <div class="row" style="margin-top:30px;">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
+            @include('errors.errors')
+        </div>
         <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     View Note
+
+                    @if(isDownloadingNotesEnabledForUser(auth()->id()))
+                        <div class="pull-right">
+                            <a href="{{ route('patient.note.download', ['patientId' => $patient->id, 'noteId' => $note['id'], 'format' => 'pdf']) }}"
+                               class="download-note-pdf-btn tooltip-top"
+                               data-tooltip="Download Note as PDF"
+                            >
+                                <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                            </a>
+                        </div>
+                    @endif
                 </div>
-                {!! Form::open(array('url' => route('patient.note.send', ['patientId' => $patient->id, 'noteId' => $note['id']]), 'class' => 'form-horizontal')) !!}
+
+                {!! Form::open(array('url' => route('patient.note.send', ['patientId' => $patient->id, 'noteId' => $note['id']]), 'class' => 'form-horizontal', 'id' => 'viewNote')) !!}
 
                 @include('partials.userheader')
 
@@ -208,6 +230,67 @@
                                             $('[data-toggle="tooltip"]').tooltip()
                                         });
 
+                                        let shouldValidateEmailBody = true;
+                                        let form;
+                                        let formAttachments = null;
+                                        const validateEmailBodyUrl = '{{route('patient-email.validate', ['patient_id' => $patient->id])}}';
+
+                                        $(document).ready(function () {
+                                            App.$on('file-upload', (attachments) => {
+                                                formAttachments = attachments;
+                                            });
+
+                                            $('#viewNote').submit(function (e) {
+                                                e.preventDefault();
+                                                form = this;
+                                                //prevent sent if send patient email is check and email body is empty
+                                                if ($("[id='email-patient']").prop("checked") == true && shouldValidateEmailBody) {
+
+
+                                                    if ($("[id='patient-email-body-input']").val() == 0) {
+                                                        alert("Please fill out the patient email!");
+                                                        return;
+                                                    } else {
+                                                        return validateEmailBody()
+                                                    }
+                                                }
+                                                //append patient email attachments on form if the exist
+                                                if (formAttachments) {
+                                                    let i = 0;
+                                                    formAttachments.map(function (attachment) {
+                                                        $("<input>")
+                                                            .attr("type", "hidden")
+                                                            .attr("name", "attachments[" + i + "][media_id]").val(attachment.media_id).appendTo(form);
+                                                        $("<input>")
+                                                            .attr("type", "hidden")
+                                                            .attr("name", "attachments[" + i + "][path]").val(attachment.path).appendTo(form);
+                                                        i++;
+                                                    });
+                                                }
+                                                form.submit();
+                                            });
+                                        });
+
+                                        const validateEmailBody = async () => {
+                                            return await window.axios
+                                                .post(validateEmailBodyUrl, {
+                                                    patient_emaile_subject: $("[id='email-subject']").val(),
+                                                    patient_email_body: $("[id='patient-email-body-input']").val()
+                                                })
+                                                .then((response) => {
+                                                    if (response.data.status == 400) {
+                                                        App.$emit('patient-email-body-errors', response.data.messages);
+                                                        return false;
+                                                    }
+                                                    shouldValidateEmailBody = false;
+                                                    return $('#viewNote').submit();
+                                                })
+                                                .catch(err => {
+                                                    App.$emit('patient-email-errors', err);
+                                                    return false
+                                                });
+                                        };
+
                                         $('.collapse').collapse();
 
                                         $("input:checkbox").on('click', function () {
@@ -228,7 +311,9 @@
                                     </script>
                                 @endpush
                                 {!! Form::close() !!}
-
+                                @if(authUserCanSendPatientEmail())
+                                    @include('wpUsers.patient.note.patient-emails')
+                                @endif
                                 <div class="col-sm-12">
                                     @include('wpUsers.patient.note.manage-addendums')
                                 </div>

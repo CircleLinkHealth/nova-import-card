@@ -32,6 +32,8 @@ export default (App, Event) => {
 
     Event.$on('vue-tables.filter::Patient', App.activateFilters)
 
+    Event.$on('vue-tables.filter::Language', App.activateFilters)
+
     Event.$on('vue-tables.filter::Patient ID', App.activateFilters)
 
     Event.$on('vue-tables.filter::Activity Day', App.activateFilters)
@@ -39,6 +41,8 @@ export default (App, Event) => {
     Event.$on('vue-tables.filter::Last Call', App.activateFilters)
 
     Event.$on('vue-tables.filter::Practice', App.activateFilters)
+
+    Event.$on('vue-tables.filter::State', App.activateFilters)
 
     Event.$on('vue-tables.filter::Billing Provider', App.activateFilters)
 

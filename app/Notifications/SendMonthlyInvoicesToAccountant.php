@@ -27,8 +27,7 @@ class SendMonthlyInvoicesToAccountant extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param Carbon $date
-     * @param mixed  $csvInvoices
+     * @param mixed $csvInvoices
      */
     public function __construct(Carbon $date, $csvInvoices)
     {

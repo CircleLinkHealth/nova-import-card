@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use CircleLinkHealth\Customer\Entities\PatientNurse;
+use CircleLinkHealth\GeneratePatientCallDataCsv\GeneratePatientCallDataCsv;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
@@ -61,8 +62,6 @@ class NursePatient extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -71,8 +70,6 @@ class NursePatient extends Resource
     }
 
     /**
-     * @param Request $request
-     *
      * @return bool
      */
     public static function authorizedToCreate(Request $request)
@@ -81,8 +78,6 @@ class NursePatient extends Resource
     }
 
     /**
-     * @param Request $request
-     *
      * @return bool
      */
     public function authorizedToDelete(Request $request)
@@ -91,8 +86,6 @@ class NursePatient extends Resource
     }
 
     /**
-     * @param Request $request
-     *
      * @return bool
      */
     public function authorizedToUpdate(Request $request)
@@ -103,19 +96,17 @@ class NursePatient extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
     {
-        return [];
+        return [
+            new GeneratePatientCallDataCsv(),
+        ];
     }
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -154,8 +145,6 @@ class NursePatient extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function filters(Request $request)
@@ -170,8 +159,6 @@ class NursePatient extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

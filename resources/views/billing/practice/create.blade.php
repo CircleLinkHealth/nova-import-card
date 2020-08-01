@@ -23,7 +23,8 @@
         </script>
     @endpush
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @include('errors.messages')
+
     {!! Form::open(array('url' => route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid" style="padding-top: 50px;">
         <div class="row">
@@ -41,20 +42,11 @@
                                         <select id="practices" name="practices[]"
                                                 class="practices dropdown Valid form-control" multiple required>
                                             @foreach($readyToBill as $practice)
-                                                <option value="{{$practice->id}}">{{$practice->display_name}}</option>
+                                                <option value="{{$practice->id}}" @if(auth()->user()->isAdmin() && $practice->isARealBillableCustomer()) selected @endif>{{$practice->display_name}}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
-
-                                {{--<div class="form-group">--}}
-                                    {{--<label class="col-md-2 control-label" for="invoice_no">--}}
-                                        {{--Custom Invoice#<br></label>--}}
-                                    {{--<div class="col-md-6">--}}
-                                        {{--<input class="form-control" value="{{$invoice_no}}" name="invoice_no"--}}
-                                               {{--id="invoice_no">--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
 
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="date">Month</label>
@@ -78,8 +70,8 @@
                                     <div class="col-md-6">
                                         <select class="col-md-3 practices dropdown Valid form-control reloader"
                                                 name="format" required>
-                                            <option value="pdf" selected>PDF</option>
-                                            <option value="csv">QuickBooks CSV</option>
+                                            <option value="pdf">PDF</option>
+                                            <option value="csv" selected>QuickBooks CSV</option>
                                             <option value="xls">QuickBooks Excel</option>
                                         </select>
                                     </div>
@@ -94,23 +86,6 @@
                                     </div>
                                 </div>
                         </form>
-
-                        <hr>
-
-                        <div class="row" style="padding-left: 30px;">
-
-                            List of Practices with pending QA:
-                            <ul>
-
-                                @foreach($needsQA as $practice)
-
-                                    <li><a href="#">{{$practice->display_name}}</a></li>
-
-                                @endforeach
-
-                            </ul>
-
-                        </div>
                     </div>
                 </div>
             </div>

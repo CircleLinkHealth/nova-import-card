@@ -55,8 +55,6 @@ class UserManagementService
     }
 
     /**
-     * @param InternalUser $internalUser
-     *
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
     public function storeInternalUser(InternalUser $internalUser)

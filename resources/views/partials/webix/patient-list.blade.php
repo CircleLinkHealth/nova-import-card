@@ -55,9 +55,9 @@
                         id: "first_name",
                         header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                         template: "<a href='<?php echo route(
-    'patient.summary',
-    ['patient' => '#key#']
-                        ); ?>'>#first_name# #last_name#</a>",
+    'patient.careplan.print',
+    ['#key#']
+); ?>'>#first_name# #last_name#</a>",
                         width: 200,
                         sort: 'string'
                     },
@@ -65,15 +65,21 @@
                         id: "last_name",
                         header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                         template: "<a href='<?php echo route(
-                            'patient.summary',
-                            ['patient' => '#key#']
-                        ); ?>'>#last_name#, #first_name#</a>",
+    'patient.careplan.print',
+    ['#key#']
+); ?>'>#last_name#, #first_name#</a>",
                         width: 200,
                         sort: 'string'
                     },
                     {
                         id: "provider",
                         header: ["Provider", {content: "selectFilter"}],
+                        width: 200,
+                        sort: 'string'
+                    },
+                    {
+                        id: "location",
+                        header: ["Location", {content: "selectFilter"}],
                         width: 200,
                         sort: 'string'
                     },
@@ -163,9 +169,10 @@
                 },
                 data: <?php echo $patientJson; ?>
             });
-            webix.event(window, "resize", function () {
+            const debounced = _.debounce(() => {
                 obs_alerts_dtable.adjust();
-            });
+            }, 1000);
+            webix.event(window, "resize", debounced);
             obs_alerts_dtable.sort("#patient_name#");
             obs_alerts_dtable.hideColumn("last_name");
             obs_alerts_dtable.hideColumn("site");
@@ -187,6 +194,7 @@
                                         columns:{
                                 'first_name':       { header:'Patient Name', width: 200, template: webix.template('#first_name# #last_name#') },
                                 'provider':         { header:'Provider',    width:200, sort:'string', template: webix.template('#provider#') },
+                                'location':         { header:'Location',    width:200, sort:'string', template: webix.template('#location#') },
                                 'site':             { header:'Program',    width:150, sort:'string', template: webix.template('#site#')},
                                 'ccm_status':       { header:'CCM Status',    width:105, sort:'string', template: webix.template('#ccm_status#')},
                                 'careplan_status':  { header:'CarePlan Status', tooltip:'#tooltip#' , width:125, template: webix.template('#careplan_status#')},
@@ -208,6 +216,7 @@
                                         columns:{
                                 'first_name':       { header:'Patient Name', width: 200, template: webix.template('#first_name# #last_name#') },
                                 'provider':         { header:'Provider',    width:200, sort:'string', template: webix.template('#provider#') },
+                                'location':         { header:'Location',    width:200, sort:'string', template: webix.template('#location#') },
                                 'site':             { header:'Program',    width:150, sort:'string', template: webix.template('#site#')},
                                 'ccm_status':       { header:'CCM Status',    width:105, sort:'string', template: webix.template('#ccm_status#')},
                                 'careplan_status':  { header:'CarePlan Status', tooltip:'#tooltip#' , width:125, template: webix.template('#careplan_status#')},
@@ -233,9 +242,15 @@
     @endif
     @push('scripts')
         <script type="text/javascript">
-            window.onload = function () {
+            function onLoad() {
+                if (typeof filterText === 'undefined') {
+                    setTimeout(() => onLoad(), 200);
+                    return;
+                }
                 filterText('');
             }
+
+            window.onload = onLoad;
             // obs_alerts_dtable.hideColumn("ccm_status");
         </script>
     @endpush

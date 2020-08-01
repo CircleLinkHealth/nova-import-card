@@ -13,6 +13,7 @@ if (isset($patient)) {
 } else {
     $monthlyTime = '';
 }
+$canSwitchToWeb = $patient->carePlan && CircleLinkHealth\SharedModels\Entities\CarePlan::PDF == $patient->carePlan->mode && auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']);
 ?>
 
 <style>
@@ -44,7 +45,7 @@ if (isset($patient)) {
                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
                         @if (isset($disableTimeTracking) && $disableTimeTracking)
                             <div class="color-grey">
-                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patientId' => $patient->id]) }}">
                                     <server-time-display url="{{config('services.ws.server-url')}}"
                                                          patient-id="{{$patient->id}}"
                                                          provider-id="{{Auth::user()->id}}"
@@ -68,13 +69,9 @@ if (isset($patient)) {
             </div>
         </div>
 
-        <pdf-careplans mode="pdf">
-            <template slot="buttons">
-                @if(auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']) && $patient->carePlan && $patient->carePlan->mode == App\CarePlan::PDF)
-                    <a href="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan ? $patient->carePlan->id : 0])}}"
-                       class="btn revert-btn inline-block">REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA</a>
-                @endif
-            </template>
+        <pdf-careplans mode="pdf"
+                       route-switch-to-web="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan ? $patient->carePlan->id : 0])}}"
+                       :can-switch-to-web="@json($canSwitchToWeb)">
         </pdf-careplans>
     </div>
 @endsection

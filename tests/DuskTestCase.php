@@ -8,11 +8,15 @@ namespace Tests;
 
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Dusk\TestCase as BaseTestCase;
 
 abstract class DuskTestCase extends BaseTestCase
 {
     use CreatesApplication;
+//    Commented out by Michalis.
+//    Self Enrollment Dusk test (the only dusk test in the repo at this time) fails.
+//    use DatabaseTransactions;
 
     /**
      * Prepare for Dusk test execution.

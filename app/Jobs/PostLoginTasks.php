@@ -7,6 +7,7 @@
 namespace App\Jobs;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -24,15 +25,17 @@ class PostLoginTasks implements ShouldQueue
      * @var Login
      */
     protected $event;
+    /**
+     * @var User
+     */
+    private $user;
 
     /**
      * Create a new job instance.
-     *
-     * @param Login $event
      */
-    public function __construct(Login $event)
+    public function __construct(User $user)
     {
-        $this->event = $event;
+        $this->user = $user;
     }
 
     /**
@@ -40,16 +43,16 @@ class PostLoginTasks implements ShouldQueue
      */
     public function handle()
     {
-        $this->event->user->last_login = Carbon::now()->toDateTimeString();
-        $this->event->user->is_online  = true;
+        $this->user->last_login = Carbon::now()->toDateTimeString();
+        $this->user->is_online  = true;
 
-        $authyUser = optional($this->event->user->authyUser);
+        $authyUser = optional($this->user->authyUser);
 
-        if ($this->event->user->isAdmin() && (bool) config('auth.two_fa_enabled') && $authyUser->authy_id && ! $authyUser->is_authy_enabled) {
+        if ( ! $authyUser->is_authy_enabled && $authyUser->authy_id && isAllowedToSee2FA($this->user) && (bool) config('auth.two_fa_enabled')) {
             $authyUser->is_authy_enabled = true;
             $authyUser->save();
         }
 
-        $this->event->user->save();
+        $this->user->save();
     }
 }

@@ -103,34 +103,6 @@
                                        @change="function (e) { changeUnscheduledPatients(index, e); }"/>
                             </td>
                             <td>
-                                <!--
-                                <span class="asap_label">Temporary</span>
-                                <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
-                                   style="color: #000;"
-                                   title="Is this a temporary assignment?">
-                                    <input v-model="action.data.isTemporary"
-                                           id="temporary"
-                                           type="checkbox"
-                                           name="temporary"
-                                           style=" float: right;margin-top: -14%;"
-                                           :disabled="action.disabled">
-                                </a>
-
-                                <input :disabled="action.disabled"
-                                       type="date"
-                                       v-show="action.data.isTemporary"
-                                       v-model="action.data.temporaryFrom"
-                                       name="temporary_from" class="form-control height-40"
-                                       :required="action.data.isTemporary"/>
-
-                                <input :disabled="action.disabled"
-                                       type="date"
-                                       v-show="action.data.isTemporary"
-                                       v-model="action.data.temporaryTo"
-                                       name="temporary_to" class="form-control height-40"
-                                       :required="action.data.isTemporary"/>
-                                -->
-
                                 <v-select :disabled="action.disabled"
                                           max-height="200px"
                                           class="form-control" name="outbound_cpm_id"
@@ -199,13 +171,16 @@
                         No available nurses for selected patient
                     </div>
                     <div class="alert alert-warning"
-                         v-if="hasPatientInDraftMode || hasPatientInNotInAcceptableCcmStatus">
+                         v-if="hasPatientInDraftMode || hasPatientInNotInAcceptableCcmStatus || hasNonMatchingPatientNurseLanguage">
                         Action not allowed:
                         <span v-if="hasPatientInDraftMode">
                             Care plan is in draft mode. QA the care plan first.
                         </span>
                         <span v-if="hasPatientInNotInAcceptableCcmStatus">
                             Patient's CCM status is one of withdrawn, paused or unreachable.
+                        </span>
+                        <span v-if="hasNonMatchingPatientNurseLanguage">
+                            Care Coach does not speak patient's preferred contact language.
                         </span>
                     </div>
                 </div>
@@ -280,6 +255,7 @@
             selectedPracticeData: UNASSIGNED_VALUE,
             selectedNurseData: UNASSIGNED_VALUE,
             selectedPatientIsInDraftMode: false,
+            selectedPatientNurseLanguageDoesNotMatch: false,
 
             //CPM-1580 system has a command that deletes all calls with unreachable/paused/withdrawan patients
             //every 5 minutes. better stop users from creating such calls from UI.
@@ -354,6 +330,9 @@
             hasNotAvailableNurses() {
                 return this.actions.filter(x => x.data.practiceId && x.nursesForSelect.length === 0).length > 0 && !this.loaders.nurses;
             },
+            hasNonMatchingPatientNurseLanguage() {
+                return this.actions.filter(x => x.selectedPatientNurseLanguageDoesNotMatch).length > 0;
+            },
             hasPatientInDraftMode() {
                 return this.actions.filter(x => x.selectedPatientIsInDraftMode).length > 0;
             },
@@ -414,6 +393,9 @@
             selectedPatient(actionIndex) {
                 return (this.actions[actionIndex].patients.find(patient => patient.id === this.actions[actionIndex].data.patientId) || {});
             },
+            selectedNurse(actionIndex) {
+                return (this.actions[actionIndex].nurses.find(nurse => nurse.id === this.actions[actionIndex].data.nurseId) || {});
+            },
             setPractice(actionIndex, practiceId) {
                 if (practiceId) {
                     this.actions[actionIndex].data.practiceId = practiceId;
@@ -449,6 +431,13 @@
                     this.setPractice(actionIndex, selectedPatient.program_id);
                     this.actions[actionIndex].selectedPatientIsInDraftMode = this.isPatientInDraftMode(selectedPatient);
                     this.actions[actionIndex].selectedPatientIsNotInAcceptableCcmStatus = this.isPatientInNotInAcceptableCcmStatus(selectedPatient);
+                    //if there is a nurse selected
+                    const selectedNurse = this.selectedNurse(actionIndex);
+                    if (Object.keys(selectedNurse).length) {
+                        this.actions[actionIndex].selectedPatientNurseLanguageDoesNotMatch = this.isNonMatchingPatientNurseLanguage(selectedPatient, selectedNurse);
+                    } else {
+                        this.actions[actionIndex].selectedPatientNurseLanguageDoesNotMatch = false;
+                    }
                 }
             },
             changePractice(actionIndex, practice) {
@@ -470,6 +459,13 @@
                 }
                 return Promise.resolve([])
             },
+            isNonMatchingPatientNurseLanguage(patient, nurse) {
+                if (!patient.preferred_contact_language || patient.preferred_contact_language.toUpperCase() === 'EN') {
+                    return false;
+                }
+                // nurse.spanish is one of [0,1]
+                return !nurse.spanish;
+            },
             isPatientInDraftMode(patient) {
                 return patient.status === 'draft';
             },
@@ -479,6 +475,14 @@
             changeNurse(actionIndex, nurse) {
                 if (nurse) {
                     this.actions[actionIndex].data.nurseId = nurse.value;
+                    const selectedPatient = this.selectedPatient(actionIndex);
+                    //if there is a patient selected
+                    if (Object.keys(selectedPatient).length) {
+                        const selectedNurse = this.selectedNurse(actionIndex);
+                        this.actions[actionIndex].selectedPatientNurseLanguageDoesNotMatch = this.isNonMatchingPatientNurseLanguage(selectedPatient, selectedNurse);
+                    } else {
+                        this.actions[actionIndex].selectedPatientNurseLanguageDoesNotMatch = false;
+                    }
                 }
             },
             changeUnscheduledPatients(actionIndex, e) {
@@ -536,6 +540,7 @@
                     this.actions[actionIndex].patients = ((pagination || {}).data || [])
                         .map(patient => {
                             patient.name = patient.full_name;
+                            patient.preferred_contact_language = patient.patient_info ? patient.patient_info.preferred_contact_language : null;
                             return patient;
                         })
                         .sort((a, b) => a.name > b.name ? 1 : -1)
@@ -642,7 +647,9 @@
                     })
                     .map(action => {
                         const data = action.data;
-                        patients.push(action.patients.find(patient => patient.id === data.patientId));
+                        const patient = action.patients.find(patient => patient.id === data.patientId);
+                        const assignedNurse = action.nurses.find(nurse => nurse.id === data.nurseId);
+                        patients.push(Object.assign({}, patient, {nurseSpanishSpeaking: (assignedNurse ? assignedNurse : {}).spanish}));
                         patientIds.push(data.patientId);
                         return {
                             type: data.type,
@@ -665,6 +672,15 @@
                 if (!patients.length) {
                     Event.$emit('notifications-add-action-modal:create', {
                         text: `Patient not found`,
+                        type: 'warning'
+                    });
+                    return;
+                }
+
+                const nonMatchingLanguage = patients.filter(x => this.isNonMatchingPatientNurseLanguage(x, {spanish: x.nurseSpanishSpeaking}));
+                if (nonMatchingLanguage.length) {
+                    Event.$emit('notifications-add-action-modal:create', {
+                        text: `Action not allowed: Care Coach does not speak these patients' [${nonMatchingLanguage.map(x => x.name || x.full_name).join(', ')}] preferred contact language`,
                         type: 'warning'
                     });
                     return;
@@ -808,18 +824,20 @@
             };
 
             Event.$on('modal-add-action:show', () => {
+                //we put a setTimeout in case a modal is already shown
+                //i.e. Modal unscheduled patients is visible
+                setTimeout(() => {
+                    const el = '.modal-container';
+                    waitForEl(el, () => {
+                        $(el).css('width', document.body.offsetWidth * 0.95);
+                    });
 
-                const el = '.modal-container';
-                waitForEl(el, () => {
-                    $(el).css('width', document.body.offsetWidth * 0.95);
-                });
-
-                const el2 = "a.my-tool-tip";
-                waitForEl(el2, () => {
-                    //initialize tooltips
-                    $(el2).tooltip();
-                });
-
+                    const el2 = "a.my-tool-tip";
+                    waitForEl(el2, () => {
+                        //initialize tooltips
+                        $(el2).tooltip();
+                    });
+                }, 100);
             });
 
             Event.$on('add-action-modals:set', (data) => {

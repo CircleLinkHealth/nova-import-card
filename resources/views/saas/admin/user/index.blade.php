@@ -123,7 +123,7 @@
                                         </td>
                                         <td>
                                             <div class="text-right">
-                                            @if($wpUser->hasRole('participant'))
+                                            @if($wpUser->isParticipant())
                                                 <a href="{{ route('patient.summary', ['patientId' => $wpUser->id]) }}"
                                                    class="btn btn-info btn-xs" style="margin-left:10px;"><i
                                                             class="glyphicon glyphicon-eye-open"></i> View</a>

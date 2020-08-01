@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CarePlan;
 use App\Http\Controllers\Controller;
-use App\Models\Pdf;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Storage;
@@ -25,23 +25,13 @@ class PatientCarePlanController extends Controller
 
     public function downloadPdf($fileName)
     {
-        $path = storage_path("patient/pdf-careplans/${fileName}");
+        $pdf = Pdf::whereFilename($fileName)->first();
 
-        if ( ! file_exists($path)) {
-            $pdf = Pdf::whereFilename($fileName)->first();
-
-            if ( ! $pdf) {
-                return "Could not find PDF with filename: ${fileName}";
-            }
-
-            file_put_contents($path, base64_decode($pdf->file));
+        if ( ! $pdf) {
+            return "Could not find PDF with filename: ${fileName}";
         }
 
-        if ( ! file_exists($path)) {
-            return "Could not locate file with name: ${fileName}";
-        }
-
-        return response(file_get_contents($path), 200, [
+        return response(base64_decode($pdf->file), 200, [
             'Content-Type'        => 'application/pdf',
             'Content-Disposition' => 'inline; filename="'.$fileName.'"',
         ]);
@@ -52,7 +42,7 @@ class PatientCarePlanController extends Controller
      *
      * @param mixed $patientId
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index($patientId)
     {
@@ -67,7 +57,7 @@ class PatientCarePlanController extends Controller
         }
 
         foreach ($cp->pdfs as $pdf) {
-            $pdf->url   = route('download.pdf.careplan', ['fileName' => $pdf->filename]);
+            $pdf->url   = route('download.pdf.careplan', [$pdf->filename]);
             $pdf->label = "CarePlan uploaded on {$pdf->created_at->format('m/d/Y')} at {$pdf->created_at->format('g:i:s A T')}";
         }
 
@@ -87,7 +77,7 @@ class PatientCarePlanController extends Controller
         foreach ($request->file()['file'] as $file) {
             $now      = Carbon::now()->toDateTimeString();
             $hash     = Str::random();
-            $filename = "{$carePlan->patient->getFirstName()}_{$carePlan->patient->getLastName()}-{$hash}-{$now}-CarePlan.pdf";
+            $filename = sha1("{$carePlan->patient->getFirstName()}_{$carePlan->patient->getLastName()}-{$hash}-{$now}-CarePlan").'.pdf';
             Storage::disk('storage')
                 ->makeDirectory('patient/pdf-careplans');
             file_put_contents(storage_path("patient/pdf-careplans/${filename}"), file_get_contents($file));
@@ -100,7 +90,7 @@ class PatientCarePlanController extends Controller
                 'file'         => base64_encode(file_get_contents($file)),
             ]);
 
-            $pdf->url   = route('download.pdf.careplan', ['fileName' => $pdf->filename]);
+            $pdf->url   = route('download.pdf.careplan', [$pdf->filename]);
             $pdf->label = "CarePlan uploaded on {$pdf->created_at->format('m/d/Y')} at {$pdf->created_at->format('g:i:s A T')}";
 
             $created[] = $pdf;

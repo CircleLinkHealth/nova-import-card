@@ -9,16 +9,14 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Venturecraft\Revisionable\Revision;
 
 class ShowRevisionsController extends Controller
 {
     /**
      * Show all the activity registered from using CPM.
-     *
-     * @param Request $request
      *
      * @return Response
      */
@@ -87,7 +85,6 @@ class ShowRevisionsController extends Controller
     /**
      * Show all PHI related revisions for a patient.
      *
-     * @param Request $request
      * @param $userId
      */
     public function phi(Request $request, $userId)
@@ -128,6 +125,8 @@ class ShowRevisionsController extends Controller
             ->paginate(20);
 
         $submitUrl = route('revisions.patient.phi', $userId);
+
+        $errors = collect();
 
         return view('admin.allActivity.index', compact([
             'errors',

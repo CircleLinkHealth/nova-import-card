@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/CcdaParserProcessorPhp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/CerberusGatekeeper" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/ConditionCodeLookup" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/Core" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/CpmMigrations" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/Customer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/Eligibility" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/Nurseinvoices" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/Patientapi" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/Raygun" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/Revisionable" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/SharedModels" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/Sqlviews" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/Timetracking" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/Twofa" vcs="Git" />
+  </component>
+</project>

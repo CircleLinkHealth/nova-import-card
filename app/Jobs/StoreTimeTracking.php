@@ -6,10 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Services\ActivityService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
@@ -27,7 +24,10 @@ class StoreTimeTracking implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    // Do not count time for these routes
+    /**
+     * Do not count time for these routes
+     * force_skip is set in {@link ProviderUITimerComposer}.
+     */
     const UNTRACKED_ROUTES = [
         'patient.activity.create',
         'patient.activity.providerUIIndex',
@@ -39,7 +39,7 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @var int
      */
-    public $tries = 2;
+    public $tries = 3;
 
     /**
      * @var ParameterBag
@@ -57,13 +57,16 @@ class StoreTimeTracking implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(ActivityService $service)
+    public function handle()
     {
-        $provider = User::with('nurseInfo')
-            ->find($this->params->get('providerId', null));
+        /** @var User $provider */
+        $provider = User::with(['nurseInfo'])
+            ->findOrFail($this->params->get('providerId', null));
 
-        $isPatientBhi = User::isBhiChargeable()
-            ->where('id', $this->params->get('patientId'))
+        $patientId = $this->params->get('patientId', 0);
+
+        $isPatientBhi = ! empty($patientId) && User::isBhiChargeable()
+            ->where('id', $patientId)
             ->exists();
 
         foreach ($this->params->get('activities', []) as $activity) {
@@ -73,12 +76,30 @@ class StoreTimeTracking implements ShouldQueue
 
             $pageTimer = $this->createPageTimer($activity);
 
-            if ($this->isBillableActivity($pageTimer, $provider)) {
-                $newActivity = $this->createActivity($pageTimer, $provider, $isBehavioral);
-                $service->processMonthlyActivityTime([$this->params->get('patientId')]);
-                $this->handleNurseLogs($newActivity, $provider);
+            if ($this->isBillableActivity($pageTimer, $activity, $provider)) {
+                $newActivity = $this->createActivity($pageTimer, $isBehavioral);
+                ProcessMonthltyPatientTime::dispatchNow($patientId);
+                ProcessNurseMonthlyLogs::dispatchNow($newActivity);
+            }
+
+            if ($this->isProcessableCareAmbassadorActivity($activity, $provider)) {
+                ProcessCareAmbassadorTime::dispatchNow($provider->id, $activity);
             }
         }
+    }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return [
+            'storetime',
+            'patient:'.$this->params->get('patientId'),
+            'provider:'.$this->params->get('providerId', null),
+        ];
     }
 
     /**
@@ -88,7 +109,7 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @return Activity|\Illuminate\Database\Eloquent\Model
      */
-    private function createActivity(PageTimer $pageTimer, User $provider = null, $isBehavioral = false)
+    private function createActivity(PageTimer $pageTimer, $isBehavioral = false)
     {
         return Activity::create(
             [
@@ -126,12 +147,13 @@ class StoreTimeTracking implements ShouldQueue
         $pageTimer->duration          = $duration;
         $pageTimer->duration_unit     = 'seconds';
         $pageTimer->patient_id        = $this->params->get('patientId');
+        $pageTimer->enrollee_id       = empty($activity['enrolleeId']) ? null : $activity['enrolleeId']; //0 is null
         $pageTimer->provider_id       = $this->params->get('providerId', null);
         $pageTimer->start_time        = $startTime->toDateTimeString();
         $pageTimer->end_time          = $endTime->toDateTimeString();
         $pageTimer->url_full          = $activity['url'];
         $pageTimer->url_short         = $activity['url_short'];
-        $pageTimer->program_id        = $this->params->get('programId');
+        $pageTimer->program_id        = empty($this->params->get('programId', null)) ? null : $this->params->get('programId', null);
         $pageTimer->ip_addr           = $this->params->get('ipAddr');
         $pageTimer->activity_type     = $activity['name'];
         $pageTimer->title             = $activity['title'];
@@ -141,30 +163,32 @@ class StoreTimeTracking implements ShouldQueue
         return $pageTimer;
     }
 
-    private function handleNurseLogs(Activity $activity, User $provider)
-    {
-        $activity->load('patient.patientInfo');
-
-        $nurse = $provider->nurseInfo;
-
-        if ( ! is_a($nurse, Nurse::class)) {
-            return;
-        }
-
-        (new AlternativeCareTimePayableCalculator($nurse))
-            ->adjustNursePayForActivity($activity);
-    }
-
     /**
      * Returns true if an activity should be created, and false if it should not.
      *
      * @return bool
      */
-    private function isBillableActivity(PageTimer $pageTimer, User $provider = null)
+    private function isBillableActivity(PageTimer $pageTimer, array $activity, User $provider = null)
     {
+        $forceSkip = $activity['force_skip'] ?? false;
+
         return ! ( ! $provider
                    || ! (bool) $provider->isCCMCountable()
                    || 0 == $pageTimer->patient_id
-                   || in_array($pageTimer->title, self::UNTRACKED_ROUTES));
+                   || in_array($pageTimer->title, self::UNTRACKED_ROUTES)
+                   || $forceSkip);
+    }
+
+    /**
+     * If user is a care ambassador, then we should process their time in CA logs.
+     * Unless activity is marked in {@link UNTRACKED_CA_ACTIVITIES}.
+     *
+     * @return bool
+     */
+    private function isProcessableCareAmbassadorActivity(array $activity, User $provider = null)
+    {
+        $forceSkip = $activity['force_skip'] ?? false;
+
+        return ! $forceSkip && $provider->isCareAmbassador();
     }
 }

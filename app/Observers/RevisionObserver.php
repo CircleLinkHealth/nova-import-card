@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use Venturecraft\Revisionable\Revision;
+use CircleLinkHealth\Revisionable\Entities\Revision;
 
 class RevisionObserver
 {

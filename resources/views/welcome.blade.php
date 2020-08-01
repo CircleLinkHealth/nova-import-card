@@ -6,7 +6,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>CPM API - {!! Route::current()->getName() !!}</title>
 
-	<link href="{{ mix('/compiled/css/stylesheet.css') }}" rel="stylesheet">
 	<link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
 	<link href="{{ mix('/img/favicon.png') }}" rel="icon">
 </head>

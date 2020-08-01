@@ -7,27 +7,16 @@
 namespace App\Http\Controllers;
 
 use App\Observation;
-use App\Services\MsgCPRules;
-use App\Services\ObservationService;
+use App\Services\Observations\ObservationConstants;
+use App\Services\Observations\ObservationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Crypt;
 use Validator;
 
 class ObservationController extends Controller
 {
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-    }
-
     public function dashboardIndex()
     {
         return view('admin.observations.dashboard.index');
@@ -45,28 +34,6 @@ class ObservationController extends Controller
             'msg',
             'Observation Successfully Deleted.'
         );
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     *
-     * @return Response
-     */
-    public function destroy($id)
-    {
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     *
-     * @return Response
-     */
-    public function edit($id)
-    {
     }
 
     public function editObservation(Request $request)
@@ -101,160 +68,134 @@ class ObservationController extends Controller
         return view('admin.observations.dashboard.index', compact(['user', 'observations']));
     }
 
-    public function index(Request $request)
-    {
-        if ('ui' == $request->header('Client')) {
-            $obs_id = Crypt::decrypt($request->header('obsId'));
-
-            $wpUsers = (new User())->getObservation($obs_id);
-
-            return response()->json(Crypt::encrypt(json_encode($wpUsers)));
-        }
-    }
-
-    public function show($id)
-    {
-    }
-
     public function store(Request $request)
     {
-        $observationService = new ObservationService();
-        $msgCPRules         = new MsgCPRules();
+        $validator = Validator::make($request->all(), [
+            'observationDate'   => 'required|date',
+            'observationValue'  => 'required',
+            'observationSource' => 'required',
+            'userId'            => ['required', function ($attribute, $value, $fail) {
+                if ( ! User::where('id', $value)->ofType('participant')->has('patientInfo')->exists()) {
+                    $fail('Invalid Patient.');
+                }
+            }],
+        ]);
 
-        $input = $request->all();
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
-        if (( ! $request->header('Client'))) {
-            $wpUser = User::find($input['userId']);
-            if ( ! $wpUser) {
-                return response()->json(['error' => 'invalid_credentials'], 401);
+        $newObservation = new Observation([
+            'obs_date'       => Carbon::createFromFormat('Y-m-d H:i:s', $request->input('observationDate'))->format('Y-m-d H:i:s'),
+            'sequence_id'    => 0,
+            'obs_message_id' => $request->input('observationType'),
+            'obs_method'     => $request->input('observationSource'),
+            'user_id'        => $request->input('userId'),
+            'obs_value'      => $request->input('observationValue'),
+            'obs_key'        => ObservationService::getObsKey($request->input('observationType')),
+        ]);
+
+        //@todo: define BooleanObservation class
+        if (in_array($newObservation->obs_key, [ObservationConstants::MEDICATIONS_ADHERENCE_OBSERVATION_TYPE, ObservationConstants::LIFESTYLE_OBSERVATION_TYPE])) {
+            if ( ! in_array(strtoupper($newObservation->obs_value), ['Y', 'N', 'YES', 'NO'])) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a Y or a N."])->withInput();
             }
-            $validator = Validator::make($input, [
-                'observationDate'   => 'required|date',
-                'observationValue'  => 'required',
-                'observationSource' => 'required',
+
+            $newObservation->obs_value = strtoupper($newObservation->obs_value[0]);
+
+            return $this->saveObservationAndRedirect($newObservation);
+        }
+
+        //@todo: define NumericRangeObservation class
+        if (in_array($newObservation->obs_key, [ObservationConstants::SYMPTOMS_OBSERVATION_TYPE])) {
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => 'required|numeric|between:1,9',
             ]);
+
             if ($validator->fails()) {
-                if ($request->header('Client')) {
-                    return response()->json(['response' => 'Validation Error'], 500);
-                }
-
-                return redirect()->back()->withErrors($validator)->withInput();
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number from 1 to 9."])->withInput();
             }
 
-            //***** start extra work here to decode from quirky UI ******
-            // creates params array to mimick the way mobi sends it
-            $params['user_id'] = $wpUser->id;
-            //$date = DateTime::createFromFormat("Y-m-d\TH:i", $input['observationDate']);
-            $date = DateTime::createFromFormat('Y-m-d H:i', $input['observationDate']);
-
-            //could not reproduce invalid date being sent here, but we found exception where Date could not be parsed (probably from an old IE browser)
-            if ( ! $date) {
-                if ($request->header('Client')) {
-                    return response()->json(['response' => 'Validation Error'], 400);
-                }
-
-                return redirect()->back()->withErrors(['observationDate' => 'The date and/or time could not be parsed.'])->withInput();
-            }
-
-            $date = $date->format('Y-m-d H:i:s');
-
-            if (isset($input['parent_id'])) {
-                $params['parent_id'] = $input['parent_id'];
-            }
-            $params['parent_id']      = 0;
-            $params['obs_value']      = str_replace('/', '_', $input['observationValue']);
-            $params['obs_date']       = $date;
-            $params['obs_message_id'] = $input['observationType'];
-            $params['obs_key']        = ''; // need to get from obs_message_id
-            $params['timezone']       = 'America/New_York';
-            $params['qstype']         = '';
-            $params['source']         = $input['observationSource'];
-            $params['isStartingObs']  = 'N';
-            if (isset($input['isStartingObs'])) {
-                $params['isStartingObs'] = $input['isStartingObs'];
-            }
-
-            //***** end extra work here to decode from quirky UI ******
+            return $this->saveObservationAndRedirect($newObservation);
         }
 
-        // process message id (ui dropdown includes qstype)
-        $pieces = explode('/', $params['obs_message_id']);
-        if (1 == count($pieces)) {
-            // normal message, straight /messageId
-            $obsMessageId = $params['obs_message_id'];
-        } else {
-            if (2 == count($pieces)) {
-                // semi-normal message, qstype/messageId
-                $qstype       = $pieces[0];
-                $obsMessageId = $pieces[1];
-            }
-        }
+        //@todo: define NumericRangeObservation class
+        if (ObservationConstants::CIGARETTE_COUNT === $newObservation->obs_key) {
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => 'required|numeric',
+            ]);
 
-        // validate answer
-        $qsType         = $msgCPRules->getQsType($obsMessageId, '16');
-        $answerResponse = $msgCPRules->getValidAnswer('16', $qsType, $obsMessageId, $params['obs_value'], false);
-
-        //Hack to validate a1c.
-        //This code is gross
-        if ('RPT/CF_RPT_60' == $request->input('observationType')) {
-            $params['obs_value'] = str_replace('%', '', $params['obs_value']);
-
-            if (str_contains(
-                $params['obs_value'],
-                '.'
-                ) && 3 == strlen($params['obs_value']) && is_numeric($params['obs_value'])
-            ) {
-                $answerResponse = true;
-            }
-        }
-
-        if ( ! $answerResponse) {
-            return redirect()->back()->withErrors(['You entered an invalid value, please review and resubmit.'])->withInput();
-        }
-
-        // validate timezone
-        /*
-        if(strlen($params['timezone']) < 5) {
-            return response()->json(['response' => 'Error - Invalid timezone, please provide full timezone (not GMT offset)'], 500);
-        }
-        */
-
-        $result = $observationService->storeObservationFromApp(
-            $params['user_id'],
-            $params['parent_id'],
-            $params['obs_value'],
-            $params['obs_date'],
-            $obsMessageId,
-            $params['obs_key'],
-            $params['timezone'],
-            $params['source'],
-            $params['isStartingObs']
-        );
-
-        if ('mobi' == $request->header('Client') || 'ui' == $request->header('Client')) {
-            // api response
-            if ($result) {
-                return response()->json(['response' => 'Observation Created'], 201);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number greater than, or equal to 0."])->withInput();
             }
 
-            return response()->json(['response' => 'Error'], 500);
+            return $this->saveObservationAndRedirect($newObservation);
         }
-        // ui response
-        return redirect()->route('patient.summary', [
-            'id'        => $wpUser->id,
-            'programId' => $request->input('programId'),
-        ])->with('messages', ['Successfully added new observation']);
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param int $id
-     *
-     * @return Response
-     */
-    public function update($id)
-    {
+        //@todo: define NumericRangeObservation Or Percentage class
+        if (ObservationConstants::A1C === $newObservation->obs_key) {
+            $newObservation->obs_value = str_replace('%', '', $newObservation->obs_value);
+
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => 'required|numeric|between:0.001,100',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter decimal percentage such as \"5.0%\", or \"6.12%\"."])->withInput();
+            }
+
+            return $this->saveObservationAndRedirect($newObservation);
+        }
+
+        if (ObservationConstants::BLOOD_SUGAR === $newObservation->obs_key) {
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => 'required|numeric',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number greater than, or equal to 1."])->withInput();
+            }
+
+            return $this->saveObservationAndRedirect($newObservation);
+        }
+
+        if (ObservationConstants::WEIGHT === $newObservation->obs_key) {
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => 'required|numeric',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number greater than, or equal to 1."])->withInput();
+            }
+
+            return $this->saveObservationAndRedirect($newObservation);
+        }
+
+        if (ObservationConstants::BLOOD_PRESSURE === $newObservation->obs_key) {
+            $validator = Validator::make([$newObservation->obs_key => $newObservation->obs_value], [
+                $newObservation->obs_key => [
+                    'required',
+                    function ($attribute, $value, $fail) {
+                        $pieces = explode('/', $value);
+                        if (2 !== count($pieces)
+                            || ! ctype_digit($pieces[0])
+                            || (int) $pieces[0] < 1
+                            || ! ctype_digit($pieces[1])
+                            || (int) $pieces[1] < 1
+                        ) {
+                            $fail("$value is not a valid Blood Pressure. An example of a valid Blood Pressure is 120/80");
+                        }
+                    }, ],
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors(["\"$newObservation->obs_value\" is not an accepted value for $newObservation->obs_key observations. Please enter a number greater than 0."])->withInput();
+            }
+
+            return $this->saveObservationAndRedirect($newObservation);
+        }
+
+        return redirect()->back()->withErrors(['The Observation could not be processed.'])->withInput();
     }
 
     public function updateObservation(Request $request)
@@ -288,5 +229,14 @@ class ObservationController extends Controller
             'msg',
             'Changes Successfully Applied.'
         );
+    }
+
+    private function saveObservationAndRedirect(Observation $newObservation)
+    {
+        $newObservation->save();
+
+        return redirect()->route('patient.summary', [
+            'patientId' => $newObservation->user_id,
+        ])->with('messages', ['Successfully added new observation']);
     }
 }

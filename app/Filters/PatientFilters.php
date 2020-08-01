@@ -6,13 +6,14 @@
 
 namespace App\Filters;
 
-use App\CarePlan;
 use App\Repositories\PatientReadRepository;
+use App\User;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Http\Request;
 
 class PatientFilters extends QueryFilters
@@ -42,7 +43,14 @@ class PatientFilters extends QueryFilters
     public function careplanStatus($status)
     {
         return $this->builder->whereHas('carePlan', function ($query) use ($status) {
-            $query->where('status', $status)->orWhere('status', 'LIKE', '%\"status\":\"'.$status.'\"%');
+            $query->where(function ($q) use ($status) {
+                if ( ! is_array($status)) {
+                    $status = [$status];
+                }
+                foreach ($status as $val) {
+                    $q->orWhere('status', 'LIKE', '%'.$val.'%');
+                }
+            });
         });
     }
 
@@ -69,7 +77,7 @@ class PatientFilters extends QueryFilters
                         $subQuery->where('ccm_status', Patient::WITHDRAWN)
                             ->where('date_withdrawn', 'LIKE', "%${date}%");
                     }
-                  );
+                );
         });
     }
 
@@ -92,7 +100,19 @@ class PatientFilters extends QueryFilters
 
     public function globalFilters(): array
     {
-        return [];
+        $filters = [];
+
+        $currFilters = $this->request->all();
+        if ( ! isset($currFilters['careplanStatus'])) {
+            /** @var User $user */
+            $user = auth()->user();
+            if ( ! $user->isAdmin()) {
+                // CPM-1790, non-admins should only see rn_approved, and provider_approved
+                $filters['careplanStatus'] = [CarePlan::PROVIDER_APPROVED, CarePlan::RN_APPROVED];
+            }
+        }
+
+        return $filters;
     }
 
     public function isAutocomplete()
@@ -102,18 +122,25 @@ class PatientFilters extends QueryFilters
 
     public function isCsv()
     {
-        return isset($this->filters()['csv']);
+        return array_key_exists('csv', $this->filters());
     }
 
     public function isExcel()
     {
-        return isset($this->filters()['excel']);
+        return array_key_exists('excel', $this->filters());
     }
 
     public function lastReading($reading)
     {
         return $this->builder->whereHas('lastObservation', function ($query) use ($reading) {
             return $query->where('obs_date', 'LIKE', $reading.'%');
+        });
+    }
+
+    public function location($location)
+    {
+        return $this->builder->whereHas('patientInfo.location', function ($q) use ($location) {
+            $q->where('name', $location)->orWhere('id', $location);
         });
     }
 

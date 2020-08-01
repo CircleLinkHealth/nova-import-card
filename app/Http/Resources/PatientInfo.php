@@ -6,9 +6,9 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class PatientInfo extends Resource
+class PatientInfo extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -30,6 +30,7 @@ class PatientInfo extends Resource
             'last_contact_time'                   => $this->last_contact_time,
             'last_successful_contact_time'        => $this->last_successful_contact_time,
             'no_call_attempts_since_last_success' => $this->no_call_attempts_since_last_success,
+            'preferred_contact_language'          => $this->preferred_contact_language,
             'contact_windows'                     => PatientContactWindows::collection($this->whenLoaded('contactWindows')),
         ];
     }

@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'enabled' => env('PROFILER_ENABLED', true),
+    'enabled' => env('PROFILER_ENABLED', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -30,7 +30,7 @@ return [
 
     'enabled_overrides' => [
         'production' => false,
-        //        'testing' => false,
+        'testing'    => false,
         //        'local' => false,
     ],
 

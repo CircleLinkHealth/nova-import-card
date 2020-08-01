@@ -7,9 +7,11 @@
 namespace App\Notifications\Channels;
 
 use App\Contracts\DirectMail;
-use App\Exceptions\InvalidTypeException;
+use App\Contracts\DirectMailableNotification;
+use App\DirectMailMessage;
+use App\Services\PhiMail\SendResult;
 use App\ValueObjects\SimpleNotification;
-use Illuminate\Notifications\Notification;
+use CircleLinkHealth\Core\Exceptions\InvalidTypeException;
 
 class DirectMailChannel
 {
@@ -28,14 +30,14 @@ class DirectMailChannel
      *
      * @throws InvalidTypeException
      */
-    public function send($notifiable, Notification $notification)
+    public function send($notifiable, DirectMailableNotification $notification)
     {
         if ($notifiable->emr_direct_address) {
             $message = $notification->toDirectMail($notifiable);
 
             $this->throwExceptionIfWrongType($message, $notification);
 
-            $this->dm->send(
+            $sentMessage = $this->dm->send(
                 $notifiable->emr_direct_address,
                 $message->getFilePath(),
                 $message->getFileName(),
@@ -44,6 +46,34 @@ class DirectMailChannel
                 $message->getBody(),
                 $message->getSubject()
             );
+
+            if (array_key_exists(0, $sentMessage) && is_a($sentMessage[0], SendResult::class)) {
+                $numAttachments = 0;
+
+                if ($message->getFilePath()) {
+                    ++$numAttachments;
+                }
+                if ($message->getCcdaAttachmentPath()) {
+                    ++$numAttachments;
+                }
+                /** @var SendResult $msgObj */
+                $msgObj = $sentMessage[0];
+                $dm     = DirectMailMessage::create(
+                    [
+                        'message_id'      => $msgObj->messageId,
+                        'from'            => config('services.emr-direct.user'),
+                        'to'              => $msgObj->recipient,
+                        'body'            => $notification->directMailBody($notifiable),
+                        'subject'         => $notification->directMailSubject($notifiable),
+                        'num_attachments' => $numAttachments,
+                        'status'          => $msgObj->succeeded
+                            ? DirectMailMessage::STATUS_SUCCESS
+                            : DirectMailMessage::STATUS_FAIL,
+                        'direction'  => DirectMailMessage::DIRECTION_SENT,
+                        'error_text' => $msgObj->errorText,
+                    ]
+                );
+            }
         }
     }
 
@@ -58,11 +88,7 @@ class DirectMailChannel
     private function throwExceptionIfWrongType($message, $notification)
     {
         if ( ! is_a($message, SimpleNotification::class)) {
-            throw new InvalidTypeException(
-                'Object of invalid type returned from `'.get_class(
-                    $notification
-                ).'@toDirectMail`. At '.__FILE__.':'.__LINE__
-            );
+            throw new InvalidTypeException('Object of invalid type returned from `'.get_class($notification).'@toDirectMail`. At '.__FILE__.':'.__LINE__);
         }
     }
 }

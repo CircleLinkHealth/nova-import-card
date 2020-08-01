@@ -8,18 +8,18 @@
     "license": "MIT",
     "require": {
         "php": ">=7.1.0",
-        "sparclex/nova-import-card": "^2.0"
+        "sparclex/nova-import-card": "^7.0.1"
 
     },
     "autoload": {
         "psr-4": {
-            "Circlelinkhealth\\ImportPracticeStaffCsv\\": "src/"
+            "CircleLinkHealth\\ImportPracticeStaffCsv\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Circlelinkhealth\\ImportPracticeStaffCsv\\CardServiceProvider"
+                "CircleLinkHealth\\ImportPracticeStaffCsv\\CardServiceProvider"
             ]
         }
     },
@@ -27,5 +27,11 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
+        }
+    ]
 }

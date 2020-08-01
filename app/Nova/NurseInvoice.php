@@ -6,15 +6,19 @@
 
 namespace App\Nova;
 
+use Circlelinkhealth\InvoicesDownload\InvoicesDownload;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use NovaButton\Button;
+use Titasgailius\SearchRelations\SearchesRelations;
 
 class NurseInvoice extends Resource
 {
+    use SearchesRelations;
+
     /**
      * The logical group associated with the resource.
      *
@@ -43,7 +47,7 @@ class NurseInvoice extends Resource
      * @var array
      */
     public static $searchRelations = [
-        'user' => ['display_name', 'first_name', 'last_name'],
+        'nurse.user' => ['display_name', 'first_name', 'last_name'],
     ];
 
     /**
@@ -58,8 +62,6 @@ class NurseInvoice extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -68,8 +70,6 @@ class NurseInvoice extends Resource
     }
 
     /**
-     * @param Request $request
-     *
      * @return bool
      */
     public static function authorizedToCreate(Request $request)
@@ -78,8 +78,6 @@ class NurseInvoice extends Resource
     }
 
     /**
-     * @param Request $request
-     *
      * @return bool
      */
     public function authorizedToDelete(Request $request)
@@ -88,8 +86,6 @@ class NurseInvoice extends Resource
     }
 
     /**
-     * @param Request $request
-     *
      * @return bool
      */
     public function authorizedToUpdate(Request $request)
@@ -100,19 +96,17 @@ class NurseInvoice extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
     {
-        return [];
+        return [
+            new InvoicesDownload(),
+        ];
     }
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -120,11 +114,11 @@ class NurseInvoice extends Resource
     {
         return [
             BelongsTo::make('Care Coach', 'user', CareCoachUser::class)
-                     ->hideWhenUpdating()
-                     ->hideFromIndex()
-                     ->searchable()
-                     ->prepopulate(),
-            
+                ->hideWhenUpdating()
+                ->hideFromIndex()
+                ->searchable()
+                ->prepopulate(),
+
             Text::make('Name', 'nurse.user.display_name')
                 ->sortable()
                 ->hideWhenCreating()
@@ -132,7 +126,7 @@ class NurseInvoice extends Resource
 
             Date::make('month_year')->sortable(),
 
-            Button::make('View Invoice')->link(route('nurseinvoices.admin.show', [$this->nurse->user->id, $this->id]), '_blank')->style('info'),
+            Button::make('View Invoice')->link(route('nurseinvoices.admin.show', [$this->nurse->user_id, $this->id]), '_blank')->style('primary'),
 
             ID::make()->sortable(),
         ];
@@ -140,8 +134,6 @@ class NurseInvoice extends Resource
 
     /**
      * Get the filters available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -157,8 +149,6 @@ class NurseInvoice extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

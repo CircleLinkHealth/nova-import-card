@@ -24,7 +24,7 @@
                     </div>
                     <div class="form-row col-md-12">
                         <div class="form-group col-md-6">
-                            <label for="lang">Language: (EN or ES)</label>
+                            <label for="lang">Language:</label>
                             <input type="text" class="form-control" id="lang" v-model="enrolleeData.lang"/>
                         </div>
                         <div class="form-group col-md-6">
@@ -67,7 +67,11 @@
                             <h4>Status</h4>
                         </div>
                         <div class="form-group col-md-3">
-                            <input type="text" class="form-control" id="status" v-model="enrolleeData.status"/>
+                            <select v-model="enrolleeData.status">
+                                <option v-for="status in statuses" v-bind:value="status.id">
+                                    {{ status.text }}
+                                </option>
+                            </select>
                         </div>
                         <div class="form-group col-md-6">
                         </div>
@@ -151,8 +155,19 @@
         props: [],
         data: () => {
             return {
+                statuses: [
+                    {id: 'call_queue', text: 'Call Queue'},
+                    {id:'enrolled', text: 'Enrolled'},
+                    {id:'consented', text: 'Consented'},
+                    {id:'soft_rejected', text: 'Soft Declined'},
+                    {id:'rejected', text: 'Hard Declined'},
+                    {id:'utc', text: 'Unreachable'},
+                    {id:'ineligible',text: 'Ineligible'},
+                    {id:'queue_auto_enrollment', text:'Queued for Self-enrollment'},
+                ],
                 loading: false,
                 enrolleeData: {
+                    status: '',
                     phones: {
                         primary_phone: '',
                         cell_phone: '',
@@ -282,8 +297,6 @@
         margin: 0px;
         padding: 0px;
     }
-
-
 
     h4 {
         display: block;

@@ -12,7 +12,8 @@
 
     <div class="container">
         <h3 align="center">Create Call for existing Note</h3>
-        <hr><br>
+        <hr>
+        <br>
         <div class="text-center">
             <div>
                 <h4 class="ops-dboard-title">Note Info</h4>
@@ -72,6 +73,12 @@
                             <input type="radio" name="direction" value="inbound" required> Inbound<br>
                             <input type="radio" name="direction" value="outbound" checked> Outbound<br>
                         </div>
+                        <div class="form-group" id="notify-patient-group" style="display:none">
+                            <input type="checkbox" name="notify-patient" value="yes">
+                            <label for="notify-patient"> Tick here if you would like patient to be notified by email/sms that
+                                nurse tried to contact them</label>
+                            <br>
+                        </div>
                     </div>
                 </div>
                 <br>
@@ -81,4 +88,18 @@
             </form>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $('input[name="status"]').change(function (e) {
+                    if (e.currentTarget.value === "not reached") {
+                        $('#notify-patient-group').show();
+                    } else {
+                        $('#notify-patient-group').hide();
+                    }
+                });
+            });
+        </script>
+    @endpush
 @endsection

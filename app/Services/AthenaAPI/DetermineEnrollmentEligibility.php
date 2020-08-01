@@ -6,10 +6,13 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Jobs\Athena\GetAppointmentsForDepartment;
+use CircleLinkHealth\Eligibility\ValueObjects\ProblemsCollection;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 
 class DetermineEnrollmentEligibility
 {
@@ -43,12 +46,10 @@ class DetermineEnrollmentEligibility
 
     /**
      * @param $ehrPracticeId
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @param bool   $offset
-     * @param null   $batchId
+     * @param bool $offset
+     * @param null $batchId
      *
-     * @throws \Exception
+     * @throws AuthenticationException
      */
     public function getPatientIdFromAppointments(
         $ehrPracticeId,
@@ -58,19 +59,30 @@ class DetermineEnrollmentEligibility
         $batchId = null
     ) {
         $departments = \Cache::tags(['athena_api', "ehr_practice_id:$ehrPracticeId"])->remember("athena_api:$ehrPracticeId:department_ids", 5, function () use ($ehrPracticeId) {
-            return $this->api->getDepartmentIds($ehrPracticeId);
+            return $this->api->getDepartments($ehrPracticeId);
         });
+
+        if ( ! is_countable($departments)) {
+            $message = 'Departments is not countable. Possibly unauthorized AthenaAPI action. response:'.json_encode($departments);
+
+            \Log::error($message, [
+                'batch_id'        => $batchId,
+                'ehr_practice_id' => $ehrPracticeId,
+            ]);
+
+            throw new AuthorizationException($message);
+        }
 
         $count = count($departments);
 
-        \Log::channel('logdna')->info("Found $count departments", [
+        \Log::info("Found $count departments", [
             'batch_id'        => $batchId,
             'ehr_practice_id' => $ehrPracticeId,
         ]);
 
         foreach ($departments['departments'] as $department) {
             if ( ! empty($department['departmentid'])) {
-                GetAppointmentsForDepartment::dispatch($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId);
+                GetAppointmentsForDepartment::dispatch($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId)->onQueue('low');
             }
         }
     }
@@ -90,13 +102,13 @@ class DetermineEnrollmentEligibility
      * @param $practiceId
      * @param $departmentId
      *
-     * @return Problems
+     * @return ProblemsCollection
      */
     public function getPatientProblems($patientId, $practiceId, $departmentId)
     {
         $problemsResponse = $this->api->getPatientProblems($patientId, $practiceId, $departmentId);
 
-        $problems = new Problems();
+        $problems = new ProblemsCollection();
         $problems->setProblems($problemsResponse['problems']);
 
         return $problems;

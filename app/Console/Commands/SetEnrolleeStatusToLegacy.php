@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 
 class SetEnrolleeStatusToLegacy extends Command

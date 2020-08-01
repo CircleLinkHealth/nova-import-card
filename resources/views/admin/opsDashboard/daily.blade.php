@@ -64,13 +64,15 @@
             .color-red {
                 color: red;
             }
+
         </style>
     @endpush
 
     <div class="container">
-        <div class="col-md-12">
-            @include('admin.opsDashboard.panel')
-        </div>
+{{--        Currently not in use, remove until and if needed--}}
+{{--        <div class="col-md-12">--}}
+{{--            @include('admin.opsDashboard.panel')--}}
+{{--        </div>--}}
         <div class="col-md-4">
             <form action="{{route('OpsDashboard.index')}}" method="GET">
                 <div class="form-group">
@@ -98,8 +100,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class="ops-csv">
-                        <a href="{{route('OpsDashboard.dailyCsv')}}" class="btn btn-info">Generate CSV: From 11pm to
-                            Now</a>
+                        <a class="excel-export btn btn-info" data-href="{{route('OpsDashboard.dailyCsv')}}">Generate CSV</a>
                     </div>
                 </div>
             </div>
@@ -114,7 +115,7 @@
         </div>
     </div>
     <div class="container">
-        @if($rows != null)
+        @empty(! empty($rows))
             <div class="panel panel-default">
                 {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
                 <div class="panel-body">
@@ -135,6 +136,7 @@
                             <th>Unreachable</th>
                             <th>Paused</th>
                             <th>Withdrawn</th>
+                            <th>Deleted</th>
                             <th>DELTA</th>
                             <th>G0506 To Enroll</th>
                         </tr>
@@ -170,6 +172,14 @@
                                         @if($value['Withdrawn'] != 0)
                                             <td class="color-red">-{{$value['Withdrawn']}}</td>@else
                                             <td>{{$value['Withdrawn']}}</td>@endif
+                                        @if(isset($value['Deleted']))
+                                            @if($value['Deleted'] != 0)
+                                                <td class="color-red">-{{$value['Deleted']}}</td>
+                                            @else
+                                                <td>{{$value['Deleted']}}</td>@endif
+                                        @else
+                                            <td>N/A</td>
+                                        @endif
                                         <td>{{$value['Delta']}}</td>
                                         <td>{{$value['G0506 To Enroll']}}</td>
                                     </tr>
@@ -189,8 +199,8 @@
                                         @else
                                             <td>N/A</td>
                                         @endif
-                                        <td>{{$value['Total']}}</td>
-                                        <td>{{$value['Prior Day totals']}}</td>
+                                        <td @if(isset($value['report_updated_at'])) title="Report generated at: {{$value['report_updated_at']}}"@endif>{{$value['Total']}}</td>
+                                        <td @if(isset($value['prior_day_report_updated_at'])) title="Prior day report generated at: {{$value['prior_day_report_updated_at']}}"@endif>{{$value['Prior Day totals']}}</td>
                                         @if($value['Added'] != 0)
                                             <td class="color-green">{{$value['Added']}}</td>@else
                                             <td>{{$value['Added']}}</td>@endif
@@ -203,7 +213,16 @@
                                         @if($value['Withdrawn'] != 0)
                                             <td class="color-red">-{{$value['Withdrawn']}}</td>@else
                                             <td>{{$value['Withdrawn']}}</td>@endif
-                                        <td>{{$value['Delta']}}</td>
+                                        @if(isset($value['Deleted']))
+                                            @if($value['Deleted'] != 0)
+                                                <td class="color-red">-{{$value['Deleted']}}</td>
+                                            @else
+                                                <td>{{$value['Deleted']}}</td>@endif
+                                        @else
+                                            <td>N/A</td>
+                                        @endif
+                                        <td @if(isset($value['lost_added_calculated_using_revisions']) && $value['lost_added_calculated_using_revisions']== true)
+                                            title="Calculated using Revisions" @endif>{{$value['Delta']}}</td>
                                         <td>{{$value['G0506 To Enroll']}}</td>
                                     </tr>
                                 </div>
@@ -231,8 +250,27 @@
             </div>
         @endif
     </div>
+    @push('scripts')
+        <script>
+            $(function () {
+                function setExcelExportHref(date) {
+                    var href = $('.excel-export').attr('data-href') + '?date=' + date
+                    $('.excel-export').attr('href', href)
+                    return href
+                }
+
+                $("#date").change(function (date) {
+                    // whatever you need to be done on change of the input field
+                    setExcelExportHref($("#start_date").val())
+                });
 
 
+                setExcelExportHref($("#date").val())
+            })
+
+        </script>
+
+    @endpush
 @endsection
 
 

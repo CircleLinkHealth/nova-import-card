@@ -6,99 +6,108 @@
 
 namespace App\Listeners;
 
-use App\CarePlan;
-use App\Contracts\Efax;
 use App\Events\CarePlanWasApproved;
-use App\Events\PdfableCreated;
-use App\Observers\PatientObserver;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Log;
 
 class UpdateCarePlanStatus
 {
     /**
-     * @var Efax
-     */
-    private $efax;
-
-    /**
-     * Create the event listener.
-     */
-    public function __construct(Efax $efax)
-    {
-        $this->efax = $efax;
-    }
-
-    /**
      * Handle the event.
-     *
-     * @param CarePlanWasApproved $event
      */
     public function handle(CarePlanWasApproved $event)
     {
-        $user = $event->patient;
-
-        //Stop the propagation to other Listeners if the CarePlan is already approved.
-        if (CarePlan::PROVIDER_APPROVED == $user->getCarePlanStatus()) {
+        if ($this->carePlanIsAlreadyApproved($event->patient->carePlan)) {
             Log::debug('UpdateCarePlanStatus: Called but care plan is already approved. Exiting.');
 
             return;
         }
-        $practiceSettings = $event->practiceSettings;
-        //This CarePlan has already been `QA approved` by CLH, and is now being approved by a member of the practice
-        if (CarePlan::QA_APPROVED == $user->getCarePlanStatus() && auth()->user()->canApproveCarePlans()) {
-            Log::debug('UpdateCarePlanStatus: Ready to set status to PROVIDER_APPROVED');
 
-            $date     = Carbon::now();
-            $approver = auth()->user();
-
-            $user->setCarePlanStatus(CarePlan::PROVIDER_APPROVED);
-            $user->setCarePlanProviderApprover($approver->id);
-            $user->setCarePlanProviderApproverDate($date->format('Y-m-d H:i:s'));
-            $user->carePlan->forward();
-            event(new PdfableCreated($user->carePlan));
-
-            if (isProductionEnv()) {
-                sendSlackMessage(
-                    '#careplanprintstatus',
-                    "Dr.{$approver->getFullName()} approved {$user->id}'s care plan.\n"
-                );
-            }
-        } //This CarePlan is being `QA approved` by CLH
-        elseif (CarePlan::DRAFT == $user->getCarePlanStatus()
-                && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->getPrimaryPracticeId())) {
-            $user->carePlan->status         = CarePlan::QA_APPROVED;
-            $user->carePlan->qa_approver_id = auth()->id();
-            $user->carePlan->save();
-
-            if ((bool) $practiceSettings->auto_approve_careplans) {
-                $user->carePlan->status               = CarePlan::PROVIDER_APPROVED;
-                $user->carePlan->provider_approver_id = optional($user->billingProviderUser())->id;
-                $user->carePlan->save();
-
-                event(new PdfableCreated($user->carePlan));
-            }
-
-            $this->addPatientConsentedNote($user);
-
-            $user->setCarePlanQADate(date('Y-m-d H:i:s')); // careplan_qa_date
-        }
-
-        $user->save();
+        $this->attemptApproval($event->patient, $event->approver);
     }
 
     /**
-     * Send patient consented note to practice only after CLH has approved CarePlan.
-     *
-     * @param User $user
+     * Attempt to approve.
      */
-    private function addPatientConsentedNote(User $user)
+    private function attemptApproval(User &$patient, User &$approver)
     {
-        if ( ! $user->notes->isEmpty()) {
-            return;
+        if ($this->shouldBeProviderApproved($patient, $approver)) {
+            $this->providerApprove($patient, $approver);
+        } elseif ($this->shouldBeRNApproved($patient, $approver)) {
+            $this->rnApprove($patient, $approver);
+        } elseif ($this->shouldBeQAApproved($patient, $approver)) {
+            $this->qaApprove($patient, $approver);
         }
 
-        (new PatientObserver())->sendPatientConsentedNote($user->patientInfo);
+        if ($patient->isDirty()) {
+            $patient->save();
+        }
+    }
+
+    private function carePlanIsAlreadyApproved(CarePlan $carePlan)
+    {
+        return CarePlan::PROVIDER_APPROVED == $carePlan->status;
+    }
+
+    private function providerApprove(User &$patient, User $approver)
+    {
+        Log::debug('UpdateCarePlanStatus: Ready to set status to PROVIDER_APPROVED');
+
+        $patient->carePlan->status               = CarePlan::PROVIDER_APPROVED;
+        $patient->carePlan->provider_approver_id = $approver->id;
+        $patient->carePlan->provider_date        = now()->toDateTimeString();
+        $patient->carePlan->save();
+
+        //@todo: refactor to laravel notification via slack channel
+        if (isProductionEnv()) {
+            sendSlackMessage(
+                '#careplanprintstatus',
+                "Dr.{$approver->getFullName()} approved {$patient->id}'s care plan.\n"
+            );
+        }
+    }
+
+    private function qaApprove(User &$patient, User $approver)
+    {
+        $patient->carePlan->status         = CarePlan::QA_APPROVED;
+        $patient->carePlan->qa_approver_id = $approver->id;
+        $patient->carePlan->qa_date        = now()->toDateTimeString();
+        $patient->carePlan->save();
+    }
+
+    private function rnApprove(User &$patient, User $approver)
+    {
+        $patient->carePlan->status         = CarePlan::RN_APPROVED;
+        $patient->carePlan->rn_approver_id = $approver->id;
+        $patient->carePlan->rn_date        = now()->toDateTimeString();
+        $patient->carePlan->save();
+    }
+
+    /**
+     * This CarePlan has already been `RN approved` by CLH, and is now being approved by a member of the practice.  We
+     * can now store it with status `Provider Approved`.
+     */
+    private function shouldBeProviderApproved(User $patient, User $approver): bool
+    {
+        return CarePlan::RN_APPROVED == $patient->getCarePlanStatus() && $approver->canApproveCarePlans();
+    }
+
+    /**
+     * This is a `Draft` CarePlan what was just `QA approved` by CLH. We can now store it with status `QA Approved`.
+     */
+    private function shouldBeQAApproved(User $patient, User $approver): bool
+    {
+        return CarePlan::DRAFT == $patient->getCarePlanStatus()
+               && $approver->hasPermissionForSite('care-plan-qa-approve', $patient->getPrimaryPracticeId());
+    }
+
+    /**
+     * This is a `QA Approved` CarePlan what was just `RN approved` by CLH. We can now store it with status `RN Approved`.
+     */
+    private function shouldBeRNApproved(User $patient, User $approver): bool
+    {
+        return CarePlan::QA_APPROVED == $patient->getCarePlanStatus()
+            && $approver->hasPermissionForSite('care-plan-rn-approve', $patient->getPrimaryPracticeId());
     }
 }

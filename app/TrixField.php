@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string                          $body
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField careAmbassador($language)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField newQuery()
@@ -34,7 +35,8 @@ class TrixField extends Model
     /**
      * The Type to get scripts for the Care Ambassadors Page.
      */
-    const CARE_AMBASSADOR_SCRIPT = 'care_ambassador_script';
+    const CARE_AMBASSADOR_SCRIPT                  = 'care_ambassador_script';
+    const CARE_AMBASSADOR_UNREACHABLE_USER_SCRIPT = 'care_ambassador_unreachable_user_script';
 
     const ENGLISH_LANGUAGE = 'en';
     const SPANISH_LANGUAGE = 'es';
@@ -50,33 +52,25 @@ class TrixField extends Model
      *
      * @param $builder
      * @param $language
+     * @param mixed $enrollableIsUnreachableUser
      */
-    public function scopeCareAmbassador($builder, $language)
+    public function scopeCareAmbassador($builder, $language, $enrollableIsUnreachableUser = false)
     {
         $scriptLanguage = '';
 
-        if (in_array(strtolower($language), [
-            'en',
-            'eng',
-            'english',
-        ]) ||
-            starts_with(strtolower($language), 'en')
-        ) {
+        if (stringMeansEnglish($language)) {
             $scriptLanguage = self::ENGLISH_LANGUAGE;
         }
 
-        if (in_array(strtolower($language), [
-            'sp',
-            'es',
-            'spanish',
-            'spa',
-        ]) ||
-            starts_with(strtolower($language), ['es', 'sp'])
-        ) {
+        if (stringMeansSpanish($language)) {
             $scriptLanguage = self::SPANISH_LANGUAGE;
         }
 
-        $builder->where('type', TrixField::CARE_AMBASSADOR_SCRIPT)
-            ->where('language', $scriptLanguage);
+        $type = $enrollableIsUnreachableUser ? self::CARE_AMBASSADOR_UNREACHABLE_USER_SCRIPT : self::CARE_AMBASSADOR_SCRIPT;
+
+        $builder->where('type', $type)
+            ->where(function ($q) use ($scriptLanguage) {
+                $q->where('language', $scriptLanguage);
+            });
     }
 }

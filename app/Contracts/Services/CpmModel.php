@@ -15,10 +15,7 @@ interface CpmModel
      * NOTE: The User will only be related with the Ids passed in ONLY. All others will be erased, just like Laravel's
      *      sync() method.
      *
-     * @param \CircleLinkHealth\Customer\Entities\User $user
-     * @param array                                    $ids
-     * @param int                                      $page
-     * @param array                                    $instructionsInput
+     * @param int $page
      *
      * @return mixed
      */

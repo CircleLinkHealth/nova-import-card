@@ -28,7 +28,7 @@
 
     <link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
-    <link rel="stylesheet" href="{{ mix('/css/materialize.min.css') }}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
 
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">

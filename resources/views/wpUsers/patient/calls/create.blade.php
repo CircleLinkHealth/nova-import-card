@@ -23,25 +23,27 @@
             const windowMatchAlt =@json($window_match_alt ?? null);
 
             function dateChanged(d) {
-                d.setSeconds(0);
-                d.setMinutes(0);
-                d.setHours(0);
-                const from = new Date(temporaryFrom.date);
-                from.setSeconds(0);
-                from.setMinutes(0);
-                from.setHours(0);
-                const to = new Date(temporaryTo.date);
-                to.setSeconds(0);
-                to.setMinutes(0);
-                to.setHours(0);
-                if (d >= from && d <= to) {
-                    $('#nurse').val(nurse);
-                    //found in callInfo.blade.php
-                    $('#window_match_text').html(windowMatch);
-                } else {
-                    $('#nurse').val(nurseAlt);
-                    //found in callInfo.blade.php
-                    $('#window_match_text').html(windowMatchAlt);
+                if (temporaryFrom && 'date' in temporaryFrom && temporaryTo && 'date' in temporaryTo) {
+                    d.setSeconds(0);
+                    d.setMinutes(0);
+                    d.setHours(0);
+                    const from = new Date(temporaryFrom.date);
+                    from.setSeconds(0);
+                    from.setMinutes(0);
+                    from.setHours(0);
+                    const to = new Date(temporaryTo.date);
+                    to.setSeconds(0);
+                    to.setMinutes(0);
+                    to.setHours(0);
+                    if (d >= from && d <= to) {
+                        $('#nurse').val(nurse);
+                        //found in callInfo.blade.php
+                        $('#window_match_text').html(windowMatch);
+                    } else {
+                        $('#nurse').val(nurseAlt);
+                        //found in callInfo.blade.php
+                        $('#window_match_text').html(windowMatchAlt);
+                    }
                 }
             }
 

@@ -29,26 +29,10 @@ return [
         'enabled' => false,
         'path'    => base_path().'/vendor/nwidart/laravel-modules/src/Commands/stubs',
         'files'   => [
-            'routes/web'      => 'Routes/web.php',
-            'routes/api'      => 'Routes/api.php',
-            'views/index'     => 'Resources/views/index.blade.php',
-            'views/master'    => 'Resources/views/layouts/master.blade.php',
-            'scaffold/config' => 'Config/config.php',
-            'composer'        => 'composer.json',
-            'assets/js/app'   => 'Resources/assets/js/app.js',
-            'assets/sass/app' => 'Resources/assets/sass/app.scss',
-            'webpack'         => 'webpack.mix.js',
-            'package'         => 'package.json',
+            'composer' => 'composer.json',
         ],
         'replacements' => [
-            'routes/web'      => ['LOWER_NAME', 'STUDLY_NAME'],
-            'routes/api'      => ['LOWER_NAME'],
-            'webpack'         => ['LOWER_NAME'],
-            'json'            => ['LOWER_NAME', 'STUDLY_NAME', 'MODULE_NAMESPACE'],
-            'views/index'     => ['LOWER_NAME'],
-            'views/master'    => ['LOWER_NAME', 'STUDLY_NAME'],
-            'scaffold/config' => ['STUDLY_NAME'],
-            'composer'        => [
+            'composer' => [
                 'LOWER_NAME',
                 'STUDLY_NAME',
                 'VENDOR',
@@ -100,18 +84,18 @@ return [
         | Set the generate key to false to not generate that folder
         */
         'generator' => [
-            'config'        => ['path' => 'Config', 'generate' => true],
-            'command'       => ['path' => 'Console', 'generate' => true],
-            'migration'     => ['path' => 'Database/Migrations', 'generate' => true],
-            'seeder'        => ['path' => 'Database/Seeders', 'generate' => true],
-            'factory'       => ['path' => 'Database/factories', 'generate' => true],
+            'config'        => ['path' => 'Config', 'generate' => false],
+            'command'       => ['path' => 'Console', 'generate' => false],
+            'migration'     => ['path' => 'Database/Migrations', 'generate' => false],
+            'seeder'        => ['path' => 'Database/Seeders', 'generate' => false],
+            'factory'       => ['path' => 'Database/factories', 'generate' => false],
             'model'         => ['path' => 'Entities', 'generate' => true],
             'controller'    => ['path' => 'Http/Controllers', 'generate' => true],
-            'filter'        => ['path' => 'Http/Middleware', 'generate' => true],
-            'request'       => ['path' => 'Http/Requests', 'generate' => true],
+            'filter'        => ['path' => 'Http/Middleware', 'generate' => false],
+            'request'       => ['path' => 'Http/Requests', 'generate' => false],
             'provider'      => ['path' => 'Providers', 'generate' => true],
             'assets'        => ['path' => 'Resources/assets', 'generate' => true],
-            'lang'          => ['path' => 'Resources/lang', 'generate' => true],
+            'lang'          => ['path' => 'Resources/lang', 'generate' => false],
             'views'         => ['path' => 'Resources/views', 'generate' => true],
             'test'          => ['path' => 'Tests', 'generate' => true],
             'repository'    => ['path' => 'Repositories', 'generate' => false],
@@ -119,9 +103,9 @@ return [
             'listener'      => ['path' => 'Listeners', 'generate' => false],
             'policies'      => ['path' => 'Policies', 'generate' => false],
             'rules'         => ['path' => 'Rules', 'generate' => false],
-            'jobs'          => ['path' => 'Jobs', 'generate' => false],
+            'jobs'          => ['path' => 'Jobs', 'generate' => true],
             'emails'        => ['path' => 'Emails', 'generate' => false],
-            'notifications' => ['path' => 'Notifications', 'generate' => false],
+            'notifications' => ['path' => 'Notifications', 'generate' => true],
             'resource'      => ['path' => 'Transformers', 'generate' => false],
         ],
     ],
@@ -153,8 +137,26 @@ return [
     'composer' => [
         'vendor' => 'circlelinkhealth',
         'author' => [
-            'name'  => 'Michalis Antoniou',
-            'email' => 'mantoniou@cirlelinkhealth.com',
+            [
+                'name'  => 'Antonis Antoniou',
+                'email' => 'antonis@cirlelinkhealth.com',
+                'role'  => 'Developer',
+            ],
+            [
+                'name'  => 'Constantinos Kakoushias',
+                'email' => 'constantinos@cirlelinkhealth.com',
+                'role'  => 'Developer',
+            ],
+            [
+                'name'  => 'Michalis Antoniou',
+                'email' => 'mantoniou@cirlelinkhealth.com',
+                'role'  => 'Lead Developer',
+            ],
+            [
+                'name'  => 'Pangratios Cosma',
+                'email' => 'pangratios@cirlelinkhealth.com',
+                'role'  => 'Lead Developer',
+            ],
         ],
     ],
     /*
@@ -178,7 +180,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'register' => [
-        'translations' => true,
+        'translations' => false,
         /*
          * load files on boot or register method
          *

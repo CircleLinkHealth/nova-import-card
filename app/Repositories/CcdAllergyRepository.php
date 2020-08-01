@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\Models\CCD\Allergy;
+use CircleLinkHealth\SharedModels\Entities\Allergy;
 
 class CcdAllergyRepository
 {

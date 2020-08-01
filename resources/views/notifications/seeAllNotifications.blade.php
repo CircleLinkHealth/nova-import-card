@@ -4,6 +4,6 @@
 @section('activity', 'See All Notifications')
 
 @section('content')
-    <pusher-see-all-notifications :notifications="{{json_encode($notifications)}}"></pusher-see-all-notifications>
+    <pusher-see-all-notifications></pusher-see-all-notifications>
 @endsection
 

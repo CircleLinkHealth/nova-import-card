@@ -4,17 +4,16 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Unit\CallsAlgo;
+namespace Tests\Unit\CallSchedulingAlgo;
 
 use App\Algorithms\Calls\SuccessfulHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class SuccessfulCallHandlerTest extends TestCase
 {
-    use UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
 
     /**
      * @var \CircleLinkHealth\Customer\Entities\User
@@ -22,7 +21,7 @@ class SuccessfulCallHandlerTest extends TestCase
     private $nurse;
     private $practice;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -65,6 +64,10 @@ class SuccessfulCallHandlerTest extends TestCase
         $called  = Carbon::now()->startOfMonth()->addDay(4);
         $patient = $this->fakePatient($called);
 
+        $patient->patientInfo->preferred_calls_per_month = 3;
+        $patient->patientInfo->save();
+
+        Carbon::setTestNow(now()->startOfMonth()->addDays(10));
         $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
             ->handle();
 

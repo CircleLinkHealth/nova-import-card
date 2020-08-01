@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
+                <div class="text-center" v-if="goals.length === 0 && !note.body">No Health Goals at this time</div>
                 
                 <ul class="subareas__list top-10" v-if="goals && goals.length > 0">
                     <li class='subareas__item subareas__item--wide row top-10' v-for="goal in goalsForListing()" :key="goal.id">

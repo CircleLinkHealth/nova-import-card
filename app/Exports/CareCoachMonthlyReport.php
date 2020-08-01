@@ -52,7 +52,7 @@ class CareCoachMonthlyReport implements FromCollection, Responsable, WithHeading
                     $a->where('performed_at', '>=', $fromDate)
                         ->where('performed_at', '<=', $toDate);
                 }
-                      )
+            )
             ->chunk(
                 50,
                 function ($nurses) use (&$rows, $fromDate, $toDate) {
@@ -63,7 +63,7 @@ class CareCoachMonthlyReport implements FromCollection, Responsable, WithHeading
                                     $q->where('performed_at', '>=', $fromDate)
                                         ->where('performed_at', '<=', $toDate);
                                 }
-                                                     )
+                            )
                             ->sum('duration');
 
                         if (0 == $seconds) {
@@ -72,10 +72,10 @@ class CareCoachMonthlyReport implements FromCollection, Responsable, WithHeading
 
                         $rows->push(
                             $this->row($nurse, $seconds)
-                                  );
+                        );
                     }
                 }
-                      );
+            );
 
         return $rows;
     }
@@ -89,10 +89,7 @@ class CareCoachMonthlyReport implements FromCollection, Responsable, WithHeading
     }
 
     /**
-     * @param User $nurse
      * @param $seconds
-     *
-     * @return array
      */
     private function row(User $nurse, $seconds): array
     {

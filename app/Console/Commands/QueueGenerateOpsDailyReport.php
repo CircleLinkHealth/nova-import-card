@@ -6,8 +6,10 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\GenerateOpsDailyPracticeReport;
 use App\Jobs\GenerateOpsDailyReport;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 
 class QueueGenerateOpsDailyReport extends Command
@@ -43,9 +45,28 @@ class QueueGenerateOpsDailyReport extends Command
         $endDateStr = $this->argument('endDate') ?? null;
 
         $endDate = $endDateStr
-            ? Carbon::parse($endDateStr)->setTime(23, 0)
+            ? Carbon::parse($endDateStr)->setTime(23, 30)
             : Carbon::now();
 
-        GenerateOpsDailyReport::dispatch($endDate)->onQueue('high');
+        $practicesIds = Practice::whereHas('patients.patientInfo')
+            ->activeBillable()
+            ->pluck('id')
+            ->toArray();
+
+        $length      = count($practicesIds);
+        $jobsToChain = [];
+
+        //start from 1 - exclude first array entry because this is going to be the initial job on which we will chain all others.
+        for ($i = 1; $i < $length; ++$i) {
+            $jobsToChain[] = new GenerateOpsDailyPracticeReport($practicesIds[$i], $endDate);
+        }
+        //add last job to gather all data - upload report to s3 - notify etc.
+        $jobsToChain[] = new GenerateOpsDailyReport($practicesIds, $endDate);
+
+        GenerateOpsDailyPracticeReport::withChain(
+            $jobsToChain
+        )
+            ->dispatch($practicesIds[0], $endDate)
+            ->onQueue('high');
     }
 }

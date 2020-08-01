@@ -18,7 +18,7 @@ class CpmInstructable extends Resource
      *
      * @var string
      */
-    public static $model = \App\Models\CPM\CpmInstructable::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\CpmInstructable::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
@@ -28,8 +28,6 @@ class CpmInstructable extends Resource
 
     /**
      * Get the actions available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -56,8 +54,6 @@ class CpmInstructable extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
@@ -67,8 +63,6 @@ class CpmInstructable extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -97,8 +91,6 @@ class CpmInstructable extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function filters(Request $request)
@@ -113,8 +105,6 @@ class CpmInstructable extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

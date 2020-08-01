@@ -39,9 +39,6 @@ class StaffInvite extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @param User     $implementationLead
-     * @param Practice $practice
      */
     public function __construct(
         User $implementationLead,

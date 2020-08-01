@@ -28,7 +28,7 @@ class AddendumNotificationsService
      */
     public function getAddendumNotifications($authUser)
     {
-        return $authUser->notifications->where('type', '=', 'App\Notifications\AddendumCreated')->all();
+        return $authUser->notifications->where('type', '=', \App\Notifications\AddendumCreated::class)->all();
     }
 
 //    /**

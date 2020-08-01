@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\AppConfig;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Console\Command;
@@ -48,40 +48,11 @@ class ResetCcmTime extends Command
             })
             ->chunk(200, function ($patients) {
                 foreach ($patients as $patient) {
-                    $summary = PatientMonthlySummary::where('patient_id', '=', $patient->user_id)
-                        ->orderBy('id', 'desc')->first();
-
-                    //if we have already summary for this month, then we skip this
-                    if ($summary && Carbon::today()->isSameMonth($summary->month_year)) {
-                        return;
-                    }
-
-                    if ($summary) {
-                        //clone record
-                        $newSummary = $summary->replicate();
-                    } else {
-                        $newSummary = new PatientMonthlySummary();
-                        $newSummary->patient_id = $patient->user_id;
-                    }
-
-                    $newSummary->month_year = Carbon::today()->startOfMonth();
-                    $newSummary->total_time = 0;
-                    $newSummary->ccm_time = 0;
-                    $newSummary->bhi_time = 0;
-                    $newSummary->no_of_calls = 0;
-                    $newSummary->no_of_successful_calls = 0;
-                    $newSummary->approved = 0;
-                    $newSummary->rejected = 0;
-                    $newSummary->actor_id = null;
-                    $newSummary->needs_qa = null;
-                    $newSummary->save();
+                    PatientMonthlySummary::createFromPatient($patient->id, Carbon::now()->startOfMonth());
                 }
             });
 
-        AppConfig::updateOrCreate([
-            'config_key'   => 'add_new_patient_monthly_summary_record',
-            'config_value' => Carbon::now(),
-        ]);
+        AppConfig::set('add_new_patient_monthly_summary_record', Carbon::now());
 
         $this->info('CCM Time reset.');
     }

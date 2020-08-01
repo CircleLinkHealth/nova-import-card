@@ -6,17 +6,16 @@
 
 namespace App\Http\Controllers\Billing;
 
-use App\AppConfig;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovableBillablePatient;
-use App\Models\CCD\Problem;
-use App\Models\CPM\CpmProblem;
-use App\Models\ProblemCode;
+use App\Jobs\CreatePracticeInvoice;
 use App\Notifications\PracticeInvoice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
+use App\Services\CPM\CpmProblemService;
 use App\Services\PracticeReportsService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -118,12 +117,10 @@ class PracticeInvoiceController extends Controller
         $readyToBill = Practice::active()
             ->authUserCanAccess()
             ->get();
-        $needsQA    = [];
-        $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
+        $invoice_no = AppConfig::pull('billing_invoice_count', 0);
 
         return view('billing.practice.create', compact(
             [
-                'needsQA',
                 'readyToBill',
                 'invoice_no',
                 'dates',
@@ -138,8 +135,6 @@ class PracticeInvoiceController extends Controller
      */
     public function data(Request $request)
     {
-        ini_set('max_execution_time', 300);
-
         $practice_id = $request->input('practice_id');
         $date        = $request->input('date');
 
@@ -210,16 +205,7 @@ class PracticeInvoiceController extends Controller
             ->active()
             ->get();
 
-        $cpmProblems = CpmProblem::where('name', '!=', 'Diabetes')
-            ->get()
-            ->map(function ($p) {
-                return [
-                    'id'            => $p->id,
-                    'name'          => $p->name,
-                    'code'          => $p->default_icd_10_code,
-                    'is_behavioral' => $p->is_behavioral,
-                ];
-            });
+        $cpmProblems = (new CpmProblemService())->all();
 
         $currentMonth = Carbon::now()->startOfMonth();
 
@@ -249,35 +235,30 @@ class PracticeInvoiceController extends Controller
     }
 
     /**
-     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
-     * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
-     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function makeInvoices(Request $request)
     {
-        $invoices = [];
+        $date      = Carbon::parse($request->input('date'));
+        $format    = $request['format'];
+        $practices = $request['practices'];
 
-        $date = Carbon::parse($request->input('date'));
+        CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id())->onQueue('low');
 
-        if ('pdf' == $request['format']) {
-            $invoices = $this->practiceReportsService->getPdfInvoiceAndPatientReport($request['practices'], $date);
+        $practices = Practice::whereIn('id', $practices)->pluck('display_name')->all();
 
-            return view('billing.practice.list', compact(['invoices']));
-        }
-        if ('csv' == $request['format'] or 'xls') {
-            $report = $this->practiceReportsService->getQuickbooksReport(
-                $request['practices'],
-                $request['format'],
-                $date
-            );
+        $niceDate = "{$date->shortEnglishMonth} {$date->year}";
 
-            if (false === $report) {
-                return 'No data found. Please hit back and try again.';
-            }
+        session()->put(
+            'messages',
+            array_merge(
+                ["We are creating reports for $niceDate, for the following practices:"],
+                $practices,
+                ['We will send you an email when they are ready.']
+            )
+        );
 
-            return $this->downloadMedia($report);
-        }
+        return redirect()->back();
     }
 
     /** open patient-monthly-summaries in a practice */
@@ -356,130 +337,6 @@ class PracticeInvoiceController extends Controller
         return $logger;
     }
 
-    public function storeProblem(Request $request)
-    {
-        try {
-            $summary = PatientMonthlySummary::find($request['report_id']);
-
-            //since this route is also accessible from software-only,
-            //we should make sure that software-only role is applied on this practice
-            $user = auth()->user();
-            if ( ! $user->isAdmin()) {
-                $patientPracticeId = User::find($summary->patient_id, ['program_id'])->program_id;
-                if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $patientPracticeId)) {
-                    abort(403);
-                }
-            }
-
-            $key = $request['problem_no'];
-
-            $problemId = $request['id'];
-
-            if (in_array(strtolower($problemId), ['other', 'new'])) {
-                $newProblem = $this->patientSummaryDBRepository->storeCcdProblem($summary->patient, [
-                    'name'             => $request['name'],
-                    'cpm_problem_id'   => $request['cpm_problem_id'],
-                    'billable'         => true,
-                    'code'             => $request['code'],
-                    'code_system_name' => 'ICD-10',
-                    'code_system_oid'  => '2.16.840.1.113883.6.3',
-                    'is_monitored'     => true,
-                ]);
-
-                $problemId = optional($newProblem)->id;
-            }
-
-            if ($problemId) {
-                $existingProblemId = $summary->$key;
-
-                if ($existingProblemId) {
-                    Problem::where('id', $existingProblemId)
-                        ->update([
-                            'billable' => false,
-                        ]);
-                }
-
-                Problem::where('id', $problemId)
-                    ->update([
-                        'billable'     => true,
-                        'name'         => $request['name'],
-                        'is_monitored' => true,
-                    ]);
-
-                $updated = ProblemCode::where('problem_id', $problemId)
-                    ->where('code_system_name', 'like', '%10%')
-                    ->update([
-                        'code'             => $request['code'],
-                        'code_system_name' => 'ICD-10',
-                        'code_system_oid'  => '2.16.840.1.113883.6.3',
-                    ]);
-
-                if ( ! $updated && $request['code']) {
-                    ProblemCode::create([
-                        'problem_id'       => $problemId,
-                        'code'             => $request['code'],
-                        'code_system_name' => 'ICD-10',
-                        'code_system_oid'  => '2.16.840.1.113883.6.3',
-                    ]);
-                }
-            }
-
-            if ('problem_1' == $key || 'problem_2' == $key) {
-                $summary->$key = $problemId;
-            } elseif ('bhi_problem' == $key && $summary->hasServiceCode('CPT 99484')) {
-                if ($request['cpm_problem_id']) {
-                    $cpmProblem = CpmProblem::where('id', $request['cpm_problem_id'])->where(
-                        'is_behavioral',
-                        1
-                    )->exists();
-
-                    if ( ! $cpmProblem) {
-                        throw new \Exception('Please select a BHI problem.');
-                    }
-                }
-
-                if ($summary->billableProblems()->where((new Problem())->getTable().'.id', $problemId)->exists()) {
-                    $summary->billableProblems()->updateExistingPivot($problemId, [
-                        'name'        => $request['name'],
-                        'icd_10_code' => $request['code'],
-                    ]);
-                } else {
-                    $summary->attachBillableProblem($problemId, $request['name'], $request['code'], 'bhi');
-                }
-            } else {
-                throw new \Exception('Cannot add BHI problem because practice does not have service CPT 99484 activated.');
-            }
-
-            if ( ! $this->patientSummaryDBRepository->lacksProblems($summary)) {
-                $summary->approved = true;
-            }
-
-            $problemNumber = extractNumbers($key);
-
-            if ((int) $problemNumber > 0 && (int) $problemNumber < 3) {
-                $summary->{"billable_problem${problemNumber}"}      = $request['name'];
-                $summary->{"billable_problem{$problemNumber}_code"} = $request['code'];
-            }
-
-            $summary->save();
-
-            $counts = $this->getCounts($summary->month_year->toDateString(), $summary->patient->primaryPractice->id);
-
-            return response()->json(
-                [
-                    'report_id' => $summary->id,
-                    'counts'    => $counts,
-                ]
-            );
-        } catch (\Exception $e) {
-            return response()->json([
-                'message'    => $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString(),
-                'code'       => $e->getCode(),
-            ], 500);
-        }
-    }
-
     /**
      * @return \Illuminate\Http\JsonResponse
      */
@@ -504,13 +361,6 @@ class PracticeInvoiceController extends Controller
             ->billablePatientSummaries($practice_id, $date)
             ->get()
             ->map(function ($summary) use ($default_code_id, $is_detach) {
-                $result = $this->patientSummaryDBRepository
-                    ->attachBillableProblems($summary->patient, $summary);
-
-                if ($result) {
-                    $summary = $result;
-                }
-
                 if ( ! $is_detach) {
                     $summary = $this->service
                         ->attachDefaultChargeableService($summary, $default_code_id, false);
@@ -535,6 +385,10 @@ class PracticeInvoiceController extends Controller
 
         $summary->approved = $request['approved'];
         $summary->rejected = $request['rejected'];
+
+        if ( ! $summary->approved && ! $summary->rejected) {
+            $summary->needs_qa = true;
+        }
 
         //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
         $summary->actor_id = auth()->user()->id;
@@ -582,7 +436,15 @@ class PracticeInvoiceController extends Controller
             return $this->badRequest("Report with id ${reportId} not found.");
         }
 
-        $summary->chargeableServices()->sync($chargeableIDs);
+        $toSync = [];
+
+        foreach ($chargeableIDs as $id) {
+            $toSync[$id] = [
+                'is_fulfilled' => true,
+            ];
+        }
+
+        $summary->chargeableServices()->sync($toSync);
 
         return $this->ok($summary);
     }

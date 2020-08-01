@@ -9,7 +9,8 @@
             <tr>
                 <th>Name</th>
                 <th>Provider</th>
-                <th>Program</th>
+                <th>Practice</th>
+                <th>Location</th>
                 <th>CCM Status</th>
                 <th>Careplan Status</th>
                 <th>Withdrawn Reason</th>
@@ -27,11 +28,12 @@
                 <td> <a href="{{ route('patient.summary', [ 'patientId' => $patient['key'] ]) }}">{{$patient['first_name']}} {{$patient['last_name']}}</a> </td>
                 <td> {{$patient['provider']}} </td>
                 <td> {{$patient['site']}} </td>
+                <td> {{$patient['location']}} </td>
                 <td> {{$patient['ccm_status']}} </td>
                 <td>
                     <?php
                         $status = $patient['careplan_status'];
-                        if ($status && str_contains($status, '{')) {
+                        if ($status && \Illuminate\Support\Str::contains($status, '{')) {
                             $status = ((object) json_decode($status))->status;
                         }
                         echo $status;

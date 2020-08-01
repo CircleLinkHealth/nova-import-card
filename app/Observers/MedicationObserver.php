@@ -7,19 +7,17 @@
 namespace App\Observers;
 
 use App\MedicationGroupsMap;
-use App\Models\CCD\Medication;
+use CircleLinkHealth\SharedModels\Entities\Medication;
 
 class MedicationObserver
 {
     /**
      * Listen to the Medication creating event.
-     *
-     * @param Medication $medication
      */
     public function creating(Medication $medication)
     {
-        if ( ! $medication->medication_group_id && $medication->name) {
-            $medication->medication_group_id = MedicationGroupsMap::getGroup($medication->name);
+        if ( ! $medication->medication_group_id && ($medication->name || $medication->sig)) {
+            $medication->medication_group_id = MedicationGroupsMap::getGroup($medication->name) ?? MedicationGroupsMap::getGroup($medication->sig);
         }
     }
 }

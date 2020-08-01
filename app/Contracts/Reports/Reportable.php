@@ -13,17 +13,12 @@ interface Reportable
     /**
      * Sum of activity time for this Reportable.
      *
-     * @param Carbon $start
-     * @param Carbon $end
-     *
      * @return mixed
      */
     public function activitiesDuration(Carbon $start, Carbon $end);
 
     /**
      * Total eligible-to-be-billed patients count (for given month) for this Reportable.
-     *
-     * @param Carbon $month
      *
      * @return mixed
      */
@@ -32,9 +27,7 @@ interface Reportable
     /**
      * Call count for this Reportable.
      *
-     * @param Carbon $start
-     * @param Carbon $end
-     * @param null   $status
+     * @param null $status
      *
      * @return mixed
      */
@@ -43,18 +36,12 @@ interface Reportable
     /**
      * Forwarded emergency notes count for this Reportable.
      *
-     * @param Carbon $start
-     * @param Carbon $end
-     *
      * @return mixed
      */
     public function forwardedEmergencyNotesCount(Carbon $start, Carbon $end);
 
     /**
      * Forwarded notes count for this Reportable.
-     *
-     * @param Carbon $start
-     * @param Carbon $end
      *
      * @return mixed
      */
@@ -70,9 +57,6 @@ interface Reportable
     /**
      * Observation count for this Reportable.
      *
-     * @param Carbon $start
-     * @param Carbon $end
-     *
      * @return mixed
      */
     public function observationsCount(Carbon $start, Carbon $end);
@@ -86,8 +70,6 @@ interface Reportable
 
     /**
      * Total billed patients count (since the beginning of time) for this Reportable.
-     *
-     * @param Carbon|null $month
      *
      * @return mixed
      */

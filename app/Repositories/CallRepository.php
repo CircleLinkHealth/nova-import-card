@@ -9,6 +9,7 @@ namespace App\Repositories;
 use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Facades\DB;
 
 class CallRepository
 {
@@ -31,7 +32,6 @@ class CallRepository
      * Get the number of calls for a patient for a month.
      *
      * @param $patientUserId
-     * @param Carbon|null $monthYear
      *
      * @return mixed
      */
@@ -54,7 +54,6 @@ class CallRepository
      * Get the number of successful calls for a patient for a month.
      *
      * @param $patientUserId
-     * @param Carbon|null $monthYear
      *
      * @return mixed
      */
@@ -110,7 +109,12 @@ class CallRepository
         $users = User::ofType('participant')
             ->whereHas('patientInfo', function ($q) {
                 $q->enrolledOrPaused();
-            });
+            })
+            ->with([
+                'patientInfo' => function ($q) {
+                    return $q->select(['id', 'user_id', 'preferred_contact_language']);
+                },
+            ]);
         if ($practiceId) {
             $users = $users->ofPractice($practiceId);
         } else {

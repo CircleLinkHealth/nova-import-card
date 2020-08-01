@@ -13,8 +13,6 @@ class NurseContactWindowObserver
     /**
      * Listen for the NurseContactWindow created event.
      *
-     * @param \CircleLinkHealth\Customer\Entities\NurseContactWindow $window
-     *
      * @internal param User $user
      */
     public function created(NurseContactWindow $window)
@@ -38,8 +36,6 @@ class NurseContactWindowObserver
 
     /**
      * Listen for the NurseContactWindow deleted event.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\NurseContactWindow $window
      *
      * @internal param User $user
      */

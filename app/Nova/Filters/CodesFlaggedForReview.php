@@ -6,7 +6,7 @@
 
 namespace App\Nova\Filters;
 
-use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Filters\Filter;
@@ -23,7 +23,6 @@ class CodesFlaggedForReview extends Filter
     /**
      * Apply the filter to the given query.
      *
-     * @param \Illuminate\Http\Request              $request
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param mixed                                 $value
      *
@@ -46,8 +45,6 @@ class CodesFlaggedForReview extends Filter
 
     /**
      * Get the filter's available options.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

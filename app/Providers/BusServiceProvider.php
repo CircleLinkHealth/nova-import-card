@@ -13,8 +13,6 @@ class BusServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
-     *
-     * @param \Illuminate\Bus\Dispatcher $dispatcher
      */
     public function boot(Dispatcher $dispatcher)
     {

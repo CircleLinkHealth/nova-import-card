@@ -24,41 +24,8 @@
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="!selectedProblem">
-                    <div class="row">
-                        <form @submit="addCcdProblem">
-                            <div class="col-sm-12">
-                                <label class="label label-danger font-14" v-if="patientHasSelectedProblem">
-                                    Condition is already in care plan. Please add a new condition.
-                                </label>
-                            </div>
-                            <div class="col-sm-12 top-10">
-                                <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name"
-                                        :value="newProblem.name" :limit="15"
-                                        :suggestions="cpmProblemsForAutoComplete"
-                                        :class="{ error: patientHasSelectedProblem }" :threshold="0.8"
-                                        @input="resolveIcd10Code">
-                                </v-complete>
-                            </div>
-                            <div class="col-sm-6 font-14 top-20">
-                                <label><input type="radio" :value="true" v-model="newProblem.is_monitored"/> For Care
-                                    Management</label>
-                            </div>
-                            <div class="col-sm-6 font-14 top-20">
-                                <label><input type="radio" :value="false" v-model="newProblem.is_monitored"/> Other
-                                    Condition</label>
-                            </div>
-                            <div class="col-sm-12 top-20" v-if="newProblem.is_monitored">
-                                <input type="text" class="form-control" v-model="newProblem.icd10"
-                                       placeholder="ICD10 Code"/>
-                            </div>
-                            <div class="col-sm-12 text-right top-20">
-                                <loader v-if="loaders.addProblem"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 selected" value="Add Condition"
-                                       :disabled="patientHasSelectedProblem"/>
-                            </div>
-                        </form>
-                    </div>
-
+                    <add-condition :patient-id="patientId" :problems="problems"
+                                   :should-select-is-monitored="true"></add-condition>
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
                     <div class="row top-20">
@@ -66,7 +33,8 @@
                             <form @submit="editCcdProblem">
                                 <div class="row">
                                     <div class="col-sm-12 top-20">
-                                        <div style="margin-bottom: 10px" v-if="selectedProblem.instruction.name !== selectedInstruction">
+                                        <div style="margin-bottom: 10px"
+                                             v-if="selectedProblem.instruction.name !== selectedInstruction">
                                             <input type="button"
                                                    class="btn btn-secondary margin-0 instruction-add selected"
                                                    @click="resetInstructions"
@@ -87,7 +55,8 @@
                                                 <label class="color-red" v-if="selectedProblem.is_monitored">Mapped
                                                     To:</label>
                                                 <select class="form-control" v-model="selectedProblem.cpm_id"
-                                                        @change="updateInstructions" v-if="selectedProblem.is_monitored">
+                                                        @change="updateInstructions"
+                                                        v-if="selectedProblem.is_monitored">
                                                     <option :value="null">Selected a Related Condition</option>
                                                     <option v-for="problem in cpmProblemsForSelect" :key="problem.value"
                                                             :value="problem.value">{{problem.label}}
@@ -184,6 +153,8 @@
     import VueComplete from 'v-complete'
     import Collapsible from '../../collapsible'
     import CareplanMixin from '../mixins/careplan.mixin'
+    import AddConditionMixin from '../mixins/add-condition.mixin'
+    import AddCondition from '../add-condition'
 
     export default {
         name: 'care-areas-modal',
@@ -191,8 +162,12 @@
             'patient-id': String,
             problems: Array
         },
-        mixins: [CareplanMixin],
+        mixins: [
+            CareplanMixin,
+            AddConditionMixin
+        ],
         components: {
+            'add-condition': AddCondition,
             'modal': Modal,
             'v-select': VueSelect,
             'v-complete': VueComplete,
@@ -202,31 +177,11 @@
             problemsForListing() {
                 return this.problems.distinct((p) => p.name)
             },
-            patientHasSelectedProblem() {
-                if (!this.selectedProblem) return (this.newProblem.name !== '') && this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
-                else return (this.selectedProblem.name !== '') && this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
-            },
             cpmProblemsForSelect() {
-                return this.cpmProblems.map(p => ({
+                return this.getAddConditionCpmProblems().map(p => ({
                     label: p.name,
                     value: p.id
                 })).sort((a, b) => a.label < b.label ? -1 : 1)
-            },
-            cpmProblemsForAutoComplete() {
-                return this.cpmProblems.filter(p => p && p.name).reduce((pA, pB) => {
-                    return pA.concat([{
-                        name: pB.name,
-                        id: pB.id,
-                        code: pB.code,
-                        is_snomed: false,
-                    }, ...(pB.is_behavioral ? pB.snomeds.map(snomed => ({
-                        name: snomed.icd_10_name,
-                        id: pB.id,
-                        code: snomed.icd_10_code,
-                        is_snomed: true,
-                    })) : [])])
-                }, []).distinct(p => p.name)
-                    .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
@@ -239,15 +194,7 @@
             return {
                 selectedProblem: null,
                 selectedInstruction: null,
-                cpmProblems: [],
                 newCpmProblem: null,
-                newProblem: {
-                    name: '',
-                    problem: '',
-                    is_monitored: true,
-                    icd10: null,
-                    cpm_problem_id: null
-                },
                 selectedCpmProblemId: null,
                 loaders: {
                     addInstruction: null,
@@ -264,41 +211,30 @@
         },
         methods: {
             select(problem) {
+                //when '+' is selected, problem === null.
+                let instruction = problem ? problem.instruction.name : problem
                 this.selectedProblem = problem
-                this.selectedInstruction = problem.instruction.name
-
+                this.selectedInstruction = instruction
             },
-            updateInstructions(event){
-                let cpmProblem = this.cpmProblems.find(problem => {
+            updateInstructions(event) {
+                let cpmProblem = this.getAddConditionCpmProblems().find(problem => {
                     return problem.id == event.target.value
                 })
 
-                if (cpmProblem.instruction){
+                if (cpmProblem.instruction) {
                     this.selectedInstruction = cpmProblem.instruction.name
-                }else{
+                } else {
                     this.selectedInstruction = null
                 }
             },
-            resetInstructions(){
+            resetInstructions() {
                 this.selectedInstruction = this.selectedProblem.instruction.name
-            },
-            reset() {
-                this.newProblem.name = ''
-                this.newProblem.problem = ''
-                this.newProblem.is_monitored = true
-                this.newProblem.icd10 = null
-            },
-            resolveIcd10Code() {
-                const autoCompleteProblem = this.cpmProblemsForAutoComplete.find(p => p.name == this.newProblem.name)
-                this.newProblem.icd10 = (autoCompleteProblem || {}).code || (this.problems.find(p => p.name == this.newProblem.name) || {}).code
-                this.newProblem.cpm_problem_id = (autoCompleteProblem || {}).id
             },
             removeProblem() {
                 if (this.selectedProblem && confirm('Are you sure you want to remove this problem?')) {
                     this.loaders.removeProblem = true
                     const url = `api/patients/${this.patientId}/problems/${this.selectedProblem.type}/${this.selectedProblem.id}`
                     return this.axios.delete(rootUrl(url)).then(response => {
-                        console.log('care-areas:remove-problems', response.data)
                         this.loaders.removeProblem = false
                         Event.$emit(`care-areas:remove-${this.selectedProblem.type}-problem`, this.selectedProblem.id)
                         Event.$emit('problems:updated', {})
@@ -315,27 +251,6 @@
                     this.selectedInstruction = this.selectedProblem.instructions[index]
                 }
             },
-            addCcdProblem(e) {
-                e.preventDefault()
-                this.loaders.addProblem = true
-                return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), {
-                    name: this.newProblem.name,
-                    cpm_problem_id: this.newProblem.cpm_problem_id,
-                    is_monitored: this.newProblem.is_monitored,
-                    icd10: this.newProblem.icd10
-                }).then(response => {
-                    console.log('full-conditions:add', response.data)
-                    this.loaders.addProblem = false
-                    Event.$emit('problems:updated', {})
-                    Event.$emit('full-conditions:add', response.data)
-                    this.reset()
-                    this.selectedProblem = response.data
-                    setImmediate(() => this.checkPatientBehavioralStatus())
-                }).catch(err => {
-                    console.error('full-conditions:add', err)
-                    this.loaders.addProblem = false
-                })
-            },
             editCcdProblem(e) {
                 e.preventDefault()
                 this.loaders.editProblem = true
@@ -345,7 +260,6 @@
                     icd10: this.selectedProblem.icd10,
                     instruction: this.selectedInstruction
                 }).then(response => {
-                    console.log('full-conditions:edit', response.data)
                     this.loaders.editProblem = false
                     Event.$emit('problems:updated', {})
                     Event.$emit('full-conditions:edit', response.data)
@@ -358,21 +272,6 @@
             switchToFullConditionsModal() {
                 Event.$emit('modal-care-areas:hide')
                 Event.$emit('modal-full-conditions:show')
-            },
-            getSystemCodes() {
-                let codes = this.careplan().allCpmProblemCodes || null
-
-                if (codes !== null) {
-                    this.codes = codes
-                    return true
-                }
-
-                return this.axios.get(rootUrl(`api/problems/codes`)).then(response => {
-                    // console.log('full-conditions:get-system-codes', response.data)
-                    this.codes = response.data
-                }).catch(err => {
-                    console.error('full-conditions:get-system-codes', err)
-                })
             },
             addCode(e) {
                 e.preventDefault()
@@ -408,15 +307,18 @@
              * is patient BHI, CCM or BOTH?
              */
             checkPatientBehavioralStatus() {
-                const ccmCount = this.problems.filter(problem => {
+                const problems = this.problems || [];
+                const cpmProblems = this.getAddConditionCpmProblems() || [];
+
+                const ccmCount = problems.filter(problem => {
                     if (problem.is_monitored) {
-                        const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
+                        const cpmProblem = cpmProblems.find(cpm => cpm.id == problem.cpm_id)
                         return cpmProblem ? !cpmProblem.is_behavioral : false
                     }
                     return false
                 }).length
-                const bhiCount = this.problems.filter(problem => {
-                    const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
+                const bhiCount = problems.filter(problem => {
+                    const cpmProblem = cpmProblems.find(cpm => cpm.id == problem.cpm_id)
                     return cpmProblem ? cpmProblem.is_behavioral : false
                 }).length
                 console.log('ccm', ccmCount, 'bhi', bhiCount)
@@ -426,10 +328,6 @@
                 })
             }
         },
-        mounted() {
-            this.cpmProblems = this.careplan().allCpmProblems || []
-            this.getSystemCodes()
-        }
     }
 </script>
 

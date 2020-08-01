@@ -31,9 +31,6 @@ class CallsViewController extends ApiController
      *     )
      *   )
      *
-     * @param Request         $request
-     * @param CallViewFilters $filters
-     *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request, CallViewFilters $filters)

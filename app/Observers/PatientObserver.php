@@ -6,38 +6,21 @@
 
 namespace App\Observers;
 
-use App\Enrollee;
-use App\TargetPatient;
+use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
+use App\Listeners\AssignPatientToStandByNurse;
+use App\Notifications\PatientUnsuccessfulCallNotification;
+use App\Services\Calls\SchedulerService;
+use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
+use Illuminate\Support\Facades\Artisan;
 
 class PatientObserver
 {
-    public function attachTargetPatient(Patient $patient)
-    {
-        $user = $patient->user;
-
-        $enrollee = Enrollee::where([
-            ['mrn', '=', $patient->mrn_number],
-            ['practice_id', '=', optional($user)->primaryPractice],
-        ])->first();
-
-        if ($enrollee) {
-            //find target patient with matching ehr_patient_id, update or create TargetPatient
-            $targetPatient = TargetPatient::where('enrollee_id', $enrollee->id)
-                ->orWhere('ehr_patient_id', $enrollee->mrn)
-                ->first();
-
-            if ($targetPatient) {
-                $user->ehrInfo()->save($targetPatient);
-            }
-        }
-    }
+    use UnreachablePatientsToCaPanel;
 
     /**
      * Listen to the Patient created event.
-     *
-     * @param Patient $patient
      */
     public function created(Patient $patient)
     {
@@ -46,13 +29,43 @@ class PatientObserver
         }
     }
 
-    /**
-     * @param Patient $patient
-     */
+    public function saved(Patient $patient)
+    {
+        if ($patient->isDirty('ccm_status')) {
+            if (Patient::UNREACHABLE === $patient->ccm_status
+                && ! $patient->user->hasRole('survey-only')) {
+                $this->createEnrolleModelForPatient($patient->user);
+            }
+
+            if (in_array(
+                $patient->ccm_status,
+                [
+                    Patient::WITHDRAWN_1ST_CALL,
+                    Patient::WITHDRAWN,
+                    Patient::PAUSED,
+                    Patient::UNREACHABLE,
+                ]
+            )) {
+                Artisan::queue(
+//                    Do we want to run this if survey-only? I dont see any reason
+                    RemoveScheduledCallsForWithdrawnAndPausedPatients::class,
+                    ['patientUserIds' => [$patient->user_id]]
+                );
+            }
+
+            $this->assignToStandByNurseIfChangedToEnrolled($patient);
+        }
+
+        if ($patient->isDirty('no_call_attempts_since_last_success') && $patient->no_call_attempts_since_last_success > 0) {
+            // ROAD-98 - sms patients with unsuccessful call
+            $this->sendUnsuccessfulCallNotificationToPatient($patient);
+        }
+    }
+
     public function saving(Patient $patient)
     {
-        if ($patient->isDirty('mrn_number')) {
-            $this->attachTargetPatient($patient);
+        if ($this->statusChangedToEnrolled($patient)) {
+            $patient->no_call_attempts_since_last_success = 0;
         }
     }
 
@@ -62,30 +75,33 @@ class PatientObserver
             return;
         }
 
-        $note = $patient->user->notes()->create([
-            'author_id'    => 948,
-            'body'         => "Patient consented on {$patient->consent_date}",
-            'type'         => 'Patient Consented',
-            'performed_at' => Carbon::now()->toDateTimeString(),
-        ]);
+        $note = $patient->user->notes()->create(
+            [
+                'author_id'    => isProductionEnv() ? 948 : 1,
+                'body'         => "Patient consented on {$patient->consent_date}",
+                'type'         => 'Patient Consented',
+                'performed_at' => Carbon::now()->toDateTimeString(),
+            ]
+        );
     }
 
     /**
      * Listen to the Patient updated event.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\Patient $patient
      */
     public function updated(Patient $patient)
     {
         if ($patient->isDirty('consent_date')) {
             $this->sendPatientConsentedNote($patient);
         }
+
+        $this->assignToStandByNurseIfChangedToEnrolled($patient);
     }
 
     /**
      * Listen to the Patient updated event.
-     *
-     * @param Patient $patient
+     * Reset paused_letter_printed_at in case date_paused was changed.
+     * Make sure patient has scheduled call in case status was changed AND is now 'enrolled'.
+     * Make sure call attempts counter is reset in case status was 'unreachable' and is now 'enrolled'.
      */
     public function updating(Patient $patient)
     {
@@ -94,9 +110,61 @@ class PatientObserver
         }
 
         if ($patient->isDirty('ccm_status')) {
-            if (Patient::UNREACHABLE == $patient->getOriginal('ccm_status') && Patient::ENROLLED == $patient->ccm_status) {
+            if ($this->statusChangedToEnrolled($patient)) {
                 $patient->no_call_attempts_since_last_success = 0;
             }
         }
+    }
+
+    private function assignToStandByNurseIfChangedToEnrolled(Patient $patient)
+    {
+        if ( ! $patient->user->isParticipant()) {
+            return;
+        }
+        if ($patient->isDirty('ccm_status')) {
+            if ($this->statusChangedToEnrolled($patient)) {
+                $patient->loadMissing('user');
+                AssignPatientToStandByNurse::assign($patient->user);
+            }
+        }
+    }
+
+    private function sendUnsuccessfulCallNotificationToPatient(Patient $patient)
+    {
+        if ( ! isUnsuccessfulCallPatientNotificationEnabled()) {
+            return;
+        }
+
+        if (Patient::ENROLLED !== $patient->ccm_status) {
+            return;
+        }
+
+        //send notification only on first unsuccessful attempt, and then every after 2, so 1st, 3rd, 5th
+        if (0 === $patient->no_call_attempts_since_last_success % 2) {
+            return;
+        }
+
+        $call = SchedulerService::getLastUnsuccessfulCall($patient->user_id, now(), true);
+        if ( ! $call) {
+            return;
+        }
+
+        $call->inboundUser->notify(new PatientUnsuccessfulCallNotification($call, false));
+    }
+
+    private function statusChangedToEnrolled(Patient $patient): bool
+    {
+        $oldValue = $patient->getOriginal('ccm_status');
+        $newValue = $patient->ccm_status;
+
+        if (Patient::ENROLLED != $newValue) {
+            return false;
+        }
+
+        if (Patient::ENROLLED == $oldValue) {
+            return false;
+        }
+
+        return true;
     }
 }

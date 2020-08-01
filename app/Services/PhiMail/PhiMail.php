@@ -7,12 +7,16 @@
 namespace App\Services\PhiMail;
 
 use App\Contracts\DirectMail;
-use App\DirectMailMessage;
+use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PhiMail implements DirectMail
 {
+    const UPG_NAME = 'UPG';
+
     /**
      * @var IncomingMessageHandler
      */
@@ -39,13 +43,15 @@ class PhiMail implements DirectMail
     }
 
     /**
-     * @throws \Exception
+     * @param null $dmUserAddress
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      *
      * @return bool
      */
-    public function receive()
+    public function receive($dmUserAddress = null)
     {
-        $this->initPhiMailConnection();
+        $this->initPhiMailConnection($dmUserAddress);
 
         if ( ! is_a($this->connector, PhiMailConnector::class)) {
             return false;
@@ -53,71 +59,9 @@ class PhiMail implements DirectMail
 
         try {
             while ($message = $this->connector->check()) {
-                if ( ! $message->isMail()) {
-                    // Process a status update for a previously sent message.
-//                        echo ("Status message for id = " . $message->messageId . "\n");
-//                        echo ("  StatusCode = " . $message->statusCode . "\n");
-//                        if ($message->info != null) echo ("  Info = " . $message->info . "\n");
-                    if ('failed' == $message->statusCode) {
-                        // ...do something about a failed message...
-                        // $message->messageId will match the messageId returned
-                        // when you originally sent the corresponding message
-                        // See the API documentation for information about
-                        // status notification types and their meanings.
-
-                        Log::error(
-                            "DirectMail Message Fail. Message ID: `$message->messageId`. Logged from:".__METHOD__.':'.__LINE__
-                        );
-                    }
-
-                    // This signals the server that the status update can be
-                    // safely removed from the queue,
-                    // i.e. it has been successfully received and processed.
-                    // Note: this is NOT the same method used to acknowledge
-                    // regular messages.
-                    $this->connector->acknowledgeStatus();
-                } else {
-                    // If you are checking messages for an address group,
-                    // $message->recipient will contain the address in that
-                    // group to which this message should be delivered.
-//                Log::critical("A new message is available for " . $message->recipient . "\n");
-//                Log::critical("from " . $message->sender . "; id "
-//                    . $message->messageId . "; #att=" . $message->numAttachments
-//                    . "\n");
-
-                    $dm = $this
-                        ->incomingMessageHandler
-                        ->createNewDirectMessage($message);
-
-                    for ($i = 0; $i <= $message->numAttachments; ++$i) {
-                        // Get content for part i of the current message.
-                        $showRes = $this->connector->show($i);
-
-                        $this
-                            ->incomingMessageHandler
-                            ->handleMessageAttachment($dm, $showRes);
-
-                        // Store the list of attachments and associated info. This info is only
-                        // included with message part 0.
-                        if (0 == $i) {
-                            $this
-                                ->incomingMessageHandler
-                                ->storeMessageSubject($dm, $showRes);
-                        }
-                    }
-                    // This signals the server that the message can be safely removed from the queue
-                    // and should only be sent after all required parts of the message have been
-                    // retrieved and processed.:log
-                    $this->connector->acknowledgeMessage();
-
-                    if ($message->numAttachments > 0) {
-                        $this->notifyAdmins($dm);
-
-                        $message = "Checked EMR Direct Mailbox. There where {$message->numAttachments} attachment(s). \n";
-
-                        sendSlackMessage('#background-tasks', $message);
-                    }
-                }
+                $message->isMail()
+                    ? $this->handleValidMail($message)
+                    : $this->handleInvalidMail($message);
             }
         } catch (\Exception $e) {
             $this->handleException($e);
@@ -128,12 +72,12 @@ class PhiMail implements DirectMail
      * @param $outboundRecipient
      * @param $binaryAttachmentFilePath
      * @param $binaryAttachmentFileName
-     * @param null                                          $ccdaAttachmentPath
-     * @param \CircleLinkHealth\Customer\Entities\User|null $patient
-     * @param mixed|null                                    $body
-     * @param mixed|null                                    $subject
+     * @param null       $ccdaContents
+     * @param mixed|null $body
+     * @param mixed|null $subject
+     * @param mixed|null $sender
      *
-     * @throws \Exception
+     *@throws \Exception
      *
      * @return bool|SendResult[]
      */
@@ -141,13 +85,13 @@ class PhiMail implements DirectMail
         $outboundRecipient,
         $binaryAttachmentFilePath = null,
         $binaryAttachmentFileName = null,
-        $ccdaAttachmentPath = null,
+        $ccdaContents = null,
         User $patient = null,
         $body = null,
-        $subject = null
+        $subject = null,
+        $sender = null
     ) {
-        //add case when everything is null
-        $this->initPhiMailConnection();
+        $this->initPhiMailConnection($sender);
 
         if ( ! is_a($this->connector, PhiMailConnector::class)) {
             return false;
@@ -182,14 +126,16 @@ class PhiMail implements DirectMail
                 $this->connector->setSubject($subject);
             }
 
-            if ($ccdaAttachmentPath) {
-                // Add a CDA attachment and let phiMail server assign a filename.
-                $this->connector->addCDA(self::loadFile($ccdaAttachmentPath));
-            }
-
             if ($binaryAttachmentFilePath) {
                 // Add a binary attachment and specify the attachment filename.
                 $this->connector->addRaw(self::loadFile($binaryAttachmentFilePath), $binaryAttachmentFileName);
+            }
+
+            $ccdaContent = $this->upgTemporaryHack($patient);
+
+            if ($ccdaContent) {
+                // Add a CDA attachment and let phiMail server assign a filename.
+                $this->connector->addCDA($ccdaContent);
             }
 
             // Optionally, request a final delivery notification message.
@@ -198,7 +144,7 @@ class PhiMail implements DirectMail
             // result in a failure notification after the timeout period has elapsed.
             // This command will override the default setting set by the server.
             //
-            //$this->connector->setDeliveryNotification(true);
+            // $this->connector->setDeliveryNotification(true);
 
             // Send the message. srList will contain one entry for each recipient.
             // If more than one recipient was specified, then each would have an entry.
@@ -221,6 +167,35 @@ class PhiMail implements DirectMail
         return $srList ?? false;
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Exception
+     */
+    private function fetchKeyIfNotExists(string $certFileName, string $certPath)
+    {
+        $storage = Storage::disk('secrets');
+
+        if ( ! is_readable($certPath)) {
+            touch($certPath);
+
+            if ( ! is_writeable($certPath)) {
+                throw new \Exception("$certPath is not writable");
+            }
+
+            if ( ! $storage->has($certFileName)) {
+                throw new \Exception("$certFileName not found on remote drive.");
+            }
+
+            $contents = $storage->get($certFileName);
+
+            $written = file_put_contents($certPath, $contents);
+
+            if (false === $written) {
+                throw new \Exception("Could not write `$certFileName` to `$certPath`.");
+            }
+        }
+    }
+
     private function handleException(\Exception $e)
     {
         $message     = $e->getMessage()."\n".$e->getFile()."\n".$e->getLine();
@@ -235,10 +210,64 @@ class PhiMail implements DirectMail
     /**
      * @throws \Exception
      */
-    private function initPhiMailConnection()
+    private function handleInvalidMail(CheckResult $cr)
     {
-        $phiMailUser = config('services.emr-direct.user');
-        $phiMailPass = config('services.emr-direct.password');
+        if ('failed' == $cr->statusCode) {
+            Log::error("DirectMail Message Fail. Message ID: `$cr->messageId`. Logged from:".__METHOD__.':'.__LINE__.'  Info = '.$cr->info."\n");
+        }
+
+        $this->connector->acknowledgeStatus();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function handleValidMail(CheckResult $message)
+    {
+        $dm = $this
+            ->incomingMessageHandler
+            ->createNewDirectMessage($message);
+
+        for ($i = 0; $i <= $message->numAttachments; ++$i) {
+            // Get content for part i of the current message.
+            $showRes = $this->connector->show($i);
+
+            $this
+                ->incomingMessageHandler
+                ->handleMessageAttachment($dm, $showRes);
+
+            // Store the list of attachments and associated info. This info is only
+            // included with message part 0.
+            if (0 == $i) {
+                $this
+                    ->incomingMessageHandler
+                    ->storeMessageSubject($dm, $showRes);
+            }
+        }
+
+        $this->incomingMessageHandler->processCcdas($dm);
+
+        $this->connector->acknowledgeMessage();
+
+        event(new DirectMailMessageReceived($dm));
+    }
+
+    /**
+     * @param null $dmUserAddress
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    private function initPhiMailConnection($dmUserAddress = null)
+    {
+        $phiMailUser        = $dmUserAddress ? $dmUserAddress : config('services.emr-direct.user');
+        $phiMailPass        = config('services.emr-direct.password');
+        $clientCertPath     = base_path(config('services.emr-direct.conc-keys-pem-path'));
+        $serverCertPath     = base_path(config('services.emr-direct.server-cert-pem-path'));
+        $clientCertFileName = config('services.emr-direct.client-cert-filename');
+        $serverCertFileName = config('services.emr-direct.server-cert-filename');
+
+        $this->fetchKeyIfNotExists($serverCertFileName, $serverCertPath);
+        $this->fetchKeyIfNotExists($clientCertFileName, $clientCertPath);
 
         // Use the following command to enable client TLS authentication, if
         // required. The key file referenced should contain the following
@@ -247,15 +276,14 @@ class PhiMail implements DirectMail
         //   <your_client_certificate.pem>
         //   <intermediate_CA_certificate.pem>
         //   <root_CA_certificate.pem>
-        //
         PhiMailConnector::setClientCertificate(
-            base_path(config('services.emr-direct.conc-keys-pem-path')),
+            $clientCertPath,
             config('services.emr-direct.pass-phrase')
         );
 
         // This command is recommended for added security to set the trusted
         // SSL certificate or trust anchor for the phiMail server.
-        PhiMailConnector::setServerCertificate(base_path(config('services.emr-direct.server-cert-pem-path')));
+        PhiMailConnector::setServerCertificate($serverCertPath);
 
         $phiMailServer = config('services.emr-direct.mail-server');
         $phiMailPort   = config('services.emr-direct.port');
@@ -264,24 +292,30 @@ class PhiMail implements DirectMail
         $this->connector->authenticateUser($phiMailUser, $phiMailPass);
     }
 
-    /**
-     * This is to help notify us of the status of CCDs we receive.
-     *
-     * @param DirectMailMessage $dm
-     */
-    private function notifyAdmins(
-        DirectMailMessage $dm
-    ) {
-        if (app()->environment('local')) {
-            return;
+    private function upgTemporaryHack(?User $patient)
+    {
+        if ( ! $patient) {
+            return null;
         }
+        $patient->load('primaryPractice');
 
-        $link        = route('import.ccd.remix');
-        $messageLink = route('direct-mail.show', [$dm->id]);
+        try {
+            if (self::UPG_NAME === $patient->primaryPractice->name && $patient->hasCcda()) {
+                $content = $patient->ccdas()->orderByDesc('id')->with('media')->first()->getMedia('ccd')->first()->getFile();
 
-        sendSlackMessage(
-            '#ccd-file-status',
-            "We received a message from EMR Direct. \n Click here to see the message {$messageLink}. \n If a CCD was included in the message, it has been imported. Click here {$link} to QA and Import."
-        );
+                if ($content && ! Str::startsWith($content, ['<?xml'])) {
+                    $content = '<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="CDA.xsl"?>'.$content;
+                }
+
+                if ($content) {
+                    Log::warning('UPG: Attach patient '.$patient->id.' CCDA');
+
+                    return $content;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('UPG CCDA not attached for patient '.$patient->id);
+        }
     }
 }

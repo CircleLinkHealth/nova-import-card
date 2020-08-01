@@ -14,13 +14,15 @@ use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 
 class NurseDailyReport
 {
-    public static function data(Carbon $forDate = null)
+    public static function data(Carbon $forDate = null, $nurse_users = null, $bypassSorting = false)
     {
         $date = $forDate ?? Carbon::now();
 
-        $nurse_users = User::careCoaches()
-            ->where('access_disabled', 0)
-            ->get();
+        if ( ! $nurse_users) {
+            $nurse_users = User::careCoaches()
+                ->where('access_disabled', 0)
+                ->get();
+        }
 
         $aggregatedTime = new AggregatedTotalTimePerNurse(
             $nurse_users->pluck('id')->all(),
@@ -57,14 +59,15 @@ class NurseDailyReport
             $s1                      = $activity_time % 60;
             $activity_time_formatted = sprintf('%02d:%02d:%02d', $H1, $m1, $s1);
 
-            $system_time = PageTimer::where('provider_id', $nurse->id)
-                ->createdOn($date, 'updated_at')
-                ->sum('billable_duration');
+            //it seems that this field may have been deprecated
+//            $system_time = PageTimer::where('provider_id', $nurse->id)
+//                ->createdOn($date, 'updated_at')
+//                ->sum('billable_duration');
 
-            $system_time_formatted = secondsToHMS($system_time);
+//            $system_time_formatted = secondsToHMS($system_time);
 
-            $nurses[$i]['CCM Mins Today']   = $activity_time_formatted;
-            $nurses[$i]['Total Mins Today'] = $system_time_formatted;
+            $nurses[$i]['CCM Mins Today'] = $activity_time_formatted;
+//            $nurses[$i]['Total Mins Today'] = $system_time_formatted;
 
             $carbon_now = Carbon::now();
 
@@ -83,7 +86,9 @@ class NurseDailyReport
         }
 
         $nurses = collect($nurses);
-        $nurses->sortBy('last_activity');
+        if ( ! $bypassSorting) {
+            $nurses->sortBy('last_activity');
+        }
 
         return $nurses;
     }

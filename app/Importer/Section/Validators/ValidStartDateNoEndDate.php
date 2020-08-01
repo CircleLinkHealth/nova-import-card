@@ -6,13 +6,16 @@
 
 namespace App\Importer\Section\Validators;
 
-use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
-use App\Contracts\Importer\MedicalRecord\Section\Validator as SectionValidator;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\Validator as SectionValidator;
 
 class ValidStartDateNoEndDate implements SectionValidator
 {
-    public function isValid(ItemLog $item): bool
+    public function isValid($item): bool
     {
+        if (is_array($item)) {
+            $item = (object) $item;
+        }
+
         if ( ! $this->shouldValidate($item)) {
             return false;
         }
@@ -20,8 +23,12 @@ class ValidStartDateNoEndDate implements SectionValidator
         return true;
     }
 
-    public function shouldValidate(ItemLog $item): bool
+    public function shouldValidate($item): bool
     {
+        if (is_array($item)) {
+            $item = (object) $item;
+        }
+
         return ! empty($item->start) && empty($item->end);
     }
 }

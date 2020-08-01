@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\InvalidArgumentException;
 use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Support\Facades\Cache;
@@ -77,7 +77,7 @@ class LegacyBhiConsentController extends Controller
         $tomorrow = $now->copy()->addDay()->startOfDay()->addHours(7);
 
         return null !== $nextScheduledCallDate
-            ? Carbon::parse($nextScheduledCallDate)->diffInMinutes($now)
+            ? Carbon::parse($nextScheduledCallDate)->setTime(11, 30)->diffInMinutes($now)
             : $tomorrow->diffInMinutes($now);
     }
 

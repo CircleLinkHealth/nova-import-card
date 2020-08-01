@@ -18,8 +18,6 @@ class WeeklyProviderReport extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @param array $data
      */
     public function __construct(array $data)
     {
@@ -60,7 +58,7 @@ class WeeklyProviderReport extends Notification
             ->from(
                 'notifications@careplanmanager.com',
                 optional($notifiable)->saasAccountName() ?? 'CircleLink Health'
-                                  )
+            )
             ->subject('Dr. '.$this->data['name'].'\'s CCM Weekly Summary');
     }
 

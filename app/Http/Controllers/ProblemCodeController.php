@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProblemCode;
-use App\ProblemCodeSystem;
+use CircleLinkHealth\SharedModels\Entities\ProblemCode;
+use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 use Illuminate\Http\Request;
 
 class ProblemCodeController extends Controller

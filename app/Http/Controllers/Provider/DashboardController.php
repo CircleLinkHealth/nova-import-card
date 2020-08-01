@@ -20,6 +20,7 @@ use CircleLinkHealth\Customer\Entities\Settings;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
@@ -47,7 +48,9 @@ class DashboardController extends Controller
     {
         $practiceChargeableRel = $this->primaryPractice->chargeableServices;
 
-        $allChargeableServices = ChargeableService::all()
+        $allChargeableServices = ChargeableService::where('is_enabled', '=', 1)
+            ->orderBy('order')
+            ->get()
             ->map(function ($service) use ($practiceChargeableRel) {
                 $existing = $practiceChargeableRel
                     ->where('id', '=', $service->id)
@@ -185,7 +188,7 @@ class DashboardController extends Controller
             'email'      => $request->input('email'),
             'subject'    => $request->input('subject'),
             'message'    => $request->input('message'),
-            'code'       => str_random(20),
+            'code'       => Str::random(20),
         ]);
     }
 
@@ -293,7 +296,7 @@ Please update their profiles <a href='{$route}'>here</a>.");
             $update['clh_pppm']     = $request->input('clh_pppm');
             $update['term_days']    = $request->input('term_days');
             $update['active']       = $request->input('is_active');
-            $update['is_demo']      = $request->input('is_demo');
+            $update['is_demo']      = $request->input('is_demo') ?? false;
 
             if ((bool) $this->primaryPractice->active && ! (bool) $update['active']) {
                 $enrolledPatientsExist = User::ofPractice($this->primaryPractice->id)

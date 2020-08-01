@@ -39,9 +39,6 @@ class ResolveInvoiceDispute extends Action
     /**
      * Perform the action on the given models.
      *
-     * @param \Laravel\Nova\Fields\ActionFields $fields
-     * @param \Illuminate\Support\Collection    $models
-     *
      * @return mixed
      */
     public function handle(ActionFields $fields, Collection $models)
@@ -69,6 +66,6 @@ class ResolveInvoiceDispute extends Action
     {
         $invoice->load(['nurse.user']);
         $generator = new Generator([$invoice->nurse->user_id], $invoice->month_year->copy()->startOfMonth(), $invoice->month_year->copy()->endOfMonth(), false, true);
-        $invoices  = $generator->createAndNotifyNurses();
+        $generator->createAndNotifyNurses();
     }
 }

@@ -6,9 +6,10 @@
 
 namespace App\Console\Commands;
 
-use App\Contracts\Services\TwilioClientable;
+use CircleLinkHealth\Core\TwilioClientable;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Twilio\Rest\Api\V2010\Account\RecordingInstance;
 
 class DownloadTwilioRecordings extends Command
@@ -33,8 +34,6 @@ class DownloadTwilioRecordings extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param TwilioClientable $twilioClientService
      */
     public function __construct(TwilioClientable $twilioClientService)
     {
@@ -68,7 +67,7 @@ class DownloadTwilioRecordings extends Command
     private function download(RecordingInstance $recording): bool
     {
         $ext    = '.mp3';
-        $mp3Url = str_replace_last('.json', $ext, $recording->uri);
+        $mp3Url = Str::replaceLast('.json', $ext, $recording->uri);
         $url    = 'https://api.twilio.com'.$mp3Url;
         $result = $this->twilioService->downloadMedia($url);
         if ($result && $result['errorDetail']) {

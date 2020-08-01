@@ -9,6 +9,7 @@ namespace App\Http\Controllers\API;
 use App\Filters\NurseFilters;
 use App\Http\Resources\NurseInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
+use Illuminate\Http\Request;
 
 class NurseController extends ApiController
 {
@@ -26,8 +27,10 @@ class NurseController extends ApiController
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(NurseFilters $filters)
+    public function index(Request $request, NurseFilters $filters)
     {
-        return NurseInfo::collection(Nurse::filter($filters)->get());
+        $filtered = Nurse::filter($filters)->get();
+
+        return NurseInfo::collection($filtered);
     }
 }

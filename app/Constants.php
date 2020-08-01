@@ -7,6 +7,7 @@
 namespace App;
 
 use CircleLinkHealth\Customer\Entities\Ehr;
+use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 
 class Constants
 {
@@ -29,23 +30,28 @@ class Constants
         Constants::ICD10_NAME  => 2,
         Constants::SNOMED_NAME => 3,
     ];
-    const ICD10      = 'icd_10_code';
-    const ICD10_NAME = 'ICD-10';
+    const ICD10      = ProblemCodeSystem::ICD10;
+    const ICD10_NAME = ProblemCodeSystem::ICD10_NAME;
 
     /**
      * Problem Codes.
      */
-    const ICD9 = 'icd_9_code';
+    const ICD9 = ProblemCodeSystem::ICD9;
 
-    const ICD9_NAME = 'ICD-9';
+    const ICD9_NAME = ProblemCodeSystem::ICD9_NAME;
 
     const MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS = 1200;
 
     //Groups for Nova Resources
-    const NOVA_GROUP_CARE_COACHES = 'Care Coaches';
-    const NOVA_GROUP_ENROLLMENT   = 'Enrollment';
-    const NOVA_GROUP_NBI          = 'NBI';
-    const NOVA_GROUP_PRACTICES    = 'Practices';
+    const NOVA_GROUP_ADMIN               = 'Admin';
+    const NOVA_GROUP_CARE_COACHES        = 'Care Coaches';
+    const NOVA_GROUP_ENROLLMENT          = 'Enrollment';
+    const NOVA_GROUP_NBI                 = 'NBI';
+    const NOVA_GROUP_PRACTICE_DATA_PULLS = 'Practice Data Pulls';
+    const NOVA_GROUP_PRACTICES           = 'Practices';
+    const NOVA_GROUP_SETTINGS            = 'Settings';
+
+    const PATIENT_PHI_RELATIONSHIPS = ['patientInfo'];
 
     const PRACTICE_STAFF_ROLE_NAMES     = ['provider', 'office_admin', 'med_assistant', 'registered-nurse', 'specialist'];
     const SAAS_INTERNAL_USER_ROLE_NAMES = ['saas-admin', 'care-center'];
@@ -60,13 +66,18 @@ class Constants
         'margin-bottom'      => '15',
         'margin-right'       => '0.75',
     ];
-    const SNOMED          = 'snomed_code';
-    const SNOMED_NAME     = 'SNOMED CT';
-    const VIEWING_PATIENT = 'viewing-patient';
+    const SNOMED                 = ProblemCodeSystem::SNOMED;
+    const SNOMED_NAME            = ProblemCodeSystem::SNOMED_NAME;
+    const TEN_MINUTES_IN_SECONDS = 600;
+
+    const THIRTY_DAYS_IN_MINUTES     = 43200;
+    const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre><br><ul><ol><li><span><a>';
+    const TRIX_FIELDS                = ['patient-email-body'];
+    const VIEWING_PATIENT            = 'viewing-patient';
 
     public static function athenaEhrId()
     {
-        return \Cache::remember('athena_ehr_id_in_cpm', 5, function () {
+        return \Cache::remember('athena_ehr_id_in_cpm', 2, function () {
             return optional(Ehr::whereName('Athena')->firstOrFail())->id;
         });
     }

@@ -5,7 +5,7 @@
                 @foreach ($errors->getMessages() as $key => $value)
                     @foreach ($value as $error)
                         <li class="{{$key}}">
-                            {{ $error }}
+                            {!! $error !!}
                             @if($key === 'outdated-browser')
 
                                 <div class="col-md-12 text-center">

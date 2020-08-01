@@ -44,10 +44,6 @@ function formatTime($time)
                 margin-top: -2%;
             }
 
-            .dataTables_wrapper .dataTables_paginate {
-                visibility: hidden;
-            }
-
             .dataTables_wrapper .dataTables_length label {
                 padding-top: 10%;
             }
@@ -60,7 +56,7 @@ function formatTime($time)
             $(document).ready(function () {
                 const table = $('#cpmEditableTable');
                 table.DataTable({
-                    order: [[2, "desc"]],
+                    order: [],
                     processing: true,
                     scrollX: true,
                     fixedHeader: true,
@@ -69,12 +65,6 @@ function formatTime($time)
 
 
                 });
-
-                // $('#filter-select').change(function () {
-                //     table.column($(this).data('column'))
-                //         .search($(this).val())
-                //         .draw();
-                // });
 
                 function addClickListener() {
                     const row = $('.patientNameLink');
@@ -111,6 +101,53 @@ function formatTime($time)
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                     <div class="">
+
+                        @if(isset($draftNotes) && $draftNotes->isNotEmpty())
+                            <div class="row text-center">
+                                <div class="col-md-12">
+                                    <h4>
+                                        Please <strong>save</strong> or <strong>delete</strong> the following note
+                                        drafts:
+                                    </h4>
+                                </div>
+                                <div class="col-md-8 col-md-offset-2">
+                                    <table class="display dataTable no-footer">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                Patient ID
+                                            </th>
+                                            <th>
+                                                Date Created
+                                            </th>
+                                            <th>
+
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($draftNotes as $key => $note)
+                                            <tr>
+                                                <td>
+                                                    {{$note->patient_id}}
+                                                </td>
+                                                <td>
+                                                    {{$note->performed_at->toDateString()}}
+                                                </td>
+                                                <td>
+                                                    <a href="{{$note->editLink()}}"
+                                                       style="color: blue; text-transform: uppercase; font-weight: 600">
+                                                        Approve/Delete
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @endif
+
                         <br/>
                         <br/>
                         <div class="row">
@@ -147,7 +184,7 @@ function formatTime($time)
                                                 </div>
                                             </div>
                                         </div>
-                                        </form>
+                                        {!! Form::close() !!}
                                     </div>
                                 </div>
                                 <div class="">
@@ -189,6 +226,7 @@ function formatTime($time)
                                             <th>Time<br>Zone</th>
                                             <th>Last<br>Date called</th>
                                             <th>CCM<br>Time to date</th>
+                                            <th>BHI<br>Time to date</th>
                                             <th># Calls<br>to date</th>
                                             <th>Provider</th>
                                             <th>Practice</th>
@@ -199,18 +237,35 @@ function formatTime($time)
                                         @if (count($calls) > 0)
                                             @foreach($calls as $key => $call)
                                                 <?php
-                                                $curTime   = \Carbon\Carbon::now();
-                                                $curDate   = $curTime->toDateString();
+                                                $curTime = \Carbon\Carbon::now();
+
                                                 $curTime   = $curTime->toTimeString();
                                                 $rowBg     = '';
                                                 $boldRow   = '';
                                                 $textBlack = '';
-                                                if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
+                                                if ($call->scheduled_date == now()->toDateString()
+                                                    && ! empty($call->call_time_end)
+                                                    && now()
+                                                        ->setTimezone($call->timezone ?? config('app.timezone'))
+                                                        ->setTimeFromTimeString($call->call_time_end)->isPast()
+                                                    && 'addendum_response' !== $call->type) {
                                                     $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
-                                                if ('Call Back' === $call->type || $call->asap && 'reached' !== $call->status && 'done' !== $call->status) {
+                                                if (($call->asap || 'Call Back' === $call->type) && \App\Call::REACHED !== $call->status && \App\Call::DONE !== $call->status) {
                                                     $boldRow   = 'bold-row';
                                                     $textBlack = 'color:black;';
+                                                }
+
+                                                $route = route(
+                                                    'patient.note.index',
+                                                    ['patientId' => $call->patient_id]
+                                                );
+
+                                                if ('addendum_response' === $call->type) {
+                                                    $route = route(
+                                                        'redirect.readonly.activity',
+                                                        ['callId' => $call->id]
+                                                    );
                                                 }
                                                 ?>
                                                 <tr class="{{$boldRow}}" style="{{ $rowBg . $textBlack }}">
@@ -236,7 +291,7 @@ function formatTime($time)
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="{{ route('patient.careplan.print', array('patient' => $call->patient_id)) }}"
+                                                        <a href="{{ $route }}"
                                                            class="patientNameLink" call-id="{{ $call->id }}"
                                                            style="font-weight:bold;"
                                                            data-template='<div class="tooltip" style="text-align:left" role="tooltip"><div class="arrow"></div><div class="tooltip-inner" style="text-align:left"></div></div>'
@@ -252,12 +307,17 @@ function formatTime($time)
                                                         {{ presentDate($call->scheduled_date, false) }}
                                                     </td>
 
-                                                    @if($call->asap === 1 && $call->status !== 'reached' && $call->status !== 'done')
+                                                    @if($call->asap === 1 && $call->status !== \App\Call::REACHED && $call->status !== \App\Call::DONE)
                                                         <td>{{ 'ASAP' }}</td>
                                                         <td>{{ 'N/A' }}</td>
                                                     @else
-                                                        <td>{{ $call->call_time_start }}</td>
-                                                        <td>{{ $call->call_time_end }}</td>
+                                                        @if($call->type !== 'addendum_response')
+                                                            <td>{{ $call->call_time_start }}</td>
+                                                            <td>{{ $call->call_time_end }}</td>
+                                                        @else
+                                                            <td>{{ 'N/A' }}</td>
+                                                            <td>{{ 'N/A' }}</td>
+                                                        @endif
                                                     @endif
 
                                                     <td>
@@ -272,6 +332,7 @@ function formatTime($time)
                                                     <td>
                                                         {{ presentDate($call->last_call) }}
                                                     </td>
+
                                                     <td>
                                                         @if( isset($call->ccm_time))
                                                             {{ formatTime($call->ccm_time) }}
@@ -280,6 +341,13 @@ function formatTime($time)
                                                         @endif
                                                     </td>
 
+                                                    <td>
+                                                        @if( isset($call->bhi_time))
+                                                            {{ formatTime($call->bhi_time) }}
+                                                        @else
+                                                            <em style="color:red;">-</em>
+                                                        @endif
+                                                    </td>
 
                                                     <td>
                                                         {{$call->no_of_calls ?? 0}}
@@ -320,7 +388,6 @@ function formatTime($time)
                                         @endif
                                         </tbody>
                                     </table>
-                                    </form>
                                     <?php //$calls->links()?>
                                 </div>
                             </div>
@@ -334,11 +401,19 @@ function formatTime($time)
             </div>
         </div>
     </div>
-    </div>
 
     <!-- call attempt_note modals -->
     @if (count($calls) > 0)
         @foreach($calls as $call)
+            <?php
+            $route      = route('patient.note.index', ['patientId' => $call->patient_id]);
+            $buttonName = 'Continue to notes';
+
+            if ('addendum_response' === $call->type) {
+                $route      = route('redirect.readonly.activity', ['callId' => $call->id]);
+                $buttonName = 'Continue to note';
+            }
+            ?>
             @if ((!empty($call->attempt_note) || !empty($call->general_comment)) )
                 <!-- Modal -->
                 <div id="attemptNoteCall{{ $call->id }}" class="modal fade" role="dialog">
@@ -360,8 +435,8 @@ function formatTime($time)
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <a href="{{ route('patient.careplan.print', array('patient' => $call->patient_id)) }}"
-                                   class="btn btn-primary">Continue to care plan</a>
+                                <a href="{{$route}}"
+                                   class="btn btn-primary">{{$buttonName}}</a>
                             </div>
                         </div>
 

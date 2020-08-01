@@ -7,7 +7,6 @@
 	<title>CPM API</title>
 
 	<link href="{{ mix('/css/app.css') }}" rel="stylesheet">
-	<link href="{{ mix('/css/lavish.css') }}" rel="stylesheet">
 	<link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
 	<!-- Fonts -->
@@ -21,7 +20,7 @@
 	<![endif]-->
 
 	<!-- Scripts -->
-	<link rel="stylesheet" href="{{mix('/css/smoothness-jquery-ui-1.11.4.css')}}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css" integrity="sha256-iWTx/iC9IoKaoSKD5+WVFef8ZYNIgQ4AxVpMbBw2hig=" crossorigin="anonymous" />
 	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 

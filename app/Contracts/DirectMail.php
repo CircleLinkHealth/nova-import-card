@@ -11,18 +11,20 @@ use CircleLinkHealth\Customer\Entities\User;
 interface DirectMail
 {
     /**
+     * @param mixed|null $dmUserAddress
+     *
      * @return mixed
      */
-    public function receive();
+    public function receive($dmUserAddress = null);
 
     /**
      * @param $outboundRecipient
-     * @param null                                          $binaryAttachmentFilePath
-     * @param null                                          $binaryAttachmentFileName
-     * @param null                                          $ccdaAttachmentPath
-     * @param \CircleLinkHealth\Customer\Entities\User|null $patient
-     * @param null                                          $body
-     * @param null                                          $subject
+     * @param null       $binaryAttachmentFilePath
+     * @param null       $binaryAttachmentFileName
+     * @param null       $ccdaContents
+     * @param null       $body
+     * @param null       $subject
+     * @param mixed|null $dmUserAddress
      *
      * @return mixed
      */
@@ -30,9 +32,10 @@ interface DirectMail
         $outboundRecipient,
         $binaryAttachmentFilePath = null,
         $binaryAttachmentFileName = null,
-        $ccdaAttachmentPath = null,
+        $ccdaContents = null,
         User $patient = null,
         $body = null,
-        $subject = null
+        $subject = null,
+        $dmUserAddress = null
     );
 }

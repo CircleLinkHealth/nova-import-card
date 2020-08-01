@@ -16,10 +16,10 @@ const fs = require('fs');
 const webpackConfig = {
     // devtool: 'source-map', // .vue is off by a line or 2. <template>, <style> sections are visible. file structure is clean
 // devtool: 'cheap-eval-source-map', // .vue lines are accurate. <template>, <style> are not visible. Lots of weird duplicate files, with ?ffcc, ?ddaa, etc. in the suffix.
-    devtool: 'cheap-module-eval-sourcemap', // .vue lines are accurate, <template>, <style> sections are visible. But file structure is messed up, the actual debuggable js is in root directory, not in its subfolder where it is in actual source.
+    devtool: 'cheap-module-source-map', // .vue lines are accurate, <template>, <style> sections are visible. But file structure is messed up, the actual debuggable js is in root directory, not in its subfolder where it is in actual source.
     output: {
         publicPath: "/",
-        chunkFilename: '[name].[chunkhash].js'
+        chunkFilename: 'compiled/js/[name].[chunkhash].js'
     },
     node: {
         fs: 'empty' //to help webpack resolve 'fs'
@@ -51,14 +51,7 @@ mix.webpackConfig(webpackConfig);
  *
  */
 mix.combine([
-        'resources/assets/less/css/animate.min.css'
-    ], 'public/compiled/css/stylesheet.css');
-
-mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/compiled/css/provider-dashboard.css');
-
-mix.combine([
-    'public/compiled/css/provider-dashboard.css',
-    'resources/assets/less/css/animate.min.css'
+    'resources/assets/sass/css/provider/dashboard.css',
 ], 'public/compiled/css/provider-dashboard.css');
 
 
@@ -78,7 +71,6 @@ mix.combine([
     'bower_components/bootstrap/dist/js/bootstrap.js',
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'public/js/typeahead.bundle.js',
-    'public/js/jquery.datetimepicker.full.min.js',
 ], 'public/compiled/js/issue-688.js');
 /** end fixing issue 688 */
 
@@ -86,10 +78,7 @@ mix.combine([
 mix.combine([
     'bower_components/jquery/dist/jquery.js',
     'bower_components/jquery-ui/jquery-ui.js',
-    'public/js/jquery.datetimepicker.full.min.js',
     'bower_components/jquery-idletimer/dist/idle-timer.js',
-    'public/js/jquery-ui-timepicker.min.js',
-    'bower_components/parsleyjs/dist/parsley.js',
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'bower_components/select2/dist/js/select2.js',
     'bower_components/bootstrap/dist/js/bootstrap.js'
@@ -109,8 +98,7 @@ const walkSync = function (dir, fileList) {
     files.forEach(function (file) {
         if (fs.statSync(path.join(dir, file)).isDirectory()) {
             fileList = walkSync(path.join(dir, file), fileList);
-        }
-        else {
+        } else {
             fileList.push(path.join(dir, file));
         }
     });
@@ -136,7 +124,7 @@ allPublicFiles.forEach((fullPath) => {
     }
 
 
-    if ([".css", ".img", ".jpg", "jpeg", ".js", ".png", ".ico", ".svg"].includes(path.extname(fullPath))) {
+    if ([".css", ".img", ".jpg", "jpeg", ".js", ".png", ".ico", ".svg", ".json"].includes(path.extname(fullPath))) {
         toVersion.push(fullPath);
     }
 

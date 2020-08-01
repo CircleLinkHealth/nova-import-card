@@ -6,28 +6,15 @@
 
 namespace App\Services;
 
-use App\Contracts\Services\TwilioClientable;
+use CircleLinkHealth\Core\TwilioClientable;
 use Twilio\Jwt\ClientToken;
 use Twilio\Rest\Client;
 
 class TwilioClientService implements TwilioClientable
 {
-    private const TOKEN_LIFETIME_SECONDS = 7200; //2 hours
+    private const TOKEN_LIFETIME_SECONDS = 28800; //8 hours
     private $capability;
-
     private $client;
-
-    /**
-     * TwilioClientService constructor.
-     *
-     * @throws \Twilio\Exceptions\ConfigurationException
-     */
-    public function __construct()
-    {
-        $this->client     = new Client(config('services.twilio.sid'), config('services.twilio.token'));
-        $this->capability = new ClientToken(config('services.twilio.sid'), config('services.twilio.token'));
-        $this->capability->allowClientOutgoing(config('services.twilio.twiml-app-sid'));
-    }
 
     /**
      * Download media from Twilio Cloud.
@@ -92,16 +79,23 @@ class TwilioClientService implements TwilioClientable
     /**
      * Generates new token based on credentials and permissions set
      * in the constructor.
-     *
-     * @return string
      */
     public function generateCapabilityToken(): string
     {
+        if ( ! $this->capability) {
+            $this->capability = new ClientToken(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
+            $this->capability->allowClientOutgoing(config('services.twilio.twiml-app-sid'));
+        }
+
         return $this->capability->generateToken(TwilioClientService::TOKEN_LIFETIME_SECONDS);
     }
 
     public function getClient(): Client
     {
+        if ( ! $this->client) {
+            $this->client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
+        }
+
         return $this->client;
     }
 

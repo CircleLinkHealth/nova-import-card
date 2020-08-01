@@ -187,8 +187,8 @@
                                                 width: 140,
                                                 sort: 'string',
                                                 template: "<a href='<?php echo route('patient.note.view', [
-                                                    'patient' => '#patient_id#',
-                                                    'noteId'  => '#id#',
+                                                    'patientId' => '#patient_id#',
+                                                    'noteId'    => '#id#',
                                                 ]); ?>'>#patient_name#</a>"
 
 
@@ -214,7 +214,7 @@
                                                     'bottom': 0,
                                                     'right': 0
                                                 },
-                                                header: ["Status", {content: "textFilter", placeholder: "Filter"}],
+                                                header: ["Status"],
                                                 width: 110,
                                                 sort: 'string'
                                             },
@@ -223,13 +223,15 @@
                                                 header: ["Summary", {content: "textFilter", placeholder: "Filter"}],
                                                 width: 250,
                                                 sort: 'string',
-                                                tooltip: ['#summary#'],
+                                                tooltip: ['#comment#'],
                                                 fillspace: true,
                                                 template: "<a href='<?php echo route('patient.note.view', [
-                                                    'patient' => '#patient_id#',
-                                                    'noteId'  => '#id#',
-                                                ]); ?>'>#summary#</a>"
+                                                    'patientId' => '#patient_id#',
+                                                    'noteId'    => '#id#',
+                                                ]); ?>'>#comment#</a>"
                                             },
+                                            // This is hidden but it holds the summary value above.
+                                            // I think it was not considered while hiding the column.
                                             {
                                                 id: "comment",
                                                 header: ["Preview", {content: "textFilter", placeholder: "Filter"}],
@@ -238,8 +240,8 @@
                                                 tooltip: ['#comment#'],
                                                 fillspace: true,
                                                 template: "<a href='<?php echo route('patient.note.view', [
-                                                    'patient' => '#patient_id#',
-                                                    'noteId'  => '#id#',
+                                                    'patientId' => '#patient_id#',
+                                                    'noteId'    => '#id#',
                                                 ]); ?>'>#comment#</a>"
                                             },
                                             {
@@ -278,9 +280,10 @@
                                     obs_alerts_dtable.hideColumn("comment");
                                     obs_alerts_dtable.hideColumn("program_name");
 
-                                    webix.event(window, "resize", function () {
+                                    const debounced = _.debounce(() => {
                                         obs_alerts_dtable.adjust();
-                                    });
+                                    }, 1000);
+                                    webix.event(window, "resize", debounced);
 
                                 </script>
                             @endpush
@@ -312,6 +315,13 @@
                                             <span class="glyphicon glyphicon-envelope"></span>
                                         </div>
                                         Forwarded To Provider
+                                    </li>
+
+                                    <li>
+                                        <div class="label label-warning" style="margin-right: 4px; text-align: right; background-color: #9865f2">
+                                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                                        </div>
+                                        Success Story
                                     </li>
 
                                     <li>

@@ -7,7 +7,7 @@
 namespace App\Importer\Loggers\Problem;
 
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
-use App\Services\Eligibility\Entities\Problem;
+use CircleLinkHealth\Eligibility\Entities\Problem;
 
 class ArrayProblemLogger implements Logger
 {
@@ -19,12 +19,52 @@ class ArrayProblemLogger implements Logger
             if ( ! is_array($p)) {
                 continue;
             }
-            $results[] = Problem::create([
-                'code'             => $p['code'],
-                'name'             => $p['name'],
-                'code_system_name' => $p['code_type'],
-                'start'            => $p['start_date'],
-            ]);
+
+            if ( ! array_keys_exist(
+                [
+                    'code',
+                    'name',
+                    'code_type',
+                    'start_date',
+                ],
+                $p
+            ) && array_keys_exist(
+                [
+                    'code',
+                    'code_type',
+                ],
+                $p
+            )) {
+                $results[] = Problem::create(
+                    [
+                        'code'             => $p['code'],
+                        'code_system_name' => $p['code_type'],
+                    ]
+                );
+
+                continue;
+            }
+
+            if (1 === count($p) && array_key_exists('name', $p)) {
+                $results[] = Problem::create(
+                    [
+                        'name' => $p['name'],
+                    ]
+                );
+
+                continue;
+            }
+
+            if ( ! empty($p['name']) || ! empty($p['code'])) {
+                $results[] = Problem::create(
+                    [
+                        'code'             => $p['code'] ?? null,
+                        'name'             => $p['name'] ?? null,
+                        'code_system_name' => $p['code_type'] ?? null,
+                        'start'            => $p['start_date'] ?? null,
+                    ]
+                );
+            }
         }
 
         return $results;
@@ -43,16 +83,36 @@ class ArrayProblemLogger implements Logger
                 return false;
             }
 
-            if ( ! array_keys_exist([
-                'code',
+            if (array_keys_exist(
+                [
+                    'code',
+                    'name',
+                    'code_type',
+                    'start_date',
+                ],
+                $prob
+            )) {
+                return true;
+            }
+
+            if (array_keys_exist(
+                [
+                    'code',
+                    'code_type',
+                ],
+                $prob
+            )) {
+                return true;
+            }
+
+            if (array_key_exists(
                 'name',
-                'code_type',
-                'start_date',
-            ], $prob)) {
-                return false;
+                $prob
+            )) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 }

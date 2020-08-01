@@ -64,13 +64,14 @@
 
                             <div class="col-sm-12">
                                 <call-number
-                                        :debug="@json(!isProductionEnv())"
+                                        :debug="{{json_encode(!isProductionEnv())}}"
                                         cpm-caller-url="{{config('services.twilio.cpm-caller-url')}}"
                                         cpm-token="{{$cpmToken}}"
                                         from-number="{{$patient->primaryProgramPhoneE164()}}"
-                                        :allow-conference="@json(config('services.twilio.allow-conference'))"
+                                        :allow-conference="{{json_encode(config('services.twilio.allow-conference'))}}"
                                         inbound-user-id="{{$patient->id}}"
                                         outbound-user-id="{{auth()->id()}}"
+                                        source="patient-call-page"
                                         :patient-numbers="{{$phoneNumbers}}"
                                         clinical-escalation-number="{{$clinicalEscalationNumber}}">
                                 </call-number>

@@ -23,7 +23,7 @@ class ProviderInfoService
                 function ($u) {
                     return $u->safe();
                 }
-                   );
+            );
     }
 
     public function list()

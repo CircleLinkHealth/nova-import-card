@@ -6,7 +6,8 @@
 
 namespace App\Services;
 
-use App\CallView;
+use App\Call;
+use App\CallViewNurses;
 
 class CallService
 {
@@ -19,14 +20,14 @@ class CallService
      */
     public function filterCalls($dropdownStatus, $filterPriority, string $today, $nurseId)
     {
-        $calls = CallView::where('nurse_id', '=', $nurseId);
+        $calls = CallViewNurses::where('nurse_id', '=', $nurseId);
 
         if ('completed' === $dropdownStatus && 'all' === $filterPriority) {
-            $calls->whereIn('status', ['reached', 'done']);
+            $calls->whereIn('status', [Call::REACHED, Call::DONE]);
         }
 
         if ('scheduled' === $dropdownStatus && 'all' === $filterPriority) {
-            $calls->where('status', '=', 'scheduled');
+            $calls->where('status', '=', Call::SCHEDULED);
         }
 
         if ('all' !== $filterPriority) {
@@ -35,7 +36,7 @@ class CallService
             $calls->where(function ($query) use ($today) {
                 $query->where(
                     [
-                        ['status', '=', 'scheduled'],
+                        ['status', '=', Call::SCHEDULED],
                         ['scheduled_date', '<=', $today],
                     ]
                 )->orWhere(
@@ -46,7 +47,8 @@ class CallService
             });
         }
 
-        $calls->orderByRaw('FIELD(type, "Call Back") desc, scheduled_date desc, call_time_start asc, call_time_end asc');
+        // Ordering: ASAP are always first, then Call Backs, then everything else with earlier tasks higher than later tasks.
+        $calls->orderByRaw('asap desc, FIELD(type, "Call Back") desc, scheduled_date asc, call_time_start asc, call_time_end asc');
 
         return $calls->get();
     }

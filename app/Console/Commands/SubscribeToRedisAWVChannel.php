@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
+use App\SelfEnrollment\Jobs\ListenToAwvChannel;
 use Illuminate\Console\Command;
-use Redis;
 
 class SubscribeToRedisAWVChannel extends Command
 {
@@ -27,16 +27,22 @@ class SubscribeToRedisAWVChannel extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
-        Redis::subscribe(['test-channel'], function ($message) {
-            echo $message;
-
-            \Log::channel('logdna')->info('Recording test-channel message', [
-                'batch_id' => \Carbon::now()->toDateTimeString(),
-            ]);
-        });
+        //https://github.com/phpredis/phpredis/issues/70
+        ini_set('default_socket_timeout', '-1');
+        $this->info('Listening...');
+        \RedisManager::connection('pub_sub')->subscribe(
+            [
+                ListenToAwvChannel::AWV_REPORT_CREATED,
+                ListenToAwvChannel::ENROLLMENT_SURVEY_COMPLETED,
+            ],
+            function ($data, $channel) {
+                $this->info("Received on $channel");
+                ListenToAwvChannel::dispatch($data, $channel);
+            }
+        );
     }
 }

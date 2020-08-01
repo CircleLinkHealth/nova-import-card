@@ -7,44 +7,72 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Mail Driver
+    | Default Mailer
     |--------------------------------------------------------------------------
     |
-    | Laravel supports both SMTP and PHP's "mail" function as drivers for the
-    | sending of e-mail. You may specify which one you're using throughout
-    | your application here. By default, Laravel is setup for SMTP mail.
-    |
-    | Supported: "smtp", "mail", "sendmail", "mailgun", "mandrill", "log"
+    | This option controls the default mailer that is used to send any email
+    | messages sent by your application. Alternative mailers may be setup
+    | and used as needed; however, this mailer will be used by default.
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'smtp'),
+    'default' => env('MAIL_MAILER', env('POSTMARK_TOKEN', null) ? 'postmark' : 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
-    | SMTP Host Address
+    | Mailer Configurations
     |--------------------------------------------------------------------------
     |
-    | Here you may provide the host address of the SMTP server used by your
-    | applications. A default option is provided that is compatible with
-    | the Mailgun mail service which will provide reliable deliveries.
+    | Here you may configure all of the mailers used by your application plus
+    | their respective settings. Several examples have been configured for
+    | you and you are free to add your own as your application requires.
+    |
+    | Laravel supports a variety of mail "transport" drivers to be used while
+    | sending an e-mail. You will specify which one you are using for your
+    | mailers below. You are free to add additional mailers as required.
+    |
+    | Supported: "smtp", "sendmail", "mailgun", "ses",
+    |            "postmark", "log", "array"
     |
     */
 
-    'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+    'mailers' => [
+        'smtp' => [
+            'transport'  => 'smtp',
+            'host'       => env('MAIL_HOST', 'smtp.mailgun.org'),
+            'port'       => env('MAIL_PORT', 587),
+            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'username'   => env('MAIL_USERNAME'),
+            'password'   => env('MAIL_PASSWORD'),
+            'timeout'    => null,
+        ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | SMTP Host Port
-    |--------------------------------------------------------------------------
-    |
-    | This is the SMTP port used by your application to deliver e-mails to
-    | users of the application. Like the host we have set this value to
-    | stay compatible with the Mailgun e-mail application by default.
-    |
-    */
+        'ses' => [
+            'transport' => 'ses',
+        ],
 
-    'port' => env('MAIL_PORT', 587),
+        'mailgun' => [
+            'transport' => 'mailgun',
+        ],
+
+        'postmark' => [
+            'transport' => 'postmark',
+        ],
+
+        'sendmail' => [
+            'transport' => 'sendmail',
+            'path'      => '/usr/sbin/sendmail -bs',
+        ],
+
+        'log' => [
+            'transport' => 'log',
+            'channel'   => env('MAIL_LOG_CHANNEL'),
+        ],
+
+        'array' => [
+            'transport' => 'array',
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -58,6 +86,18 @@ return [
     */
 
     'from' => [
+        'address' => env('TRANSACTIONAL_MAIL_FROM_ADDRESS', 'no-reply@careplanmanager.com'),
+        'name'    => env('TRANSACTIONAL_MAIL_FROM_NAME', 'CircleLink Health'),
+    ],
+
+    'from-with-inbound' => [
+        // we prefer to not have a default, because we don't want to have emails
+        // targeted to staging being processed by production inbound mail address
+        'address' => env('INBOUND_MAIL_FROM_ADDRESS', null /*'wellness@careplanmanager.com'*/),
+        'name'    => env('INBOUND_MAIL_FROM_NAME', 'CarePlan Manager'),
+    ],
+
+    'marketing_from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'no-reply@circlelinkhealth.com'),
         'name'    => env('MAIL_FROM_NAME', 'CircleLink Health'),
     ],
@@ -85,7 +125,9 @@ return [
     | connection. You may also set the "password" value below this one.
     |
     */
+
     'username' => env('MAIL_USERNAME'),
+
     'password' => env('MAIL_PASSWORD'),
 
     /*
@@ -98,6 +140,7 @@ return [
     | been provided here, which will work well on most of your systems.
     |
     */
+
     'sendmail' => '/usr/sbin/sendmail -bs',
 
     /*
@@ -110,8 +153,10 @@ return [
     | of the emails. Or, you may simply stick with the Laravel defaults!
     |
     */
+
     'markdown' => [
         'theme' => 'default',
+
         'paths' => [
             resource_path('views/vendor/mail'),
         ],

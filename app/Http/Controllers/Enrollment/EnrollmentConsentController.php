@@ -6,9 +6,12 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\Enrollee;
+use App\EnrolleeView;
+use App\Filters\EnrolleeFilters;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EnrolleeCsvResource;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 
 class EnrollmentConsentController extends Controller
@@ -29,90 +32,45 @@ class EnrollmentConsentController extends Controller
     /**
      * @return mixed
      */
-    public function index()
+    public function index(Request $request, EnrolleeFilters $filters)
     {
-        //todo change to Enrollee
-        $enrollees = Enrollee::with('careAmbassador', 'practice', 'provider')
-            ->where('status', '!=', 'enrolled')
-            ->where('attempt_count', '<', 3)
-            ->get();
+        $fields = ['*'];
 
-        $formatted = [];
-        $count     = 0;
+        $byColumn  = $request->get('byColumn');
+        $query     = $request->get('query');
+        $limit     = $request->get('limit');
+        $orderBy   = $request->get('orderBy');
+        $ascending = $request->get('ascending');
+        $page      = $request->get('page');
 
-        foreach ($enrollees as $enrollee) {
-            $status = '';
+        $data = EnrolleeView::filter($filters)->select($fields);
 
-            //if the patient has a ca_id, then it's a phone call
-            if (null != $enrollee->care_ambassador_user_id) {
-                //if the patient wasn't reached, show how many attempts were made
-                if ('utc' == $enrollee->status) {
-                    $status = 'Call:'.$enrollee->attempt_count.'x';
-                } elseif ('rejected' == $enrollee->status) {
-                    $status = 'Call: Declined';
-                } elseif ('consented' == $enrollee->status) {
-                    $status = 'Call: Consented';
-                }
-            }
+        $count = $data->count();
 
-            if ('call_queue' == $enrollee->status) {
-                $status = 'Call: To Call';
-            }
+        $data->limit($limit)
+            ->skip($limit * ($page - 1));
 
-            if ('sms_queue' == $enrollee->status) {
-                if (null == $enrollee->invite_sent_at) {
-                    $status = 'SMS: To SMS';
-                } else {
-                    $status = 'SMS:'.$enrollee->attempt_count.'x';
-                }
-            }
+        $now = Carbon::now()->toDateString();
 
-            if (null != $enrollee->invite_sent_at && 'consented' == $enrollee->status) {
-                $status = 'SMS: Consented';
-            }
-
-            $days = (null == $enrollee->preferred_days)
-                ? 'N/A'
-                : $enrollee->preferred_days;
-            $times = (null == $enrollee->preferred_days)
-                ? 'N/A'
-                : $enrollee->preferred_window;
-
-            $careAmbassador = optional($enrollee->careAmbassador)->user;
-
-            $formatted[$count] = [
-                'name'      => $enrollee->first_name.' '.$enrollee->last_name,
-                'program'   => ucwords(optional($enrollee->practice)->name),
-                'provider'  => ucwords($enrollee->getProviderFullNameAttribute()),
-                'has_copay' => $enrollee->has_copay
-                    ? 'Yes'
-                    : 'No',
-                'status'                   => $status,
-                'care_ambassador'          => ucwords(optional($careAmbassador)->getFullName() ?? null),
-                'last_call_outcome'        => ucwords($enrollee->last_call_outcome),
-                'last_call_outcome_reason' => ucwords($enrollee->last_call_outcome_reason),
-                'mrn_number'               => ucwords($enrollee->mrn_number),
-                'dob'                      => ucwords($enrollee->dob),
-                'phone'                    => ucwords($enrollee->primary_phone),
-                'invite_sent_at'           => ucwords($enrollee->invite_sent_at),
-                'invite_opened_at'         => ucwords($enrollee->invite_opened_at),
-                'last_attempt_at'          => ucwords($enrollee->last_attempt_at),
-                'consented_at'             => ucwords($enrollee->consented_at),
-                'preferred_days'           => $days,
-                'preferred_window'         => $times,
-                'agent_phone'              => $enrollee->getAgentAttribute(Enrollee::AGENT_PHONE_KEY),
-                'agent_name'               => $enrollee->getAgentAttribute(Enrollee::AGENT_NAME_KEY),
-                'agent_email'              => $enrollee->getAgentAttribute(Enrollee::AGENT_EMAIL_KEY),
-                'agent_relationship'       => $enrollee->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY),
-            ];
-
-            ++$count;
+        if (isset($orderBy)) {
+            $direction = 1 == $ascending
+                ? 'ASC'
+                : 'DESC';
+            $data->orderBy($orderBy, $direction);
         }
 
-        $formatted = collect($formatted);
-        $formatted->sortByDesc('date');
+        $filtersInput = $filters->filters();
 
-        return datatables()->collection($formatted)->make(true);
+        if ($filters->isCsv()) {
+            return EnrolleeCsvResource::collection($data->paginate($filtersInput['rows']));
+        }
+
+        $results = $data->get()->toArray();
+
+        return [
+            'data'  => $results,
+            'count' => $count,
+        ];
     }
 
     public function makeEnrollmentReport()

@@ -86,6 +86,14 @@ return [
             'url'    => env('AWS_URL'),
         ],
 
+        'secrets' => [
+            'driver' => 's3',
+            'key'    => env('S3_SECRETS_KEY'),
+            'secret' => env('S3_SECRETS_SECRET'),
+            'region' => env('S3_SECRETS_REGION'),
+            'bucket' => env('S3_SECRETS_BUCKET'),
+        ],
+
         'rackspace' => [
             'driver'    => 'rackspace',
             'username'  => 'your-username',
@@ -112,5 +120,20 @@ return [
             'bucket' => env('S3_CPM_STORAGE_BUCKET_NAME'),
             'root'   => 'backup',
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Symbolic Links
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure the symbolic links that will be created when the
+    | `storage:link` Artisan command is executed. The array keys should be
+    | the locations of the links and the values should be their targets.
+    |
+    */
+
+    'links' => [
+        public_path('storage') => storage_path('app/public'),
     ],
 ];

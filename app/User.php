@@ -18,7 +18,7 @@ namespace App;
  * @property string|null                                                                                                     $password
  * @property string                                                                                                          $email
  * @property \Illuminate\Support\Carbon|null                                                                                 $user_registered
- * @property int                                                                                                             $user_status
+ * @property int|null                                                                                                        $user_status
  * @property int|null                                                                                                        $auto_attach_programs
  * @property string|null                                                                                                     $display_name
  * @property string|null                                                                                                     $first_name
@@ -36,10 +36,12 @@ namespace App;
  * @property string|null                                                                                                     $remember_token
  * @property \Illuminate\Support\Carbon|null                                                                                 $created_at
  * @property \Illuminate\Support\Carbon|null                                                                                 $updated_at
- * @property string|null                                                                                                     $deleted_at
+ * @property \Illuminate\Support\Carbon|null                                                                                 $deleted_at
  * @property string|null                                                                                                     $last_login
  * @property int                                                                                                             $is_online
  * @property string|null                                                                                                     $last_session_id
+ * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[]                                    $actions
+ * @property int|null                                                                                                        $actions_count
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $activities
  * @property int|null                                                                                                        $activities_count
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $activitiesAsProvider
@@ -48,21 +50,19 @@ namespace App;
  * @property int|null                                                                                                        $appointments_count
  * @property \CircleLinkHealth\TwoFA\Entities\AuthyUser                                                                      $authyUser
  * @property \App\CareAmbassador                                                                                             $careAmbassador
- * @property \App\CareItem[]|\Illuminate\Database\Eloquent\Collection                                                        $careItems
- * @property int|null                                                                                                        $care_items_count
- * @property \App\CarePlan                                                                                                   $carePlan
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlan                                                                $carePlan
  * @property \App\CareplanAssessment                                                                                         $carePlanAssessment
  * @property \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection                       $careTeamMembers
  * @property int|null                                                                                                        $care_team_members_count
- * @property \App\Models\CCD\Allergy[]|\Illuminate\Database\Eloquent\Collection                                              $ccdAllergies
+ * @property \CircleLinkHealth\SharedModels\Entities\Allergy[]|\Illuminate\Database\Eloquent\Collection                      $ccdAllergies
  * @property int|null                                                                                                        $ccd_allergies_count
- * @property \App\Models\CCD\CcdInsurancePolicy[]|\Illuminate\Database\Eloquent\Collection                                   $ccdInsurancePolicies
+ * @property \CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy[]|\Illuminate\Database\Eloquent\Collection           $ccdInsurancePolicies
  * @property int|null                                                                                                        $ccd_insurance_policies_count
- * @property \App\Models\CCD\Medication[]|\Illuminate\Database\Eloquent\Collection                                           $ccdMedications
+ * @property \CircleLinkHealth\SharedModels\Entities\Medication[]|\Illuminate\Database\Eloquent\Collection                   $ccdMedications
  * @property int|null                                                                                                        $ccd_medications_count
- * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection                                              $ccdProblems
+ * @property \CircleLinkHealth\SharedModels\Entities\Problem[]|\Illuminate\Database\Eloquent\Collection                      $ccdProblems
  * @property int|null                                                                                                        $ccd_problems_count
- * @property \App\Models\MedicalRecords\Ccda[]|\Illuminate\Database\Eloquent\Collection                                      $ccdas
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda[]|\Illuminate\Database\Eloquent\Collection                         $ccdas
  * @property int|null                                                                                                        $ccdas_count
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection                $chargeableServices
  * @property int|null                                                                                                        $chargeable_services_count
@@ -72,27 +72,27 @@ namespace App;
  * @property int|null                                                                                                        $clinical_emergency_contact_locations_count
  * @property \App\Comment[]|\Illuminate\Database\Eloquent\Collection                                                         $comment
  * @property int|null                                                                                                        $comment_count
- * @property \App\Models\CPM\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection                                         $cpmBiometrics
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection                 $cpmBiometrics
  * @property int|null                                                                                                        $cpm_biometrics_count
- * @property \App\Models\CPM\Biometrics\CpmBloodPressure                                                                     $cpmBloodPressure
- * @property \App\Models\CPM\Biometrics\CpmBloodSugar                                                                        $cpmBloodSugar
- * @property \App\Models\CPM\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection                                         $cpmLifestyles
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure                                                        $cpmBloodPressure
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar                                                           $cpmBloodSugar
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection                 $cpmLifestyles
  * @property int|null                                                                                                        $cpm_lifestyles_count
- * @property \App\Models\CPM\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection                                   $cpmMedicationGroups
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection           $cpmMedicationGroups
  * @property int|null                                                                                                        $cpm_medication_groups_count
- * @property \App\Models\CPM\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                                          $cpmMiscUserPivot
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                  $cpmMiscUserPivot
  * @property int|null                                                                                                        $cpm_misc_user_pivot_count
- * @property \App\Models\CPM\CpmMisc[]|\Illuminate\Database\Eloquent\Collection                                              $cpmMiscs
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMisc[]|\Illuminate\Database\Eloquent\Collection                      $cpmMiscs
  * @property int|null                                                                                                        $cpm_miscs_count
- * @property \App\Models\CPM\CpmProblem[]|\Illuminate\Database\Eloquent\Collection                                           $cpmProblems
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem[]|\Illuminate\Database\Eloquent\Collection                   $cpmProblems
  * @property int|null                                                                                                        $cpm_problems_count
- * @property \App\Models\CPM\Biometrics\CpmSmoking                                                                           $cpmSmoking
- * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                                           $cpmSymptoms
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmSmoking                                                              $cpmSmoking
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                   $cpmSymptoms
  * @property int|null                                                                                                        $cpm_symptoms_count
- * @property \App\Models\CPM\Biometrics\CpmWeight                                                                            $cpmWeight
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight                                                               $cpmWeight
  * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                     $disputes
  * @property int|null                                                                                                        $disputes_count
- * @property \App\TargetPatient                                                                                              $ehrInfo
+ * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                                            $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo                                                         $ehrReportWriterInfo
  * @property \App\Models\EmailSettings                                                                                       $emailSettings
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection                 $emrDirect
@@ -106,6 +106,8 @@ namespace App;
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                             $forwardedCarePlanApprovalEmailsBy
  * @property int|null                                                                                                        $forwarded_care_plan_approval_emails_by_count
  * @property mixed                                                                                                           $emr_direct_address
+ * @property mixed                                                                                                           $full_name_with_id
+ * @property string                                                                                                          $name
  * @property mixed                                                                                                           $timezone_abbr
  * @property mixed                                                                                                           $timezone_offset
  * @property mixed                                                                                                           $timezone_offset_hours
@@ -139,9 +141,8 @@ namespace App;
  * @property int|null                                                                                                        $patient_a_w_v_summaries_count
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $patientActivities
  * @property int|null                                                                                                        $patient_activities_count
- * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection                $patientDemographics
- * @property int|null                                                                                                        $patient_demographics_count
  * @property \CircleLinkHealth\Customer\Entities\Patient                                                                     $patientInfo
+ * @property \CircleLinkHealth\Customer\Entities\PatientNurse                                                                $patientNurseAsPatient
  * @property \CircleLinkHealth\Customer\Entities\PatientMonthlySummary[]|\Illuminate\Database\Eloquent\Collection            $patientSummaries
  * @property int|null                                                                                                        $patient_summaries_count
  * @property \CircleLinkHealth\Customer\Entities\Permission[]|\Illuminate\Database\Eloquent\Collection                       $perms
@@ -150,7 +151,7 @@ namespace App;
  * @property int|null                                                                                                        $phone_numbers_count
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                               $primaryPractice
  * @property \CircleLinkHealth\Customer\Entities\ProviderInfo                                                                $providerInfo
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                                  $revisionHistory
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                     $revisionHistory
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection                             $roles
  * @property int|null                                                                                                        $roles_count
@@ -165,14 +166,17 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasBillingProvider($billing_provider_id)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User intersectLocationsWith($user)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User intersectPracticesWith($user)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User intersectPracticesWith(\CircleLinkHealth\Customer\Entities\User $user, $withDemo = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiChargeable()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiEligible()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User notOfPracticeRequiringSpecialBhiConsent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofActiveBillablePractice()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofPractice($practiceId)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofType($type)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofPracticeRequiringSpecialBhiConsent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofType($type, $excludeAwv = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User practiceStaff()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User practicesWhereHasRoles($roleIds, $onlyActive = false)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User query()
@@ -210,10 +214,23 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withCareTeamOfType($type)
  * @mixin \Eloquent
  *
- * @property mixed $full_name_with_id
+ * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null $enrollmentInvitationLinks
+ * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $enrollableInfoRequest
+ * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                       $loginEvents
+ * @property int|null                                                                          $login_events_count
+ * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                              $enrollee
+ * @property int|null                                                                          $enrollment_invitation_links_count
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User notOfPracticeRequiringSpecialBhiConsent()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofPracticeRequiringSpecialBhiConsent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInviteReminder(\Carbon\Carbon $date = null, $has = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingCLHApproval(\CircleLinkHealth\Customer\Entities\User $approver)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingProviderApproval(\CircleLinkHealth\Customer\Entities\User $approver)
+ *
+ * @property \CircleLinkHealth\Eligibility\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection $assignedEnrollees
+ * @property int|null                                                                                   $assigned_enrollees_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withDownloadableInvoices(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate)
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

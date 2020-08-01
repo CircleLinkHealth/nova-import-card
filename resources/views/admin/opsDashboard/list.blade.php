@@ -44,7 +44,7 @@
 
             </table>
 
-            {!! $patients->appends(Input::except('page'))->links() !!}
+            {!! $patients->appends(Request::except('page'))->links() !!}
         </div>
     </div>
 

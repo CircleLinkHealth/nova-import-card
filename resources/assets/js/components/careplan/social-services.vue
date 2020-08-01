@@ -29,13 +29,12 @@
     import MiscModal from './modals/misc.modal'
     import CareplanMixin from './mixins/careplan.mixin'
 
-    const MISC_ID = 5
-
     export default {
         name: 'social-services',
         props: [
             'patient-id',
-            'url'
+            'url',
+            'misc-id'
         ],
         components: {
             'misc-modal': MiscModal
@@ -56,7 +55,7 @@
                 return socialService
             },
             getSocialService() {
-                return this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/${MISC_ID}`)).then(response => {
+                return this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/${this.miscId}`)).then(response => {
                     console.log('social-services:get-social-service', response.data)
                     this.socialService = this.setupSocialService(response.data)
                     if (this.socialService) Event.$emit('misc:select', this.socialService)
@@ -71,16 +70,17 @@
             }
         },
         mounted() {
-            this.socialService = this.setupSocialService(this.careplan().misc.find(m => m.id == MISC_ID))
+            this.socialService = this.setupSocialService(this.careplan().misc.find(m => m.id == this.miscId))
 
             Event.$on('misc:change', (misc) => {
-                if (misc && misc.id === ((this.socialService || {}).id || MISC_ID)) {
-                    this.getSocialService()
+                if (misc && parseInt(misc.id) === parseInt(this.miscId)) {
+                    this.socialService = this.setupSocialService(misc)
+                    if (this.socialService) Event.$emit('misc:select', this.socialService)
                 }
             })
 
             Event.$on('misc:remove', (id) => {
-                if (id && id === ((this.socialService || {}).id || MISC_ID)) {
+                if (id && id === ((this.socialService || {}).id || this.miscId)) {
                     this.socialService = null
                 }
             })

@@ -380,13 +380,13 @@ class CallFilters extends QueryFilters
                 'calls.inbound_cpm_id',
                 '=',
                 (new Patient())->getTable().'.user_id'
-                             )
+            )
             ->join(
                 (new PatientContactWindow())->getTable(),
                 (new PatientContactWindow())->getTable().'.patient_info_id',
                 '=',
                 (new Patient())->getTable().'.id'
-                             )
+            )
             ->orderBy('sort_day', $term)
             ->groupBy('calls.inbound_cpm_id');
     }

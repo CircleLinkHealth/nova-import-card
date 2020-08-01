@@ -43,11 +43,9 @@ class SalesByProviderReport extends SalesReport
     {
         if ($defaultSections) {
             $this->requestedSections = self::SECTIONS;
-
-            return parent::data();
         }
 
-        return parent::data(false);
+        return parent::data();
     }
 
     public function renderPDF(

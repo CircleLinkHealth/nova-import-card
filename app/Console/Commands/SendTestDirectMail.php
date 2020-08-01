@@ -13,6 +13,23 @@ use Illuminate\Console\Command;
 class SendTestDirectMail extends Command
 {
     /**
+     * CLHs sandbox DM address. Safe to use for testing. Not safe for PHI.
+     */
+    const CLH_SANDBOX_DM_EMAIL = 'circlelinkhealth@test.directproject.net';
+    /**
+     * The body of the test Direct Mail Message.
+     */
+    const TEST_DM_BODY = 'Hello there! This is a test message from CircleLink Health.';
+    /**
+     * The number of attachments in the test Direct Mail Message.
+     */
+    const TEST_DM_NUM_ATTACHMENTS = 2;
+    /**
+     * The subject of the test Direct Mail Message.
+     */
+    const TEST_DM_SUBJECT = 'Test Message from CircleLink Health';
+
+    /**
      * The console command description.
      *
      * @var string
@@ -32,8 +49,6 @@ class SendTestDirectMail extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param DirectMail $directMail
      */
     public function __construct(DirectMail $directMail)
     {
@@ -45,14 +60,17 @@ class SendTestDirectMail extends Command
     /**
      * Execute the console command.
      *
-     * @throws \App\Exceptions\FileNotFoundException
+     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      *
      * @return mixed
      */
     public function handle()
     {
-        $to = $this->argument('to');
+        $this->output->text(var_dump($this->sendTestDM($this->argument('to'))));
+    }
 
+    public function sendTestDM(string $to)
+    {
         $binaryAttachmentFilePath = getSampleNotePdfPath();
         $binaryAttachmentFileName = 'Sample CCDA';
         $ccdaAttachmentPath       = getSampleCcdaPath();
@@ -60,14 +78,14 @@ class SendTestDirectMail extends Command
         $patient->first_name      = 'Foo';
         $patient->last_name       = 'Bar';
 
-        $sent = $this->directMail->send(
+        return $this->directMail->send(
             $to,
             $binaryAttachmentFilePath,
             $binaryAttachmentFileName,
             $ccdaAttachmentPath,
-            $patient
+            $patient,
+            self::TEST_DM_BODY,
+            self::TEST_DM_SUBJECT
         );
-
-        $this->output->text(var_dump($sent));
     }
 }

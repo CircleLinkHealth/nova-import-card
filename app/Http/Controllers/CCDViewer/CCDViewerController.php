@@ -8,8 +8,8 @@ namespace App\Http\Controllers\CCDViewer;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Controllers\Controller;
-use App\Models\MedicalRecords\Ccda;
 use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaStream;
 
@@ -26,6 +26,17 @@ class CCDViewerController extends Controller
     public function create()
     {
         return view('CCDViewer.old-viewer');
+    }
+
+    public function downloadXml(Request $request, $ccdaId)
+    {
+        $ccda = Ccda::withTrashed()
+            ->with('media')
+            ->findOrFail($ccdaId);
+
+        $media = $ccda->getMedia('ccd')->first();
+
+        return $media ? $media : abort(400, 'XML was not found.');
     }
 
     public function exportAllCcds($userId)
@@ -48,7 +59,7 @@ class CCDViewerController extends Controller
         if ($request->hasFile('uploadedCcd')) {
             $xml = file_get_contents($request->file('uploadedCcd'));
 
-            $ccd = json_decode($this->repo->toJson($xml));
+            $ccd = json_decode($this->repo->toBlueButtonJson($xml));
 
             return view('CCDViewer.old-viewer', compact('ccd'));
         }
@@ -65,7 +76,7 @@ class CCDViewerController extends Controller
         if ('xml' == $type) {
             $media = $ccda->getMedia('ccd')->first();
 
-            return $media ? $media->getFile() : 'N/A';
+            return $media ? $media : 'N/A';
         }
 
         if ($ccda) {

@@ -47,8 +47,6 @@ class CareAmbassadorScript extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -59,8 +57,6 @@ class CareAmbassadorScript extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
@@ -70,8 +66,6 @@ class CareAmbassadorScript extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -84,6 +78,12 @@ class CareAmbassadorScript extends Resource
                 ->options([
                     'en' => 'English',
                     'es' => 'Spanish',
+                ])->displayUsingLabels(),
+
+            Select::make('Type')
+                ->options([
+                    TrixField::CARE_AMBASSADOR_SCRIPT                  => 'For Patients to Enroll',
+                    TrixField::CARE_AMBASSADOR_UNREACHABLE_USER_SCRIPT => 'For Unreachable Users',
                 ])->displayUsingLabels(),
 
             CKEditor::make('Body', 'body')
@@ -107,8 +107,6 @@ class CareAmbassadorScript extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function filters(Request $request)
@@ -118,8 +116,6 @@ class CareAmbassadorScript extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -131,7 +127,6 @@ class CareAmbassadorScript extends Resource
     public static function newModel()
     {
         $model = new static::$model();
-        $model->setAttribute('type', TrixField::CARE_AMBASSADOR_SCRIPT);
 
         return $model;
     }

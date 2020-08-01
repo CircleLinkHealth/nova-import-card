@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers;
 
-use App\CarePlan;
 use App\Contracts\ReportFormatter;
-use App\Exports\FromArray;
 use App\Http\Requests\GetUnder20MinutesReport;
+use App\Note;
+use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanAssessmentService;
 use App\Services\CareplanService;
@@ -17,11 +17,12 @@ use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
-use App\ValueObjects\PatientCareplanRelations;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -218,50 +219,6 @@ class ReportsController extends Controller
         return view('reports.billing', $data);
     }
 
-    public function biometricsCharts(
-        Request $request,
-        $patientId = false
-    ) {
-        $patient = User::find($patientId);
-
-        $biometrics = [
-            'Weight',
-            'Blood_Sugar',
-            'Blood_Pressure',
-        ];
-        $biometrics_data  = [];
-        $biometrics_array = [];
-
-        foreach ($biometrics as $biometric) {
-            $biometrics_data[$biometric] = $this->service->getBiometricsData($biometric, $patient);
-        }            //debug($biometrics_data);
-
-        foreach ($biometrics_data as $key => $value) {
-            $bio_name                            = $key;
-            $count                               = 1;
-            $biometrics_array[$bio_name]['data'] = '';
-            if ($value) {
-                foreach ($value as $key => $value) {
-                    $biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval(
-                        $value->Avg
-                        ).'} ,';
-                    ++$count;
-                }
-            } else {
-                //no data
-                $biometrics_array[$bio_name]['data'] = '';
-            }//debug($biometrics_array);
-        }
-
-        return view(
-            'wpUsers.patient.biometric-chart',
-            [
-                'patient'          => $patient,
-                'biometrics_array' => $biometrics_array,
-            ]
-        );
-    }
-
     public function excelReportUnreachablePatients()
     {
         $users = $this->patientReadRepository->unreachable()->fetch();
@@ -439,7 +396,7 @@ class ReportsController extends Controller
                     }
                     $biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval(
                         $value->Avg
-                        ).'} ,';
+                    ).'} ,';
                     ++$count;
                 }
             } else {
@@ -612,11 +569,14 @@ class ReportsController extends Controller
                                     $end,
                                 ]
                             )
-                            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                            ->groupBy(DB::raw('provider_id, DATE(performed_at),type,lv_activities.id'))
                             ->orderBy('performed_at', 'desc');
                     },
                 ]
             )
+            ->has('primaryPractice')
+            ->has('patientInfo')
+            ->with('patientInfo')
             ->whereHas(
                 'patientSummaries',
                 function ($q) use ($time) {
@@ -664,8 +624,7 @@ class ReportsController extends Controller
 
         $patient_counter = 0;
         foreach ($patients as $patient) {
-            $u20_patients[$patient_counter]['site'] = $patient->primaryPractice->display_name;
-
+            $u20_patients[$patient_counter]['site']            = $patient->primaryPractice->display_name;
             $u20_patients[$patient_counter]['colsum_careplan'] = 0;
             $u20_patients[$patient_counter]['colsum_changes']  = 0;
             $u20_patients[$patient_counter]['colsum_progress'] = 0;
@@ -677,6 +636,7 @@ class ReportsController extends Controller
             $u20_patients[$patient_counter]['dob']             = Carbon::parse($patient->getBirthDate())->format(
                 'm/d/Y'
             );
+            $u20_patients[$patient_counter]['mrn']          = $patient->patientInfo->mrn_number;
             $u20_patients[$patient_counter]['patient_name'] = $patient->getFullName();
             $u20_patients[$patient_counter]['patient_id']   = $patient->id;
             $acts                                           = $patient->activities;
@@ -779,10 +739,14 @@ class ReportsController extends Controller
         Request $request,
         $patientId = false
     ) {
+        ini_set('max_execution_time', 150);
+        ini_set('memory_limit', '512M');
+
         if ( ! $patientId) {
-            return 'Patient Not Found..';
+            return response('Patient Not Found..', 400);
         }
 
+        /** @var User $patient */
         $patient = User::with(PatientCareplanRelations::get())->findOrFail($patientId);
 
         if (CarePlan::PDF == $patient->getCareplanMode()) {
@@ -791,18 +755,38 @@ class ReportsController extends Controller
 
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport($patient);
 
-        if ( ! $careplan) {
-            return 'Careplan not found...';
+        if ( ! $patient->carePlan || ! $careplan) {
+            return response('Careplan not found...', 400);
         }
 
-        $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+        /** @var User $user */
+        $user                           = auth()->user();
+        $showReadyForDrButton           = $patient->carePlan->shouldRnApprove($user);
+        $readyForDrButtonDisabled       = false;
+        $readyForDrButtonAlreadyClicked = false;
+        if ($showReadyForDrButton) {
+            $readyForDrButtonDisabled = ! Note::whereStatus(Note::STATUS_DRAFT)
+                ->where('patient_id', '=', $patient->id)
+                ->where('successful_clinical_call', '=', 1)
+                ->exists();
+
+            $approvedBy                     = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
+            $readyForDrButtonAlreadyClicked = $approvedBy && $approvedBy == $user->id;
+        }
+
+//        To phase out
+//        $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+        $showInsuranceReviewFlag = false;
 
         $skippedAssessment = $request->has('skippedAssessment');
 
         $recentSubmission = $request->input('recentSubmission') ?? false;
 
+        $cpmMiscs = CpmMisc::pluck('id', 'name');
+
         $args = [
             'patient'                 => $patient,
+            'careplanStatus'          => $patient->carePlan->status,
             'problems'                => $careplan[$patientId]['problems'],
             'problemNames'            => $careplan[$patientId]['problem'],
             'biometrics'              => $careplan[$patientId]['bio_data'],
@@ -820,11 +804,17 @@ class ReportsController extends Controller
             'careplan'                => array_merge(
                 $careplanService->careplan($patient),
                 //vue front end expects this format
-            ['other' => [
-                ['name' => $careplan[$patientId]['other']],
-            ],
-            ]
+                ['other' => [
+                    ['name' => $careplan[$patientId]['other']],
+                ],
+                ]
             ),
+            'socialServicesMiscId'           => $cpmMiscs[CpmMisc::SOCIAL_SERVICES],
+            'othersMiscId'                   => $cpmMiscs[CpmMisc::OTHER],
+            'rnApprovalEnabled'              => $patient->carePlan->isRnApprovalEnabled(),
+            'showReadyForDrButton'           => $showReadyForDrButton,
+            'readyForDrButtonDisabled'       => $readyForDrButtonDisabled,
+            'readyForDrButtonAlreadyClicked' => $readyForDrButtonAlreadyClicked,
         ];
 
         return view(

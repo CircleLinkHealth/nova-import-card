@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ManagesPatientCookies;
 use Illuminate\Http\Request;
 
 class WelcomeController extends Controller
@@ -21,6 +22,8 @@ class WelcomeController extends Controller
     |
     */
 
+    use ManagesPatientCookies;
+
     /**
      * Create a new controller instance.
      */
@@ -31,6 +34,10 @@ class WelcomeController extends Controller
 
     /**
      * Show the application welcome screen to the user.
+     *
+     * Addin practice Id for patient login.
+     *
+     * @param null $practiceId
      *
      * @throws \Exception
      *
@@ -50,19 +57,33 @@ class WelcomeController extends Controller
             throw new \Exception("Log in for User with id {$user->id} failed. User has no assigned Roles.");
         }
 
+        if ($user->isCareCoach()) {
+            return redirect()->route('patientCallList.index');
+        }
+
+        if ($user->isParticipant()) {
+            return redirect()->route('patient-user.careplan');
+        }
+
+        if ($user->isSurveyOnly()) {
+            auth()->logout();
+
+            return redirect()->route('login');
+        }
+
         if ($user->isAdmin()) {
             return \App::call('App\Http\Controllers\Admin\DashboardController@index');
         }
 
-        if ($user->hasRole('saas-admin')) {
+        if ($user->isSaasAdmin()) {
             return \App::call('App\Http\Controllers\Patient\PatientController@showDashboard');
         }
 
-        if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
+        if ($user->isCareAmbassador()) {
             return \App::call('App\Http\Controllers\Enrollment\EnrollmentCenterController@dashboard');
         }
 
-        if ($user->hasRole('ehr-report-writer')) {
+        if ($user->isEhrReportWriter()) {
             if ( ! isProductionEnv()) {
                 return \App::call('App\Http\Controllers\EhrReportWriterController@index');
             }

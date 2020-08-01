@@ -9,6 +9,7 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Titasgailius\SearchRelations\SearchesRelations;
@@ -36,7 +37,8 @@ class Nurse extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'user_id',
+        'id',
+        'user_id',
     ];
 
     /**
@@ -54,10 +56,10 @@ class Nurse extends Resource
      */
     public static $title = 'user_id';
 
+    public static $with = ['user'];
+
     /**
      * Get the actions available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -89,8 +91,6 @@ class Nurse extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
@@ -100,8 +100,6 @@ class Nurse extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -113,20 +111,43 @@ class Nurse extends Resource
                 ->hideWhenCreating()
                 ->readonly(),
 
+            Date::make('Start Date', 'start_date'),
+
             Text::make('+ Days Payment', 'pay_interval')
                 ->rules('required'),
 
             Number::make('Case Load Capacity', 'case_load_capacity'),
 
+            Boolean::make('Is Active?', 'status')
+                ->trueValue('active')
+                ->falseValue('inactive'),
+
             Boolean::make('Is Demo?', 'is_demo'),
-            Boolean::make('Variable Rate', 'is_variable_rate'),
+
+            //CPM-2131
+            Boolean::make('Fixed VF or Fixed Hourly', 'is_variable_rate'),
+
+            Number::make('Hourly Rate (fixed rate)', 'hourly_rate')
+                ->step(0.01),
+
+            Number::make('Visit Fee 1', 'visit_fee')
+                ->step(0.01),
+            Number::make('Visit Fee 2', 'visit_fee_2')
+                ->step(0.01),
+            Number::make('Visit Fee 3', 'visit_fee_3')
+                ->step(0.01),
+
+            Number::make('High Rate 1', 'high_rate')
+                ->step(0.01),
+            Number::make('High Rate 2', 'high_rate_2')
+                ->step(0.01),
+            Number::make('High Rate 3', 'high_rate_3')
+                ->step(0.01),
         ];
     }
 
     /**
      * Get the filters available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -142,8 +163,6 @@ class Nurse extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

@@ -7,11 +7,12 @@
 namespace App\Notifications;
 
 use App\CareplanAssessment;
+use App\Contracts\FaxableNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SendAssessmentNotification extends Notification
+class SendAssessmentNotification extends Notification implements FaxableNotification
 {
     //todo: REMOVE PHI FROM NOTIFICATION
     use Queueable;
@@ -66,13 +67,14 @@ class SendAssessmentNotification extends Notification
         ];
     }
 
-    public function toFax($notifiable)
+    /**
+     * @param $notifiable
+     */
+    public function toFax($notifiable = null): array
     {
-        if ( ! $notifiable || ! $notifiable->fax) {
-            return false;
-        }
-
-        return $this->toPdf($notifiable);
+        return [
+            'file' => $this->toPdf($notifiable),
+        ];
     }
 
     /**
@@ -87,10 +89,13 @@ class SendAssessmentNotification extends Notification
         return (new MailMessage())
             ->from('notifications@careplanmanager.com', 'CircleLink Health')
             ->subject('New Patient Assessment')
-            ->view('emails.assessment-created', [
-                'assessment' => $this->attachment,
-                'notifiable' => $notifiable,
-            ]);
+            ->view(
+                'emails.assessment-created',
+                [
+                    'assessment' => $this->attachment,
+                    'notifiable' => $notifiable,
+                ]
+            );
     }
 
     public function toPdf($notifiable = null)

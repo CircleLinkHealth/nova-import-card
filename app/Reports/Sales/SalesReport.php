@@ -6,8 +6,8 @@
 
 namespace App\Reports\Sales;
 
-use App\Services\PdfService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Services\PdfService;
 
 abstract class SalesReport
 {

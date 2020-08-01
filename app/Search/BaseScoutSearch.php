@@ -43,6 +43,18 @@ abstract class BaseScoutSearch implements ScoutSearch
      * @var string
      */
     protected $prefix = 'search:';
+    /**
+     * Callback given to setWheres.
+     *
+     * @var callable
+     */
+    private $fn;
+    /**
+     * Add this to hash for uniqueness between practices.
+     *
+     * @var array
+     */
+    private $wheres;
 
     public function __construct()
     {
@@ -51,10 +63,18 @@ abstract class BaseScoutSearch implements ScoutSearch
         }
     }
 
+    public function cache(callable $fn, string $term)
+    {
+        return \Cache::tags($this->tags())
+            ->remember(
+                self::key($term),
+                $this->duration(),
+                $fn
+            );
+    }
+
     /**
      * How long to store in cache for.
-     *
-     * @return int
      */
     public function duration(): int
     {
@@ -64,26 +84,20 @@ abstract class BaseScoutSearch implements ScoutSearch
     /**
      * Search using given term.
      *
-     * @param string $term
-     *
      * @return mixed
      */
     public function find(string $term)
     {
-        return \Cache::tags($this->tags())
-            ->remember(
-                self::key($term),
-                $this->duration(),
-                function () use ($term) {
-                    return $this->query($term);
-                }
-                     );
+        return $this->cache(
+            function () use ($term) {
+                return $this->decorateQuery($this->query($term))->first();
+            },
+            $term
+        );
     }
 
     /**
      * Essentially a static wrapper for find so that we can do `ProviderByName::first($term)`.
-     *
-     * @param string $term
      *
      * @return mixed
      */
@@ -93,19 +107,19 @@ abstract class BaseScoutSearch implements ScoutSearch
     }
 
     /**
-     * @param string $term
-     *
      * @return string
      */
     public function key(string $term)
     {
-        return "{$this->name()}:$term";
+        if (empty($this->wheres)) {
+            return sha1("{$this->name()}:$term");
+        }
+
+        return sha1("{$this->name()}:$term:".json_encode($this->wheres));
     }
 
     /**
      * The name of this search. Will be used in cache keys, tags.
-     *
-     * @return string
      */
     public function name(): string
     {
@@ -113,9 +127,17 @@ abstract class BaseScoutSearch implements ScoutSearch
     }
 
     /**
+     * @return BaseScoutSearch
+     */
+    public function setWheres(array $wheres)
+    {
+        $this->wheres = $wheres;
+
+        return $this;
+    }
+
+    /**
      * Tags for this search.
-     *
-     * @return array
      */
     public function tags(): array
     {
@@ -123,6 +145,19 @@ abstract class BaseScoutSearch implements ScoutSearch
             $this->name(),
             self::SCOUT_SEARCHES_CACHE_TAG,
         ];
+    }
+
+    private function decorateQuery(\Laravel\Scout\Builder $query)
+    {
+        if (empty($this->wheres)) {
+            return $query;
+        }
+
+        foreach ($this->wheres as $key => $value) {
+            $query->where($key, $value);
+        }
+
+        return $query;
     }
 
     private function generateSearchName()

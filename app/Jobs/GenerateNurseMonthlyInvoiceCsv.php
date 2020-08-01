@@ -6,10 +6,10 @@
 
 namespace App\Jobs;
 
-use App\AppConfig;
 use App\Exports\NurseInvoiceCsv;
 use App\Notifications\SendMonthlyInvoicesToAccountant;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,8 +33,6 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param Carbon $month
      */
     public function __construct(Carbon $month)
     {
@@ -44,15 +42,7 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
 
     public function csvReceivers()
     {
-        $getEmails = [];
-        AppConfig::where('config_key', '=', self::RECEIVES_NURSE_INVOICES_CSV)
-            ->select('config_value')->chunk(20, function ($emails) use (&$getEmails) {
-                foreach ($emails as $email) {
-                    $getEmails[] = $email->config_value;
-                }
-            });
-
-        return $getEmails;
+        return AppConfig::pull(self::RECEIVES_NURSE_INVOICES_CSV, []);
     }
 
     /**

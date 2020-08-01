@@ -7,8 +7,7 @@
 namespace App\Jobs;
 
 use App\Exports\NurseDailyReport;
-use App\Notifications\NurseDailyReportGenerated;
-use App\Services\Cache\NotificationService;
+use App\Notifications\ReportGenerated;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
@@ -25,13 +24,12 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    const RECEIVES_DAILY_NURSE_REPORT_NOTIFICATION_NOVA_KEY = 'receives_nurse_daily_report_notification';
     private $date;
     private $reportData;
 
     /**
      * Create a new job instance.
-     *
-     * @param Carbon|null $forDate
      */
     public function __construct(Carbon $forDate = null)
     {
@@ -41,29 +39,22 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param NotificationService $notificationService
-     *
      * @throws \Exception
      */
-    public function handle(NotificationService $notificationService)
+    public function handle()
     {
         $media = (new NurseDailyReport($this->date))->storeAndAttachMediaTo(SaasAccount::whereSlug('circlelink-health')->firstOrFail());
 
         $link = $media->getUrl();
 
-        $notificationService->notifyAdmins(
-            'Nurse Daily Report '.$this->date->toDateString(),
-            '',
-            $link,
-            'Download Spreadsheet'
-        );
-
         if (isProductionEnv()) {
-            $sara = User::whereEmail('sheller@circlelinkhealth.com')->first();
-
-            if ($sara) {
-                $sara->notify(new NurseDailyReportGenerated($this->date, $link));
-            }
+            $receivers = User::whereIn('id', function ($q) {
+                $q->select('config_value')
+                    ->from('app_config')
+                    ->where('config_key', self::RECEIVES_DAILY_NURSE_REPORT_NOTIFICATION_NOVA_KEY);
+            })->get()->each(function ($user) use ($link) {
+                $user->notify(new ReportGenerated($this->date, $link, 'Nurse Daily Report'));
+            });
         }
     }
 }

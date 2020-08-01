@@ -24,7 +24,9 @@ class QueueSendAuditReports extends Command
      *
      * @var string
      */
-    protected $signature = 'send:audit-reports';
+    protected $signature = 'send:audit-reports {practiceId?} {month?} {limit?} {--dry}';
+
+    private static $dispatched = 0;
 
     /**
      * Create a new command instance.
@@ -41,31 +43,50 @@ class QueueSendAuditReports extends Command
      */
     public function handle()
     {
-        $date = Carbon::now()->subMonth()->firstOfMonth();
+        if ($inputDate = $this->argument('month')) {
+            $date = Carbon::createFromFormat('Y-m-d', $inputDate)->firstOfMonth();
+        } else {
+            $date = Carbon::now()->subMonth()->firstOfMonth();
+        }
 
-        $patients = User::ofType('participant')
+        $this->warn("Creating Audit Reports for {$date->toDateString()}");
+
+        User::ofType('participant')
             ->with('patientInfo')
             ->with('patientSummaries')
             ->with('primaryPractice')
             ->with('primaryPractice.settings')
+            ->doesntHave('primaryPractice.notificationContactPreferences')
             ->whereHas('primaryPractice', function ($query) {
                 $query->where('active', '=', true)
                     ->whereHas('settings', function ($query) {
                         $query->where('dm_audit_reports', '=', true)
                             ->orWhere('efax_audit_reports', '=', true);
+                    })->when($this->argument('practiceId'), function ($q) {
+                        $q->where('id', '=', $this->argument('practiceId'));
                     });
             })
             ->whereHas('patientSummaries', function ($query) use ($date) {
                 $query->where('total_time', '>', 0)
                     ->where('month_year', $date->toDateString());
             })
-            ->get();
+            ->chunkById(100, function ($patients) use ($date) {
+                foreach ($patients as $patient) {
+                    $this->warn("Creating audit report for $patient->id");
 
-        foreach ($patients as $patient) {
-            $job = (new MakeAndDispatchAuditReports($patient, $date))
-                ->onQueue('high');
+                    if ( ! $this->option('dry')) {
+                        MakeAndDispatchAuditReports::dispatch($patient, $date, (bool) $patient->primaryPractice->cpmSettings()->batch_efax_audit_reports)
+                            ->onQueue('high');
+                    }
 
-            dispatch($job);
-        }
+                    if ( ! is_null($this->argument('limit')) && ++self::$dispatched >= (int) $this->argument('limit')) {
+                        $this->warn('Existing after dispatching '.self::$dispatched.' jobs.');
+
+                        return false;
+                    }
+                }
+            });
+
+        $this->line('Command Finished');
     }
 }

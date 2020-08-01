@@ -7,18 +7,15 @@
 namespace App\Search;
 
 use CircleLinkHealth\Customer\Entities\Location;
+use Laravel\Scout\Builder;
 
 class LocationByName extends BaseScoutSearch
 {
     /**
      * The eloquent query for performing the search.
-     *
-     * @param string $term
-     *
-     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function query(string $term)
+    public function query(string $term): Builder
     {
-        return Location::search($term)->first();
+        return Location::search($term);
     }
 }

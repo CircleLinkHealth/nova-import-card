@@ -195,6 +195,8 @@
                             Selected User Actions:
                             <select id="perform-action-select" name="action">
                                 <option value="delete">Delete</option>
+                                <option value="enroll">Enroll</option>
+                                <option value="unreachable" selected>Mark As Unreachable</option>
                                 <option value="withdraw" selected>Withdraw</option>
                             </select>
 
@@ -259,11 +261,19 @@
                                     <tr>
                                         <td><input class="user-select-checkbox" type="checkbox" name="users[]"
                                                    value="{{ $wpUser->id }}"></td>
-                                        <td><a href="{{ route('admin.users.edit', array('id' => $wpUser->id)) }}"
-                                               class=""> {{ $wpUser->getFullNameWithId() }}</a></td>
                                         <td>
-                                            @if (count($wpUser->roles) > 0)
-                                                {{$wpUser->roles->unique('display_name')->implode('display_name', ', ')}}
+                                            @if(!App\Http\Controllers\SuperAdmin\UserController::hideFromAdminPanel($wpUser))
+                                                <a href="{{ route('admin.users.edit', array('id' => $wpUser->id)) }}"
+                                                   class=""> {{ $wpUser->getFullNameWithId() }}</a>
+                                            @else
+                                                {{$wpUser->getFullNameWithId()}}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{$wpUser->roles->unique('display_name')->implode('display_name', ', ')}}
+
+                                            @if($wpUser->isParticipant() && $wpUser->patientInfo)
+                                                ({{ucfirst($wpUser->patientInfo->ccm_status)}})
                                             @endif
                                         </td>
                                         <td>{{ $wpUser->email }}</td>
@@ -274,19 +284,19 @@
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            @if(Cerberus::hasPermission('user.update'))
+                                            @if(!App\Http\Controllers\SuperAdmin\UserController::hideFromAdminPanel($wpUser) && auth()->user()->hasPermission('user.update'))
                                                 <a href="{{ route('admin.users.edit', array('id' => $wpUser->id)) }}"
                                                    class="btn btn-primary btn-xs"><i
                                                             class="glyphicon glyphicon-edit"></i> Edit</a>
                                             @endif
-                                            @if (count($wpUser->roles) > 0)
-                                                @if($wpUser->hasRole('participant'))
-                                                    <a href="{{ route('patient.summary', array('patientId' => $wpUser->id)) }}"
-                                                       class="btn btn-info btn-xs" style="margin-left:10px;"><i
-                                                                class="glyphicon glyphicon-eye-open"></i> UI</a>
-                                                @endif
+
+                                            @if($wpUser->isParticipant())
+                                                <a href="{{ route('patient.summary', array('patientId' => $wpUser->id)) }}"
+                                                   class="btn btn-info btn-xs" style="margin-left:10px;"><i
+                                                            class="glyphicon glyphicon-eye-open"></i> View Chart</a>
                                             @endif
-                                            @if(Cerberus::hasPermission('user.update'))
+
+                                            @if(auth()->user()->hasPermission('user.update'))
                                                 <a href="{{ route('admin.users.destroy', array('id' => $wpUser->id)) }}"
                                                    onclick="var result = confirm('Are you sure you want to delete?');if (!result) {event.preventDefault();}"
                                                    class="btn btn-danger btn-xs" style="margin-left:10px;"><i

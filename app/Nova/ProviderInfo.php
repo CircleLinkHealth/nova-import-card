@@ -55,8 +55,6 @@ class ProviderInfo extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -87,8 +85,6 @@ class ProviderInfo extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
@@ -98,8 +94,6 @@ class ProviderInfo extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -111,6 +105,7 @@ class ProviderInfo extends Resource
                 ->hideWhenCreating()
                 ->hideFromIndex()
                 ->sortable(),
+
             Text::make('Name', 'user.display_name')
                 ->hideFromDetail()
                 ->hideWhenCreating()
@@ -118,26 +113,24 @@ class ProviderInfo extends Resource
 
             Text::make('Prefix')
                 ->sortable()
-                ->updateRules('string'),
+                ->updateRules('nullable', 'string'),
 
             Text::make('Pronunciation')
                 ->sortable()
-                ->updateRules('string'),
+                ->updateRules('nullable', 'string'),
 
             Text::make('Sex')
                 ->sortable()
-                ->updateRules('string'),
+                ->updateRules('nullable', 'string'),
 
             Text::make('Specialty')
                 ->sortable()
-                ->updateRules('string'),
+                ->updateRules('nullable', 'string'),
         ];
     }
 
     /**
      * Get the filters available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -153,8 +146,6 @@ class ProviderInfo extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

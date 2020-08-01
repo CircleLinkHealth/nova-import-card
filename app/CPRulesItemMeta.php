@@ -14,15 +14,19 @@ namespace App;
  * @property string|null           $meta_key
  * @property string|null           $meta_value
  * @property \App\CPRulesItem|null $CPRulesItem
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereItemmetaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereItemsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereMetaKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereMetaValue($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta query()
+ *
  * @property int|null $revision_history_count
  */
 class CPRulesItemMeta extends \CircleLinkHealth\Core\Entities\BaseModel
@@ -52,6 +56,6 @@ class CPRulesItemMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function CPRulesItem()
     {
-        return $this->belongsTo('App\CPRulesItem', 'items_id');
+        return $this->belongsTo(\App\CPRulesItem::class, 'items_id');
     }
 }

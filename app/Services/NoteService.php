@@ -8,16 +8,19 @@ namespace App\Services;
 
 use App\Call;
 use App\CareplanAssessment;
-use App\CLH\Repositories\UserRepository;
 use App\Filters\NoteFilters;
 use App\Note;
+use App\Notifications\SendPatientEmail;
 use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\NoteRepository;
 use App\View\MetaTag;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class NoteService
 {
@@ -74,7 +77,7 @@ class NoteService
         $patient = User::find($note->patient_id);
 
         $note->body = 'Created/Edited Assessment for '.$patient->name().' ('.$assessment->careplan_id.') ... See '.
-            URL::to('/manage-patients/'.$assessment->careplan_id.'/view-careplan/assessment');
+                              URL::to('/manage-patients/'.$assessment->careplan_id.'/view-careplan/assessment');
         $note->type         = 'Edit Assessment';
         $note->performed_at = Carbon::now();
         $note->save();
@@ -109,16 +112,34 @@ class NoteService
             $note->status = $requestInput['status'];
         }
 
+        if (empty($requestInput['type'])) {
+            $requestInput['type'] = $note->type;
+        }
+
+        if (empty($requestInput['logger_id'])) {
+            $requestInput['logger_id'] = auth()->id();
+        }
+
+        if (isset($requestInput['call_status']) && Call::REACHED === $requestInput['call_status']) {
+            $note->successful_clinical_call = 1;
+        }
+
         $note->logger_id = $requestInput['logger_id'];
         $note->isTCM     = isset($requestInput['tcm'])
             ? 'true' === $requestInput['tcm']
             : 0;
-        $note->type                 = $requestInput['type'];
-        $note->summary              = $requestInput['summary'] ?? null;
-        $note->body                 = $requestInput['body'];
-        $note->performed_at         = $requestInput['performed_at'];
+        $note->type    = $requestInput['type'];
+        $note->summary = $requestInput['summary'] ?? null;
+        $note->body    = $requestInput['body'];
+
+        // this is no longer available in create note page
+        $note->performed_at = Carbon::now(); //$requestInput['performed_at'];
+
         $note->did_medication_recon = isset($requestInput['medication_recon'])
             ? 'true' === $requestInput['medication_recon']
+            : 0;
+        $note->success_story = isset($requestInput['success_story'])
+            ? 'true' === $requestInput['success_story']
             : 0;
 
         if ($note->isDirty()) {
@@ -172,14 +193,15 @@ class NoteService
      *
      * Force forwards to CareTeam if the patient's in the hospital, ie `if(true === note->isTCM)`
      *
-     * @param Note $note
      * @param bool $notifyCareTeam
      * @param bool $notifyCLH
      * @param bool $forceNotify
+     *
+     * @return void
      */
     public function forwardNoteIfYouMust(Note $note, $notifyCareTeam = false, $notifyCLH = false, $forceNotify = false)
     {
-        if ($note->isTCM) {
+        if ($note->isTCM && $this->practiceHasNotesNotificationsEnabled($note->patient->primaryPractice)) {
             $notifyCareTeam = $forceNotify = true;
         }
 
@@ -271,6 +293,53 @@ class NoteService
             });
     }
 
+    public function getNoteEmails(Note $note)
+    {
+        return $note->patient->notifications()->where('type', SendPatientEmail::class)->where(
+            'data->note_id',
+            $note->id
+        )->get()->map(function ($n) {
+            $data = $n->data;
+
+            if (isset($data['sender_id'])) {
+                $sender = User::find($n->data['sender_id']);
+                $email['senderFullName'] = $sender
+                    ? $sender->getFullName()
+                    : 'N/A';
+            }
+
+            if (isset($data['email_content'])) {
+                $email['content'] = $data['email_content']
+                    ?: 'No content found';
+            }
+            $email['subject'] = $data['email_subject'];
+
+            $email['created_at'] = presentDate($n->created_at);
+
+            if (isset($data['attachments'])) {
+                foreach ($data['attachments'] as $attachment) {
+                    $a['id'] = $attachment['media_id'];
+                    $media = Media::where('collection_name', 'patient-email-attachments')
+                        ->where('model_id', $n->notifiable_id)
+                        ->whereIn(
+                            'model_type',
+                            [\App\User::class, 'CircleLinkHealth\Customer\Entities\User']
+                        )
+                        ->find($attachment['media_id']);
+
+                    $a['url'] = $media->getUrl();
+                    $a['file_name'] = $media->file_name;
+                    $a['is_image'] = Str::contains($media->mime_type, 'image')
+                        ?: false;
+
+                    $email['attachments'][] = $a;
+                }
+            }
+
+            return $email;
+        });
+    }
+
     //Get all notes for patients with specified date range
 
 //    public function getNotesAndOfflineActivitiesForPatient(User $patient)
@@ -322,21 +391,6 @@ class NoteService
 
     //return bool of whether note was sent to a provider
 
-    public function getPatientCareTeamMembers($patientId)
-    {
-        $careteam_info = [];
-        $careteam_ids  = CarePerson
-            ::whereUserId($patientId)->pluck('member_user_id');
-
-        foreach ($careteam_ids as $id) {
-            if (User::find($id)) {
-                $careteam_info[$id] = User::find($id)->getFullName();
-            }
-        }
-
-        return $careteam_info;
-    }
-
     public function getSeenForwards(Note $note)
     {
         return $note->notifications()
@@ -367,14 +421,21 @@ class NoteService
             ->get()
             ->markAsRead();
     }
-    
+
     public function patientNotes($userId, NoteFilters $filters)
     {
         return $this->noteRepo->patientNotes($userId, $filters);
     }
 
+    public function practiceHasNotesNotificationsEnabled(Practice $practice): bool
+    {
+        return with($practice->cpmSettings(), function ($settings) {
+            return $settings->email_note_was_forwarded || $settings->efax_pdf_notes || $settings->dm_pdf_notes;
+        });
+    }
+
     public function storeCallForNote(
-        $note,
+        Note $note,
         $status,
         User $patient,
         User $author,
@@ -382,6 +443,11 @@ class NoteService
         $scheduler,
         $attemptNote = ''
     ) {
+        if ( ! $note->successful_clinical_call) {
+            $note->successful_clinical_call = 1;
+            $note->save();
+        }
+
         if ('inbound' == $phone_direction) {
             $outbound_num  = $patient->getPrimaryPhone();
             $outbound_id   = $patient->id;
@@ -396,7 +462,7 @@ class NoteService
             $isCpmOutbound = true;
         }
 
-        Call::create([
+        return Call::create([
             'note_id' => $note->id,
             'service' => 'phone',
             'status'  => $status,

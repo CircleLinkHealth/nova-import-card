@@ -6,9 +6,8 @@
 
 namespace App;
 
-use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\SqlViewModel;
 use CircleLinkHealth\Core\Filters\Filterable;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\CallView.
@@ -33,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null    $no_of_successful_calls
  * @property int|null    $practice_id
  * @property string|null $practice
+ * @property string|null $state
  * @property string|null $timezone
  * @property string|null $preferred_call_days
  * @property int         $is_ccm
@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $ccm_status
  * @property string|null $patient_nurse_id
  * @property string|null $patient_nurse
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView newQuery()
@@ -75,60 +76,29 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereType($value)
  * @mixin \Eloquent
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereCcmStatus($value)
+ *
  * @property int $asap
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereAsap($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientNurse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientNurseId($value)
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property int|null                                                                                    $revision_history_count
+ * @property string|null                                                                                 $preferred_contact_language
  */
-class CallView extends Model
+class CallView extends SqlViewModel
 {
     use Filterable;
 
+    public $phi = [
+        'patient',
+        'state',
+    ];
+
     protected $table = 'calls_view';
-
-    /**
-     * @return string
-     */
-    public function preferredCallDaysToExpandedString()
-    {
-        $windows = [];
-        if ($this->preferred_call_days) {
-            $days  = explode(',', $this->preferred_call_days);
-            $start = Carbon::parse($this->call_time_start)->format('h:i a');
-            $end   = Carbon::parse($this->call_time_end)->format('h:i a');
-
-            foreach ($days as $day) {
-                switch ($day) {
-                    case 1:
-                        $windows[] = "Monday: {$start} - {$end}<br/>";
-                        break;
-                    case 2:
-                        $windows[] = "Tuesday: {$start} - {$end}<br/>";
-                        break;
-                    case 3:
-                        $windows[] = "Wednesday: {$start} - {$end}<br/>";
-                        break;
-                    case 4:
-                        $windows[] = "Thursday: {$start} - {$end}<br/>";
-                        break;
-                    case 5:
-                        $windows[] = "Friday: {$start} - {$end}<br/>";
-                        break;
-                    case 6:
-                        $windows[] = "Saturday: {$start} - {$end}<br/>";
-                        break;
-                    case 7:
-                        $windows[] = "Sunday: {$start} - {$end}<br/>";
-                        break;
-                }
-            }
-        }
-
-        return empty($windows)
-            ? 'Patient call date/time preferences not found.'
-            : implode($windows);
-    }
 
     public function preferredCallDaysToString()
     {

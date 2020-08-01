@@ -5,24 +5,34 @@
     "framework",
     "laravel"
   ],
+  "authors": [
+    {
+      "name": "Antonis Antoniou",
+      "email": "antonis@cirlelinkhealth.com",
+      "role": "Developerr"
+    },
+    {
+      "name": "Constantinos Kakoushias",
+      "email": "constantinos@cirlelinkhealth.com",
+      "role": "Developerr"
+    },
+    {
+      "name": "Michalis Antoniou",
+      "email": "mantoniou@cirlelinkhealth.com",
+      "role": "Lead Developerr"
+    },
+    {
+      "name": "Pangratios Cosma",
+      "email": "pangratios@cirlelinkhealth.com",
+      "role": "Lead Developerr"
+    }
+  ],
   "license": "MIT",
   "type": "project",
   "repositories": [
     {
       "type": "composer",
       "url": "https://nova.laravel.com"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:jamisonvalenta/Laravel-4-Generators.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:subzero10/url-shortener.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:subzero10/laravel-raygun.git"
     },
     {
       "type": "git",
@@ -53,12 +63,12 @@
       "url": "git@github.com:CircleLinkHealth/module-core.git"
     },
     {
-      "type": "composer",
-      "url": "https://packagist.org"
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/scout.git"
     },
     {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/wkhtmltopdf-amd64.git"
+      "type": "composer",
+      "url": "https://packagist.org"
     },
     {
       "packagist": false
@@ -66,99 +76,210 @@
     {
       "type": "path",
       "url": "./nova-components/ImportPracticeStaffCsv"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/GeneratePatientCallDataCsv"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:circlelinkhealth/revisionable-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/ClhImportCardExtended"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/patient-api-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/slack-laravel.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/condition-code-lookup-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
+    },
+    {
+      "type": "git",
+      "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/short-url.git"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/GenerateSuccessStoriesReport"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/ClhNovaTheme"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/EnrollmentInvites"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/InvoicesDownload"
     }
   ],
   "require": {
-    "php": ">=7.2.0",
+    "php": "^7.4",
     "ext-bcmath": "*",
     "ext-dom": "*",
     "ext-json": "*",
     "ext-libxml": "*",
+    "ext-pdo": "*",
+    "ext-redis": "*",
     "ext-simplexml": "*",
     "alexbowers/nova-prepopulate-searchable": "^1.0",
     "algolia/algoliasearch-client-php": "^2.2",
     "algolia/scout-extended": "^1.8",
     "amnuts/opcache-gui": "dev-master",
-    "appstract/laravel-opcache": "^2.0",
-    "barryvdh/laravel-snappy": "0.4.4",
-    "circlelinkhealth/core": "1.3",
-    "circlelinkhealth/customer": "1.4.4",
+    "anaseqal/nova-import": "^0.0.3",
+    "appstract/laravel-opcache": "^4.0",
+    "ashallendesign/short-url": "3.0.3",
+    "barryvdh/laravel-snappy": "0.4.7",
+    "circlelinkhealth/ccda-parser-processor-php-module": "1.1.2",
+    "circlelinkhealth/cerberus-gatekeeper-module": "3.1.7",
+    "circlelinkhealth/clh-import-card-extended": "*",
+    "circlelinkhealth/clh-nova-theme": "*",
+    "circlelinkhealth/condition-code-lookup-module": "1.1.5",
+    "circlelinkhealth/core-module": "1.7.1",
+    "circlelinkhealth/cpm-migrations-module": "2.3.1",
+    "circlelinkhealth/customer-module": "3.1.6",
+    "circlelinkhealth/eligibility-module": "3.2.4",
+    "circlelinkhealth/enrollment-invites": "*",
+    "circlelinkhealth/generate-patient-call-data-csv": "*",
+    "circlelinkhealth/generate-success-stories-report": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
-    "circlelinkhealth/raygun": "dev-master",
-    "circlelinkhealth/timetracking": "1.1.2",
-    "circlelinkhealth/twofa": "1.1.2",
-    "daltcore/lara-pdf-merger": "dev-master",
+    "circlelinkhealth/invoices-download": "*",
+    "circlelinkhealth/nurseinvoices-module": "1.5.5",
+    "circlelinkhealth/patientapi-module": "1.3.3",
+    "circlelinkhealth/raygun-module": "1.1",
+    "circlelinkhealth/revisionable-module": "6.1.1",
+    "circlelinkhealth/shared-models-module": "1.7.3",
+    "circlelinkhealth/sqlviews-module": "1.2.6",
+    "circlelinkhealth/timetracking-module": "1.2.5",
+    "circlelinkhealth/twofa-module": "1.2.0",
+    "consoletvs/charts": "^6.5",
+    "daltcore/lara-pdf-merger": "1.1.2",
+    "danielme85/laravel-log-to-db": "^2.3",
     "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "2.9.2",
-    "fideloper/proxy": "^4.0",
+    "epartment/nova-dependency-container": "^1.2",
+    "fideloper/proxy": "^4.2",
     "fourstacks/nova-checkboxes": "^0.1.5",
+    "fruitcake/laravel-cors": "^1.0",
     "fzaninotto/faker": "~1.4",
-    "genealabs/laravel-caffeine": "^0.8.1",
-    "guzzlehttp/guzzle": "~5.3|~6.0",
-    "h4cc/wkhtmltoimage-amd64": "*",
-    "h4cc/wkhtmltopdf-amd64": "^0.12.5",
+    "genealabs/laravel-caffeine": "^7.0",
+    "guzzlehttp/guzzle": "^6.3",
     "hubertnnn/laravel-nova-field-dynamic-select": "^0.2.0",
     "jenssegers/agent": "^2.5",
-    "jeremykenedy/slack-laravel": "^2.2",
-    "jorijn/laravel-security-checker": "^0.3.0",
+    "jeremykenedy/slack-laravel": "^7.0.0",
+    "joshbrw/laravel-module-installer": "^0.1.5",
     "jubeki/nova-card-linkable": "^1.0",
+    "kreitje/nova-horizon-stats": "^0.3.0",
     "lab404/laravel-impersonate": "^1.2",
-    "laracasts/utilities": "~2.0",
-    "laravel/framework": "5.7.*",
-    "laravel/horizon": "^1.4",
-    "laravel/nova": "2.0.7",
-    "laravel/scout": "^7.2",
-    "laravel/tinker": "^1.0",
-    "laravelcollective/html": "5.7.*",
-    "league/flysystem-aws-s3-v3": "~1.0",
-    "league/fractal": "0.12.*",
-    "maatwebsite/excel": "^3.1",
+    "laracasts/utilities": "~3.0",
+    "laravel-notification-channels/twilio": "^2.1",
+    "laravel/framework": "^7.6",
+    "laravel/horizon": "^4.0",
+    "laravel/nova": "^3.0",
+    "laravel/scout": "^8.0",
+    "laravel/tinker": "^2.0",
+    "laravel/ui": "^2.0",
+    "laravelcollective/html": "^6.1",
+    "league/flysystem-aws-s3-v3": "^1.0",
+    "maatwebsite/excel": "^3.1.19",
+    "maatwebsite/laravel-nova-excel": "^1.2",
+    "moontoast/math": "1.1.2 as 1.999.999",
     "nao-pon/flysystem-google-drive": "~1.1",
     "nvanheuverzwijn/monolog-logdna": "^2.1",
-    "phaxio/phaxio": "^1.0",
-    "pragmarx/version": "^0.2.8",
-    "predis/predis": "^1.1",
-    "propaganistas/laravel-phone": "^3.0",
+    "phaxio/phaxio": "^2.0",
+    "propaganistas/laravel-phone": "^4.2.2",
     "pusher/pusher-php-server": "^4.0",
     "seld/jsonlint": "^1.7",
-    "sparclex/nova-import-card": "^2.0",
-    "spatie/laravel-medialibrary": "^7.0.0",
-    "spatie/laravel-view-models": "^1.1",
+    "sentry/sentry-laravel": "^1.7",
+    "setasign/fpdi-fpdf": "^2.2",
+    "sparclex/nova-import-card": "^7.0.1",
+    "spatie/laravel-medialibrary": "^7.19",
+    "spatie/laravel-rate-limited-job-middleware": "^1.3",
+    "spatie/laravel-view-models": "^1.3",
+    "spatie/pdf-to-text": "^1.2",
+    "suenerds/nova-searchable-belongs-to-filter": "^1.0",
     "titasgailius/search-relations": "^1.0",
-    "twilio/sdk": "5.7",
-    "waavi/url-shortener": "dev-master",
+    "twilio/sdk": "~5.16",
+    "vink/nova-cache-card": "^1.0",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
-    "wikimedia/composer-merge-plugin": "^1.4",
-    "yajra/laravel-datatables-oracle": "~8.0"
+    "wildbit/swiftmailer-postmark": "^3.1",
+    "willdurand/email-reply-parser": "^2.9",
+    "yajra/laravel-datatables-oracle": "~9.0"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
-    "barryvdh/laravel-ide-helper": "^2.4",
-    "brianium/paratest": "*",
-    "darkaonline/l5-swagger": "^5.5",
-    "filp/whoops": "~2.0",
-    "friendsofphp/php-cs-fixer": "^2.13",
+    "barryvdh/laravel-ide-helper": "^2.6.7",
+    "facade/ignition": "^2.0",
+    "friendsofphp/php-cs-fixer": "^2.16.3",
+    "fzaninotto/faker": "^1.4",
+    "heroku/heroku-buildpack-php" : "dev-master",
     "jkocik/laravel-profiler": "^1.2",
-    "laravel/dusk": "^3.0",
-    "mockery/mockery": "^1.0",
-    "nwidart/laravel-modules": "^4.0",
+    "kitloong/laravel-migrations-generator": "^4.3",
+    "laravel/dusk": "^5.9",
+    "mockery/mockery": "^1.3.1",
+    "nunomaduro/collision": "^4.1",
+    "nwidart/laravel-modules": "^7.1",
     "orangehill/iseed": "dev-master",
-    "phpunit/phpunit": "^7.0",
+    "phpstan/phpstan": "^0.12.5",
+    "phpunit/phpunit": "^8.5",
     "spatie/phpunit-watcher": "^1.8",
     "squizlabs/php_codesniffer": "*",
     "symfony/css-selector": "^4.0",
-    "symfony/dom-crawler": "^4.0",
-    "xethron/laravel-4-generators": "*",
-    "xethron/migrations-generator": "dev-l5"
+    "symfony/dom-crawler": "^4.0"
   },
   "autoload": {
     "classmap": [
       "database/seeds",
-      "database/factories",
-      "database/views"
+      "database/factories"
     ],
     "psr-4": {
-      "App\\": "app/"
+      "App\\": "app/",
+      "Modules\\": "Modules/"
     },
     "files": [
       "app/helpers.php"
@@ -169,7 +290,7 @@
       "Tests\\": "tests/"
     },
     "files": [
-      "vendor/circlelinkhealth/core/Helpers/helpers.php"
+      "Modules/Core/Helpers/helpers.php"
     ]
   },
   "scripts": {
@@ -193,20 +314,23 @@
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
       "@php artisan nova:publish"
     ],
-    "paratest": [
-      "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p8"
-    ],
-    "coverage": [
-      "php artisan --env=testing test:prepare-test_suite-db",
-      "APP_ENV=testing COMPOSER_PROCESS_TIMEOUT=700 ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --coverage-text"
-    ],
     "unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
-      "APP_ENV=testing ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3"
+      "APP_ENV=testing ./vendor/phpunit/phpunit/phpunit --testsuite=Unit --colors"
     ],
-    "profile-unit-tests": [
+    "feature-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
-      "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --log-junit tests_profiles.xml"
+      "APP_ENV=testing ./vendor/phpunit/phpunit/phpunit --testsuite=Feature --colors"
+    ],
+    "test": [
+      "php artisan --env=testing test:prepare-test_suite-db",
+      "php artisan --env=testing migrate:fresh",
+      "php artisan --env=testing migrate:views",
+      "php artisan --env=testing db:seed --class=TestSuiteSeeder",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=NurseInvoicesModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=EligibilityModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=Feature --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --colors --testdox"
     ],
     "clear": [
       "php artisan clear-compiled",
@@ -215,7 +339,9 @@
     "ide": [
       "php artisan ide-helper:generate",
       "php artisan -vvv ide-helper:models -W",
-      "php artisan ide-helper:meta"
+      "php artisan ide-helper:meta",
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --using-cache=no --show-progress=dots --diff --verbose --config=.php_cs.dist",
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --using-cache=no --show-progress=dots --diff --verbose --config=.php_cs_views.php"
     ]
   },
   "config": {
@@ -226,7 +352,7 @@
     "github-oauth": {
       "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
     },
-    "process-timeout": 500
+    "process-timeout": 3000
   },
   "extra": {
     "laravel": {
@@ -234,20 +360,6 @@
         "laravel/dusk",
         "barryvdh/laravel-snappy"
       ]
-    },
-    "merge-plugin": {
-      "include": [
-        "Modules/*/composer.json",
-        "CLHPackages/*/composer.json"
-      ],
-      "require": [],
-      "recurse": true,
-      "replace": true,
-      "ignore-duplicates": false,
-      "merge-dev": true,
-      "merge-extra": false,
-      "merge-extra-deep": false,
-      "merge-scripts": false
     }
   },
   "prefer-stable": true,

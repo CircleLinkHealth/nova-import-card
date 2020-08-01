@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 
 class MiscController extends Controller
 {

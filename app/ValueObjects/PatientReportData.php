@@ -12,32 +12,48 @@ namespace App\ValueObjects;
  */
 class PatientReportData
 {
+    protected $allBhiCodes;
+
+    protected $allCcmProblemCodes;
     protected $awvDate;
 
-    protected $bhiCode;
-
-    protected $bhiProblem;
+    protected $bhiCodes;
 
     protected $bhiTime;
 
     protected $billingCodes;
+
+    protected $ccmProblemCodes;
+
     protected $ccmTime;
 
     protected $dob;
+
+    protected $enableAllProblemCodesColumnns;
+
+    protected $locationName;
 
     protected $name;
 
     protected $practice;
 
-    protected $problem1;
-
-    protected $problem1Code;
-
-    protected $problem2;
-
-    protected $problem2Code;
-
     protected $provider;
+
+    /**
+     * @return mixed
+     */
+    public function getAllBhiCodes()
+    {
+        return $this->allBhiCodes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAllCcmProblemCodes()
+    {
+        return $this->allCcmProblemCodes;
+    }
 
     /**
      * @return mixed
@@ -50,17 +66,9 @@ class PatientReportData
     /**
      * @return mixed
      */
-    public function getBhiCode()
+    public function getBhiCodes()
     {
         return $this->bhiCode;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBhiProblem()
-    {
-        return $this->bhiProblem;
     }
 
     /**
@@ -82,6 +90,14 @@ class PatientReportData
     /**
      * @return mixed
      */
+    public function getCcmProblemCodes()
+    {
+        return $this->ccmProblemCodes;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getCcmTime()
     {
         return $this->ccmTime;
@@ -93,6 +109,22 @@ class PatientReportData
     public function getDob()
     {
         return $this->dob;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEnableAllProblemCodesColumnns()
+    {
+        return $this->enableAllProblemCodesColumnns;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLocationName()
+    {
+        return $this->locationName;
     }
 
     /**
@@ -114,41 +146,25 @@ class PatientReportData
     /**
      * @return mixed
      */
-    public function getProblem1()
-    {
-        return $this->problem1;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProblem1Code()
-    {
-        return $this->problem1Code;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProblem2()
-    {
-        return $this->problem2;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProblem2Code()
-    {
-        return $this->problem2Code;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getProvider()
     {
         return $this->provider;
+    }
+
+    /**
+     * @param mixed $allBhiCodes
+     */
+    public function setAllBhiCodes($allBhiCodes): void
+    {
+        $this->allBhiCodes = $allBhiCodes;
+    }
+
+    /**
+     * @param mixed $allCcmProblemCodes
+     */
+    public function setAllCcmProblemCodes($allCcmProblemCodes): void
+    {
+        $this->allCcmProblemCodes = $allCcmProblemCodes;
     }
 
     /**
@@ -160,19 +176,11 @@ class PatientReportData
     }
 
     /**
-     * @param mixed $bhiCode
+     * @param mixed $bhiCodes
      */
-    public function setBhiCode($bhiCode): void
+    public function setBhiCodes($bhiCodes): void
     {
-        $this->bhiCode = $bhiCode;
-    }
-
-    /**
-     * @param mixed $bhiProblem
-     */
-    public function setBhiProblem($bhiProblem): void
-    {
-        $this->bhiProblem = $bhiProblem;
+        $this->bhiCode = $bhiCodes;
     }
 
     /**
@@ -192,6 +200,14 @@ class PatientReportData
     }
 
     /**
+     * @param mixed $ccmProblemCodes
+     */
+    public function setCcmProblemCodes($ccmProblemCodes): void
+    {
+        $this->ccmProblemCodes = $ccmProblemCodes;
+    }
+
+    /**
      * @param mixed $ccmTime
      */
     public function setCcmTime($ccmTime): void
@@ -205,6 +221,22 @@ class PatientReportData
     public function setDob($dob): void
     {
         $this->dob = $dob;
+    }
+
+    /**
+     * @param mixed $enableAllProblemCodesColumnns
+     */
+    public function setEnableAllProblemCodesColumnns($enableAllProblemCodesColumnns): void
+    {
+        $this->enableAllProblemCodesColumnns = $enableAllProblemCodesColumnns;
+    }
+
+    /**
+     * @param mixed $locationName
+     */
+    public function setLocationName($locationName): void
+    {
+        $this->locationName = $locationName;
     }
 
     /**

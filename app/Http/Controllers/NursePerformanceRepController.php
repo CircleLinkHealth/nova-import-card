@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\FromArray;
 use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -25,8 +25,6 @@ class NursePerformanceRepController extends Controller
 
     /**
      * NursePerformanceRepController constructor.
-     *
-     * @param NursesPerformanceReportService $service
      */
     public function __construct(NursesPerformanceReportService $service)
     {
@@ -96,9 +94,6 @@ class NursePerformanceRepController extends Controller
     /**
      * Gets input date and collects days from that date back to beginning of that week.
      *
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     *
      * @return array
      */
     public function getDaysBetweenPeriodRange(Carbon $startDate, Carbon $endDate)
@@ -122,8 +117,6 @@ class NursePerformanceRepController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @throws \Exception
      *
      * @return array
@@ -161,8 +154,6 @@ class NursePerformanceRepController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @throws \Exception
      *
      * @return Factory|View
@@ -182,8 +173,6 @@ class NursePerformanceRepController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @throws \Exception
      *
      * @return JsonResponse
@@ -194,8 +183,6 @@ class NursePerformanceRepController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @throws \Exception
      *
      * @return
@@ -225,8 +212,6 @@ class NursePerformanceRepController extends Controller
     }
 
     /**
-     * @param Collection $nurses
-     *
      * @return array
      */
     public function nursesDataForView(Collection $nurses)
@@ -236,15 +221,19 @@ class NursePerformanceRepController extends Controller
         foreach ($nurses as $name => $report) {
             foreach ($report as $day => $reportPerDay) {
                 $nurseDailyData[$n] = [
-                    'Day'            => Carbon::parse($day)->copy()->format('jS D'),
+                    'Day'            => Carbon::parse($day)->copy()->format('j'),
                     'Name'           => $reportPerDay['nurse_full_name'],
                     'Assigned Calls' => $reportPerDay['scheduledCalls']
                         ?: '0',
                     'Actual Calls' => $reportPerDay['actualCalls']
-                        ?: '0',
+                        ?: '0', // this completed calls in UI
                     'Successful Calls' => $reportPerDay['successful']
                         ?: '0',
                     'Unsuccessful Calls' => $reportPerDay['unsuccessful']
+                        ?: '0',
+                    'Avg CCM Time Per Successful Patient' => $reportPerDay['avgCCMTimePerPatient']
+                        ?: '0',
+                    'Avg Completion Time Per Patient' => $reportPerDay['avgCompletionTime']
                         ?: '0',
                     'Actual Hrs Worked' => $reportPerDay['actualHours']
                         ?: '0',
@@ -263,6 +252,8 @@ class NursePerformanceRepController extends Controller
                     'Hrs Deficit or Surplus' => $this->surplusShortfallHours($reportPerDay)
                         ?: '0',
                     'Case Load' => $this->caseLoad($reportPerDay)
+                        ?: '0',
+                    'Incomplete Patients' => $reportPerDay['incompletePatients']
                         ?: '0',
                     '% Case Load Complete' => $this->caseLoadComplete($reportPerDay)
                         ?: '0.00',
@@ -287,9 +278,6 @@ class NursePerformanceRepController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param Carbon  $yesterdayDate
-     *
      * @return array|RedirectResponse
      */
     public function setDates(Request $request, Carbon $yesterdayDate)
@@ -327,9 +315,6 @@ class NursePerformanceRepController extends Controller
     }
 
     /**
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     *
      * @return RedirectResponse
      */
     public function validateInputDate(Carbon $startDate, Carbon $endDate)

@@ -6,13 +6,14 @@
 
 namespace App\Nova;
 
-use App\AppConfig as AppConfigModel;
+use App\Constants;
+use CircleLinkHealth\Core\Entities\AppConfig as AppConfigModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
 
 class AppConfig extends Resource
 {
-    public static $group = 'Settings';
+    public static $group = Constants::NOVA_GROUP_SETTINGS;
     /**
      * The model the resource corresponds to.
      *
@@ -39,8 +40,6 @@ class AppConfig extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -51,8 +50,6 @@ class AppConfig extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
@@ -62,8 +59,6 @@ class AppConfig extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -77,8 +72,6 @@ class AppConfig extends Resource
 
     /**
      * Get the filters available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -94,8 +87,6 @@ class AppConfig extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

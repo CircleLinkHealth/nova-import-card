@@ -38,7 +38,7 @@
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount"
                               :redirect-url="'manage-patients/' + info.patientId + '/activities'"/>
             </span>
-            
+
             <inactivity-tracker :call-mode="callMode" ref="inactivityTracker"/>
             <away ref="away"/>
         </span>
@@ -56,6 +56,8 @@
     import AwayComponent from './comps/away'
     import BhiComponent from './comps/bhi-switch'
     import Notifications from '../../components/notifications';
+
+    import {registerHandler, sendRequest} from "../../components/bc-job-manager";
 
     export default {
         name: 'time-tracker',
@@ -89,7 +91,9 @@
                 wsUrl: null,
                 wsUrlFailOver: null,
                 connectedOnce: false,
-                connectionLossTimestamp: null
+                connectionLossTimestamp: null,
+                lastUpdatedBhiTime: 0,
+                lastUpdatedCcmTime: 0,
             }
         },
         components: {
@@ -101,11 +105,31 @@
             'notifications': Notifications
         },
         computed: {
+            formattedTime() {
+                if (this.showLoader || !this.$refs.timeDisplay) {
+                    return undefined;
+                }
+                return this.$refs.timeDisplay.getTime();
+            },
             totalTime() {
                 return this.seconds
             }
         },
         methods: {
+            bhiTimeInSeconds(){
+                //this makes sure that who ever calls this method gets time dynamically
+                if(this.info.isManualBehavioral){
+                    return this.seconds;
+                }
+                return this.lastUpdatedBhiTime ||  this.info.totalBHITime || 0;
+            },
+            ccmTimeInSeconds(){
+                //this makes sure that who ever calls this method gets time dynamically
+                if(!this.info.isManualBehavioral){
+                    return this.seconds;
+                }
+                return this.lastUpdatedCcmTime || this.info.totalCCMTime || 0;
+            },
             shouldShowCcmTime() {
                 //we show ccm time, even if zero time. we do not show when empty string
                 return this.info.monthlyBhiTime && this.info.monthlyBhiTime.length > 0;
@@ -126,8 +150,7 @@
                     if (!this.connectedOnce) {
                         this.connectedOnce = true;
                         this.info.initSeconds = Math.round(startupTime() / 1000);
-                    }
-                    else if (this.connectionLossTimestamp != null) {
+                    } else if (this.connectionLossTimestamp != null) {
                         this.info.initSeconds = this.timeSinceLastConnection();
                     }
 
@@ -149,9 +172,9 @@
                     if (this.overrideTimeout) {
                         // setTimeout(() => {
                         //     EventBus.$emit('modal-inactivity:timeouts:override', {
-                        //         alertTimeout: 30, 
+                        //         alertTimeout: 30,
                         //         logoutTimeout: 120,
-                        //         alertTimeoutCallMode: 60, 
+                        //         alertTimeoutCallMode: 60,
                         //         logoutTimeoutCallMode: 150
                         //     })
                         // }, 1000)
@@ -170,28 +193,23 @@
                                 const data = JSON.parse(res.data)
                                 if (data.message === 'server:sync') {
                                     self.seconds = self.info.isManualBehavioral ? data.bhiSeconds : data.ccmSeconds
+                                    self.lastUpdatedBhiTime = data.bhiSeconds;
+                                    self.lastUpdatedCcmTime = data.ccmSeconds;
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                     self.showLoader = false;
-                                }
-                                else if (data.message === 'server:modal') {
+                                } else if (data.message === 'server:modal') {
                                     EventBus.$emit('away:trigger-modal')
-                                }
-                                else if (data.message === 'server:logout') {
-                                    EventBus.$emit("tracker:stop")
-                                    location.href = rootUrl('auth/logout')
-                                }
-                                else if (data.message === 'server:call-mode:enter') {
+                                } else if (data.message === 'server:logout') {
+                                    EventBus.$emit("tracker:stop", true);
+                                } else if (data.message === 'server:call-mode:enter') {
                                     self.callMode = true
                                     EventBus.$emit('server:call-mode', self.callMode)
-                                }
-                                else if (data.message === 'server:call-mode:exit') {
+                                } else if (data.message === 'server:call-mode:exit') {
                                     self.callMode = false
                                     EventBus.$emit('server:call-mode', self.callMode)
-                                }
-                                else if (data.message === 'server:inactive-modal:close') {
+                                } else if (data.message === 'server:inactive-modal:close') {
                                     EventBus.$emit('modal-inactivity:reset', true)
-                                }
-                                else if (data.message === 'server:bhi:switch') {
+                                } else if (data.message === 'server:bhi:switch') {
                                     EventBus.$emit('tracker:bhi:switch', data.mode)
                                     self.info.isCcm = data.hasOwnProperty('isCcm') ? data.isCcm : self.info.isCcm
                                     self.info.isBehavioral = data.hasOwnProperty('isBehavioral') ? data.isBehavioral : self.info.isBehavioral
@@ -207,8 +225,7 @@
                             if (EventBus.isInFocus) {
                                 self.updateTime()
                                 self.callMode = false
-                            }
-                            else {
+                            } else {
                                 self.startCount = 0;
                             }
                             // console.log("socket connection opened", ev, self.startCount, EventBus.isInFocus)
@@ -253,11 +270,18 @@
 
                         return socket;
                     })()
-                }
-                catch (ex) {
+                } catch (ex) {
                     console.error(ex);
                 }
             }
+        },
+        created() {
+            registerHandler("logout_event", () => {
+                EventBus.$emit("tracker:stop", true, true);
+                return Promise.resolve({});
+            });
+
+            window.TimeTracker = this;
         },
         mounted() {
 
@@ -274,8 +298,7 @@
 
             if (this.info.disabled || !this.info.wsUrl) {
                 this.visible = false;
-            }
-            else {
+            } else {
 
                 EventBus.isInFocus = !document.hidden;
                 console.log('document is ', EventBus.isInFocus ? 'focused' : 'not focused');
@@ -294,6 +317,7 @@
                     CLOSE_INACTIVE_MODAL: 'client:inactive-modal:close',
                     ENTER_CALL_MODE: 'client:call-mode:enter',
                     EXIT_CALL_MODE: 'client:call-mode:exit',
+                    ACTIVITY: 'client:activity',
                     LOGOUT: 'client:logout',
                     BHI: 'client:bhi',
                     TIMEOUTS_OVERRIDE: 'client:timeouts:override'
@@ -311,8 +335,7 @@
                     }
                 })
 
-                EventBus.$on('tracker:stop', () => {
-
+                EventBus.$on('tracker:stop', (isLoggingOut, isFromLogoutEvent) => {
                     EventBus.$emit("inactivity:stop");
 
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
@@ -325,7 +348,16 @@
 
                         // this.showLoader = true
                     }
-                })
+
+                    if (isLoggingOut) {
+                        //if we reached here from a logout_event, no need to broadcast again
+                        isFromLogoutEvent = !!isFromLogoutEvent;
+                        if (!isFromLogoutEvent) {
+                            sendRequest("logout_event", {}, 1000);
+                        }
+                        location.href = rootUrl('auth/logout');
+                    }
+                });
 
                 EventBus.$on('tracker:hide-inactive-modal', () => {
                     /** does the same as tracker:start without the conditional */
@@ -390,8 +422,7 @@
                     if (this.info.isBehavioral && this.info.isCcm) {
                         shouldUpdateNetwork = (this.info.isManualBehavioral !== mode)
                         this.info.isManualBehavioral = mode
-                    }
-                    else {
+                    } else {
                         shouldUpdateNetwork = (this.info.isManualBehavioral !== mode)
                         this.info.isManualBehavioral = (this.info.isBehavioral && !this.info.isCcm) || false
                     }
@@ -400,6 +431,12 @@
                     }
                     console.log('tracker:bhi:switch', mode)
                 })
+
+                EventBus.$on('tracker:activity', (newInfo) => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify({message: STATE.ACTIVITY, info: newInfo}))
+                    }
+                });
 
                 Event.$on('careplan:bhi', ({hasCcm, hasBehavioral}) => {
                     const shouldUpdateNetwork = (this.info.isBehavioral && this.info.isCcm) !== (hasCcm && hasBehavioral)
@@ -452,6 +489,7 @@
     }
 
     #notifications-wrapper {
+        z-index: 100;
         position: fixed;
         top: 65px;
         right: 15px;

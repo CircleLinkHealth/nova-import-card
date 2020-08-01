@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use App\Note;
-use App\Services\GoogleDrive;
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -37,7 +37,6 @@ class QueuePatientToExport implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param User $user
      * @param $folderId
      */
     public function __construct(User $user, $folderId)
@@ -60,8 +59,6 @@ class QueuePatientToExport implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @param GoogleDrive $drive
      *
      * @throws \Exception
      */
@@ -87,9 +84,6 @@ class QueuePatientToExport implements ShouldQueue
 
     /**
      * Create a PDF of the CarePlan and stream it to Google Drive.
-     *
-     * @param GoogleDrive $drive
-     * @param array       $googleDriveDir
      *
      * @throws \Exception
      */
@@ -174,7 +168,6 @@ class QueuePatientToExport implements ShouldQueue
     /**
      * Get the patient's note directory. If it doesn't exist, create it first.
      *
-     * @param GoogleDrive $drive
      * @param $googleDriveDir
      *
      * @return mixed
@@ -193,8 +186,6 @@ class QueuePatientToExport implements ShouldQueue
 
     /**
      * Get the directory with the patient's name. If it doesn't exist, create it.
-     *
-     * @param GoogleDrive $drive
      *
      * @return mixed
      */
@@ -228,8 +219,6 @@ class QueuePatientToExport implements ShouldQueue
     /**
      * Get the filename for a pdf note.
      *
-     * @param Note $note
-     *
      * @return string
      */
     private function getNoteFileName(Note $note)
@@ -239,8 +228,6 @@ class QueuePatientToExport implements ShouldQueue
 
     /**
      * The full path to the Careplan.pdf on Google Drive.
-     *
-     * @param array $googleDriveDir
      *
      * @return string
      */

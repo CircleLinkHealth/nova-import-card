@@ -8,11 +8,13 @@ namespace App\Http\Controllers\Admin\Reports;
 
 use App\Call;
 use App\CallView;
-use App\Exports\FromArray;
 use App\Filters\CallFilters;
 use App\Filters\CallViewFilters;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class CallReportController extends Controller
@@ -24,7 +26,145 @@ class CallReportController extends Controller
     {
         $date = Carbon::now()->startOfMonth();
 
-        $calls = Call::filter($filters)->with('inboundUser')
+        if ($request->has('json')) {
+            // interrupt request and return json
+            return response()->json($this->callsQuery($filters, $date)->get());
+        }
+
+        $headings = [
+            'id',
+            'Nurse',
+            'Patient',
+            'Practice',
+            'Last Call Status',
+            'Next Call',
+            'Call Time Start',
+            'Call Time End',
+            'Preferred Call Days',
+            'Last Call',
+            'CCM Time',
+            'Successful Calls',
+            'Patient Status',
+            'Billing Provider',
+            'DOB',
+            'Scheduler',
+        ];
+
+        $rows = [];
+
+        $this->callsQuery($filters, $date)
+            ->chunkById(500, function (Collection $calls) use (&$rows, &$headings) {
+                $calls->each(function ($call) use (&$rows, &$headings) {
+                    if ($call->inboundUser) {
+                        $ccmTime = $call->inboundUser->formattedCcmTime();
+                    } else {
+                        $ccmTime = 'n/a';
+                    }
+
+                    if ($call->inboundUser && $call->inboundUser->patientInfo) {
+                        if (is_null($call->inboundUser->patientInfo->no_call_attempts_since_last_success)) {
+                            $noAttmpts = 'n/a';
+                        } elseif ($call->inboundUser->patientInfo->no_call_attempts_since_last_success > 0) {
+                            $noAttmpts = $call->inboundUser->patientInfo->no_call_attempts_since_last_success.'x Attempts';
+                        } else {
+                            $noAttmpts = 'Success';
+                        }
+                    }
+                    // call days
+                    $days = [
+                        1 => 'M',
+                        2 => 'Tu',
+                        3 => 'W',
+                        4 => 'Th',
+                        5 => 'F',
+                        6 => 'Sa',
+                        7 => 'Su',
+                    ];
+                    $preferredCallDays = 'n/a';
+                    if ($call->inboundUser && $call->inboundUser->patientInfo) {
+                        $windowText = '';
+                        $windows = $call->inboundUser->patientInfo->contactWindows()->get();
+                        if ($windows) {
+                            foreach ($days as $key => $val) {
+                                foreach ($windows as $window) {
+                                    if ($window->day_of_week == $key) {
+                                        $windowText .= $days[$window->day_of_week].',';
+                                    }
+                                }
+                            }
+                        }
+                        $preferredCallDays = rtrim($windowText, ',');
+                    }
+
+                    $rows[] = [
+                        $call->call_id,
+                        $call->nurse_name,
+                        $call->patient_name,
+                        $call->program_name,
+                        $noAttmpts,
+                        $call->scheduled_date,
+                        $call->window_start,
+                        $call->window_end,
+                        $preferredCallDays,
+                        $call->last_contact_time,
+                        $ccmTime,
+                        $call->no_of_successful_calls,
+                        $call->ccm_status,
+                        $call->billing_provider,
+                        $call->birth_date,
+                        $call->scheduler_user_name,
+                    ];
+                });
+            }, 'calls.id');
+
+        $fileName = 'CLH-Report-'.$date.'.xls';
+
+        return (new FromArray($fileName, $rows, $headings))->download($fileName);
+    }
+
+    public function exportXlsV2(Request $request, CallViewFilters $filters)
+    {
+        $date = Carbon::now()->startOfMonth();
+
+        $calls = CallView::filter($filters)
+            ->get();
+
+        if ($request->has('json')) {
+            // interrupt request and return json
+            return response()->json($calls);
+        }
+
+        $data = $this->generateXlsData($date, $calls);
+
+        return $data->download($data->getFilename());
+    }
+
+    /**
+     * @return int media id
+     */
+    public function generateXlsAndSaveToMedia(Carbon $date, CallViewFilters $filters)
+    {
+        $calls      = CallView::filter($filters)->get();
+        $data       = $this->generateXlsData($date, $calls);
+        $model      = SaasAccount::whereSlug('circlelink-health')->firstOrFail();
+        $collection = "pam_{$date->toDateString()}";
+        $media      = $data->storeAndAttachMediaTo($model, $collection);
+
+        return $media->id;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+    }
+
+    private function callsQuery(CallFilters $filters, Carbon $date)
+    {
+        return Call::filter($filters)->with('inboundUser')
             ->with('outboundUser')
             ->with('note')
             ->select(
@@ -60,7 +200,7 @@ class CallReportController extends Controller
                     'program.display_name AS program_name',
                     'billing_provider.display_name AS billing_provider',
                 ]
-                     )
+            )
             ->where('calls.status', '=', 'scheduled')
             ->leftJoin('notes', 'calls.note_id', '=', 'notes.id')
             ->leftJoin('users AS nurse', 'calls.outbound_cpm_id', '=', 'nurse.id')
@@ -73,7 +213,7 @@ class CallReportController extends Controller
                     $join->on('patient_monthly_summaries.patient_id', '=', 'patient.id');
                     $join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
                 }
-                     )
+            )
             ->leftJoin('practices AS program', 'patient.program_id', '=', 'program.id')
             ->leftJoin(
                 'patient_care_team_members',
@@ -81,121 +221,28 @@ class CallReportController extends Controller
                     $join->on('patient.id', '=', 'patient_care_team_members.user_id');
                     $join->where('patient_care_team_members.type', '=', 'billing_provider');
                 }
-                     )
+            )
             ->leftJoin(
                 'users AS billing_provider',
                 'patient_care_team_members.member_user_id',
                 '=',
                 'billing_provider.id'
-                     )
-            ->groupBy('call_id')
-            ->get();
-
-        if ($request->has('json')) {
-            // interrupt request and return json
-            return response()->json($calls);
-        }
-
-        $fileName = 'CLH-Report-'.$date.'.xls';
-
-        $headings = [
-            'id',
-            'Nurse',
-            'Patient',
-            'Practice',
-            'Last Call Status',
-            'Next Call',
-            'Call Time Start',
-            'Call Time End',
-            'Preferred Call Days',
-            'Last Call',
-            'CCM Time',
-            'Successful Calls',
-            'Patient Status',
-            'Billing Provider',
-            'DOB',
-            'Scheduler',
-        ];
-
-        $rows = [];
-
-        foreach ($calls as $call) {
-            if ($call->inboundUser) {
-                $ccmTime = $call->inboundUser->formattedCcmTime();
-            } else {
-                $ccmTime = 'n/a';
-            }
-
-            if ($call->inboundUser && $call->inboundUser->patientInfo) {
-                if (is_null($call->inboundUser->patientInfo->no_call_attempts_since_last_success)) {
-                    $noAttmpts = 'n/a';
-                } elseif ($call->inboundUser->patientInfo->no_call_attempts_since_last_success > 0) {
-                    $noAttmpts = $call->inboundUser->patientInfo->no_call_attempts_since_last_success.'x Attempts';
-                } else {
-                    $noAttmpts = 'Success';
-                }
-            }
-            // call days
-            $days = [
-                1 => 'M',
-                2 => 'Tu',
-                3 => 'W',
-                4 => 'Th',
-                5 => 'F',
-                6 => 'Sa',
-                7 => 'Su',
-            ];
-            $preferredCallDays = 'n/a';
-            if ($call->inboundUser && $call->inboundUser->patientInfo) {
-                $windowText = '';
-                $windows    = $call->inboundUser->patientInfo->contactWindows()->get();
-                if ($windows) {
-                    foreach ($days as $key => $val) {
-                        foreach ($windows as $window) {
-                            if ($window->day_of_week == $key) {
-                                $windowText .= $days[$window->day_of_week].',';
-                            }
-                        }
-                    }
-                }
-                $preferredCallDays = rtrim($windowText, ',');
-            }
-
-            $rows[] = [
-                $call->call_id,
-                $call->nurse_name,
-                $call->patient_name,
-                $call->program_name,
-                $noAttmpts,
-                $call->scheduled_date,
-                $call->window_start,
-                $call->window_end,
-                $preferredCallDays,
-                $call->last_contact_time,
-                $ccmTime,
-                $call->no_of_successful_calls,
-                $call->ccm_status,
-                $call->billing_provider,
-                $call->birth_date,
-                $call->scheduler_user_name,
-            ];
-        }
-
-        return (new FromArray($fileName, $rows, $headings))->download($fileName);
+            )
+            ->groupBy('call_id');
     }
 
-    public function exportXlsV2(Request $request, CallViewFilters $filters)
+    private function formatTime($time)
     {
-        $date = Carbon::now()->startOfMonth();
+        $seconds = $time;
+        $H       = floor($seconds / 3600);
+        $i       = ($seconds / 60) % 60;
+        $s       = $seconds % 60;
 
-        $calls = CallView::filter($filters)
-            ->get();
+        return sprintf('%02d:%02d:%02d', $H, $i, $s);
+    }
 
-        if ($request->has('json')) {
-            // interrupt request and return json
-            return response()->json($calls);
-        }
-
+    private function generateXlsData($date, $calls)
+    {
         $headings = [
             'id',
             'Type',
@@ -238,25 +285,6 @@ class CallReportController extends Controller
 
         $fileName = 'CLH-Report-'.$date.'.xls';
 
-        return (new FromArray($fileName, $rows, $headings))->download($fileName);
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index(Request $request)
-    {
-    }
-
-    private function formatTime($time)
-    {
-        $seconds = $time;
-        $H       = floor($seconds / 3600);
-        $i       = ($seconds / 60) % 60;
-        $s       = $seconds % 60;
-
-        return sprintf('%02d:%02d:%02d', $H, $i, $s);
+        return new FromArray($fileName, $rows, $headings);
     }
 }

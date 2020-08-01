@@ -12,29 +12,31 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * App\CareplanAssessment.
  *
- * @property int                                           $id
- * @property int                                           $careplan_id
- * @property int                                           $provider_approver_id
- * @property string                                        $alcohol_misuse_counseling
- * @property string                                        $diabetes_screening_interval
- * @property \Carbon\Carbon                                $diabetes_screening_last_date
- * @property \Carbon\Carbon                                $diabetes_screening_next_date
- * @property array|string|null                             $diabetes_screening_risk
- * @property string                                        $eye_screening_last_date
- * @property string                                        $eye_screening_next_date
- * @property string                                        $key_treatment
- * @property array|string|null                             $patient_functional_assistance_areas
- * @property array|string|null                             $patient_psychosocial_areas_to_watch
- * @property string                                        $risk
- * @property array|string|null                             $risk_factors
- * @property string                                        $tobacco_misuse_counseling
- * @property \Carbon\Carbon                                $created_at
- * @property \Carbon\Carbon                                $updated_at
- * @property \CircleLinkHealth\Customer\Entities\User|null $approver
- * @property \CircleLinkHealth\Customer\Entities\User|null $patient
- * @property \App\CarePlan|null                            $carePlan
+ * @property int                                                   $id
+ * @property int                                                   $careplan_id
+ * @property int                                                   $provider_approver_id
+ * @property string                                                $alcohol_misuse_counseling
+ * @property string                                                $diabetes_screening_interval
+ * @property \Carbon\Carbon                                        $diabetes_screening_last_date
+ * @property \Carbon\Carbon                                        $diabetes_screening_next_date
+ * @property array|string|null                                     $diabetes_screening_risk
+ * @property string                                                $eye_screening_last_date
+ * @property string                                                $eye_screening_next_date
+ * @property string                                                $key_treatment
+ * @property array|string|null                                     $patient_functional_assistance_areas
+ * @property array|string|null                                     $patient_psychosocial_areas_to_watch
+ * @property string                                                $risk
+ * @property array|string|null                                     $risk_factors
+ * @property string                                                $tobacco_misuse_counseling
+ * @property \Carbon\Carbon                                        $created_at
+ * @property \Carbon\Carbon                                        $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User|null         $approver
+ * @property \CircleLinkHealth\Customer\Entities\User|null         $patient
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlan|null $carePlan
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment query()
@@ -56,6 +58,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereRiskFactors($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereTobaccoMisuseCounseling($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereUpdatedAt($value)
+ *
  * @property int|null $revision_history_count
  */
 class CareplanAssessment extends \CircleLinkHealth\Core\Entities\BaseModel
@@ -125,8 +128,6 @@ class CareplanAssessment extends \CircleLinkHealth\Core\Entities\BaseModel
      * Create a PDF of this resource and return the path to it.
      *
      * @param mixed $notifiable
-     *
-     * @return string
      */
     public function toPdf($notifiable): string
     {

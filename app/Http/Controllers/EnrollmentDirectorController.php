@@ -6,15 +6,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Enrollee;
 use App\EnrolleeCustomFilter;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
 use App\Http\Requests\AddEnrolleeCustomFilter;
+use App\Http\Requests\AssignCallbackToEnrollee;
 use App\Http\Requests\EditEnrolleeData;
 use App\Http\Requests\UpdateMultipleEnrollees;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
@@ -41,15 +43,62 @@ class EnrollmentDirectorController extends Controller
         return response()->json([], 200);
     }
 
+    public function assignCallback(AssignCallbackToEnrollee $request)
+    {
+        $enrollee = Enrollee::findOrFail($request->input('enrollee_id'));
+
+        $enrollee->update([
+            'status'                  => Enrollee::TO_CALL,
+            'care_ambassador_user_id' => $request->input('care_ambassador_user_id'),
+            'requested_callback'      => Carbon::parse($request->input('callback_date')),
+            'callback_note'           => htmlspecialchars($request->input('callback_note'), ENT_NOQUOTES),
+        ]);
+
+        return response()->json([], 200);
+    }
+
     public function assignCareAmbassadorToEnrollees(UpdateMultipleEnrollees $request)
     {
-        Enrollee::whereIn('id', $request->input('enrolleeIds'))
+        $careAmbassadorUser = User::with('careAmbassador')
+            ->has('careAmbassador')
+            ->findOrFail($request->input('ambassadorId'));
+
+        $enrolleeIds = $request->input('enrolleeIds');
+
+        $notAssigned = [];
+
+        if ( ! $careAmbassadorUser->careAmbassador->speaks_spanish) {
+            $spanishSpeakingEnrollees = Enrollee::whereIn('id', $enrolleeIds)
+                ->where('lang', 'like', '%es%')
+                ->orWhere('lang', 'like', '%sp%')
+                ->pluck('id');
+
+            foreach ($spanishSpeakingEnrollees as $id) {
+                $key = array_search($id, $enrolleeIds);
+                if (false !== $key) {
+                    $notAssigned[] = $id;
+                    unset($enrolleeIds[$key]);
+                }
+            }
+        }
+
+        Enrollee::whereIn('id', $enrolleeIds)
             ->update([
                 'status'                  => Enrollee::TO_CALL,
                 'care_ambassador_user_id' => $request->input('ambassadorId'),
             ]);
 
-        return response()->json([], 200);
+        $message                  = null;
+        $unassignedEnrolleesExist = ! empty($notAssigned);
+        if ($unassignedEnrolleesExist) {
+            $ids     = implode(',', $notAssigned);
+            $message = "The following patients have not been assigned to Care Ambassador ({$careAmbassadorUser->display_name}) because CA does not speak spanish: (IDs) {$ids}";
+        }
+
+        return response()->json([
+            'enrollees_unassigned' => ! empty($notAssigned),
+            'message'              => $message,
+        ], 200);
     }
 
     public function editEnrolleeData(EditEnrolleeData $request)
@@ -66,11 +115,14 @@ class EnrollmentDirectorController extends Controller
                 'address_2'           => $request->input('address_2'),
                 'primary_phone'       => $phones['primary_phone'],
                 'home_phone'          => $phones['home_phone'],
-                'other_phone'         => $phones['other_phone'],
+                'other_phone'         => $phones['other_phone'] ?? $phones['work_phone'] ?? null,
                 'cell_phone'          => $phones['cell_phone'],
                 'primary_insurance'   => $request->input('primary_insurance'),
                 'secondary_insurance' => $request->input('secondary_insurance'),
                 'tertiary_insurance'  => $request->input('tertiary_insurance'),
+                'city'                => $request->input('city'),
+                'state'               => $request->input('state'),
+                'zip'                 => $request->input('zip'),
             ]);
 
         return response()->json([], 200);
@@ -80,9 +132,11 @@ class EnrollmentDirectorController extends Controller
     {
         $ambassadors = User::ofType('care-ambassador')
             ->select(['id', 'display_name'])
-            ->get();
+            ->without(['roles', 'perms'])
+            ->get()
+            ->toArray();
 
-        return response()->json($ambassadors->toArray());
+        return response()->json($ambassadors);
     }
 
     public function getEnrollees(Request $request, EnrolleeFilters $filters)
@@ -103,6 +157,8 @@ class EnrollmentDirectorController extends Controller
         $data->limit($limit)
             ->skip($limit * ($page - 1));
 
+        $now = Carbon::now()->toDateString();
+
         if (isset($orderBy)) {
             $direction = 1 == $ascending
                 ? 'ASC'
@@ -110,11 +166,10 @@ class EnrollmentDirectorController extends Controller
             $data->orderBy($orderBy, $direction);
         } else {
             $data->orderByRaw("CASE
-   WHEN status = 'engaged' THEN 1
-   WHEN status = 'call_queue' THEN 2
-   WHEN status = 'utc' THEN 3
-   WHEN status = 'soft_rejected' THEN 4
-   ELSE 5
+            WHEN requested_callback IS NOT NULL AND DATE(requested_callback) <= DATE('{$now}') THEN 1
+   WHEN status = 'call_queue' THEN 3
+   WHEN status = 'utc' THEN 4
+   ELSE 4
 END ASC, attempt_count ASC");
         }
 
@@ -140,11 +195,61 @@ END ASC, attempt_count ASC");
 
     public function runCreateEnrolleesSeeder(Request $request)
     {
-        if ( ! isProductionEnv()) {
+        if ($request->input('erase')) {
+            Artisan::call('enrollees:erase-test');
+            $message = 'Queued job to erase all demo patients. CareAmbassador Logs related to these patients will be reset. This may take a minute. Please refresh the page.';
+        } else {
             Artisan::call('db:seed', ['--class' => 'EnrolleesSeeder']);
+            $message = 'Created 10 Demo Patients. Please refresh the page.';
+        }
+
+        if ($request->input('redirect')) {
+            return redirect()->back()->withErrors(['messages' => [$message]]);
         }
 
         return 'Test Patients have been created. Please close this window.';
+    }
+
+    public function searchEnrollables(Request $request)
+    {
+        $input = $request->input();
+
+        if ( ! array_key_exists('enrollables', $input)) {
+            return response()->json([], 400);
+        }
+
+        $searchTerms = explode(' ', $input['enrollables']);
+
+        $query = Enrollee::with(['provider', 'practice']);
+
+        foreach ($searchTerms as $term) {
+            $query->where(function ($q) use ($term) {
+                $q->where('id', $term)
+                    ->orWhere('first_name', 'like', "%${term}%")
+                    ->orWhere('last_name', 'like', "%${term}%");
+            });
+        }
+
+        $enrollables = [];
+        $query->chunk(100, function ($enrollees) use (&$enrollables) {
+            foreach ($enrollees as $e) {
+                $phonesString = "{$e->home_phone}, {$e->cell_phone}, {$e->other_phone}";
+
+                $item = [
+                    'id'       => $e->id,
+                    'name'     => $e->first_name.' '.$e->last_name,
+                    'mrn'      => $e->mrn,
+                    'program'  => optional($e->practice)->display_name ?? '',
+                    'provider' => optional($e->provider)->getFullName() ?? '',
+                ];
+
+                $item['hint'] = "{$item['name']} ({$item['id']}) PROVIDER: [{$item['provider']}] [{$item['program']}]  {$phonesString}";
+
+                $enrollables[] = $item;
+            }
+        });
+
+        return response()->json($enrollables);
     }
 
     public function unassignCareAmbassadorFromEnrollees(UpdateMultipleEnrollees $request)

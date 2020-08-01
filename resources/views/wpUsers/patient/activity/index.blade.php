@@ -22,7 +22,7 @@
                 @include('partials.userheader')
 
                 {!! Form::open(array('url' => route('patient.activity.providerUIIndex',
-                ['patientId' => $patient]),
+                ['patientId' => $patient->id]),
                 'method' => 'GET',
                 'class' => 'form-horizontal',
                 'style' => 'margin-right: 10px',
@@ -88,6 +88,9 @@
                         @push('scripts')
 
                             <script>
+
+                                const patientId = {{$patient->id}};
+
                                 function startCompare(value, filter) {
                                     value = value.toString().toLowerCase();
                                     filter = '<' + filter.toString().toLowerCase();
@@ -190,10 +193,7 @@
 
                                             template: function (obj) {
                                                 if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                    return "<a href='<?php echo route('patient.activity.view', [
-                                                        'patientId' => $patient->id,
-                                                        'atcId'     => '',
-                                                    ]); ?>/" + obj.id + "'>" + obj.type + "</a>";
+                                                    return `<a href="/manage-patients/${patientId}/view/${obj.id}">${obj.type}</a>`;
                                                 else
                                                     return obj.type;
                                             },
@@ -251,16 +251,18 @@
                                         group: 5   // the number of pages in the pager
                                     },
                                     {!! $activity_json !!}                         });
-                                webix.event(window, "resize", function () {
+
+                                const debounced = _.debounce(() => {
                                     obs_alerts_dtable.adjust();
-                                })
+                                }, 1000);
+                                webix.event(window, "resize", debounced);
 
                                 $('#refresh-activity').click(function () {
 
                                     $('#refresh-activity').prop('disabled', true);
                                     $('#refresh-activity-loader').show();
 
-                                    const url = '{!! route('patient.activity.get.current.for.patient', ['patientId' => $patient]) !!}';
+                                    const url = '{!! route('patient.activity.get.current.for.patient', ['patientId' => $patient->id]) !!}';
 
                                     $.ajax({
                                         type: "GET",

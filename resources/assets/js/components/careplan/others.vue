@@ -29,13 +29,12 @@
     import MiscModal from './modals/misc.modal'
     import CareplanMixin from './mixins/careplan.mixin'
 
-    const MISC_ID = 7
-
     export default {
         name: 'others',
         props: [
             'patient-id',
-            'url'
+            'url',
+            'misc-id'
         ],
         components: {
             'misc-modal': MiscModal
@@ -59,8 +58,8 @@
                 const existsOnWindowObject = this.getOtherFromWindow()
 
                 if (!existsOnWindowObject) {
-                    this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/${MISC_ID}`)).then(response => {
-                        // console.log('others:get-other', response.data)
+                    this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/${this.miscId}`)).then(response => {
+                        console.log('others:get-other', response.data)
                         this.other = this.setupOther(response.data)
                         if (this.other) Event.$emit('misc:select', this.other)
                     }).catch(err => {
@@ -88,14 +87,14 @@
             this.getOther()
 
             Event.$on('misc:change', (misc) => {
-                if (misc && misc.id === ((this.other || {}).id || MISC_ID)) {
-                    this.other = misc
-                    this.$forceUpdate()
+                if (misc && parseInt(misc.id) === parseInt(this.miscId)) {
+                    this.other = this.setupOther(misc)
+                    if (this.other) Event.$emit('misc:select', this.other)
                 }
             })
 
             Event.$on('misc:remove', (id) => {
-                if (id && id === ((this.other || {}).id || MISC_ID)) {
+                if (id && id === ((this.other || {}).id || this.miscId)) {
                     this.other = null
                 }
             })

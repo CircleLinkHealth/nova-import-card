@@ -6,16 +6,14 @@
 
 namespace App\Http\Resources;
 
-use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Http\Resources\Json\Resource;
-use Illuminate\Support\Collection;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class NurseInfo extends Resource
+class NurseInfo extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request
+     * @param \Illuminate\Http\Request
      * @param mixed $request
      *
      * @return array
@@ -23,15 +21,12 @@ class NurseInfo extends Resource
     public function toArray($request)
     {
         $nurse = parent::toArray($request);
-        if (array_key_exists('states', $nurse) && $request->has('compressed')) {
-            $nurse['states'] = (new Collection($nurse['states']))->map(function ($s) {
+        if (isset($nurse['states']) && $request->has('compressed')) {
+            $nurse['states'] = collect($nurse['states'])->map(function ($s) {
                 return $s['code'];
             });
-            $user = User::find($nurse['user_id']);
-            if ($user) {
-                $nurse['practices'] = $user->practices()->get(['id'])->map(function ($p) {
-                    return $p->id;
-                });
+            if ($this->user) {
+                $nurse['practices'] = $this->user->practices->pluck('id');
             }
         }
 

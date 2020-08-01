@@ -11,6 +11,7 @@ use App\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use App\Services\NotificationService;
 use App\Traits\ArrayableNotification;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -45,14 +46,36 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
         $this->sender = $sender;
     }
 
+    /**
+     * @return string|null
+     */
+    public function activityType()
+    {
+        return ! empty($this->call->sub_type) ? $this->call->sub_type : $this->call->type;
+    }
+
     public function attachmentType(): string
     {
         return Call::class;
     }
 
-    public function description(): string
+    public function dateForMail(): string
+    {
+//        return Carbon::parse(now())->toDayDateTimeString();
+    }
+
+    public function description($notifiable): string
     {
         return 'Activity';
+    }
+
+    public function descriptionForMail(): string
+    {
+//        return $this->activityType();
+    }
+
+    public function emailLineStyled(): string
+    {
     }
 
     /**
@@ -61,6 +84,14 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
     public function getAttachment(): ?Model
     {
         return $this->call;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNotificationData($notifiable): array
+    {
+        return $this->notificationData($notifiable);
     }
 
     /**
@@ -81,9 +112,9 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
         return NotificationService::getPatientName($patientId);
     }
 
-    public function getSubject(): string
+    public function getSubject($notifiable): string
     {
-        $activity    = ! empty($this->call->sub_type) ? $this->call->sub_type : $this->call->type;
+        $activity    = $this->activityType();
         $patientName = $this->getPatientName();
 
         return 'call' === $activity
@@ -91,16 +122,24 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
             : "Patient <strong>$patientName</strong> requires a $activity";
     }
 
-    public function noteId(): ?int
+    /**
+     * @param $notifiable
+     */
+    public function mailData($notifiable): array
     {
-        return  $this->call->note_id;
+//        return $this->dataForClhEmail($notifiable->email);
     }
 
-    public function redirectLink(): string
+    public function noteId(): ?int
+    {
+        return $this->call->note_id;
+    }
+
+    public function redirectLink($notifiable): string
     {
         $patientId = $this->getPatientId();
 
-        return route('patient.careplan.print', ['patient' => $patientId]);
+        return route('patient.careplan.print', [$patientId]);
     }
 
     public function senderId(): int
@@ -128,10 +167,8 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
      *Returns by default -  ONLY the notification id & the notification type.
      *
      * @param mixed $notifiable
-     *
-     * @return BroadcastMessage
      */
-    public function toBroadcast($notifiable): object
+    public function toBroadcast($notifiable): BroadcastMessage
     {
         return new BroadcastMessage([
         ]);

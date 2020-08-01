@@ -7,13 +7,15 @@
 namespace App\Events;
 
 use App\Contracts\PdfReport;
-use App\Note;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Queue\SerializesModels;
 
 class PdfableCreated extends Event
 {
     use SerializesModels;
+    /**
+     * @var bool|mixed
+     */
+    public $notifyPractice;
 
     /**
      * An entity implementing App\Contracts\PdfReport.
@@ -25,9 +27,6 @@ class PdfableCreated extends Event
     /**
      * Create a new event instance.
      *
-     * @param User  $patient
-     * @param User  $sender
-     * @param Note  $note
      * @param mixed $notifyPractice
      */
     public function __construct(

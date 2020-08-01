@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Except Junk Js" pattern="!file[app-cpm-web]:.idea//*&amp;&amp;!file[app-cpm-web]:.github//*&amp;&amp;!file[app-cpm-web]:.vscode//*&amp;&amp;!file[app-cpm-web]:bower_components//*&amp;&amp;!file:public/compiled/js/chunk*&amp;&amp;!file:public/compiled/js/vendors~*&amp;&amp;!file:public/chunk*&amp;&amp;!file:public/vendors~*" />
+</component>

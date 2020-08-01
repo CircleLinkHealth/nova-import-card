@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Circlelinkhealth\ImportPracticeStaffCsv;
+namespace CircleLinkHealth\ImportPracticeStaffCsv;
 
 use Sparclex\NovaImportCard\ImportController;
 
@@ -15,8 +15,6 @@ class CLHImportCardController
      * but we cannot redirect to a POST request.
      *
      *This is a hacky workaround.
-     *
-     * @param ImportPracticeStaffCsvNovaRequest $request
      *
      * @return array
      */

@@ -6,12 +6,9 @@
 
 namespace App\Services;
 
-use App\CarePlan;
-use App\Models\CPM\CpmBiometric;
-use App\Models\CPM\CpmMisc;
-use App\Services\CPM\CpmMiscService;
-use App\Services\CPM\CpmProblemService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use Illuminate\Support\Facades\DB;
 
 class ReportsService
@@ -249,143 +246,6 @@ class ReportsService
         }
     }
 
-    public function carePlanGenerator($patients)
-    {
-        $careplanReport = [];
-
-        foreach ($patients as $user) {
-            if ( ! is_object($user)) {
-                $user = User::find($user);
-            }
-            $careplanReport[$user->id]['symptoms']    = $user->cpmSymptoms()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['problem']     = $user->cpmProblems()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['problems']    = app(CpmProblemService::class)->getProblemsWithInstructionsForUser($user);
-            $careplanReport[$user->id]['lifestyle']   = $user->cpmLifestyles()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['biometrics']  = $user->cpmBiometrics()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['medications'] = $user->cpmMedicationGroups()->get()->pluck('name')->all();
-        }
-
-        $other_problems = $this->getInstructionsforOtherProblems($user);
-
-        if ( ! empty($other_problems)) {
-            $careplanReport[$user->id]['problems']['Other Problems'] = $other_problems;
-        }
-
-        //Get Biometrics with Values
-        $careplanReport[$user->id]['bio_data'] = [];
-
-        //Ignore Smoking - Untracked Biometric
-        if (false !== ($key = array_search(CpmBiometric::SMOKING, $careplanReport[$user->id]['biometrics']))) {
-            unset($careplanReport[$user->id]['biometrics'][$key]);
-        }
-
-        foreach ($careplanReport[$user->id]['biometrics'] as $metric) {
-            $biometric        = $user->cpmBiometrics->where('name', $metric)->first();
-            $biometric_values = app(config('cpmmodelsmap.biometrics')[$biometric->type])->getUserValues($user);
-
-            if ($biometric_values) {
-                //Check to see whether the user has a starting value
-                if ('' == $biometric_values['starting']) {
-                    $biometric_values['starting'] = 'N/A';
-                }
-
-                //Check to see whether the user has a target value
-                if ('' == $biometric_values['target']) {
-                    $biometric_values['target'] = 'TBD';
-                }
-
-                //If no values are retrievable, then default to these:
-            } else {
-                $biometric_values['starting'] = 'N/A';
-                $biometric_values['target']   = 'TBD';
-            }
-
-            //Special verb use for each biometric
-            if ('Blood Pressure' == $metric) {
-                if ('N/A' == $biometric_values['starting']) {
-                    $biometric_values['verb'] = 'Regulate';
-                } else {
-                    $biometric_values['verb'] = 'Maintain';
-                }
-            } else {
-                if ('Weight' == $metric) {
-                    $biometric_values['verb'] = 'Maintain';
-                } else {
-                    $biometric_values['verb'] = 'Raise';
-
-                    if ('N/A' != $biometric_values['starting']) {
-                        $starting = explode('/', $biometric_values['starting']);
-                        $starting = $starting[0];
-                        $target   = explode('/', $biometric_values['target']);
-                        $target   = $target[0];
-
-                        if ($starting > $target) {
-                            $biometric_values['verb'] = 'Lower';
-                        }
-                    }
-                }
-            }
-
-            $careplanReport[$user->id]['bio_data'][$metric]['target']   = $biometric_values['target'].ReportsService::biometricsUnitMapping($metric);
-            $careplanReport[$user->id]['bio_data'][$metric]['starting'] = $biometric_values['starting'].ReportsService::biometricsUnitMapping($metric);
-            $careplanReport[$user->id]['bio_data'][$metric]['verb']     = $biometric_values['verb'];
-        }
-
-        $miscService = app(CpmMiscService::class);
-
-        //Medications List
-        if ($user->cpmMiscs->where('name', CpmMisc::MEDICATION_LIST)->first()) {
-            $careplanReport[$user->id]['taking_meds'] = $miscService->getMiscWithInstructionsForUser(
-                $user,
-                CpmMisc::MEDICATION_LIST
-            );
-        } else {
-            $careplanReport[$user->id]['taking_meds'] = '';
-        }
-
-        //Allergies
-        if ($user->cpmMiscs->where('name', CpmMisc::MEDICATION_LIST)->first()) {
-            $careplanReport[$user->id]['allergies'] = $miscService->getMiscWithInstructionsForUser(
-                $user,
-                CpmMisc::ALLERGIES
-            );
-        } else {
-            $careplanReport[$user->id]['allergies'] = '';
-        }
-
-        //Social Services
-        if ($user->cpmMiscs->where('name', CpmMisc::SOCIAL_SERVICES)->first()) {
-            $careplanReport[$user->id]['social'] = $miscService->getMiscWithInstructionsForUser(
-                $user,
-                CpmMisc::SOCIAL_SERVICES
-            );
-        } else {
-            $careplanReport[$user->id]['social'] = '';
-        }
-
-        //Other
-        if ($user->cpmMiscs->where('name', CpmMisc::OTHER)->first()) {
-            $careplanReport[$user->id]['other'] = $miscService->getMiscWithInstructionsForUser(
-                $user,
-                CpmMisc::OTHER
-            );
-        } else {
-            $careplanReport[$user->id]['other'] = '';
-        }
-
-        //Appointments
-        if ($user->cpmMiscs->where('name', CpmMisc::APPOINTMENTS)->first()) {
-            $careplanReport[$user->id]['appointments'] = $miscService->getMiscWithInstructionsForUser(
-                $user,
-                CpmMisc::APPOINTMENTS
-            );
-        } else {
-            $careplanReport[$user->id]['appointments'] = '';
-        }
-
-        return $careplanReport;
-    }
-
     public function getBiometricsData(
         $biometric,
         $user
@@ -470,7 +330,7 @@ class ReportsService
                 'lv_observations.obs_value',
                 'lv_observations.obs_key',
                 'lv_observations.obs_message_id'
-                            )
+            )
             ->join('lv_observations', 'rules_questions.msg_id', '=', 'lv_observations.obs_message_id')
             ->join('rules_items', 'rules_questions.qid', '=', 'rules_items.qid')
             ->where('user_id', $user->id)

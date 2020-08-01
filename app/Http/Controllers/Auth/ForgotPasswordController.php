@@ -7,11 +7,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Traits\ManagesPatientCookies;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
 
 class ForgotPasswordController extends Controller
 {
+    use ManagesPatientCookies;
     /*
     |--------------------------------------------------------------------------
     | Password Reset Controller
@@ -27,8 +29,6 @@ class ForgotPasswordController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @param Request $request
      */
     public function __construct(Request $request)
     {
@@ -40,16 +40,22 @@ class ForgotPasswordController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function showLinkRequestForm()
+    public function showLinkRequestForm(Request $request)
     {
-        return view('auth.password');
+        if (auth()->check()) {
+            auth()->logout();
+        }
+        $this->checkPracticeNameCookie($request);
+
+        return view('auth.password')->with([
+            'email' => $request->input('email'),
+        ]);
     }
 
     /**
      * Get the response for a successful password reset link.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param string                   $response
+     * @param string $response
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */

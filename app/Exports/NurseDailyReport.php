@@ -7,8 +7,8 @@
 namespace App\Exports;
 
 use App\Reports\NurseDailyReport as NurseStatsService;
-use App\Traits\AttachableAsMedia;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
@@ -89,17 +89,11 @@ class NurseDailyReport implements FromCollection, Responsable, WithHeadings
         )->filter()->values();
     }
 
-    /**
-     * @return string
-     */
     public function getFilename(): string
     {
         return $this->filename;
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         return [
@@ -117,8 +111,6 @@ class NurseDailyReport implements FromCollection, Responsable, WithHeadings
 
     /**
      * @param string $filename
-     *
-     * @return NurseDailyReport
      */
     public function setFilename(string $filename = null): NurseDailyReport
     {

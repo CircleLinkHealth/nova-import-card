@@ -27,6 +27,43 @@ class FamilyController extends Controller
     {
     }
 
+    public function getMembers($patientId)
+    {
+        $members = [];
+        /** @var Patient $patient */
+        $patient = Patient::with(
+            [
+                'family.patients' => function ($q) {
+                    $q->with([
+                        'user' => function ($q) {
+                            $q->without(['roles', 'perms'])
+                                ->select(['id', 'display_name']);
+                        },
+                    ])->select(['id', 'user_id', 'family_id']);
+                },
+            ]
+        )->whereUserId($patientId)->first();
+
+        if ($patient && ! empty($patient->family)) {
+            $members = $patient
+                ->family
+                ->patients
+                ->reject(function (Patient $p) use ($patientId) {
+                    // exclude current patient
+                    return $p->user_id == $patientId;
+                })
+                ->map(function (Patient $p) {
+                    return [
+                        'user_id'      => $p->user->id,
+                        'display_name' => $p->user->display_name,
+                    ];
+                })
+                ->values();
+        }
+
+        return response()->json(['members' => $members]);
+    }
+
     public function index()
     {
         $families = Family::all();
@@ -45,17 +82,17 @@ class FamilyController extends Controller
         $fam->save();
 
         foreach ($family_member_ids as $patient_id) {
-            $patient       = Patient::where('user_id', trim($patient_id))->first();
-            $contact_rohan = 'Please contact Rohan for Manual Edits.';
+            $patient     = Patient::where('user_id', trim($patient_id))->first();
+            $contact_clh = 'Please contact CLH Support for Manual Edits.';
 
             if ( ! is_object($patient)) {
-                return "Sorry, {$patient_id} is not a patient in the system. ".$contact_rohan;
+                return "Sorry, {$patient_id} is not a patient in the system. ".$contact_clh;
             }
 
             if ($patient->family()->count() >= 1) {
                 $fam->delete();
 
-                return "Sorry, {$patient->user->getFullName()} already belongs to a family.<br> <br>".$contact_rohan;
+                return "Sorry, {$patient->user->getFullName()} already belongs to a family.<br> <br>".$contact_clh;
             }
 
             $patient->family_id = $fam->id;

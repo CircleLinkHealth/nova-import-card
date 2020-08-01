@@ -6,6 +6,7 @@
 
 namespace App\Filters;
 
+use App\Call;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
 
@@ -16,8 +17,6 @@ class CallViewFilters extends QueryFilters
      * Sorting and filters just work, simply because
      * the column names match the view table names and they
      * are ordered by them.
-     *
-     * @param Request $request
      */
     public function __construct(Request $request)
     {
@@ -34,8 +33,8 @@ class CallViewFilters extends QueryFilters
         return $this->builder
             ->where('type', '!=', 'call')
             ->where(function ($q) {
-                $q->where('status', '=', 'done')
-                    ->orWhere('status', '=', 'reached');
+                $q->where('status', '=', Call::DONE)
+                    ->orWhere('status', '=', Call::REACHED);
             });
     }
 
@@ -67,6 +66,11 @@ class CallViewFilters extends QueryFilters
     public function practice($practice)
     {
         return $this->builder->where('practice', 'like', '%'.$practice.'%');
+    }
+
+    public function preferred_contact_language($value)
+    {
+        return $this->builder->where('preferred_contact_language', '=', $value);
     }
 
     public function scheduled()
@@ -128,6 +132,11 @@ class CallViewFilters extends QueryFilters
         return $this->builder->orderBy('practice', $term);
     }
 
+    public function sort_preferred_contact_language($term)
+    {
+        return $this->builder->orderBy('preferred_contact_language', $term);
+    }
+
     public function sort_scheduled_date($term)
     {
         return $this->builder->orderBy('scheduled_date', $term);
@@ -136,6 +145,16 @@ class CallViewFilters extends QueryFilters
     public function sort_scheduler($term)
     {
         return $this->builder->orderBy('scheduler', $term);
+    }
+
+    public function sort_state($term)
+    {
+        return $this->builder->orderBy('state', $term);
+    }
+
+    public function state($state)
+    {
+        return $this->builder->where('state', 'like', '%'.$state.'%');
     }
 
     public function type($type)

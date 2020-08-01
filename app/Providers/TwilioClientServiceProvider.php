@@ -6,14 +6,15 @@
 
 namespace App\Providers;
 
-use App\Contracts\Services\TwilioClientable;
 use App\Services\TwilioClientService;
+use CircleLinkHealth\Core\Services\CustomTwilioService;
+use CircleLinkHealth\Core\TwilioClientable;
+use CircleLinkHealth\Core\TwilioInterface;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class TwilioClientServiceProvider extends ServiceProvider
+class TwilioClientServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    protected $defer = true;
-
     /**
      * Bootstrap the application services.
      */
@@ -23,7 +24,7 @@ class TwilioClientServiceProvider extends ServiceProvider
 
     public function provides()
     {
-        return [TwilioClientable::class];
+        return [TwilioClientable::class, TwilioInterface::class];
     }
 
     /**
@@ -31,8 +32,12 @@ class TwilioClientServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(TwilioClientable::class, function () {
+        $this->app->singleton(TwilioClientable::class, function () {
             return new TwilioClientService();
+        });
+
+        $this->app->singleton(TwilioInterface::class, function () {
+            return $this->app->make(CustomTwilioService::class);
         });
     }
 }

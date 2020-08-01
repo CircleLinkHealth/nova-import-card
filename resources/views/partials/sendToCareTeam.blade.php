@@ -30,7 +30,7 @@
                         <input type="checkbox" id="notify-careteam" name="notify_careteam"
                                @empty($note_channels_text) disabled="disabled"
                                @endempty value="1">
-                        <label for="notify-careteam" style="display: inline-block;"><span></span>Provider/CareTeam
+                        <label id="notify-careteam-label" for="notify-careteam" style="display: inline-block;"><span id="notify-careteam-span"></span>Provider/CareTeam
 
                         </label>
                         <div class="label" data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
@@ -38,9 +38,17 @@
                         </div>
                     @endempty
                 @endempty
-
             </div>
-            <div class="col-sm-4" style="text-align: right">
+            <div class="col-sm-2" style="margin-right: 0; padding-right: 0">
+                @if(authUserCanSendPatientEmail())
+                <div>
+                    <input type="checkbox" id="email-patient"
+                           name="email-patient" value="1">
+                    <label for="email-patient"><span> </span>Email Patient</label>
+                </div>
+                    @endif
+            </div>
+            <div class="col-sm-2" style="text-align: right">
                 @if(Route::is('patient.note.view'))
                     <input type="hidden" value="new_activity"/>
                     <button id="update" name="submitAction" type="submit" value="new_activity"
@@ -52,7 +60,15 @@
             <div class="col-sm-12">
                 <hr>
             </div>
-
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div class="no-padding-left no-padding-right">
+                    <div id="email-patient-div" style="display: none;">
+                        <send-email-to-patient  patient-id="{{$patient->id}}" patient-email="{{$patient->email}}"></send-email-to-patient>
+                    </div>
+                </div>
+            </div>
         </div>
     @endif
 
@@ -67,7 +83,7 @@
                 </label>
             </div>
             <div class="col-sm-12 no-padding-left no-padding-right">
-                @if(Route::is('patient.note.create'))
+                @if($shouldShowForwardNoteSummaryBox)
                     <div class="col-sm-1 no-padding-left custom-radio">
                         <input id='fyi' type="radio" name="summary_type" value="{{\App\Note::SUMMARY_FYI}}">
                         <label for="fyi"><span> </span>FYI</label>
@@ -99,6 +115,7 @@
         </div>
     </div>
 
+
 </div>
 
 @push('styles')
@@ -124,9 +141,9 @@
 
 @push('scripts')
     <script>
-        const isCreateNotePage = @json(Route::is('patient.note.create'));
         const hasSummary = @json(isset($note['summary']) && !empty($note['summary']));
-        if (isCreateNotePage) {
+
+        if (@json($shouldShowForwardNoteSummaryBox)) {
             (function ($) {
                 //hacky way to display summary input required when notify-careteam is checked, and also make summary required
                 $('#notify-careteam').change(function (e) {
@@ -168,8 +185,28 @@
             setSubmitText();
         });
 
+        $('#email-patient').change(function (e) {
+            $('#email-patient-div').toggle();
+            $('#notify-careteam').prop('disabled', $('#email-patient').prop('checked'));
+            if($('#email-patient').prop('checked')){
+                $('#notify-careteam-label').css("color", "#D3D3D3");
+                $('#notify-careteam-span').css("cursor", "not-allowed");
+                @empty($patient->email)
+                $('#custom-patient-email').prop('required', true);
+                @endempty
+            }else{
+                $('#notify-careteam-label').css("color","#7b7d81");
+                $('#notify-careteam-span').css("cursor", "");
+                $('#custom-patient-email').prop('required', false);
+            }
+
+            setSubmitText();
+        });
+
+
+
         function setSubmitText() {
-            const text = ($('#notify-circlelink-support').is(':checked') || $('#notify-careteam').is(':checked')) ? 'Save / Send Note' : 'Save Note';
+            const text = ($('#notify-circlelink-support').is(':checked') || $('#notify-careteam').is(':checked') || $('#email-patient').is(':checked')) ? 'Save / Send Note' : 'Save Note';
             $('#Submit').text(text);
         }
 

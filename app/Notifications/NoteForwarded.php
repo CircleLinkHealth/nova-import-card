@@ -6,9 +6,13 @@
 
 namespace App\Notifications;
 
+use App\Contracts\DirectMailableNotification;
+use App\Contracts\FaxableNotification;
 use App\Contracts\HasAttachment;
+use App\Contracts\NotificationAboutPatient;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
+use CircleLinkHealth\Customer\AppConfig\ReceiveAllForwardedNotes;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
+class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, FaxableNotification, DirectMailableNotification, NotificationAboutPatient
 {
     use Queueable;
     public $attachment;
@@ -43,20 +47,7 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
         $this->channels = array_merge($this->channels, $channels);
     }
 
-    /**
-     * Returns an Eloquent model.
-     */
-    public function getAttachment(): ?Model
-    {
-        return $this->note;
-    }
-
-    /**
-     * Get the body of a DM.
-     *
-     * @return string
-     */
-    public function getDMBody()
+    public function directMailBody($notifiable): string
     {
         $link = $this->note->link();
 
@@ -64,6 +55,19 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
         $lastLine = PHP_EOL.PHP_EOL."The web version of the note can be found at $link";
 
         return $this->getBody($message, $lastLine);
+    }
+
+    public function directMailSubject($notifiable): string
+    {
+        return $this->getSubject();
+    }
+
+    /**
+     * Returns an Eloquent model.
+     */
+    public function getAttachment(): ?Model
+    {
+        return $this->note;
     }
 
     /**
@@ -90,6 +94,11 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
         return 'You have been forwarded a note from CarePlanManager';
     }
 
+    public function notificationAboutPatientWithUserId(): int
+    {
+        return $this->note->patient_id;
+    }
+
     /**
      * Get the array representation of the notification.
      *
@@ -110,7 +119,7 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
             'receiver_id'    => $notifiable->id,
             'receiver_email' => $notifiable->email,
             'email_body'     => $this->getEmailBody(),
-            'dm_body'        => $this->getDMBody(),
+            'dm_body'        => $this->directMailBody($notifiable),
             'link'           => $this->note->link(),
             'subject'        => $this->getSubject(),
             'note_id'        => $this->note->id,
@@ -125,15 +134,16 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
      *
      * @return bool|string
      */
-    public function toDirectMail($notifiable)
+    public function toDirectMail($notifiable): SimpleNotification
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
             return false;
         }
 
         return (new SimpleNotification())
-            ->setBody($this->getDMBody())
-            ->setSubject($this->getSubject())
+            ->setBody($this->directMailBody($notifiable))
+            ->setSubject($this->directMailSubject($notifiable))
+            ->setPatient($this->note->patient)
             ->setFilePath($this->toPdf());
     }
 
@@ -141,16 +151,12 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
      * Get a pdf representation of the note to send via Fax.
      *
      * @param $notifiable
-     *
-     * @return bool|string
      */
-    public function toFax($notifiable)
+    public function toFax($notifiable = null): array
     {
-        if ( ! $notifiable || ! $notifiable->fax) {
-            return false;
-        }
-
-        return $this->toPdf();
+        return [
+            'file' => $this->toPdf(),
+        ];
     }
 
     /**
@@ -162,32 +168,23 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
      */
     public function toMail($notifiable)
     {
-        $saasAccountName     = $notifiable->saasAccountName();
-        $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
-
         $mail = (new MailMessage())
             ->view(
                 'vendor.notifications.email',
                 [
-                    'greeting'        => $this->getEmailBody(),
-                    'actionText'      => 'View Note',
-                    'actionUrl'       => $this->note->link(),
-                    'introLines'      => [],
-                    'outroLines'      => [],
-                    'level'           => '',
-                    'saasAccountName' => $saasAccountName,
+                    'greeting'   => $this->getEmailBody(),
+                    'actionText' => 'View Note',
+                    'actionUrl'  => $this->note->link(),
+                    'introLines' => [],
+                    'outroLines' => [],
+                    'level'      => '',
                 ]
             )
-            ->from("no-reply@${slugSaasAccountName}.com", $saasAccountName)
             ->subject($this->getSubject());
 
-        if ('circlelink-health' == $notifiable->saasAccount->slug) {
+        if ('circlelink-health' == $notifiable->saasAccount->slug && app()->environment('production')) {
             return $mail->bcc(
-                [
-                    'raph@circlelinkhealth.com',
-                    'abigail@circlelinkhealth.com',
-                    'sheller@circlelinkhealth.com',
-                ]
+                ReceiveAllForwardedNotes::emails()
             );
         }
 

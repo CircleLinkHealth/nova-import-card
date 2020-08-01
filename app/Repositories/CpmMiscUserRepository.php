@@ -6,9 +6,9 @@
 
 namespace App\Repositories;
 
-use App\Models\CPM\CpmMisc;
-use App\Models\CPM\CpmMiscUser;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
+use CircleLinkHealth\SharedModels\Entities\CpmMiscUser;
 use Illuminate\Support\Collection;
 
 class CpmMiscUserRepository
@@ -56,7 +56,7 @@ class CpmMiscUserRepository
 
     public function patientHasMisc($userId, $miscId, $instructionId = null)
     {
-        return (bool) $this->model()->where(['patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId])->first();
+        return (bool) $this->model()->where(['patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId])->exists();
     }
 
     public function patientMisc($userId, $miscTypeId = null)
@@ -125,7 +125,7 @@ class CpmMiscUserRepository
 
     public function removeInstructions($userId, $miscId)
     {
-        $this->model()->where(['patient_id' => $userId, 'cpm_misc_id' => $miscId])->with('cpmInstruction')->get()->map(function ($m) {
+        $this->model()->where(['patient_id' => $userId, 'cpm_misc_id' => $miscId])->with('cpmInstruction')->whereHas('cpmInstruction')->get()->each(function ($m) {
             if ($m->cpmInstruction) {
                 $m->cpmInstruction->delete();
             }

@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\CCDModels\Items;
 
 use App\Http\Controllers\Controller;
-use App\Models\CCD\Problem;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Http\Request;
 
 /**

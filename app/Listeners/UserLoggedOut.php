@@ -9,9 +9,13 @@ namespace App\Listeners;
 use Carbon\Carbon;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
-class UserLoggedOut
+class UserLoggedOut implements ShouldQueue
 {
+    use InteractsWithQueue;
+
     /**
      * Create the event listener.
      */
@@ -44,7 +48,8 @@ class UserLoggedOut
             $activity->title             = 'Logout';
             $activity->url_short         = '/auth/logout/';
             $activity->url_full          = url()->current();
-            $activity->patient_id        = $user->id;
+            $activity->patient_id        = null;
+            $activity->provider_id       = $user->id;
             $activity->start_time        = Carbon::now();
             $activity->end_time          = Carbon::now();
             $activity->program_id        = $user->program_id;

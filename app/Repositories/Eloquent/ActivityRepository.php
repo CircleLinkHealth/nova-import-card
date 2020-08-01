@@ -14,10 +14,6 @@ class ActivityRepository
     /**
      * Get the CCM Time provided by a specific provider to a specific patient for a given month.
      *
-     * @param int         $providerId
-     * @param array       $patientIds
-     * @param Carbon|null $monthYear
-     *
      * @return mixed
      */
     public function ccmTimeBetween(int $providerId, array $patientIds, Carbon $monthYear = null)
@@ -28,9 +24,6 @@ class ActivityRepository
 
     /**
      * Get the total BHI time for the given patients for a given month.
-     *
-     * @param array  $userIds
-     * @param Carbon $monthYear
      *
      * @return $this
      */
@@ -46,9 +39,6 @@ class ActivityRepository
 
     /**
      * Get the total CCM time for the given patients for a given month.
-     *
-     * @param array  $userIds
-     * @param Carbon $monthYear
      *
      * @return $this
      */

@@ -6,8 +6,8 @@
 
 namespace App\Exports;
 
-use App\Traits\AttachableAsMedia;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Contracts\Support\Responsable;
@@ -66,9 +66,6 @@ class RolesPermissionsChart implements FromCollection, Responsable
         return collect($rows);
     }
 
-    /**
-     * @return string
-     */
     public function getFilename(): string
     {
         return $this->filename;
@@ -76,8 +73,6 @@ class RolesPermissionsChart implements FromCollection, Responsable
 
     /**
      * @param string $filename
-     *
-     * @return RolesPermissionsChart
      */
     public function setFilename(string $filename = null): RolesPermissionsChart
     {

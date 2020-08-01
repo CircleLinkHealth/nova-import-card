@@ -68,7 +68,7 @@
                             <div class="row">
                                 <div class="col-xs-6">
                                             <span class="text-right"><a class="btn btn-green btn-sm submit-chart-select"
-                                                                        href="{{route('patient.summary', array('patient' => $patient->id))}}"><<
+                                                                        href="{{route('patient.summary', array('patientId' => $patient->id))}}"><<
                                                     Return</a></span>
                                 </div>
                             </div>

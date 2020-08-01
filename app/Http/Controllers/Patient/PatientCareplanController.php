@@ -6,28 +6,34 @@
 
 namespace App\Http\Controllers\Patient;
 
-use App\CarePlan;
 use App\CarePlanPrintListView;
-use App\CLH\Repositories\UserRepository;
 use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
-use App\Models\CCD\CcdInsurancePolicy;
+use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
 use App\Services\PatientService;
-use App\Services\PdfService;
 use Auth;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatientCareplanController extends Controller
@@ -78,7 +84,7 @@ class PatientCareplanController extends Controller
                     $careplanStatusLink = '';
                     $approverName = 'NA';
 
-                    if ('provider_approved' == $careplanStatus) {
+                    if (CarePlan::PROVIDER_APPROVED == $careplanStatus) {
                         $careplanStatus = $careplanStatusLink = 'Approved';
 
                         $approver = $cp->approver_full_name;
@@ -88,10 +94,13 @@ class PatientCareplanController extends Controller
 
                             $careplanStatusLink = '<span data-toggle="" title="'.$approverName.' '.$carePlanProviderDate.'">Approved</span>';
                         }
-                    } elseif ('qa_approved' == $careplanStatus) {
+                    } elseif (CarePlan::RN_APPROVED == $careplanStatus) {
                         $careplanStatus = 'Prov. to Approve';
                         $careplanStatusLink = 'Prov. to Approve';
-                    } elseif ('draft' == $careplanStatus) {
+                    } elseif (CarePlan::QA_APPROVED == $careplanStatus) {
+                        $careplanStatus = 'RN to Approve';
+                        $careplanStatusLink = 'RN to Approve';
+                    } elseif (CarePlan::DRAFT == $careplanStatus) {
                         $careplanStatus = 'CLH to Approve';
                         $careplanStatusLink = 'CLH to Approve';
                     }
@@ -160,10 +169,10 @@ class PatientCareplanController extends Controller
             $letter = true;
         }
 
-        $users = explode(',', $request['users']);
+        $userIds = explode(',', $request['users']);
 
         if ($request->input('final')) {
-            foreach ($users as $userId) {
+            foreach ($userIds as $userId) {
                 $careplanService->repo()->approve($userId, auth()->user()->id);
                 $patientService->setStatus($userId, Patient::ENROLLED);
             }
@@ -174,57 +183,68 @@ class PatientCareplanController extends Controller
 
         $fileNameWithPathBlankPage = $this->pdfService->blankPage();
 
+        $users = User::with(
+            array_merge(PatientCareplanRelations::get(), [
+                'patientInfo',
+                'primaryPractice',
+                'inboundCalls' => function ($c) {
+                    $c->with(['outboundUser'])
+                        ->where('status', 'scheduled')
+                        ->where('called_date', '=', null);
+                }, ])
+        )
+            ->has('patientInfo')
+            ->has('billingProvider.user')
+            ->findMany($userIds);
+
         // create pdf for each user
         $p = 1;
-        foreach ($users as $user_id) {
-            $user = User::with(['careTeamMembers', 'carePlan.pdfs'])->find($user_id);
-
-            if ( ! $user) {
-                return response()->json("User with id: {$user->id} not found.");
-            }
-
-            if ( ! $user->billingProviderUser()) {
-                return response()->json("User with id: {$user->id}, does not have a billing provider");
-            }
-
+        foreach ($users as $user) {
             $careplan = $this->formatter->formatDataForViewPrintCareplanReport($user);
-            $careplan = $careplan[$user_id];
+            $careplan = $careplan[$user->id];
             if (empty($careplan)) {
                 return false;
             }
 
-            $pageCount = 0;
+            $pageCount         = 0;
+            $gender            = $user->patientInfo->gender;
+            $title             = 'm' === strtolower($gender) ? 'Mr.' : ('f' === strtolower($gender) ? 'Ms.' : null);
+            $practiceNumber    = $user->primaryPractice->number_with_dashes;
+            $assignedNurseName = optional(PatientNurse::getPermanentNurse($user->id))->first_name;
+
+            //if permanent assigned nurse does not exist, get nurse from scheduled call - CPM-1829
+            if ( ! $assignedNurseName) {
+                $call              = $user->inboundCalls->first();
+                $assignedNurseName = $call ? optional($call->outboundUser)->first_name : null;
+            }
+
+            $viewParams = [
+                'careplans'         => [$user->id => $careplan],
+                'isPdf'             => true,
+                'letter'            => $letter,
+                'problemNames'      => $careplan['problem'],
+                'patient'           => $user,
+                'careTeam'          => $user->careTeamMembers,
+                'data'              => $careplanService->careplan($user->id),
+                'billingDoctor'     => $user->billingProviderUser(),
+                'regularDoctor'     => $user->regularDoctorUser(),
+                'title'             => $title,
+                'practiceNumber'    => $practiceNumber,
+                'assignedNurseName' => $assignedNurseName,
+            ];
 
             if ($request->filled('render') && 'html' == $request->input('render')) {
-                return view(
-                    'wpUsers.patient.multiview',
-                    [
-                        'careplans'    => [$user_id => $careplan],
-                        'isPdf'        => true,
-                        'letter'       => $letter,
-                        'problemNames' => $careplan['problem'],
-                        'careTeam'     => $user->careTeamMembers,
-                        'data'         => $careplanService->careplan($user_id),
-                    ]
-                );
+                return view('wpUsers.patient.multiview', $viewParams);
             }
 
             $pdfCareplan = null;
             if (true == $letter && 'pdf' == $user->carePlan->mode) {
-                $pdfCareplan = $user->carePlan->pdfs->sortByDesc('created_at')->first();
+                $viewParams['pdfCarePlan'] = $user->carePlan->pdfs->sortByDesc('created_at')->first();
             }
 
             $fileNameWithPath = $this->pdfService->createPdfFromView(
                 'wpUsers.patient.multiview',
-                [
-                    'careplans'    => [$user_id => $careplan],
-                    'isPdf'        => true,
-                    'letter'       => $letter,
-                    'problemNames' => $careplan['problem'],
-                    'careTeam'     => $user->careTeamMembers,
-                    'data'         => $careplanService->careplan($user_id),
-                    'pdfCareplan'  => $pdfCareplan,
-                ],
+                $viewParams,
                 null,
                 Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
             );
@@ -294,8 +314,6 @@ class PatientCareplanController extends Controller
         return redirect()->route('patient.pdf.careplan.print', ['patientId' => $cp->user_id]);
     }
 
-    //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
-
     /**
      * Change CarePlan Mode to Web.
      *
@@ -357,8 +375,7 @@ class PatientCareplanController extends Controller
         )->all();
 
         // roles
-        $patientRoleId = Role::where('name', '=', 'participant')->first();
-        $patientRoleId = $patientRoleId->id;
+        $patientRoleId = Role::byName('participant')->id;
 
         $reasons = [
             'No Longer Interested',
@@ -376,59 +393,7 @@ class PatientCareplanController extends Controller
         $patientWithdrawnReason = $patient->getWithdrawnReason();
 
         // States (for dropdown)
-        $states = [
-            'AL' => 'Alabama',
-            'AK' => 'Alaska',
-            'AZ' => 'Arizona',
-            'AR' => 'Arkansas',
-            'CA' => 'California',
-            'CO' => 'Colorado',
-            'CT' => 'Connecticut',
-            'DE' => 'Delaware',
-            'DC' => 'District Of Columbia',
-            'FL' => 'Florida',
-            'GA' => 'Georgia',
-            'HI' => 'Hawaii',
-            'ID' => 'Idaho',
-            'IL' => 'Illinois',
-            'IN' => 'Indiana',
-            'IA' => 'Iowa',
-            'KS' => 'Kansas',
-            'KY' => 'Kentucky',
-            'LA' => 'Louisiana',
-            'ME' => 'Maine',
-            'MD' => 'Maryland',
-            'MA' => 'Massachusetts',
-            'MI' => 'Michigan',
-            'MN' => 'Minnesota',
-            'MS' => 'Mississippi',
-            'MO' => 'Missouri',
-            'MT' => 'Montana',
-            'NE' => 'Nebraska',
-            'NV' => 'Nevada',
-            'NH' => 'New Hampshire',
-            'NJ' => 'New Jersey',
-            'NM' => 'New Mexico',
-            'NY' => 'New York',
-            'NC' => 'North Carolina',
-            'ND' => 'North Dakota',
-            'OH' => 'Ohio',
-            'OK' => 'Oklahoma',
-            'OR' => 'Oregon',
-            'PA' => 'Pennsylvania',
-            'RI' => 'Rhode Island',
-            'SC' => 'South Carolina',
-            'SD' => 'South Dakota',
-            'TN' => 'Tennessee',
-            'TX' => 'Texas',
-            'UT' => 'Utah',
-            'VT' => 'Vermont',
-            'VA' => 'Virginia',
-            'WA' => 'Washington',
-            'WV' => 'West Virginia',
-            'WI' => 'Wisconsin',
-            'WY' => 'Wyoming',
-        ];
+        $states = usStatesArrayForDropdown();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
@@ -437,12 +402,12 @@ class PatientCareplanController extends Controller
         }
 
         $showApprovalButton = false; // default hide
-        if (Auth::user()->hasRole(['provider'])) {
-            if ('provider_approved' != $patient->getCarePlanStatus()) {
+        if (Auth::user()->isProvider()) {
+            if (CarePlan::PROVIDER_APPROVED != $patient->getCarePlanStatus()) {
                 $showApprovalButton = true;
             }
         } else {
-            if ('draft' == $patient->getCarePlanStatus()) {
+            if (CarePlan::DRAFT == $patient->getCarePlanStatus()) {
                 $showApprovalButton = true;
             }
         }
@@ -450,6 +415,7 @@ class PatientCareplanController extends Controller
         $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
         $contact_days_array = [];
+        $contactWindows     = [];
         if ($patient->patientInfo()->exists()) {
             $contactWindows     = $patient->patientInfo->contactWindows;
             $contact_days_array = $contactWindows->pluck('day_of_week')->toArray();
@@ -460,8 +426,6 @@ class PatientCareplanController extends Controller
             compact(
                 [
                     'patient',
-                    'userMeta',
-                    'userConfig',
                     'states',
                     'locations',
                     'timezones',
@@ -480,6 +444,8 @@ class PatientCareplanController extends Controller
             )
         );
     }
+
+    //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
 
     private function storeOrUpdateDemographics(
         Request $request
@@ -500,7 +466,7 @@ class PatientCareplanController extends Controller
         }
 
         //moving here to cover all cases
-        if ('withdrawn' == $params->get('ccm_status')) {
+        if (in_array($params->get('ccm_status'), [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
             if ('Other' == $params->get('withdrawn_reason')) {
                 $params->set('withdrawn_reason', $params->get('withdrawn_reason_other'));
             }
@@ -527,6 +493,13 @@ class PatientCareplanController extends Controller
             $patient = User::where('id', $patientId)->first();
             //Update patient info changes
             $info = $patient->patientInfo;
+
+            if ($user->first_name) {
+                $params->set('first_name', $user->first_name);
+            }
+            if ($user->last_name) {
+                $params->set('last_name', $user->last_name);
+            }
 
             if ( ! $patient->patientInfo) {
                 $info = new Patient(
@@ -561,8 +534,10 @@ class PatientCareplanController extends Controller
                 'required'                   => 'The :attribute field is required.',
                 'home_phone_number.required' => 'The patient phone number field is required.',
             ];
-            $this->validate($request, $user->getPatientRules(), $messages);
-
+            $v = Validator::make($params->all(), $user->getPatientRules(), $messages);
+            if ($v->fails()) {
+                return redirect()->back()->withErrors($v->errors())->withInput($request->input());
+            }
             $userRepo->editUser($user, $params);
             if ($params->get('direction')) {
                 return redirect($params->get('direction'))->with(
@@ -578,9 +553,12 @@ class PatientCareplanController extends Controller
             'required'                   => 'The :attribute field is required.',
             'home_phone_number.required' => 'The patient phone number field is required.',
         ];
-        $this->validate($request, $user->getPatientRules(), $messages);
-        $role      = Role::whereName('participant')->first();
-        $newUserId = str_random(15);
+        $v = Validator::make($params->all(), $user->getPatientRules(), $messages);
+        if ($v->fails()) {
+            return redirect()->back()->withErrors($v->errors())->withInput($request->input());
+        }
+        $role      = Role::byName('participant');
+        $newUserId = Str::random(15);
 
         $carePlanStatus = CarePlan::DRAFT;
         if (auth()->user()->isPracticeStaff()) {
@@ -603,7 +581,19 @@ class PatientCareplanController extends Controller
                 'careplan_mode'   => CarePlan::WEB,
             ]
         );
-        $newUser = $userRepo->createNewUser($user, $params);
+        try {
+            $newUser = $userRepo->createNewUser($params);
+        } catch (PatientAlreadyExistsException $e) {
+            return redirect()
+                ->back()
+                ->withErrors(['first_name' => $e->getMessage()])
+                ->withInput($request->input());
+        } catch (ValidationException $e) {
+            return redirect()
+                ->back()
+                ->withErrors($e->validator->errors())
+                ->withInput($request->input());
+        }
 
         if ($request->has('provider_id')) {
             $newUser->setBillingProviderId($request->input('provider_id'));

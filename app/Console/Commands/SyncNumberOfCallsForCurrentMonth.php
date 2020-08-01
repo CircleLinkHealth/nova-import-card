@@ -32,8 +32,6 @@ class SyncNumberOfCallsForCurrentMonth extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param PatientSummaryEloquentRepository $patientSummaryEloquentRepository
      */
     public function __construct(PatientSummaryEloquentRepository $patientSummaryEloquentRepository)
     {

@@ -21,7 +21,6 @@ class CarePlanApprovalReminder extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param \CircleLinkHealth\Customer\Entities\User $recipient
      * @param $numberOfCareplans
      */
     public function __construct(User $recipient, $numberOfCareplans)

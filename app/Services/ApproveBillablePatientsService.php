@@ -37,23 +37,35 @@ class ApproveBillablePatientsService
 
     public function counts($practiceId, Carbon $month)
     {
+        // the counts might be inaccurate here because the records might
+        // not be processed yet. see command ProcessApprovableBillablePatientSummary
+
         $count['approved'] = $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month)
+            ->billablePatientSummaries($practiceId, $month, true)
             ->where('approved', '=', true)
             ->where('rejected', '=', false)
             ->count();
 
         $count['toQA'] = $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month)
+            ->billablePatientSummaries($practiceId, $month, true)
             ->where('approved', '=', false)
             ->where('rejected', '=', false)
             ->where('needs_qa', '=', true)
             ->count();
 
         $count['rejected'] = $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month)
+            ->billablePatientSummaries($practiceId, $month, true)
             ->where('rejected', '=', true)
             ->where('approved', '=', false)
+            ->count();
+
+        // 1. not all fields might have been set, because they might not have been processed yet
+        // 2. or we have an actor_id but none of these is true
+        $count['other'] = $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month, true)
+            ->where('rejected', '=', false)
+            ->where('approved', '=', false)
+            ->where('needs_qa', '=', false)
             ->count();
 
         return $count;
@@ -72,58 +84,38 @@ class ApproveBillablePatientsService
      *  is_closed Boolean
      *
      * @param $practiceId
-     * @param Carbon $date
      *
      * @return \Illuminate\Support\Collection
      */
     public function getBillablePatientsForMonth($practiceId, Carbon $date)
     {
-        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(100);
+        // 1. this will fetch billable patients that have
+        //    ccm > 1200 and/or bhi > 1200
+        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(30);
 
-        $summaries->getCollection()->transform(function ($summary) {
-            if ( ! $summary->actor_id) {
-                $summary = $this->patientSummaryRepo->attachChargeableServices($summary);
-                $summary = $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
+        //note: this only applies to the paginated results, not the whole collection. not sure if intended
+        $summaries->getCollection()->transform(
+            function ($summary) {
+                if ( ! $summary->actor_id) {
+                    $aSummary = $this->patientSummaryRepo->attachChargeableServices($summary);
+                    $summary = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($aSummary);
+                }
+
+                return ApprovableBillablePatient::make($summary);
             }
+        );
 
-            $summary = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($summary);
+        $isClosed = (bool) $summaries->getCollection()->every(
+            function ($summary) {
+                return (bool) $summary->actor_id;
+            }
+        );
 
-            return ApprovableBillablePatient::make($summary);
-        });
-
-        $isClosed = (bool) $summaries->getCollection()->every(function ($summary) {
-            return (bool) $summary->actor_id;
-        });
-
-        return collect([
-            'summaries' => $summaries,
-            'is_closed' => $isClosed,
-        ]);
-    }
-
-    public function patientsToApprove($practiceId, Carbon $month)
-    {
-        $summaries = $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month)
-            ->paginate();
-        $summaries->getCollection()->transform(function ($summary) {
-            $summary = $this->patientSummaryRepo
-                ->attachChargeableService($summary);
-
-            return $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
-        });
-
-        return $summaries;
-    }
-
-    public function transformPatientsToApprove($practiceId, Carbon $month)
-    {
-        $summaries = $this->patientsToApprove($practiceId, $month);
-
-        $summaries->getCollection()->transform(function ($summary) {
-            return ApprovableBillablePatient::make($summary);
-        });
-
-        return $summaries;
+        return collect(
+            [
+                'summaries' => $summaries,
+                'is_closed' => $isClosed,
+            ]
+        );
     }
 }

@@ -6,9 +6,10 @@
 
 namespace App\Nova\Importers;
 
-use App\Enrollee;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Str;
 use Log;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -19,17 +20,11 @@ class EnroleeStatus implements WithChunkReading, ToModel, WithHeadingRow, Should
 {
     use Importable;
 
-    /**
-     * @return int
-     */
     public function batchSize(): int
     {
         return 200;
     }
 
-    /**
-     * @return int
-     */
     public function chunkSize(): int
     {
         return 200;
@@ -65,28 +60,28 @@ class EnroleeStatus implements WithChunkReading, ToModel, WithHeadingRow, Should
 
     private function setEnrolleeStatus($e, $row)
     {
-        if (str_contains(strtolower($row['call_status']), ['maybe', 'attempt', '3', '2', '1', 'soft'])) {
-            if (str_contains($row['call_status'], '3')) {
+        if (Str::contains(strtolower($row['call_status']), ['maybe', 'attempt', '3', '2', '1', 'soft'])) {
+            if (Str::contains($row['call_status'], '3')) {
                 $e->attempt_count = 3;
             }
-            if (str_contains($row['call_status'], '2')) {
+            if (Str::contains($row['call_status'], '2')) {
                 $e->attempt_count = 2;
             }
-            if (str_contains($row['call_status'], '1')) {
+            if (Str::contains($row['call_status'], '1')) {
                 $e->attempt_count = 1;
             }
             $e->status = Enrollee::SOFT_REJECTED;
         }
-        if (str_contains(strtolower($row['call_status']), ['hard', 'declined'])) {
+        if (Str::contains(strtolower($row['call_status']), ['hard', 'declined'])) {
             $e->status = Enrollee::REJECTED;
         }
-        if (str_contains(strtolower($row['call_status']), 'reach')) {
+        if (Str::contains(strtolower($row['call_status']), 'reach')) {
             $e->status = Enrollee::UNREACHABLE;
         }
-        if (str_contains(strtolower($row['call_status']), 'call')) {
+        if (Str::contains(strtolower($row['call_status']), 'call')) {
             $e->status = Enrollee::TO_CALL;
         }
-        if (str_contains(strtolower($row['call_status']), 'enrolled')) {
+        if (Str::contains(strtolower($row['call_status']), 'enrolled')) {
             $e->status = Enrollee::ENROLLED;
         }
 

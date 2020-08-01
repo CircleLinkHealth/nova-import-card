@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Contracts\DirectMailableNotification;
 use App\Mail\CarePlanApprovalReminder as CarePlanApprovalReminderMailable;
 use App\Notifications\Channels\DirectMailChannel;
 use App\ValueObjects\SimpleNotification;
@@ -16,9 +17,15 @@ use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\View;
 
-class CarePlanApprovalReminder extends Notification implements ShouldQueue
+class CarePlanApprovalReminder extends Notification implements ShouldQueue, DirectMailableNotification
 {
     use Queueable;
+    /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
 
     /**
      * Create a new notification instance.
@@ -28,6 +35,25 @@ class CarePlanApprovalReminder extends Notification implements ShouldQueue
     public function __construct($numberOfCareplans)
     {
         $this->numberOfCareplans = $numberOfCareplans;
+    }
+
+    /**
+     * @param null $notifiable
+     */
+    public function directMailBody($notifiable): string
+    {
+        return View::make(
+            'emails.DmCareplanApprovalReminder',
+            [
+                'notifiable'        => $notifiable,
+                'numberOfCareplans' => $this->numberOfCareplans,
+            ]
+        );
+    }
+
+    public function directMailSubject($notifiable): string
+    {
+        return "{$this->numberOfCareplans} CircleLink Care Plan(s) for your Approval!";
     }
 
     /**
@@ -51,27 +77,25 @@ class CarePlanApprovalReminder extends Notification implements ShouldQueue
     }
 
     /**
-     * @param User $notifiable
+     * @param mixed $notifiable
      *
      * @throws \Exception
      *
      * @return array|bool
      */
-    public function toDirectMail(User $notifiable): SimpleNotification
+    public function toDirectMail($notifiable): SimpleNotification
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
             return false;
         }
 
         return (new SimpleNotification())
-            ->setSubject("{$this->numberOfCareplans} CircleLink Care Plan(s) for your Approval!")
+            ->setSubject($this->directMailSubject($notifiable))
             ->setBody($this->directMailBody($notifiable));
     }
 
     /**
      * Get the mail representation of the notification.
-     *
-     * @param User $notifiable
      *
      * @return CarePlanApprovalReminderMailable
      */
@@ -101,21 +125,5 @@ class CarePlanApprovalReminder extends Notification implements ShouldQueue
         }
 
         return $channels;
-    }
-
-    /**
-     * @throws \Exception
-     *
-     * @return string
-     */
-    private function directMailBody(User $notifiable)
-    {
-        return View::make(
-            'emails.DmCareplanApprovalReminder',
-            [
-                'notifiable'        => $notifiable,
-                'numberOfCareplans' => $this->numberOfCareplans,
-            ]
-        );
     }
 }

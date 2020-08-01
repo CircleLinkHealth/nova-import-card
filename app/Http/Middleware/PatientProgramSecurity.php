@@ -21,8 +21,6 @@ class PatientProgramSecurity
 
     /**
      * Create a new filter instance.
-     *
-     * @param Guard $auth
      */
     public function __construct(Guard $auth)
     {
@@ -46,7 +44,7 @@ class PatientProgramSecurity
             return redirect()->guest('login');
         }
 
-        if ($loggedInUser->hasRole('participant')) {
+        if ($loggedInUser->isParticipant()) {
             abort(403);
         }
 

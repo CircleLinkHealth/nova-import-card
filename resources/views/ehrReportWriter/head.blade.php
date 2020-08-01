@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="base-url" content="{{ url('/') }}">
-    <title>CPM API</title>
+    <title>CPM</title>
 
 @include('partials.hotjar-code')
 
@@ -26,7 +26,7 @@
     <![endif]-->
 
     <!-- JQuery -->
-    <link rel="stylesheet" href="{{mix('/css/smoothness-jquery-ui-1.11.4.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css" integrity="sha256-iWTx/iC9IoKaoSKD5+WVFef8ZYNIgQ4AxVpMbBw2hig=" crossorigin="anonymous" />
 
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"
@@ -52,20 +52,75 @@
         .select2 {
             width: 100%;
         }
+
+        .top-nav-item {
+            background: none !important;
+            padding: 15px;
+            line-height: 20px;
+            cursor: pointer;
+        }
     </style>
     @stack('styles')
 </head>
 <body>
-<ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-               aria-expanded="false">{{ Auth::user()->getFullName() }} [ID:{{ Auth::user()->id }}]<span
-                        class="caret"></span></a>
-            <ul class="dropdown-menu" role="menu">
-                <li><a href="{{ url('/auth/logout') }}">Logout</a></li>
-            </ul>
-        </li>
-</ul>
+<div id="app">
+
+    <nav class="navbar navbar-default">
+        <div class="container-fluid full-width margin-0">
+            <div class="row">
+                <div class="col-lg-4 col-sm-12 col-xs-12">
+                    <div class="row">
+                        <div class="col-md-3 col-xs-12">
+                            <a class="navbar-brand" href="{{ url('/') }}" style="padding: 5px 15px; border: none"><img
+                                        src="{{mix('/img/logos/LogoHorizontal_Color.svg')}}"
+                                        alt="Care Plan Manager"
+                                        style="position:relative;top:-7px"
+                                        height="50"
+                                        width="105"/></a>
+
+                            <button type="button" class="navbar-toggle collapsed" style="border-color:white"
+                                    data-toggle="collapse"
+                                    data-target="#navbar-collapse" aria-expanded="false">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar" style="background-color:white"></span>
+                                <span class="icon-bar" style="background-color:white"></span>
+                                <span class="icon-bar" style="background-color:white"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8 col-sm-12 col-xs-12">
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-3">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <a href="{{route('report-writer.google-drive')}}" target="_blank"><i class="top-nav-item-icon glyphicon glyphicon glyphicon glyphicon-cloud"></i> My Google Drive Folder</a>
+                            </li>
+                            <li class="dropdown">
+                                <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button" aria-expanded="false" id="csv-templates-dropdown">
+                                    <i class="top-nav-item-icon glyphicon glyphicon glyphicon-list-alt"></i>
+
+                                    Templates
+                                    <span class="caret text-white"></span>
+                                </div>
+                                <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                                    <li>
+                                        <a href="{{route('report-writer.download-template', ['name' => 'Single Fields'])}}">Single field CSV</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('report-writer.download-template', ['name' => 'Numbered Fields'])}}">Multi-field CSV</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            @include('partials.user-account-dropdown', ['user' => auth()->user()])
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+</div>
 </body>
 @include('partials.footer')
 @yield('content')

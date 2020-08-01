@@ -23,6 +23,7 @@ use App\Services\MsgUI;
  * @property \App\Observation[]|\Illuminate\Database\Eloquent\Collection         $observations
  * @property \App\CPRulesQuestionSets[]|\Illuminate\Database\Eloquent\Collection $questionSets
  * @property \App\CPRulesItem[]|\Illuminate\Database\Eloquent\Collection         $rulesItems
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereCategory($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereIcon($value)
@@ -31,10 +32,13 @@ use App\Services\MsgUI;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereQid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereQtype($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions query()
+ *
  * @property int|null $care_items_count
  * @property int|null $observations_count
  * @property int|null $question_sets_count
@@ -95,16 +99,16 @@ class CPRulesQuestions extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function observations()
     {
-        return $this->hasMany('App\Observation', 'msg_id', 'obs_message_id');
+        return $this->hasMany(\App\Observation::class, 'msg_id', 'obs_message_id');
     }
 
     public function questionSets()
     {
-        return $this->hasMany('App\CPRulesQuestionSets', 'qid', 'qid');
+        return $this->hasMany(\App\CPRulesQuestionSets::class, 'qid', 'qid');
     }
 
     public function rulesItems() // rules prefix because ->items is a protect class var on parent
     {
-        return $this->hasMany('App\CPRulesItem', 'qid', 'qid');
+        return $this->hasMany(\App\CPRulesItem::class, 'qid', 'qid');
     }
 }

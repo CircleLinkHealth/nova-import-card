@@ -103,23 +103,23 @@
             <div class="col-sm-12 text-center line-50 row">
                 <div class="col-sm-4">
                     <strong>Approved: </strong>
-                    <loader v-if="loaders.billables"></loader>
+                    <loader v-if="loaders.billables || loaders.counts"></loader>
                     <span class="color-green">
-                        {{loaders.billables ? '' : counts.approved}}
+                        {{(loaders.billables || loaders.counts) ? '' : counts.approved}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Flagged: </strong>
-                    <loader v-if="loaders.billables"></loader>
+                    <loader v-if="loaders.billables || loaders.counts"></loader>
                     <span class="color-dark-orange">
-                        {{loaders.billables ? '' : counts.flagged}}
+                        {{(loaders.billables || loaders.counts) ? '' : counts.flagged}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Rejected: </strong>
-                    <loader v-if="loaders.billables"></loader>
+                    <loader v-if="loaders.billables || loaders.counts"></loader>
                     <span class="color-dark-red">
-                        {{loaders.billables ? '' : counts.rejected}}
+                        {{(loaders.billables || loaders.counts) ? '' : counts.rejected}}
                     </span>
                 </div>
             </div>
@@ -145,29 +145,21 @@
                 <template slot="Patient" slot-scope="props">
                     <a :href="props.row.patientUrl" target="_blank" class="blue">{{props.row.Patient}}</a>
                 </template>
-                <template slot="CCM Problem 1" slot-scope="props">
-                    <div>
-                        <span class="blue pointer"
-                              @click="showCcmModal(props.row, 1)">{{props.row['CCM Problem 1'] || '&lt;Edit&gt;'}}</span>
-                        <loader v-if="props.row.promises['problem_1']"></loader>
+                <template slot="CCM Problem Code(s)" slot-scope="props">
+                    <div class="ccm-problem-codes">
+                        <span class="blue pointer" style="overflow-wrap: break-word"
+                              @click="showCcmModal(props.row)">{{attestedCcmProblemCodes(props.row) || '&lt;Edit&gt;'}}</span>
                     </div>
                 </template>
-                <template slot="CCM Problem 2" slot-scope="props">
-                    <div>
-                        <span class="blue pointer"
-                              @click="showCcmModal(props.row, 2)">{{props.row['CCM Problem 2'] || '&lt;Edit&gt;'}}</span>
-                        <loader v-if="props.row.promises['problem_2']"></loader>
-                    </div>
-                </template>
-                <template slot="BHI Problem" slot-scope="props">
-                    <div>
-                        <span class="blue pointer"
-                              @click="showBhiModal(props.row, 3)">{{props.row['BHI Problem'] || '&lt;Edit&gt;'}}</span>
-                        <loader v-if="props.row.promises['bhi_problem']"></loader>
+                <template slot="BHI Problem Code(s)" slot-scope="props">
+                    <div class="ccm-problem-codes">
+                        <span class="blue pointer" style="overflow-wrap: break-word"
+                              @click="showBhiModal(props.row)">{{attestedBhiProblemCodes(props.row) || 'N/A'}}</span>
                     </div>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
-                    <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'" @click="showChargeableServicesModal(props.row)">
+                    <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'"
+                         @click="showChargeableServicesModal(props.row)">
                         <div v-if="props.row.chargeable_services.length">
                             <label class="label label-info margin-5 inline-block"
                                    v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
@@ -177,13 +169,22 @@
                     </div>
                 </template>
             </v-client-table>
-            <div class="text-right" v-if="tableData.length > 0">
-                <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
-                <loader v-if="loaders.closeMonth"></loader>
-                <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
-                <loader v-if="loaders.openMonth"></loader>
-            </div>
-            <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
+            <template v-if="tableData.length > 0">
+                <div class="row">
+                    <div class="col-md-6">
+                        <loader v-if="loaders.billablesBackground"></loader>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
+                        <loader v-if="loaders.closeMonth"></loader>
+                        <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
+                        <loader v-if="loaders.openMonth"></loader>
+                    </div>
+                </div>
+            </template>
+
+            <attest-call-conditions-modal ref="attestCallConditionsModal"
+                                          :cpm-problems="cpmProblems"></attest-call-conditions-modal>
             <chargeable-services-modal ref="chargeableServicesModal"
                                        :services="selectedPracticeChargeableServices"></chargeable-services-modal>
             <error-modal ref="errorModal"></error-modal>
@@ -238,6 +239,8 @@
                 loaders: {
                     practices: false,
                     billables: false,
+                    billablesBackground: false,
+                    counts: false,
                     chargeableServices: false,
                     openMonth: false,
                     closeMonth: false
@@ -247,8 +250,9 @@
                     approved: 0,
                     rejected: 0,
                     flagged: 0,
+                    other: 0,
                     total() {
-                        return this.approved + this.rejected + this.flagged
+                        return this.approved + this.rejected + this.flagged + this.other
                     }
                 },
                 columns: [
@@ -260,12 +264,8 @@
                     'Status',
                     'CCM Mins',
                     'BHI Mins',
-                    'CCM Problem 1',
-                    'CCM Problem 1 Code',
-                    'CCM Problem 2',
-                    'CCM Problem 2 Code',
-                    'BHI Problem',
-                    'BHI Problem Code',
+                    'CCM Problem Code(s)',
+                    'BHI Problem Code(s)',
                     '#Successful Calls',
                     'approved',
                     'rejected',
@@ -287,8 +287,7 @@
                     if (type == 'approve') {
                         tablePatient.approved = e.target.checked
                         tablePatient.rejected = false
-                    }
-                    else {
+                    } else {
                         tablePatient.rejected = e.target.checked
                         tablePatient.approved = false
                     }
@@ -307,6 +306,7 @@
                             this.counts.approved = ((response.data || {}).counts || {}).approved || 0
                             this.counts.rejected = ((response.data || {}).counts || {}).rejected || 0
                             this.counts.flagged = ((response.data || {}).counts || {}).toQA || 0
+                            this.counts.other = ((response.data || {}).counts || {}).other || 0
                         }
                         tablePatient.actorId = (response.data || {}).actor_id
                         console.log('billing-approve-reject', response.data)
@@ -318,39 +318,39 @@
                 }
             },
             changePractice() {
-                this.tableData = []
+                this.tableData = [];
                 this.url = null;
-                this.$refs.tblBillingReport.setPage(1)
-                this.retrieve()
-                this.getCounts()
+                this.$refs.tblBillingReport.setPage(1);
+                this.getCounts();
+                this.retrieve();
             },
             detachChargeableService(e) {
-                if (e) e.preventDefault()
-                const id = this.selectedService
-                console.log('billing:chargeable-service:default', id)
-                const service = this.chargeableServices.find(s => s.id == id)
-                const practice = this.practices.find(p => p.id == this.selectedPractice)
+                if (e) e.preventDefault();
+                const id = this.selectedService;
+                console.log('billing:chargeable-service:default', id);
+                const service = this.chargeableServices.find(s => s.id == id);
+                const practice = this.practices.find(p => p.id == this.selectedPractice);
                 if (id && service && practice && !this.loaders.chargeableServices && confirm(`Are you sure you want to remove ${service.code} from all chargeable services for ${practice.name} in ${this.selectedMonth}?`)) {
-                    return this.updateChargeableService(id, true)
+                    return this.updateChargeableService(id, true);
                 }
             },
             attachChargeableService(e) {
-                if (e) e.preventDefault()
-                const id = this.selectedService
-                console.log('billing:chargeable-service:default', id)
-                const service = this.chargeableServices.find(s => s.id == id)
-                const practice = this.practices.find(p => p.id == this.selectedPractice)
+                if (e) e.preventDefault();
+                const id = this.selectedService;
+                console.log('billing:chargeable-service:default', id);
+                const service = this.chargeableServices.find(s => s.id == id);
+                const practice = this.practices.find(p => p.id == this.selectedPractice);
                 if (id && service && practice && !this.loaders.chargeableServices && confirm(`Are you sure you want to set ${service.code} as the default chargeable service for ${practice.name} in ${this.selectedMonth}?`)) {
-                    return this.updateChargeableService(id)
+                    return this.updateChargeableService(id);
                 }
             },
             updateChargeableService(id, isDetach = false) {
-                this.loaders.chargeableServices = true
+                this.loaders.chargeableServices = true;
                 const data = {
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth,
                     default_code_id: id
-                }
+                };
                 if (isDetach) {
                     data.detach = true
                 }
@@ -388,102 +388,133 @@
             },
             */
             getCounts() {
-                return this.axios.get(rootUrl(`admin/reports/monthly-billing/v2/counts?practice_id=${this.selectedPractice}&date=${this.selectedMonth}`)).then(response => {
-                    console.log('billing:counts', response.data)
-                    this.counts.approved = (response.data || {}).approved || 0
-                    this.counts.rejected = (response.data || {}).rejected || 0
-                    this.counts.flagged = (response.data || {}).toQA || 0
-                    return this.counts
-                })
+                this.loaders.counts = true;
+                return this.axios
+                    .get(rootUrl(`admin/reports/monthly-billing/v2/counts?practice_id=${this.selectedPractice}&date=${this.selectedMonth}`))
+                    .then(response => {
+                        this.loaders.counts = false;
+                        console.log('billing:counts', response.data)
+                        this.counts.approved = (response.data || {}).approved || 0
+                        this.counts.rejected = (response.data || {}).rejected || 0
+                        this.counts.flagged = (response.data || {}).toQA || 0
+                        this.counts.other = (response.data || {}).other || 0
+                        return this.counts
+                    })
+                    .catch(err => {
+                        this.loaders.counts = false;
+                        console.error(err);
+                    });
             },
-            retrieve() {
-                this.loaders.billables = true
-                this.axios.post(this.url || rootUrl(`admin/reports/monthly-billing/v2/data`), {
-                    practice_id: this.selectedPractice,
-                    date: this.selectedMonth
-                }).then(response => {
-                    console.log('billables:response', response)
-                    const pagination = response.data || []
-                    const ids = this.tableData.map(i => i.id)
-                    this.url = pagination.next_page_url
-                    this.isClosed = !!Number(response.headers['is-closed'])
-                    this.tableData = this.tableData.concat(pagination.data.filter(patient => !ids.includes(patient.id)).map((patient, index) => {
-                        const item = {
-                            id: patient.id,
-                            MRN: patient.mrn,
-                            approved: patient.approve,
-                            rejected: patient.reject,
-                            reportId: patient.report_id,
-                            actorId: patient.actor_id,
-                            qa: patient.qa,
-                            problems: patient.problems || [],
-                            Provider: patient.provider,
-                            Patient: patient.name,
-                            patientUrl: patient.url,
-                            Practice: patient.practice,
-                            DOB: patient.dob,
-                            Status: patient.status,
-                            'CCM Mins': timeDisplay(patient.ccm_time),
-                            'BHI Mins': timeDisplay(patient.bhi_time),
-                            'CCM Problem 1': patient.problem1,
-                            'CCM Problem 2': patient.problem2,
-                            'CCM Problem 1 Code': patient.problem1_code,
-                            'CCM Problem 2 Code': patient.problem2_code,
-                            'BHI Problem': patient.bhi_problem,
-                            'BHI Problem Code': patient.bhi_problem_code,
-                            '#Successful Calls': patient.no_of_successful_calls,
-                            chargeable_services: (patient.chargeable_services || []).map(item => item.id),
-                            promises: {
-                                problem_1: false,
-                                problem_2: false,
-                                bhi_problem: false,
-                                approve_reject: false,
-                                update_chargeables: false
-                            },
-                            errors: {
-                                approve_reject: null
-                            },
-                            chargeables: () => {
-                                //we need the chargeableService for the practice (not all chargeableServices)
-                                const practiceChargeableServices = this.selectedPracticeChargeableServices;
-                                return item.chargeable_services.map(id => practiceChargeableServices.find(service => service.id == id)).filter(Boolean)
-                            },
-                            onChargeableServicesUpdate: (serviceIDs) => {
-                                item.chargeable_services = serviceIDs
-                                console.log('service-ids', serviceIDs, item)
-                                item.promises.update_chargeables = true
-                                return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), {
-                                    report_id: item.reportId,
-                                    patient_chargeable_services: serviceIDs
-                                }).then(response => {
-                                    console.log('billing:chargeable-services:update', response.data)
-                                    item.promises.update_chargeables = false
-                                }).catch(err => {
-                                    console.error('billing:chargeable-services:update', err)
-                                    item.promises.update_chargeables = false
-                                })
-                            },
-                            isBhiEligible() {
-                                return !!this.chargeables().find(service => service.code === SERVICES.CPT_99484);
-                            },
-                            isCcmEligible() {
-                                return !!this.chargeables().find(service => service.code === SERVICES.CPT_99490);
-                            },
-                            hasOver20MinutesBhiTime() {
-                                return patient.bhi_time >= 1200;
-                            },
-                            hasOver20MinutesCCMTime() {
-                                return patient.ccm_time >= 1200;
-                            },
+            retrieve(isBackground) {
+
+                if (isBackground) {
+                    this.loaders.billablesBackground = true;
+                } else {
+                    this.loaders.billables = true;
+                }
+
+                this.axios
+                    .post(this.url || rootUrl(`admin/reports/monthly-billing/v2/data`), {
+                        practice_id: this.selectedPractice,
+                        date: this.selectedMonth
+                    })
+                    .then(response => {
+                        console.log('billables:response', response);
+                        const pagination = response.data || [];
+                        const ids = this.tableData.map(i => i.id);
+                        this.url = pagination.next_page_url;
+                        this.isClosed = !!Number(response.headers['is-closed']);
+                        this.tableData = this.tableData
+                            .concat((pagination.data || [])
+                                .filter(patient => !ids.includes(patient.id))
+                                .map(this.setupRow)
+                                .sort((pA, pB) => pB.qa - pA.qa));
+
+                        if (isBackground) {
+                            this.loaders.billablesBackground = false;
+                        } else {
+                            this.loaders.billables = false;
                         }
-                        return item
-                    }).sort((pA, pB) => pB.qa - pA.qa))
-                    this.loaders.billables = false
-                    console.log('bills-report', this.tableData.slice(0))
-                }).catch(err => {
-                    console.error(err)
-                    this.loaders.billables = false
-                })
+
+                        if (this.url) {
+                            setTimeout(() => this.retrieve(true), 100);
+                        } else {
+                            console.log('all pages loaded');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        if (isBackground) {
+                            this.loaders.billablesBackground = false;
+                        } else {
+                            this.loaders.billables = false;
+                        }
+                    });
+            },
+
+            setupRow(patient) {
+                const item = {
+                    id: patient.id,
+                    MRN: patient.mrn,
+                    approved: patient.approve,
+                    rejected: patient.reject,
+                    reportId: patient.report_id,
+                    actorId: patient.actor_id,
+                    qa: patient.qa,
+                    problems: patient.problems || [],
+                    Provider: patient.provider,
+                    Patient: patient.name,
+                    patientUrl: patient.url,
+                    Practice: patient.practice,
+                    DOB: patient.dob,
+                    Status: patient.status,
+                    'CCM Mins': timeDisplay(patient.ccm_time),
+                    'BHI Mins': timeDisplay(patient.bhi_time),
+                    attested_ccm_problems: patient.attested_ccm_problems,
+                    attested_bhi_problems: patient.attested_bhi_problems,
+                    '#Successful Calls': patient.no_of_successful_calls,
+                    chargeable_services: (patient.chargeable_services || []).map(item => item.id),
+                    promises: {
+                        approve_reject: false,
+                        update_chargeables: false
+                    },
+                    errors: {
+                        approve_reject: null
+                    },
+                    chargeables: () => {
+                        //we need the chargeableService for the practice (not all chargeableServices)
+                        const practiceChargeableServices = this.selectedPracticeChargeableServices;
+                        return item.chargeable_services.map(id => practiceChargeableServices.find(service => service.id == id)).filter(Boolean)
+                    },
+                    onChargeableServicesUpdate: (serviceIDs) => {
+                        item.chargeable_services = serviceIDs
+                        console.log('service-ids', serviceIDs, item)
+                        item.promises.update_chargeables = true
+                        return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), {
+                            report_id: item.reportId,
+                            patient_chargeable_services: serviceIDs
+                        }).then(response => {
+                            console.log('billing:chargeable-services:update', response.data)
+                            item.promises.update_chargeables = false
+                        }).catch(err => {
+                            console.error('billing:chargeable-services:update', err)
+                            item.promises.update_chargeables = false
+                        })
+                    },
+                    isBhiEligible() {
+                        return !!this.chargeables().find(service => service.code === SERVICES.CPT_99484);
+                    },
+                    isCcmEligible() {
+                        return !!this.chargeables().find(service => service.code === SERVICES.CPT_99490);
+                    },
+                    hasOver20MinutesBhiTime() {
+                        return patient.bhi_time >= 1200;
+                    },
+                    hasOver20MinutesCCMTime() {
+                        return patient.ccm_time >= 1200;
+                    },
+                };
+                return item;
             },
 
             showChargeableServicesModal(row) {
@@ -499,7 +530,7 @@
                 })
             },
 
-            showBhiModal(patient, type) {
+            showBhiModal(patient) {
                 if (!patient.isBhiEligible()) {
                     Event.$emit('notifications-billing:create', {
                         text: `Cannot edit BHI Problem. Check that both Practice and Patient are chargeable for ${SERVICES.CPT_99484}.`,
@@ -518,10 +549,10 @@
                     return;
                 }
 
-                this.showProblemsModal(patient, type);
+                this.showProblemsModal(patient, true);
             },
 
-            showCcmModal(patient, type) {
+            showCcmModal(patient) {
                 // if (!patient.isCcmEligible()) {
                 //     Event.$emit('notifications-billing:create', {
                 //         text: `Cannot edit CCM Problem. Check that both Practice and Patient are chargeable for ${SERVICES.CPT_99490}.`,
@@ -533,70 +564,22 @@
 
                 if (!patient.hasOver20MinutesCCMTime()) {
                     Event.$emit('notifications-billing:create', {
-                        text: 'Cannot edit CCM Problem. The Patient has less than 20 minutes CCM time.',
+                        text: 'Cannot edit CCM Problems. The Patient has less than 20 minutes CCM time.',
                         type: 'warning',
                         interval: 5000
                     });
                     return;
                 }
 
-                this.showProblemsModal(patient, type);
+                this.showProblemsModal(patient, false);
             },
 
-            showProblemsModal(patient, type) {
-                const self = this;
-                Event.$emit('modal-patient-problem:show', patient, type, function (modified) {
-                    /** callback done function */
-                    const tablePatient = self.tableData.find(pt => pt.id === patient.id)
-                    console.log('table-patient', tablePatient, modified)
-                    if (tablePatient) {
-                        if (modified.id == 'Other') {
-                            modified.name = (this.cpmProblems.find(problem => problem.id == modified.cpm_id) || {}).name || modified.name
-                        }
-                        if (type === 1) {
-                            tablePatient['CCM Problem 1 Code'] = modified.code
-                            tablePatient['CCM Problem 1'] = modified.name
-                        }
-                        else if (type == 2) {
-                            tablePatient['CCM Problem 2 Code'] = modified.code
-                            tablePatient['CCM Problem 2'] = modified.name
-                        }
-                        else if (type == 3) {
-                            tablePatient['BHI Problem Code'] = modified.code
-                            tablePatient['BHI Problem'] = modified.name
-                        }
-                        const problemKey = (type === 1) ? 'problem_1' : (type === 2 ? 'problem_2' : 'bhi_problem')
-                        tablePatient.promises[problemKey] = true
-                        return self.axios.post(rootUrl('admin/reports/monthly-billing/v2/storeProblem'), {
-                            code: modified.code,
-                            id: modified.id,
-                            name: modified.name,
-                            problem_no: problemKey,
-                            report_id: tablePatient.reportId,
-                            cpm_problem_id: modified.cpm_id
-                        }).then((response) => {
-                            tablePatient.promises[problemKey] = false
-                            console.log('billing-change-problem', response)
-                            if (problemKey == 'bhi_problem' && !response) {
-                                Event.$emit('notifications-billing:create', {
-                                    text: 'An error occurred when performing this action',
-                                    type: 'error',
-                                    interval: 3000
-                                })
-                            }
-                        }).catch(err => {
-                            tablePatient.promises[problemKey] = false
-                            console.error('billing-change-problem', err)
-                            Event.$emit('notifications-billing:create', {
-                                text: err.message,
-                                type: 'error',
-                                interval: 3000
-                            })
-                        })
-                        console.log('table-patient-promises', tablePatient.promises)
-                    }
-                    else console.error('could not find tablePatient')
-                })
+            showProblemsModal(patient, isBhi) {
+                Event.$emit('modal-attest-call-conditions:show', {
+                    'patient': patient,
+                    'patient_has_bhi': patient.isBhiEligible(),
+                    'is_bhi': isBhi
+                });
             },
 
             showErrorModal(id, name) {
@@ -623,7 +606,9 @@
                             return a
                         }, {}),
                         data: this.tableData.map(row => (Object.assign({}, row, {
-                            chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code)
+                            chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code),
+                            'CCM Problem Code(s)': this.attestedCcmProblemCodes(row),
+                            'BHI Problem Code(s)': this.attestedBhiProblemCodes(row)
                         })))
                     }
                 ])
@@ -647,6 +632,24 @@
                     this.loaders.openMonth = false
                     console.error('billable:open-month', err)
                 })
+            },
+            attestedCcmProblemCodes(patient) {
+                return patient.problems.filter(function (p) {
+                    return (patient.attested_ccm_problems || []).includes(p.id) && !!p.code;
+                })
+                    .map(function (p) {
+                        return p.code;
+                    })
+                    .join(", ");
+            },
+            attestedBhiProblemCodes(patient) {
+                return patient.problems.filter(function (p) {
+                    return patient.attested_bhi_problems.includes(p.id) && !!p.code;
+                })
+                    .map(function (p) {
+                        return p.code;
+                    })
+                    .join(", ");
             },
             closeMonth() {
                 this.loaders.closeMonth = true
@@ -696,20 +699,69 @@
             this.selectedMonth = (this.months[0] || {}).label;
             this.selectedPractice = this.practices[0].id;
 
-            this.retrieve();
+            // this.retrieve();
 
             //todo
             //this.getChargeableServices();
 
-            this.getCounts();
+            // this.getCounts();
+
+            App.$on('call-conditions-attested', (data) => {
+                this.$http.post(rootUrl(`api/patients/${data.patient_id}/problems/attest-summary-problems`), {
+                    attested_problems: data.attested_problems,
+                    date: this.selectedMonth,
+                    is_bhi: data.is_bhi
+                }).then(response => {
+                    if (data.is_bhi) {
+                        this.tableData.filter(function (p) {
+                            return String(p.id) === String(data.patient_id);
+                        })[0].attested_bhi_problems = response.data.attested_problems;
+                    } else {
+                        this.tableData.filter(function (p) {
+                            return String(p.id) === String(data.patient_id);
+                        })[0].attested_ccm_problems = response.data.attested_problems;
+                    }
+
+                    App.$emit('modal-attest-call-conditions:hide');
+                }).catch(err => {
+                    console.error(err)
+                })
+            });
+
+            Event.$on('full-conditions:add', (ccdProblem) => {
+                //if another condition is created and is attested for the patient, add it to the patient's existing problems
+
+                let is_behavioral = false
+
+                if (ccdProblem.cpm_id) {
+                    is_behavioral = !!this.cpmProblems.filter(function (cpmProblem) {
+                        return cpmProblem.id == ccdProblem.cpm_id;
+                    })[0].is_behavioral;
+                }
+
+
+                this.tableData.filter(function (p) {
+                    return String(p.id) === String(ccdProblem.patient_id);
+                })[0].problems.push({
+                    id: ccdProblem.id,
+                    name: ccdProblem.name,
+                    is_behavioral: is_behavioral,
+                    code: ccdProblem.codes[0].code
+                });
+            });
 
             Event.$on('vue-tables.pagination', (page) => {
+                // still need to get counts to know the Approved, Flagged and Rejected
+                this.getCounts();
+                /*
                 const $table = this.$refs.tblBillingReport;
                 if (page === $table.totalPages) {
                     console.log('next page clicked');
                     this.retrieve();
+                    this.getCounts();
                 }
-            })
+                */
+            });
         }
     }
 </script>
@@ -813,5 +865,13 @@
 
     div.notifications-billing div.alert {
         margin-right: 30px;
+    }
+
+    .ccm-problem-codes {
+        max-width: 150px;
+    }
+
+    .pagination li:not(.disabled) a {
+        cursor: pointer;
     }
 </style>

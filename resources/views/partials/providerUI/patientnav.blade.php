@@ -3,18 +3,18 @@
         <ul class="navbar-nav nav">
 
             <li class="inline-block">
-                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.note.index', array('patient' => $patient->id)) }}">
+                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.note.index', [$patient->id]) }}">
                     Notes and Activities
                 </a>
             </li>
 
             <li class="inline-block">
-                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.summary', array('patient' => $patient->id)) }}"
+                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.summary', [$patient->id]) }}"
                    role="button">Patient Overview</a>
             </li>
 
             <li class="inline-block">
-                <a href="{{ route('patient.demographics.show', array('patientId' => $patient->id)) }}"
+                <a href="{{ route('patient.demographics.show', [$patient->id]) }}"
                    role="button">Patient Profile</a>
             </li>
 
@@ -24,28 +24,28 @@
                    omitsubmit="yes">Patient Reports <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li>
-                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">Patient
+                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', [$patient->id]) }}">Patient
                             Activity Report</a>
                     </li>
-                    @if(auth()->user()->isNotSaas())
-                        <li>
-                            <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress
-                                Report</a>
-                        </li>
-                    @endif
+{{--                    @if(auth()->user()->isNotSaas())--}}
+{{--                        <li>--}}
+{{--                            <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress--}}
+{{--                                Report</a>--}}
+{{--                        </li>--}}
+{{--                    @endif--}}
                     <li>
-                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.care-docs', array('patient' => $patient->id)) }}">Wellness Visit Docs</a>
+                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.care-docs', [$patient->id]) }}">Wellness Visit Docs</a>
                     </li>
                     @if(auth()->user()->isAdmin() && $patient->hasCcda())
                         <li>
-                            <a target="_blank" href="{{route('get.CCDViewerController.showByUserId', [ 'userId' => $patient->id])}}">CCDA</a>
+                            <a target="_blank" href="{{route('get.CCDViewerController.showByUserId', [$patient->id])}}">CCDA</a>
                         </li>
                     @endif
                 </ul>
             </li>
 
             <li class="inline-block">
-                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.careplan.print', array('patient' => $patient->id)) }}"
+                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.careplan.print', [$patient->id]) }}"
                    role="button">View Care Plan</a>
             </li>
         </ul>

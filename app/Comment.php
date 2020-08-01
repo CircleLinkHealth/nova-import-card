@@ -32,6 +32,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon                           $updated_at
  * @property \App\Observation                         $observation
  * @property \CircleLinkHealth\Customer\Entities\User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAgent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentApproved($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAuthor($value)
@@ -52,10 +53,13 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereUserId($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment query()
+ *
  * @property int|null $revision_history_count
  */
 class Comment extends \CircleLinkHealth\Core\Entities\BaseModel
@@ -85,7 +89,7 @@ class Comment extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function observation()
     {
-        return $this->belongsTo('App\Observation', 'comment_ID');
+        return $this->belongsTo(\App\Observation::class, 'comment_ID');
     }
 
     public function save(array $params = [])

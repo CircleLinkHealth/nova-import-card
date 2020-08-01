@@ -17,7 +17,7 @@ return [
         | Here you can specify how big the chunk should be.
         |
         */
-        'chunk_size' => 1000,
+        'chunk_size' => 300,
 
         /*
         |--------------------------------------------------------------------------
@@ -177,6 +177,6 @@ return [
         | in conjunction with queued imports and exports.
         |
         */
-        'remote_disk' => 'cloud',
+        'remote_disk' => 'media',
     ],
 ];

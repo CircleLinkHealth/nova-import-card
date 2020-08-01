@@ -215,10 +215,13 @@
             },
             data: {!! $patientJson !!}
         });
-        webix.event(window, "resize", function () {
+
+        const debounced = _.debounce(() => {
             obs_alerts_dtable.adjust();
-        }),
-            obs_alerts_dtable.sort("#patient_name#");
+        }, 1000);
+        webix.event(window, "resize", debounced);
+
+        obs_alerts_dtable.sort("#patient_name#");
         obs_alerts_dtable.filter("#careplan_printed#", "No");
         obs_alerts_dtable.hideColumn("last_name");
 

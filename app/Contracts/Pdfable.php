@@ -12,8 +12,6 @@ interface Pdfable
      * Create a PDF of this resource and return the path to it.
      *
      * @param mixed|null $scale
-     *
-     * @return string
      */
-    public function toPdf($scale = null): string;
+    public function toPdf($scale = null): ?string;
 }

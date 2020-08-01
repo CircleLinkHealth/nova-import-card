@@ -49,9 +49,7 @@ class SendInternalUserSignupInvitation extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param User                                         $sender
      * @param array|Collection|EloquentCollection|Practice $practice
-     * @param SaasAccount                                  $saasAccount
      * @param array                                        $channels
      */
     public function __construct(

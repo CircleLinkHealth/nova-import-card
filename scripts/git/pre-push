@@ -1,12 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
 #echo 'Checking Javascript code quality...'
 #jscs ./js
 #JSCS_EC=$?
 
 #echo 'Checking PHP code style...'
-#composer lint-php
-#composer lint-views
+# COMPOSER_MEMORY_LIMIT=-1 composer ide
 
 #composer test
 #COMPOSER_TEST_EC=$?

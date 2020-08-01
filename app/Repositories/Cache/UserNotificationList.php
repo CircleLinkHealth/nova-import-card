@@ -10,7 +10,6 @@ use App\Constants;
 use App\Contracts\UserNotificationListInterface;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Facades\Redis;
 
 class UserNotificationList implements UserNotificationListInterface
 {
@@ -35,7 +34,7 @@ class UserNotificationList implements UserNotificationListInterface
      */
     public function all($start = 0, $end = -1)
     {
-        return collect(Redis::lrange($this->userHashKey(), $start, $end))->map(function ($json) {
+        return collect(\RedisManager::lrange($this->userHashKey(), $start, $end))->map(function ($json) {
             $cache = json_decode($json, true);
 
             $now = Carbon::now();
@@ -60,12 +59,12 @@ class UserNotificationList implements UserNotificationListInterface
      */
     public function count()
     {
-        return Redis::llen($this->userHashKey());
+        return \RedisManager::llen($this->userHashKey());
     }
 
     public function delete($notification)
     {
-        return Redis::lrem($this->userHashKey(), 0, $notification);
+        return \RedisManager::lrem($this->userHashKey(), 0, $notification);
     }
 
     /**
@@ -78,7 +77,7 @@ class UserNotificationList implements UserNotificationListInterface
      */
     public function push($title = '', $description = '', $link = null, $linkTitle = 'Link')
     {
-        $pushed = Redis::rpush(
+        $pushed = \RedisManager::rpush(
             $this->userHashKey(),
             $this->userCachedNotificationFactory($title, $description, $link, $linkTitle)
         );

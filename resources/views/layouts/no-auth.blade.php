@@ -4,13 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CarePlanManager - Log In</title>
+    <title>CarePlanManager | Log In</title>
 
-    @include('partials.hotjar-code')
     @include('cpm-module-raygun::partials.real-user-monitoring')
+    @include('partials.new-relic-tracking')
 
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
-    <link href="{{ mix('/compiled/css/stylesheet.css') }}" rel="stylesheet">
     <link href="{{ mix('/img/favicon.png') }}" rel="icon">
     <style type="text/css">
         input[type=text], input[type=password] {
@@ -59,18 +58,23 @@
             <div class="main-form-container col-lg-4 col-lg-offset-4 col-sm-4 col-sm-offset-4">
                 <div class="row">
                     <div class="main-form-title--login">
-                        <div class="col-lg-12"
-                             style="background-color: white;margin: 0 0px 10px 0px;border-top: #50b2e1 3px solid;">
-                            <div class="col-lg-10 col-lg-offset-1">
-                                <img class="img-responsive" src="{{ mix('img/logos/LogoHorizontal_Color.svg') }}"
-                                     alt="CarePlan Manager">
+                            <div class="col-lg-12"
+                                 style="background-color: white;margin: 0 0px 10px 0px;border-top: #50b2e1 3px solid;">
+                                <div class="col-lg-10 col-lg-offset-1" style="text-align: center">
+                                    @if(\Illuminate\Support\Facades\Cookie::has('practice_name_as_logo') && ! empty(\Illuminate\Support\Facades\Cookie::get('practice_name_as_logo')))
+                                        <h2 class="auth-pages-title">{{\Illuminate\Support\Facades\Cookie::get('practice_name_as_logo')}}</h2>
+                                    @elseif(isset($_COOKIE['practice_name_as_logo']) && ! empty($_COOKIE['practice_name_as_logo']))
+                                        <h2 class="auth-pages-title">{{$_COOKIE['practice_name_as_logo']}}</h2>
+                                    @else
+                                        <img class="img-responsive" src="{{ mix('img/logos/LogoHorizontal_Color.svg') }}"
+                                             alt="CarePlan Manager">
+                                    @endif
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-lg-12 auth-pages-title-container">
-                            <h2 class="auth-pages-title">CarePlan<span class="text-thin">Manager&trade;</span></h2>
-                        </div>
+                            <div class="col-lg-12 auth-pages-title-container">
+                                <h2 class="auth-pages-title">CarePlan<span class="text-thin">Manager&trade;</span></h2>
+                            </div>
                     </div>
-
                     @yield('content')
                 </div>
             </div>
@@ -79,5 +83,6 @@
 </div>
 
 <script src="{{mix('js/prevent-multiple-submits.js')}}"></script>
+@include('partials.sentry-js')
 </body>
 </html>

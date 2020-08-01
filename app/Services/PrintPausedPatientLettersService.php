@@ -8,7 +8,8 @@ namespace App\Services;
 
 use App\Constants;
 use App\Repositories\PatientReadRepository;
-use App\Repositories\PatientWriteRepository;
+use CircleLinkHealth\Core\Services\PdfService;
+use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 
 class PrintPausedPatientLettersService
 {
@@ -57,8 +58,7 @@ class PrintPausedPatientLettersService
     /**
      * Make paused letters for the user id's provided.
      *
-     * @param array $userIdsToPrint
-     * @param bool  $viewOnly       | If true, it doesn't update paused letter printed date
+     * @param bool $viewOnly | If true, it doesn't update paused letter printed date
      *
      * @return string|null
      */

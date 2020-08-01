@@ -11,9 +11,9 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\PracticeRoleUser;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Http\Request;
 use Laravel\Nova\Metrics\Value;
-use Venturecraft\Revisionable\Revision;
 
 class PatientsOverTargetCcmTime extends Value
 {
@@ -29,8 +29,6 @@ class PatientsOverTargetCcmTime extends Value
 
     /**
      * Calculate the value of the metric.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return mixed
      */
@@ -61,19 +59,19 @@ class PatientsOverTargetCcmTime extends Value
                 'old_value',
                 '<',
                 Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
-                       )
+            )
             ->where(
                 'new_value',
                 '>=',
                 Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
-                       )
+            )
             ->leftJoin($summariesTable, "$revisionsTable.revisionable_id", '=', "$summariesTable.id")
             ->leftJoin(
                 $usersTable,
                 "$usersTable.id",
                 '=',
                 "$summariesTable.patient_id"
-                       )
+            )
             ->whereIn("$usersTable.program_id", $activePracticesIds);
     }
 

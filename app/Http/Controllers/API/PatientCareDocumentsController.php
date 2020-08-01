@@ -7,13 +7,16 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Notifications\SendCareDocument;
+use App\Jobs\SendSingleNotification;
+use App\Notifications\NotificationStrategies\SendsNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Mime\Exception\InvalidArgumentException;
 
 class PatientCareDocumentsController extends Controller
 {
@@ -53,7 +56,7 @@ class PatientCareDocumentsController extends Controller
 
         $files = Media::where('collection_name', 'patient-care-documents')
             ->where('model_id', $patientId)
-            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
             ->get()
             ->sortByDesc('created_at')
             ->mapToGroups(function ($item, $key) {
@@ -77,7 +80,7 @@ class PatientCareDocumentsController extends Controller
         ]);
     }
 
-    public function sendCareDocument($patientId, $mediaId, $channel, $addressOrFax)
+    public function sendCareDocument($patientId, $mediaId, $channel, $input)
     {
         $media = $this->getMediaItemById($patientId, $mediaId);
 
@@ -104,45 +107,22 @@ class PatientCareDocumentsController extends Controller
             );
         }
 
-        if ('email' == $channel) {
-            $validator = Validator::make([
-                'email' => $addressOrFax,
-            ], [
-                'email' => 'required|email',
-            ]);
+        $validator = $this->validateInput($channel, $input);
 
-            if ($validator->fails()) {
-                return response()->json(
-                    'Invalid email address.',
-                    400
-                );
-            }
-
-            $notifiableUser = User::whereEmail($addressOrFax)->first();
-
-            if ( ! $notifiableUser) {
-                return response()->json(
-                    'Could not find User with that email.',
-                    400
-                );
-                //Fails because of non-existent id. Don't know if we want to be saving dummy users or just use dummy id.
-//                $notifiableUser = (new User())->forceFill([
-//                    'name'  => 'Notifiable User',
-//                    'email' => $addressOrFax,
-//                ]);
-            }
-
-            $notifiableUser->notify(new SendCareDocument($media, $patient, ['mail']));
-
-            return response()->json(
-                'Document sent successfully!',
-                200
-            );
+        if ($validator->fails()) {
+            return response()->json(convertValidatorMessagesToString($validator), 400);
         }
 
+        SendSingleNotification::dispatch(app(SendsNotification::class, [
+            'patient' => $patient,
+            'media'   => $media,
+            'input'   => $input,
+            'channel' => $channel,
+        ]));
+
         return response()->json(
-            'This feature has not yet been implemented',
-            400
+            '',
+            200
         );
     }
 
@@ -151,7 +131,18 @@ class PatientCareDocumentsController extends Controller
         $patient = User::findOrFail($patientId);
 
         foreach ($request->file()['file'] as $file) {
-            if ('application/pdf' !== $file->getMimeType()) {
+            try {
+                $mimeType = $file->getMimeType();
+            } catch (InvalidArgumentException $exception) {
+                Log::error($exception);
+
+                return response()->json(
+                    'The file you are trying to upload has an invalid type.',
+                    400
+                );
+            }
+
+            if ('application/pdf' !== $mimeType) {
                 return response()->json(
                     'The file you are trying to upload is not a PDF.',
                     400
@@ -190,7 +181,33 @@ class PatientCareDocumentsController extends Controller
     {
         return Media::where('collection_name', 'patient-care-documents')
             ->where('model_id', $modelId)
-            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
             ->find($mediaId);
+    }
+
+    private function validateInput($channel, $input)
+    {
+        switch ($channel) {
+            case 'email':
+                $validationRules = ['required', 'email'];
+                break;
+            case 'direct':
+                $validationRules = ['required', 'email'];
+                break;
+            case 'fax':
+                $validationRules = ['required', 'phone:us'];
+                break;
+            default:
+                $validationRules = [];
+        }
+
+        return Validator::make(
+            [
+                'input' => $input,
+            ],
+            [
+                'input' => $validationRules,
+            ]
+        );
     }
 }

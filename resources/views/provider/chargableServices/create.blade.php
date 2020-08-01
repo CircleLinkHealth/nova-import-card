@@ -25,14 +25,21 @@
                                     <div class="input-field col s8">
                                         <input name="chargeable_services[{{$service->id}}][is_on]" type="checkbox"
                                                id="service-{{$service->id}}"
-                                               value="1" @if($service->is_on){{'checked'}}@endif @if(!auth()->user()->hasPermission('chargeableService.create')){{'disabled'}}@endif>
+                                               value="1"
+                                        @if($service->code === \CircleLinkHealth\Customer\Entities\ChargeableService::CCM_PLUS_40){!!'class="ccm_plus_40"'!!}@endif
+                                        @if($service->code === \CircleLinkHealth\Customer\Entities\ChargeableService::CCM_PLUS_60){!!'class="ccm_plus_60"'!!}@endif
+                                        @if($service->is_on){{'checked'}}@endif
+                                        @if(!auth()->user()->hasPermission('chargeableService.create')){{'disabled'}}@endif>
                                         <label for="service-{{$service->id}}">Active</label>
                                     </div>
 
                                     <div class="input-field col s4">
-                                        <input id="service-{{$service->id}}-amount" name="chargeable_services[{{$service->id}}][amount]" type="text" class="validate" value="{{$service->amount}}"
-                                               @if(!auth()->user()->hasPermission('chargeableService.create')){{'disabled'}}@endif>
-                                        <label for="service-{{$service->id}}-amount" data-error="required" data-success="">Amount ($)</label>
+                                        <input id="service-{{$service->id}}-amount"
+                                               name="chargeable_services[{{$service->id}}][amount]" type="text"
+                                               class="validate" value="{{$service->amount}}"
+                                        @if(!auth()->user()->hasPermission('chargeableService.create')){{'disabled'}}@endif>
+                                        <label for="service-{{$service->id}}-amount" data-error="required"
+                                               data-success="">Amount ($)</label>
                                     </div>
                                 </div>
                             </div>
@@ -60,6 +67,17 @@
             <script>
                 $(document).ready(function () {
                     $('select').material_select();
+
+                    const ccmPlus40Elem = $('.ccm_plus_40');
+                    const ccmPlus60Elem = $('.ccm_plus_60');
+
+                    ccmPlus40Elem.click(function (e) {
+                        ccmPlus60Elem.prop('checked', e.currentTarget.checked);
+                    });
+
+                    ccmPlus60Elem.click(function (e) {
+                        ccmPlus40Elem.prop('checked', e.currentTarget.checked);
+                    });
                 });
             </script>
     @endpush

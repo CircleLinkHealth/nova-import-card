@@ -29,7 +29,6 @@ class NoteFinalSaved
     /**
      * Create a new event instance.
      *
-     * @param Note  $note
      * @param array $params
      */
     public function __construct(Note $note, $params = [])

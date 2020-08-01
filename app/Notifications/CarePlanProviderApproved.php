@@ -6,15 +6,18 @@
 
 namespace App\Notifications;
 
-use App\CarePlan;
+use App\Contracts\DirectMailableNotification;
+use App\Contracts\FaxableNotification;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
-class CarePlanProviderApproved extends Notification
+class CarePlanProviderApproved extends Notification implements FaxableNotification, DirectMailableNotification
 {
     use Queueable;
     public $attachment;
@@ -22,6 +25,10 @@ class CarePlanProviderApproved extends Notification
     public $carePlan;
     public $channels = ['database'];
     public $pathToPdf;
+    /**
+     * @var array
+     */
+    private $faxOptions = [];
 
     /**
      * Create a new notification instance.
@@ -35,7 +42,17 @@ class CarePlanProviderApproved extends Notification
     ) {
         $this->attachment = $this->carePlan = $carePlan;
 
-        $this->channels = array_merge($this->channels, $channels);
+        $this->channels = array_unique(array_merge($this->channels, $channels));
+    }
+
+    public function directMailBody($notifiable): string
+    {
+        return $this->getBody();
+    }
+
+    public function directMailSubject($notifiable): string
+    {
+        return $this->getSubject();
     }
 
     /**
@@ -66,6 +83,14 @@ class CarePlanProviderApproved extends Notification
     }
 
     /**
+     * Add any specific options for eFax API here.
+     */
+    public function getFaxOptions(): array
+    {
+        return $this->faxOptions;
+    }
+
+    /**
      * Get the mail's subject.
      *
      * @return string
@@ -73,6 +98,13 @@ class CarePlanProviderApproved extends Notification
     public function getSubject()
     {
         return 'A CarePlan has just been approved';
+    }
+
+    public function setFaxOptions(array $faxOptions): CarePlanProviderApproved
+    {
+        $this->faxOptions = $faxOptions;
+
+        return $this;
     }
 
     /**
@@ -93,8 +125,8 @@ class CarePlanProviderApproved extends Notification
                 : null,
             'sender_email' => optional(auth()->user())->email,
 
-            'receiver_type'  => $notifiable->id,
-            'receiver_id'    => get_class($notifiable),
+            'receiver_type'  => get_class($notifiable),
+            'receiver_id'    => $notifiable->id,
             'receiver_email' => $notifiable->email,
 
             'body'    => $this->getBody(),
@@ -114,15 +146,15 @@ class CarePlanProviderApproved extends Notification
      *
      * @return bool|string
      */
-    public function toDirectMail($notifiable)
+    public function toDirectMail($notifiable): SimpleNotification
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
             return false;
         }
 
         return (new SimpleNotification())
-            ->setBody($this->getBody())
-            ->setSubject($this->getSubject())
+            ->setBody($this->directMailBody($notifiable))
+            ->setSubject($this->directMailSubject($notifiable))
             ->setFilePath($this->toPdf());
     }
 
@@ -130,16 +162,12 @@ class CarePlanProviderApproved extends Notification
      * Get a pdf representation of the note to send via Fax.
      *
      * @param $notifiable
-     *
-     * @return bool|string
      */
-    public function toFax($notifiable)
+    public function toFax($notifiable = null): array
     {
-        if ( ! $notifiable || ! $notifiable->fax) {
-            return false;
-        }
-
-        return $this->toPdf();
+        return [
+            'file' => $this->toPdf($notifiable),
+        ];
     }
 
     /**
@@ -152,7 +180,7 @@ class CarePlanProviderApproved extends Notification
     public function toMail($notifiable)
     {
         $saasAccountName     = $notifiable->saasAccountName();
-        $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
+        $slugSaasAccountName = strtolower(Str::slug($saasAccountName, ''));
 
         $mail = (new MailMessage())
             ->view('vendor.notifications.email', [
@@ -167,11 +195,10 @@ class CarePlanProviderApproved extends Notification
             ->from("no-reply@${slugSaasAccountName}.com", $saasAccountName)
             ->subject($this->getSubject());
 
-        if ('circlelink-health' == $notifiable->saasAccount->slug) {
+        if ($notifiable->saasAccount->isCircleLinkHealth()) {
             return $mail->bcc([
                 'raph@circlelinkhealth.com',
                 'abigail@circlelinkhealth.com',
-                'sheller@circlelinkhealth.com',
             ]);
         }
 

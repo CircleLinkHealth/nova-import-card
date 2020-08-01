@@ -1,542 +1,93 @@
 <template>
     <div id="enrollment_calls">
-
-        <ul class="side-nav fixed">
-
-            <div class="row">
-                <div class="col s6">
-                    <div class="card">
-                        <div class="card-content" style="text-align: center">
-                            <div style="color: #6d96c5" class="counter">
-                                {{report.total_calls ? report.total_calls : 0}}
-                            </div>
-                            <div class="card-subtitle">
-                                Total Calls
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col s6">
-                    <div class="card">
-                        <div class="card-content" style="text-align: center">
-                            <div style="color: #9fd05f" class="counter">
-                                {{report.no_enrolled ? report.no_enrolled : 0}}
-                            </div>
-                            <div class="card-subtitle">
-                                Enrolled
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col s12">
-                    <div class="card">
-                        <div class="card-content" style="text-align: center">
-                            <div style="color: #6d96c5" class="counter">
-                                {{formatted_total_time_in_system}}
-                            </div>
-                            <div class="card-subtitle">
-                                Time worked
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col s12">
-                    <div class="card">
-                        <div class="card-content">
-                            <ul>
-                                <li class="sidebar-demo-list"><span :title="name"><b>Name:</b> {{name}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="lang"><b>Language:</b> {{lang}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b> {{practice_name}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="providerPhone"><b>Provider Phone:</b> {{providerPhone}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col s12">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="row">
-
-                                <div v-if="callError">
-                                    <blockquote>Call Status: {{ callError }}</blockquote>
-                                </div>
-
-                                <div v-if="onCall === true" style="text-align: center">
-
-                                    <blockquote>Call Status: {{ this.callStatus }}</blockquote>
-                                    <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                            class="material-icons left">call_end</i>Hang Up</a>
-                                </div>
-                                <div v-else style="text-align: center">
-                                    <div v-if="home_phone !== ''" class="col s4">
-
-                                        <div class="waves-effect waves-light btn call-button"
-                                             v-on:click="call(home_phone, 'Home')">
-                                            <i class="material-icons">phone</i>
-                                        </div>
-                                        <div>
-                                            Home
-                                        </div>
-
-                                    </div>
-                                    <div v-if="cell_phone !== ''" class="col s4">
-
-                                        <div class="waves-effect waves-light btn call-button"
-                                             v-on:click="call(cell_phone, 'Cell')">
-                                            <i class="material-icons">phone</i>
-
-                                        </div>
-                                        <div>
-                                            Cell
-                                        </div>
-
-                                    </div>
-                                    <div v-if="other_phone !== ''" class="col s4">
-
-                                        <div class="waves-effect waves-light btn call-button"
-                                             v-on:click="call(other_phone, 'Other')">
-                                            <i class="material-icons">phone</i>
-
-                                        </div>
-
-                                        <div>
-                                            Other
-                                        </div>
-
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col s12">
-                    <div class="card">
-                        <div class="card-content">
-                            <ul class="action-buttons">
-                                <li>
-                                    <a class="waves-effect waves-light btn modal-trigger" href="#consented">
-                                        Consented
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-light btn modal-trigger" href="#utc"
-                                       style="background: #ecb70e">
-                                        Unavailable
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-light btn modal-trigger" href="#rejected"
-                                       style="background: red;">
-                                        Hard Declined
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-light btn modal-trigger" href="#rejected"
-                                       v-on:click="softReject()"
-                                       style="background: #ff0000c2;">
-                                        Soft Declined
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </ul>
-
-        <div style="margin-left: 26%;">
-
-            <div style="padding: 0px 10px; font-size: 16px;">
-
-                <blockquote v-if="last_call_outcome !== ''">
-                    Last Call Outcome: {{ last_call_outcome }}
-                    <span v-if="last_call_outcome_reason !== ''">
-                        <br/>
-                        Last Call Comment: {{ last_call_outcome_reason }}
-                    </span>
-                </blockquote>
-
-                <div class="padding-top-5 font-size-20">
-                    <p v-html="care_ambassador_script"></p>
-                </div>
-            </div>
-
-            <div style="padding: 10px; margin-bottom: 15px"></div>
-            <div style="text-align: center">
-
-            </div>
+        <div>
+            <time-tracker ref="timeTracker"
+                          :hide-tracker="true"
+                          :twilio-enabled="true"
+                          :info="getTimeTrackerInfo()"
+                          :no-live-count="false"
+                          :override-timeout="false">
+            </time-tracker>
         </div>
-
-        <!-- MODALS -->
-
-        <!-- Success / Patient Consented -->
-        <div id="consented" class="modal confirm modal-fixed-footer consented_modal">
-            <form method="post" id="consented_form" :action="consentedUrl">
-
-                <input type="hidden" name="_token" :value="csrf">
-
-                <div class="modal-content">
-                    <h4 style="color: #47beab">Awesome! Please confirm patient details:</h4>
-                    <blockquote style="border-left: 5px solid #26a69a;">
-                        <span class="consented_title"><b>I.</b></span>
-                        <span>Ask the patient:</span>
-                        <div class="font-size-20">
-                            <template v-if="lang === 'ES'">
-                                ¿Quiere quele llamemos directamente o hay alguien más con el cual quiere quenos pongamos
-                                en
-                                contacto?
-                            </template>
-                            <template v-else>
-                                Do you want us to call you directly or is there someone else we should contact?
-                            </template>
-                        </div>
-                        <br>
-                        <span><strong>Please enter any unknown phone numbers and select the patient's preferred phone number to receive care management calls:</strong></span>
-                    </blockquote>
-                    <div class="row">
-                        <div class="col s6 m3 select-custom">
-                            <label for="home_radio"
-                                   :class="{valid: home_is_valid, invalid: home_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="home_radio" value="home"
-                                       :checked="home_phone != ''"/>
-                                <span class="phone-label">{{home_phone_label}}</span>
-
-                            </label>
-                            <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
-                        </div>
-                        <div class="col s6 m3 select-custom">
-
-                            <label for="cell_radio"
-                                   :class="{valid: cell_is_valid, invalid: cell_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="cell_radio" value="cell"
-                                       :checked="home_phone == '' && cell_phone != ''"/>
-                                <span class="phone-label">{{cell_phone_label}}</span></label>
-                            <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
-                        </div>
-                        <div class="col s6 m3 select-custom">
-
-                            <label for="other_radio"
-                                   :class="{valid: other_is_valid, invalid: other_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="other_radio" value="other"
-                                       :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
-                                <span class="phone-label">{{other_phone_label}}</span>
-                            </label>
-                            <input class="input-field" name="other_phone" id="other_phone" v-model="other_phone"/>
-                        </div>
-                        <div class="col s6 m3 select-custom">
-                            <label for="agent_radio"
-                                   :class="{valid: agent_is_valid, invalid: agent_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="agent_radio" value="agent"
-                                       :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
-                                <span class="phone-label">{{agent_phone_label}}</span>
-                            </label>
-                            <input class="input-field" name="agent_phone" id="agent_phone" v-model="agent_phone"/>
-                        </div>
-                    </div>
-                    <div v-if="preferred_phone == 'agent' " class="row">
-                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's details</b></blockquote>
-                        <div  class="col s6 m4">
-                            <label for="agent_name" class="label">Other Contact's Name</label>
-                            <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>
-                        </div>
-                        <div class="col s6 m4">
-                            <label for="agent_email" class="label">Other Contact's Email</label>
-                            <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
-                        </div>
-                        <div class="col s6 m4">
-                            <label for="agent_relationship" class="label">Other Contact's Relationship to the Patient</label>
-                            <input class="input-field" name="agent_relationship" id="agent_relationship"
-                                   v-model="agent_relationship"/>
-                        </div>
-                        <div class="col s6 m3 select-custom">
-                            <label for="agent_radio"
-                                   :class="{valid: agent_is_valid, invalid: agent_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="agent_radio" value="agent"
-                                       :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
-                                <span class="phone-label">{{agent_phone_label}}</span>
-                            </label>
-                            <input class="input-field" name="agent_phone" id="agent_phone" v-model="agent_phone"/>
-                        </div>
-                    </div>
-                    <div v-if="preferred_phone == 'agent' " class="row">
-                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's details</b></blockquote>
-                        <div  class="col s6 m4">
-                            <label for="agent_name" class="label">Other Contact's Name</label>
-                            <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>
-                        </div>
-                        <div class="col s6 m4">
-                            <label for="agent_email" class="label">Other Contact's Email</label>
-                            <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
-                        </div>
-                        <div class="col s6 m4">
-                            <label for="agent_relationship" class="label">Other Contact's Relationship to the Patient</label>
-                            <input class="input-field" name="agent_relationship" id="agent_relationship"
-                                   v-model="agent_relationship"/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <blockquote style="border-left: 5px solid #26a69a;">
-                            <span class="consented_title"><b>II.</b></span> Please confirm the patient’s mailing address and email address:
-                        </blockquote>
-
-                        <div class="col s12 m3 select-custom">
-                            <label for="address" class="label">Address Line 1</label>
-                            <input class="input-field" name="address" id="address" v-model="address"/>
-                        </div>
-                        <div class="col s12 m2 select-custom">
-                            <label for="address_2" class="label">Address Line 2</label>
-                            <input class="input-field" name="address_2" id="address_2" v-model="address_2"/>
-                        </div>
-                        <div class="col s12 m2 select-custom">
-                            <label for="city" class="label">City</label>
-                            <input class="input-field" name="city" id="city" v-model="city"/>
-                        </div>
-                        <div class="col s12 m1 select-custom">
-                            <label for="state" class="label">State</label>
-                            <input class="input-field" name="state" id="state" v-model="state"/>
-                        </div>
-                        <div class="col s12 m1 select-custom">
-                            <label for="zip" class="label">Zip</label>
-                            <input class="input-field" name="zip" id="zip" v-model="zip"/>
-                        </div>
-                        <div class="col s12 m3 select-custom">
-                            <label for="email" class="label">Email</label>
-                            <input class="input-field" name="email" id="email" v-model="email"/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <blockquote style="border-left: 5px solid #26a69a;">
-                            <span class="consented_title"><b>III.</b></span> Please confirm the patient's preferred
-                            contact days
-                            and
-                            times, and any other relevant information:
-                        </blockquote>
-                        <div class="col s12 m3">
-                            <label for="days[]" class="label">Day</label>
-                            <select  class="do-not-close" name="days[]" id="days[]" multiple>
-                                <option disabled selected>Days:</option>
-                                <option value="1">Monday</option>
-                                <option value="2">Tuesday</option>
-                                <option value="3">Wednesday</option>
-                                <option value="4">Thursday</option>
-                                <option value="5">Friday</option>
-                            </select>
-                        </div>
-                        <div class="col s12 m3">
-                            <label for="times[]" class="label">Times</label>
-                            <select class="do-not-close" name="times[]" id="times[]" multiple>
-                                <option disabled selected>Times:</option>
-                                <option value="10:00-12:00">10AM - Noon</option>
-                                <option value="12:00-15:00">Noon - 3PM</option>
-                                <option value="15:00-18:00">3PM - 6PM</option>
-                            </select>
-                        </div>
-                        <div class="col s12 m6 select-custom">
-                            <label for="extra" class="label">Optional additional information</label>
-                            <input class="input-field" name="extra" id="extra"/>
-                        </div>
-                    </div>
-
-                    <blockquote style="border-left: 5px solid #26a69a;">
-                        <span class="consented_title"><b>IV.</b></span>
-                        <span style="color: red"><b>TELL PATIENT BEFORE HANGING UP!</b></span><br>
-                        <div class="font-size-20">
-                            <template v-if="lang === 'ES'">
-                                Una enfermera registrada le llamará en breve del mismo desde el cual lo estoy llamando
-                                {{practice_phone}}. Por favor, guárdelo para que acepte la llamada cuando suene el
-                                teléfono.
-                                ¡Me alegro de haberme conectado! ¡Que tenga un muy buen día!
-                            </template>
-                            <template v-else>
-                                A registered nurse will call you in the coming days from {{practice_phone}}.
-                                Please save this number so you accept the call when he or she rings.
-                                I am so glad we were able to connect! Have a great day!
-                            </template>
-                        </div>
-                    </blockquote>
-
-                    <input type="hidden" name="status" value="consented">
-                    <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
-                    <input type="hidden" name="time_elapsed" :value="time_elapsed">
-
-                </div>
-                <div class="modal-footer">
-                    <button name="submit" type="submit"
-                            :disabled="home_is_invalid || cell_is_invalid || other_is_invalid"
-                            class="modal-action waves-effect waves-light btn">Confirm and call next patient
-                    </button>
-                    <div v-if="onCall === true" style="text-align: center">
-                        <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                class="material-icons left">call_end</i>Hang Up</a>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- Unable To Contact -->
-        <div id="utc" class="modal confirm modal-fixed-footer">
-            <form method="post" id="utc_form" :action="utcUrl">
-
-                <input type="hidden" name="_token" :value="csrf">
-
-                <div class="modal-content">
-                    <h4 style="color: #47beab">Please provide some details:</h4>
-                    <blockquote style="border-left: 5px solid #26a69a;">
-                        <b>If Caller Reaches Machine, Leave Voice Message: </b><br>
-                        Hi, this is {{userFullName}} calling on behalf of {{providerFullName}} at {{practice_name}}.
-                        The doctor(s) have invited you to their new personalized care management program.
-                        Please give us a call at {{practice_phone}} to learn more.
-                        Please note there is nothing to worry about, this program just lets your doctor take better care of you between visits.
-                        Again the number is {{practice_phone}}.
-                    </blockquote>
-
-                    <div class="row">
-                        <div class="col s12 m12">
-                            <label for="utc-reason" class="label">Reason:</label>
-                            <select class="auto-close" v-model="utc_reason" name="reason" id="utc-reason" required>
-                                <option value="voicemail">Left A Voicemail</option>
-                                <option value="disconnected">Disconnected Number</option>
-                                <option value="requested callback">Requested Call At Other Time</option>
-                                <option value="other">Other...</option>
-                            </select>
-                        </div>
-
-                        <div v-show="utc_other" class="col s6 m12 select-custom">
-                            <label for="utc_reason_other" class="label">If you selected other, please specify:</label>
-                            <input class="input-field" name="reason_other" id="utc_reason_other"/>
-                        </div>
-
-                        <div v-show="utc_requested_callback" class="col s6 m12 select-custom">
-                            <label for="utc_callback" class="label">Patient Requests Callback On:</label>
-                            <input name="utc_callback" id="utc_callback">
-                        </div>
-
-                    </div>
-
-                    <input type="hidden" name="status" value="utc">
-                    <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
-                    <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
-
-                </div>
-                <div class="modal-footer">
-                    <button name="submit" type="submit"
-                            class="modal-action waves-effect waves-light btn">Call Next Patient
-                    </button>
-                    <div v-if="onCall === true" style="text-align: center">
-                        <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                class="material-icons left">call_end</i>Hang Up</a>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- Rejected -->
-        <div id="rejected" class="modal confirm modal-fixed-footer" style="height: 50% !important;">
-            <form method="post" id="rejected_form" :action="rejectedUrl">
-
-                <input type="hidden" name="_token" :value="csrf">
-
-                <div class="modal-content">
-                    <h4 style="color: #47beab">Please provide some details:</h4>
-
-                    <div class="row">
-                        <div class="col s12 m12">
-                            <label for="reason" class="label">What reason did the Patient convey?</label>
-                            <select class="auto-close" v-model="reason" name="reason" id="reason" required>
-                                <option value="Worried about co-pay">Worried about co-pay</option>
-                                <option value="Doesn’t trust medicare">Doesn’t trust medicare</option>
-                                <option value="Doesn’t need help with Health">Doesn’t need help with health</option>
-                                <option value="other">Other...</option>
-                            </select>
-                        </div>
-
-                        <div v-show="rejected_other" class="col s6 m12 select-custom">
-                            <label for="rejected_reason_other" class="label">If you selected other, please
-                                specify:</label>
-                            <input class="input-field" name="reason_other" id="rejected_reason_other"/>
-                        </div>
-
-                        <div v-if="isSoftDecline" class="col s6 m12 select-custom">
-                            <input type="hidden" name="status" value="soft_rejected">
-                        </div>
-                        <div v-else>
-                            <input type="hidden" name="status" value="rejected">
-                        </div>
-
-                    </div>
-
-
-                    <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
-                    <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
-
-                </div>
-                <div class="modal-footer" style="padding-right: 60px">
-                    <button name="submit" type="submit"
-                            class="modal-action waves-effect waves-light btn">Call Next Patient
-                    </button>
-                    <div v-if="onCall === true" style="text-align: center">
-                        <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                class="material-icons left">call_end</i>Hang Up</a>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- Enrollment tips -->
-        <div id="tips" class="modal confirm modal-fixed-footer">
+        <div id="loading" class="modal confirm" style="width: 40% !important">
             <div class="modal-content">
-                <div class="row">
-                    <div class="input-field col s12">
-                        <h5>Tips</h5>
-                        <br/>
-                        <div v-html="enrollmentTips"></div>
-                    </div>
+                <div class="loading-patient">
+                    <span>Loading patient... </span>
+                    <loader/>
+                </div>
+                <div v-show="onCall" id="on_call" class="on-call-info">
+                    <ul>
+                        <li style="margin-bottom: 5%">
+                            <span>Calling {{enrollable_name}} on {{phone}}</span>
+                        </li>
+                        <li style="margin-bottom: 25px">
+                            <hr style="border-top: 1px grey">
+                        </li>
+                        <li><a v-on:click="hangUp"
+                               class="waves-effect waves-light btn"
+                               style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="modal-footer">
-                <div class="row">
-                    <div class="col s6">
-                        <div style="margin-top: 10px; text-align: left">
-                            <label for="do-not-show-tips-again">
-                                <input id="do-not-show-tips-again"
-                                       name="do-not-show-tips-again"
-                                       class="filled-in"
-                                       type="checkbox" @click="doNotShowTipsAgain"/>
-                                <span>Do not show again</span>
-                            </label>
+        </div>
+        <div id="error" class="modal confirm" style="width: 40% !important">
+            <div class="modal-content">
+                <div><i
+                        class="material-icons left modal-error-icon">error</i></div>
+                <div class="error-header">
+                    <span>Oops! Something went wrong... </span>
+                </div>
+                <div class="error-message">
+                    <span>{{this.error}}</span>
+                </div>
+                <div v-if="error_retrieve_next" class="container center-align">
+                    <a v-on:click="closeAndRetrievePatient()"
+                       class="waves-effect waves-light btn"
+                       style="background: green"><i
+                            class="material-icons left">call</i>Get Next Patient</a>
+                </div>
+            </div>
+        </div>
+        <div v-if="!loading">
+            <div v-if="patientExists">
+                <patient-to-enroll :patient-data="patientData" :time-tracker="$refs.timeTracker"
+                                   :debug="debug"></patient-to-enroll>
+            </div>
+            <div v-else>
+                <div v-show="onCall">
+                    <a v-on:click="hangUp"
+                       class="waves-effect waves-light btn"
+                       style="background: red;  margin-top: 1%; margin-left: 40%; position: fixed"><i
+                            class="material-icons left">call_end</i>Hang Up</a>
+                </div>
+                <div v-if="shouldShowCookie" class="row">
+                    <div class="col cookie">
+                        <div class="card horizontal">
+                            <div class="card-image">
+                                <img :src="'/img/cookie.png'">
+                            </div>
+                            <div class="card-stacked">
+                                <div class="card-content">
+                                    <h2 class="header" style="color: #47beab">Oops!</h2>
+                                    <p>You’re out of patients to call, please contact your administrator to request more
+                                        calls.</p>
+                                    <br>
+                                    <p>In the meantime, enjoy this cookie.</p>
+                                    <br>
+                                    <p v-if="pendingPatientsExist">
+                                        You have {{patients_pending}} pending patient(s). Next call attempt will be at
+                                        {{next_attempt_at}}.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col s6">
-                        <button type="button"
-                                data-dismiss="modal" aria-label="Got it!"
-                                class="modal-close waves-effect waves-light btn">
-                            Got it!
-                        </button>
-                    </div>
                 </div>
-
+                <div v-if="this.error" class="row">
+                    <i
+                            class="material-icons left error-image">error_outline</i>
+                </div>
             </div>
         </div>
 
@@ -545,320 +96,271 @@
 
 <script>
 
-    import Twilio from 'twilio-client';
+    import {Device} from 'twilio-client';
+
+    import PatientToEnroll from './patient-to-enroll';
 
     import {rootUrl} from '../../app.config';
-    import CoPayEn from './call-scripts/copay-en';
-    import NoCoPayEn from './call-scripts/no-copay-en';
-    import CoPayEs from './call-scripts/copay-es';
-    import NoCoPayEs from './call-scripts/no-copay-es';
 
-    //Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+    import TimeTracker from '../../admin/time-tracker';
+    import TimeTrackerEventBus from '../../admin/time-tracker/comps/event-bus';
 
-    //for some reason i could not pass these as props from blade.php
-    const hasTips = window.hasTips;
-    const enrollee = window.enrollee;
+    import Loader from '../loader.vue';
+    import {Logger} from '../../logger-logdna';
+
     const userId = window.userId;
     const userFullName = window.userFullName;
-    const providerFullName = window.providerFullName;
-    const report = window.report;
-    const providerInfo = window.providerInfo;
+
+    const ACTIVITY_TITLE_TO_SKIP_FROM_CA_TIME = 'CA - No more patients';
+    const ACTIVITY_TITLE_LOADING_PATIENT = 'CA - Loading next patient';
 
     export default {
         name: 'enrollment-dashboard',
-        props: [],
+        props: [
+            'cpmToken',
+            'cpmCallerUrl',
+            'timeTracker',
+            'debug'
+        ],
         components: {
-            'copay-en': CoPayEn,
-            'no-copay-en': NoCoPayEn,
-            'copay-es': CoPayEs,
-            'no-copay-es': NoCoPayEs,
+            'loader': Loader,
+            'patient-to-enroll': PatientToEnroll,
+            'time-tracker': TimeTracker
         },
         computed: {
-            enrolleeId: function () {
-                return enrollee.id;
+            patientExists: function () {
+                return this.patientData && this.patientData.enrollable_id;
             },
-            enrolleeUserId: function () {
-                return enrollee.user ? enrollee.user.id : null;
+            shouldShowCookie: function () {
+                return !this.patientExists && !this.error
             },
-            enrollmentTips: function () {
-                return enrollee.practice && enrollee.practice.enrollment_tips ? enrollee.practice.enrollment_tips.content : '';
-            },
-            last_call_outcome: function () {
-                return enrollee.last_call_outcome ? enrollee.last_call_outcome : '';
-            },
-            last_call_outcome_reason: function () {
-                return enrollee.last_call_outcome_reason ? enrollee.last_call_outcome_reason : '';
-            },
-            has_copay: function () {
-                return enrollee.has_copay;
-            },
-            name: function () {
-                return enrollee.first_name + ' ' + enrollee.last_name;
-            },
-            lang: function () {
-                return enrollee.lang;
-            },
-            practice_id: function () {
-                return enrollee.practice.id;
-            },
-            practice_name: function () {
-                return enrollee.practice.display_name;
-            },
-            practice_phone: function () {
-                return enrollee.practice.outgoing_phone_number;
-            },
-            total_time_in_system: function () {
-                return this.report && this.report.total_time_in_system ? this.report.total_time_in_system : 0;
-            },
-            formatted_total_time_in_system: function () {
-                return new Date(1000 * this.total_time_in_system_running).toISOString().substr(11, 8);
-            },
-            //other phone computer vars
-            other_phone_label: function () {
-
-                if (this.other_phone == '') {
-                    return 'Other Phone Unknown...';
-                }
-
-                if (this.validatePhone(this.other_phone)) {
-                    return 'Other Phone Valid!';
-                }
-
-                return 'Other Phone Invalid..'
-            },
-            agent_phone_label: function () {
-                if (this.agent_phone == '') {
-                    return 'Other Contact\'s Phone Unknown...';
-                }
-                if (this.validatePhone(this.agent_phone)) {
-                    return 'Other Contact\'s Phone Valid!';
-                }
-                return 'Other Contact\'s Phone Invalid..'
-            },
-            other_is_valid: function () {
-                return this.validatePhone(this.other_phone)
-            },
-            other_is_invalid: function () {
-                return !this.validatePhone(this.other_phone)
-            },
-            agent_is_valid: function () {
-                return this.validatePhone(this.agent_phone)
-            },
-            agent_is_invalid: function () {
-                return !this.validatePhone(this.agent_phone)
-            },
-            //other phone computer vars
-            home_phone_label: function () {
-
-                if (this.home_phone == '') {
-                    return 'Home Phone Unknown...';
-                }
-
-                if (this.validatePhone(this.home_phone)) {
-                    return 'Home Phone Valid!';
-                }
-
-                return 'Home Phone Invalid..'
-            },
-            home_is_valid: function () {
-                return this.validatePhone(this.home_phone)
-            },
-            home_is_invalid: function () {
-                return !this.validatePhone(this.home_phone)
-            },
-            //other phone computer vars
-            cell_phone_label: function () {
-
-                if (this.cell_phone == '') {
-                    return 'Cell Phone Unknown...';
-                }
-
-                if (this.validatePhone(this.cell_phone)) {
-                    return 'Cell Phone Valid!';
-                }
-
-                return 'Cell Phone Invalid..'
-            },
-            cell_is_valid: function () {
-                return this.validatePhone(this.cell_phone)
-            },
-            cell_is_invalid: function () {
-                return !this.validatePhone(this.cell_phone)
-            },
-            utc_requested_callback() {
-                return this.utc_reason === 'requested callback';
-            },
-            utc_other(){
-                return this.utc_reason === 'other';
-            },
-            rejected_other(){
-                return this.reason === 'other';
-            },
-            provider_pronunciation: function(){
-                return providerInfo ? (providerInfo.pronunciation ? providerInfo.pronunciation : 'N/A') : 'N/A';
-            },
-            provider_sex: function(){
-                return providerInfo ? (providerInfo.sex ? providerInfo.sex : 'N/A') : 'N/A';
-            },
-            last_office_visit_at: function(){
-                return enrollee.last_encounter ? enrollee.last_encounter: 'N/A';
-            },
-            care_ambassador_script: function(){
-
-                if(! script){
-                    return 'Script not found.'
-                }
-                let ca_script = script.body;
-
-                let processed_script = ca_script.replace(/{doctor}/gi, providerFullName)
-                    .replace(/{patient}/gi, this.name)
-                    .replace(/{practice}/gi, this.practice_name)
-                    .replace(/{last visit}/gi, this.last_office_visit_at)
-                    .replace(/{enroller}/gi, userFullName);
-
-                return processed_script;
+            pendingPatientsExist: function () {
+                return this.patients_pending > 0;
             }
         },
         data: function () {
             return {
-                csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                userFullName: userFullName,
-                providerFullName: providerFullName,
-                providerPhone: providerPhone,
-                hasTips: hasTips,
-                report: report,
-                script: script,
-
-                home_phone: enrollee.home_phone,
-                cell_phone: enrollee.cell_phone,
-                other_phone: enrollee.other_phone,
-                address: enrollee.address ? enrollee.address : 'N/A',
-                address_2: enrollee.address_2 ? enrollee.address_2 : 'N/A',
-                state: enrollee.state ? enrollee.state : 'N/A',
-                city: enrollee.city ? enrollee.city : 'N/A',
-                zip: enrollee.zip ? enrollee.zip : 'N/A',
-                email: enrollee.email ? enrollee.email : 'N/A',
-                dob: enrollee.dob ? enrollee.dob : 'N/A',
-
-                disableHome: false,
-                disableCell: false,
-                disableOther: false,
-                time_elapsed: 0,
-                start_time: null,
-                total_time_in_system_running: 0,
+                patientData: [],
+                loading: false,
+                error: null,
+                phone: null,
+                callError: null,
                 onCall: false,
                 callStatus: 'Summoning Calling Gods...',
-                toCall: '',
-                isSoftDecline: false,
-                utc_reason: '',
-                reason: '',
-                callError: null,
-                consentedUrl: rootUrl('enrollment/consented'),
-                utcUrl: rootUrl('enrollment/utc'),
-                rejectedUrl: rootUrl('enrollment/rejected'),
-
-                //twilio
+                practice_phone: null,
+                enrollable_id: null,
+                enrollable_user_id: null,
+                enrollable_name: null,
                 device: null,
-
-                preferred_phone: '',
-                agent_phone: '',
-                agent_name: '',
-                agent_email: '',
-                agent_relationship: '',
+                log: null,
+                phone_type: null,
+                loading_modal: null,
+                error_modal: null,
+                patients_pending: 0,
+                next_attempt_at: null,
+                error_retrieve_next: false,
+                error_enrollee_id: null,
+                error_on_previous_submit: null
             };
         },
         mounted: function () {
 
-            this.start_time = Date.now();
-            this.total_time_in_system_running = this.total_time_in_system;
-            let self = this;
-            self.initTwilio();
+            this.loading = true;
+            M.Modal.init($('#loading'), {
+                preventScrolling: true,
+                dismissible: false
+            });
 
-            //timer
-            setInterval(function () {
-                self.$data.total_time_in_system_running = self.getTimeDiffInSecondsFromMS(self.start_time) + (self.total_time_in_system);
-                self.$data.time_elapsed = self.getTimeDiffInSecondsFromMS(self.start_time);
-            }, 1000);
+            M.Modal.init($('#error'), {
+                preventScrolling: true,
+                dismissible: true
+            });
+            this.loading_modal = M.Modal.getInstance(document.getElementById('loading'));
+            this.error_modal = M.Modal.getInstance(document.getElementById('error'));
 
-            $(document).ready(function () {
+            this.loading_modal.open();
 
-                M.Modal.init($('#consented'));
-                M.Modal.init($('#utc'), {
-                    onOpenEnd: function () {
-                        M.Datepicker.init($('#utc_callback'), {
-                            container: 'body',
-                            format: 'yyyy-mm-dd'
-                        })
-                    },
-                });
-                M.Modal.init($('#tips'));
+            this.retrievePatient();
 
-                M.Modal.init($('#rejected'), {
-                    onOpenEnd: function () {
-                        M.Datepicker.init($('#soft_decline_callback'), {
-                            container: 'body',
-                            format: 'yyyy-mm-dd'
-                        })
-                    },
-                    onCloseEnd: function () {
-                        //always reset when modal is closed
-                        self.isSoftDecline = false;
-                    }
-                });
+            this.initTwilio(true);
 
-                M.FormSelect.init($('select'));
+            App.$on('enrollable:action-complete', () => {
+                this.patientData = null;
+                this.loading = true;
+                this.loading_modal.open();
+                this.retrievePatient();
+                this.updateCallStatus();
+            })
 
-                M.Dropdown.init($('.auto-close'), {
-                    alignment: 'right',
-                    coverTrigger: false,
-                    closeOnClick: true
-                });
+            App.$on('enrollable:call', (data) => {
+                this.phone = data.phone;
+                this.type = data.type;
+                this.practice_phone = data.practice_phone;
+                this.enrollable_user_id = data.enrollable_user_id;
+                this.enrollable_name = data.enrollable_name;
+                this.callError = data.callError;
+                this.onCall = data.onCall;
+                this.callStatus = data.callStatus;
 
-                M.Dropdown.init($('.do-not-close'), {
-                    alignment: 'right',
-                    coverTrigger: false,
-                    closeOnClick: false
-                });
+                this.call();
+            });
 
-                if (self.hasTips) {
-                    let showTips = true;
-                    const tipsSettings = self.getTipsSettings();
-                    if (tipsSettings) {
-                        if (tipsSettings[self.practice_id] && !tipsSettings[self.practice_id].show) {
-                            showTips = false;
-                        }
-                    }
+            App.$on('enrollable:hang-up', () => {
+                this.hangUp();
+                this.updateCallStatus();
+            });
 
-                    $('#do-not-show-tips-again').prop('checked', !showTips);
-                    if (showTips) {
-                        //show the modal here
-                        $('#tips-link')[0].click();
+            App.$on('enrollable:numpad-input', (input) => {
+                if (this.device) {
+                    const {allInput, lastInput} = input;
+                    console.debug('Sending digits to twilio', lastInput.toString());
+                    const connection = this.device.activeConnection();
+                    if (connection) {
+                        connection.sendDigits(lastInput.toString());
                     }
                 }
+            });
 
+            App.$on('enrollable:load-from-search-bar', () => {
+                this.retrievePatient();
+                this.loading_modal.open();
+            });
+
+            App.$on('enrollable:error', (data) => {
+                this.patientData = null;
+                this.error_retrieve_next = true;
+                this.error_enrollee_id = data.enrollable_id;
+                this.error_on_previous_submit = data.error_message;
+
+                this.error = 'Something went wrong while saving patient details. We are investigating the issue. Please click on button to get next Patient.';
+                this.error_modal.open()
             });
         },
         methods: {
+            getTimeTrackerInfo() {
+                return window['timeTrackerInfo'];
+            },
+            setTimeTrackerInfo(info) {
+                //in case connection is lost and time tracker re-connects,
+                // we need to have the timeTrackerInfo object up to date
+                window['timeTrackerInfo'] = info;
+            },
+            notifyTimeTracker(loadingTime) {
+                const info = this.getTimeTrackerInfo();
+                info.forceSkip = false;
+
+                if (loadingTime) {
+                    info.enrolleeId = 0;
+                    info.activity = ACTIVITY_TITLE_LOADING_PATIENT;
+                } else {
+                    info.enrolleeId = this.enrollable_id;
+                    if (this.shouldShowCookie) {
+                        info.activity = ACTIVITY_TITLE_TO_SKIP_FROM_CA_TIME;
+                        info.forceSkip = true;
+                    } else if (+this.enrollable_id === 0) {
+                        info.activity = ACTIVITY_TITLE_LOADING_PATIENT;
+                    } else {
+                        info.activity = `CA - ${this.enrollable_id}`;
+                    }
+                }
+
+                this.setTimeTrackerInfo(info);
+                TimeTrackerEventBus.$emit('tracker:activity', info);
+            },
+            closeAndRetrievePatient() {
+                this.error_modal.close()
+                this.retrievePatient()
+                this.loading_modal.open();
+                this.updateCallStatus()
+                this.error_retrieve_next = false;
+                this.error_enrollee_id = null;
+            },
+            retrievePatient() {
+                this.loading = true;
+                let url = rootUrl('/enrollment/show');
+
+                let href = window.location.href
+                let tags = href.split('#')
+                if (tags[1] && tags[1] !== '!') {
+                    url = url + '/' + tags[1]
+                }
+                let errorData = null;
+                if (this.error_retrieve_next) {
+                    errorData = {
+                        params: {
+                            error_enrollable_id: this.error_enrollee_id,
+                            error_on_previous_submit: this.error_on_previous_submit
+                        }
+                    }
+                }
+
+                //this.notifyTimeTracker(true);
+
+                return this.axios
+                    .get(url, errorData)
+                    .then(response => new Promise(resolve => setTimeout(() => {
+                        this.loading = false
+                        this.error = null
+                        this.loading_modal.close()
+
+                        let patientData = response.data.data;
+                        if (patientData) {
+                            patientData.onCall = this.onCall;
+                            patientData.callStatus = this.callStatus;
+                            patientData.log = this.log;
+                            patientData.callError = this.callError;
+                            this.patientData = patientData;
+                            this.enrollable_id = patientData.enrollable_id;
+                            this.enrollable_user_id = patientData.enrollable_user_id;
+                        } else {
+                            this.enrollable_id = 0;
+                            this.patientData = null;
+                        }
+
+                        if (response.data.patients_pending !== undefined) {
+                            this.patients_pending = response.data.patients_pending;
+                            this.next_attempt_at = response.data.next_attempt_at;
+                        }
+
+                        this.notifyTimeTracker();
+
+                        App.$emit('enrollable:loaded', {
+                            has_tips: this.patientData ? this.patientData.has_tips : false
+                        });
+
+                    }, 2000)))
+                    .catch(err => {
+                        this.loading = false;
+                        this.loading_modal.close()
+                        let errorMessage = err.response.data.message;
+                        Logger.warn(`WARNING: CA Panel - Patient retrieval failure. Message: ${errorMessage}`, {meta: {'connection': 'warning'}});
+                        if (err.response.status === 404) {
+                            this.error = errorMessage;
+                        } else {
+                            this.error = 'Something went wrong while retrieving patient. Please contact CLH support.';
+                        }
+
+                        this.error_modal.open();
+                        console.error(err);
+
+                        //just making sure that this time is not counted towards any patient (until page refresh or request is retried)
+                        this.notifyTimeTracker(true);
+                    });
+            },
 
             getTimeDiffInSecondsFromMS(millis) {
                 return Math.round(Date.now() - millis) / 1000;
             },
 
-            //triggered when cilck on Soft Decline
-            //gets reset when modal closes
-            softReject() {
-                this.isSoftDecline = true;
+            updateCallStatus() {
+                App.$emit('enrollable:update-call-status', {
+                    'onCall': this.onCall,
+                    'callStatus': this.callStatus,
+                    'log': this.log,
+                    'callError': this.callError
+                })
             },
-            getTipsSettings() {
-                const tipsSettingsStr = localStorage.getItem('enrollment-tips-per-practice');
-                if (tipsSettingsStr) {
-                    return JSON.parse(tipsSettingsStr);
-                }
-                return null;
-            },
-            setTipsSettings(settings) {
-                localStorage.setItem('enrollment-tips-per-practice', JSON.stringify(settings));
-            },
+
             /**
              * used by the tips modal
              * @param e
@@ -871,203 +373,187 @@
                 settings[this.practice_id] = {show: !e.currentTarget.checked};
                 this.setTipsSettings(settings);
             },
-            validatePhone(value) {
-                let isValid = this.isValidPhoneNumber(value)
 
-                if (isValid) {
-                    this.isValid = true;
-                    this.disableHome = true;
-                    return true;
-                }
-                else {
-                    this.isValid = false;
-                    this.disableHome = true;
-                    return false;
-                }
-            },
-            isValidPhoneNumber(string) {
-                //return true if string is empty
-                if (string.length === 0) {
-                    return true
-                }
+            call() {
+                //tokens expire so need to fetch a new one every time we want to make a call
+                this.initTwilio(false)
+                    .then(() => {
+                        TimeTrackerEventBus.$emit('tracker:call-mode:enter');
+                        this.device.connect({
+                            To: this.phone,
+                            From: this.practice_phone ? this.practice_phone : undefined,
+                            IsUnlistedNumber: false,
+                            InboundUserId: this.enrollable_user_id,
+                            InboundEnrolleeId: this.enrollable_id,
+                            OutboundUserId: userId,
+                            Source: "enrolment-dashboard"
+                        });
+                    })
+                    .catch(err => {
 
-                let matchNumbers = string.match(/\d+-?/g)
-
-                if (matchNumbers === null) {
-                    return false
-                }
-
-                matchNumbers = matchNumbers.join('')
-
-                return !(matchNumbers === null || matchNumbers.length < 10 || string.match(/[a-z]/i));
-            },
-            call(phone, type) {
-
-                //make sure we have +1 on the phone,
-                //and remove any dashes
-                let phoneSanitized = phone.toString();
-                phoneSanitized = phoneSanitized.replace(/-/g, "");
-                if (!phoneSanitized.startsWith("+1")) {
-                    phoneSanitized = "+1" + phoneSanitized;
-                }
-
-                this.callError = null;
-                this.onCall = true;
-                this.callStatus = "Calling " + type + "..." + phoneSanitized;
-                M.toast({html: this.callStatus, displayLength: 3000});
-                this.device.connect({
-                    To: phoneSanitized,
-                    From: this.practice_phone ? this.practice_phone : undefined,
-                    IsUnlistedNumber: false,
-                    InboundUserId: this.enrolleeUserId,
-                    OutboundUserId: userId
-                });
+                    });
             },
             hangUp() {
+                TimeTrackerEventBus.$emit('tracker:call-mode:exit');
                 this.onCall = false;
                 this.callStatus = "Ended Call";
                 M.toast({html: this.callStatus, displayLength: 3000});
-                this.device.disconnectAll();
+                //if anything goes wrong with twilio, prevent page from falsely showing  message: 'Calling...'
+                if (this.device) {
+                    this.device.disconnectAll();
+                }
             },
-            initTwilio: function () {
-                const self = this;
-                const url = rootUrl(`/twilio/token`);
+            getUrl: function (path) {
+                if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
+                    if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
+                        return this.cpmCallerUrl + path;
+                    } else {
+                        return this.cpmCallerUrl + "/" + path;
+                    }
+                }
+                return rootUrl(path);
+            },
+            initTwilio: function (showReadyLog) {
+                const url = this.getUrl(`twilio/token?cpm-token=${this.cpmToken}`);
 
-                self.$http.get(url)
-                    .then(response => {
-                        self.log = 'Initializing';
-                        self.device = new Twilio.Device(response.data.token, {
-                            closeProtection: true
-                        });
+                this.log = 'Fetching token...';
+                return new Promise((resolve, reject) => {
+                    this.$http.get(url)
+                        .then(response => {
+                            this.log = 'Initializing.';
+                            this.device = new Device(response.data.token, {
+                                closeProtection: true,
+                                edge: ['ashburn', 'roaming'],
+                            });
 
-                        self.device.on('disconnect', () => {
-                            console.log('twilio device: disconnect');
-                            self.log = 'Call ended.';
-                            self.onCall = false;
-                        });
+                            this.device.on('disconnect', () => {
+                                console.log('twilio device: disconnect');
+                                this.log = 'Call ended.';
+                                this.onCall = false;
+                                TimeTrackerEventBus.$emit('tracker:call-mode:exit');
+                                this.updateCallStatus()
+                            });
 
-                        self.device.on('offline', () => {
-                            console.log('twilio device: offline');
-                            self.log = 'Offline.';
-                        });
+                            this.device.on('offline', () => {
+                                console.log('twilio device: offline');
+                                this.log = 'Offline.';
+                                this.updateCallStatus()
+                            });
 
-                        self.device.on('error', (err) => {
-                            console.error('twilio device: error', err);
-                            self.callError = err.message;
-                        });
+                            this.device.on('error', (err) => {
+                                console.error('twilio device: error', err);
+                                this.callError = err.message;
+                                this.updateCallStatus()
+                            });
 
-                        self.device.on('ready', () => {
-                            console.log('twilio device: ready');
-                            self.log = 'Ready to make call';
-                            M.toast({html: self.log, displayLength: 5000});
+                            this.device.on('ready', () => {
+                                console.log('twilio device: ready');
+                                if (showReadyLog) {
+                                    this.log = 'Ready to make call';
+                                }
+                                M.toast({html: this.log, displayLength: 5000});
+                                this.updateCallStatus();
+                                resolve();
+                            });
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            this.log = 'Could not fetch token, see console.log';
+                            this.updateCallStatus()
+                            reject(error);
                         });
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        self.log = 'Could not fetch token, see console.log';
-                    });
+                });
             }
         }
     }
 
 </script>
 <style>
-
-    .phone-label {
-        margin-bottom: 10px;
+    .loading-patient {
+        margin-top: 10%;
+        margin-left: 37%;
+        margin-bottom: 15%;
     }
 
-    .consented_modal {
-        max-height: 100% !important;
-        height: 90% !important;
-        width: 80% !important;
-        top: 4% !important;
+    .loading-patient .loader {
+        margin-left: 14%;
+        margin-top: 10%;
     }
 
-    .sidebar-demo-list {
-        height: 24px;
-        width: 278px;
-        font-size: 16px;
-        padding-left: 15px;
-        line-height: 20px !important;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
+    .loading-patient span {
+        color: darkgray;
+        font-size: large;
     }
 
-    .valid {
-        color: green;
-    }
-
-    .invalid {
-        color: red;
-    }
-
-
-    .padding-top-5 {
-        padding-top: 5%;
-    }
-
-    .font-size-20 {
-        font-size: 20px;
-    }
-
-    /**
-        NOTE: these styles are for sidebar.blade
-        For some reason, there were not applied if added in that file
-     */
-
-    .counter {
-        font-size: larger;
-    }
-
-    .card-subtitle {
-    }
-
-    .side-nav.fixed {
-        width: 25%;
-        margin-top: 65px;
-        position: fixed;
-    }
-
-    .side-nav a {
-        height: 36px;
-        line-height: 36px;
-    }
-
-    .side-nav .row {
-        margin-bottom: 0;
-    }
-
-    .side-nav .card {
-        margin: .5rem 0 0.1rem 0;
-    }
-
-    .side-nav .card-content {
-        padding: 10px;
-    }
-
-    .call-button {
-        max-width: 100%;
-        background: #4caf50;
-    }
-
-    .action-buttons {
+    .error-header {
+        margin-top: 25%;
+        margin-bottom: 10%;
         text-align: center;
     }
 
-    .action-buttons li {
-        margin-bottom: 4px;
+    .error-header span {
+        color: darkgray;
+        font-size: large;
     }
 
-    .action-buttons li a {
-        width: 100%;
+    .error-message {
+        text-align: center;
+        font-size: medium;
+        padding-bottom: 10%;
     }
 
-    .phone-label {
-        margin-bottom: 10px;
+    .cookie {
+        margin-top: 15%;
+        margin-left: 15%;
     }
 
+    .collapsible-top {
+        width: 250px;
+        margin-left: 45%;
+        margin-top: 0.3%;
+        position: fixed;
+        border-radius: 3px;
+    }
+
+    .collapsible-body-top {
+        background-color: #fff;
+    }
+
+    .collapsible-header-top {
+        text-align: center;
+        background-color: #fff;
+        padding-left: 20%;
+    }
+
+    .collapsible-body-top li {
+        margin-bottom: 5px;
+    }
+
+    .on-call-info {
+        margin-top: 20%;
+    }
+
+    .on-call-info ul {
+        list-style: none;
+    }
+
+    .on-call-info ul li {
+        text-align: center;
+    }
+
+    .error-image {
+        color: red;
+        margin-left: 44%;
+        margin-top: 15%;
+        font-size: 190px;
+    }
+
+    .modal-error-icon {
+        margin-top: 10%;
+        margin-left: 45%;
+        color: red;
+        font-size: 50px;
+    }
 </style>
 
 

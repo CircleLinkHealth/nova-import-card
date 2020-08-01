@@ -6,21 +6,20 @@
 
 namespace Tests\Unit;
 
-use App\AppConfig;
 use App\Call;
-use App\Models\CPM\CpmProblem;
 use App\Services\Calls\SchedulerService;
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Tests\Helpers\UserHelpers;
-use Tests\TestCase;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use Tests\CustomerTestCase;
 
-class BHIReconsentTest extends TestCase
+class BHIReconsentTest extends CustomerTestCase
 {
     use UserHelpers;
 
@@ -28,36 +27,35 @@ class BHIReconsentTest extends TestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
-        $provider    = $this->createUser($bhiPractice->id, 'provider');
-        $nurse       = $this->createUser($bhiPractice->id, 'care-center');
+
         //Create 2 calls for today
-        $c1 = $this->createCall($nurse, $bhiPatient, Carbon::now());
-        $c2 = $this->createCall($nurse, $bhiPatient, Carbon::now());
+        $c1 = $this->createCall($this->careCoach(), $bhiPatient, Carbon::now());
+        $c2 = $this->createCall($this->careCoach(), $bhiPatient, Carbon::now());
 
         //Add billing provider
         $billing = CarePerson::create(
             [
                 'alert'          => true,
                 'user_id'        => $bhiPatient->id,
-                'member_user_id' => $provider->id,
+                'member_user_id' => $this->provider()->id,
                 'type'           => CarePerson::BILLING_PROVIDER,
             ]
         );
 
         $this->assertTrue($bhiPatient->isLegacyBhiEligible());
-        $this->assertTrue($nurse->shouldShowBhiFlagFor($bhiPatient));
+        $this->assertTrue($this->careCoach()->shouldShowBhiFlagFor($bhiPatient));
 
         //store not now response as a nurse
-        $response = $this->actingAs($nurse)->call('POST', route('legacy-bhi.store', [$bhiPatient->program_id, $bhiPatient->id]), [
+        $response = $this->actingAs($this->careCoach())->call('POST', route('legacy-bhi.store', [$bhiPatient->program_id, $bhiPatient->id]), [
             //"Not Now" response
             'decision' => 2,
         ])->assertStatus(302);
 
-        $cacheKey = $nurse->getLegacyBhiNursePatientCacheKey($bhiPatient->id);
+        $cacheKey = $this->careCoach()->getLegacyBhiNursePatientCacheKey($bhiPatient->id);
         $this->assertTrue(\Cache::has($cacheKey));
 
         $timeTillShowAgain = \Cache::get($cacheKey);
-        $this->assertTrue(Carbon::now()->addMinutes($timeTillShowAgain)->isTomorrow());
+        $this->assertTrue(Carbon::now()->addMinutes($timeTillShowAgain)->isAfter(Carbon::tomorrow()->startOfDay()));
     }
 
     public function test_it_is_bhi_for_after_cutoff_consent_date()
@@ -72,9 +70,7 @@ class BHIReconsentTest extends TestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, false);
-        AppConfig::create([
-            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
-            'config_value' => $bhiPractice->name, ]);
+        AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         $this->assertTrue($bhiPatient->isBhi());
     }
@@ -91,9 +87,7 @@ class BHIReconsentTest extends TestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, true);
-        AppConfig::create([
-            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
-            'config_value' => $bhiPractice->name, ]);
+        AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         $this->assertTrue($bhiPatient->isBhi());
     }
@@ -102,9 +96,7 @@ class BHIReconsentTest extends TestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, false);
-        AppConfig::create([
-            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
-            'config_value' => $bhiPractice->name, ]);
+        AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         $this->assertFalse($bhiPatient->isBhi());
     }
@@ -121,9 +113,7 @@ class BHIReconsentTest extends TestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
-        AppConfig::create([
-            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
-            'config_value' => $bhiPractice->name, ]);
+        AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         $this->assertFalse($bhiPatient->isBhi());
     }
@@ -163,9 +153,7 @@ class BHIReconsentTest extends TestCase
     public function test_it_retrieves_practices_that_require_consent()
     {
         $bhiPractice = $this->createPractice(true);
-        AppConfig::create([
-            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
-            'config_value' => $bhiPractice->name, ]);
+        AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         $needConsent = PracticesRequiringSpecialBhiConsent::names();
 
@@ -222,6 +210,8 @@ class BHIReconsentTest extends TestCase
                     : Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI),
             ]);
 
+        $patient->patientInfo->fresh();
+
         if ($hasBhiConsentNote) {
             $now = Carbon::now();
 
@@ -250,13 +240,11 @@ class BHIReconsentTest extends TestCase
 
     private function createPractice($bhi = false)
     {
-        $practice = factory(Practice::class)->create([]);
-
         if ($bhi) {
-            $practice->chargeableServices()
+            $this->practice()->chargeableServices()
                 ->attach(ChargeableService::whereCode('CPT 99484')->firstOrFail()->id);
         }
 
-        return $practice;
+        return $this->practice();
     }
 }

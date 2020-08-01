@@ -1,22 +1,27 @@
 <template>
     <div class="container-fluid">
         <div class="col-md-12" style="margin-top: 15px">
-            <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px">
-                <button class="col-md-3 btn btn-secondary btn-xs pointer" v-bind:class="{'btn-info': !this.showPast}"
-                        @click="showCurrentDocuments()">Current
-                </button>
-                <button class="col-md-3 btn btn-secondary btn-xs pointer" v-bind:class="{'btn-info': this.showPast}"
-                        style="margin-right: 40px"
-                        @click="showPastDocuments()">Past
-                </button>
-                <button class="col-md-3 btn btn-info btn-xs pointer"
+            <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px;">
+                <div class="col-md-3 btn-group btn-group-toggle" data-toggle="buttons" style="min-width: 230px">
+                    <label class="col-md-4 btn btn-secondary btn-s pointer btn-switch active"
+                           v-bind:class="{'btn-info': !this.showPast}"
+                           @click="showCurrentDocuments()">
+                        <input type="radio" name="documents" id="current" autocomplete="off" checked> Current
+                    </label>
+                    <label class="col-md-4 btn btn-secondary btn-s pointer btn-switch"
+                           v-bind:class="{'btn-info': this.showPast}"
+                           @click="showPastDocuments()">
+                        <input type="radio" name="documents" id="past" autocomplete="off"> Past
+                    </label>
+                </div>
+                <button class="col-md-3 btn btn-info btn-s pointer btn-upload-documents"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
                 <a v-if="!userEnrolledIntoAwv"
-                   class="col-md-2 btn btn-info btn-xs pointer"
+                   class="col-md-2 btn btn-info btn-s pointer btn-upload-documents"
                    style="margin-left: 10px"
                    target="_blank"
-                   :href="getAwvUrl(`manage-patients/${this.patient.id}/enroll`)">
+                   :href="getAwvUrl(`manage-patients/${this.patientId}/enroll`)">
                     Enroll into AWV
                 </a>
             </div>
@@ -30,7 +35,7 @@
         </div>
 
         <div v-if="noDocsFound" class="col-md-12" style="padding-left: 42%">
-            <div><strong>No Care Documents were found.</strong></div>
+            <div><span class="strong-custom">No Care Documents were found.</span></div>
         </div>
         <div class="col-md-12">
             <div v-if="showBanner" :class="bannerClass">{{this.errors.errors}}</div>
@@ -47,43 +52,38 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
-                                            disabled
+                                    <button class="col-md-6 btn btn-m btn-static disabled"
                                             :class="getButtonColorFromStatus(status.hra_status)">
                                         {{getButtonTextFromStatus(status.hra_status)}}
                                     </button>
-                                    <a v-else class="col-md-6 btn btn-m"
-                                       :class="getButtonColorFromStatus(status.hra_status)"
-                                       target="_blank"
-                                       :href="getViewHraSurveyUrl()">
-                                        {{getButtonTextFromStatus(status.hra_status)}}
-                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a v-if="userEnrolledIntoAwv" class="blue-link"
+                                       style="float: right; padding-top: 7px"
+                                       :href="getViewHraSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
-                                <div class="col-md-6">
-                                    {{status.year}}
+                                <div>
+                                    {{userEnrolledIntoAwv ? status.hra_display_date : '&nbsp'}}
                                 </div>
-                                <!--<div class="col-md-6">-->
-                                <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
-                                <!--</div>-->
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
-                                <p><strong>Send Assessment Link to Provider via:</strong></p>
+                                <p><span class="strong-custom">Send assessment link to patient via:</span></p>
                             </div>
                             <div class="col-md-12  panel-section">
-                                <a
+                                <button
                                         class="col-md-6 btn btn-method btn-width-100 btn-s"
-                                        target="_blank"
-                                        :href="getAwvSendSmsForm('hra')">
+                                        :class="{'isDisabled': !userEnrolledIntoAwv, 'disabled': !userEnrolledIntoAwv}"
+                                        @click="openInNewTab(getAwvSendSmsForm('hra'))">
                                     SMS
-                                </a>
-                                <a
+                                </button>
+                                <button
                                         class="col-md-6 btn btn-method btn-width-100 btn-s"
-                                        target="_blank"
-                                        :href="getAwvSendEmailForm('hra')">
+                                        :class="{'isDisabled': !userEnrolledIntoAwv, 'disabled': !userEnrolledIntoAwv}"
+                                        @click="openInNewTab(getAwvSendEmailForm('hra'))">
                                     Email
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -96,43 +96,38 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
-                                            disabled
+                                    <button class="col-md-6 btn btn-m btn-static disabled"
                                             :class="getButtonColorFromStatus(status.vitals_status)">
                                         {{getButtonTextFromStatus(status.vitals_status)}}
                                     </button>
-                                    <a v-else class="col-md-6 btn btn-m"
-                                       :class="getButtonColorFromStatus(status.vitals_status)"
-                                       target="_blank"
-                                       :href="getViewVitalsSurveyUrl()">
-                                        {{getButtonTextFromStatus(status.vitals_status)}}
-                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a v-if="userEnrolledIntoAwv" class="blue-link"
+                                       style="float: right; padding-top: 7px"
+                                       :href="getViewVitalsSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
-                                <div class="col-md-6">
-                                    {{status.year}}
+                                <div>
+                                    {{userEnrolledIntoAwv ? status.v_display_date : '&nbsp'}}
                                 </div>
-                                <!--<div class="col-md-6">-->
-                                <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
-                                <!--</div>-->
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
-                                <p><strong>Send Assessment Link to Provider via:</strong></p>
+                                <p><span class="strong-custom">Send assessment link to provider via:</span></p>
                             </div>
                             <div class="col-md-12  panel-section">
-                                <a
-                                   class="col-md-6 btn btn-method btn-width-100 btn-s"
-                                   target="_blank"
-                                   :href="getAwvSendSmsForm('vitals')">
+                                <button
+                                        class="col-md-6 btn btn-method btn-width-100 btn-s"
+                                        :class="{'isDisabled': !userEnrolledIntoAwv, 'disabled': !userEnrolledIntoAwv}"
+                                        @click="openInNewTab(getAwvSendSmsForm('vitals'))">
                                     SMS
-                                </a>
-                                <a
-                                   class="col-md-6 btn btn-width-100 btn-method btn-s"
-                                   target="_blank"
-                                   :href="getAwvSendEmailForm('vitals')">
+                                </button>
+                                <button
+                                        class="col-md-6 btn btn-width-100 btn-method btn-s"
+                                        :class="{'isDisabled': !userEnrolledIntoAwv, 'disabled': !userEnrolledIntoAwv}"
+                                        @click="openInNewTab(getAwvSendEmailForm('vitals'))">
                                     Email
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -147,27 +142,27 @@
             <!--</div>-->
             <div v-if="careDocs['PPP']">
                 <div v-for="doc in careDocs['PPP']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'PPP'" :patient="patient"></care-document-box>
+                    <care-document-box :doc="doc" :type="'PPP'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'PPP'"  :patient="patient"></care-document-box>
+                    <care-document-box :type="'PPP'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Provider Report']">
                 <div v-for="doc in careDocs['Provider Report']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Provider Report'" :patient="patient"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Provider Report'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'Provider Report'"  :patient="patient"></care-document-box>
+                    <care-document-box :type="'Provider Report'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Lab Results']">
                 <div v-for="doc in careDocs['Lab Results']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Lab Results'" :patient="patient"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Lab Results'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
         </div>
@@ -182,7 +177,7 @@
             <template slot="body">
                 <div class="col-md-12">
                     <div class="col-md-12 row">
-                        <p><strong>Select Document Type</strong></p>
+                        <p><span class="strong-custom">Select Document Type</span></p>
                     </div>
                     <div class="col-md-12 row">
                         <v-select max-height="200px" v-model="selectedDocumentType"
@@ -259,14 +254,12 @@
                 showBanner: false,
                 bannerText: '',
                 bannerType: 'info',
-
-
             }
 
         },
         props: {
-            patient: {
-                type: Object,
+            patientId: {
+                type: String,
                 required: true,
             },
             awvUrl: {
@@ -288,7 +281,7 @@
         },
         computed: {
             uploadUrl() {
-                return rootUrl('/care-docs/' + this.patient.id);
+                return rootUrl('/care-docs/' + this.patientId);
             },
             bannerClass() {
                 return 'alert alert-' + this.bannerType;
@@ -326,26 +319,32 @@
 
                 if (this.awvUrl[this.awvUrl.length - 1] === "/") {
                     return this.awvUrl + path;
-                }
-                else {
+                } else {
                     return this.awvUrl + "/" + path;
                 }
             },
 
             getViewHraSurveyUrl() {
-                return this.getAwvUrl(`survey/hra/${this.patient.id}`);
+                return this.getAwvUrl(`survey/hra/${this.patientId}`);
             },
 
             getViewVitalsSurveyUrl() {
-                return this.getAwvUrl(`survey/vitals/${this.patient.id}`);
+                return this.getAwvUrl(`survey/vitals/${this.patientId}`);
             },
 
-            getAwvSendSmsForm(survey){
-                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/sms/send-assessment-link`);
+            getAwvSendSmsForm(survey) {
+                return this.getAwvUrl(`manage-patients/${this.patientId}/` + survey + `/sms/send-assessment-link`);
             },
 
-            getAwvSendEmailForm(survey){
-                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/email/send-assessment-link`);
+            getAwvSendEmailForm(survey) {
+                return this.getAwvUrl(`manage-patients/${this.patientId}/` + survey + `/email/send-assessment-link`);
+            },
+
+            openInNewTab(url) {
+                if (!this.userEnrolledIntoAwv) {
+                    return;
+                }
+                window.open(url, "_blank");
             },
 
             getButtonTextFromStatus(status) {
@@ -358,9 +357,10 @@
 
                     case "completed":
                         return "Completed";
-                }
 
-                return status;
+                    default:
+                        return 'Not Enrolled';
+                }
             },
 
             getButtonColorFromStatus(status) {
@@ -373,9 +373,10 @@
 
                     case "completed":
                         return "btn-success";
-                }
 
-                return status;
+                    default:
+                        return "btn-default";
+                }
             },
 
             uploadCareDocument() {
@@ -384,7 +385,7 @@
 
             getCareDocuments() {
                 return this.axios
-                    .get(rootUrl('/care-docs/' + this.patient.id + '/' + this.showPast))
+                    .get(rootUrl('/care-docs/' + this.patientId + '/' + this.showPast))
                     .then(response => {
                         this.loading = false;
                         this.careDocs = response.data.files;
@@ -467,11 +468,12 @@
 
     .btn-method {
         border-color: #5cc0dd;
+        color: #5cc0dd;
         max-height: 30px;
         margin: 2px;
     }
 
-    .btn-width-100{
+    .btn-width-100 {
         width: 100px;
     }
 
@@ -534,7 +536,27 @@
     }
 
     .shadow {
-        box-shadow:         1px 1px 1px 1px #ccc;
+        box-shadow: 1px 1px 1px 1px #ccc;
+    }
+
+    .blue-link {
+        color: #5cc0dd;
+        font-weight: 700;
+    }
+
+    .btn-switch {
+        max-width: 100px;
+        background-color: #ffffff;
+        border: solid 1px #f2f2f2;
+    }
+
+    .btn-upload-documents {
+        max-width: 150px;
+    }
+
+    .isDisabled {
+        color: grey !important;
+        opacity: 0.5;
     }
 
 </style>

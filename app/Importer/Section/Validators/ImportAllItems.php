@@ -6,13 +6,16 @@
 
 namespace App\Importer\Section\Validators;
 
-use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
-use App\Contracts\Importer\MedicalRecord\Section\Validator as SectionValidator;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\Validator as SectionValidator;
 
 class ImportAllItems implements SectionValidator
 {
-    public function isValid(ItemLog $item): bool
+    public function isValid($item): bool
     {
+        if (is_array($item)) {
+            $item = (object) $item;
+        }
+
         if ( ! $this->shouldValidate($item)) {
             return false;
         }
@@ -20,9 +23,15 @@ class ImportAllItems implements SectionValidator
         return true;
     }
 
-    public function shouldValidate(ItemLog $item): bool
+    public function shouldValidate($item): bool
     {
-        return empty($item->status)
+        if (is_array($item)) {
+            $item = (object) $item;
+        }
+
+        return
+            //do not count status 'completed' as valid input because it's not reliable, and only found in meds.
+            ! in_array(strtolower($item->status), ValidStatus::VALID_STATUS_VALUES)
         && empty($item->start)
         && empty($item->end);
     }

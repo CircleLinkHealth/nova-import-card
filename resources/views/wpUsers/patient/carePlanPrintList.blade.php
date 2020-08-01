@@ -94,9 +94,9 @@
                     id: "first_name",
                     header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                     template: "<a href='<?php echo route(
-                        'patient.summary',
-                        ['patient' => '#key#']
-                    ); ?>'>#first_name# #last_name#</a>",
+            'patient.summary',
+            ['patientId' => '#key#']
+        ); ?>'>#first_name# #last_name#</a>",
                     width: 100,
                     sort: 'string',
                     adjust: true,
@@ -106,9 +106,9 @@
                     id: "last_name",
                     header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                     template: "<a href='<?php echo route(
-                            'patient.summary',
-                            ['patient' => '#key#']
-                        ); ?>'>#last_name#, #first_name#</a>",
+            'patient.summary',
+            ['patientId' => '#key#']
+        ); ?>'>#last_name#, #first_name#</a>",
                     width: 120,
                     sort: 'string',
                     adjust: true,
@@ -185,16 +185,23 @@
             },
             data: <?php echo $patientJson; ?>
         });
-        webix.event(window, "resize", function () {
+        const debounced = _.debounce(() => {
             obs_alerts_dtable.adjust();
-        }),
-            obs_alerts_dtable.sort("#patient_name#");
+        }, 1000);
+        webix.event(window, "resize", debounced);
+        obs_alerts_dtable.sort("#patient_name#");
         obs_alerts_dtable.hideColumn("last_name");
     </script>
     <script type="text/javascript">
-        window.onload = function () {
-            filterText('')
-        };
+        function onLoad() {
+            if (typeof filterText === 'undefined') {
+                setTimeout(() => onLoad(), 200);
+                return;
+            }
+            filterText('');
+        }
+
+        window.onload = onLoad;
         // obs_alerts_dtable.hideColumn("ccm_status");
     </script>
 @endpush

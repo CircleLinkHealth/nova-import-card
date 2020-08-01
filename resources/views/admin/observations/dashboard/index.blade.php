@@ -87,7 +87,7 @@
                             return confirm('Are you sure you want to delete this observation?')
                         }
 
-                        function myFunction() {
+                        function checked() {
                             let input, filter, table, tr, td, i;
                             input = document.getElementById("myInput");
                             filter = input.value.toUpperCase();
@@ -106,7 +106,7 @@
                         }
                     </script>
                 @endpush
-                {!! $observations->appends(Input::except('page'))->links() !!}
+                {!! $observations->appends(Request::except('page'))->links() !!}
             </div>
         </div>
     </div>

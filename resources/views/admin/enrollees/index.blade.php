@@ -34,8 +34,8 @@
                                         <select class="select2" name="enrollee_id">
                                             <option disabled {{old('enrollee_id') ?'':'selected'}}>search patients</option>
                                             @foreach($enrollees as $enrollee)
-                                                <option value="{{$enrollee->id}}" {{empty($enrollee->user_id) ?'':'disabled'}} {{app(App\Services\CCD\ProcessEligibilityService::class)->isCcda($enrollee->medical_record_type) ?'':'disabled'}} {{old('enrollee_id') == $enrollee->id ?'selected':''}} >
-                                                    {{empty($enrollee->user_id) ?'': 'CAREPLAN EXISTS!!  '}} {{app(App\Services\CCD\ProcessEligibilityService::class)->isCcda($enrollee->medical_record_type) ?'':'NO CCDA FOUND'}} {{ $enrollee->first_name }} {{ $enrollee->last_name }}
+                                                <option value="{{$enrollee->id}}" {{empty($enrollee->user_id) ?'':'disabled'}} {{app(CircleLinkHealth\Eligibility\ProcessEligibilityService::class)->isCcda($enrollee->medical_record_type) ?'':'disabled'}} {{old('enrollee_id') == $enrollee->id ?'selected':''}} >
+                                                    {{empty($enrollee->user_id) ?'': 'CAREPLAN EXISTS!!  '}} {{app(CircleLinkHealth\Eligibility\ProcessEligibilityService::class)->isCcda($enrollee->medical_record_type) ?'':'NO CCDA FOUND'}} {{ $enrollee->first_name }} {{ $enrollee->last_name }}
                                                     , {{ $enrollee->dob->toDateString() }}, {{ $enrollee->mrn }}
                                                     ({{ $practices[$enrollee->practice_id]->display_name }})
                                                 </option>

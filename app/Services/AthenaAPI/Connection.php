@@ -23,6 +23,7 @@ namespace App\Services\AthenaAPI;
 */
 
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
+use Illuminate\Support\Str;
 
 /**
  * This module contains utilities for communicating with the More Disruption Please API.
@@ -311,7 +312,7 @@ class Connection implements AthenaApiConnection
                 }
             } else {
                 // Hack to check for 401 response without needing to install PECL to be able to use http_parse_headers()
-                if (isset($http_response_header) && str_contains($http_response_header[0], '401')) {
+                if (isset($http_response_header) && Str::contains($http_response_header[0], '401')) {
                     return false;
                 }
             }

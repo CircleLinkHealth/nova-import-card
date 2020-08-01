@@ -7,16 +7,25 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Traits\ManagesPatientCookies;
+use App\Traits\PasswordLessAuth;
 use Carbon\Carbon;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Jenssegers\Agent\Agent;
 
 class LoginController extends Controller
 {
+    use AuthenticatesUsers {
+        login as traitLogin;
+    }
+    use ManagesPatientCookies;
     /*
     |--------------------------------------------------------------------------
     | Login Controller
@@ -28,9 +37,7 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers {
-        login as traitLogin;
-    }
+    use PasswordLessAuth;
 
     const MIN_PASSWORD_CHANGE_IN_DAYS = 180;
 
@@ -59,8 +66,6 @@ class LoginController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @param Request $request
      */
     public function __construct(Request $request)
     {
@@ -69,8 +74,6 @@ class LoginController extends Controller
 
     /**
      * Logout due to inactivity.
-     *
-     * @param Request $request
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -90,31 +93,40 @@ class LoginController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @throws ValidationException
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function login(Request $request)
     {
-        $this->usernameOrEmail($request);
-        $loginResponse = $this->traitLogin($request);
+        $shouldUsePasswordless = Route::is('passwordless.login.for.careplan.approval');
+
+        if ( ! $shouldUsePasswordless) {
+            $this->usernameOrEmail($request);
+        }
+
+        $loginResponse = $shouldUsePasswordless
+            ? $this->passwordlessLogin($request, $request->route('token'))
+            : $this->traitLogin($request);
+
+        if ('username' === $this->username) {
+            \Log::debug('User['.auth()->id().'] logged in using Username.');
+        }
 
         $agent = new Agent();
 
-        $isClh = auth()->user()->hasRole(['care-center', 'administrator']);
+        $isClh = auth()->user()->hasRole(['care-center', 'administrator', 'developer']);
 
         if ( ! $this->validateBrowserCompatibility($agent, $isClh)) {
             $this->sendInvalidBrowserResponse($agent->browser(), $isClh);
         }
 
-        if ( ! $this->validatePasswordAge() && config('auth.force_password_change')) {
+        if ( ! $shouldUsePasswordless && ! $this->validatePasswordAge() && config('auth.force_password_change')) {
             auth()->logout();
             $days = LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
 
             return redirect('auth/password/reset')
-                ->withErrors(['old-password' => "You password has not been changed for the last ${days} days. Please reset it to continue."]);
+                ->withErrors(['old-password' => "Your password has not been changed for the last ${days} days. Please reset it to continue."]);
         }
 
         return $loginResponse;
@@ -123,10 +135,21 @@ class LoginController extends Controller
     /**
      * Overrides laravel method.
      *
+     * In case a patient User tries to log in, need id to show Practice Name instead of CLH logo.
+     *
      * @return $this|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
+        /** @var Session $session */
+        $session  = $request->session();
+        $previous = $session->previousUrl();
+        if (empty($session->get('url.intended')) && ! Str::contains($previous, ['login', 'logout'])) {
+            $session->put('url.intended', $session->previousUrl());
+        }
+
+        $this->checkPracticeNameCookie($request);
+
         if (auth()->check()) {
             return redirect('/');
         }
@@ -136,10 +159,11 @@ class LoginController extends Controller
         if ( ! $this->validateBrowserVersion($agent) && ! optional(session('errors'))->has('invalid-browser-force-switch')) {
             $message = "You are using an outdated version of {$agent->browser()}. Please update to a newer version.";
 
-            return view('auth.login')->withErrors(['outdated-browser' => [$message]]);
+            return view('auth.login')
+                ->withErrors(['outdated-browser' => [$message]]);
         }
 
-        return view('auth.login');
+        return response()->view('auth.login');
     }
 
     /**
@@ -153,9 +177,6 @@ class LoginController extends Controller
     }
 
     /**
-     * @param array $agentVersion
-     * @param array $browserVersion
-     *
      * @return bool
      */
     protected function checkVersion(array $agentVersion, array $browserVersion)
@@ -174,12 +195,9 @@ class LoginController extends Controller
         return true;
     }
 
-    /**
-     * @return Collection
-     */
     protected function getBrowsers(): Collection
     {
-        return \Cache::remember('supported-browsers', 30, function () {
+        return \Cache::remember('supported-browsers', 2, function () {
             return DB::table('browsers')->get();
         });
     }
@@ -195,8 +213,8 @@ class LoginController extends Controller
         $messages = [];
         if ('IE' == $browser) {
             $messages = [
-                'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support. 
-            Please use Chrome browser instead. 
+                'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support.
+            Please use Chrome browser instead.
             <br>If you must use IE, please use IE11 or later.
             <br>If you must use IE v10 or earlier, please e-mail <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>",
             ];
@@ -221,9 +239,6 @@ class LoginController extends Controller
             ->withErrors($messages);
     }
 
-    /**
-     * @param Request $request
-     */
     protected function storeBrowserCompatibilityCheckPreference(Request $request)
     {
         if ( ! auth()->check() || auth()->user()->isCareCoach()) {
@@ -240,8 +255,6 @@ class LoginController extends Controller
     /**
      * Determine whether log in input is email or username, and do the needful to authenticate.
      *
-     * @param Request $request
-     *
      * @return bool
      */
     protected function usernameOrEmail(Request $request)
@@ -252,7 +265,7 @@ class LoginController extends Controller
 
         $request->merge(array_map('trim', $request->input()));
 
-        if ( ! str_contains($request->input('email'), '@')) {
+        if ( ! Str::contains($request->input('email'), '@')) {
             $this->username = 'username';
 
             $request->merge([
@@ -282,8 +295,7 @@ class LoginController extends Controller
     }
 
     /**
-     * @param Agent $agent
-     * @param bool  $isCLH
+     * @param bool $isCLH
      *
      * @return bool
      */

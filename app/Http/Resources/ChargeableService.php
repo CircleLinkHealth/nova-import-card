@@ -6,9 +6,9 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class ChargeableService extends Resource
+class ChargeableService extends JsonResource
 {
     /**
      * Transform the resource into an array.

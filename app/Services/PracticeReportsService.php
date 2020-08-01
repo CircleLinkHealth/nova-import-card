@@ -7,9 +7,9 @@
 namespace App\Services;
 
 use App\Billing\Practices\PracticeInvoiceGenerator;
-use App\Exports\FromArray;
 use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -19,8 +19,8 @@ use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 class PracticeReportsService
 {
     /**
-     * @throws InvalidConversion
      * @throws FileCannotBeAdded
+     * @throws InvalidConversion
      *
      * @return array
      */
@@ -55,8 +55,12 @@ class PracticeReportsService
     {
         $data = [];
 
-        foreach ($practices as $practiceId) {
-            $practice = Practice::find($practiceId);
+        $saasAccount = null;
+
+        foreach (Practice::with(['settings', 'chargeableServices', 'saasAccount'])->whereIn('id', $practices)->get() as $practice) {
+            if ( ! $saasAccount) {
+                $saasAccount = $practice->saasAccount;
+            }
 
             if ('practice' == $practice->cpmSettings()->bill_to || empty($practice->cpmSettings()->bill_to)) {
                 $chargeableServices = $this->getChargeableServices($practice);
@@ -88,7 +92,7 @@ class PracticeReportsService
             return false;
         }
 
-        return $this->makeQuickbookReport($data, $format, $date);
+        return $this->makeQuickbookReport($data, $format, $date, $saasAccount);
     }
 
     /**
@@ -98,10 +102,12 @@ class PracticeReportsService
      */
     private function getChargeableServices($chargeable)
     {
-        $chargeableServices = $chargeable->chargeableServices()->get();
+        $chargeable->loadMissing('chargeableServices');
+
+        $chargeableServices = $chargeable->chargeableServices;
 
         //defaults to CPT 99490 if practice doesnt have a chargeableService, until further notice
-        if ( ! $chargeableServices) {
+        if ($chargeableServices->isEmpty()) {
             $chargeableServices = ChargeableService::where('id', 1)->get();
         }
 
@@ -111,19 +117,21 @@ class PracticeReportsService
     /**
      * @param $rows
      * @param $format
+     * @param mixed $saasAccount
      *
      * @return mixed
      */
-    private function makeQuickbookReport($rows, $format, Carbon $date)
+    private function makeQuickbookReport($rows, $format, Carbon $date, $saasAccount)
     {
         return (new FromArray("Billable Patients Report - ${date}.$format", $rows))->storeAndAttachMediaTo(
-            auth()->user()
-                ->saasAccount,
+            $saasAccount,
             "quickbooks_report_for_{$date->toDateString()}"
         );
     }
 
     /**
+     * @param mixed|null $requestedByUserId
+     *
      * @throws \Exception
      * @throws \Waavi\UrlShortener\InvalidResponseException
      *
@@ -139,7 +147,7 @@ class PracticeReportsService
 
         $reportName = $practice->name.'-'.$date->format('Y-m').'-patients';
 
-        $patientReport = $generator->makePatientReportPdf($reportName);
+        $patientReport = $generator->makePatientReportCsv($reportName);
 
         $link = shortenUrl($patientReport->getUrl());
 
@@ -187,23 +195,10 @@ class PracticeReportsService
                 ? 'Software-Only Platform Fee'
                 : $chargeableService->description,
             'LineUnitPrice' => (string) '$'.' '.$lineUnitPrice,
-            'Msg'           => 'Send Check Payments to:
-CircleLink Health Inc.
-1178 Broadway
-3rd floor #1265
-New York, NY 10001
-
-ACH Payments: JPMorgan Chase Bank 
-Routing Number (ABA): 02110361 
-Account Number: 693139136 
-Account Name: CircleLink Health Account 
-Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902 
-
-Wire Payments: JPMorgan Chase Bank 
-Routing Number (ABA): 021000021 
-Account Number: 693139136 
-Account Name: Circle Link Health Account 
-Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902
+            'Msg'           => 'ACH Payments: Silicon Valley Bank
+Routing Number (ABA): 121140399
+Account Number: 3302397258
+Account Name: CIRCLELINK HEALTH INC.
 ',
         ];
 

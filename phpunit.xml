@@ -4,7 +4,7 @@
          bootstrap="vendor/autoload.php"
          forceCoversAnnotation="true"
          beStrictAboutCoversAnnotation="true"
-         beStrictAboutOutputDuringTests="true"
+         beStrictAboutOutputDuringTests="false"
          beStrictAboutTodoAnnotatedTests="true"
          backupGlobals="false"
          backupStaticAttributes="false"
@@ -12,15 +12,18 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         processIsolation="true"
-         stopOnFailure="true"
+         processIsolation="false"
+         stopOnFailure="false"
          verbose="true">
     <testsuites>
-        <testsuite name="Eligibility">
-            <directory suffix="Test.php">./Modules/Eligibility/Tests</directory>
-        </testsuite>
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="EligibilityModule">
+            <directory suffix="Test.php">./Modules/Eligibility/Tests</directory>
+        </testsuite>
+        <testsuite name="NurseInvoicesModule">
+            <directory suffix="Test.php">./Modules/Nurseinvoices/Tests</directory>
         </testsuite>
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
@@ -28,18 +31,6 @@
         <testsuite name="Deployment">
             <directory suffix="Test.php">./tests/integration/</directory>
             <directory suffix="Test.php">./tests/Unit</directory>
-        </testsuite>
-        <testsuite name="Notes">
-            <directory>./tests/Notes/</directory>
-        </testsuite>
-        <testsuite name="TimeTracking">
-            <directory>./tests/TimeTracking/</directory>
-        </testsuite>
-        <testsuite name="Calls">
-            <directory>./tests/Calls/</directory>
-        </testsuite>
-        <testsuite name="Care_Plan">
-            <directory>./tests/CarePlan/</directory>
         </testsuite>
         <testsuite name="Provider">
             <directory>./tests/Provider/</directory>
@@ -55,6 +46,8 @@
         <!--Workaround: precede commands with APP_ENV=testing-->
         <!--APP_ENV=testing phpunit-->
         <env name="APP_ENV" value="testing"/>
+        <env name="PROFILER_ENABLED" value="false"/>
+        <env name="SCOUT_DRIVER" value="null"/>
         <server name="APP_ENV" value="testing"/>
         <ini name="display_errors" value="true"/>
     </php>

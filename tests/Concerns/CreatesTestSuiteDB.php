@@ -6,48 +6,40 @@
 
 namespace Tests\Concerns;
 
-use Symfony\Component\Process\Process;
+use App\Traits\RunsConsoleCommands;
 
 trait CreatesTestSuiteDB
 {
-    public function createDB()
+    use RunsConsoleCommands;
+
+    public function createDB(?string $dbName = 'cpm_tests')
     {
-        $this->createDatabase();
+        if ('cpm_production' === $dbName) {
+            abort('It is not recommended to run this command on the production database');
+        }
+
+        if ($isCi = getenv('CI')) {
+            $dbName = getenv('HEROKU_TEST_RUN_ID');
+        }
+
+        $this->createDatabase($dbName ?? 'cpm_tests', ! $isCi);
     }
 
-    private function createDatabase()
+    private function createDatabase(string $dbName, $isLocal = true)
     {
-        $migrateInstallCommand  = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', 'cpm_tests', '--env=testing']);
-        $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh', '--env=testing']);
-        $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:views', '--env=testing']);
-        $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder', '--env=testing']);
-    }
+        collect(
+            [
+                ['mysql:createdb', $dbName],
+            ]
+        )->each(
+            function ($command) use ($isLocal) {
+                $base = ['php', 'artisan', '-vvv'];
+                if ($isLocal) {
+                    array_push($command, '--env=testing');
+                }
 
-    private function runCommand(array $command, bool $echoOutput = true)
-    {
-        $process = new Process($command);
-
-        echo PHP_EOL.'Running command:';
-
-        foreach ($command as $c) {
-            echo " $c ";
-        }
-
-        echo PHP_EOL;
-
-        $process->run();
-
-        $output = (string) trim($process->getOutput());
-
-        if (true === $echoOutput) {
-            echo $output;
-        }
-
-        if (0 !== $process->getExitCode()) {
-            echo $process->getErrorOutput();
-            throw new \Exception($process->getExitCodeText().' when executing '.$process->getCommandLine());
-        }
-
-        return $process;
+                $this->runCommand(array_merge($base, $command));
+            }
+        );
     }
 }

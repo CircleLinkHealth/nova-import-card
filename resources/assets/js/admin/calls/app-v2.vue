@@ -21,7 +21,7 @@
                 </label>
                 <loader class="absolute" v-if="loaders.calls"></loader>
             </div>
-            <div class="col-sm-6 text-right" v-if="itemsAreSelected">
+            <div class="col-sm-6 text-right" v-if="selectedPatients.length > 0">
                 <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Care Coach</button>
                 <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Activity Date</button>
                 <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
@@ -32,6 +32,7 @@
             <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
                 <template slot="selected" slot-scope="props">
                     <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
+                           :disabled="loaders.nurses"
                            type="checkbox"/>
                 </template>
                 <template slot="h__selected" slot-scope="props">
@@ -73,7 +74,8 @@
                 <template slot="Care Coach" slot-scope="props">
                     <div>
                         <select-editable v-model="props.row.NurseId" :display-text="props.row['Care Coach']"
-                                         :values="props.row.nurses()" :class-name="isAssignedToPatientsCareCoach(props.row) ? 'blue' : 'orange'"
+                                         :values="props.row.nurses()"
+                                         :class-name="isAssignedToPatientsCareCoach(props.row) ? 'blue' : 'orange'"
                                          :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
                         <loader class="relative" v-if="props.row.loaders.nurse"></loader>
                     </div>
@@ -150,12 +152,14 @@
     import BindAppEvents from './app.events'
     import Loader from '../../components/loader'
     import VueCache from '../../util/vue-cache'
+    import GetsNurses from '../../mixins/gets-nurses'
     import {today} from '../../util/today'
     import * as callUpdateFunctions from './utils/call-update.fn'
     import timeDisplay from '../../util/time-display'
 
+
     import {library} from '@fortawesome/fontawesome-svg-core'
-    import {faHandPointUp, faCalendarCheck, faPhone} from '@fortawesome/free-solid-svg-icons'
+    import {faCalendarCheck, faHandPointUp, faPhone} from '@fortawesome/free-solid-svg-icons'
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
     library.add(faPhone);
@@ -172,7 +176,7 @@
 
     export default {
         name: 'CallMgmtAppV2',
-        mixins: [VueCache],
+        mixins: [VueCache, GetsNurses],
         props: [
             'isAdmin'
         ],
@@ -193,11 +197,9 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
+                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
                 tableData: [],
-                nurses: [],
                 loaders: {
-                    nurses: false,
                     calls: false
                 },
                 currentDate: new Date(),
@@ -206,39 +208,24 @@
                 },
                 showOnlyUnassigned: false,
                 showOnlyCompletedTasks: false,
-                showPatientNames: !this.isAdmin
+                showPatientNames: !this.isAdmin,
+
+                selectedPatients: [],
+                selectedPatientsNew: [],
             }
         },
         computed: {
             patientNamesClass() {
                 return this.showPatientNames ? '' : 'hidden';
             },
-            itemsAreSelected() {
-                return !!this.tableData.find(row => !!row.selected)
-            },
-            selectedPatients() {
-                return this.tableData.filter(row => row.selected && row.Patient).map(row => {
 
-                    const nurse = this.nurses.find(n => n.id === row.NurseId);
-                    return {
-                        id: row['Patient ID'],
-                        callId: row.id,
-                        name: row.Patient,
-                        nurse: {
-                            id: row.NurseId,
-                            name: nurse.display_name
-                        },
-                        nextCall: row['Activity Day'],
-                        callTimeStart: row['Activity Start'],
-                        callTimeEnd: row['Activity End'],
-                        loaders: row.loaders
-                    };
-                });
+            nursesForSelect() {
+                return this.nurses.filter(n => !!n.display_name).map(nurse => ({
+                    text: nurse.display_name,
+                    value: nurse.id
+                }));
             },
-            selectedPatientsNew() {
-                return this.tableData.filter(row => row.selected && row.Patient);
-            }
-            ,
+
             options() {
                 return {
                     columnsClasses: {
@@ -247,8 +234,8 @@
                         'Patient ID': !this.isAdmin ? 'hidden' : '',
                         'Patient': this.patientNamesClass
                     },
-                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
-                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider', 'Patient\'s Care Coach'],
+                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'State', 'Scheduler'],
+                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'Practice', 'State', 'Billing Provider', 'Patient\'s Care Coach'],
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -261,23 +248,18 @@
                         Type: (ascending) => (a, b) => 0,
                         'Care Coach': (ascending) => (a, b) => 0,
                         'Patient': (ascending) => (a, b) => 0,
+                        'Language': (ascending) => (a, b) => 0,
                         'Patient ID': (ascending) => (a, b) => 0,
                         'Activity Day': (ascending) => (a, b) => 0,
                         'Last Call': (ascending) => (a, b) => 0,
                         'CCM Time': (ascending) => (a, b) => 0,
                         'BHI Time': (ascending) => (a, b) => 0,
                         Practice: (ascending) => (a, b) => 0,
+                        State: (ascending) => (a, b) => 0,
                         Scheduler: (ascending) => (a, b) => 0,
                         'Patient\'s Care Coach': (ascending) => (a, b) => 0,
                     }
-                }
-            }
-            ,
-            nursesForSelect() {
-                return this.nurses.filter(n => !!n.display_name).map(nurse => ({
-                    text: nurse.display_name,
-                    value: nurse.id
-                }))
+                };
             }
         },
         methods: {
@@ -297,6 +279,7 @@
                     'Type': 'type',
                     'Care Coach': 'nurse',
                     'Patient': 'patient',
+                    'Language': 'preferred_contact_language',
                     'Patient ID': 'patient_id',
                     'Activity Day': 'scheduled_date',
                     'Last Call': 'last_call',
@@ -304,6 +287,7 @@
                     'BHI Time': 'bhi_time',
                     'Successful Calls': 'no_of_successful_calls',
                     'Practice': 'practice',
+                    'State': 'state',
                     'Activity Start': 'call_time_start',
                     'Activity End': 'call_time_end',
                     'Preferred Call Days': 'preferred_call_days',
@@ -363,8 +347,7 @@
                 const rowsFilterSuffix = this.$refs.tblCalls.limit ? `rows=${this.$refs.tblCalls.limit}` : ''
                 if (this.pagination) {
                     return rootUrl(`api/admin/calls-v2?page=${this.$refs.tblCalls.page}&${rowsFilterSuffix}${this.urlFilterSuffix()}`)
-                }
-                else {
+                } else {
                     return rootUrl(`api/admin/calls-v2?${rowsFilterSuffix}${this.urlFilterSuffix()}`)
                 }
             },
@@ -382,13 +365,17 @@
                 this.tableData = this.tableData.map(row => {
                     if (fiteredDataIDs.indexOf(row.id) >= 0) row.selected = this.selected;
                     return row;
-                })
+                });
+                this.setSelectedPatients();
+                this.setSelectedPatientsNew();
             },
             toggleSelect(id) {
                 const row = this.tableData.find(row => row.id === id)
                 if (row) {
                     row.selected = !row.selected
                 }
+                this.setSelectedPatients();
+                this.setSelectedPatientsNew();
             },
             deleteSelected(e, overrideConfirmation = false) {
                 const count = this.tableData.filter(row => !!row.selected).length;
@@ -405,10 +392,8 @@
                         }).catch(err => {
                             console.error('calls:delete', err)
                         })
-                    }
-                    else return Promise.reject('no confirmation')
-                }
-                else return Promise.reject('no selected items')
+                    } else return Promise.reject('no confirmation')
+                } else return Promise.reject('no selected items')
             },
             clearSelected() {
                 this.selected = false
@@ -423,13 +408,11 @@
                 let showModal = false;
                 if (manualCalls.length === 0) {
                     showModal = true;
-                }
-                else if (selectedCalls.length === 1 && manualCalls.length === 1) {
+                } else if (selectedCalls.length === 1 && manualCalls.length === 1) {
                     if (confirm(this.getEditDateTimeConfirmMessage(manualCalls[0]))) {
                         showModal = true;
                     }
-                }
-                else if (confirm(editCallDateTimeMessageForCalls)) {
+                } else if (confirm(editCallDateTimeMessageForCalls)) {
                     showModal = true;
                 }
 
@@ -443,51 +426,11 @@
             showUnscheduledPatientsModal() {
                 Event.$emit('modal-unscheduled-patients:show')
             },
-            getNurses() {
-                this.loaders.nurses = true
-                return this.axios.get(rootUrl('api/nurses?compressed')).then(response => {
-                    const pagination = (response || {}).data
-                    this.nurses = ((pagination || {}).data || []).filter(nurse => nurse.practices).map(nurse => {
-
-                        const roles = nurse.user.roles.map(r => r.name);
-                        const rolesSet = Array.from(new Set(roles));
-
-                        let displayName = (nurse.user || {}).display_name || '';
-                        const suffix = (nurse.user || {}).suffix;
-                        if (suffix) {
-                            const suffixPos = displayName.indexOf(suffix);
-                            if (suffixPos === -1 || suffixPos + suffix.length !== displayName.length) {
-                                displayName = `${displayName} ${suffix}`;
-                            }
-                        }
-                        if (roles.includes('care-center-external')) {
-                            displayName = displayName + ' (in-house)';
-                        }
-
-                        return {
-                            id: nurse.user_id,
-                            nurseId: nurse.id,
-                            roles: rolesSet,
-                            display_name: displayName,
-                            states: nurse.states,
-                            practiceId: (nurse.user || {}).program_id,
-                            practices: (nurse.practices || [])
-                        }
-                    })
-                    //console.log('calls:nurses', pagination)
-                    this.loaders.nurses = false
-                    return this.nurses
-                }).catch(err => {
-                    console.error('calls:nurses', err)
-                    this.loaders.nurses = false
-                })
-            },
 
             getEditDateTimeConfirmMessage(call) {
                 if (call['Manual']) {
                     return editCallDateTimeMessageForCall.replace('$CARE_COACH$', call['Scheduler']);
-                }
-                else {
+                } else {
                     return undefined;
                 }
             },
@@ -549,7 +492,9 @@
                     'Care Coach': call.nurse,
                     NurseId: call.nurse_id,
                     Patient: call.patient,
+                    Language: call.preferred_contact_language,
                     Practice: call.practice,
+                    State: call.state,
                     Scheduler: call.scheduler,
                     'Billing Provider': call.billing_provider,
                     'Last Call': call.last_call,
@@ -689,8 +634,7 @@
                                     },
                                     loaders: {}
                                 }))]
-                            }
-                            else {
+                            } else {
                                 const from = ((this.pagination || {}).from || 0)
                                 const to = ((this.pagination || {}).to || 0)
                                 for (let i = from - 1; i < to; i++) {
@@ -700,8 +644,7 @@
                             setTimeout(() => {
                                 if ($vm.pagination) {
                                     $vm.$refs.tblCalls.count = $vm.pagination.total;
-                                }
-                                else {
+                                } else {
                                     $vm.$refs.tblCalls.count = 0;
                                 }
 
@@ -714,7 +657,31 @@
                     console.error('calls:response', err)
                     $vm.loaders.calls = false
                 })
-            }
+            },
+
+            setSelectedPatients() {
+                this.selectedPatients = this.tableData.filter(row => row.selected && row.Patient).map(row => {
+
+                    const nurse = this.nurses.find(n => n.id === row.NurseId);
+                    return {
+                        id: row['Patient ID'],
+                        callId: row.id,
+                        name: row.Patient,
+                        nurse: {
+                            id: row.NurseId,
+                            name: nurse ? nurse.display_name : 'Unassigned'
+                        },
+                        nextCall: row['Activity Day'],
+                        callTimeStart: row['Activity Start'],
+                        callTimeEnd: row['Activity End'],
+                        loaders: row.loaders
+                    };
+                });
+            },
+
+            setSelectedPatientsNew() {
+                this.selectedPatientsNew = this.tableData.filter(row => row.selected && row.Patient);
+            },
         },
         mounted() {
             BindAppEvents(this, Event);
@@ -725,6 +692,12 @@
 </script>
 
 <style>
+
+    /* State column is too small and search input is barely visible */
+    .VueTables__sortable {
+        min-width: 60px;
+    }
+
     .VueTables__child-row-toggler {
         display: block;
         width: 20px;

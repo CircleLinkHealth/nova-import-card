@@ -6,8 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Core\Entities\SqlViewModel;
 use CircleLinkHealth\Core\Filters\Filterable;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\EnrolleeView.
@@ -65,6 +65,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null                     $provider_name
  * @property string|null                     $care_ambassador_name
  * @property string|null                     $practice_name
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView newQuery()
@@ -123,16 +124,65 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereZip($value)
  * @mixin \Eloquent
+ *
  * @property string|null $requested_callback
  * @property string|null $provider_sex
  * @property string|null $provider_pronunciation
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereProviderPronunciation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereProviderSex($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereRequestedCallback($value)
+ *
+ * @property mixed|null $agent_details
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereAgentDetails($value)
+ *
+ * @property int|null $family_enrollee_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereFamilyEnrolleeId($value)
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property int|null                                                                                    $revision_history_count
+ * @property int|null                                                                                    $enrollment_non_responsive
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereEnrollmentNonResponsive($value)
+ *
+ * @property int|null $location_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereLocationId($value)
+ *
+ * @property string|null $other_note
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereOtherNote($value)
+ *
+ * @property int         $auto_enrollment_triggered
+ * @property string|null $source
+ * @property string|null $callback_note
+ * @property int         $invited
  */
-class EnrolleeView extends Model
+class EnrolleeView extends SqlViewModel
 {
     use Filterable;
+
+    public $phi = [
+        'first_name',
+        'last_name',
+        'address',
+        'address_2',
+        'city',
+        'state',
+        'zip',
+        'primary_phone',
+        'cell_phone',
+        'home_phone',
+        'other_phone',
+        'primary_insurance',
+        'secondary_insurance',
+        'tertiary_insurance',
+        'has_copay',
+        'email',
+        'agent_details',
+    ];
 
     protected $table = 'enrollees_view';
 }

@@ -6,19 +6,23 @@
 
 namespace App\Jobs;
 
-use App\CLH\Helpers\StringManipulation;
 use App\Contracts\DirectMail;
 use App\Contracts\Efax;
-use App\Reports\PatientDailyAuditReport;
+use App\Notifications\Channels\DirectMailChannel;
+use App\Notifications\SendAuditReport;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Spatie\RateLimitedMiddleware\RateLimited;
 
 class MakeAndDispatchAuditReports implements ShouldQueue
 {
+    use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -44,19 +48,21 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      * @var User
      */
     protected $patient;
+    /**
+     * @var bool
+     */
+    private $batch;
 
     /**
      * Create a new job instance.
      *
-     * @param User   $patient
      * @param Carbon $date
      */
-    public function __construct(User $patient, Carbon $date = null)
+    public function __construct(User $patient, Carbon $date = null, bool $batch = true)
     {
-        $this->patient    = $patient;
-        $this->date       = $date ?? Carbon::now();
-        $this->directMail = app(DirectMail::class);
-        $this->eFax       = app(Efax::class);
+        $this->patient = $patient;
+        $this->date    = $date ?? Carbon::now();
+        $this->batch   = $batch;
     }
 
     /**
@@ -64,39 +70,35 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      */
     public function handle()
     {
-        $fileName = (new PatientDailyAuditReport(
-            $this->patient->patientInfo,
-            $this->date->startOfMonth()
-        ))
-            ->renderPDF();
-
-        $path = storage_path("download/${fileName}");
-
-        if ( ! $path) {
-            \Log::error("File not found: ${path}");
-
-            return;
-        }
-
         $settings = $this->patient->primaryPractice->settings()->firstOrNew([]);
 
-        $sent = $this->patient->locations->map(function ($location) use ($path, $settings, $fileName) {
-            //Send DM mail
+        $this->patient->locations->each(function (Location $location) use ($settings) {
             if ($settings->dm_audit_reports) {
-                $this->directMail->send($location->emr_direct_address, $path, $fileName);
+                $channels[] = DirectMailChannel::class;
             }
 
-            //Send eFax
-            $fax = $location->fax;
-
-            if ($settings->efax_audit_reports && $fax) {
-                $number = (new StringManipulation())->formatPhoneNumberE164($fax);
-                $this->eFax->send($number, $path);
+            if ($settings->efax_audit_reports && $location->fax) {
+                $channels[] = 'phaxio';
             }
 
-            return $location;
+            if (isset($channels)) {
+                $location->notify(new SendAuditReport($this->patient, $this->date, $channels, $this->batch));
+            }
         });
+    }
 
-        \File::delete($path);
+    public function middleware()
+    {
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(50)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(10);
+
+        return [$rateLimitedMiddleware];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addHour();
     }
 }

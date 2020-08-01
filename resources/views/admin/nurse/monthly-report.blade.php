@@ -93,7 +93,7 @@
             <div class="panel-footer">
                 <div class="row">
                     <div class="col-md-4">
-                        {!! $rows->appends(Input::except('page'))->links() !!}
+                        {!! $rows->appends(Request::except('page'))->links() !!}
                     </div>
                 </div>
             </div>

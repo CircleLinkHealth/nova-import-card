@@ -80,9 +80,6 @@ class Problem
         return $this->departmentId;
     }
 
-    /**
-     * @return string
-     */
     public function getLaterality(): string
     {
         return $this->laterality;
@@ -96,41 +93,26 @@ class Problem
         return $this->note;
     }
 
-    /**
-     * @return int
-     */
     public function getPatientId(): int
     {
         return $this->patientId;
     }
 
-    /**
-     * @return int
-     */
     public function getPracticeId(): int
     {
         return $this->practiceId;
     }
 
-    /**
-     * @return int
-     */
     public function getSnomedCode(): int
     {
         return $this->snomedCode;
     }
 
-    /**
-     * @return Carbon
-     */
     public function getStartDate(): Carbon
     {
         return $this->startDate;
     }
 
-    /**
-     * @return string
-     */
     public function getStatus(): string
     {
         return $this->status;
@@ -144,9 +126,6 @@ class Problem
         $this->departmentId = $departmentId;
     }
 
-    /**
-     * @param string $laterality
-     */
     public function setLaterality(string $laterality)
     {
         $this->laterality = $laterality;
@@ -160,41 +139,26 @@ class Problem
         $this->note = $note;
     }
 
-    /**
-     * @param int $patientId
-     */
     public function setPatientId(int $patientId)
     {
         $this->patientId = $patientId;
     }
 
-    /**
-     * @param int $practiceId
-     */
     public function setPracticeId(int $practiceId)
     {
         $this->practiceId = $practiceId;
     }
 
-    /**
-     * @param int $snomedCode
-     */
     public function setSnomedCode(int $snomedCode)
     {
         $this->snomedCode = $snomedCode;
     }
 
-    /**
-     * @param Carbon $startDate
-     */
     public function setStartDate(Carbon $startDate)
     {
         $this->startDate = $startDate;
     }
 
-    /**
-     * @param string $status
-     */
     public function setStatus(string $status)
     {
         $this->status = $status;

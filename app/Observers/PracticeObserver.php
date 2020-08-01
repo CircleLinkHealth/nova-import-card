@@ -13,18 +13,16 @@ class PracticeObserver
 {
     /**
      * Listen to the Practice created event.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      */
     public function created(Practice $practice)
     {
-        $updated = User::withTrashed()
+        User::withTrashed()
             ->where('saas_account_id', $practice->saas_account_id)
             ->where('auto_attach_programs', true)
             ->with('roles')
             ->has('roles')
             ->whereDoesntHave('practices', function ($q) use ($practice) {
-                $q->whereId($practice->id);
+                $q->where('practices.id', $practice->id);
             })
             ->get()
             ->map(function ($user) use ($practice) {
@@ -34,8 +32,6 @@ class PracticeObserver
 
     /**
      * Listen to the Practice creating event.
-     *
-     * @param Practice $practice
      */
     public function creating(Practice $practice)
     {

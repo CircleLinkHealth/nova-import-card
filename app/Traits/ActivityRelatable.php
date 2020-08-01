@@ -6,13 +6,15 @@
 
 namespace App\Traits;
 
+use App\Call;
+
 trait ActivityRelatable
 {
     public function markActivitiesAsDone()
     {
         $toUpdate = [
             'asap'   => false,
-            'status' => 'done',
+            'status' => Call::DONE,
         ];
 
         $activities = $this->getActivities();

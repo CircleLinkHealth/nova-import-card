@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Circlelinkhealth\ImportPracticeStaffCsv;
+namespace CircleLinkHealth\ImportPracticeStaffCsv;
 
 use CircleLinkHealth\Customer\Entities\Practice;
 use Laravel\Nova\Http\Requests\NovaRequest;

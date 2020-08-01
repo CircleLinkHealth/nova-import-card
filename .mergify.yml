@@ -1,23 +1,74 @@
 pull_request_rules:
-- name: automatic merge on CI success and 2 reviews
-  conditions:
-  - status-success=ci/circleci
-  - "#approved-reviews-by>=2"
-  - "#changes-requested-reviews-by=0"
-  - label!=wip
-  - base=development
-  - base!=master
-  - head!=master
-  actions:
-    merge:
-      method: merge
-      strict: smart
-- name: delete head branch after merge
-  conditions: []
-  actions:
-    delete_head_branch: {}
-- name: remove outdated reviews
-  conditions:
-  - base=development
-  actions:
-    dismiss_reviews: {}
+  - name: merge a branch into master
+    conditions:
+      - status-success=continuous-integration/heroku
+      - "#approved-reviews-by>=1"
+      - label!=wip
+      - label=shipToProd
+      - base=master
+      - approved-reviews-by=NektariosX01
+      - approved-reviews-by=michalisantoniou6
+      - approved-reviews-by=subzero10
+    actions:
+      merge:
+        method: merge
+        strict: smart
+
+  - name: automatic merge on CI success, 2 Dev reviews
+    conditions:
+      - status-success=continuous-integration/heroku
+      - "#approved-reviews-by>=1"
+      - "#changes-requested-reviews-by=0"
+      - label!=wip
+      - head!=master
+      - base=development
+    actions:
+      merge:
+        method: merge
+        strict: smart
+
+  - name: automatic merge on CI success, 2 Dev reviews, and QA Approval
+    conditions:
+      - status-success=continuous-integration/heroku
+      - "#approved-reviews-by>=1"
+      - "#changes-requested-reviews-by=0"
+      - label=needsQAapproval
+      - head!=master
+      - base=development
+      - approved-reviews-by=NektariosX01
+    actions:
+      merge:
+        method: merge
+        strict: smart
+
+  - name: automatic merge on CI success, and approval from michalisantoniou6
+    conditions:
+      - status-success=continuous-integration/heroku
+      - label=fastlane
+      - author=michalisantoniou6
+    actions:
+      merge:
+        method: merge
+        strict: smart
+
+  - name: automatic merge on CI success, and approval from subzero10
+    conditions:
+      - status-success=continuous-integration/heroku
+      - label=fastlane
+      - author=subzero10
+    actions:
+      merge:
+        method: merge
+        strict: smart
+
+  - name: delete head branch after merge
+    conditions:
+      - head!=master
+      - head!=development
+    actions:
+      delete_head_branch: {}
+  - name: remove outdated reviews
+    conditions:
+      - base=development
+    actions:
+      dismiss_reviews: {}

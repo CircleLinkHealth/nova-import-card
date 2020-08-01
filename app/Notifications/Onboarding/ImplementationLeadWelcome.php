@@ -35,8 +35,6 @@ class ImplementationLeadWelcome extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      */
     public function __construct(Practice $practice)
     {

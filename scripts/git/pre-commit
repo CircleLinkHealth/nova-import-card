@@ -1,4 +1,5 @@
 #!/bin/bash
+
 ################################################################################
 #
 # Bash PHP Coding Standards Fixer
@@ -23,7 +24,29 @@ title="PHP Code Fixer"
 # Possible command names of this tool
 local_command="php-cs-fixer.phar"
 vendor_command="vendor/bin/php-cs-fixer"
-global_command="php-cs-fixer"
+global_command="../../"$vendor_command
+
+BLADE_FILES_CONFIG=".php_cs_views.php"
+
+if [[ ! -f "$BLADE_FILES_CONFIG" ]]; then
+    BLADE_FILES_CONFIG="../../.php_cs_views.php"
+fi
+
+if [[ ! -f "$BLADE_FILES_CONFIG" ]]; then
+    echo -en "\n${txtwht}${bakred} $BLADE_FILES_CONFIG not found ${txtrst}\n"
+    exit 1
+fi
+
+PHP_FILES_CONFIG=".php_cs.dist"
+
+if [[ ! -f "$PHP_FILES_CONFIG" ]]; then
+    PHP_FILES_CONFIG="../../.php_cs_views.php"
+fi
+
+if [[ ! -f "$PHP_FILES_CONFIG" ]]; then
+    echo -en "\n${txtwht}${bakred} $PHP_FILES_CONFIG not found ${txtrst}\n"
+    exit 1
+fi
 
 # Print a welcome and locate the exec for this tool
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -33,54 +56,35 @@ source $DIR/helpers/welcome.sh
 source $DIR/helpers/locate.sh
 
 # Get modified files, staged for commit
-declare -a CHANGED_FILES=$(git diff --name-only --cached)
+declare -a STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep ".php\{0,1\}$")
 
-printf '%s\n' "${CHANGED_FILES}"
+if [[ "$STAGED_FILES" = "" ]]; then
+  exit 0
+fi
 
-args="--verbose --show-progress=dots --diff --path-mode=override"
-php_errors_found=false
+printf '%s\n' "${STAGED_FILES}"
+
+ARGS="--verbose --show-progress=dots --path-mode=override"
+PHP_ERRORS_FOUND=false
 error_message=""
 
 # Run the command on each file
-for path in "${CHANGED_FILES[@]}"
+for FILE in "${STAGED_FILES[@]}"
 do
-    echo "checking ${path}"
-
-    add_file_again=0
-
-    if [[ ${path} == *"resources/views/"* ]]; then
-        echo "php view file"
-
-        echo "$exec_command fix $path --config=.php_cs_views.php $args"
-
-        ${exec_command} fix ${path} --config=.php_cs_views.php ${args}
-
-        add_file_again=1
-    elif [[ ${path} == *".php"* ]]; then
-        echo "php file"
-        echo "$exec_command fix $path --config=.php_cs.dist $args"
-
-        ${exec_command} fix ${path} --config=.php_cs.dist ${args}
-
-        add_file_again=1
-    else
-        echo "non-php file"
-    fi
-
-    if [ $? -ne 0 ]; then
-        echo "errors"
-        error_message+="  - ${txtred}${path}${txtrst}\n"
-        php_errors_found=true
-     elif [[ $add_file_again == 1 ]]; then
-        echo "re-adding $path"
-        git add ${path}
-        echo "😍"
+    if [[ ${FILE} == *"resources/views/"* ]]; then
+        echo "$exec_command fix $PATH --config=$BLADE_FILES_CONFIG $ARGS"
+        ${exec_command} fix ${FILE} --config=$BLADE_FILES_CONFIG ${ARGS}
+        git add ${FILE}
+    elif [[ ${FILE} == *".php"* ]]; then
+        echo "$exec_command fix $PATH --config=$PHP_FILES_CONFIG $ARGS"
+        ${exec_command} fix ${FILE} --config=$PHP_FILES_CONFIG ${ARGS}
+        git add ${FILE}
     fi
 done;
 
 # There is currently debate about exit codes in php-cs-fixer
 # https://github.com/FriendsOfPHP/PHP-CS-Fixer/issues/1211
-if [ "$php_errors_found" = true ]; then
+if [ "$PHP_ERRORS_FOUND" = true ]; then
     echo -en "\n${undred}${title} updated the following files:${txtrst}\n"
     echo -en "\n${error_message}"
     echo -en "\n${txtwht}${bakred}Please review the changes above. If you're happy, please commit and push.${txtrst}\n"

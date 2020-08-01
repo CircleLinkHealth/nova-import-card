@@ -3,6 +3,10 @@
 @section('title', 'Dashboard')
 @section('activity', 'Dashboard')
 
+<?php
+$patientListDropdown = getPatientListDropdown(auth()->user());
+$hasAwv              = in_array('awv', $patientListDropdown);
+?>
 
 @section('content')
     <div class="container container--menu">
@@ -20,20 +24,41 @@
                     {{--</div>--}}
                     {{--</a>--}}
                     {{--</li>--}}
-                    <li class="menu-item">
-                        <a id="patient-list" href="{{ route('patients.listing', array()) }}">
-                            <div class="icon-container column-centered">
-                                <i class="icon--list-patient--big icon--menu">
-                                    <div class="notification btn-warning">{{ $pendingApprovals }}</div>
-                                </i>
-                            </div>
-                            <div>
-                                <p class="text-medium-big text--menu text-serif">Patient List<br><span
-                                            style="color:red;font-style:italic;font-size:85%;" class="text-thin">{{ $pendingApprovals }}
+
+                    @if(! auth()->user()->isCareCoach())
+                        @if (config('services.awv.url', null) && $hasAwv)
+                            <li class="menu-item">
+                                <a href="{{ config('services.awv.url') . '/manage-patients' }}">
+                                    <div class="icon-container column-centered">
+                                        <i class="icon--list-patient--big icon--menu">
+                                        </i>
+                                    </div>
+                                    <div>
+                                        <p class="text-medium-big text--menu text-serif">
+                                            Wellness Visit Patient List
+                                            <br/>
+                                            <br/>
+                                        </p>
+                                    </div>
+                                </a>
+                            </li>
+                        @endif
+
+                        <li class="menu-item">
+                            <a id="patient-list" href="{{ route('patients.listing', array()) }}">
+                                <div class="icon-container column-centered">
+                                    <i class="icon--list-patient--big icon--menu">
+                                        <div class="notification btn-warning">{{ $pendingApprovals }}</div>
+                                    </i>
+                                </div>
+                                <div>
+                                    <p class="text-medium-big text--menu text-serif">CCM Patient List<br><span
+                                                style="color:red;font-style:italic;font-size:85%;" class="text-thin">{{ $pendingApprovals }}
                                         Pending<br>Approvals</span><br></p>
-                            </div>
-                        </a>
-                    </li>
+                                </div>
+                            </a>
+                        </li>
+                    @endif
 
                     <li class="menu-item">
                         <a dusk="add-patient-btn" href="{{ route('patient.demographics.create') }}">
@@ -58,39 +83,24 @@
                             </a>
                         </li>
                     @endif
-                    @if( auth()->user()->hasPermission(['ccd-import']) )
-                        <li class="menu-item">
-                            <a id="patient-list" href="{{ route('import.ccd.remix') }}">
-                                <div class="icon-container column-centered">
-                                    <i class="icon--menu" aria-hidden="true">
-                                        <img src="{{mix('/img/icon--download.png')}}"
-                                             style="
-                                            max-width: 61px;
-                                            position: absolute;
-                                            left: 15px;
-                                            bottom: 12px;">
-                                    </i>
-                                </div>
-                                <div>
-                                    <p class="text-medium-big text--menu text-serif">Import CCDs<BR><BR><br></p>
-                                </div>
-                            </a>
-                        </li>
-                    @endif
                 </ul>
             </div>
         </div>
         @include('errors.errors')
-
-        @if($nurse && auth()->user()->isNotSaas())
-            @include('partials.care-center.dashboard-schedule', [$nurse])
-        @endif
-
     </div>
 
-    <div class="container-fluid">
         @if($showPatientsPendingApprovalBox)
-            @include('partials.provider.patients-pending-approval')
+            <div class="container-fluid">
+                @if($seesAutoApprovalButton)
+                    <div class="row">
+                        <div class="col-lg-11">
+                            {{link_to_action('Patient\PatientController@autoQAApprove', 'Auto QA', ['userId' => auth()->id()], ['class' => 'btn btn-success pull-right'])}}
+                        </div>
+                    </div>
+                @endif
+
+                @include('partials.provider.patients-pending-approval')
+            </div>
+
         @endif
-    </div>
 @endsection

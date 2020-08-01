@@ -6,7 +6,11 @@
 
 namespace App\Console\Commands;
 
-use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
+use App\Search\ProviderByName;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
+use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 
 /**
@@ -28,6 +32,7 @@ class OverwriteNBIImportedData extends Command
      * @var string
      */
     protected $signature = 'nbi:overwrite';
+    private $nbiPractice;
 
     /**
      * Create a new command instance.
@@ -44,13 +49,19 @@ class OverwriteNBIImportedData extends Command
      */
     public function handle()
     {
-        $result = \App\Models\MedicalRecords\ImportedMedicalRecord::whereNull('patient_id')->whereNull('billing_provider_id')->get()->map(
-            function ($imr) {
-                $this->info("Checking ImportedMedicalRecord id: $imr->id");
+        if ( ! $this->nbiPractice()) {
+            $this->error('NBI practice not found');
+
+            return;
+        }
+
+        $result = Ccda::where('practice_id', $this->nbiPractice()->id)->whereNull('billing_provider_id')->has('patient')->with('patient')->get()->map(
+            function ($ccda) {
+                $this->info("Checking CCDA id: $ccda->id");
 
                 return [
-                    'imr_id'       => $imr->id,
-                    'was_replaced' => $this->lookupAndReplacePatientData($imr),
+                    'imr_id'       => $ccda->id,
+                    'was_replaced' => $this->lookupAndReplacePatientData($ccda),
                 ];
             }
         );
@@ -59,22 +70,16 @@ class OverwriteNBIImportedData extends Command
     }
 
     /**
-     * @param ImportedMedicalRecord $imr
-     *
      * @return bool
      */
-    public function lookupAndReplacePatientData(ImportedMedicalRecord $imr)
+    public function lookupAndReplacePatientData(Ccda $ccda)
     {
-        $mr    = $imr->medicalRecord();
-        $dem   = $imr->demographics()->first();
-        $datas = \App\Models\PatientData\NBI\PatientData::where(
-            'first_name',
-            'like',
-            "{$dem->first_name}%"
-        )->where(
-            'last_name',
-            $dem->last_name
-        )->where('dob', $dem->dob)->first();
+        if ( ! $this->nbiPractice()) {
+            return;
+        }
+
+        $datas = SupplementalPatientData::forPatient($this->nbiPractice()->id, $ccda->patient_first_name, $ccda->patient_last_name, $ccda->patientDob());
+
         if ($datas) {
             $map = [
                 'HUSSAINI,RAFIA'     => 11493,
@@ -89,45 +94,30 @@ class OverwriteNBIImportedData extends Command
             ];
 
             if ($datas->provider) {
-                $term = strtoupper($datas->provider);
-                $this->warn("Searching for provider with term `$term`");
-                $imr->billing_provider_id = $map[$term] ?? null;
-                $this->warn("Provider result: {$imr->billing_provider_id}");
+                $term                      = strtoupper($datas->provider);
+                $ccda->billing_provider_id = $map[$term] ?? optional(ProviderByName::first($term))->id;
             }
 
-            $imr->practice_id = 201;
-            $imr->location_id = 971;
-            $imr->save();
-            $dem->mrn_number = $datas->mrn;
-            $dem->save();
-
-            if ( ! empty($datas->primary_insurance)) {
-                $insurance = \App\Importer\Models\ItemLogs\InsuranceLog::create(
-                    [
-                        'medical_record_id'   => $mr->id,
-                        'medical_record_type' => get_class($mr),
-                        'name'                => $datas->primary_insurance,
-                        'approved'            => false,
-                        'import'              => true,
-                    ]
-                );
-            }
-
-            if ( ! empty($datas->secondary_insurance)) {
-                $insurance = \App\Importer\Models\ItemLogs\InsuranceLog::create(
-                    [
-                        'medical_record_id'   => $mr->id,
-                        'medical_record_type' => get_class($mr),
-                        'name'                => $datas->secondary_insurance,
-                        'approved'            => false,
-                        'import'              => true,
-                    ]
-                );
-            }
+            $ccda->practice_id = $this->nbiPractice()->id;
+            $ccda->location_id = $this->nbiPractice()->primaryLocation()->id;
+            $ccda->save();
+            $ccda->patient->patientInfo->mrn_number = $datas->mrn;
+            $ccda->patient->patientInfo->save();
 
             return true;
         }
 
         return false;
+    }
+
+    public function nbiPractice(): ?Practice
+    {
+        if ( ! $this->nbiPractice) {
+            $this->nbiPractice = Practice::whereName(ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME)->with(
+                'locations'
+            )->first();
+        }
+
+        return $this->nbiPractice;
     }
 }

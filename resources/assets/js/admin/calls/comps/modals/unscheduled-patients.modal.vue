@@ -83,7 +83,7 @@
             },
             patientUrl() {
                 const practice_addendum = this.practiceId ? `practices/${this.practiceId}/` : '';
-                return rootUrl(`api/${practice_addendum}patients/without-scheduled-activities?autocomplete`);
+                return rootUrl(`api/${practice_addendum}patients/without-scheduled-activities?autocomplete=true`);
             }
         },
         methods: {
@@ -109,6 +109,12 @@
             getPatients() {
                 this.loaders.patients = true
                 this.cache().get(this.patientUrl).then(patients => {
+                    if (patients.data) {
+                        patients = patients.data;
+                    }
+                    if (!Array.isArray(patients)) {
+                        patients = Object.values(patients);
+                    }
                     this.loaders.patients = false
                     this.patients = (patients || [])
                     //console.log('unscheduled-patients-get-patients', patients)

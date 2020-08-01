@@ -30,13 +30,6 @@ class AppointmentRepository
         return $this->model()->count();
     }
 
-    public function create(Appointment $appointment)
-    {
-        $appointment->save();
-
-        return $appointment;
-    }
-
     public function exists($id)
     {
         return (bool) $this->model()->find($id);

@@ -6,9 +6,9 @@
 
 namespace App\Nova\Metrics;
 
+use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Http\Request;
 use Laravel\Nova\Metrics\Value;
-use Venturecraft\Revisionable\Revision;
 
 class PatientsOverTargetBhiTime extends Value
 {
@@ -24,8 +24,6 @@ class PatientsOverTargetBhiTime extends Value
 
     /**
      * Calculate the value of the metric.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return mixed
      */

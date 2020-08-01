@@ -6,37 +6,27 @@
 
 namespace Tests\Nurse;
 
-use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
-use Tests\TestCase;
+use App\Services\NursesPerformanceReportService;
+use Carbon\Carbon;
+use Tests\CustomerTestCase;
 
-class PerformanceTest extends TestCase
+class PerformanceTest extends CustomerTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        \Artisan::call('db:seed', ['--class' => \PopulateNursePerformanceSeeder::class]);
+    }
+
     public function test_example()
     {
-        $nurses = User::ofType('care-center')->get();
+        $this->getFakeReportData();
+    }
 
-        foreach ($nurses as $nurse) {
-            $activityTime = Activity::createdBy($nurse)
-                ->createdToday()
-                ->sum('duration');
+    private function getFakeReportData()
+    {
+        $date = Carbon::createFromDate(2020, 3, 1)->startOfMonth();
 
-            $systemTime = PageTimer::where('provider_id', $nurse->id)
-                ->createdToday()
-                ->sum('billable_duration');
-
-            $performance = $activityTime / $systemTime;
-
-            $totalTimeInSystemOnGivenDate = secondsToHMS($systemTime);
-
-            $totalTimeInSystemThisMonthInSeconds = PageTimer::where('provider_id', $nurse->id)
-                ->createdThisMonth()
-                ->sum('billable_duration');
-
-            $totalTimeInSystemThisMonth = secondsToHMS($totalTimeInSystemThisMonthInSeconds);
-
-            $totalEarningsThisMonth = $totalTimeInSystemThisMonthInSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60;
-        }
+        return app(NursesPerformanceReportService::class)->collectData($date);
     }
 }

@@ -12,12 +12,22 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 
 class PracticeStaffController extends Controller
 {
+    public const PRACTICE_STAFF_ROLES = [
+        'practice-lead',
+        'med_assistant',
+        'office_admin',
+        'provider',
+        'registered-nurse',
+        'specialist',
+        'software-only',
+        'care-center-external',
+    ];
+
     /**
      * Remove the specified resource from storage.
      *
@@ -56,23 +66,11 @@ class PracticeStaffController extends Controller
     {
         $primaryPractice = Practice::find($primaryPracticeId);
 
-        $relevantRoles = [
-            'med_assistant',
-            'office_admin',
-            'provider',
-            'registered-nurse',
-            'specialist',
-            'software-only',
-            'care-center-external',
-        ];
-
-        $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
-            ->whereHas('practices', function ($q) use (
-                                 $primaryPractice
-                             ) {
-                $q->where('id', '=', $primaryPractice->id);
+        $practiceUsers = User::ofType(self::PRACTICE_STAFF_ROLES)
+            ->whereHas('practices', function ($q) use ($primaryPractice) {
+                $q->where('practices.id', '=', $primaryPractice->id);
             })
-            ->with('roles')
+            ->with('providerInfo')
             ->get()
             ->sortBy('first_name')
             ->values();
@@ -115,17 +113,19 @@ class PracticeStaffController extends Controller
                 'name',
                 '=',
                 User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
-                                                            )
+            )
             ->orHaving(
                 'name',
                 '=',
                 User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
-                                                            )
+            )
             ->get()
             ->mapToGroups(function ($user) {
                 return [$user->pivot->name => $user->id];
             })
                                                        ?? null;
+
+        $user->loadMissing('providerInfo');
 
         return [
             'id'              => $user->id,
@@ -140,7 +140,7 @@ class PracticeStaffController extends Controller
             'phone_type'      => array_search(
                 $phone->type ?? '',
                 PhoneNumber::getTypes()
-                                                     ) ?? '',
+            ) ?? '',
             'sendBillingReports'     => $permissions->pivot->send_billing_reports ?? false,
             'canApproveAllCareplans' => $user->canApproveCarePlans(),
             'role_names'             => $roles->map(function ($r) {
@@ -182,9 +182,7 @@ class PracticeStaffController extends Controller
         $roleNames = $formData['role_names'];
         $roles     = Role::whereIn('name', $roleNames)->get()->keyBy('id');
 
-        $user = User::updateOrCreate([
-            'id' => $formData['id'],
-        ], [
+        $args = [
             'program_id'   => $primaryPractice->id,
             'email'        => $formData['email'],
             'first_name'   => $formData['first_name'],
@@ -192,17 +190,18 @@ class PracticeStaffController extends Controller
             'display_name' => "{$formData['first_name']} {$formData['last_name']}",
             'suffix'       => ! empty($formData['suffix']) ? $formData['suffix'] : null,
             'user_status'  => 1,
-        ]);
+        ];
+
+        if (is_numeric($formData['id'])) {
+            $user = User::updateOrCreate([
+                'id' => $formData['id'],
+            ], $args);
+        } else {
+            $user = User::create($args);
+        }
 
         if ($formData['emr_direct_address']) {
             $user->emr_direct_address = $formData['emr_direct_address'];
-        }
-
-        $careplanApprove = Permission::where('name', 'care-plan-approve')->first();
-        if ($formData['canApproveAllCareplans']) {
-            $user->attachPermission($careplanApprove->id);
-        } elseif ($user->hasPermission('care-plan-approve')) {
-            $user->detachPermission($careplanApprove->id);
         }
 
         //Attach the locations
@@ -234,11 +233,15 @@ class PracticeStaffController extends Controller
 //            $user->forwardTo($formData['forward_alerts_to']['user_id'], $formData['forward_alerts_to']['who']);
         }
 
-        if (in_array('provider', $roleNames)) {
-            $providerInfo = ProviderInfo::firstOrCreate([
-                'user_id' => $user->id,
-            ]);
+        if ( ! $formData['canApproveAllCareplans'] && $user->canApproveCarePlans()) {
+            $user->attachPermission(Permission::where('name', 'care-plan-approve')->firstOrFail(), false);
+            $user->clearRolesCache();
+        } elseif ( ! $user->canApproveCarePlans()) {
+            $user->attachPermission(Permission::where('name', 'care-plan-approve')->firstOrFail(), true);
+            $user->clearRolesCache();
+        }
 
+        if (in_array('provider', $roleNames)) {
             if ('billing_provider' != $formData['forward_careplan_approval_emails_to']['who']) {
                 foreach ($formData['forward_careplan_approval_emails_to']['user_ids'] as $user_id) {
                     $user->forwardTo($user_id, $formData['forward_careplan_approval_emails_to']['who']);

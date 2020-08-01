@@ -4,10 +4,20 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Providers\CpmArtisanServiceProvider;
+use App\Providers\PrimaryNavComposer;
+use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
+use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
-use Circlelinkhealth\ImportPracticeStaffCsv\CardServiceProvider;
+use CircleLinkHealth\Eligibility\Providers\RouteServiceProvider as EligibilityRouteServiceProvider;
+use CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
+use Illuminate\Support\Arr;
+
+$appUrl = env('APP_URL', 'http://cpm.dev');
+
+$appUrl = str_replace('${HEROKU_APP_NAME}', getenv('HEROKU_APP_NAME'), $appUrl);
 
 return [
     /*
@@ -71,7 +81,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://cpm.dev'),
+    'url' => $appUrl,
 
     'asset_url' => env('ASSET_URL', null),
 
@@ -161,7 +171,8 @@ return [
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
-        Illuminate\Cache\CacheServiceProvider::class,
+        SmartCacheServiceProvider::class,
+        //Illuminate\Cache\CacheServiceProvider::class,
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
         Illuminate\Cookie\CookieServiceProvider::class,
         Illuminate\Database\DatabaseServiceProvider::class,
@@ -188,7 +199,7 @@ return [
 
         \App\Providers\NovaServiceProvider::class,
 
-        CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
+        \CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
         App\Providers\AppDeferredServiceProvider::class,
@@ -207,11 +218,16 @@ return [
         App\View\Composers\FabComposer::class,
         App\View\Composers\SAAS\Admin\ManageInternalUser::class,
         App\Providers\EligibilityBatchViewComposerServiceProvider::class,
+        PrimaryNavComposer::class,
 
         NurseInvoicesServiceProvider::class,
         NurseInvoicesDeferredBindingsServiceProvider::class,
         EligibilityServiceProvider::class,
+        EligibilityRouteServiceProvider::class,
         CardServiceProvider::class,
+        CcdaParserProcessorProvider::class,
+        CpmArtisanServiceProvider::class,
+        \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
     ],
 
     /*
@@ -244,12 +260,12 @@ return [
         'Hash'         => Illuminate\Support\Facades\Hash::class,
         'Lang'         => Illuminate\Support\Facades\Lang::class,
         'Log'          => Illuminate\Support\Facades\Log::class,
-        'Notification' => Illuminate\Support\Facades\Notification::class,
+        'Notification' => CircleLinkHealth\Core\Facades\Notification::class,
         'Mail'         => Illuminate\Support\Facades\Mail::class,
         'Password'     => Illuminate\Support\Facades\Password::class,
         'Queue'        => Illuminate\Support\Facades\Queue::class,
         'Redirect'     => Illuminate\Support\Facades\Redirect::class,
-        'Redis'        => Illuminate\Support\Facades\Redis::class,
+        'RedisManager' => Illuminate\Support\Facades\Redis::class,
         'Request'      => Illuminate\Support\Facades\Request::class,
         'Response'     => Illuminate\Support\Facades\Response::class,
         'Route'        => Illuminate\Support\Facades\Route::class,
@@ -260,7 +276,6 @@ return [
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
 
-        'Input'     => Illuminate\Support\Facades\Input::class,
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
         'DataTables'   => Yajra\DataTables\Facades\DataTables::class,
@@ -285,4 +300,19 @@ return [
     |
     */
     'app_version' => env('APP_VERSION', ''),
+
+    // Hide these variables from debug screens (Whoops, Raygun, etc)
+    'debug_blacklist' => [
+        '_COOKIE' => array_keys($_COOKIE),
+        '_SERVER' => array_keys($_SERVER),
+        '_ENV'    => Arr::except(array_keys($_ENV), [
+            'APP_ENV',
+            'SCOUT_DRIVER',
+            'BROADCAST_DRIVER',
+            'CACHE_DRIVER',
+            'SESSION_DRIVER',
+            'SESSION_DOMAIN',
+            'TWO_FA_ENABLED',
+        ]),
+    ],
 ];

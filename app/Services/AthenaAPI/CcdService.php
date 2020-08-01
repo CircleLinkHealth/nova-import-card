@@ -6,17 +6,21 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\Models\MedicalRecords\Ccda;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CcdService
 {
     /**
-     * @var Calls
+     * @var AthenaApiImplementation
      */
     private $athenaApi;
 
-    public function __construct(Calls $athenaApi)
+    /**
+     * CcdService constructor.
+     */
+    public function __construct(AthenaApiImplementation $athenaApi)
     {
         $this->athenaApi = $athenaApi;
     }
@@ -41,7 +45,6 @@ class CcdService
                 'practice_id' => $practice->id,
                 'location_id' => $practice->locations->first()->id,
                 'user_id'     => auth()->user()->id,
-                'vendor_id'   => 1,
                 'xml'         => $ccdaExternal[0]['ccda'],
             ]);
 

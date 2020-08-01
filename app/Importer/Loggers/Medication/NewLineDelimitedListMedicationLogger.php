@@ -7,6 +7,7 @@
 namespace App\Importer\Loggers\Medication;
 
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
+use Illuminate\Support\Str;
 
 class NewLineDelimitedListMedicationLogger implements Logger
 {
@@ -41,9 +42,9 @@ class NewLineDelimitedListMedicationLogger implements Logger
 
     public function shouldHandle($medicalRecord): bool
     {
-        return str_contains(
+        return Str::contains(
             optional($medicalRecord)->medications_string,
             "\n"
-        ) && ! starts_with(optional($medicalRecord)->medications_string, ['[', '{']);
+        ) && ! Str::startsWith(optional($medicalRecord)->medications_string, ['[', '{']);
     }
 }

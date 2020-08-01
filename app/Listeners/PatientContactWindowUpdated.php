@@ -93,10 +93,6 @@ class PatientContactWindowUpdated
      *  - patient has less than 20 minutes
      *  - patient has 0 successful calls.
      *
-     * @param Carbon               $currentDate
-     * @param Collection           $availableDays
-     * @param PatientContactWindow $window
-     *
      * @return Carbon
      */
     private function getNextAvailableContactDate(

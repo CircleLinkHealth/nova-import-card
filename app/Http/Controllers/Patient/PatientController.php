@@ -6,29 +6,49 @@
 
 namespace App\Http\Controllers\Patient;
 
-use App\CLH\Repositories\UserRepository;
+use App\Console\Commands\AutoApproveValidCarePlansAs;
 use App\Contracts\ReportFormatter;
+use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
-use App\Models\CPM\CpmProblem;
-use App\Services\CarePlanViewService;
-use App\Services\PdfService;
+use App\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Core\Services\PdfService;
+use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatientController extends Controller
 {
     private $formatter;
+    /**
+     * @var NurseCalendarService
+     */
+    private $fullCalendarService;
 
-    public function __construct(ReportFormatter $formatter)
+    /**
+     * PatientController constructor.
+     */
+    public function __construct(ReportFormatter $formatter, NurseCalendarService $fullCalendarService)
     {
-        $this->formatter = $formatter;
+        $this->formatter           = $formatter;
+        $this->fullCalendarService = $fullCalendarService;
+    }
+
+    public function autoQAApprove($userId)
+    {
+        if (SeesAutoQAButton::userId($userId)) {
+            Artisan::queue(AutoApproveValidCarePlansAs::class, [
+                'userId'                         => $userId,
+                '--reimport:clear'               => true,
+                '--reimport:without-transaction' => true,
+            ]);
+        }
+
+        return 'Cpm will QA valid CarePlans in your queue on your behalf. Give it ~5 minutes and refresh your homepage. Any patients still showing on the table need human QA.';
     }
 
     public function createCBTTestPatient(Request $request)
@@ -103,7 +123,7 @@ class PatientController extends Controller
             $dob                  = new Carbon(($d->getBirthDate()));
             $patients[$i]['dob']  = $dob->format('m-d-Y');
             $patients[$i]['mrn']  = $d->getMRN();
-            $patients[$i]['link'] = route('patient.summary', ['patient' => $d->id]);
+            $patients[$i]['link'] = route('patient.summary', ['patientId' => $d->id]);
 
             $programObj = Practice::find($d->program_id);
 
@@ -165,8 +185,8 @@ class PatientController extends Controller
         $pendingApprovals = 0;
 
         $nurse                          = null;
-        $patientsPendingApproval        = [];
         $showPatientsPendingApprovalBox = false;
+        $seesAutoApprovalButton         = false;
 
         /** @var User $user */
         $user = auth()->user();
@@ -177,23 +197,26 @@ class PatientController extends Controller
 
         if ($user->canApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
-            $patients                       = $user->patientsPendingApproval()->get();
-            $patientsPendingApproval        = $this->formatter->patientListing($patients);
-            $pendingApprovals               = $patients->count();
+            $pendingApprovals               = User::patientsPendingProviderApproval($user)->count();
+        } elseif ($user->isAdmin() && $user->canQAApproveCarePlans()) {
+            $showPatientsPendingApprovalBox = true;
+            $pendingApprovals               = User::patientsPendingCLHApproval($user)->count();
+            $seesAutoApprovalButton         = SeesAutoQAButton::userId(auth()->id());
         }
+
         $noLiveCountTimeTracking = true;
+        $authData                = $this->fullCalendarService->getAuthData();
 
         return view(
             'wpUsers.patient.dashboard',
-            array_merge(
-                compact([
-                    'pendingApprovals',
-                    'nurse',
-                    'showPatientsPendingApprovalBox',
-                    'noLiveCountTimeTracking',
-                ]),
-                $patientsPendingApproval
-            )
+            compact([
+                'pendingApprovals',
+                'nurse',
+                'showPatientsPendingApprovalBox',
+                'noLiveCountTimeTracking',
+                'authData',
+                'seesAutoApprovalButton',
+            ])
         );
     }
 
@@ -226,11 +249,19 @@ class PatientController extends Controller
      */
     public function showPatientListing()
     {
+        if (auth()->user()->isCareCoach()) {
+            abort(403);
+        }
+
         return view('wpUsers.patient.listing');
     }
 
     public function showPatientListingPdf(PdfService $pdfService)
     {
+        if (auth()->user()->isCareCoach()) {
+            abort(403);
+        }
+
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
         $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';
@@ -300,7 +331,11 @@ class PatientController extends Controller
             abort(403);
         }
 
-        return view('wpUsers.patient.observation.create', ['patient' => $patient]);
+        return view('wpUsers.patient.observation.create', [
+            'patient'                  => $patient,
+            'acceptedObservationTypes' => collect(ObservationConstants::ACCEPTED_OBSERVATION_TYPES)->sortBy('display_name'),
+            'observationCatecories'    => collect(ObservationConstants::CATEGORIES)->sortBy('display_name'),
+        ]);
     }
 
     /**
@@ -328,12 +363,9 @@ class PatientController extends Controller
      */
     public function showPatientSummary(
         Request $request,
-        $patientId,
-        CarePlanViewService $carePlanViewService
+        $patientId
     ) {
-        $messages = \Session::get('messages');
-
-        $wpUser = User::with([
+        $patientUser = User::with([
             'primaryPractice',
             'ccdProblems' => function ($q) {
                 $q->with('cpmProblem.cpmInstructions')
@@ -342,65 +374,19 @@ class PatientController extends Controller
             'observations' => function ($q) {
                 $q->where('obs_unit', '!=', 'invalid')
                     ->where('obs_unit', '!=', 'scheduled')
-                    ->with([
-                        'meta',
-                        'question.careItems',
-                    ])
+                    ->whereNotNull('obs_value')
+                    ->where('obs_value', '!=', '')
                     ->orderBy('obs_date', 'desc')
-                    ->take(100);
+                    ->take(40);
             },
             'patientSummaries',
         ])
             ->where('id', $patientId)
-            ->first();
+            ->firstOrFail();
 
-        if ( ! $wpUser) {
-            return response('User not found', 401);
-        }
+        $detailSection = $request->input('detail', '');
 
-        // program
-        $program = $wpUser->primaryPractice;
-
-        $problems = $wpUser->getProblemsToMonitor();
-
-        $params        = $request->all();
-        $detailSection = '';
-        if (isset($params['detail'])) {
-            $detailSection = $params['detail'];
-        }
-
-        $sections = [
-            [
-                'section'           => 'obs_biometrics',
-                'id'                => 'obs_biometrics_dtable',
-                'title'             => 'Biometrics',
-                'col_name_question' => 'Reading Type',
-                'col_name_severity' => 'Reading',
-            ],
-            [
-                'section'           => 'obs_medications',
-                'id'                => 'obs_medications_dtable',
-                'title'             => 'Medications',
-                'col_name_question' => 'Medication',
-                'col_name_severity' => 'Adherence',
-            ],
-            [
-                'section'           => 'obs_symptoms',
-                'id'                => 'obs_symptoms_dtable',
-                'title'             => 'Symptoms',
-                'col_name_question' => 'Symptom',
-                'col_name_severity' => 'Severity',
-            ],
-            [
-                'section'           => 'obs_lifestyle',
-                'id'                => 'obs_lifestyle_dtable',
-                'title'             => 'Lifestyle',
-                'col_name_question' => 'Question',
-                'col_name_severity' => 'Response',
-            ],
-        ];
-
-        $observations = $wpUser->observations;
+        $observations = $patientUser->observations;
 
         // build array of pcp
         $obs_by_pcp = [
@@ -419,107 +405,90 @@ class PatientController extends Controller
             }
             $observation['parent_item_text'] = '---';
             switch ($observation['obs_key']) {
-                case 'A1c':
-                    $observation['description']     = 'A1c';
-                    $obs_by_pcp['obs_biometrics'][] = $observation;
-                    break;
-                case 'HSP_ER':
-                case 'HSP_HOSP':
+                case ObservationConstants::A1C:
+                    $observation['description']     = ObservationConstants::A1C;
+                    $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Cigarettes':
-                    $observation['description']     = 'Smoking (# per day)';
-                    $obs_by_pcp['obs_biometrics'][] = $observation;
+                case ObservationConstants::CIGARETTE_COUNT:
+                if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                    $observation['description'] = $description;
+                }
+                    $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Blood_Pressure':
                 case 'Blood_Sugar':
-                case 'Weight':
-                    $observation['description']     = $observation['obs_key'];
-                    $obs_by_pcp['obs_biometrics'][] = $observation;
+                case ObservationConstants::BLOOD_PRESSURE:
+                case ObservationConstants::BLOOD_SUGAR:
+                case ObservationConstants::WEIGHT:
+                $observation['description']         = $observation['obs_key'];
+                    $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
-                case 'Adherence':
-                    $question = $observation->question;
-                    // find carePlanItem with qid
-                    if ($question) {
-                        $item = $question->careItems->first();
-                        if ($item) {
-                            $observation['description'] = $item->display_name;
-                        }
+                case ObservationConstants::MEDICATIONS_ADHERENCE_OBSERVATION_TYPE:
+                    if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                        $observation['description'] = $description;
                     }
-                    $obs_by_pcp['obs_medications'][] = $observation;
+                    $obs_by_pcp['obs_medications'][] = $this->prepareForWebix($observation);
                     break;
-                case 'Symptom':
-                case 'Severity':
-                    // get description
-                    $question = $observation->question;
-                    if ($question) {
-                        $observation['items_text']  = $question->description;
-                        $observation['description'] = $question->description;
-                        $observation['obs_key']     = $question->description;
+                case ObservationConstants::SYMPTOMS_OBSERVATION_TYPE:
+                    if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                        $observation['items_text']  = $description;
+                        $observation['description'] = $description;
                     }
-                    $obs_by_pcp['obs_symptoms'][] = $observation;
+                    $obs_by_pcp['obs_symptoms'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Other':
-                case 'Call':
-                    // only y/n responses, skip anything that is a number as its assumed it is response to a list
-                    $question = $observation->question;
-                    // find carePlanItem with qid
-                    if ($question) {
-                        $item = $question->careItems->first();
-                        if ($item) {
-                            $observation['description'] = $item->display_name;
-                        }
-                    }
-                    if (('Call' == $observation['obs_key']) || ( ! is_numeric($observation['obs_value']))) {
-                        $obs_by_pcp['obs_lifestyle'][] = $observation;
-                    }
-                    break;
+                case ObservationConstants::LIFESTYLE_OBSERVATION_TYPE:
+                if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                    $observation['description'] = $description;
+                }
+                $obs_by_pcp['obs_lifestyle'][] = $this->prepareForWebix($observation);
+                break;
                 default:
                     break;
             }
         }
 
-        $observation_json = [];
-        foreach ($obs_by_pcp as $section => $observations) {
-            $o                          = 0;
-            $observation_json[$section] = 'data:[';
-            foreach ($observations as $observation) {
-                // limit to 3 if not detail
-                if (empty($detailSection)) {
-                    if ($o >= 3) {
-                        continue 1;
-                    }
-                }
-                // set default
-                $alertLevel = 'default';
-                if ( ! empty($observation->alert_level)) {
-                    $alertLevel = $observation->alert_level;
-                }
-                // lastly format json
-                $observation_json[$section] .= "{ obs_key:'".$observation->obs_key."', ".
-                                               "description:'".str_replace(
-                                                   '_',
-                                                   ' ',
-                                                   $observation->description
-                                               )."', ".
-                                               "obs_value:'".$observation->obs_value."', ".
-                                               "dm_alert_level:'".$alertLevel."', ".
-                                               "obs_unit:'".$observation->obs_unit."', ".
-                                               "obs_message_id:'".$observation->obs_message_id."', ".
-                                               "comment_date:'".Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A')."', ".'},';
-                ++$o;
-            }
-            $observation_json[$section] .= '],';
-        }
-
         return view('wpUsers.patient.summary', [
-            'program'          => $program,
-            'patient'          => $wpUser,
-            'wpUser'           => $wpUser,
-            'sections'         => $sections,
+            'program'          => $patientUser->primaryPractice,
+            'patient'          => $patientUser,
+            'wpUser'           => $patientUser,
             'detailSection'    => $detailSection,
-            'observation_data' => $observation_json,
-            'messages'         => $messages,
-            'problems'         => $problems,
+            'observation_data' => collect($obs_by_pcp)->transform(function ($obsType) {
+                return json_encode($obsType);
+            }),
+            'problems' => $patientUser->getProblemsToMonitor(),
+            'filter'   => '',
+            'sections' => [
+                [
+                    'section'           => 'obs_biometrics',
+                    'id'                => 'obs_biometrics_dtable',
+                    'title'             => 'Biometrics',
+                    'col_name_question' => 'Reading Type',
+                    'col_name_severity' => 'Reading',
+                ],
+                [
+                    'section'           => 'obs_medications',
+                    'id'                => 'obs_medications_dtable',
+                    'title'             => 'Medications',
+                    'col_name_question' => 'Medication',
+                    'col_name_severity' => 'Adherence',
+                ],
+                [
+                    'section'           => 'obs_symptoms',
+                    'id'                => 'obs_symptoms_dtable',
+                    'title'             => 'Symptoms',
+                    'col_name_question' => 'Symptom',
+                    'col_name_severity' => 'Severity',
+                ],
+                [
+                    'section'           => 'obs_lifestyle',
+                    'id'                => 'obs_lifestyle_dtable',
+                    'title'             => 'Lifestyle',
+                    'col_name_question' => 'Question',
+                    'col_name_severity' => 'Response',
+                ],
+            ],
         ]);
     }
 
@@ -554,8 +523,6 @@ class PatientController extends Controller
     /**
      * Create Cross Browser Testing Patients.
      *
-     * @param Request $request
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function storeCBTTestPatient(Request $request)
@@ -564,65 +531,25 @@ class PatientController extends Controller
             return back();
         }
 
-        $repo = new UserRepository();
-
-        $practice = Practice::whereName('demo')->firstOrFail();
-        $role     = Role::whereName('participant')->firstOrFail();
-        $problems = CpmProblem::get();
-
-        foreach (TestPatients::CBT_TEST_PATIENTS as $patientData) {
-            //in case something goes wrong and users where not deleted, take all
-            $users = User::whereEmail($patientData['email'])->get();
-
-            //If user exists delete and create again
-            if ($users->count() > 0) {
-                foreach ($users as $user) {
-                    $user->forceDelete();
-                }
-            }
-
-            $bag = new ParameterBag([
-                'email'             => $patientData['email'],
-                'password'          => str_random(),
-                'display_name'      => $patientData['first_name'].' '.$patientData['last_name'],
-                'first_name'        => $patientData['first_name'],
-                'last_name'         => $patientData['last_name'],
-                'username'          => $patientData['email'],
-                'program_id'        => $practice->id,
-                'is_auto_generated' => true,
-                'roles'             => [$role->id],
-
-                //patientInfo
-                'gender'                     => $patientData['gender'],
-                'preferred_contact_language' => $patientData['preferred_contact_language'],
-                'ccm_status'                 => $patientData['ccm_status'],
-                'birth_date'                 => $patientData['birth_date'],
-                'consent_date'               => $patientData['consent_date'],
-                'preferred_contact_timezone' => $patientData['preferred_contact_timezone'],
-                'mrn_number'                 => $patientData['mrn_number'],
-            ]);
-
-            $user = $repo->createNewUser(new User(), $bag);
-
-            $userProblems = in_array('all', $patientData['conditions'])
-                ? $problems
-                : $problems->whereIn('name', $patientData['conditions']);
-            $ccdProblems = [];
-            foreach ($userProblems as $problem) {
-                $ccdProblems[] = [
-                    'is_monitored'   => 1,
-                    'name'           => $problem->name,
-                    'cpm_problem_id' => $problem->id,
-                ];
-            }
-            $user->ccdProblems()->createMany($ccdProblems);
-            $user->ccdMedications()->createMany(TestPatients::testMedications($patientData['medications']));
-            $user->careTeamMembers()->create([
-                'member_user_id' => $patientData['billing_provider_id'],
-                'type'           => CarePerson::BILLING_PROVIDER,
-            ]);
-        }
+        (new TestPatients())->create();
 
         return redirect()->back();
+    }
+
+    private function prepareForWebix($observation)
+    {
+        return [
+            'obs_key'     => $observation->obs_key,
+            'description' => str_replace(
+                '_',
+                ' ',
+                $observation->description
+            ),
+            'obs_value'      => $observation->obs_value,
+            'dm_alert_level' => empty($alertLevel = $observation->getAlertLevel()) ? 'default' : $alertLevel,
+            'obs_unit'       => $observation->obs_unit,
+            'obs_message_id' => $observation->obs_message_id,
+            'comment_date'   => Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A'),
+        ];
     }
 }

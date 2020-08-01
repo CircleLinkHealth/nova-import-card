@@ -7,6 +7,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\CareAmbassador;
 use CircleLinkHealth\Customer\Entities\Practice;
 
 /**
@@ -24,6 +25,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @property \Carbon\Carbon|null      $created_at
  * @property \Carbon\Carbon|null      $updated_at
  * @property \App\CareAmbassador|null $enroller
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereDay($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereEnrollerId($value)
@@ -35,18 +37,22 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereTotalTimeInSystem($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property int|null                                                                       $practice_id
- * @property \CircleLinkHealth\Customer\Entities\Practice                                   $practice
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property int|null                                                                                    $practice_id
+ * @property \CircleLinkHealth\Customer\Entities\Practice                                                $practice
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereNoSoftRejected($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog wherePracticeId($value)
+ *
  * @property int|null $revision_history_count
  */
 class CareAmbassadorLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
+    //todo: Decide if stat fields are actually useful, since we are switching to getting stats dynamically (from DB) for KPIs page
     protected $fillable = [
         'enroller_id',
         'day',
@@ -64,9 +70,13 @@ class CareAmbassadorLog extends \CircleLinkHealth\Core\Entities\BaseModel
 //
 //    }
 
-    public static function createOrGetLogs($enroller_id)
+    public static function createOrGetLogs($enroller_id, Carbon $date = null)
     {
-        $date   = Carbon::now()->format('Y-m-d');
+        if ( ! $date) {
+            $date = Carbon::now();
+        }
+        $date = $date->format('Y-m-d');
+
         $report = self
                     ::where('enroller_id', $enroller_id)
                         ->where('day', $date)

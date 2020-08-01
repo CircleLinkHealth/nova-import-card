@@ -8,8 +8,9 @@ namespace App\Services\AthenaAPI;
 
 use App\Entities\CcdaRequest;
 use App\Jobs\ImportCcda;
-use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Str;
 
 class CreateAndPostPdfCareplan
 {
@@ -29,9 +30,9 @@ class CreateAndPostPdfCareplan
         $start = $startDate->format('m/d/Y');
         $end   = $endDate->format('m/d/Y');
 
-        $departments = $this->api->getDepartmentIds($practiceId);
+        $departments = $this->api->getDepartments($practiceId);
 
-        if ( ! array_key_exists('departments', $departments)) {
+        if ( ! is_array($departments) || ! array_key_exists('departments', $departments)) {
             return false;
         }
 
@@ -44,7 +45,7 @@ class CreateAndPostPdfCareplan
     public function getCcdsFromRequestQueue($number = 5)
     {
         $imported = CcdaRequest::whereNull('successful_call')
-            ->chunk($number, function ($ccdaRequests) {
+            ->chunkById($number, function ($ccdaRequests) {
                 foreach ($ccdaRequests as $ccdaRequest) {
                     $xmlCcda = $this->api->getCcd(
                         $ccdaRequest->patient_id,
@@ -108,12 +109,12 @@ class CreateAndPostPdfCareplan
             $patientId    = $bookedAppointment['patientid'];
             $departmentId = $bookedAppointment['departmentid'];
 
-            $patientCustomFields = $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId);
+            $patientCustomFields = $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId) ?? [];
 
             //If 'CCM Enabled' contains a y (meaning yes), then save the patient id
             foreach ($patientCustomFields as $customField) {
                 if ($customField['customfieldid'] == $ccmEnabledFieldId
-                    && str_contains($customField['customfieldvalue'], ['Y', 'y'])
+                    && Str::contains($customField['customfieldvalue'], ['Y', 'y'])
                 ) {
                     $ccdaRequest = $this->ccdaRequests->create([
                         'patient_id'    => $patientId,

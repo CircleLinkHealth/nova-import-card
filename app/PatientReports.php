@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null    $deleted_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\PatientReports onlyTrashed()
  * @method static bool|null restore()
@@ -38,10 +39,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\PatientReports withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\PatientReports withoutTrashed()
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports query()
+ *
  * @property int|null $revision_history_count
  */
 class PatientReports extends BaseModel

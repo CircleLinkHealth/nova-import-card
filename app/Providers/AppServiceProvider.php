@@ -8,20 +8,31 @@ namespace App\Providers;
 
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
+use App\Notifications\Channels\FaxChannel;
+use App\Notifications\NotificationStrategies\SendsNotification;
+use App\Services\AWV\DirectPatientDocument;
+use App\Services\AWV\EmailPatientDocument;
+use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
+use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
+use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use DB;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\SQLiteBuilder;
 use Illuminate\Database\SQLiteConnection;
+use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Laravel\Horizon\Horizon;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Queue;
-use Tests\Commands\CreateAndSeedTestSuiteDB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +41,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Schema::defaultStringLength(255);
+
         /*
          * If the current date is the 31st of the month, Carbon::now()->subMonth() will go back to the 31st of the previous month.
          * If the previous month does not have 31 days, `$startDate = Carbon::now()->subMonth()->startOfMonth();` jumps to the first day of the current month(!?!).
@@ -77,8 +90,8 @@ class AppServiceProvider extends ServiceProvider
                         return preg_replace(
                             '/\?/',
                             is_numeric($binding)
-                                                ? $binding
-                                                : "'".$binding."'",
+                                ? $binding
+                                : "'".$binding."'",
                             $sql,
                             1
                         );
@@ -94,6 +107,18 @@ class AppServiceProvider extends ServiceProvider
                 return $this->getQuery()->toRawSql();
             }
         );
+
+        /** @var ChannelManager $cm */
+        $cm = $this->app->make(ChannelManager::class);
+        $cm->extend('phaxio', function (Application $app) {
+            return $app->make(FaxChannel::class);
+        });
+        $cm->extend('twilio', function (Application $app) {
+            return $app->make(CustomTwilioChannel::class);
+        });
+        $cm->extend('mail', function (Application $app) {
+            return $app->make(CustomMailChannel::class);
+        });
 
         if ($this->app->runningUnitTests() && \Config::get('database.default')) {
             \Illuminate\Database\Connection::resolverFor('sqlite', function ($connection, $database, $prefix, $config) {
@@ -133,21 +158,30 @@ class AppServiceProvider extends ServiceProvider
         // Excel Package Importing Config
         // Format input array keys to be all lower-case and sluggified
         HeadingRowFormatter::extend('custom', function ($value) {
-            return strtolower(str_slug($value));
+            return strtolower(Str::slug($value));
         });
 
         $this->app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);
         $this->app->register(\Yajra\DataTables\DataTablesServiceProvider::class);
 
-        if ($this->app->environment('local')) {
-            $this->app->register(DevelopmentServiceProvider::class);
-        }
-
-        if ($this->app->environment('testing')) {
-            $this->commands([
-                CreateAndSeedTestSuiteDB::class,
-            ]);
-        }
+        $this->app->bind(
+            SendsNotification::class,
+            function ($app, $args) {
+                switch ($args['channel']) {
+                    case 'email':
+                        return new EmailPatientDocument($args['patient'], $args['media'], $args['input']);
+                        break;
+                    case 'direct':
+                        return new DirectPatientDocument($args['patient'], $args['media'], $args['input']);
+                        break;
+                    case 'fax':
+                        return new FaxPatientDocument($args['patient'], $args['media'], $args['input']);
+                        break;
+                    default:
+                        throw new \Exception('Channel Supplied from Patient AWV Care Docs Page is invalid.');
+                }
+            }
+        );
 
         $this->app->bind(
             ReportFormatter::class,
@@ -160,8 +194,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\jeremykenedy\Slack\Laravel\ServiceProvider::class);
         $this->app->register(EmailArrayValidatorServiceProvider::class);
         $this->app->register(\Propaganistas\LaravelPhone\PhoneServiceProvider::class);
-        $this->app->register(\Waavi\UrlShortener\UrlShortenerServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
+
+//        Auth::provider('enrollmentLogin', function ($app, array $config) {
+//            return new AutoEnrollmentLoginProvider($app['hash'], $config['model']);
+//        });
     }
 }

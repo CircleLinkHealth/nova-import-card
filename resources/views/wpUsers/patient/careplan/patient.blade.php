@@ -53,14 +53,14 @@ $user_info = [];
                                                 <input type="text" class="form-control" name="first_name"
                                                        id="first_name"
                                                        placeholder="First Name *"
-                                                       value="{{ (old('first_name') ? old('first_name') : $patient->first_name) }}">
+                                                       value="{{ (old('first_name') ? old('first_name') : $patient->first_name) }}" @if(!empty($patient->first_name ?? null)) disabled @endif>
                                                 <span class="help-block">{{ $errors->first('first_name') }}</span>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('last_name') ? 'has-error' : '' }}">
                                                 <label class="sr-only" for="last_name">Last Name</label>
                                                 <input type="text" class="form-control" name="last_name" id="last_name"
                                                        placeholder="Last Name *"
-                                                       value="{{ (old('last_name') ? old('last_name') : $patient->last_name) }}">
+                                                       value="{{ (old('last_name') ? old('last_name') : $patient->last_name) }}" @if(!empty($patient->last_name ?? null)) disabled @endif>
                                                 <span class="help-block">{{ $errors->first('last_name') }}</span>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('gender') ? 'has-error' : '' }}">
@@ -108,7 +108,7 @@ $user_info = [];
                                                         </div>
                                                         <span class="help-block">{{ $errors->first('preferred_contact_language') }}</span>
                                                     </div>
-                                                    <div class="col-sm-12  col-lg-5{{ $errors->first('mrn_number') ? 'has-error' : '' }}">
+                                                    <div class="col-sm-12  col-lg-5 {{ $errors->first('mrn_number') ? 'has-error' : '' }}">
                                                         <label for="mrn_number">MRN<span
                                                                     class="attention">*</span>:</label>
                                                         <input type="text" class="form-control" name="mrn_number"
@@ -135,11 +135,16 @@ $user_info = [];
                                                     <div class="col-sm-6">
                                                         <div class="form-group {{ $errors->first('home_phone_number') ? 'has-error' : '' }}">
                                                             <label class="sr-only" for="telephone">Phone</label>
-                                                            <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                            <input type="tel" @if (isProductionEnv()) pattern='\d{3}[\-]\d{3}[\-]\d{4}' @endif
                                                                    class="form-control" name="home_phone_number"
                                                                    id="home_phone_number" placeholder="Telephone *"
                                                                    title="Please write a phone number in the format 123-345-7890"
-                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}">
+                                                                   @if (isProductionEnv())
+                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}"
+                                                                   @else
+                                                                   value="{{ old('home_phone_number') ?? $patient->getHomePhoneNumber() }}"
+                                                                   @endif>
+
                                                             <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
                                                         </div>
                                                     </div>
@@ -147,12 +152,16 @@ $user_info = [];
                                                         <div class="form-group {{ $errors->first('mobile_phone_number') ? 'has-error' : '' }}">
                                                             <label class="sr-only"
                                                                    for="mobile_phone_number">Phone</label>
-                                                            <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                            <input type="tel" @if (isProductionEnv()) pattern='\d{3}[\-]\d{3}[\-]\d{4}' @endif
                                                                    class="form-control" name="mobile_phone_number"
                                                                    id="mobile_phone_number"
                                                                    placeholder="Mobile Telephone *"
                                                                    title="Please write a phone number in the format 123-345-7890"
-                                                                   value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}">
+                                                                   @if (isProductionEnv())
+                                                                       value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}"
+                                                                   @else
+                                                                       value="{{ old('mobile_phone_number') ?? $patient->getMobilePhoneNumber() }}"
+                                                                   @endif>
                                                             <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
                                                         </div>
                                                     </div>
@@ -180,7 +189,7 @@ $user_info = [];
                                                 <span class="help-block">{{ $errors->first('city') }}</span>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('state') ? 'has-error' : '' }}">
-                                                {!! Form::select('state', $states, (old('state') ? old('state') : $patient->state ? $patient->state : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                                {!! Form::select('state', $states, (old('state') ? old('state') : ($patient->state ? $patient->state : '')), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                                 <span class="help-block">{{ $errors->first('state') }}</span>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-4 {{ $errors->first('zip') ? 'has-error' : '' }}">
@@ -269,7 +278,7 @@ $user_info = [];
                                                                     class="attention">*</span>:</label>
                                                     </div>
                                                     <div class="col-sm-12">
-                                                        {!! Form::select('timezone', timezones(), (old('timezone') ? old('timezone') : $patient->timezone ? $patient->timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                                        {!! Form::select('timezone', timezones(), (old('timezone') ? old('timezone') : ($patient->timezone ? $patient->timezone : 'America/New_York')), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                                     </div>
                                                 </div>
 
@@ -358,8 +367,49 @@ $user_info = [];
                                                     <div class="row">
                                                         <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
                                                         <div id="perform-status-select"
-                                                             class="col-lg-8">{!! Form::select('ccm_status', [ CircleLinkHealth\Customer\Entities\Patient::PAUSED => 'Paused', CircleLinkHealth\Customer\Entities\Patient::ENROLLED => 'Enrolled', CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN => 'Withdrawn', CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE => 'Unreachable' ], $patient->getCcmStatus(), ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                             class="col-lg-8">
+                                                            <select id="ccm_status" name="ccm_status" class="selectpicker form-control"
+                                                                    style="width: 100%">
+                                                                <option value="{{CircleLinkHealth\Customer\Entities\Patient::ENROLLED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::ENROLLED ? 'selected' : ''}}>
+                                                                    Enrolled
+                                                                </option>
+                                                                @if($patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL)
+                                                                    <option class="withdrawn_1st_call"
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL}}" selected>
+                                                                        Wthdrn 1st Call
+                                                                    </option>
+                                                                @else
+                                                                    <option
+                                                                            class="withdrawn"
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN ? 'selected' : ''}}>
+                                                                        Withdrawn
+                                                                    </option>
+                                                                @endif
+                                                                <option class="paused"
+                                                                        value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED ? 'selected' : ''}}>
+                                                                    Paused
+                                                                </option>
+                                                                <option class="unreachable"
+                                                                        value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE ? 'selected' : ''}}>
+                                                                    Unreachable
+                                                                </option>
+                                                            </select>
+                                                        </div>
                                                     </div>
+                                                    @if(auth()->user()->isAdmin() && $patient->careplan)
+                                                    <div class="row" style="margin-top: 10px;">
+                                                        <div class="col-lg-4">{!! Form::label('careplan_status', 'Careplan Status:') !!}</div>
+                                                        <div class="col-lg-8">
+                                                            {!! Form::select('careplan_status', [
+                                                                    CircleLinkHealth\SharedModels\Entities\CarePlan::DRAFT => 'Draft',
+                                                                    CircleLinkHealth\SharedModels\Entities\CarePlan::QA_APPROVED => 'CLH Approved',
+                                                                    CircleLinkHealth\SharedModels\Entities\CarePlan::RN_APPROVED => 'RN Approved',
+                                                                    CircleLinkHealth\SharedModels\Entities\CarePlan::PROVIDER_APPROVED => 'Provider Approved'],
+                                                                        optional($patient->careplan)->status, ['class' => 'form-control select-picker', 'style' => 'width:100%;'])
+                                                            !!}
+                                                        </div>
+                                                    </div>
+                                                    @endif
                                                     <div id="withdrawn-reason" class="row hidden"
                                                          style="margin-top: 20px">
                                                         <div class="col-lg-12">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>
@@ -382,7 +432,6 @@ $user_info = [];
                                                                    value="{{ $patient->getCcmStatus() == '' ? 'enrolled' : $patient->getCcmStatus() }}"
                                                                    name="ccm_status">
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             @endif
@@ -393,7 +442,8 @@ $user_info = [];
 
                                                         let ccmStatus = document.getElementById("ccm_status");
 
-                                                        if (ccmStatus.value === "withdrawn") {
+                                                        console.log(ccmStatus);
+                                                        if (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call") {
                                                             $('#withdrawn-reason').removeClass('hidden');
                                                             onReasonChange();
                                                         } else {

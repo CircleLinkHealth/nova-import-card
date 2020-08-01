@@ -4,20 +4,19 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Unit\CallsAlgo;
+namespace Tests\Unit\CallSchedulingAlgo;
 
-use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
-use CircleLinkHealth\Customer\Entities\User;
-use Tests\TestCase;
+use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
+use Tests\CustomerTestCase;
 
-class CallSchedulerTest extends TestCase
+class CallSchedulerTest extends CustomerTestCase
 {
     public function test_it_pauses_patient_after_5_unsuccessful_calls()
     {
-        $patientInfo = factory(User::class)->create()->patientInfo()->create(['no_call_attempts_since_last_success' => 4]);
+        $patientInfo = $this->patient()->patientInfo()->create(['no_call_attempts_since_last_success' => 4]);
 
         $patientSummary = $this->app->make(PatientWriteRepository::class)->updateCallLogs($patientInfo, false);
 
@@ -33,7 +32,7 @@ class CallSchedulerTest extends TestCase
 
     public function tests_it_schedules_call_for_next_weekday_for_patient_without_call_windows()
     {
-        $patient = factory(User::class)->create()->patientInfo()->create([]);
+        $patient = $this->patient()->patientInfo()->create([]);
 
         $now           = Carbon::now();
         $dateTimeArray = (new PatientContactWindow())->getEarliestWindowForPatientFromDate($patient, $now);

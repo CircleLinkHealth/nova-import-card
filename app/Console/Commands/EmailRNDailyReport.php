@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Notifications\NurseDailyReport;
+use App\Jobs\SendDailyReportToRN;
 use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -26,9 +26,8 @@ class EmailRNDailyReport extends Command
      *
      * @var string
      */
-    protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.} {date? : Date to generate report for in YYYY-MM-DD.}';
+    protected $signature = 'nurses:emailDailyReport {date? : Date to generate report for in YYYY-MM-DD.} {nurseUserIds? : Comma separated user IDs of nurses to email report to.} ';
 
-    private $report;
     private $service;
 
     /**
@@ -44,8 +43,8 @@ class EmailRNDailyReport extends Command
     /**
      * Execute the console command.
      *
-     * @throws \App\Exceptions\FileNotFoundException
      * @throws \Exception
+     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      *
      * @return mixed
      */
@@ -59,10 +58,22 @@ class EmailRNDailyReport extends Command
             $date = Carbon::parse($date);
         }
 
-        $this->report = $this->service->showDataFromS3($date);
+        $report = $this->service->showDataFromS3($date);
 
-        $counter    = 0;
-        $emailsSent = [];
+        if ($report->isEmpty()) {
+            \Artisan::call(NursesPerformanceDailyReport::class);
+            $report = $this->service->showDataFromS3($date);
+        }
+
+        if ($report->isEmpty()) {
+            $this->error('No data found for '.$date->toDateString());
+
+            return;
+        }
+
+        $counter      = 0;
+        $emailsSent   = [];
+        $dataNotFound = [];
 
         User::ofType('care-center')
             ->when(
@@ -79,94 +90,33 @@ class EmailRNDailyReport extends Command
                 }
             )
             ->chunk(
-                20,
-                function ($nurses) use (&$counter, &$emailsSent, $date) {
-                    foreach ($nurses as $nurse) {
-                        $reportDataForNurse = $this->report->where('nurse_id', $nurse->id)->first();
+                50,
+                function ($nurses) use (&$counter, &$emailsSent, $date, $report, &$dataNotFound) {
+                    foreach ($nurses as $nurseUser) {
+                        $this->warn("Processing $nurseUser->id");
 
-                        //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
-                        if ( ! $reportDataForNurse || ! $this->validateReportData($reportDataForNurse)) {
-                            \Log::error("Invalid/missing report for nurse with id: {$nurse->id} and date {$date->toDateString()}");
+                        $reportDataForNurse = $report->where('nurse_id', $nurseUser->id)->first();
+
+                        if ( ! is_array($reportDataForNurse)) {
+                            array_push($dataNotFound, $nurseUser->id);
                             continue;
                         }
 
-                        $systemTime = $reportDataForNurse['systemTime'];
+                        SendDailyReportToRN::dispatch($nurseUser, $date, $reportDataForNurse);
 
-                        $totalMonthSystemTimeSeconds = $reportDataForNurse['totalMonthSystemTimeSeconds'];
-
-                        if (0 == $systemTime) {
-                            continue;
-                        }
-
-                        if ($nurse->nurseInfo->hourly_rate < 1) {
-                            continue;
-                        }
-
-                        $attendanceRate = 0 != $reportDataForNurse['committedHours']
-                            ? (round(
-                                (float) (($reportDataForNurse['actualHours'] / $reportDataForNurse['committedHours']) * 100),
-                                2
-                            ))
-                            : 'N/A';
-
-                        $callsCompletionRate = 0 != $reportDataForNurse['scheduledCalls']
-                            ? (0 == $reportDataForNurse['committedHours']
-                                ? 'N/A'
-                                : round(
-                                    (float) (($reportDataForNurse['actualCalls'] / $reportDataForNurse['scheduledCalls']) * 100),
-                                    2
-                                ))
-                            : 0;
-
-                        $totalTimeInSystemOnGivenDate = secondsToHMS($systemTime);
-
-                        $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
-
-                        $totalEarningsThisMonth = round(
-                            (float) ($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
-                            2
-                        );
-
-                        $nextUpcomingWindow = $reportDataForNurse['nextUpcomingWindow'];
-
-                        $data = [
-                            'name'                         => $nurse->getFullName(),
-                            'actualHours'                  => $reportDataForNurse['actualHours'],
-                            'committedHours'               => $reportDataForNurse['committedHours'],
-                            'completionRate'               => $reportDataForNurse['completionRate'],
-                            'attendanceRate'               => $attendanceRate,
-                            'callsCompletionRate'          => $callsCompletionRate,
-                            'efficiencyIndex'              => $reportDataForNurse['efficiencyIndex'],
-                            'caseLoadComplete'             => $reportDataForNurse['caseLoadComplete'],
-                            'caseLoadNeededToComplete'     => $reportDataForNurse['caseLoadNeededToComplete'],
-                            'hoursCommittedRestOfMonth'    => $reportDataForNurse['hoursCommittedRestOfMonth'],
-                            'surplusShortfallHours'        => $reportDataForNurse['surplusShortfallHours'],
-                            'projectedHoursLeftInMonth'    => $reportDataForNurse['projectedHoursLeftInMonth'],
-                            'avgHoursWorkedLast10Sessions' => $reportDataForNurse['avgHoursWorkedLast10Sessions'],
-                            'totalEarningsThisMonth'       => $totalEarningsThisMonth,
-                            'totalTimeInSystemOnGivenDate' => $totalTimeInSystemOnGivenDate,
-                            'totalTimeInSystemThisMonth'   => $totalTimeInSystemThisMonth,
-                            'nextUpcomingWindowLabel'      => $reportDataForNurse['nextUpcomingWindowLabel'],
-                            'totalHours'                   => $reportDataForNurse['totalHours'],
-                            'windowStart'                  => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A T')
-                                : null,
-                            'windowEnd' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A T')
-                                : null,
-                        ];
-
-                        $nurse->notify(new NurseDailyReport($data, $date));
+                        $this->warn("Notified $nurseUser->id");
 
                         $emailsSent[] = [
-                            'nurse' => $nurse->getFullName(),
-                            'email' => $nurse->email,
+                            'nurse' => $nurseUser->getFullName(),
+                            'email' => $nurseUser->email,
                         ];
 
                         ++$counter;
                     }
                 }
             );
+
+        $this->info($date->toDateString());
 
         $this->table(
             [
@@ -177,23 +127,12 @@ class EmailRNDailyReport extends Command
         );
 
         $this->info("${counter} email(s) sent.");
-    }
 
-    private function validateReportData($report)
-    {
-        return array_keys_exist([
-            'systemTime',
-            'totalMonthSystemTimeSeconds',
-            'completionRate',
-            'efficiencyIndex',
-            'committedHours',
-            'caseLoadComplete',
-            'caseLoadNeededToComplete',
-            'hoursCommittedRestOfMonth',
-            'surplusShortfallHours',
-            'nextUpcomingWindow',
-            'projectedHoursLeftInMonth',
-            'avgHoursWorkedLast10Sessions',
-        ], $report);
+        if ( ! empty($dataNotFound)) {
+            $imploded = implode(', ', $dataNotFound);
+            $message  = "Missing  report for date {$date->toDateString()} nurses with IDs: $imploded";
+            $this->info($message);
+            \Log::alert($message);
+        }
     }
 }

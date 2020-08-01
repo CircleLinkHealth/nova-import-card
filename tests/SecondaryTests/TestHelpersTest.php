@@ -6,8 +6,8 @@
 
 namespace Tests\Unit;
 
+use App\Traits\SetupTestCustomerTrait;
 use Carbon\Carbon;
-use Tests\Helpers\SetupTestCustomerTrait;
 use Tests\TestCase;
 
 class TestHelpersTest extends TestCase
@@ -20,7 +20,7 @@ class TestHelpersTest extends TestCase
     private $provider;
     private $total;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -42,7 +42,7 @@ class TestHelpersTest extends TestCase
         $this->assertInstanceOf('CircleLinkHealth\Customer\Entities\User', $this->patient);
         $this->assertInstanceOf('CircleLinkHealth\Customer\Entities\User', $this->provider);
 
-        $this->assertInstanceOf('App\CarePlan', $this->patient->carePlan);
+        $this->assertInstanceOf('CircleLinkHealth\SharedModels\Entities\CarePlan', $this->patient->carePlan);
 
         $this->assertEquals($this->patient->program_id, $this->practice->id);
         $this->assertEquals($this->provider->program_id, $this->practice->id);

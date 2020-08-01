@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\Models\CCD\Medication;
+use CircleLinkHealth\SharedModels\Entities\Medication;
 
 class CpmMedicationRepository
 {

@@ -6,8 +6,8 @@
 
 namespace App\Services;
 
-use App\Models\MedicalRecords\Ccda;
 use App\Repositories\CcdaRepository;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CcdaService
 {

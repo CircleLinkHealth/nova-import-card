@@ -11,19 +11,17 @@ use Laravel\Nova\Filters\Filter;
 
 class PracticeFilter extends Filter
 {
-    public $name = 'Practice';
-    
     /**
      * The filter's component.
      *
      * @var string
      */
     public $component = 'select-filter';
+    public $name      = 'Practice';
 
     /**
      * Apply the filter to the given query.
      *
-     * @param \Illuminate\Http\Request              $request
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param mixed                                 $value
      *
@@ -31,18 +29,16 @@ class PracticeFilter extends Filter
      */
     public function apply(Request $request, $query, $value)
     {
-        return $query->where('id', $value);
+        return $query->where('practice_id', $value);
     }
 
     /**
      * Get the filter's available options.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function options(Request $request)
     {
-        return auth()->user()->practices->pluck('id', 'display_name')->all();
+        return auth()->user()->practices->sortBy('display_name')->pluck('id', 'display_name')->all();
     }
 }

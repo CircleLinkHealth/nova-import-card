@@ -13,8 +13,6 @@ class UserObserver
 {
     /**
      * Listen to the User creating event.
-     *
-     * @param User $user
      */
     public function creating(User $user)
     {
@@ -22,8 +20,6 @@ class UserObserver
 
     /**
      * Listen to the User deleting event.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\User $user
      */
     public function deleting(User $user)
     {
@@ -31,44 +27,43 @@ class UserObserver
 
     /**
      * Listen to the User saved event.
-     *
-     * @param User $user
      */
     public function saved(User $user)
     {
-        if ($user->auto_attach_programs) {
-            $practiceIds = $user->saasAccount
-                ->practices
-                ->map(function ($practice) use ($user) {
-                    try {
-                        $role = $user->practiceOrGlobalRole();
-
-                        if ( ! $role) {
-                            return false;
-                        }
-
-                        $user->attachRoleForSite($role->id, $practice->id);
-
-                        return $practice->id;
-                    } catch (\Exception $e) {
-                        //check if this is a mysql exception for unique key constraint
-                        if ($e instanceof QueryException) {
-                            $errorCode = $e->errorInfo[1];
-                            if (1062 == $errorCode) {
-                                return false;
-                            }
-                        }
-
-                        throw $e;
-                    }
-                });
+        if ( ! ($user->isDirty('auto_attach_programs') && $user->auto_attach_programs)) {
+            return;
         }
+
+        $role = $user->practiceOrGlobalRole();
+        if ( ! $role) {
+            return;
+        }
+
+        $user->saasAccount
+            ->practices
+            ->each(function ($practice) use ($user, $role) {
+                try {
+                    if ( ! $user->hasRoleForSite($role->name, $practice->id)) {
+                        $user->attachRoleForSite($role->id, $practice->id);
+                    }
+                } catch (\Exception $e) {
+                    //check if this is a mysql exception for unique key constraint
+                    if ($e instanceof QueryException) {
+                        //@todo:heroku query to see if it exists, then attach
+
+                        $errorCode = $e->errorInfo[1];
+                        if (1062 == $errorCode) {
+                            return;
+                        }
+                    }
+
+                    throw $e;
+                }
+            });
     }
 
     /**
      * Listen to the User saving event.
-     *
-     * @param User $user
      */
     public function saving(User $user)
     {

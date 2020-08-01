@@ -6,14 +6,14 @@
 
 namespace Tests\Unit;
 
+use App\Traits\SetupTestCustomerTrait;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
+use Tests\CustomerTestCase;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\Helpers\SetupTestCustomerTrait;
-use Tests\TestCase;
 
-class CareTeamReceivesAlertsTest extends TestCase
+class CareTeamReceivesAlertsTest extends CustomerTestCase
 {
     use CarePlanHelpers;
     use SetupTestCustomerTrait;
@@ -34,7 +34,7 @@ class CareTeamReceivesAlertsTest extends TestCase
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -43,10 +43,10 @@ class CareTeamReceivesAlertsTest extends TestCase
 
         $this->faker = Factory::create();
 
-        $this->provider = $this->createUser($this->practice->id, 'provider');
+        $this->provider = $this->provider();
 
         auth()->login($this->provider);
-        $this->patient = $this->createUser($this->practice->id, 'participant');
+        $this->patient = $this->patient();
 
         foreach ($this->provider->locations as $location) {
             $location->clinicalEmergencyContact()->sync([]);

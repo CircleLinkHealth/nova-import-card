@@ -19,6 +19,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @property string|null                                                                             $pcp_type
  * @property \App\CPRulesItem[]|\Illuminate\Database\Eloquent\Collection                             $items
  * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection $program
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereCpsetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP wherePcpId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP wherePcpType($value)
@@ -26,10 +27,13 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereSectionText($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereStatus($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP query()
+ *
  * @property int|null $items_count
  * @property int|null $program_count
  * @property int|null $revision_history_count
@@ -64,7 +68,7 @@ class CPRulesPCP extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function items()
     {
-        return $this->hasMany('App\CPRulesItem', 'pcp_id');
+        return $this->hasMany(\App\CPRulesItem::class, 'pcp_id');
     }
 
     public function program()

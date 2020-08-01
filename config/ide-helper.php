@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'write_model_magic_where' => true,
+    'write_model_magic_where' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -71,6 +71,8 @@ return [
     'helper_files' => [
         base_path().'/vendor/laravel/framework/src/Illuminate/Support/helpers.php',
         base_path().'/app/helpers.php',
+        base_path().'/Modules/Core/Helpers/helpers.php',
+        base_path().'/tests/Concerns/TwilioFake/Twilio.php',
     ],
 
     /*
@@ -85,7 +87,6 @@ return [
 
     'model_locations' => [
         'app',
-        'CLHPackages',
         'Modules',
     ],
 
