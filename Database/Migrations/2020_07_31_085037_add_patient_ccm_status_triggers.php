@@ -31,6 +31,7 @@ class AddPatientCcmStatusTriggers extends Migration
         DB::unprepared("
         
         CREATE TRIGGER patient_info_ccm_status_after_insert AFTER INSERT ON `patient_info`
+        DETERMINISTIC
         FOR EACH ROW
         BEGIN
             INSERT INTO patient_ccm_status_revisions(patient_info_id,patient_user_id,action,new_value)
