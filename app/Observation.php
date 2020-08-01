@@ -6,7 +6,7 @@
 
 namespace App;
 
-use App\Services\DatamonitorService;
+use App\Services\Observations\ObservationConstants;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -40,28 +40,29 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\CPRulesQuestions                                                                       $question
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User                                                    $user
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation newModelQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation newQuery()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation query()
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereCommentId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereCreatedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereLegacyObsId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDate($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDateGmt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsKey($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMessageId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMethod($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsUnit($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsValue($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereProgramId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereSequenceId($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereUpdatedAt($value)
- * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereUserId($value)
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereCommentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereLegacyObsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDateGmt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMessageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereProgramId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereSequenceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUserId($value)
  * @mixin \Eloquent
- * @property int|null    $meta_count
- * @property int|null    $revision_history_count
- * @property string|null $severity
+ *
+ * @property int|null $meta_count
+ * @property int|null $revision_history_count
  */
 class Observation extends BaseModel
 {
@@ -80,6 +81,7 @@ class Observation extends BaseModel
         'obs_unit',
         'program_id',
         'legacy_obs_id',
+        'severity',
     ];
     protected $table = 'lv_observations';
 
@@ -88,47 +90,88 @@ class Observation extends BaseModel
         return $this->belongsTo(\App\Comment::class);
     }
 
-    public function getAlertLevelAttribute()
+    public function getAlertLevel()
     {
-        if ($this->obs_value) {
-            $value = preg_split('/\\/|\\_/', $this->obs_value)[0];
+        if ( ! $this->obs_value) {
+            return;
+        }
+        $value = preg_split('/\\/|\\_/', $this->obs_value)[0];
 
-            if ('Blood_Pressure' == $this->obs_key) {
-                if ($value < 80 || $value >= 180) {
-                    return 'danger';
-                }
-                if (($value >= 80 && $value < 100) || ($value >= 130 && $value < 180)) {
-                    return 'warning';
-                }
+        if (ObservationConstants::BLOOD_PRESSURE == $this->obs_key) {
+            $value = (int) $value;
 
-                return 'success';
-            }
-            if ('Blood_Sugar' == $this->obs_key) {
-                if ($value < 60 || $value >= 350) {
-                    return 'danger';
-                }
-                if (($value >= 60 && $value < 80) || ($value >= 140 && $value < 350)) {
-                    return 'warning';
-                }
-
-                return 'success';
-            }
-            if ('Cigarettes' == $this->obs_key) {
-                if ($value < 4) {
-                    return 'success';
-                }
-
+            if ($value < 80 || $value >= 180) {
                 return 'danger';
             }
-            $meta = $this->meta->where('meta_key', '=', 'dm_alert_level')->first();
-            if (isset($meta)) {
-                return $meta->meta_value;
+            if (($value >= 80 && $value < 100) || ($value >= 130 && $value < 180)) {
+                return 'warning';
             }
 
-            return '';
+            return 'success';
+        }
+        if (ObservationConstants::BLOOD_SUGAR == $this->obs_key) {
+            $value = (int) $value;
+
+            if ($value < 60 || $value >= 350) {
+                return 'danger';
+            }
+            if (($value >= 60 && $value < 80) || ($value >= 140 && $value < 350)) {
+                return 'warning';
+            }
+
+            return 'success';
+        }
+        if (ObservationConstants::A1C == $this->obs_key) {
+            $value         = (float) $value;
+            $diabetesLevel = 7.1;
+            $normalLevel   = 5.7;
+
+            if ($value > $diabetesLevel) {
+                return 'danger';
+            }
+
+            if ($value >= $normalLevel && $value <= $diabetesLevel) {
+                return 'warning';
+            }
+
+            return 'success';
+        }
+        if (ObservationConstants::CIGARETTE_COUNT == $this->obs_key) {
+            $value = (int) $value;
+
+            if ($value < 4) {
+                return 'success';
+            }
+
+            return 'danger';
+        }
+        if (in_array($this->obs_key, [ObservationConstants::MEDICATIONS_ADHERENCE_OBSERVATION_TYPE, ObservationConstants::LIFESTYLE_OBSERVATION_TYPE, 'Other'])) {
+            $value = (string) strtoupper($value);
+
+            if ('Y' === $value) {
+                return 'success';
+            }
+
+            if ('N' === $value) {
+                return 'danger';
+            }
+
+            return;
+        }
+        if (in_array($this->obs_key, [ObservationConstants::SYMPTOMS_OBSERVATION_TYPE])) {
+            $value = (int) $value;
+            if ($value <= 3) {
+                return 'success';
+            }
+            if ($value >= 4 && $value <= 6) {
+                return 'warning';
+            }
+            if ($value > 6) {
+                return 'danger';
+            }
         }
 
-        return $name ?? null;
+        return $this->severity;
     }
 
     public function getAlertLogAttribute()
@@ -252,62 +295,6 @@ class Observation extends BaseModel
     public function question()
     {
         return $this->belongsTo(CPRulesQuestions::class, 'obs_message_id', 'msg_id');
-    }
-
-    public function save(array $params = [])
-    {
-        if (empty($this->user_id)) {
-            return false;
-        }
-        $wpUser = User::find($this->user_id);
-        if ( ! $wpUser->program_id) {
-            return false;
-        }
-        $comment = Comment::find($this->comment_id);
-        if ($comment) {
-            $params['comment_id'] = $comment->legacy_comment_id;
-        } else {
-            $this->comment_id     = '0';
-            $params['comment_id'] = '0';
-        }
-        $params['user_id']        = $this->user_id;
-        $params['obs_date']       = $this->obs_date;
-        $params['obs_date_gmt']   = $this->obs_date_gmt;
-        $params['sequence_id']    = $this->sequence_id;
-        $params['obs_message_id'] = $this->obs_message_id;
-        $params['obs_method']     = $this->obs_method;
-        $params['obs_key']        = $this->obs_key;
-        $params['obs_value']      = $this->obs_value;
-        $params['obs_unit']       = $this->obs_unit;
-        $this->program_id         = $wpUser->program_id;
-
-        // updating or inserting?
-        $updating = false;
-        if ($this->id) {
-            $updating = true;
-        }
-
-        // take programId(primaryProgramId) and add to wp_X_observations table
-        /*
-        if($updating) {
-            DB::table('ma_'.$wpUser->primaryProgramId().'_observations')->where('obs_id', $this->legacy_obs_id)->update($params);
-        } else {
-            // add to legacy if doesnt already exist
-            if(empty($this->legacy_obs_id)) {
-                $resultObsId = DB::table('ma_' . $wpUser->primaryProgramId() . '_observations')->insertGetId($params);
-                $this->legacy_obs_id = $resultObsId;
-            }
-        }
-        */
-
-        parent::save();
-
-        // run datamonitor if new obs
-        if ( ! $updating) {
-            $dmService = app(DatamonitorService::class);
-            $dmService->process_obs_alerts($this->id);
-        }
-        // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
     }
 
     public function user()

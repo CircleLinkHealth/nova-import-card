@@ -467,7 +467,7 @@ if ( ! function_exists('iterateCsv')) {
                     $results[] = $cb;
                 }
 
-                if (array_key_exists('error', $cb)) {
+                if (array_key_exists('error', (array) $cb)) {
                     $errors[] = $cb['error'];
                 }
             }
@@ -862,7 +862,9 @@ if ( ! function_exists('defaultCarePlanTemplate')) {
      */
     function getDefaultCarePlanTemplate(): ?CarePlanTemplate
     {
-        return CarePlanTemplate::findOrFail(AppConfig::pull('default_care_plan_template_id'));
+        return \Illuminate\Support\Facades\Cache::remember('default_care_plan_template_object', 2, function () {
+            return CarePlanTemplate::findOrFail(AppConfig::pull('default_care_plan_template_id'));
+        });
     }
 }
 if ( ! function_exists('authUserCanSendPatientEmail')) {
@@ -1776,6 +1778,23 @@ if ( ! function_exists('isPatientCcmPlusBadgeEnabled')) {
         $val = AppConfig::pull($key, null);
         if (null === $val) {
             return AppConfig::set($key, false);
+        }
+
+        return $val;
+    }
+}
+
+if ( ! function_exists('isPatientPcmBadgeEnabled')) {
+    /**
+     * Key: enable_patient_pcm_badge
+     * Default: true.
+     */
+    function isPatientPcmBadgeEnabled(): bool
+    {
+        $key = 'enable_patient_pcm_badge';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            return AppConfig::set($key, true);
         }
 
         return $val;

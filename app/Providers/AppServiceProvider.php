@@ -164,10 +164,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);
         $this->app->register(\Yajra\DataTables\DataTablesServiceProvider::class);
 
-        if ($this->app->environment('local')) {
-            $this->app->register(DevelopmentServiceProvider::class);
-        }
-
         $this->app->bind(
             SendsNotification::class,
             function ($app, $args) {

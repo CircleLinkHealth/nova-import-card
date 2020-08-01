@@ -27,7 +27,7 @@ $healthNote     = $data['healthGoalNote'];
     });
 
     $problemsWithInstructions = $ccdProblems->filter(function ($ccd) {
-        return $ccd['instruction']['name'];
+        return optional($ccd['instruction'])['name'];
     });
 
     $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
@@ -212,14 +212,14 @@ $medications = $medications
                     <li class="top-10">
                         @if ($medication['name'])
                             <h4>{{$medication['name']}}
-                                @if ($medication['group']['name'])
+                                @if (optional($medication['group'])['name'])
                                     <label class="label label-secondary">{{$medication['group']['name']}}</label>
                                 @endif
                             </h4>
                         @endif
                         @if (!$medication['name'])
                             <h4>- {{$medication['sig']}}
-                                @if ($medication['group']['name'])
+                                @if (optional($medication['group'])['name'])
                                     <label class="label label-primary">{{$medication['group']['name']}}</label>
                                 @endif
                             </h4>

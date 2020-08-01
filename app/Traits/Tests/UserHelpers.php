@@ -125,7 +125,7 @@ trait UserHelpers
                     'user_id' => $user->id,
                 ],
                 [
-                    'care_plan_template_id' => \CircleLinkHealth\Core\Entities\AppConfig::pull('default_care_plan_template_id'),
+                    'care_plan_template_id' => getDefaultCarePlanTemplate()->id,
                     'status'                => 'draft',
                 ]
             );

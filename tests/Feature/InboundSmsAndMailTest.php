@@ -68,7 +68,7 @@ class InboundSmsAndMailTest extends CustomerTestCase
             ->first();
         self::assertNotNull($call);
         self::assertEquals(1, $call->asap);
-        self::assertEquals('test', $call->attempt_note);
+        self::assertStringContainsString('test', $call->attempt_note);
 
         Notification::assertSentTo($patient, PatientUnsuccessfulCallReplyNotification::class);
     }
@@ -87,7 +87,7 @@ class InboundSmsAndMailTest extends CustomerTestCase
             ->first();
         self::assertNotNull($call);
         self::assertEquals(1, $call->asap);
-        self::assertEquals('test', $call->attempt_note);
+        self::assertStringContainsString('test', $call->attempt_note);
 
         Notification::assertSentTo($patient, PatientUnsuccessfulCallReplyNotification::class);
     }
@@ -110,7 +110,7 @@ class InboundSmsAndMailTest extends CustomerTestCase
             ->first();
         self::assertNotNull($call);
         self::assertEquals(1, $call->asap);
-        self::assertEquals("test\ntest2", $call->attempt_note);
+        self::assertStringContainsString("test\ntest2", $call->attempt_note);
 
         Notification::assertSentTo($patient, PatientUnsuccessfulCallReplyNotification::class);
     }
