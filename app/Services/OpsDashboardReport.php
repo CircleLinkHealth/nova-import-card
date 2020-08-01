@@ -390,6 +390,7 @@ class OpsDashboardReport
     private function setPriorDayReportData()
     {
         $priorDayReport = $this->monthReportData
+            //todo: implement ->whereDay() or ->whereSameDate OR ->whereDate() collection macro that checks day match on carbon attribute
             ->where('date', $this->date->copy()->subDay()->startOfDay())
             ->first();
 
