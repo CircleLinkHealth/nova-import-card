@@ -84,11 +84,12 @@ class OpsDashboardTest extends \Tests\TestCase
         }
 
         //generate report for 1 day
-        $yesterday = Carbon::now()->setTimeFromTimeString('23:30')->subDay();
-        $this->runJobToGenerateDBDataForPractice($practice->id, $yesterday);
+        $twoDaysAgo = Carbon::now()->setTimeFromTimeString('23:30')->subDay(2);
+        Carbon::setTestNow($twoDaysAgo);
+        $this->runJobToGenerateDBDataForPractice($practice->id, $twoDaysAgo);
 
         $dbReport1 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
-            ->where('date', $yesterday->toDateString())
+            ->where('date', $twoDaysAgo->toDateString())
             ->first();
         //assert true numbers
 
@@ -133,12 +134,14 @@ class OpsDashboardTest extends \Tests\TestCase
         $this->setupPatient($practice);
 
         //generate report for next day
-        $today = Carbon::now()->setTimeFromTimeString('23:30');
-        $this->runJobToGenerateDBDataForPractice($practice->id, $today);
+        Carbon::setTestNow();
+        $yesterday = Carbon::now()->subDay(1)->setTimeFromTimeString('23:30');
+        Carbon::setTestNow($yesterday);
+        $this->runJobToGenerateDBDataForPractice($practice->id, $yesterday);
 
         //assert deltas are correct
         $dbReport2 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
-            ->where('date', $today->toDateString())
+            ->where('date', $yesterday->toDateString())
             ->first();
         //assert true numbers
 
@@ -162,6 +165,49 @@ class OpsDashboardTest extends \Tests\TestCase
         $this->assertTrue(-3 === $dbReport2Data['Delta']);
         $this->assertTrue($dbReport2Data['Prior Day totals'] === $dbReport1Data['Total']);
         $this->assertTrue($dbReport1Data['Total'] + $dbReport2Data['Delta'] === $dbReport2Data['Total']);
+
+        //change patient statuses yet again, make sure to add patients that were previously enrolled to assert 'Unique Added' count.
+        $patient0                          = $patients[0];
+        $patient0->patientInfo->ccm_status = Patient::ENROLLED;
+        $patient0->save();
+
+        //add new patient
+        $this->setupPatient($practice);
+
+        //generate report for next day
+        Carbon::setTestNow();
+        $today = Carbon::now()->setTimeFromTimeString('23:30');
+
+        $this->runJobToGenerateDBDataForPractice($practice->id, $today);
+
+        //assert deltas are correct
+        $dbReport3 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
+            ->where('date', $today->toDateString())
+            ->first();
+        //assert true numbers
+
+        $this->assertNotNull($dbReport3);
+
+        $dbReport3Data = $dbReport3->data;
+        $this->assertTrue( ! empty($dbReport3Data));
+        $this->assertTrue(array_keys_exist([
+            'total_paused_count',
+            'total_unreachable_count',
+            'total_withdrawn_count',
+            'prior_day_report_updated_at',
+            'report_updated_at',
+            'enrolled_patient_ids',
+        ], $dbReport3Data));
+
+        $this->assertTrue(2 === $dbReport3Data['Added']);
+
+        //if current date is start of month, all added patients will be considered unique added
+        $expectedUniqueAdded = $today->toDateString() === $today->copy()->startOfMonth()->toDateString() ? 2 : 1;
+        $this->assertTrue($expectedUniqueAdded === $dbReport3Data['Unique Added']);
+
+        $this->assertTrue(2 === $dbReport3Data['Delta']);
+        $this->assertTrue($dbReport3Data['Prior Day totals'] === $dbReport2Data['Total']);
+        $this->assertTrue($dbReport2Data['Total'] + $dbReport3Data['Delta'] === $dbReport3Data['Total']);
     }
 
     public function test_patient_ccm_status_revisions_are_stored()
