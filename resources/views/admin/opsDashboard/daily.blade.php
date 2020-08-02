@@ -115,7 +115,15 @@
         </div>
     </div>
     <div class="container">
-        @empty(! empty($rows))
+        @empty($rows)
+            <div class="well well-sm">
+                <div class="alert alert-danger" role="alert">
+                    <article>No report found for {{$date->toDateString()}}. Please select another date, or generate CSV
+                        report for today.
+                    </article>
+                </div>
+            </div>
+        @else
             <div class="panel panel-default">
                 {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
                 <div class="panel-body">
@@ -238,14 +246,6 @@
                         <div class="col-md-4">
                         </div>
                     </div>
-                </div>
-            </div>
-        @else
-            <div class="well well-sm">
-                <div class="alert alert-danger" role="alert">
-                    <article>No report found for {{$date->toDateString()}}. Please select another date, or generate CSV
-                        report for today.
-                    </article>
                 </div>
             </div>
         @endif
