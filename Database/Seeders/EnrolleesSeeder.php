@@ -26,7 +26,7 @@ class EnrolleesSeeder extends Seeder
             ->where('is_demo', true)
             ->first();
 
-        if (app()->environment(['testing', 'review']) && ! $practice) {
+        if (app()->environment(['testing', 'review', 'local']) && ! $practice) {
             $practice = factory(Practice::class)->create();
         }
 
