@@ -7,6 +7,8 @@ SECONDS=0
 
 docker-compose --env-file=.env up --build --remove-orphans -d
 
+docker-compose exec app php artisan mysql:createdb cpm_tests
+
 docker-compose exec app npm run build-dev
 
 docker-compose exec app php artisan db:seed --class=TestSuiteSeeder
