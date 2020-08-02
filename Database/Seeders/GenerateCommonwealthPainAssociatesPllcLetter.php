@@ -152,7 +152,7 @@ class GenerateCommonwealthPainAssociatesPllcLetter extends Seeder
     {
         $commonwealthName     = 'commonwealth-pain-associates-pllc';
         $commonwealthPractice = Practice::where('name', '=', $commonwealthName)->first();
-        if (App::environment(['testing', 'review'])) {
+        if (App::environment(['testing', 'review', 'local'])) {
             $commonwealthPractice = Practice::firstOrCreate(
                 [
                     'name' => $commonwealthName,
