@@ -1,4 +1,4 @@
-FROM php:7.2-fpm
+FROM php:7.4-fpm
 
 # Set working directory
 WORKDIR /var/www
@@ -17,11 +17,13 @@ RUN apt-get update && apt-get install -y \
         zlib1g-dev  \
         libsqlite3-dev \
         vim \
+        libzip-dev \
+        zip \
     && docker-php-ext-install -j$(nproc) iconv \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd zip pcntl exif bcmath pdo_mysql \
-    && pecl install redis-4.0.1 \
-    && pecl install xdebug-2.6.0 \
+    && pecl install redis \
+    && pecl install xdebug \
     && docker-php-ext-enable redis xdebug
 
 RUN apt-get update && \

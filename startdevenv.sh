@@ -5,7 +5,7 @@ set -e
 # Reset BASH time counter
 SECONDS=0
 
-docker-compose up --build --remove-orphans -d
+docker-compose --env-file=.env up --build --remove-orphans -d
 
 docker-compose exec app npm run build-dev
 

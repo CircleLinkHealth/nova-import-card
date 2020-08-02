@@ -4,27 +4,25 @@ services:
 
   # laravel app
   app:
-    image: cpm-web
+    build:
+      context: docker/php
+      dockerfile: dev.Dockerfile
     depends_on:
       - mysql
       - redis
+      - web
     networks:
       - app-network
+    restart: unless-stopped
     env_file:
       - .env
     environment:
-      - PORT=8080
       - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - DB_USERNAME=root
       - DB_HOST=mysql
-      - DB_PORT=30061
-      - DB_DATABASE=cpm_tests
-      - DB_PASSWORD=secret
-    ports:
-      - "8080:8080"
-      - "443:443"
-    restart: unless-stopped
+    volumes:
+      - .:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    working_dir: /var/www
 
   # mysql db
   mysql:
@@ -38,7 +36,7 @@ services:
     networks:
       - app-network
     ports:
-      - "30061:3306"
+      - "3306:3306"
     restart: unless-stopped
     volumes:
       - dbdata:/var/lib/mysql
@@ -47,13 +45,23 @@ services:
   redis:
     image: redis
     ports:
-      - "63781:6379"
+      - "6379:6379"
     command: redis-server --appendonly yes
-    volumes:
-      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
-      - redisData:/data
     networks:
       - app-network
+
+  # nginx webserver
+  web:
+    image: nginx:1.17.5
+    networks:
+      - app-network
+    ports:
+      - "8085:80"
+      - "443:443"
+    restart: unless-stopped
+    volumes:
+      - ./docker/web/conf.d/app.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www
 
 #Docker Networks
 networks:
@@ -63,6 +71,4 @@ networks:
 #Volumes
 volumes:
   dbdata:
-    driver: local
-  redisData:
     driver: local
