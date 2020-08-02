@@ -6,21 +6,25 @@ services:
   app:
     image: cpm-web
     depends_on:
-    - mysql
-    - redis
+      - mysql
+      - redis
     networks:
-    - app-network
+      - app-network
+    env_file:
+      - .env
     environment:
       - PORT=8080
-      - CACHE_DRIVER=array
-      - SESSION_DRIVER=array
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DB_USERNAME=root
+      - DB_HOST=mysql
+      - DB_PORT=30061
+      - DB_DATABASE=cpm_tests
+      - DB_PASSWORD=secret
     ports:
       - "8080:8080"
       - "443:443"
     restart: unless-stopped
-    volumes:
-    - .:/var/www
-    - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
 
   # mysql db
   mysql:
@@ -32,21 +36,24 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
-    - app-network
+      - app-network
     ports:
-    - "33066:3306"
+      - "30061:3306"
     restart: unless-stopped
     volumes:
-    - dbdata:/var/lib/mysql
-    - ./docker/mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
+      - dbdata:/var/lib/mysql
+      - ./docker/mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
 
   redis:
     image: redis
     ports:
-      - "6379:6379"
+      - "63781:6379"
     command: redis-server --appendonly yes
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - redisData:/data
     networks:
-    - app-network
+      - app-network
 
 #Docker Networks
 networks:
@@ -56,4 +63,6 @@ networks:
 #Volumes
 volumes:
   dbdata:
+    driver: local
+  redisData:
     driver: local
