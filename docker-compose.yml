@@ -19,6 +19,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - DB_HOST=mysql
+      - COMPOSER_MEMORY_LIMIT=-1
     volumes:
       - .:/var/www
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
