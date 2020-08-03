@@ -21,10 +21,9 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Allergy newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Allergy newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Allergy query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Allergy newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Allergy newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Allergy query()
  * @mixin \Eloquent
  */
 class Allergy extends BaseModel

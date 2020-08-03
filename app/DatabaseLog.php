@@ -23,10 +23,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property array|null                      $extra
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseLog newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseLog newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseLog query()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\DatabaseLog newModelQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\DatabaseLog newQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\DatabaseLog query()
  * @mixin \Eloquent
  */
 class DatabaseLog extends Model
