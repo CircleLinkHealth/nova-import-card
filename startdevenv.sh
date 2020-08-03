@@ -31,4 +31,4 @@ ELAPSED="Elapsed: $((($SECONDS / 60) % 60))min $(($SECONDS % 60))sec"
 
 echo "Time elapsed: $ELAPSED seconds."
 
-echo "Done! You may head to: http://localhost:8080"
+echo "Done! You may head to: http://cpm.test"

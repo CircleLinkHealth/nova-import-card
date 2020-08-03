@@ -25,10 +25,9 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Medication newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Medication newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Medication query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Medication newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Medication newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Models\PracticePull\Medication query()
  * @mixin \Eloquent
  */
 class Medication extends BaseModel
