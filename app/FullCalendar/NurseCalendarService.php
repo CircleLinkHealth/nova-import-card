@@ -513,18 +513,18 @@ class NurseCalendarService
         return collect($reportsForCalendarView);
     }
 
-    public function prepareHolidaysData($holidays, $nurse, $startDate, $endDate)
+    public function prepareHolidaysData(\Illuminate\Support\Collection $holidays, $nurse, string $startDate, string $endDate)
     {
         return collect($holidays)
             ->where('date', '>=', $startDate)
             ->where('date', '<=', $endDate)
-            ->map(function ($holiday) use ($nurse) {
+            ->transform(function ($holiday) use ($nurse) {
                 $holidayDate = Carbon::parse($holiday['date'])->toDateString();
                 $holidayDateInDayOfWeek = Carbon::parse($holidayDate)->dayOfWeek;
                 $holidayInHumanLang = clhDayOfWeekToDayName($holidayDateInDayOfWeek);
                 $eventType = 'holiday';
 
-                if (array_key_exists('eventType', $holiday) && self::COMPANY_HOLIDAY === $holiday['eventType']) {
+                if (isset($holiday['eventType']) && self::COMPANY_HOLIDAY === $holiday['eventType']) {
                     $eventType = self::COMPANY_HOLIDAY;
                 }
 
