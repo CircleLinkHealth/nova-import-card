@@ -20,19 +20,16 @@ use Michalisantoniou6\Cerberus\CerberusRole;
  * @property \Carbon\Carbon                                                                            $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Permission[]|\Illuminate\Database\Eloquent\Collection $perms
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection       $users
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDisplayName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereUpdatedAt($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereCreatedAt($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereDescription($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereDisplayName($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereId($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereName($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereUpdatedAt($value)
  * @mixin \Eloquent
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role query()
- *
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newModelQuery()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newQuery()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role query()
  * @property int|null $perms_count
  * @property int|null $users_count
  */

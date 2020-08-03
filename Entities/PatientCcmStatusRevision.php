@@ -11,6 +11,21 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Entries for the db table are created from SQL triggers existing on the patient_info table.
+ *
+ * @property int                                              $id
+ * @property int|null                                         $patient_info_id
+ * @property int|null                                         $patient_user_id
+ * @property string|null                                      $action
+ * @property string|null                                      $old_value
+ * @property string|null                                      $new_value
+ * @property \Illuminate\Support\Carbon                       $created_at
+ * @property \CircleLinkHealth\Customer\Entities\Patient|null $patient
+ * @property \CircleLinkHealth\Customer\Entities\User|null    $patientUser
+ * @method   static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision newModelQuery()
+ * @method   static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision newQuery()
+ * @method   static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision ofDate(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate = null)
+ * @method   static                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision query()
+ * @mixin \Eloquent
  */
 class PatientCcmStatusRevision extends Model
 {
