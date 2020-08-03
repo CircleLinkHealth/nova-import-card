@@ -523,7 +523,7 @@ class WorkScheduleController extends Controller
     {
         $workScheduleData = $request->all();
         $nurseInfoId      = $workScheduleData['nurse_info_id'];
-        if ( ! array_key_exists('day_of_week', $workScheduleData)) {
+        if ( ! isset($workScheduleData['day_of_week'])) {
             $inputDate                       = $workScheduleData['date'];
             $workScheduleData['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
         }
@@ -602,7 +602,7 @@ class WorkScheduleController extends Controller
         if ($workEventExistsOnSameDate) {
             $validator->getMessageBag()->add(
                 'error',
-                'This day already has a scheduled event. 
+                'This day already has a scheduled event.
                 If you wish to change your schedule, please remove the existing event first.'
             );
 
