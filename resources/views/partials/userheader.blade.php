@@ -70,6 +70,17 @@
                     </h4>
                 @endif
 
+                @if ($patient->shouldShowPcmBadge())
+                    <h4 style="display: inline">
+                        <span class="label label-success with-tooltip"
+                              data-placement="top"
+                              title="This patient is eligible for PCM reimbursement, therefore minimum time is 30 minutes (instead of 20)."
+                              style="vertical-align: top; margin-right: 3px">
+                            PCM
+                        </span>
+                    </h4>
+                @endif
+
                 {{-- red flag.indication patient is BHI eligible--}}
                 @if(isset($patient) && auth()->check()
                 && !isset($isPdf)

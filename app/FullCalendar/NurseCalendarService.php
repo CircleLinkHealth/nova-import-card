@@ -25,6 +25,7 @@ class NurseCalendarService
 
     const END                = 'end';
     const FIRST_LOGIN_OF_DAY = 1;
+    const NURSE_HOLIDAY      = 'nurseHoliday';
     const SATURDAY           = 6;
     const START              = 'start';
     const SUNDAY             = 0;
@@ -522,7 +523,7 @@ class NurseCalendarService
                 $holidayDateInDayOfWeek = Carbon::parse($holidayDate)->dayOfWeek;
                 $holidayInHumanLang = clhDayOfWeekToDayName($holidayDateInDayOfWeek);
                 $eventType = 'holiday';
-//                If it does not have an id, it is a company holiday
+
                 if (array_key_exists('eventType', $holiday) && self::COMPANY_HOLIDAY === $holiday['eventType']) {
                     $eventType = self::COMPANY_HOLIDAY;
                 }

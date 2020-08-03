@@ -6,17 +6,6 @@
             <loader v-if="loading" width="30"></loader>
 
             <div style="display: inline-flex;">
-                <div class="dropdown" style="padding-right: 10px; padding-bottom: 10px;">
-                    <vue-select name="practices"
-                                id="practices"
-                                placeholder="Select Practices"
-                                multiple
-                                v-model="practicesSelected"
-                                :options="practices"
-                                @input="limiter">
-                    </vue-select>
-                </div>
-
                 <div class="dropdown" style="padding-right: 10px;">
                     <vue-select name="months"
                                 id="months"
@@ -26,17 +15,16 @@
                     </vue-select>
                 </div>
 
-                <div class="dropdown">
+                <div class="dropdown" style="min-width: 200px;">
                     <vue-select name="downloadFormat"
                                 id="downloadFormat"
                                 placeholder="Download Format"
-                                multiple
-                                v-model="formatsSelected"
+                                v-model="formatSelected"
                                 :options="downloadFormats">
                     </vue-select>
                 </div>
             </div>
-            <div class="button" style="text-align: center;">
+            <div class="button" style="text-align: center; padding: 10px;">
                 <a class="btn btn-default btn-primary ml-auto mt-auto"
                    style="cursor: pointer; background-color: #4baf50" @click="downloadInvoices()">Download Invoices</a>
             </div>
@@ -73,13 +61,11 @@ export default {
 
     data() {
         return {
-            practicesSelected:[],
-            practices:[],
             loading:false,
             errors:null,
             months:[],
             monthSelected:[],
-            formatsSelected:[],
+            formatSelected:[],
             downloadFormats:[
                 {
                     label:'CSV',
@@ -102,24 +88,10 @@ export default {
             }
         },
 
-        setPracticesForDropdown(){
-            this.loading = true;
-            Nova.request().get('/nova-vendor/invoices-download/dropdown-practices').then(response => {
-                this.practices = response.data
-                this.$toasted.success(response.data.message);
-                this.loading = false;
-            }).catch(error => {
-                console.log(error);
-                this.$toasted.error(error.response.data);
-                this.loading = false;
-            });
-        },
-
         downloadInvoices(){
             this.loading = true;
             Nova.request().post('/nova-vendor/invoices-download/download', {
-                practices:this.practicesSelected,
-                downloadFormats:this.formatsSelected,
+                downloadFormat:this.formatSelected,
                 date:this.monthSelected
             }).then(response => {
                 this.$toasted.success(response.data.message);
@@ -149,16 +121,11 @@ export default {
     },
 
     mounted() {
-        this.setPracticesForDropdown();
         this.setMonthsForDropdown();
     },
 }
 </script>
 <style>
-    #practices > div{
-        min-width: 180px;
-    }
-
     #months > div{
         min-width: 180px;
     }

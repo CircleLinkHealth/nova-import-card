@@ -32,7 +32,7 @@ class TwilioClientServiceProvider extends ServiceProvider implements DeferrableP
      */
     public function register()
     {
-        $this->app->bind(TwilioClientable::class, function () {
+        $this->app->singleton(TwilioClientable::class, function () {
             return new TwilioClientService();
         });
 

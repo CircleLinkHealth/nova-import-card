@@ -116,7 +116,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(RemoveDuplicateScheduledCalls::class)
             ->everyTenMinutes()
-            ->between('8:00', '19:00');
+            ->between(6, 23);
 
         $schedule->command(RescheduleMissedCalls::class)
             ->everyFifteenMinutes()
@@ -272,7 +272,7 @@ class Kernel extends ConsoleKernel
             ->twiceDaily(12, 16);
 
         $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
-            ->twiceDaily(7, 21);
+            ->twiceDaily(6, 21);
 
         $schedule->command(QueueGenerateOpsDailyReport::class)
             ->dailyAt('23:30')

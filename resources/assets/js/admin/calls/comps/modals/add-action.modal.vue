@@ -649,7 +649,7 @@
                         const data = action.data;
                         const patient = action.patients.find(patient => patient.id === data.patientId);
                         const assignedNurse = action.nurses.find(nurse => nurse.id === data.nurseId);
-                        patients.push(Object.assign({}, patient, {nurseSpanishSpeaking: assignedNurse.spanish}));
+                        patients.push(Object.assign({}, patient, {nurseSpanishSpeaking: (assignedNurse ? assignedNurse : {}).spanish}));
                         patientIds.push(data.patientId);
                         return {
                             type: data.type,

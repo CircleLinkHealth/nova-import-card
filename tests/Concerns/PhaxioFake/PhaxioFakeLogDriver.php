@@ -60,7 +60,7 @@ class PhaxioFakeLogDriver implements Efax
         }
 
         if ( ! array_key_exists('file', $options)) {
-            $options['file'] = $notification->filePath;
+            $options['file'] = $notification->filePath ?? $notification->pathToPdf ?? null;
         }
 
         $this->logger->info('Fax sent');

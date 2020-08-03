@@ -57,7 +57,13 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
         /** @var User $user */
         $user = User::whereHas('phoneNumbers', function ($q) use ($fromNumber, $fromNumberFormatted) {
             $q->whereIn('number', [$fromNumber, $fromNumberFormatted]);
-        })->first();
+        })
+            ->with([
+                'primaryPractice' => function ($q) {
+                    $q->select(['id', 'display_name']);
+                },
+            ])
+            ->first();
 
         if ( ! $user) {
             sendSlackMessage('#carecoach_ops_alerts', "Could not find patient from inbound sms. See database record id[$recordId]");
@@ -96,7 +102,7 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
             ->first();
 
         // 4. reply to patient
-        $user->notify(new PatientUnsuccessfulCallReplyNotification($careCoach->first_name, ['twilio']));
+        $user->notify(new PatientUnsuccessfulCallReplyNotification($careCoach->first_name, $user->primaryPractice->display_name, ['twilio']));
     }
 
     private function storeRawLogs(): ?int

@@ -9,8 +9,10 @@ namespace App\Http\Controllers;
 use App\Call;
 use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Note;
+use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Services\NoteService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use Illuminate\Http\Request;
@@ -38,7 +40,14 @@ class CallsDashboardController extends Controller
     public function createCall(Request $request, NoteService $service)
     {
         /** @var Note $note */
-        $note = Note::with(['patient', 'author', 'call'])
+        $note = Note::with([
+            'patient' => function ($q) {
+                $q->without(['roles', 'perms'])
+                    ->with(['patientInfo']);
+            },
+            'author',
+            'call',
+        ])
             ->where('id', $request['noteId'])
             ->first();
         $call = $note->call;
@@ -46,9 +55,8 @@ class CallsDashboardController extends Controller
             return view('admin.CallsDashboard.edit', compact(['note', 'call']));
         }
 
-        $status = $request['status'];
-        /** @var User $patient */
-        $patient = User::find($note->patient_id);
+        $status  = $request['status'];
+        $patient = $note->patient;
         /** @var User $nurse */
         $nurse = User::with([
             'nurseInfo' => function ($q) {
@@ -58,7 +66,7 @@ class CallsDashboardController extends Controller
             ->find($request['nurseId']);
         $phone_direction = $request['direction'];
 
-        $service->storeCallForNote(
+        $call = $service->storeCallForNote(
             $note,
             $status,
             $patient,
@@ -73,8 +81,14 @@ class CallsDashboardController extends Controller
         }
 
         $this->reCalculatePms($patient->id, $note->created_at->toDateString());
+        $this->updatePatientInfo($patient->patientInfo, Call::REACHED === $status);
 
         $message = 'Call Successfully Added to Note! Nurse invoice is being re-generated. Patient calls are being re-counted!';
+
+        if ('yes' === $request->input('notify-patient', 'no')) {
+            $patient->notify(new PatientUnsuccessfulCallNotification($call, false));
+            $message .= ' We will also send sms/email notifications to patient!';
+        }
 
         return redirect()->route('CallsDashboard.index')->with('msg', $message);
     }
@@ -105,13 +119,24 @@ class CallsDashboardController extends Controller
         $call->note->save();
         $call->status = $newStatus;
         $call->save();
+
+        //nurse invoice
         $this->modifyNurseCareRateLogs($call->outboundUser, $call->note, $oldStatus, $newStatus);
 
+        //patient info
         $this->reCalculatePms($call->inbound_cpm_id, $call->note->created_at->toDateString());
+        $this->updatePatientInfo($call->inboundUser->patientInfo, Call::REACHED === $newStatus);
+
+        $message = 'Call Status successfully changed! Nurse invoice is being re-generated. Patient calls are being re-counted!';
+
+        if ('yes' === $request->input('notify-patient', 'no')) {
+            $call->inboundUser->notify(new PatientUnsuccessfulCallNotification($call, false));
+            $message .= ' We will also send sms/email notifications to patient!';
+        }
 
         return redirect()
             ->route('CallsDashboard.create', ['noteId' => $request['noteId']])
-            ->with('msg', 'Call Status successfully changed! Nurse invoice is being re-generated. Patient calls are being re-counted!');
+            ->with('msg', $message);
     }
 
     public function index()
@@ -145,5 +170,13 @@ class CallsDashboardController extends Controller
             'date'    => $forDate,
             'userIds' => "$patientId",
         ]);
+    }
+
+    private function updatePatientInfo(Patient $patient, bool $successfulCall)
+    {
+        if ($successfulCall) {
+            $patient->no_call_attempts_since_last_success = 0;
+            $patient->save();
+        }
     }
 }

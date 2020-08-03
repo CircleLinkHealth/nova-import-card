@@ -38,7 +38,7 @@ class OpsDashboardController extends Controller
         //first check if we have a valid file
         if ( ! $json || $date <= $noReportDates) {
             $hoursBehind = 'N/A';
-            $rows        = null;
+            $rows        = [];
         } else {
             //then check if it's in json format
             if ( ! is_json($json)) {
@@ -160,7 +160,7 @@ class OpsDashboardController extends Controller
         //first check if we have a valid file
         if ( ! $json || $date <= $noReportDates) {
             $hoursBehind = 'N/A';
-            $rows        = null;
+            $rows        = [];
         } else {
             //then check if it's in json format
             if ( ! is_json($json)) {
