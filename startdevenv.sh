@@ -2,6 +2,8 @@
 
 set -e
 
+SEED=$1
+
 # Reset BASH time counter
 SECONDS=0
 
@@ -17,7 +19,7 @@ docker-compose exec cpm php artisan migrate
 docker-compose exec cpm php artisan migrate:views
 
 # Seed the database if a DB name was passed to the script
-if [[ ! -z "$NEW_DB_NAME" ]]; then
+if [[ ! -z "$SEED" ]]; then
     docker-compose exec cpm php artisan db:seed --class=TestSuiteSeeder
 fi
 
