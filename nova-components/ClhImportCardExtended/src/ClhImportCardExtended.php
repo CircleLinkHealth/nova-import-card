@@ -40,13 +40,14 @@ class ClhImportCardExtended extends Card
     {
         return 'clh-import-card-extended';
     }
-    
-    public static function forUser(User $user, string $resource) {
+
+    public static function forUser(User $user, string $resource)
+    {
         $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
-                             ->activeBillable()
-                             ->pluck('display_name', 'id')
-                             ->toArray();
-        
+            ->activeBillable()
+            ->pluck('display_name', 'id')
+            ->toArray();
+
         return new ClhImportCardExtended($resource, [
             Select::make('practice')->options($practices)->withModel(Practice::class),
         ]);
