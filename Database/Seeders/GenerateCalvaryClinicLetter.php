@@ -14,9 +14,7 @@ use Illuminate\Database\Seeder;
 
 class GenerateCalvaryClinicLetter extends Seeder
 {
-
     const UI_REQUESTS = 'ui_requests';
-
 
     /**
      * Run the database seeds.
