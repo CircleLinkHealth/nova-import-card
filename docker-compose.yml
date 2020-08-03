@@ -56,13 +56,21 @@ services:
     image: nginx:1.17.5
     networks:
       - app-network
-    ports:
-      - "8080:80"
-      - "443:443"
+    environment:
+      - VIRTUAL_HOST=cpm.test
     restart: unless-stopped
     volumes:
       - ./docker/web/conf.d/app.conf:/etc/nginx/conf.d/default.conf
       - .:/var/www
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - app-network
 
 #Docker Networks
 networks:
