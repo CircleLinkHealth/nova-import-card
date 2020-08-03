@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
   # laravel app
-  app:
+  cpm:
     build:
       context: docker/php
       dockerfile: dev.Dockerfile
