@@ -515,7 +515,7 @@ class NurseCalendarService
 
     public function prepareHolidaysData(\Illuminate\Support\Collection $holidays, $nurse, string $startDate, string $endDate)
     {
-        return collect($holidays)
+        return $holidays
             ->where('date', '>=', $startDate)
             ->where('date', '<=', $endDate)
             ->transform(function ($holiday) use ($nurse) {
