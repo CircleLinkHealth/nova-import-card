@@ -21,12 +21,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string      $program_id
  * @property string|null $ccm_status
  * @property string|null $status
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticePatientsView newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticePatientsView newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticePatientsView query()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticePatientsView newModelQuery()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticePatientsView newQuery()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticePatientsView query()
  * @mixin \Eloquent
- *
  * @property string|null $preferred_contact_language
  */
 class PracticePatientsView extends Model
