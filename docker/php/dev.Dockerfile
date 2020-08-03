@@ -5,6 +5,10 @@ WORKDIR /var/www
 
 USER root
 
+RUN mkdir /app /app/cpm-build-tmp /app/bin
+COPY installwkhtmltopdf.sh /app/cpm-build-tmp/installwkhtmltopdf.sh
+RUN cd /app/cpm-build-tmp && bash installwkhtmltopdf.sh /app/cpm-build-tmp /app/cpm-build-tmp
+
 #install composer
 RUN cd /usr/bin && curl -s http://getcomposer.org/installer | php && ln -s /usr/bin/composer.phar /usr/bin/composer
 
