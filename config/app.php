@@ -228,6 +228,8 @@ return [
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
         \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
+
+        Spatie\SlashCommand\SlashCommandServiceProvider::class,
     ],
 
     /*
