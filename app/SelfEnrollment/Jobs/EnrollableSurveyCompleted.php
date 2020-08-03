@@ -267,7 +267,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             return $default;
         }
 
-        $answerVal = json_decode($answer->value);
+        $answerVal = json_decode($answer->value, true);
         $answers   = [];
 
         if (is_string($answerVal)) {
