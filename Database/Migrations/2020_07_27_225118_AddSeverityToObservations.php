@@ -39,12 +39,10 @@ class AddSeverityToObservations extends Migration
                     Observation::whereId($meta)->update(['severity' => $meta->meta_value]);
                 }
             });
-    
+
             Observation::whereObsKey('Blood_Pressure')->update(['obs_key' => ObservationConstants::BLOOD_PRESSURE]);
             Observation::whereObsKey('Blood_Sugar')->update(['obs_key' => ObservationConstants::BLOOD_SUGAR]);
             Observation::whereObsKey('Cigarettes')->update(['obs_key' => ObservationConstants::CIGARETTE_COUNT]);
-    
         });
-
     }
 }
