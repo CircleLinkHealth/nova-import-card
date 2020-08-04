@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class StoreTimeTracking implements ShouldQueue
@@ -140,6 +141,13 @@ class StoreTimeTracking implements ShouldQueue
 
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['start_time']);
         $endTime   = $startTime->copy()->addSeconds($duration);
+        if (isset($activity['end_time'])) {
+            try {
+                $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['end_time']);
+            } catch (\Throwable $e) {
+                Log::warning('Could not read activity[end_time]: '.$e->getMessage());
+            }
+        }
 
         $pageTimer                    = new PageTimer();
         $pageTimer->redirect_to       = $this->params->get('redirectLocation', null);
