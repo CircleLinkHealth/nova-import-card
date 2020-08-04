@@ -252,6 +252,8 @@ class PracticeKPIs
             'labor_rate'             => $this->laborRate,
             'acq_cost'               => $this->acqCost,
             'total_cost'             => $this->formatAndGetTotalCost(),
+            //for test - check match with CA KPIs
+            'total_time_seconds' => $this->totalTime,
         ];
     }
 }

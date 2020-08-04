@@ -226,6 +226,8 @@ class CareAmbassadorKPIs
             'conversion'          => $this->conversion,
             'hourly_rate'         => $this->hourlyRate,
             'per_cost'            => $this->perCost,
+            //for test - to check match with Practice KPIs
+            'total_seconds' => $this->totalSeconds,
         ];
     }
 }

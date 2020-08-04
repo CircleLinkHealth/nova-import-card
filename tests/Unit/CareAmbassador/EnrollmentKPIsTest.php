@@ -6,7 +6,10 @@
 
 namespace Tests\Unit;
 
+use App\Services\Enrollment\CareAmbassadorKPIs;
+use App\Services\Enrollment\PracticeKPIs;
 use App\Traits\Tests\CareAmbassadorHelpers;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Artisan;
@@ -55,15 +58,51 @@ class EnrollmentKPIsTest extends TestCase
             $this->assertNotNull($pageTimer->enrollee_id);
             $this->assertTrue(in_array($pageTimer->enrollee_id, $enrolleeIds));
         }
-
-        //optional: use new relationship to make sure they are withing coverage
     }
 
     public function test_practice_and_ca_enrollment_kpis_match()
     {
+        $practice = factory(Practice::class)->create();
+
         //create multiple CAs with multiple enrollees assigned
-        //foreach ca, foreach enrollee, perform action and add page timers (page timer add to helper class)
+        $cas = [];
+
+        for ($i = 5; $i > 0; --$i) {
+            $cas[] = $this->createUser($practice->id, 'care-ambassador');
+        }
+
+        $caActionTypes = collect([
+            Enrollee::UNREACHABLE,
+            Enrollee::SOFT_REJECTED,
+            Enrollee::REJECTED,
+            Enrollee::CONSENTED,
+        ]);
+
+        $caKPIs = [];
+
+        //foreach ca, foreach enrollee, perform action and add page timers
+        foreach ($cas as $ca) {
+            auth()->login($ca);
+            $enrollees = $this->createAndAssignEnrolleesToCA($practice, $ca, 5);
+            $this->createPageTimersForCA($ca, $enrollees->pluck('id')->toArray(), 5);
+
+            foreach ($enrollees as $enrollee) {
+                $this->performActionOnEnrollee($enrollee, $caActionTypes->random());
+            }
+
+            $caKPIs[] = CareAmbassadorKPIs::get($ca, Carbon::now()->startOfMonth(), Carbon::now());
+        }
 
         //get total of CA KPIs, compare against practice KPIs
+        $practiceKPIs = PracticeKPIs::get($practice, Carbon::now()->startOfMonth()->toDateString(), Carbon::now()->toDateString());
+
+        //compare total time
+        $caKPIs               = collect($caKPIs);
+        $caUniqueCalls        = $caKPIs->sum('total_calls');
+        $caTotalTimeInSeconds = $caKPIs->sum('total_seconds');
+
+        //compare total cost
+        $this->assertEquals($caUniqueCalls, $practiceKPIs['unique_patients_called']);
+        $this->assertEquals($caTotalTimeInSeconds, $practiceKPIs['total_time_seconds']);
     }
 }
