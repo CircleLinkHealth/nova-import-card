@@ -9,6 +9,7 @@ namespace Tests\Unit;
 use App\Traits\Tests\CareAmbassadorHelpers;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class EnrollmentKPIsTest extends TestCase
@@ -32,13 +33,28 @@ class EnrollmentKPIsTest extends TestCase
     public function test_command_adds_ca_unassigned_time_to_ca_enrollees()
     {
         //assign some enrollees to CA
+        auth()->loginUsingId($this->careAmbassadorUser->id);
+        $enrollees   = $this->createAndAssignEnrolleesToCA($this->practice, $this->careAmbassadorUser, 5);
+        $enrolleeIds = $enrollees->pluck('id')->toArray();
+
         //make sure those enrollees have been 'called'
+        foreach ($enrollees as $enrollee) {
+            $this->performActionOnEnrollee($enrollee);
+        }
 
         //create some page timers for ca without enrollee IDs, keep ids
+        $pageTimers   = $this->createPageTimersForCA($this->careAmbassadorUser, [], 5);
+        $pageTimerIds = $pageTimers->pluck('id')->toArray();
 
         //run command
+        Artisan::call('ca:unassignedTimeToEnrollees');
 
         //for each of page timers assert that they have been assigned to an enrollee belonging to a CA
+        foreach ($this->careAmbassadorUser->pageTimersAsProvider()->get() as $pageTimer) {
+            $this->assertTrue(in_array($pageTimer->id, $pageTimerIds));
+            $this->assertNotNull($pageTimer->enrollee_id);
+            $this->assertTrue(in_array($pageTimer->enrollee_id, $enrolleeIds));
+        }
 
         //optional: use new relationship to make sure they are withing coverage
     }

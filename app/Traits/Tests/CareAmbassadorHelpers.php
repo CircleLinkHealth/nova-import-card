@@ -7,7 +7,10 @@
 namespace App\Traits\Tests;
 
 use App\Services\Enrollment\UpdateEnrollable;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 
 trait CareAmbassadorHelpers
 {
@@ -55,6 +58,24 @@ trait CareAmbassadorHelpers
         $data['status'] ??= Enrollee::CONSENTED;
 
         return $data;
+    }
+
+    private function createAndAssignEnrolleesToCA(Practice $practice, User $ca, int $numberOfEnrollees = 1)
+    {
+        $enrollees = [];
+
+        for ($i = $numberOfEnrollees; $i > 0; --$i ) {
+            $enrollee = factory(Enrollee::class)->create([
+                'practice_id'             => $practice->id,
+                'care_ambassador_user_id' => $ca->id,
+            ]);
+
+            $this->createEligibilityJobDataForEnrollee($enrollee);
+
+            $enrollees[] = $enrollee;
+        }
+
+        return collect($enrollees);
     }
 
     private function createEligibilityJobDataForEnrollee(Enrollee $enrollee)
@@ -111,6 +132,33 @@ trait CareAmbassadorHelpers
 
         $enrollee->eligibility_job_id = $job->id;
         $enrollee->save();
+    }
+
+    private function createPageTimersForCA(User $ca, array $enrolleeIds = [], $numberOfPageTimers = 1)
+    {
+        $enrolleesCount = count($enrolleeIds);
+        $i              = 0;
+        $enrolleeIndex  = 0;
+        while ($i < $numberOfPageTimers) {
+            $enrolleeId = null;
+
+            if ( ! empty($enrolleeIds)) {
+                $enrolleeIndex = $enrolleeIndex < $enrolleesCount ? $enrolleeIndex : $enrolleeIndex - $enrolleesCount;
+                $enrolleeId    = $enrolleeIds[$enrolleeIndex];
+            }
+
+            $pageTimers[] = PageTimer::create([
+                'provider_id'       => $ca->id,
+                'enrollee_id'       => $enrolleeId,
+                'duration'          => 30,
+                'billable_duration' => 30,
+            ]);
+
+            ++$i;
+            ++$enrolleeIndex;
+        }
+
+        return collect($pageTimers);
     }
 
     private function rejectedInputForRequest($actionType = Enrollee::REJECTED, $data = []): array
