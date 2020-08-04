@@ -48,16 +48,6 @@ class EnrollableSurveyCompleted implements ShouldQueue
     }
 
     /**
-     * @param $address
-     *
-     * @return array
-     */
-    public function getAddressData(Collection $address)
-    {
-        return $address->toArray();
-    }
-
-    /**
      * @param $enrollableId
      * @param $surveyInstanceId
      * @param $identifier
@@ -173,7 +163,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $surveyInstanceId = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
         $surveyAnswers    = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
         $user             = User::withTrashed()->whereId($enrollableId)->firstOrFail();
-        $addressData      = $this->getAddressData($surveyAnswers['address']);
+        $addressData      = $surveyAnswers['address']->toArray();
         $emailToString    = $this->getEmail($surveyAnswers['email'], $user->email);
 //        $emailToString               = getStringValueFromAnswerAwvUser($surveyAnswers['email']);
         $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
