@@ -54,12 +54,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
      */
     public function getAddressData(Collection $address)
     {
-        $addressData = [];
-        foreach ($address as $key => $answerValue) {
-            $addressData[$key] = $answerValue;
-        }
-
-        return $addressData;
+        return $address->toArray();
     }
 
     /**
