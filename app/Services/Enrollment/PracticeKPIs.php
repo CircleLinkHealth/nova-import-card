@@ -254,6 +254,7 @@ class PracticeKPIs
             'total_cost'             => $this->formatAndGetTotalCost(),
             //for test - check match with CA KPIs
             'total_time_seconds' => $this->totalTime,
+            'total_cost'         => $this->totalCost,
         ];
     }
 }

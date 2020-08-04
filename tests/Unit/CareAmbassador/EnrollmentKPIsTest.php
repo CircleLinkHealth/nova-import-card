@@ -68,7 +68,10 @@ class EnrollmentKPIsTest extends TestCase
         $cas = [];
 
         for ($i = 5; $i > 0; --$i) {
-            $cas[] = $this->createUser($practice->id, 'care-ambassador');
+            $ca                              = $this->createUser($practice->id, 'care-ambassador');
+            $ca->careAmbassador->hourly_rate = floatval('20.5');
+            $ca->careAmbassador->save();
+            $cas[] = $ca;
         }
 
         $caActionTypes = collect([
@@ -100,9 +103,11 @@ class EnrollmentKPIsTest extends TestCase
         $caKPIs               = collect($caKPIs);
         $caUniqueCalls        = $caKPIs->sum('total_calls');
         $caTotalTimeInSeconds = $caKPIs->sum('total_seconds');
+        $caCost               = $caKPIs->sum('total_cost');
 
         //compare total cost
         $this->assertEquals($caUniqueCalls, $practiceKPIs['unique_patients_called']);
         $this->assertEquals($caTotalTimeInSeconds, $practiceKPIs['total_time_seconds']);
+        $this->assertEquals($caCost, $practiceKPIs['total_cost']);
     }
 }
