@@ -49,8 +49,51 @@ function parseNumber(val, defaultValue) {
     return defaultValue;
 }
 
+function addPadding(v) {
+    return v.toString().length < 2 ? `0${v}` : v;
+}
+
+//four digit year
+function getYear(d) {
+    return d.getFullYear();
+}
+
+//getMonth: 0 - 11
+function getMonth(d) {
+    return addPadding(d.getMonth() + 1);
+}
+
+//getDate: 1 - 31
+function getDate(d) {
+    return addPadding(d.getDate());
+}
+
+//getHours: 0 - 23
+function getHours(d) {
+    return addPadding(d.getHours());
+}
+
+//getMinutes: 0 - 59
+function getMinutes(d) {
+    return addPadding(d.getMinutes());
+}
+
+//getSeconds: 0 - 59
+function getSeconds(d) {
+    return addPadding(d.getSeconds());
+}
+
+function getTime(d) {
+    return `${getHours(d)}:${getMinutes(d)}:${getSeconds(d)}`;
+}
+
+function formatTimeForServer(dateTime) {
+    return `${getYear(dateTime)}-${getMonth(dateTime)}-${getDate(dateTime)} ${getTime(dateTime)}`;
+}
+
 module.exports.parseBool = parseBool;
 module.exports.parseNumber = parseNumber;
 module.exports.validateInfo = validateInfo;
 module.exports.createActivity = createActivity;
 module.exports.addSeconds = addSeconds;
+module.exports.formatTimeForServer = formatTimeForServer;
