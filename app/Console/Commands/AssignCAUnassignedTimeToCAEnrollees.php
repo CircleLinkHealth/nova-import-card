@@ -48,8 +48,7 @@ class AssignCAUnassignedTimeToCAEnrollees extends Command
             },
                 'pageTimersAsProvider' => function ($pt) {
                     $pt->whereNull('enrollee_id')
-                        ->where('billable_duration', '!=', 0)
-                        //confirm below with Pangratios
+                        ->where('duration', '!=', 0)
                         ->where('activity_type', '!=', 'CA - No more patients');
                 }, ])
             ->chunk(2, function ($caUsers) {

@@ -175,10 +175,10 @@ class PracticeKPIs
             DB::raw('enrollees.status as enrollee_status'),
             'start_time',
             'end_time',
-            DB::raw('SUM(billable_duration) as total_time'),
+            DB::raw('SUM(duration) as total_time'),
             DB::raw('enrollees.attempt_count as enrollee_attempt_count'),
             DB::raw('care_ambassadors.hourly_rate as ca_hourly_rate'),
-            DB::raw('(SUM(billable_duration)/3600) * care_ambassadors.hourly_rate as cost')
+            DB::raw('(SUM(duration)/3600) * care_ambassadors.hourly_rate as cost')
         )
             ->rightJoin('enrollees', 'lv_page_timer.enrollee_id', '=', 'enrollees.id')
             ->leftJoin('care_ambassadors', 'lv_page_timer.provider_id', '=', 'care_ambassadors.user_id')
