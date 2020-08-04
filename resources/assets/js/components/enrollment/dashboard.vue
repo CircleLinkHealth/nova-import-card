@@ -330,7 +330,7 @@ export default {
                         has_tips: this.patientData ? this.patientData.has_tips : false
                     });
 
-                }, 2000)))
+                }, 500)))
                 .catch(err => {
                     this.loading = false;
                     this.loading_modal.close()
