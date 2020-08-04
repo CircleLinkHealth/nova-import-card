@@ -19,13 +19,13 @@ class ImportCompletedCalvaryPatientsMissed extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Import Calvary practice Enrolees that Completed Survey and did not get imported';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'fuck:kolos';
+    protected $signature = 'import:calvary-survey-completed';
 
     /**
      * Create a new command instance.
@@ -44,45 +44,51 @@ class ImportCompletedCalvaryPatientsMissed extends Command
      */
     public function handle()
     {
-        $practiceId = Practice::whereName('calvary-medical-clinic')->firstOrFail()->id;
-        $enrollees  = collect();
-        Enrollee::with('user')
-            ->where('practice_id', $practiceId)
-            ->chunk(3, function ($enrolleesModel) use (&$enrollees) {
-                $enrollees[] = $enrolleesModel;
-            });
+        $data = [
+            'enrollable_id'      => 165,
+            'survey_instance_id' => 8,
+        ];
 
-        if (empty($enrollees)) {
-            $this->warn("No completed Enrolees exist for pratice [$practiceId]. Nothing updated");
-
-            return;
-        }
-
-        $survey = Helpers::getEnrolleeSurvey();
-
-        if (empty($survey)) {
-            $this->warn("Survey named 'Enrollees' not found!");
-
-            return;
-        }
-
-        $surveyInstance = Helpers::getCurrentYearEnrolleeSurveyInstance();
-
-        if (empty($surveyInstance)) {
-            $this->warn("Survey Instance for [$survey->id] not found!");
-
-            return;
-        }
-
-        foreach ($enrollees->flatten() as $enrollee) {
-            if (Helpers::hasCompletedSelfEnrollmentSurvey($enrollee->user)) {
-                $data = [
-                    'enrollable_id'      => $enrollee->user->id,
-                    'survey_instance_id' => $surveyInstance->id,
-                ];
-
-                EnrollableSurveyCompleted::dispatch($data);
-            }
-        }
+        EnrollableSurveyCompleted::dispatch($data);
+//        $practiceId = Practice::whereName('calvary-medical-clinic')->firstOrFail()->id;
+//        $enrollees  = collect();
+//        Enrollee::with('user')
+//            ->where('practice_id', $practiceId)
+//            ->chunk(3, function ($enrolleesModel) use (&$enrollees) {
+//                $enrollees[] = $enrolleesModel;
+//            });
+//
+//        if (empty($enrollees)) {
+//            $this->warn("No completed Enrolees exist for pratice [$practiceId]. Nothing updated");
+//
+//            return;
+//        }
+//
+//        $survey = Helpers::getEnrolleeSurvey();
+//
+//        if (empty($survey)) {
+//            $this->warn("Survey named 'Enrollees' not found!");
+//
+//            return;
+//        }
+//
+//        $surveyInstance = Helpers::getCurrentYearEnrolleeSurveyInstance();
+//
+//        if (empty($surveyInstance)) {
+//            $this->warn("Survey Instance for [$survey->id] not found!");
+//
+//            return;
+//        }
+//
+//        foreach ($enrollees->flatten() as $enrollee) {
+//            if (Helpers::hasCompletedSelfEnrollmentSurvey($enrollee->user)) {
+//                $data = [
+//                    'enrollable_id'      => $enrollee->user->id,
+//                    'survey_instance_id' => $surveyInstance->id,
+//                ];
+//
+//                EnrollableSurveyCompleted::dispatch($data);
+//            }
+//        }
     }
 }
