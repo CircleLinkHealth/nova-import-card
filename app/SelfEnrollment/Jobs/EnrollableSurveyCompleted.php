@@ -292,7 +292,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             return $answers;
         }
 
-        if ($answerVal && array_key_exists('value', $answerVal)) {
+        if ($answerVal && isset($answerVal->value)) {
             return $answerVal->value;
         }
 
