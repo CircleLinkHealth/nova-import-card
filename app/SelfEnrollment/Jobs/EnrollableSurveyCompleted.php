@@ -17,6 +17,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -51,11 +52,11 @@ class EnrollableSurveyCompleted implements ShouldQueue
      *
      * @return array
      */
-    public function getAddressData($address)
+    public function getAddressData(Collection $address)
     {
         $addressData = [];
-        foreach ($address as $value) {
-            $addressData[array_keys(get_object_vars($value))[0]] = array_values(get_object_vars($value))[0];
+        foreach ($address as $key => $answerValue) {
+            $addressData[$key] = $answerValue;
         }
 
         return $addressData;
@@ -65,10 +66,11 @@ class EnrollableSurveyCompleted implements ShouldQueue
      * @param $enrollableId
      * @param $surveyInstanceId
      * @param $identifier
+     * @param mixed $flatten
      *
      * @return \Collection|\Illuminate\Support\Collection
      */
-    public function getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, $identifier)
+    public function getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, $identifier, $flatten = false)
     {
         $surveyInstance     = DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
         $enrolleesQuestions = DB::table('questions')->where('survey_id', '=', $surveyInstance->survey_id)->get();
@@ -77,12 +79,15 @@ class EnrollableSurveyCompleted implements ShouldQueue
             ->where('user_id', '=', $enrollableId)
             ->where('survey_instance_id', $surveyInstanceId)->get();
 
-        return collect($enrolleesQuestions)->where('identifier', '=', $identifier)
-            ->transform(function ($question) use ($enrollableSurveyData) {
-                $answer = collect($enrollableSurveyData)->where('question_id', $question->id)->first();
+        if ( ! $flatten) {
+            return $this->getSanitizedAnswerValue($enrolleesQuestions, $enrollableSurveyData, $identifier)->flatten();
+        }
 
-                return $this->sanitizedValue($answer);
-            })->flatten();
+        return $this->getSanitizedAnswerValue($enrolleesQuestions, $enrollableSurveyData, $identifier)->mapWithKeys(function ($answerValues) {
+            return collect($answerValues)->mapWithKeys(function ($answerWithKey) {
+                return $answerWithKey;
+            });
+        });
     }
 
     /**
@@ -151,7 +156,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'preferred_days'   => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_DAYS'),
             'preferred_time'   => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_TIME'),
             'requests_info'    => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_REQUESTS_INFO'),
-            'address'          => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_ADDRESS'),
+            'address'          => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_ADDRESS', true),
             //            'dob'                 => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_DOB')[6],
             'confirm_letter_read' => ! empty($this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER'))
                 ? $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')
@@ -309,6 +314,19 @@ class EnrollableSurveyCompleted implements ShouldQueue
         }
 
         return  $answerEmail;
+    }
+
+    /**
+     * @return \Collection|Collection
+     */
+    private function getSanitizedAnswerValue(Collection $enrolleesQuestions, Collection $enrollableSurveyData, string $identifier)
+    {
+        return collect($enrolleesQuestions)->where('identifier', '=', $identifier)
+            ->transform(function ($question) use ($enrollableSurveyData) {
+                $answer = collect($enrollableSurveyData)->where('question_id', $question->id)->first();
+
+                return $this->sanitizedValue($answer);
+            });
     }
 
     private function updateEnrolleAvatarModel($userId)
