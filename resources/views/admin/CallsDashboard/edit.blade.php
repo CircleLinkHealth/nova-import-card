@@ -12,7 +12,8 @@
 
     <div class="container">
         <h3 align="center">Edit Call Status</h3>
-        <hr><br>
+        <hr>
+        <br>
         <form action="{{route('CallsDashboard.index')}}" method="GET">
             <input align="center" type="submit" value="Edit another Note" class="btn btn-info">
         </form>
@@ -36,8 +37,8 @@
                         <td>Note type:</td>
                         <td>{{$note->type}}</td>
                     </tr>
-                        <td>Date Performed:</td>
-                        <td>{{$note->performed_at}}</td>
+                    <td>Date Performed:</td>
+                    <td>{{$note->performed_at}}</td>
                 </table>
             </div>
             <hr>
@@ -58,7 +59,8 @@
                     </tr>
                     <tr>
                         <td>Call status:</td>
-                        <td>{{$call->status}} @if($call->status == 'reached') (Successful) @elseif($call->status == 'not reached') (Unsuccessful) @endif</td>
+                        <td>{{$call->status}} @if($call->status == 'reached')
+                                (Successful) @elseif($call->status == 'not reached') (Unsuccessful) @endif</td>
                     </tr>
                 </table>
             </div>
@@ -79,6 +81,13 @@
                             <input type="radio" name="status" value="reached" required> Successful<br>
                             <input type="radio" name="status" value="not reached"> Unsuccessful<br>
                         </div>
+                        <div class="form-group" id="notify-patient-group" style="display:none">
+                            <br>
+                            <input type="checkbox" name="notify-patient" value="yes">
+                            <label for="notify-patient"> Tick here if you would like patient to be notified by email/sms that
+                                nurse tried to contact them</label>
+                            <br>
+                        </div>
                     </div>
                     <br>
                     <input type="hidden" name="callId" value="{{$call->id}}">
@@ -91,4 +100,18 @@
 
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $('input[name="status"]').change(function (e) {
+                    if (e.currentTarget.value === "not reached") {
+                        $('#notify-patient-group').show();
+                    } else {
+                        $('#notify-patient-group').hide();
+                    }
+                });
+            });
+        </script>
+    @endpush
 @endsection

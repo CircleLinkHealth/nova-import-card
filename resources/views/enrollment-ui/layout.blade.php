@@ -90,11 +90,21 @@
             coverTrigger: false,
         });
 
-        App.$on('enrollable:loaded', (data) => {
-            if (data.has_tips) {
-                $('#has_tips').show();
+        function withApp(callback) {
+            if (typeof App === 'undefined') {
+                setTimeout(() => withApp(callback), 500);
+                return;
             }
-        })
+            callback(App);
+        }
+
+        withApp((app) => {
+            app.$on('enrollable:loaded', (data) => {
+                if (data.has_tips) {
+                    $('#has_tips').show();
+                }
+            })
+        });
     });
 </script>
 

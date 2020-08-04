@@ -3,7 +3,7 @@
     "private": true,
     "scripts": {
         "build-cpm": "COMPOSER_MEMORY_LIMIT=-1 composer install && php artisan migrate && php artisan migrate:views && npm install && npm run bower_install",
-        "build-dev": "npm run build-cpm && npm run dev && COMPOSER_MEMORY_LIMIT=-1 composer ide && sh ./scripts/install",
+        "build-dev": "npm run build-cpm && npm run dev && COMPOSER_MEMORY_LIMIT=-1 composer ide",
         "build-prod": "npm run build-cpm && npm run prod",
         "dev": "npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
@@ -14,7 +14,7 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "test": "jest --verbose --coverage",
         "watch-test": "npm run test -- --watch",
-        "bower_install": "./node_modules/bower/bin/bower -V install",
+        "bower_install": "./node_modules/bower/bin/bower -V install --allow-root",
         "build-import-practice-staff-csv": "cd nova-components/ImportPracticeStaffCsv && npm run dev",
         "build-import-practice-staff-csv-prod": "cd nova-components/ImportPracticeStaffCsv  && npm install && npm run prod",
         "postinstall": "npm run bower_install && if [ \"$NODE_ENV\" = \"production\" ]; then npm run prod; else npm run dev; fi",
@@ -28,8 +28,8 @@
         "build-enrollment-invites": "cd nova-components/EnrollmentInvites && npm run dev",
         "build-enrollment-invites-prod": "cd nova-components/EnrollmentInvites && npm install && npm run prod",
         "build-invoices-download": "cd nova-components/InvoicesDownload && npm run dev",
-        "build-invoices-download-prod": "cd nova-components/InvoicesDownload && npm run prod",
-        "startare": "pack build cpm-web --builder heroku/buildpacks:18 -b heroku/php -b heroku/nodejs"
+        "build-invoices-download-prod": "cd nova-components/InvoicesDownload && npm install && npm run prod",
+        "startare": "pack build cpm-web --builder heroku/buildpacks:18 -b heroku/php -b heroku/nodejs --env-file=.env"
     },
     "jest": {
         "verbose": true,
@@ -124,8 +124,8 @@
         "xlsx-style": "^0.8.13"
     },
     "engines": {
-        "node": "12.13.1",
-        "npm": "6.12.1"
+        "node": "12.18.3",
+        "npm": "6.14.7"
     },
     "license": "MIT"
 }

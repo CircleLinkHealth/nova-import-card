@@ -244,6 +244,7 @@ function formatTime($time)
                                                 $boldRow   = '';
                                                 $textBlack = '';
                                                 if ($call->scheduled_date == now()->toDateString()
+                                                    && ! empty($call->call_time_end)
                                                     && now()
                                                         ->setTimezone($call->timezone ?? config('app.timezone'))
                                                         ->setTimeFromTimeString($call->call_time_end)->isPast()

@@ -151,6 +151,12 @@ class WorkScheduleController extends Controller
         $window = $this->nurseContactWindows
             ->find($windowId);
 
+        if (empty($window)) {
+            return response()->json([
+                'error' => 'window does not exist',
+            ], 400);
+        }
+
         $this->destroyWindowValidation($window);
         //  Delete
         $deleteRecurringEvents ? $this->multipleDelete($window) : $this->singleDelete($window);
@@ -296,7 +302,7 @@ class WorkScheduleController extends Controller
             });
 
         $eventsForSelectedNurse = $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse)->toArray();
-        $holidaysData           = $nurse->nurseInfo->getUpcomingHolidayDates()->flatten();
+        $holidaysData           = optional($nurse->nurseInfo->getUpcomingHolidayDates())->flatten();
         $holidays               = $this->fullCalendarService->prepareHolidaysData($holidaysData, $nurse, $startDate, $endDate)->toArray();
 
         return response()->json([
@@ -517,7 +523,7 @@ class WorkScheduleController extends Controller
     {
         $workScheduleData = $request->all();
         $nurseInfoId      = $workScheduleData['nurse_info_id'];
-        if ( ! array_key_exists('day_of_week', $workScheduleData)) {
+        if ( ! isset($workScheduleData['day_of_week'])) {
             $inputDate                       = $workScheduleData['date'];
             $workScheduleData['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
         }
@@ -596,7 +602,7 @@ class WorkScheduleController extends Controller
         if ($workEventExistsOnSameDate) {
             $validator->getMessageBag()->add(
                 'error',
-                'This day already has a scheduled event. 
+                'This day already has a scheduled event.
                 If you wish to change your schedule, please remove the existing event first.'
             );
 

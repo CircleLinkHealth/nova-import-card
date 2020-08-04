@@ -45,11 +45,6 @@ class GenerateOpsDailyPracticeReport implements ShouldQueue
     private $date;
 
     /**
-     * @var Carbon
-     */
-    private $fromDate;
-
-    /**
      * @var Practice
      */
     private $practiceId;
@@ -61,25 +56,8 @@ class GenerateOpsDailyPracticeReport implements ShouldQueue
      */
     public function __construct($practiceId, Carbon $date = null)
     {
-        if ( ! $date) {
-            $date = Carbon::now();
-        }
-
-        $this->date       = $date;
+        $this->date       = $date ?: Carbon::now();
         $this->practiceId = $practiceId;
-
-        //If the job was not run between 23:30-23:59 we need to get revisions from 23:30, 2 days before.
-        //Example: we need data for 12/5 23:30 - 12/6 23:30 (time the report was supposed to run). If the job runs at 12/7 04:25,
-        //we need fromDate = date->subDay(2)->setTimeFromTimeString('23:30')
-        //
-        //Even though this will make the report more accurate, it still makes the report not agree with the next day report (if that was ran at the designated time.
-        //Example: if the report gets data for 12/5 23:30 - 12/7 02:30, the next day report will get data for 12/6 23:30 - 12/7 23:30.
-        //Thus changes between 12/6 23:30 and 12/7 2:30 will be calculated in both reports, making (total added/lost patients and prior day totals have potential discrepancies)
-        if ($this->date->gte($this->date->copy()->setTimeFromTimeString('00:00')) && $this->date->lte($this->date->copy()->setTimeFromTimeString('23:29'))) {
-            $this->fromDate = $this->date->copy()->subDay(2)->setTimeFromTimeString('23:30');
-        } else {
-            $this->fromDate = $this->date->copy()->subDay()->setTimeFromTimeString('23:30');
-        }
     }
 
     /**
@@ -93,7 +71,7 @@ class GenerateOpsDailyPracticeReport implements ShouldQueue
 
         $practice = Practice::select(['id', 'display_name'])
             ->activeBillable()
-            ->opsDashboardQuery($this->date->copy()->startOfMonth(), $this->fromDate)
+            ->opsDashboardQuery($this->date->copy()->startOfMonth())
             ->findOrFail($this->practiceId);
 
         $report = OpsDashboardPracticeReport::firstOrCreate([

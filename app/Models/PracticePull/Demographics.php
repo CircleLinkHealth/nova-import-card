@@ -48,6 +48,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  *
  * @property int|null    $eligibility_job_id
  * @property string|null $facility_name
+ * @property int|null    $patient_user_id
  */
 class Demographics extends BaseModel
 {

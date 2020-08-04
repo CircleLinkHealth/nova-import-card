@@ -267,7 +267,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
             return $default;
         }
 
-        $answerVal = json_decode($answer->value);
+        $answerVal = json_decode($answer->value, true);
         $answers   = [];
 
         if (is_string($answerVal)) {
@@ -280,9 +280,9 @@ class EnrollableSurveyCompleted implements ShouldQueue
 
         if (is_array($answerVal)) {
             foreach ($answerVal as $value) {
-                if (array_key_exists('name', $value)) {
+                if (isset($value->name)) {
                     $answers[] = $value->name;
-                } elseif (array_key_exists('value', $value)) {
+                } elseif (isset($value->value)) {
                     $answers[] = $value->value;
                 } else {
                     $answers[] = $value;

@@ -1,0 +1,67 @@
+# docker-compose.yml #
+version: "3.7"
+services:
+
+  # laravel app
+  cpm:
+    build:
+      context: docker/php
+      dockerfile: dev.Dockerfile
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - app-network
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+      - DB_HOST=mysql
+      - COMPOSER_MEMORY_LIMIT=-1
+      - WEB_DOCUMENT_ROOT=/app/public/
+      - WEB_ALIAS_DOMAIN=cpm.test
+    ports:
+      - "80:80"
+    volumes:
+      - .:/app
+      - ./docker/php/local.ini:/opt/docker/etc/php/php.ini
+    working_dir: /app
+
+  # mysql db
+  mysql:
+    image: mysql:5.7.28
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - app-network
+    ports:
+      - "33067:3306"
+    restart: unless-stopped
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./docker/mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
+
+  redis:
+    image: redis
+    ports:
+      - "63797:6379"
+    volumes:
+      - ./docker/redis/redis.conf:/redis.conf
+    command: [ "redis-server", "/redis.conf" ]
+    networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+
+#Volumes
+volumes:
+  dbdata:
+    driver: local

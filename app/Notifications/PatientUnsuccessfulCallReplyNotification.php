@@ -21,17 +21,22 @@ class PatientUnsuccessfulCallReplyNotification extends Notification
     /** @var string */
     private $forwardedToNurseName;
 
+    /** @var string */
+    private $practiceName;
+
     /**
      * Create a new notification instance.
      *
      * @param mixed $forwardedToNurseName
+     * @param mixed $practiceName
      *
      * @return void
      */
-    public function __construct($forwardedToNurseName, array $channels = [])
+    public function __construct($forwardedToNurseName, $practiceName, array $channels = [])
     {
         $this->channels             = $channels;
         $this->forwardedToNurseName = $forwardedToNurseName;
+        $this->practiceName         = $practiceName;
     }
 
     /**
@@ -57,7 +62,12 @@ class PatientUnsuccessfulCallReplyNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage())
+        $mailMessage           = new MailMessage();
+        $mailMessage->viewData = ['excludeLogo' => true, 'practiceName' => $this->practiceName];
+        $fromAddress           = config('mail.from-with-inbound.address') ?? config('mail.from.address');
+
+        return $mailMessage
+            ->from($fromAddress, config('mail.from-with-inbound.name'))
             ->subject('We have received your message!')
             ->line($this->getMessage());
     }

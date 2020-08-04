@@ -1784,6 +1784,23 @@ if ( ! function_exists('isPatientCcmPlusBadgeEnabled')) {
     }
 }
 
+if ( ! function_exists('isPatientPcmBadgeEnabled')) {
+    /**
+     * Key: enable_patient_pcm_badge
+     * Default: true.
+     */
+    function isPatientPcmBadgeEnabled(): bool
+    {
+        $key = 'enable_patient_pcm_badge';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            return AppConfig::set($key, true);
+        }
+
+        return $val;
+    }
+}
+
 if ( ! function_exists('upg0506IsEnabled')) {
     /**
      * Key: upg0506_is_enabled
