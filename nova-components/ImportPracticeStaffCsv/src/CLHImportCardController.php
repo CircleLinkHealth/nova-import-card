@@ -16,8 +16,6 @@ class CLHImportCardController
      *
      *This is a hacky workaround.
      *
-     * @param ImportPracticeStaffCsvNovaRequest $request
-     *
      * @return array
      */
     public function handle(ImportPracticeStaffCsvNovaRequest $request)

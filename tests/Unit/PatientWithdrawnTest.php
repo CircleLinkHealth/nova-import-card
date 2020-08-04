@@ -78,6 +78,7 @@ class PatientWithdrawnTest extends TestCase
      * A basic unit test example.
      *
      * @throws \Illuminate\Validation\ValidationException
+     *
      * @return void
      */
     public function test_withdrawn_1st_call_from_notes_page()
@@ -110,6 +111,7 @@ class PatientWithdrawnTest extends TestCase
      * A basic unit test example.
      *
      * @throws \Illuminate\Validation\ValidationException
+     *
      * @return void
      */
     public function test_withdrawn_from_notes_page()
@@ -200,7 +202,8 @@ class PatientWithdrawnTest extends TestCase
      * Meant to be needed to call NotesController->store
      * Currently failing because of SafeRequest.
      *
-     * @param  mixed $ccmStatus
+     * @param mixed $ccmStatus
+     *
      * @return array
      */
     private function getStoreCallInput($ccmStatus)

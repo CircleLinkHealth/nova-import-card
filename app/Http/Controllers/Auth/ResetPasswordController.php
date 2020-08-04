@@ -137,7 +137,7 @@ class ResetPasswordController extends Controller
         if ($userIsPatient) {
             $request->session()->flash(
                 'messages',
-                ['patient-user' => 'Please enter your new password below, which must contain an uppercase letter, number and a special character (!,$,#,%,@,&,*)']
+                ['patient-user' => 'Please enter your new password below, which must be at least 8 characters, contain an uppercase letter, number and a special character (!,$,#,%,@,&,*)']
             );
         }
 
