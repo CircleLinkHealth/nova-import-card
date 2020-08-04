@@ -86,7 +86,7 @@ class ObservationController extends Controller
         }
 
         $newObservation = new Observation([
-            'obs_date'       => Carbon::createFromFormat('Y-m-d H:i:s', $request->input('observationDate'))->format('Y-m-d H:i:s'),
+            'obs_date'       => Carbon::parse($request->input('observationDate'))->format('Y-m-d H:i:s'),
             'sequence_id'    => 0,
             'obs_message_id' => $request->input('observationType'),
             'obs_method'     => $request->input('observationSource'),
