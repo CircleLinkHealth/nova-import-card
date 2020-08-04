@@ -104,7 +104,6 @@
       <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
       <path value="$PROJECT_DIR$/vendor/phpoffice/phpspreadsheet" />
       <path value="$PROJECT_DIR$/vendor/maatwebsite/excel" />
-      <path value="$PROJECT_DIR$/vendor/org_heigl/ghostscript" />
       <path value="$PROJECT_DIR$/vendor/fico7489/laravel-pivot" />
       <path value="$PROJECT_DIR$/vendor/spatie/pdf-to-image" />
       <path value="$PROJECT_DIR$/vendor/spatie/temporary-directory" />
@@ -314,6 +313,8 @@
       <path value="$PROJECT_DIR$/vendor/rennokki/laravel-eloquent-query-cache" />
       <path value="$PROJECT_DIR$/vendor/laravel/helpers" />
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-slack-slash-command" />
+      <path value="$PROJECT_DIR$/vendor/darkghosthunter/laraload" />
+      <path value="$PROJECT_DIR$/vendor/darkghosthunter/preloader" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

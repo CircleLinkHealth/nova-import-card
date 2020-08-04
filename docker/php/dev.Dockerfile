@@ -16,6 +16,10 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends yarn && \
     npm install -g npm
 
+RUN echo "opcache.preload = /app/storage/preload.php" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
+    && echo "opcache.preload_user = application" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini;
+
+
 COPY installwkhtmltopdf.sh /usr/local/installwkhtmltopdf.sh
 RUN cd /usr/local && mkdir -p bin && bash installwkhtmltopdf.sh /usr/local /usr/local && rm installwkhtmltopdf.sh
 
