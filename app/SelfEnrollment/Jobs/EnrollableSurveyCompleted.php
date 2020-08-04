@@ -125,13 +125,20 @@ class EnrollableSurveyCompleted implements ShouldQueue
      */
     public function getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId)
     {
+        $address = $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_ADDRESS')
+            ->mapWithKeys(function ($answerValues) {
+                return collect($answerValues)->mapWithKeys(function ($answerWithKey) {
+                    return $answerWithKey;
+                });
+            });
+
         return [
             'email'            => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_EMAIL')->flatten(),
             'preferred_number' => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_NUMBER')->flatten(),
             'preferred_days'   => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_DAYS')->flatten(),
             'preferred_time'   => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_PREFERRED_TIME')->flatten(),
             'requests_info'    => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_REQUESTS_INFO')->flatten(),
-            'address'          => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_ADDRESS'),
+            'address'          => $address->toArray(),
             //            'dob'                 => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_DOB')[6],
             'confirm_letter_read' => ! empty($this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER'))
                 ? $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')->flatten()
@@ -153,7 +160,7 @@ class EnrollableSurveyCompleted implements ShouldQueue
         $surveyInstanceId = is_json($this->data) ? json_decode($this->data)->survey_instance_id : $this->data['survey_instance_id'];
         $surveyAnswers    = $this->getSurveyAnswersEnrollables($enrollableId, $surveyInstanceId);
         $user             = User::withTrashed()->whereId($enrollableId)->firstOrFail();
-        $addressData      = $surveyAnswers['address']->toArray();
+        $addressData      = $surveyAnswers['address'];
         $emailToString    = $this->getEmail($surveyAnswers['email'], $user->email);
 //        $emailToString               = getStringValueFromAnswerAwvUser($surveyAnswers['email']);
         $preferredContactDays        = $this->getPreferredDaysToString($surveyAnswers['preferred_days']);
