@@ -106,8 +106,6 @@ class Helpers
 
     public static function hasCompletedSelfEnrollmentSurvey(User $user): bool
     {
-        $user->loadMissing('patientInfo');
-
         $surveyLink = self::getSurveyInvitationLink($user);
 
         if (empty($surveyLink)) {
