@@ -31,21 +31,25 @@ class BillablePatientsEloquentRepository
             ->whereHas(
                 'patientSummaries',
                 function ($query) use ($month, $showApprovedOnly) {
-                    $wheres = [
+                    $query->where([
                         ['month_year', '=', $month],
-                        [
-                            'total_time',
-                            '>=',
-                            AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS,
-                        ],
                         ['no_of_successful_calls', '>=', 1],
-                    ];
-
-                    if (true === $showApprovedOnly) {
-                        $wheres[] = ['approved', '=', true];
-                    }
-
-                    $query->where($wheres);
+                    ])
+                        ->where(function ($q) {
+                            $q->where(
+                                'ccm_time',
+                                '>=',
+                                AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
+                            )
+                                ->orWhere(
+                                    'bhi_time',
+                                    '>=',
+                                    AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
+                                );
+                        })
+                        ->when($showApprovedOnly, function ($q) {
+                        $q->where('approved', '=', true);
+                    });
                 }
             )
             ->ofType('participant')
