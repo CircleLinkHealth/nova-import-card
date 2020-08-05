@@ -7,7 +7,6 @@
 namespace App\SelfEnrollment;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Query\Builder;
@@ -76,10 +75,10 @@ class Helpers
      *
      * @return Builder|\Illuminate\Database\Eloquent\Model|object|null
      */
-    public static function getSurveyInvitationLink(Patient $patient): ?object
+    public static function getSurveyInvitationLink(User $user): ?object
     {
-        return DB::table('invitation_links')
-            ->where('patient_info_id', $patient->id)
+        return DB::table('enrollables_invitation_links')
+            ->where('invitationable_id', $user->enrollee->id)
             ->orderBy('created_at', 'desc')
             ->first();
     }
@@ -106,17 +105,13 @@ class Helpers
 
     public static function hasCompletedSelfEnrollmentSurvey(User $user): bool
     {
-        $user->loadMissing('patientInfo');
-
-        $surveyLink = self::getSurveyInvitationLink($user->patientInfo);
+        $surveyLink = self::getSurveyInvitationLink($user);
 
         if (empty($surveyLink)) {
             return false;
         }
 
-        $surveyInstance = DB::table('survey_instances')
-            ->where('survey_id', '=', $surveyLink->survey_id)
-            ->first();
+        $surveyInstance = self::getCurrentYearEnrolleeSurveyInstance();
 
         if (empty($surveyInstance)) {
             return false;
