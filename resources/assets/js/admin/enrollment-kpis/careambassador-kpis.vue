@@ -60,21 +60,18 @@
                 endDate: null,
                 loading: false,
                 tableData: [],
-                columns: [ 'name','total_hours','total_seconds', 'patient_hours', 'patient_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'patient_earnings', 'earnings'],
+                columns: [ 'name','total_hours','total_seconds', 'no_enrolled', 'total_calls','calls_per_hour','mins_per_enrollment','conversion','hourly_rate','per_cost', 'earnings'],
                 options: {
                     headings: {
                         name : 'Ambassador Name',
                         total_hours: 'Total Hours',
                         total_seconds: 'Total Seconds',
-                        patient_hours: 'Patient Hours',
-                        patient_seconds: 'Patient Seconds',
                         no_enrolled: '#Enrolled',
                         total_calls: '#Called',
                         calls_per_hour: 'Calls/Hour',
                         mins_per_enrollment: 'Mins/Enrollment',
                         hourly_rate: 'Hourly Rate',
                         per_cost: 'Cost per Enrollment',
-                        patient_earnings: 'Patient Cost',
                         earnings: 'Total Cost'
                     },
                     perPage: 10,
@@ -117,7 +114,7 @@
                 }
                 return download().then(res => {
 
-                    const str = 'Ambassador Name,Total Hours,Total Seconds,Patient Hours,Patient Seconds,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost Per Enrollment,Patient Earnings,Total Earnings\n'
+                    const str = 'Ambassador Name,Total Hours,Total Seconds,#Enrolled,#Called,Calls/Hour,Mins/Enrollment,Conversion,Hourly Rate,Cost Per Enrollment,Total Earnings\n'
                         + data.join('\n');
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);

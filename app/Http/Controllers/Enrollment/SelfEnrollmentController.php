@@ -179,25 +179,14 @@ class SelfEnrollmentController extends Controller
     }
 
     /**
-     * @param $notifiable
+     * @param $user
      *
      * @return bool
      */
-    public function hasSurveyInProgress(User $notifiable)
+    public function hasSurveyInProgress(User $user)
     {
-//        For nova request. At that point enrollees will ot have User model, hence they didnt get invited yet.
-//        if (Enrollee::class === get_class($notifiable)) {
-//            return false;
-//        }
-        $surveyLink = Helpers::getSurveyInvitationLink($notifiable->patientInfo);
-        if ( ! empty($surveyLink)) {
-            $surveyInstance = DB::table('survey_instances')
-                ->where('survey_id', '=', $surveyLink->survey_id)
-                ->first();
-
-            return DB::table('users_surveys')
-                ->where('user_id', '=', $notifiable->id)
-                ->where('survey_instance_id', '=', $surveyInstance->id)
+        if (Helpers::getSurveyInvitationLink($user)) {
+            return Helpers::awvUserSurveyQuery($user, Helpers::getCurrentYearEnrolleeSurveyInstance())
                 ->where('status', '=', 'in_progress')
                 ->exists();
         }

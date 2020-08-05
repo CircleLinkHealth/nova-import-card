@@ -6,10 +6,11 @@
 
 namespace App\Services\Enrollment;
 
-use App\CareAmbassadorLog;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CareAmbassadorKPIs
@@ -36,12 +37,6 @@ class CareAmbassadorKPIs
     protected $hourlyRate;
 
     protected $minsPerEnrollment;
-
-    protected $patientEarnings;
-
-    protected $patientHours;
-
-    protected $patientSeconds;
 
     protected $perCost;
 
@@ -87,8 +82,6 @@ class CareAmbassadorKPIs
             ->setHourlyRate()
             ->setTotalSeconds()
             ->setTotalHours()
-            ->setPatientSeconds()
-            ->setPatientHours()
             ->setTotalEnrolled()
             ->setTotalCalled()
             ->setMinsPerEnrollment()
@@ -96,14 +89,13 @@ class CareAmbassadorKPIs
             ->setCallsPerHour()
             ->setConversion()
             ->setPerCost()
-            ->setPatientEarnings()
             ->toArray();
     }
 
     private function setCallsPerHour()
     {
         $this->callsPerHour = $this->shouldSetCostRelatedMetrics() ? number_format(
-            $this->totalCalled / ($this->patientSeconds / 3600),
+            $this->totalCalled / ($this->totalSeconds / 3600),
             2
         ) : 'N/A';
 
@@ -112,16 +104,13 @@ class CareAmbassadorKPIs
 
     private function setCareAmbassadorAssignedEnrollees()
     {
-        $this->enrolleesAssigned = Enrollee::select('id', 'status', 'total_time_spent')
-            ->where('care_ambassador_user_id', $this->careAmbassadorUser->id)
-            ->ofStatus([
-                Enrollee::UNREACHABLE,
-                Enrollee::CONSENTED,
-                Enrollee::ENROLLED,
-                Enrollee::REJECTED,
-                Enrollee::SOFT_REJECTED,
-            ])
-            ->lastCalledBetween($this->start, $this->end)
+        $this->enrolleesAssigned = PageTimer::select(DB::raw('lv_page_timer.provider_id as ca_user_id'), 'enrollee_id', DB::raw('enrollees.status as enrollee_status'), 'start_time', 'end_time', DB::raw('SUM(duration) as total_time'))
+            ->leftJoin('enrollees', 'lv_page_timer.enrollee_id', '=', 'enrollees.id')
+            ->where('lv_page_timer.provider_id', $this->careAmbassadorUser->id)
+            ->whereNotNull('enrollee_id')
+            ->where('start_time', '>=', $this->start)
+            ->where('end_time', '<=', $this->end)
+            ->groupBy('enrollee_id')
             ->get();
 
         return $this;
@@ -158,38 +147,16 @@ class CareAmbassadorKPIs
     {
         $this->minsPerEnrollment = (0 != $this->totalEnrolled)
             ?
-            number_format(($this->patientSeconds / 60) / $this->totalEnrolled, 2)
+            number_format(($this->totalSeconds / 60) / $this->totalEnrolled, 2)
             : 0;
-
-        return $this;
-    }
-
-    private function setPatientEarnings()
-    {
-        $this->patientEarnings = $this->shouldSetCostRelatedMetrics() ? '$'.number_format($this->hourlyRate * ($this->patientSeconds / 3600), 2) : 'N/A';
-
-        return $this;
-    }
-
-    private function setPatientHours()
-    {
-        $this->patientHours = floatval(round($this->patientSeconds / 3600, 2));
-
-        return $this;
-    }
-
-    private function setPatientSeconds()
-    {
-        $this->patientSeconds = $this->enrolleesAssigned->sum('total_time_spent');
 
         return $this;
     }
 
     private function setPerCost()
     {
-        //use patient seconds per ROAD-218
         $this->perCost = $this->shouldSetCostRelatedMetrics() ? '$'.number_format(
-            (($this->patientSeconds / 3600) * $this->hourlyRate) / $this->totalEnrolled,
+            (($this->totalSeconds / 3600) * $this->hourlyRate) / $this->totalEnrolled,
             2
         ) : 'N/A';
 
@@ -198,7 +165,13 @@ class CareAmbassadorKPIs
 
     private function setTotalCalled()
     {
-        $this->totalCalled = $this->enrolleesAssigned->count();
+        $this->totalCalled = $this->enrolleesAssigned->whereIn('enrollee_status', [
+            Enrollee::CONSENTED,
+            Enrollee::ENROLLED,
+            Enrollee::UNREACHABLE,
+            Enrollee::REJECTED,
+            Enrollee::SOFT_REJECTED,
+        ])->count();
 
         return $this;
     }
@@ -206,7 +179,7 @@ class CareAmbassadorKPIs
     private function setTotalEnrolled()
     {
         $this->totalEnrolled = $this->enrolleesAssigned
-            ->whereIn('status', [Enrollee::CONSENTED, Enrollee::ENROLLED])
+            ->whereIn('enrollee_status', [Enrollee::CONSENTED, Enrollee::ENROLLED])
             ->count();
 
         return $this;
@@ -221,10 +194,7 @@ class CareAmbassadorKPIs
 
     private function setTotalSeconds()
     {
-        $this->totalSeconds = CareAmbassadorLog::where('enroller_id', $this->careAmbassadorModel->id)
-            ->where('day', '>=', $this->start)
-            ->where('day', '<=', $this->end)
-            ->sum('total_time_in_system');
+        $this->totalSeconds = $this->enrolleesAssigned->sum('total_time');
 
         return $this;
     }
@@ -247,8 +217,6 @@ class CareAmbassadorKPIs
             'name'                => $this->careAmbassadorUser->getFullName(),
             'total_hours'         => $this->totalHours,
             'total_seconds'       => $this->totalSeconds,
-            'patient_hours'       => $this->patientHours,
-            'patient_seconds'     => $this->patientSeconds,
             'no_enrolled'         => $this->totalEnrolled,
             'total_calls'         => $this->totalCalled,
             'calls_per_hour'      => $this->callsPerHour,
@@ -256,8 +224,10 @@ class CareAmbassadorKPIs
             'earnings'            => $this->earnings,
             'conversion'          => $this->conversion,
             'hourly_rate'         => $this->hourlyRate,
-            'patient_earnings'    => $this->patientEarnings,
             'per_cost'            => $this->perCost,
+            //for test - to check match with Practice KPIs
+            'total_seconds' => $this->totalSeconds,
+            'total_cost'    => $this->shouldSetCostRelatedMetrics() ? $this->hourlyRate * ($this->totalSeconds / 3600) : 0,
         ];
     }
 }

@@ -156,10 +156,14 @@ if (isset($patient) && ! empty($patient)) {
                                         $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs)
                                             ? $patientCarePlanPdfs->isNotEmpty()
                                             : false;
+                                        $patientCcmStatus = isset($patient)
+                                            ? $patient->patientInfo->ccm_status
+                                            : null;
                                         ?>
 
                                         <pdf-careplans v-cloak
                                                        mode="web"
+                                                       ccm-status="{{$patientCcmStatus}}"
                                                        careplan-status="{{$careplanStatus}}"
                                                        :is-provider="@json(auth()->user()->providerInfo && auth()->user()->isProvider())"
                                                        :is-care-coach="@json(auth()->user()->isCareCoach())"
