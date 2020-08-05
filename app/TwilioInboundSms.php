@@ -18,9 +18,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null                     $body
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\TwilioInboundSms newModelQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\TwilioInboundSms newQuery()
- * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\TwilioInboundSms query()
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioInboundSms newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioInboundSms newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioInboundSms query()
  * @mixin \Eloquent
  */
 class TwilioInboundSms extends Model

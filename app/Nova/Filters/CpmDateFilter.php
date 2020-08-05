@@ -68,7 +68,8 @@ class CpmDateFilter extends DateFilter
     }
 
     /**
-     * @param  null          $defaultDate
+     * @param null $defaultDate
+     *
      * @return CpmDateFilter
      */
     public function setDefaultDate($defaultDate)
