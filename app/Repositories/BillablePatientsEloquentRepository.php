@@ -48,8 +48,8 @@ class BillablePatientsEloquentRepository
                                 );
                         })
                         ->when($showApprovedOnly, function ($q) {
-                        $q->where('approved', '=', true);
-                    });
+                            $q->where('approved', '=', true);
+                        });
                 }
             )
             ->ofType('participant')
