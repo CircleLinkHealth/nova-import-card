@@ -56,12 +56,10 @@ class ImportCompletedCalvaryPatientsMissed extends Command
             ->chunk(100, function ($enrollees) use ($practiceId, $surveyInstance) {
                 foreach ($enrollees as $enrollee) {
                     if (Helpers::hasCompletedSelfEnrollmentSurvey($enrollee->user)) {
-                        $data = [
+                        EnrollableSurveyCompleted::dispatch([
                             'enrollable_id'      => $enrollee->user->id,
                             'survey_instance_id' => $surveyInstance->id,
-                        ];
-
-                        EnrollableSurveyCompleted::dispatch($data);
+                        ]);
                     }
                 }
             });
