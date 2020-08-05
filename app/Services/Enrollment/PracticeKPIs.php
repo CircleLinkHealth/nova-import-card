@@ -30,6 +30,8 @@ class PracticeKPIs
     protected $laborHours;
 
     protected $laborRate;
+
+    protected $pageTimers;
     /**
      * @var Practice
      */
@@ -71,7 +73,8 @@ class PracticeKPIs
 
     private function makeStats(): array
     {
-        return $this->setPracticeEnrolleeData()
+        return $this->setPageTimers()
+            ->setPracticeEnrolleeData()
             ->setUniquePatientsCalled()
             ->setConsented()
             ->setUtc()
@@ -166,19 +169,19 @@ class PracticeKPIs
         return $this;
     }
 
-    private function setPracticeEnrolleeData()
+    private function setPageTimers()
     {
-        $this->practiceEnrollees = PageTimer::select(
+        $this->pageTimers = PageTimer::select(
             DB::raw('lv_page_timer.provider_id as ca_user_id'),
             DB::raw('enrollees.practice_id'),
             'enrollee_id',
             DB::raw('enrollees.status as enrollee_status'),
             'start_time',
             'end_time',
-            DB::raw('SUM(duration) as total_time'),
+            'duration',
             DB::raw('enrollees.attempt_count as enrollee_attempt_count'),
             DB::raw('care_ambassadors.hourly_rate as ca_hourly_rate'),
-            DB::raw('(SUM(duration)/3600) * care_ambassadors.hourly_rate as cost')
+            DB::raw('(duration/3600) * care_ambassadors.hourly_rate as cost')
         )
             ->rightJoin('enrollees', 'lv_page_timer.enrollee_id', '=', 'enrollees.id')
             ->leftJoin('care_ambassadors', 'lv_page_timer.provider_id', '=', 'care_ambassadors.user_id')
@@ -187,8 +190,14 @@ class PracticeKPIs
             ->where('enrollees.practice_id', $this->practice->id)
             ->where('start_time', '>=', $this->start)
             ->where('end_time', '<=', $this->end)
-            ->groupBy('enrollee_id')
             ->get();
+
+        return $this;
+    }
+
+    private function setPracticeEnrolleeData()
+    {
+        $this->practiceEnrollees = $this->pageTimers->unique('enrollee_id');
 
         return $this;
     }
@@ -203,14 +212,14 @@ class PracticeKPIs
 
     private function setTotalCost()
     {
-        $this->totalCost = $this->practiceEnrollees->sum('cost');
+        $this->totalCost = $this->pageTimers->sum('cost');
 
         return $this;
     }
 
     private function setTotalTime()
     {
-        $this->totalTime = $this->practiceEnrollees->sum('total_time');
+        $this->totalTime = $this->pageTimers->sum('duration');
 
         return $this;
     }
