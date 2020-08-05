@@ -46,7 +46,11 @@ class ImportCompletedCalvaryPatientsMissed extends Command
     {
         $practiceId = Practice::whereName('calvary-medical-clinic')->firstOrFail()->id;
 
-        Enrollee::with('user')
+        Enrollee::with([
+            'user' => function ($q) {
+                $q->without(['roles', 'perms']);
+            },
+        ])
             ->where('practice_id', $practiceId)
             ->chunk(100, function ($enrollees) use ($practiceId) {
                 if (empty($enrollees)) {
