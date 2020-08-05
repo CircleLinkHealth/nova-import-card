@@ -45,45 +45,42 @@ class ImportCompletedCalvaryPatientsMissed extends Command
     public function handle()
     {
         $practiceId = Practice::whereName('calvary-medical-clinic')->firstOrFail()->id;
-        $enrollees  = collect();
 
         Enrollee::with('user')
             ->where('practice_id', $practiceId)
-            ->chunk(3, function ($enrolleesModel) use (&$enrollees) {
-                $enrollees[] = $enrolleesModel;
+            ->chunk(100, function ($enrollees) use ($practiceId) {
+                if (empty($enrollees)) {
+                    $this->warn("No completed Enrolees exist for pratice [$practiceId]. Nothing updated");
+
+                    return;
+                }
+
+                $survey = Helpers::getEnrolleeSurvey();
+
+                if (empty($survey)) {
+                    $this->warn("Survey named 'Enrollees' not found!");
+
+                    return;
+                }
+
+                $surveyInstance = Helpers::getCurrentYearEnrolleeSurveyInstance();
+
+                if (empty($surveyInstance)) {
+                    $this->warn("Survey Instance for [$survey->id] not found!");
+
+                    return;
+                }
+
+                foreach ($enrollees as $enrollee) {
+                    if (Helpers::hasCompletedSelfEnrollmentSurvey($enrollee->user)) {
+                        $data = [
+                            'enrollable_id'      => $enrollee->user->id,
+                            'survey_instance_id' => $surveyInstance->id,
+                        ];
+
+                        EnrollableSurveyCompleted::dispatch($data);
+                    }
+                }
             });
-
-        if (empty($enrollees)) {
-            $this->warn("No completed Enrolees exist for pratice [$practiceId]. Nothing updated");
-
-            return;
-        }
-
-        $survey = Helpers::getEnrolleeSurvey();
-
-        if (empty($survey)) {
-            $this->warn("Survey named 'Enrollees' not found!");
-
-            return;
-        }
-
-        $surveyInstance = Helpers::getCurrentYearEnrolleeSurveyInstance();
-
-        if (empty($surveyInstance)) {
-            $this->warn("Survey Instance for [$survey->id] not found!");
-
-            return;
-        }
-
-        foreach ($enrollees->flatten() as $enrollee) {
-            if (Helpers::hasCompletedSelfEnrollmentSurvey($enrollee->user)) {
-                $data = [
-                    'enrollable_id'      => $enrollee->user->id,
-                    'survey_instance_id' => $surveyInstance->id,
-                ];
-
-                EnrollableSurveyCompleted::dispatch($data);
-            }
-        }
     }
 }

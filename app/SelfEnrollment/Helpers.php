@@ -77,7 +77,6 @@ class Helpers
      */
     public static function getSurveyInvitationLink(User $user): ?object
     {
-//        @todo: Should refactor to "where('invitationable_id', $user->enrollee->id)" when implementation is ready.
         return DB::table('enrollables_invitation_links')
             ->where('invitationable_id', $user->enrollee->id)
             ->orderBy('created_at', 'desc')
