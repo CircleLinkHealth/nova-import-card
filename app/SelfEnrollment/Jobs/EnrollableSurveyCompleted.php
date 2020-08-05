@@ -140,8 +140,8 @@ class EnrollableSurveyCompleted implements ShouldQueue
             'requests_info'    => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_REQUESTS_INFO')->flatten(),
             'address'          => $address->toArray(),
             //            'dob'                 => $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_DOB')[6],
-            'confirm_letter_read' => ! empty($this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER'))
-                ? $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER')->flatten()
+            'confirm_letter_read' => ! empty($confirmLetterRead = $this->getAnswerForQuestionUsingIdentifier($enrollableId, $surveyInstanceId, 'Q_CONFIRM_LETTER'))
+                ? $confirmLetterRead->flatten()
                 : '',
         ];
     }
