@@ -7,7 +7,10 @@
 namespace App\Traits\Tests;
 
 use App\Services\Enrollment\UpdateEnrollable;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 
 trait CareAmbassadorHelpers
 {
@@ -30,33 +33,49 @@ trait CareAmbassadorHelpers
         UpdateEnrollable::update($enrollee->id, collect($data));
     }
 
-    private function consentedInputForRequest(Enrollee $enrollee, $input = []): array
+    private function consentedInputForRequest(Enrollee $enrollee, $data = []): array
     {
-        $data = $input;
+        $data['home_phone'] ??= $enrollee->home_phone;
+        $data['cell_phone'] ??= $enrollee->cell_phone;
+        $data['other_phone'] ??= $enrollee->other_phone;
+        $data['preferred_phone'] ??= 'home';
 
-        $data['home_phone']      = array_key_exists('home_phone', $input) ? $input['home_phone'] : $enrollee->home_phone;
-        $data['cell_phone']      = array_key_exists('cell_phone', $input) ? $input['cell_phone'] : $enrollee->cell_phone;
-        $data['other_phone']     = array_key_exists('other_phone', $input) ? $input['other_phone'] : $enrollee->other_phone;
-        $data['preferred_phone'] = array_key_exists('preferred_phone', $input) ? $input['preferred_phone'] : 'home';
+        $data['agent_phone'] ??= null;
+        $data['agent_email'] ??= null;
+        $data['agent_relationship'] ??= null;
+        $data['agent_name'] ??= null;
 
-        $data['agent_phone']        = array_key_exists('agent_phone', $input) ? $input['agent_phone'] : null;
-        $data['agent_email']        = array_key_exists('agent_email', $input) ? $input['agent_email'] : null;
-        $data['agent_relationship'] = array_key_exists('agent_relationship', $input) ? $input['agent_relationship'] : null;
-        $data['agent_name']         = array_key_exists('agent_name', $input) ? $input['agent_name'] : null;
+        $data['address'] ??= $enrollee->address;
+        $data['address_2'] ??= $enrollee->address_2;
+        $data['zip'] ??= $enrollee->zip;
+        $data['state'] ??= $enrollee->state;
+        $data['city'] ??= $enrollee->email;
+        $data['email'] ??= $enrollee->email;
+        $data['extra'] ??= null;
+        $data['days'] ??= ['1', '2', '3', '4', '5'];
+        $data['times'] ??= ['09:00-12:00'];
 
-        $data['address']   = array_key_exists('address', $input) ? $input['address'] : $enrollee->address;
-        $data['address_2'] = array_key_exists('address_2', $input) ? $input['address_2'] : $enrollee->address_2;
-        $data['zip']       = array_key_exists('zip', $input) ? $input['zip'] : $enrollee->zip;
-        $data['state']     = array_key_exists('state', $input) ? $input['state'] : $enrollee->state;
-        $data['city']      = array_key_exists('city', $input) ? $input['city'] : $enrollee->email;
-        $data['email']     = array_key_exists('email', $input) ? $input['email'] : $enrollee->email;
-        $data['extra']     = array_key_exists('extra', $input) ? $input['extra'] : null;
-        $data['days']      = array_key_exists('days', $input) ? $input['days'] : ['1', '2', '3', '4', '5'];
-        $data['times']     = array_key_exists('times', $input) ? $input['times'] : ['09:00-12:00'];
-
-        $data['status'] = array_key_exists('status', $input) ? $input['status'] : Enrollee::CONSENTED;
+        $data['status'] ??= Enrollee::CONSENTED;
 
         return $data;
+    }
+
+    private function createAndAssignEnrolleesToCA(Practice $practice, User $ca, int $numberOfEnrollees = 1)
+    {
+        $enrollees = [];
+
+        for ($i = $numberOfEnrollees; $i > 0; --$i ) {
+            $enrollee = factory(Enrollee::class)->create([
+                'practice_id'             => $practice->id,
+                'care_ambassador_user_id' => $ca->id,
+            ]);
+
+            $this->createEligibilityJobDataForEnrollee($enrollee);
+
+            $enrollees[] = $enrollee;
+        }
+
+        return collect($enrollees);
     }
 
     private function createEligibilityJobDataForEnrollee(Enrollee $enrollee)
@@ -115,25 +134,48 @@ trait CareAmbassadorHelpers
         $enrollee->save();
     }
 
-    private function rejectedInputForRequest($actionType = Enrollee::REJECTED, $input = []): array
+    private function createPageTimersForCA(User $ca, array $enrolleeIds = [], $numberOfPageTimers = 1)
     {
-        $data = $input;
+        $enrolleesCount = count($enrolleeIds);
+        $i              = 0;
+        $enrolleeIndex  = 0;
+        while ($i < $numberOfPageTimers) {
+            $enrolleeId = null;
 
-        $data['reason']       = array_key_exists('reason', $input) ? $input['reason'] : 'no longer interested';
-        $data['reason_other'] = array_key_exists('reason_other', $input) ? $input['reason_other'] : 'Other Reason';
-        $data['status']       = array_key_exists('status', $input) ? $input['status'] : $actionType;
+            if ( ! empty($enrolleeIds)) {
+                $enrolleeIndex = $enrolleeIndex < $enrolleesCount ? $enrolleeIndex : $enrolleeIndex - $enrolleesCount;
+                $enrolleeId    = $enrolleeIds[$enrolleeIndex];
+            }
+
+            $pageTimers[] = PageTimer::create([
+                'provider_id'       => $ca->id,
+                'enrollee_id'       => $enrolleeId,
+                'duration'          => 30,
+                'billable_duration' => 30,
+            ]);
+
+            ++$i;
+            ++$enrolleeIndex;
+        }
+
+        return collect($pageTimers);
+    }
+
+    private function rejectedInputForRequest($actionType = Enrollee::REJECTED, $data = []): array
+    {
+        $data['reason'] ??= 'no longer interested';
+        $data['reason_other'] ??= 'Other Reason';
+        $data['status'] ??= $actionType;
 
         return $data;
     }
 
-    private function unreachableInputForRequest($input = []): array
+    private function unreachableInputForRequest($data = []): array
     {
-        $data = $input;
-
-        $data['reason']       = array_key_exists('reason', $input) ? $input['reason'] : 'no longer interested';
-        $data['reason_other'] = array_key_exists('reason_other', $input) ? $input['reason_other'] : 'Other Reason';
-        $data['utc_callback'] = array_key_exists('utc_callback', $input) ? $input['utc_callback'] : null;
-        $data['status']       = array_key_exists('status', $input) ? $input['status'] : Enrollee::UNREACHABLE;
+        $data['reason'] ??= 'no longer interested';
+        $data['reason_other'] ??= 'Other Reason';
+        $data['utc_callback'] ??= null;
+        $data['status'] ??= Enrollee::UNREACHABLE;
 
         return $data;
     }

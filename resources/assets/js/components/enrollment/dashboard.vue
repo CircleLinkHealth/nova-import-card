@@ -330,11 +330,11 @@ export default {
                         has_tips: this.patientData ? this.patientData.has_tips : false
                     });
 
-                }, 2000)))
+                }, 500)))
                 .catch(err => {
                     this.loading = false;
                     this.loading_modal.close()
-                    let errorMessage = err.response.data.message;
+                    let errorMessage = err.response && err.response.data ? err.response.data.message : 'ERROR';
                     Logger.warn(`WARNING: CA Panel - Patient retrieval failure. Message: ${errorMessage}`, {meta: {'connection': 'warning'}});
                     if (err.response.status === 404) {
                         this.error = errorMessage;
