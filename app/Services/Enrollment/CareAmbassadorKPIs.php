@@ -104,7 +104,7 @@ class CareAmbassadorKPIs
 
     private function setCareAmbassadorAssignedEnrollees()
     {
-        $this->enrolleesAssigned = PageTimer::select(DB::raw('lv_page_timer.provider_id as ca_user_id'), 'enrollee_id', DB::raw('enrollees.status as enrollee_status'), 'start_time', 'end_time', DB::raw('SUM(billable_duration) as total_time'))
+        $this->enrolleesAssigned = PageTimer::select(DB::raw('lv_page_timer.provider_id as ca_user_id'), 'enrollee_id', DB::raw('enrollees.status as enrollee_status'), 'start_time', 'end_time', DB::raw('SUM(duration) as total_time'))
             ->leftJoin('enrollees', 'lv_page_timer.enrollee_id', '=', 'enrollees.id')
             ->where('lv_page_timer.provider_id', $this->careAmbassadorUser->id)
             ->whereNotNull('enrollee_id')
@@ -155,7 +155,6 @@ class CareAmbassadorKPIs
 
     private function setPerCost()
     {
-        //use patient seconds per ROAD-218
         $this->perCost = $this->shouldSetCostRelatedMetrics() ? '$'.number_format(
             (($this->totalSeconds / 3600) * $this->hourlyRate) / $this->totalEnrolled,
             2
@@ -228,6 +227,7 @@ class CareAmbassadorKPIs
             'per_cost'            => $this->perCost,
             //for test - to check match with Practice KPIs
             'total_seconds' => $this->totalSeconds,
+            'total_cost'    => $this->shouldSetCostRelatedMetrics() ? $this->hourlyRate * ($this->totalSeconds / 3600) : 0,
         ];
     }
 }
