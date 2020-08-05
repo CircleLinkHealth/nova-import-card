@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6180da938762bc66c701e350d8d33fe3",
+    "content-hash": "7218602c8f3d8401a083772782449365",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.147.10",
+            "version": "3.147.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b259aad35203d262c02be9b6353597fd62484374"
+                "reference": "960f3d34784577e223b294e978a1c6d0e516b081"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b259aad35203d262c02be9b6353597fd62484374",
-                "reference": "b259aad35203d262c02be9b6353597fd62484374",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/960f3d34784577e223b294e978a1c6d0e516b081",
+                "reference": "960f3d34784577e223b294e978a1c6d0e516b081",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-07-31T18:32:20+00:00"
+            "time": "2020-08-04T18:11:18+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1145,11 +1145,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.1.7",
+            "version": "v3.1.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "b585c29b3eba10f2c5d68f9244953fa14aa2ae0d"
+                "reference": "341f25a6cebb9aaab8316c1660ffc1c7bde94343"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1183,15 +1183,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-01T21:54:30+00:00"
+            "time": "2020-08-04T08:35:29+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.2.4",
+            "version": "v3.2.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "13f02b0c1bfc8d1f04e32b36c30ed7b44da555cc"
+                "reference": "8527b578409bca3f309b76bf2f2c8b0a849bfe0a"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1216,7 +1216,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-07-30T15:13:59+00:00"
+            "time": "2020-08-02T17:55:48+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1932,6 +1932,115 @@
                 "sql"
             ],
             "time": "2020-07-10T04:59:30+00:00"
+        },
+        {
+            "name": "darkghosthunter/laraload",
+            "version": "v2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarkGhostHunter/Laraload.git",
+                "reference": "322bb35204f83bc717576338be45270029341c1c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarkGhostHunter/Laraload/zipball/322bb35204f83bc717576338be45270029341c1c",
+                "reference": "322bb35204f83bc717576338be45270029341c1c",
+                "shasum": ""
+            },
+            "require": {
+                "darkghosthunter/preloader": "^2.1.0",
+                "illuminate/contracts": "^6.0||^7.0",
+                "illuminate/support": "^6.0||^7.0",
+                "php": "^7.4.3",
+                "symfony/finder": "^4.3||^5.0"
+            },
+            "require-dev": {
+                "orchestra/canvas": "^4.0||^5.0",
+                "orchestra/testbench": "^4.1||^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "DarkGhostHunter\\Laraload\\LaraloadServiceProvider"
+                    ],
+                    "aliases": {
+                        "Laraload": "DarkGhostHunter\\Laraload\\Facades\\Laraload"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DarkGhostHunter\\Laraload\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Italo Israel Baeza Cabrera",
+                    "email": "darkghosthunter@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Effortlessly make a Preload script for your Laravel application.",
+            "homepage": "https://github.com/darkghosthunter/laraload",
+            "keywords": [
+                "darkghosthunter",
+                "laraload"
+            ],
+            "time": "2020-07-08T03:11:09+00:00"
+        },
+        {
+            "name": "darkghosthunter/preloader",
+            "version": "v2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarkGhostHunter/Preloader.git",
+                "reference": "19829a8244b0a0261124dd27b67c7e0c3f0e5b72"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarkGhostHunter/Preloader/zipball/19829a8244b0a0261124dd27b67c7e0c3f0e5b72",
+                "reference": "19829a8244b0a0261124dd27b67c7e0c3f0e5b72",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.4",
+                "symfony/finder": "^4.3||^5.0.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DarkGhostHunter\\Preloader\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Italo Israel Baeza Cabrera",
+                    "email": "darkghosthunter@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Preloader helper to create a PHP-ready preload script from Opcache.",
+            "homepage": "https://github.com/darkghosthunter/preloader",
+            "keywords": [
+                "Opcache",
+                "darkghosthunter",
+                "php-7.4",
+                "preloader"
+            ],
+            "time": "2020-07-07T23:31:04+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -4490,16 +4599,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.22.4",
+            "version": "v7.23.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "30e851a2b3a2af73fba0b7f4fa22b04260db98e7"
+                "reference": "17cbce101f2fc78e61a6135861823563c7cfb50b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/30e851a2b3a2af73fba0b7f4fa22b04260db98e7",
-                "reference": "30e851a2b3a2af73fba0b7f4fa22b04260db98e7",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/17cbce101f2fc78e61a6135861823563c7cfb50b",
+                "reference": "17cbce101f2fc78e61a6135861823563c7cfb50b",
                 "shasum": ""
             },
             "require": {
@@ -4643,7 +4752,60 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-07-27T18:25:06+00:00"
+            "time": "2020-08-04T14:36:37+00:00"
+        },
+        {
+            "name": "laravel/helpers",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/helpers.git",
+                "reference": "1f978fc5dad9f7f906b18242c654252615201de4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/helpers/zipball/1f978fc5dad9f7f906b18242c654252615201de4",
+                "reference": "1f978fc5dad9f7f906b18242c654252615201de4",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.8.0|^6.0|^7.0",
+                "php": ">=7.1.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                },
+                {
+                    "name": "Dries Vints",
+                    "email": "dries.vints@gmail.com"
+                }
+            ],
+            "description": "Provides backwards compatibility for helpers in the latest Laravel release.",
+            "keywords": [
+                "helpers",
+                "laravel"
+            ],
+            "time": "2020-03-03T13:52:16+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -6436,16 +6598,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.37.0",
+            "version": "2.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "1f61206de973d67f36ce50f041c792ddac663c3e"
+                "reference": "d8f6a6a91d1eb9304527b040500f61923e97674b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/1f61206de973d67f36ce50f041c792ddac663c3e",
-                "reference": "1f61206de973d67f36ce50f041c792ddac663c3e",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/d8f6a6a91d1eb9304527b040500f61923e97674b",
+                "reference": "d8f6a6a91d1eb9304527b040500f61923e97674b",
                 "shasum": ""
             },
             "require": {
@@ -6460,7 +6622,7 @@
                 "kylekatarnls/multi-tester": "^2.0",
                 "phpmd/phpmd": "^2.8",
                 "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^0.12.30",
+                "phpstan/phpstan": "^0.12.35",
                 "phpunit/phpunit": "^7.5 || ^8.0",
                 "squizlabs/php_codesniffer": "^3.4"
             },
@@ -6511,7 +6673,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2020-07-28T06:04:54+00:00"
+            "time": "2020-08-04T19:12:46+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -9088,6 +9250,67 @@
             "time": "2020-05-29T15:32:18+00:00"
         },
         {
+            "name": "spatie/laravel-slack-slash-command",
+            "version": "1.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-slack-slash-command.git",
+                "reference": "c2fa076cf58665e4b978b5f6d339897ab849f829"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-slack-slash-command/zipball/c2fa076cf58665e4b978b5f6d339897ab849f829",
+                "reference": "c2fa076cf58665e4b978b5f6d339897ab849f829",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3",
+                "illuminate/config": "~5.8.0|^6.0|^7.0",
+                "illuminate/queue": "~5.8.0|^6.0|^7.0",
+                "illuminate/routing": "~5.8.0|^6.0|^7.0",
+                "illuminate/support": "~5.8.0|^6.0|^7.0",
+                "laravel/helpers": "^1.0",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.0",
+                "orchestra/testbench": "~3.8.0|^4.0|^5.0",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\SlashCommand\\SlashCommandServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\SlashCommand\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Make a Laravel app respond to a slash command from Slack",
+            "homepage": "https://github.com/spatie/laravel-slack-slash-command",
+            "keywords": [
+                "laravel-slack",
+                "spatie"
+            ],
+            "time": "2020-03-19T08:15:41+00:00"
+        },
+        {
             "name": "spatie/laravel-view-models",
             "version": "1.3.0",
             "source": {
@@ -10222,7 +10445,7 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
@@ -10284,7 +10507,7 @@
         },
         {
             "name": "symfony/polyfill-iconv",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-iconv.git",
@@ -10347,7 +10570,7 @@
         },
         {
             "name": "symfony/polyfill-intl-grapheme",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-grapheme.git",
@@ -10411,7 +10634,7 @@
         },
         {
             "name": "symfony/polyfill-intl-icu",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-icu.git",
@@ -10473,16 +10696,16 @@
         },
         {
             "name": "symfony/polyfill-intl-idn",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-idn.git",
-                "reference": "bc6549d068d0160e0f10f7a5a23c7d1406b95ebe"
+                "reference": "5dcab1bc7146cf8c1beaa4502a3d9be344334251"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/bc6549d068d0160e0f10f7a5a23c7d1406b95ebe",
-                "reference": "bc6549d068d0160e0f10f7a5a23c7d1406b95ebe",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/5dcab1bc7146cf8c1beaa4502a3d9be344334251",
+                "reference": "5dcab1bc7146cf8c1beaa4502a3d9be344334251",
                 "shasum": ""
             },
             "require": {
@@ -10540,11 +10763,11 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-07-14T12:35:20+00:00"
+            "time": "2020-08-04T06:02:08+00:00"
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
@@ -10611,7 +10834,7 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
@@ -10674,7 +10897,7 @@
         },
         {
             "name": "symfony/polyfill-php70",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php70.git",
@@ -10737,7 +10960,7 @@
         },
         {
             "name": "symfony/polyfill-php72",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php72.git",
@@ -10796,7 +11019,7 @@
         },
         {
             "name": "symfony/polyfill-php73",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php73.git",
@@ -10858,7 +11081,7 @@
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
@@ -10924,7 +11147,7 @@
         },
         {
             "name": "symfony/polyfill-uuid",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-uuid.git",
@@ -14400,16 +14623,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.34",
+            "version": "0.12.35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "ad75388d71fb0b4a954f71a852fd989915a51cb7"
+                "reference": "5230eb31d546e4df7aa725894d17436cb8afd5df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ad75388d71fb0b4a954f71a852fd989915a51cb7",
-                "reference": "ad75388d71fb0b4a954f71a852fd989915a51cb7",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/5230eb31d546e4df7aa725894d17436cb8afd5df",
+                "reference": "5230eb31d546e4df7aa725894d17436cb8afd5df",
                 "shasum": ""
             },
             "require": {
@@ -14438,7 +14661,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-07-30T15:31:10+00:00"
+            "time": "2020-08-04T09:48:39+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -16148,7 +16371,8 @@
         "ext-libxml": "*",
         "ext-pdo": "*",
         "ext-redis": "*",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+        "ext-zend-opcache": "*"
     },
     "platform-dev": []
 }
