@@ -8,6 +8,7 @@ namespace App\Services\Enrollment;
 
 use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 class EnrollmentInvitationService
@@ -40,10 +41,10 @@ class EnrollmentInvitationService
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function sendToAwv($enrollable)
+    public function sendToAwv(User $enrollable)
     {
         try {
-            $surveyLink = Helpers::getSurveyInvitationLink($enrollable->patientInfo);
+            $surveyLink = Helpers::getSurveyInvitationLink($enrollable);
         } catch (\Exception $exception) {
             \Log::alert($exception);
             throw new \Exception($exception);
