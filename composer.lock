@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c73c585dab1dfebb8256e8ed088bfad",
+    "content-hash": "6b1561293c6bbe30231115aea5dcccc5",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -9201,6 +9201,46 @@
             "time": "2020-02-19T12:21:53+00:00"
         },
         {
+            "name": "shipping-docker/vessel",
+            "version": "5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shipping-docker/vessel.git",
+                "reference": "baf7e0481a48bd04b1bece2cdfa1a82edef64141"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shipping-docker/vessel/zipball/baf7e0481a48bd04b1bece2cdfa1a82edef64141",
+                "reference": "baf7e0481a48bd04b1bece2cdfa1a82edef64141",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Vessel\\VesselServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Vessel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Fidao",
+                    "email": "fideloper@gmail.com"
+                }
+            ],
+            "description": "Simple Docker dev environments",
+            "time": "2020-01-04T12:32:35+00:00"
+        },
+        {
             "name": "sparclex/nova-import-card",
             "version": "v7.0.1",
             "source": {
@@ -17358,6 +17398,7 @@
         "php": "^7.4",
         "ext-bcmath": "*",
         "ext-dom": "*",
+        "ext-imagick": "*",
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-pdo": "*",

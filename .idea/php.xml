@@ -315,6 +315,8 @@
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-slack-slash-command" />
       <path value="$PROJECT_DIR$/vendor/darkghosthunter/laraload" />
       <path value="$PROJECT_DIR$/vendor/darkghosthunter/preloader" />
+      <path value="$PROJECT_DIR$/vendor/org_heigl/ghostscript" />
+      <path value="$PROJECT_DIR$/vendor/shipping-docker/vessel" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
