@@ -16,6 +16,7 @@
         },
 
         props: [
+            'ccmStatus',
             'careplanStatus',
             'mode',
             'isProvider',
@@ -236,6 +237,10 @@
                     if (confirm('CAUTION: Clicking "confirm" will delete this patient’s entire record from Care Plan Manager. This action cannot be undone. Do you want to delete this patients entire record?')) {
                         document.getElementById('not-eligible-form').submit();
                     }
+                },
+
+                isEnrolled() {
+                    return this.ccmStatus === 'enrolled'
                 }
             }
         ),
@@ -246,7 +251,7 @@
     <div class="col-md-12" style="padding-top: 2%;" v-cloak>
         <div class="row" v-if="mode === Modes.Web">
             <div class="col-md-5 text-left">
-                <template v-if="isProvider">
+                <template v-if="isProvider && isEnrolled()">
                     <form id="form-provider-approve" class="inline-block" style="text-align: left"
                           :action="routeApproveOwn"
                           method="POST">
@@ -258,7 +263,7 @@
                 </template>
             </div>
             <div class="col-md-2 text-center">
-                <template v-if="showReadyForDrButton">
+                <template v-if="showReadyForDrButton && isEnrolled()">
                     <form id="form-approve"
                           :class="{'with-tooltip': readyForDrButtonDisabled || readyForDrButtonAlreadyClicked}"
                           :title="readyForDrButtonTooltip"
@@ -301,7 +306,7 @@
                         </button>
                     </form>
 
-                    <template v-if="isProvider || isAdmin">
+                    <template v-if="(isProvider || isAdmin) && isEnrolled()">
                         <form id="form-approve-next"
                               :action="routeApproveViewNext"
                               method="POST" style="display: inline">

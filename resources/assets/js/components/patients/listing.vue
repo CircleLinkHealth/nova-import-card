@@ -50,16 +50,22 @@
                 CCM Status Change
             </template>
             <template slot="careplanStatus" slot-scope="props">
-                <a v-if="canApproveCareplans && props.row.careplanStatus === 'rn_approved'" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
-                    <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
-                </a>
+                <div v-if="props.row.patient_info.ccm_status === 'enrolled'">
+                    <a v-if="canApproveCareplans && props.row.careplanStatus === 'rn_approved'" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
+                        <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
+                    </a>
 
-                <a v-else-if="isAdmin && (props.row.careplanStatus === 'draft' || props.row.careplanStatus === 'qa_approved')" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
-                    <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
-                </a>
+                    <a v-else-if="isAdmin && (props.row.careplanStatus === 'draft' || props.row.careplanStatus === 'qa_approved')" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
+                        <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
+                    </a>
+                </div>
+
+                <p v-else-if="props.row.careplanStatus === 'provider_approved'">
+                    {{carePlanStatusMap[props.row.careplanStatus]}}
+                </p>
 
                 <p v-else>
-                    {{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}
+                    N/A
                 </p>
             </template>
             <template slot="filter__ccm">

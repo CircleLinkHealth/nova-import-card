@@ -13,6 +13,7 @@ use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
@@ -562,35 +563,39 @@ class WebixFormatter implements ReportFormatter
                 $careplanStatus       = 'Approved';
                 $careplanStatusLink   = '<span data-toggle="" title="'.$approverName.' '.$carePlanProviderDate.'">Approved</span>';
                 $tooltip              = $approverName.' '.$carePlanProviderDate;
-            } elseif (CarePlan::RN_APPROVED == $careplanStatus) {
-                $careplanStatus     = 'Approve Now';
-                $tooltip            = $careplanStatus;
-                $careplanStatusLink = 'Approve Now';
-                if ($canApproveCarePlans) {
-                    $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
-                        'patient.careplan.print',
-                        ['patientId' => $patient->id]
-                    ).'"><strong>Approve Now</strong></a>';
-                }
-            } elseif (CarePlan::QA_APPROVED == $careplanStatus) {
-                $careplanStatus     = 'RN Approve';
-                $tooltip            = $careplanStatus;
-                $careplanStatusLink = 'RN Approve';
-                if ($canApproveCarePlans) {
-                    $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
-                        'patient.demographics.show',
-                        [$patient->id]
-                    ).'"><strong>RN Approve</strong></a>';
-                }
-            } elseif (CarePlan::DRAFT == $careplanStatus) {
-                $careplanStatus     = 'CLH Approve';
-                $tooltip            = $careplanStatus;
-                $careplanStatusLink = 'CLH Approve';
-                if ($canQAApproveCarePlans) {
-                    $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
-                        'patient.demographics.show',
-                        [$patient->id]
-                    ).'"><strong>CLH Approve</strong></a>';
+            }
+
+            if (Patient::ENROLLED === $patient->patientInfo->ccm_status) {
+                if (CarePlan::RN_APPROVED == $careplanStatus) {
+                    $careplanStatus     = 'Approve Now';
+                    $tooltip            = $careplanStatus;
+                    $careplanStatusLink = 'Approve Now';
+                    if ($canApproveCarePlans) {
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
+                            'patient.careplan.print',
+                            ['patientId' => $patient->id]
+                        ).'"><strong>Approve Now</strong></a>';
+                    }
+                } elseif (CarePlan::QA_APPROVED == $careplanStatus) {
+                    $careplanStatus     = 'RN Approve';
+                    $tooltip            = $careplanStatus;
+                    $careplanStatusLink = 'RN Approve';
+                    if ($canApproveCarePlans) {
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
+                            'patient.demographics.show',
+                            [$patient->id]
+                        ).'"><strong>RN Approve</strong></a>';
+                    }
+                } elseif (CarePlan::DRAFT == $careplanStatus) {
+                    $careplanStatus     = 'CLH Approve';
+                    $tooltip            = $careplanStatus;
+                    $careplanStatusLink = 'CLH Approve';
+                    if ($canQAApproveCarePlans) {
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
+                            'patient.demographics.show',
+                            [$patient->id]
+                        ).'"><strong>CLH Approve</strong></a>';
+                    }
                 }
             }
 
