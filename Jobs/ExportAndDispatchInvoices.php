@@ -55,34 +55,24 @@ class ExportAndDispatchInvoices implements ShouldQueue
      */
     public function handle()
     {
-        $startDate            = $this->month->copy()->startOfMonth();
-        $endDate              = $this->month->copy()->endOfMonth();
-        $invoices             = collect();
-        $invoicesChunksMerged = collect();
+        $startDate = $this->month->copy()->startOfMonth();
+        $endDate   = $this->month->copy()->endOfMonth();
+        $invoices  = collect();
+
         User::withDownloadableInvoices($startDate, $endDate)
             ->select('id')
             ->chunk(100, function ($users) use ($startDate, $endDate, &$invoices) {
-                $invoices->push($users->transform(function ($user) {
-                    return $user->nurseInfo->invoices->first();
-                }));
+                $users->each(function ($user) use ($invoices) {
+                    $invoices->push($user->nurseInfo->invoices->first());
+                });
             });
-
-        // If invoices number is above the chunk limit, will need to merge all chunks to one collection.
-        // Else we get one csv/pdf file per chunk.
-        // OR i could just use foreach instead of chunk since i also do withDownloadableInvoices()?
-        if ($this->invoicesAreChunked($invoices)) {
-            $invoicesChunksMerged->push($invoices->transform(function ($invoice) {
-                return $invoice;
-            }));
-            $invoices = $invoicesChunksMerged;
-        }
 
         // Code execution will continue. Notification will contain info text that nothing was generated.
         if ($invoices->isEmpty()) {
             Log::warning("Invoices to download for {$startDate} not found");
         }
         // Generate pdf / csv.
-        $invoicesMediaIds = $this->generateInvoicesMedia($invoices, $startDate);
+        $invoicesMediaIds = $this->generateInvoicesMedia(collect([$invoices]), $startDate);
         // Send notification with attachment.
         $this->auth->notify(new NurseInvoicesDownloaded($invoicesMediaIds, $startDate, $this->downloadFormat));
     }
