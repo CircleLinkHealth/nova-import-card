@@ -108,5 +108,8 @@ class ExportAndDispatchInvoices implements ShouldQueue
 
             return collect($invoiceDocument)->pluck('id')->toArray();
         }
+
+        //        If for any reason. It is handled in NurseInvoicesDownloaded::class.
+        return [];
     }
 }
