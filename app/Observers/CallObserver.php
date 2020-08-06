@@ -14,6 +14,8 @@ use App\Notifications\CallCreated;
 use App\Services\ActivityService;
 use App\Services\Calls\SchedulerService;
 use App\Services\NotificationService;
+use App\TwilioCall;
+use App\VoiceCall;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Notification;
@@ -66,6 +68,8 @@ class CallObserver
                 $date = Carbon::parse($call->updated_at);
 
                 $this->activityService->processMonthlyActivityTime($patient->id, $date);
+
+                $this->matchVoiceCallWithCpmCallRecord($call);
             }
         }
 
@@ -112,6 +116,25 @@ class CallObserver
             return;
         }
         event(new CarePlanWasApproved($patient, $note->author));
+    }
+
+    private function matchVoiceCallWithCpmCallRecord(Call $call)
+    {
+        if ( ! $call->called_date) {
+            return;
+        }
+
+        $calledDate = Carbon::parse($call->called_date);
+        TwilioCall::where('inbound_user_id', '=', $call->inbound_cpm_id)
+            ->where('outbound_user_id', '=', $call->outbound_cpm_id)
+            ->whereBetween('created_at', [$calledDate->copy()->subHours(2), $calledDate->copy()->addHours(2)])
+            ->each(function ($twilioCall) use ($call) {
+                VoiceCall::updateOrCreate([
+                    'call_id'             => $call->id,
+                    'voice_callable_id'   => $twilioCall->id,
+                    'voice_callable_type' => TwilioCall::class,
+                ], []);
+            });
     }
 
     private function shouldApproveCarePlan(Call $call)
