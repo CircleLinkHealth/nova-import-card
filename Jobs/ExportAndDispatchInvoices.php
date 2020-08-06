@@ -55,32 +55,42 @@ class ExportAndDispatchInvoices implements ShouldQueue
      */
     public function handle()
     {
-        $startDate = $this->month->copy()->startOfMonth();
-        $endDate   = $this->month->copy()->endOfMonth();
-
-        $invoices = collect();
+        $startDate            = $this->month->copy()->startOfMonth();
+        $endDate              = $this->month->copy()->endOfMonth();
+        $invoices             = collect();
+        $invoicesChunksMerged = collect();
         User::withDownloadableInvoices($startDate, $endDate)
-            ->select('id', 'program_id')
-            ->chunk(20, function ($users) use ($startDate, $endDate, &$invoices) {
-                $invoices[] = $users->transform(function ($user) {
-                    return [
-                        'data' => $user->nurseInfo->invoices,
-                    ];
-                });
+            ->select('id')
+            ->chunk(100, function ($users) use ($startDate, $endDate, &$invoices) {
+                $invoices->push($users->transform(function ($user) {
+                    return $user->nurseInfo->invoices->first();
+                }));
             });
 
-        // This will create one CSV or PDF per practice.
-//        $invoicesPerPractice = $invoices->flatten(1)->groupBy('practice_id');
+        if ($this->invoicesAreChunked($invoices)) {
+            $invoicesChunksMerged->push($invoices->transform(function ($invoice) {
+                return $invoice;
+            }));
+
+            $invoices = $invoicesChunksMerged;
+        }
 
         if ($invoices->isEmpty()) {
             //            Code execution will continue. It will dispatch a Notification with info that nothing was generated.
             Log::warning("Invoices to download for {$startDate} not found");
         }
 
-        $this->generateInvoicesFormatAndDispatch($invoices, $startDate);
+        $mediaIds = $this->generateInvoicesMedia($invoices, $startDate);
+
+        $this->auth->notify(new NurseInvoicesDownloaded($mediaIds, $startDate, $this->downloadFormat));
     }
 
-    private function generateInvoicesFormatAndDispatch(Collection $invoices, Carbon $startDate)
+    public function invoicesAreChunked(Collection $invoices): bool
+    {
+        return $invoices->count() > 1;
+    }
+
+    private function generateInvoicesMedia(Collection $invoices, Carbon $startDate)
     {
         $mediaIds = [];
 
@@ -91,9 +101,8 @@ class ExportAndDispatchInvoices implements ShouldQueue
 
         if (0 == strcasecmp(NurseInvoice::CSV_DOWNLOAD_FORMAT, $this->downloadFormat)) {
             $invoiceDocument = (new GenerateInvoicesExport($invoices, $this->downloadFormat, $startDate))->generateInvoiceCsv();
-            $mediaIds        = collect($invoiceDocument)->pluck('id')->toArray();
-        }
 
-        $this->auth->notify(new NurseInvoicesDownloaded($mediaIds, $startDate, $this->downloadFormat));
+            return collect($invoiceDocument)->pluck('id')->toArray();
+        }
     }
 }

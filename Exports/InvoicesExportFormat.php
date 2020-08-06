@@ -44,14 +44,14 @@ class InvoicesExportFormat
     public function toCsvArray()
     {
         return  $this->invoices->map(function ($invoice) {
-            $invoice = $invoice['data']->first();
+//            $invoice = $invoice['data']->first();
 
-            if ( ! isset($invoice->invoice_data)) {
+            if ( ! isset($invoice->first()->invoice_data)) {
                 return [
                 ];
             }
 
-            $invoice = $invoice->invoice_data;
+            $invoice = $invoice->first()->invoice_data;
             $baseSalary = $invoice['baseSalary'];
 
             $payStructure = 'visit';

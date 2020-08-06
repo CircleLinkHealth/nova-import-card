@@ -42,7 +42,9 @@ class GenerateInvoicesExport
         $medias       = [];
         $downloadName = "$month.csv";
 
-        $model = SaasAccount::whereSlug('circlelink-health')->firstOrFail();
+        $model = \Cache::remember("cached_saas_account_$downloadName", 2, function () {
+            return SaasAccount::whereSlug('circlelink-health')->firstOrFail();
+        });
 
         foreach ($this->invoices as $invoicesData) {
             $medias[] = (new FromArray(
