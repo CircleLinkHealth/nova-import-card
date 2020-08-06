@@ -77,7 +77,7 @@ class ExportAndDispatchInvoices implements ShouldQueue
             $invoices = $invoicesChunksMerged;
         }
 
-        // Code execution will continue. It will dispatch a Notification with info that nothing was generated.
+        // Code execution will continue. Notification will contain info text that nothing was generated.
         if ($invoices->isEmpty()) {
             Log::warning("Invoices to download for {$startDate} not found");
         }

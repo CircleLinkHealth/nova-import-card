@@ -44,7 +44,16 @@ class InvoicesExportFormat
     {
         return  $this->invoices->map(function ($invoice) {
             if ( ! isset($invoice->first()->invoice_data)) {
-                return [];
+                return [
+                    'Nurse'          => 'n/a',
+                    'Hour Total'     => 'n/a',
+                    'Visit Total'    => 'n/a',
+                    'Pay Structure'  => 'n/a',
+                    'Visit Hour Pay' => 'n/a',
+                    'Extra Time'     => 'n/a',
+                    'Bonus'          => 'n/a',
+                    'Pay Total'      => 'n/a',
+                ];
             }
             $invoice = $invoice->first()->invoice_data;
             $baseSalary = $invoice['baseSalary'];
