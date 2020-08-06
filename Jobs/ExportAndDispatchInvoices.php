@@ -67,16 +67,18 @@ class ExportAndDispatchInvoices implements ShouldQueue
                 }));
             });
 
+        // If invoices number is above the chunk limit, will need to merge all chunks to one collection.
+        // Else we get one csv/pdf per chunk.
+        // OR i could just use foreach instead of chunk since i also do withDownloadableInvoices()?
         if ($this->invoicesAreChunked($invoices)) {
             $invoicesChunksMerged->push($invoices->transform(function ($invoice) {
                 return $invoice;
             }));
-
             $invoices = $invoicesChunksMerged;
         }
 
+        //            Code execution will continue. It will dispatch a Notification with info that nothing was generated.
         if ($invoices->isEmpty()) {
-            //            Code execution will continue. It will dispatch a Notification with info that nothing was generated.
             Log::warning("Invoices to download for {$startDate} not found");
         }
 
