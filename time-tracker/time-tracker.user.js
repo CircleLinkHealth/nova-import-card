@@ -1,5 +1,5 @@
 const {EventEmitter} = require('events')
-const {validateInfo, createActivity} = require('./utils.fn');
+const {validateInfo, createActivity, formatTimeForServer} = require('./utils.fn');
 
 const axios = require('axios')
 const axiosRetry = require('axios-retry');
@@ -475,6 +475,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
                 url: activity.url,
                 url_short: activity.url_short,
                 start_time: activity.start_time,
+                end_time: formatTimeForServer(new Date()),
                 is_behavioral: activity.isBehavioral,
                 force_skip: activity.forceSkip
             }))
