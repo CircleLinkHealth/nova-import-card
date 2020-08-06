@@ -24,7 +24,7 @@ class ManualInvoiceDownloadCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'manual:invoiceDownloadCommand {downloadFormat} {forMonth} {userId}';
+    protected $signature = 'manual:invoiceDownloadCommand {downloadFormat} {forMonth} {userIdToReceiveEmail}';
 
     /**
      * Create a new command instance.
@@ -40,7 +40,7 @@ class ManualInvoiceDownloadCommand extends Command
     {
         $downloadFormat  = $this->argument('downloadFormat') ?? null;
         $month           = $this->argument('forMonth') ?? null;
-        $toReceiveMailId = $this->argument('userId') ?? null;
+        $toReceiveMailId = $this->argument('userIdToReceiveEmail') ?? null;
 
         $this->validateArgs($downloadFormat, $month, $toReceiveMailId);
 

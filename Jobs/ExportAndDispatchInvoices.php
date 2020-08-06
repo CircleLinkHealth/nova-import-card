@@ -68,7 +68,7 @@ class ExportAndDispatchInvoices implements ShouldQueue
             });
 
         // If invoices number is above the chunk limit, will need to merge all chunks to one collection.
-        // Else we get one csv/pdf per chunk.
+        // Else we get one csv/pdf file per chunk.
         // OR i could just use foreach instead of chunk since i also do withDownloadableInvoices()?
         if ($this->invoicesAreChunked($invoices)) {
             $invoicesChunksMerged->push($invoices->transform(function ($invoice) {
@@ -77,14 +77,14 @@ class ExportAndDispatchInvoices implements ShouldQueue
             $invoices = $invoicesChunksMerged;
         }
 
-        //            Code execution will continue. It will dispatch a Notification with info that nothing was generated.
+        // Code execution will continue. It will dispatch a Notification with info that nothing was generated.
         if ($invoices->isEmpty()) {
             Log::warning("Invoices to download for {$startDate} not found");
         }
-
-        $mediaIds = $this->generateInvoicesMedia($invoices, $startDate);
-
-        $this->auth->notify(new NurseInvoicesDownloaded($mediaIds, $startDate, $this->downloadFormat));
+        // Generate pdf / csv.
+        $invoicesMediaIds = $this->generateInvoicesMedia($invoices, $startDate);
+        // Send notification with attachment.
+        $this->auth->notify(new NurseInvoicesDownloaded($invoicesMediaIds, $startDate, $this->downloadFormat));
     }
 
     public function invoicesAreChunked(Collection $invoices): bool
@@ -92,17 +92,19 @@ class ExportAndDispatchInvoices implements ShouldQueue
         return $invoices->count() > 1;
     }
 
+    /**
+     * @return array
+     */
     private function generateInvoicesMedia(Collection $invoices, Carbon $startDate)
     {
-        $mediaIds = [];
-
         if (0 == strcasecmp(NurseInvoice::PDF_DOWNLOAD_FORMAT, $this->downloadFormat)) {
             $invoiceDocument = (new GenerateInvoicesExport($invoices, $this->downloadFormat, $startDate))->generateInvoicePdf();
-            $mediaIds        = collect($invoiceDocument)->pluck('mediaIds')->flatten()->toArray();
+
+            return collect($invoiceDocument)->pluck('mediaIds')->flatten()->toArray();
         }
 
         if (0 == strcasecmp(NurseInvoice::CSV_DOWNLOAD_FORMAT, $this->downloadFormat)) {
-            $invoiceDocument = (new GenerateInvoicesExport($invoices, $this->downloadFormat, $startDate))->generateInvoiceCsv();
+            $invoiceDocument = (new GenerateInvoicesExport($invoices, $this->downloadFormat, $startDate))->generateCsvWithInvoices();
 
             return collect($invoiceDocument)->pluck('id')->toArray();
         }

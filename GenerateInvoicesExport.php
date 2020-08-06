@@ -36,10 +36,10 @@ class GenerateInvoicesExport
         $this->downloadFormat = $downloadFormat;
     }
 
-    public function generateInvoiceCsv()
+    public function generateCsvWithInvoices()
     {
+        $csvInvoices  = [];
         $month        = Carbon::parse($this->date)->format('M-Y');
-        $medias       = [];
         $downloadName = "$month.csv";
 
         $model = \Cache::remember("cached_saas_account_$downloadName", 2, function () {
@@ -47,7 +47,7 @@ class GenerateInvoicesExport
         });
 
         foreach ($this->invoices as $invoicesData) {
-            $medias[] = (new FromArray(
+            $csvInvoices[] = (new FromArray(
                 "$downloadName",
                 (new InvoicesExportFormat(
                     $invoicesData
@@ -57,7 +57,7 @@ class GenerateInvoicesExport
             ))->storeAndAttachMediaTo($model, $downloadName);
         }
 
-        return $medias;
+        return $csvInvoices;
     }
 
     /**
