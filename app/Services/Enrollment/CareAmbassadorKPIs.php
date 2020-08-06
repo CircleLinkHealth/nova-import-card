@@ -40,8 +40,6 @@ class CareAmbassadorKPIs
 
     protected $perCost;
 
-    protected $shouldSetCostRelatedMetrics;
-
     /**
      * @var string
      */
@@ -65,6 +63,11 @@ class CareAmbassadorKPIs
     public static function get(User $careAmbassadorUser, Carbon $start, Carbon $end)
     {
         return (new static($careAmbassadorUser, $start, $end))->makeStats();
+    }
+
+    private function hourlyRateIsSet()
+    {
+        return 'Not Set' != $this->hourlyRate;
     }
 
     private function makeStats(): array
@@ -94,7 +97,7 @@ class CareAmbassadorKPIs
 
     private function setCallsPerHour()
     {
-        $this->callsPerHour = $this->shouldSetCostRelatedMetrics() ? number_format(
+        $this->callsPerHour = 0 != $this->totalSeconds ? number_format(
             $this->totalCalled / ($this->totalSeconds / 3600),
             2
         ) : 'N/A';
@@ -104,7 +107,14 @@ class CareAmbassadorKPIs
 
     private function setCareAmbassadorAssignedEnrollees()
     {
-        $this->enrolleesAssigned = PageTimer::select(DB::raw('lv_page_timer.provider_id as ca_user_id'), 'enrollee_id', DB::raw('enrollees.status as enrollee_status'), 'start_time', 'end_time', DB::raw('SUM(duration) as total_time'))
+        $this->enrolleesAssigned = PageTimer::select(
+            DB::raw('lv_page_timer.provider_id as ca_user_id'),
+            'enrollee_id',
+            DB::raw('enrollees.status as enrollee_status'),
+            'start_time',
+            'end_time',
+            DB::raw('SUM(duration) as total_time')
+        )
             ->leftJoin('enrollees', 'lv_page_timer.enrollee_id', '=', 'enrollees.id')
             ->where('lv_page_timer.provider_id', $this->careAmbassadorUser->id)
             ->whereNotNull('enrollee_id')
@@ -118,7 +128,7 @@ class CareAmbassadorKPIs
 
     private function setConversion()
     {
-        $this->conversion = $this->shouldSetCostRelatedMetrics() ? number_format(
+        $this->conversion = 0 != $this->totalCalled ? number_format(
             ($this->totalEnrolled / $this->totalCalled) * 100,
             2
         ).'%' : 'N/A';
@@ -128,7 +138,7 @@ class CareAmbassadorKPIs
 
     private function setEarnings()
     {
-        $this->earnings = $this->shouldSetCostRelatedMetrics() ? '$'.number_format(
+        $this->earnings = $this->hourlyRateIsSet() ? '$'.number_format(
             $this->hourlyRate * ($this->totalSeconds / 3600),
             2
         ) : 'N/A';
@@ -155,10 +165,11 @@ class CareAmbassadorKPIs
 
     private function setPerCost()
     {
-        $this->perCost = $this->shouldSetCostRelatedMetrics() ? '$'.number_format(
-            (($this->totalSeconds / 3600) * $this->hourlyRate) / $this->totalEnrolled,
-            2
-        ) : 'N/A';
+        $this->perCost = $this->hourlyRateIsSet() && 0 != $this->totalEnrolled
+            ? '$'.number_format(
+                (($this->totalSeconds / 3600) * $this->hourlyRate) / $this->totalEnrolled,
+                2
+            ) : 'N/A';
 
         return $this;
     }
@@ -199,18 +210,6 @@ class CareAmbassadorKPIs
         return $this;
     }
 
-    private function shouldSetCostRelatedMetrics()
-    {
-        if (null === $this->shouldSetCostRelatedMetrics) {
-            $this->shouldSetCostRelatedMetrics = 0 != $this->totalCalled
-                && 0 != $this->totalEnrolled
-                && 'Not Set' != $this->hourlyRate
-                && 0 !== $this->totalSeconds;
-        }
-
-        return $this->shouldSetCostRelatedMetrics;
-    }
-
     private function toArray()
     {
         return [
@@ -226,8 +225,7 @@ class CareAmbassadorKPIs
             'hourly_rate'         => $this->hourlyRate,
             'per_cost'            => $this->perCost,
             //for test - to check match with Practice KPIs
-            'total_seconds' => $this->totalSeconds,
-            'total_cost'    => $this->shouldSetCostRelatedMetrics() ? $this->hourlyRate * ($this->totalSeconds / 3600) : 0,
+            'total_cost' => $this->hourlyRateIsSet() ? $this->hourlyRate * ($this->totalSeconds / 3600) : 0,
         ];
     }
 }
