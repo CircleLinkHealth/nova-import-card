@@ -24,7 +24,7 @@ class ManualInvoiceDownloadCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'manual:invoiceDownloadCommand {forPractice} {downloadFormat} {forMonth} {userId}';
+    protected $signature = 'manual:invoiceDownloadCommand {downloadFormat} {forMonth} {userIdToReceiveEmail}';
 
     /**
      * Create a new command instance.
@@ -38,26 +38,21 @@ class ManualInvoiceDownloadCommand extends Command
 
     public function handle()
     {
-        $forPractice     = $this->argument('forPractice') ?? null;
         $downloadFormat  = $this->argument('downloadFormat') ?? null;
         $month           = $this->argument('forMonth') ?? null;
-        $toReceiveMailId = $this->argument('userId') ?? null;
+        $toReceiveMailId = $this->argument('userIdToReceiveEmail') ?? null;
 
-        $this->validateArgs($forPractice, $downloadFormat, $month, $toReceiveMailId);
+        $this->validateArgs($downloadFormat, $month, $toReceiveMailId);
 
         $monthToDate = Carbon::parse($month);
 
         $adminToReceiveMail = User::findOrFail($toReceiveMailId);
 
-        ExportAndDispatchInvoices::dispatch([$forPractice], [$downloadFormat], $monthToDate, $adminToReceiveMail)->onQueue('low');
+        ExportAndDispatchInvoices::dispatch($downloadFormat, $monthToDate, $adminToReceiveMail)->onQueue('low');
     }
 
-    private function validateArgs(int $forPractice, string $downloadFormat, string $month, int $adminToReceiveMail)
+    private function validateArgs(string $downloadFormat, string $month, int $adminToReceiveMail)
     {
-        if (is_null($forPractice)) {
-            $this->warn("Missing argument 'forPractice'");
-        }
-
         if (is_null($downloadFormat)) {
             $this->warn("Missing argument 'downloadFormat'");
         }
