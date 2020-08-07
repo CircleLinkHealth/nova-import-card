@@ -15,6 +15,7 @@ use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use App\TwilioCall;
 use App\VoiceCall;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
 use Tests\CustomerTestCase;
 
@@ -22,6 +23,12 @@ class VoiceCallsTest extends CustomerTestCase
 {
     use PracticeHelpers;
     use TimeHelpers;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        AppConfig::set('enable_unsuccessful_call_patient_notification', false);
+    }
 
     /**
      * Multiple Unsuccessful calls => No Voice Call Alert.
