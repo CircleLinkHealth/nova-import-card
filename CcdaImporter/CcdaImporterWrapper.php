@@ -549,7 +549,11 @@ class CcdaImporterWrapper
         $location = Location::where('name', $enrollee->facility_name)->first();
 
         if ( ! $location) {
-            $location = (new LocationByName())->query($enrollee->facility_name)->where('practice_id', $ccda->practice_id)->whereNotNull('practice_id')->first();
+            $location = LocationByName::first($enrollee->facility_name);
+
+            if ($location->practice_id !== $ccda->practice_id) {
+                $location = null;
+            }
         }
 
         if ($location) {
