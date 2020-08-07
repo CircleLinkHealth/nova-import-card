@@ -37,9 +37,9 @@ class CoreServiceProvider extends ServiceProvider
 //        $this->registerTranslations();
 
         $this->registerViews();
+        $this->registerConfig();
 
         if ($this->app->runningInConsole()) {
-            $this->registerConfig();
             $this->registerFactories();
             $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         }
