@@ -6,6 +6,7 @@
 
 namespace Modules\Eligibility\CcdaImporter;
 
+use App\Search\LocationByName;
 use App\Search\ProviderByName;
 use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Entities\Ehr;
@@ -193,6 +194,14 @@ class CcdaImporterWrapper
         }
 
         $this->setLocationFromAuthorAddressInCcda($this->ccda);
+
+        if ($this->ccda->location_id) {
+            return $this;
+        }
+
+        if ($this->enrollee) {
+            $this->setLocationFromEnrolleeFacility($this->ccda, $this->enrollee);
+        }
 
         if ($this->ccda->location_id) {
             return $this;
@@ -528,6 +537,24 @@ class CcdaImporterWrapper
             if ($location = Location::whereIn('address_line_1', [$address, $this->replaceCommonAddressVariations($address)])->where('practice_id', $this->ccda->practice_id)->first()) {
                 $this->ccda->setLocationId($location->id);
             }
+        }
+    }
+
+    private function setLocationFromEnrolleeFacility(Ccda &$ccda, Enrollee &$enrollee)
+    {
+        if ( ! $enrollee->facility_name) {
+            return;
+        }
+
+        $location = Location::where('name', $enrollee->facility_name)->first();
+
+        if ( ! $location) {
+            $location = (new LocationByName())->query($enrollee->facility_name)->where('practice_id', $ccda->practice_id)->whereNotNull('practice_id')->first();
+        }
+
+        if ($location) {
+            $ccda->location_id     = $location->id;
+            $enrollee->location_id = $location->id;
         }
     }
 }
