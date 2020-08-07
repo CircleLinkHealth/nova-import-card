@@ -120,10 +120,9 @@ class CpmCallAlert extends Resource
 
             Text::make('Comment', 'comment')
                 ->hideFromIndex(true)
-                ->hideFromDetail(true)
                 ->rules('required'),
 
-            Text::make('Note', function ($row) {
+            Text::make('Info', function ($row) {
                 return Call::REACHED === $row->status ? 'Flagged because call was marked as successful but call is below minimum duration'
                     : 'Flagged because call was marked as unsuccessful but call is above minimum duration';
             }),
