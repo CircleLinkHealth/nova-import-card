@@ -592,9 +592,12 @@ class NotesController extends Controller
             }
         }
 
+        $attestedProblems = isset($input['attested_problems'])
+            ? $input['attested_problems']
+            : null;
         //attestation validation
         if ($successfulClinicalCall) {
-            $this->service->validateAttestation($request, $patientId);
+            $this->service->validateAttestation($request, $patientId, $attestedProblems);
         }
 
         $shouldSendPatientEmail = isset($input['email-patient']);

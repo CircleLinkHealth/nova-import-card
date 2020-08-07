@@ -520,7 +520,7 @@ class NoteService
         return $meta_tags;
     }
 
-    public function validateAttestation(SafeRequest $request, $patientId)
+    public function validateAttestation(SafeRequest $request, $patientId, $attestedProblems)
     {
         // validating attested problems by nurse. Checking existence since we are about to attach them below
         $request->validate([
@@ -529,9 +529,6 @@ class NoteService
 
         $input = $request->allSafe();
 
-        $attestedProblems = isset($input['attested_problems'])
-            ? $input['attested_problems']
-            : null;
         $bypassedAllAttestationValidation = isset($input['bypassed_all_validation']);
 
         if ($bypassedAllAttestationValidation) {
