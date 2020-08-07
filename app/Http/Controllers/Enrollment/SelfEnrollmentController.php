@@ -142,7 +142,14 @@ class SelfEnrollmentController extends Controller
 
         $this->expirePastInvitationLink($enrollable);
 
-        return $this->createUrlAndRedirectToSurvey($user);
+        try {
+            return $this->createUrlAndRedirectToSurvey($user);
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            Log::critical("User id [$userId] could not redirect to AWV Enrollee Survey. ERROR: $message");
+
+            return view('EnrollmentSurvey.enrollableError');
+        }
     }
 
     /**
@@ -232,9 +239,16 @@ class SelfEnrollmentController extends Controller
 
     protected function authenticate(SelfEnrollableUserAuthRequest $request)
     {
-        return $this->enrollableInvitationManager(
-            Auth::loginUsingId((int) $request->input('user_id'), true)
-        );
+        try {
+            return $this->enrollableInvitationManager(
+                Auth::loginUsingId((int) $request->input('user_id'), true)
+            );
+        } catch (\Exception $e) {
+            $userId = intval($request->input('enrollable_id'));
+            Log::critical("User [$userId] could not log in to Self Enrollment Survey");
+
+            return view('EnrollmentSurvey.enrollableError');
+        }
     }
 
     protected function logoutEnrollee(Request $request)
