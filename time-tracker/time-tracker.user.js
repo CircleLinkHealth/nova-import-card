@@ -448,8 +448,10 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         if (info.modify) {
             // we allow changing activity name using a filter
             const activity = user.findActivity({activity: info.modifyFilter, enrolleeId: info.enrolleeId, isManualBehavioral: info.isManualBehavioral})
-            activity.name = info.activity;
-            activity.enrolleeId = info.enrolleeId;
+            if (activity) {
+                activity.name = info.activity;
+                activity.enrolleeId = info.enrolleeId;
+            }
             return;
         }
 
