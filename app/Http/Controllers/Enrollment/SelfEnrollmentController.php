@@ -146,7 +146,7 @@ class SelfEnrollmentController extends Controller
             return $this->createUrlAndRedirectToSurvey($user);
         } catch (\Exception $e) {
             $message = $e->getMessage();
-            Log::alert("User id [$userId] could not redirect to AWV Enrollee Survey. ERROR: $message");
+            Log::critical("User id [$userId] could not redirect to AWV Enrollee Survey. ERROR: $message");
 
             return view('EnrollmentSurvey.enrollableError');
         }
@@ -245,7 +245,7 @@ class SelfEnrollmentController extends Controller
             );
         } catch (\Exception $e) {
             $userId = intval($request->input('enrollable_id'));
-            Log::alert("User [$userId] could not log in to Self Enrollment Survey");
+            Log::critical("User [$userId] could not log in to Self Enrollment Survey");
 
             return view('EnrollmentSurvey.enrollableError');
         }
