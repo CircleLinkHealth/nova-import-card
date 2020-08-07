@@ -124,6 +124,7 @@ use Illuminate\Support\Str;
  * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch|null $batch
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee lastCalledBetween(\Carbon\Carbon $start, \Carbon\Carbon $end)
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee ofStatus($status)
+ * @property string|null                                                  $facility_name
  */
 class Enrollee extends BaseModel
 {
@@ -313,6 +314,8 @@ class Enrollee extends BaseModel
         'user_id',
         'provider_id',
         'practice_id',
+        'facility_name',
+        'location_id',
         'care_ambassador_user_id',
         'total_time_spent',
 
