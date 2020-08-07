@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f9d162b8e8402fefa95831f085d9e6bb",
+    "content-hash": "a63434a4d69c8e775230a0539f166e23",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1199,11 +1199,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.2.5",
+            "version": "v3.2.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "8527b578409bca3f309b76bf2f2c8b0a849bfe0a"
+                "reference": "272ef3a6045f73f395e28787c25593228fb57a13"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1228,7 +1228,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-02T17:55:48+00:00"
+            "time": "2020-08-07T20:47:08+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -4727,16 +4727,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.23.2",
+            "version": "v7.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "75792f4c6945749046d4ec1ce560b04640d36b99"
+                "reference": "71bfb1f2f89e4e31fba539d43fe287143e635e68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/75792f4c6945749046d4ec1ce560b04640d36b99",
-                "reference": "75792f4c6945749046d4ec1ce560b04640d36b99",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/71bfb1f2f89e4e31fba539d43fe287143e635e68",
+                "reference": "71bfb1f2f89e4e31fba539d43fe287143e635e68",
                 "shasum": ""
             },
             "require": {
@@ -4880,7 +4880,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-08-06T14:56:13+00:00"
+            "time": "2020-08-07T15:13:57+00:00"
         },
         {
             "name": "laravel/helpers",
