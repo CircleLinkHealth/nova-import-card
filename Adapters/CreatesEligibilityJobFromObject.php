@@ -142,7 +142,7 @@ trait CreatesEligibilityJobFromObject
                     return false;
                 }
 
-                return implode($this->getCcdaTransformer()->insurance($payer), ' - ');
+                return implode(' - ', $this->getCcdaTransformer()->insurance($payer));
             }
         )->filter();
     }
