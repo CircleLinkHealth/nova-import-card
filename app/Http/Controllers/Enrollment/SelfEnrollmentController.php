@@ -148,7 +148,7 @@ class SelfEnrollmentController extends Controller
             $message = $e->getMessage();
             Log::alert("User id [$userId] could not redirect to AWV Enrollee Survey. ERROR: $message");
 
-            return $this->error('Something went wrong.');
+            return view('EnrollmentSurvey.enrollableError');
         }
     }
 
