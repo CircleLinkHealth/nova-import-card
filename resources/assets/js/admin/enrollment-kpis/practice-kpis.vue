@@ -68,7 +68,7 @@
                         conversion: 'Conversion %',
                         labor_rate: 'Labor Rate',
                         total_cost: 'Total Cost',
-                        acq_cost: 'Patient Acq. Cost'
+                        acq_cost: 'Pt. Consent Cost'
                     },
                     perPage: 10,
                     perPageValues: [10, 25],

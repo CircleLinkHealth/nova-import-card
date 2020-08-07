@@ -568,11 +568,12 @@ class NotesController extends Controller
                 ->withErrors(['Cannot create note with empty body.'])
                 ->withInput();
         }
+        $successfulClinicalCall = isset($input['call_status']) && Call::REACHED === $input['call_status'];
 
         // RN Approval Flow - session must have SESSION_RN_APPROVED_KEY
         $hasRnApprovedCp = false;
         if (optional($patient->carePlan)->shouldRnApprove($author) &&
-            isset($input['call_status']) && Call::REACHED === $input['call_status']) {
+            $successfulClinicalCall) {
             $approvedId      = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
             $hasRnApprovedCp = $approvedId && $approvedId == auth()->id();
             if ( ! $hasRnApprovedCp) {
@@ -591,27 +592,12 @@ class NotesController extends Controller
             }
         }
 
-        // validating attested problems by nurse. Checking existence since we are about to attach them below
-        $request->validate([
-            'attested_problems.ccd_problem_id' => 'exists:ccd_problems',
-        ]);
         $attestedProblems = isset($input['attested_problems'])
             ? $input['attested_problems']
             : null;
-        $bypassedAllAttestationValidation = isset($input['bypassed_all_validation']);
-
-        if ($bypassedAllAttestationValidation) {
-            sendPatientBypassedAttestationWarning($patientId);
-        }
-
-        if ( ! $bypassedAllAttestationValidation && empty($attestedProblems)) {
-            \Log::critical("Attestation Validation failed for patient: {$patientId}");
-
-            sendPatientAttestationValidationFailedWarning($patientId);
-        }
-
-        if (isset($input['bypassed_bhi_validation'])) {
-            sendPatientBhiUnattestedWarning($patientId);
+        //attestation validation
+        if ($successfulClinicalCall) {
+            $this->service->validateAttestation($request, $patientId, $attestedProblems);
         }
 
         $shouldSendPatientEmail = isset($input['email-patient']);

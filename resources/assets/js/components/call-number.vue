@@ -34,6 +34,7 @@
                 <div class="col-xs-12">
                     <div class="col-xs-9 no-padding">
                         <select2 class="form-control" v-model="dropdownNumber"
+                                 :settings="{minimumResultsForSearch: -1}"
                                  :disabled="onPhone[selectedPatientNumber]">
                             <option v-for="(number, key) in patientNumbers" :key="key" :value="number">{{number}}
                             </option>
