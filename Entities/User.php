@@ -242,6 +242,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiChargeable()
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiEligible()
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withDownloadableInvoices($startDate, $endDate)
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newModelQuery()
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newQuery()
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User notOfPracticeRequiringSpecialBhiConsent()
@@ -289,17 +290,21 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withTrashed()
  * @method   static                                                                                                          \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\User withoutTrashed()
  * @mixin \Eloquent
- * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null $enrollmentInvitationLinks
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null       $enrollableInfoRequest
- * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                       $loginEvents
- * @property int|null                                                                          $login_events_count
- * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                              $enrollee
- * @property int|null                                                                          $enrollment_invitation_links_count
- * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
- * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInviteReminder(\Carbon\Carbon $date = null, $has = true)
- * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
- * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingCLHApproval(\CircleLinkHealth\Customer\Entities\User $approver)
- * @method   static                                                                            \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingProviderApproval(\CircleLinkHealth\Customer\Entities\User $approver)
+ * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                       $enrollmentInvitationLinks
+ * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                             $enrollableInfoRequest
+ * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                                             $loginEvents
+ * @property int|null                                                                                                $login_events_count
+ * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                                                    $enrollee
+ * @property int|null                                                                                                $enrollment_invitation_links_count
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInviteReminder(\Carbon\Carbon $date = null, $has = true)
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingCLHApproval(\CircleLinkHealth\Customer\Entities\User $approver)
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingProviderApproval(\CircleLinkHealth\Customer\Entities\User $approver)
+ * @property \CircleLinkHealth\Eligibility\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection              $assignedEnrollees
+ * @property int|null                                                                                                $assigned_enrollees_count
+ * @property \CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision[]|\Illuminate\Database\Eloquent\Collection $patientCcmStatusRevisions
+ * @property int|null                                                                                                $patient_ccm_status_revisions_count
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -428,6 +433,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function appointments()
     {
         return $this->hasMany(Appointment::class, 'patient_id');
+    }
+
+    public function assignedEnrollees()
+    {
+        return $this->hasMany(Enrollee::class, 'care_ambassador_user_id');
     }
 
     /**
@@ -2436,6 +2446,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(PatientAWVSummary::class, 'user_id');
     }
 
+    public function patientCcmStatusRevisions()
+    {
+        return $this->hasMany(PatientCcmStatusRevision::class, 'patient_user_id');
+    }
+
     public function patientInfo()
     {
         return $this->hasOne(Patient::class, 'user_id', 'id');
@@ -3298,6 +3313,48 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
+     * @param $query
+     *
+     * @return mixed
+     */
+    public function scopeWithDownloadableInvoices($query, Carbon $startDate, Carbon $endDate)
+    {
+        return $query->careCoaches()->with([
+            'nurseInfo' => function ($nurseInfo) use ($startDate, $endDate) {
+                $nurseInfo->with(
+                    [
+                        'invoices' => function ($invoice) use ($startDate) {
+                            $invoice->where('month_year', $startDate);
+                        },
+                    ]
+                );
+            },
+            'pageTimersAsProvider' => function ($pageTimer) use ($startDate, $endDate) {
+                $pageTimer->whereBetween('start_time', [$startDate, $endDate]);
+            },
+        ])->whereHas('nurseInfo.invoices', function ($invoice) use ($startDate) {
+            $invoice->where('month_year', $startDate);
+        })
+            //            Need nurses that are currently active or used to be for selected month
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereHas(
+                    'nurseInfo',
+                    function ($info) {
+                        $info->where('status', 'active')->when(
+                            isProductionEnv(),
+                            function ($info) {
+                                $info->where('is_demo', false);
+                            }
+                        );
+                    }
+                )
+                    ->orWhereHas('pageTimersAsProvider', function ($pageTimersAsProvider) use ($startDate, $endDate) {
+                        $pageTimersAsProvider->whereBetween('start_time', [$startDate, $endDate]);
+                    });
+            });
+    }
+
+    /**
      * Get Scout index name for the model.
      *
      * @return string
@@ -3988,6 +4045,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->exists();
 
         return $invoice && $now->lte(NurseInvoiceDisputeDeadline::for($invoiceMonth));
+    }
+
+    public function shouldShowPcmBadge()
+    {
+        // cache for 24 hours
+        return Cache::remember("{$this->id}_pcm_badge", 60 * 24, function () {
+            return isPatientPcmBadgeEnabled() && $this->isPcm();
+        });
     }
 
     /**

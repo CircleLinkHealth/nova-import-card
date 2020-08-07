@@ -21,12 +21,10 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property int|null                        $max_per_hour
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CustomerNotificationContactTimePreference newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CustomerNotificationContactTimePreference newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CustomerNotificationContactTimePreference query()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\CustomerNotificationContactTimePreference newModelQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\CustomerNotificationContactTimePreference newQuery()
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|\App\CustomerNotificationContactTimePreference query()
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
  * @property int                                                                                         $is_enabled

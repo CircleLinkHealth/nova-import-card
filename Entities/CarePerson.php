@@ -32,6 +32,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson query()
  * @property int|null                                                                                    $revision_history_count
+ * @property \CircleLinkHealth\Customer\Entities\User                                                    $patient
  */
 class CarePerson extends BaseModel
 {
@@ -70,6 +71,11 @@ class CarePerson extends BaseModel
      * @var string
      */
     protected $table = 'patient_care_team_members';
+
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 
     public function user()
     {

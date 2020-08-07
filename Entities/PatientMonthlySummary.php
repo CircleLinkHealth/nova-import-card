@@ -37,7 +37,6 @@ use Illuminate\Support\Facades\DB;
  * @property int                                         $total_time
  * @property \CircleLinkHealth\Customer\Entities\User    $actor
  * @property \CircleLinkHealth\Customer\Entities\Patient $patient_info
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     getCurrent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
@@ -73,7 +72,6 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property string|null                                          $closed_ccm_status
  * @property int|null                                             $problem_1
  * @property int|null                                             $problem_2
@@ -88,7 +86,6 @@ use Illuminate\Support\Facades\DB;
  * @property \CircleLinkHealth\Customer\Entities\User $patient
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     hasServiceCode($code)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
@@ -113,7 +110,6 @@ use Illuminate\Support\Facades\DB;
  *     whereProblem2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
  *     whereTotalTime($value)
- *
  * @property int|null                                                                                         $billable_problems_count
  * @property int|null                                                                                         $chargeable_services_count
  * @property int|null                                                                                         $revision_history_count
@@ -121,6 +117,7 @@ use Illuminate\Support\Facades\DB;
  * @property int|null                                                                                         $attested_problems_count
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $allChargeableServices
  * @property int|null                                                                                         $all_chargeable_services_count
+ * @property int                                                                                              $should_process
  */
 class PatientMonthlySummary extends BaseModel
 {

@@ -225,7 +225,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         return ! empty($workHours) ? $workHours : 0;
     }
 
-    public function getUpcomingHolidayDatesAttribute()
+    public function getUpcomingHolidayDates()
     {
         return $this->upcomingHolidaysFrom(Carbon::today())
             ->sortBy(function ($item) {
