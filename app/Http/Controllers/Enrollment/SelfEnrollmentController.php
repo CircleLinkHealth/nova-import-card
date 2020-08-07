@@ -247,7 +247,7 @@ class SelfEnrollmentController extends Controller
             $userId = intval($request->input('enrollable_id'));
             Log::alert("User [$userId] could not log in to Self Enrollment Survey");
 
-            return $this->error('Sorry something went wrong.');
+            return view('EnrollmentSurvey.enrollableError');
         }
     }
 
