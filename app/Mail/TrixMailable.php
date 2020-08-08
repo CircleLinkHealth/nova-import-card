@@ -51,29 +51,23 @@ class TrixMailable extends Mailable
      */
     public function build()
     {
-        //get media to embed images
-        $media = [];
-        foreach ($this->mailAttachments as $attachment) {
-            $media[] = Media::where('collection_name', 'patient-email-attachments')
-                ->where('model_id', $this->patient->id)
-                ->whereIn('model_type', [\App\User::class, 'CircleLinkHealth\Customer\Entities\User'])
-                ->where('mime_type', 'like', '%'.'image'.'%')
-                ->find($attachment['media_id']);
-        }
+        $media = Media::where('collection_name', 'patient-email-attachments')
+            ->where('model_id', $this->patient->id)
+            ->whereIn('model_type', [\App\User::class, \CircleLinkHealth\Customer\Entities\User::class])
+            ->findMany(collect($this->mailAttachments)->pluck('media_id')->filter())->filter();
 
         $email = $this->view('patient.patient-email')
             ->with([
                 'practiceName' => $this->patient->getPrimaryPracticeName(),
                 'content'      => $this->content,
-                'attachments'  => collect($media)->filter(),
+                'attachments'  => $media->where('mime_type', 'like', '%'.'image'.'%'),
             ])
             ->from(config('mail.from.address'), 'Care Coaching Team')
             ->subject($this->emailSubject);
 
-        //attach media
-        if ( ! empty($this->mailAttachments)) {
-            foreach ($this->mailAttachments as $attachment) {
-                $email->attachFromStorageDisk('cloud', $attachment['path']);
+        foreach ($media as $attachment) {
+            if (method_exists($attachment, 'getPath')) {
+                $email->attachFromStorageDisk('media', $attachment->getPath());
             }
         }
 
