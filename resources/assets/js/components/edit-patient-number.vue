@@ -51,12 +51,13 @@
             <loader v-if="loading"></loader>
 
             <!--Extra inputs that are requested by user-->
-            <div v-for="(input, index) in newInputs" style="display: inline-flex; padding-bottom: 10px; padding-left: 10px;">
+            <div v-for="(input, index) in newInputs" class="extra-inputs">
                 <div style="padding-right: 14px; margin-left: -10px;">
-
                     <div class="numbers">
                         <div class="types">
-                       <select2 id="numberType" class="form-control" style="width: 81px;"
+                       <select2 id="numberType"
+                                class="form-control"
+                                style="width: 81px;"
                                 v-model="newPhoneType">
                            <option v-for="(phoneType, key) in phoneTypes"
                                    :key="key"
@@ -106,6 +107,42 @@
                @click="addPhoneField()">
                 Add phone number
             </a>
+
+           <div v-if="showAlternateFields" class="alternate-fields">
+               <input name="alternativeContactName"
+                      class="form-control alternative-field"
+                      maxlength="40"
+                      minlength="3"
+                      type="text"
+                      title="Type alternate contact name"
+                      placeholder="Alternate name"
+                      v-model="newAltPhoneNumber"
+                      :disabled="loading"/>
+
+               <input name="alternativeRelationship"
+                      style="margin-left: 10px;"
+                      class="form-control alternative-field"
+                      maxlength="20"
+                      minlength="3"
+                      type="text"
+                      title="Type alternate relationship"
+                      placeholder="Alternate relationship"
+                      v-model="newAltRelationship"
+                      :disabled="loading"/>
+               <br>
+
+               <input name="alternativeEmail"
+                      class="form-control alternative-field"
+                      maxlength="20"
+                      minlength="3"
+                      type="text"
+                      title="Type alternate email"
+                      placeholder="Alternate email"
+                      v-model="newAltEmail"
+                      :disabled="loading"/>
+
+           </div>
+
         </div>
     </div>
 </template>
@@ -142,9 +179,17 @@
                 markPrimaryEnabledForIndex:'',
                 makeNewNumberPrimary:false,
                 primaryNumber:'',
+                newAltPhoneNumber:'',
+                newAltRelationship:'',
+                newAltEmail:'',
             }
         },
         computed:{
+            validEmail(){
+                return this.newAltEmail.length !== 0
+                    && this.newAltEmail.includes("@")
+                    && (this.newAltEmail.includes(".com"));
+            },
             disableSaveButton(){
                 return this.loading
                     || this.newPhoneType.length === 0
@@ -162,6 +207,12 @@
                     return'Save & Make Private';
                 }
                 return "Save Number";
+            },
+
+            //Alternate fields = agent phone, email, relationship...
+            showAlternateFields(){
+                const alternate = 'alternate';
+                return this.newPhoneType.toUpperCase() === alternate.toUpperCase();
             },
         },
 
@@ -249,15 +300,42 @@
                 this.newInputs.push(arr);
             },
 
+            validateAlternativeFields(){
+                if (this.showAlternateFields){
+                    if(this.newAltEmail.length === 0){
+                        alert("Agent email is required.");
+                        return;
+                    }else if (this.newAltEmail.length > 0 && ! this.validEmail){
+                        alert("Agent email is not a valid email format.");
+                        return;
+                    }
+
+                    if(this.newAltPhoneNumber.length === 0){
+                        alert("Agent phone number is required.");
+                        return;
+                    }
+
+                    if(this.newAltRelationship.length === 0){
+                        alert("Agent relationship is required.");
+                        return;
+                    }
+                }
+            },
+
             saveNewNumber(){
                 this.loading = true;
                 if (this.newPhoneType.length === 0){
                     alert("Please choose phone number type");
+                    return;
                 }
+
+                // Should not happen.
                 if (this.newPhoneNumber.length === 0){
-                    // Should not happen.
-                    alert("Please type a phone number");
+                    alert("Phone number is required.");
+                    return;
                 }
+
+                this.validateAlternativeFields();
 
                 // If it is the first number then make it primary.
                 if (this.patientPhoneNumbers.length === 0){
@@ -318,19 +396,21 @@
 .phone-numbers{
     float: left;
 }
+
+.extra-inputs{
+    display: inline-flex;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    white-space: nowrap;
+}
     .phone-type{
         min-width: 80px;
         max-width: 80px;
         text-align: center;
         background-color: transparent;
     }
-    .edit-phone{
-        margin-left: 10px;
-        padding-top: 5px;
-        color: #50b2e2;
-        cursor: pointer;
-    }
-    .remove-phone{
+
+.remove-phone{
         top: -7px;
         padding-left: 3px;
         color: red;
@@ -384,13 +464,20 @@
         margin-right: 10px;
     }
     .types{
-        padding-right: 10px;
-        padding-left: 10px;
+        padding-right: 6px;
+        /*padding-left: 10px;*/
     }
     .phone-number{
         background-color: transparent;
         max-width: 140px;
         min-width: 140px;
+    }
+
+    .alternative-field{
+        background-color: transparent;
+        max-width: 270px;
+        min-width: 270px;
+        margin-bottom: 18px;
     }
     .update-primaryNumber{
         height: 29px;

@@ -235,12 +235,12 @@ $user_info = [];
 {{--                                                        </div>--}}
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <div class="form-group {{ $errors->first('agent_email') ? 'has-error' : '' }}">
-                                                            <input type="text" class="form-control" name="agent_email"
-                                                                   id="agent_email" placeholder="Agent Email"
-                                                                   value="{{ (old('agent_email') ? old('agent_email') : ($patient->getAgentEmail() ? $patient->getAgentEmail() : '')) }}">
-                                                            <span class="help-block">{{ $errors->first('agent_email') }}</span>
-                                                        </div>
+{{--                                                        <div class="form-group {{ $errors->first('agent_email') ? 'has-error' : '' }}">--}}
+{{--                                                            <input type="text" class="form-control" name="agent_email"--}}
+{{--                                                                   id="agent_email" placeholder="Agent Email"--}}
+{{--                                                                   value="{{ (old('agent_email') ? old('agent_email') : ($patient->getAgentEmail() ? $patient->getAgentEmail() : '')) }}">--}}
+{{--                                                            <span class="help-block">{{ $errors->first('agent_email') }}</span>--}}
+{{--                                                        </div>--}}
                                                     </div>
                                                 </div>
                                             </div>
