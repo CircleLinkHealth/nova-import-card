@@ -13,6 +13,7 @@ use App\Note;
 use App\Notifications\SendPatientEmail;
 use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\NoteRepository;
+use App\SafeRequest;
 use App\View\MetaTag;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
@@ -517,6 +518,32 @@ class NoteService
         }
 
         return $meta_tags;
+    }
+
+    public function validateAttestation(SafeRequest $request, $patientId, $attestedProblems)
+    {
+        // validating attested problems by nurse. Checking existence since we are about to attach them below
+        $request->validate([
+            'attested_problems.ccd_problem_id' => 'exists:ccd_problems',
+        ]);
+
+        $input = $request->allSafe();
+
+        $bypassedAllAttestationValidation = isset($input['bypassed_all_validation']);
+
+        if ($bypassedAllAttestationValidation) {
+            sendPatientBypassedAttestationWarning($patientId);
+        }
+
+        if ( ! $bypassedAllAttestationValidation && empty($attestedProblems)) {
+            \Log::critical("Attestation Validation failed for patient: {$patientId}");
+
+            sendPatientAttestationValidationFailedWarning($patientId);
+        }
+
+        if (isset($input['bypassed_bhi_validation'])) {
+            sendPatientBhiUnattestedWarning($patientId);
+        }
     }
 
     public function wasForwardedToCareTeam(Note $note)
