@@ -341,7 +341,6 @@
                 if (this.patientPhoneNumbers.length === 0){
                     this.makeNewNumberPrimary = true;
                 }
-
                 axios.post('/manage-patients/new/phone', {
                     phoneType:this.newPhoneType,
                     phoneNumber:this.newPhoneNumber,
