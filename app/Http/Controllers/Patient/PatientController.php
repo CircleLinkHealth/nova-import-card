@@ -20,9 +20,18 @@ use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class PatientController extends Controller
 {
@@ -237,6 +246,72 @@ class PatientController extends Controller
         ], 200);
     }
 
+    public function saveNewPhoneNumber(Request $request)
+    {
+        $phoneType   = $request->input('phoneType');
+        $phoneNumber = ($request->input('phoneNumber'));
+        $userId      = $request->input('patientUserId');
+
+        if ( ! ImportPhones::validatePhoneNumber($phoneNumber)) {
+            return response()->json([
+                'message' => 'Phone number is not a valid US number',
+            ]);
+        }
+
+        $phoneNumber = formatPhoneNumberE164($phoneNumber);
+        /** @var User $patientUser */
+        $patientUser  = User::with('patientInfo', 'phoneNumbers')->where('id', $userId)->firstOrFail();
+        $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id); // @todo: you re doing the same query  on line 204.
+        $locationId   = optional($patientUser->patientInfo)->location->id ?? null;
+        $numberExists = $patientUser->phoneNumbers()->where('type', $phoneType)->exists();
+
+        if (is_null($locationId)) {
+            $patientWithPractice = $patientUser->loadMissing('primaryPractice');
+            try {
+                $practice = $patientWithPractice->primaryPractice;
+            } catch (\Exception $e) {
+                throw new \Exception("Practice for patient with user id: {$patientUser->id} not found");
+            }
+
+            $locationId = $practice->primary_location_id;
+        }
+
+        if ($numberExists) {
+            return response()->json(
+                [
+                    'message' => "The Phone Type Number '$phoneType' already exists for this patient",
+                ],
+            );
+        }
+
+        // One trip to DB
+        $newPhoneNumber = PhoneNumber::firstOrCreate(
+            [
+                'user_id' => $userId,
+                'number'  => $phoneNumber,
+                'type'    => $phoneType,
+            ],
+            [
+                'is_primary'  => $request->input('makePrimary'),
+                'location_id' => $locationId,
+            ]
+        );
+
+        //should only be one
+        $existingPrimaryNumbers = $phoneNumbers->where('is_primary', '=', true)->all();
+        if ($request->input('makePrimary') && ! empty($existingPrimaryNumbers)) {
+            foreach ($existingPrimaryNumbers as $number) {
+                // One more trip to DB
+                $this->updatePreviousPrimaryPhone($number, $newPhoneNumber->id);
+            }
+        }
+
+        return response()->json([
+            'data'    => $phoneNumber,
+            'message' => 'Phone number has been saved!',
+        ], 200);
+    }
+
     public function showCallPatientPage(CallPatientRequest $request, $patientId)
     {
         $user = User::with('phoneNumbers')
@@ -349,7 +424,7 @@ class PatientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @return Response
+     * @return Application|Factory|Response|View
      */
     public function showPatientListing()
     {
@@ -390,7 +465,7 @@ class PatientController extends Controller
     /**
      * Display Notes.
      *
-     * @param int $patientId
+     * @param bool $patientId
      *
      * @return Response
      */
@@ -452,7 +527,7 @@ class PatientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @return Response
+     * @return Application|Factory|Response|View
      */
     public function showPatientSelect(Request $request)
     {
@@ -606,9 +681,9 @@ class PatientController extends Controller
     /**
      * Select Program.
      *
-     * @param int $patientId
+     * @param bool $patientId
      *
-     * @return Response
+     * @return Application|Response|ResponseFactory
      */
     public function showSelectProgram(
         Request $request,
@@ -645,6 +720,14 @@ class PatientController extends Controller
         (new TestPatients())->create();
 
         return redirect()->back();
+    }
+
+    /**
+     * @return \App\PhoneNumber[]|Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    private function getAllNumbersOfPatient(int $patientUserId)
+    {
+        return PhoneNumber::whereUserId($patientUserId)->get();
     }
 
     private function prepareForWebix($observation)
