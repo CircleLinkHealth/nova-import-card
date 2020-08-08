@@ -7,20 +7,12 @@
 namespace CircleLinkHealth\Core\Listeners;
 
 use CircleLinkHealth\Core\Jobs\NotificationStatusUpdateJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Queue\InteractsWithQueue;
 
-class LogMailSmtpId implements ShouldQueue
+class LogMailSmtpId
 {
     use InteractsWithQueue;
-
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
-    {
-    }
 
     /**
      * Handle the event.
