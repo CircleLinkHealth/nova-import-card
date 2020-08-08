@@ -91,16 +91,19 @@
                     {{setSaveBtnText}}
                 </button>
 
-                        <input id="makePrimary"
-                               class="make-primary"
-                               v-model="makeNewNumberPrimary"
-                               type="checkbox">
-                        <label for="makePrimary" style="padding-left: 30px;">Make Primary</label>
+                       <div v-if="! showAlternateFields" style="display: flex;">
+                           <input id="makePrimary"
+                                  class="make-primary"
+                                  v-model="makeNewNumberPrimary"
+                                  type="checkbox">
+                           <label for="makePrimary" style="padding-left: 30px;">Make Primary</label>
+                       </div>
                 </div>
                 </div>
             </div>
 
 <!-- this.patientPhoneNumbers.length < 3 is not really dynamic. We only have 3 phone types for now     -->
+<!--            @todo: write a function maybe to count phone types on page load instance?-->
             <a v-if="!loading && this.newInputs.length === 0 && this.patientPhoneNumbers.length < 3"
                class="glyphicon glyphicon-plus-sign add-new-number"
                title="Add Phone Number"
@@ -116,7 +119,7 @@
                       type="text"
                       title="Type alternate contact name"
                       placeholder="Alternate name"
-                      v-model="newAltPhoneNumber"
+                      v-model="newAltName"
                       :disabled="loading"/>
 
                <input name="alternativeRelationship"
@@ -179,9 +182,9 @@
                 markPrimaryEnabledForIndex:'',
                 makeNewNumberPrimary:false,
                 primaryNumber:'',
-                newAltPhoneNumber:'',
                 newAltRelationship:'',
                 newAltEmail:'',
+                newAltName:'',
             }
         },
         computed:{
@@ -206,6 +209,11 @@
                 if(this.makeNewNumberPrimary || this.shouldShowError){
                     return'Save & Make Private';
                 }
+
+                if (this.showAlternateFields){
+                    return "Save agent";
+                }
+
                 return "Save Number";
             },
 
@@ -301,8 +309,11 @@
             },
 
             validateAlternativeFields(){
-                if (this.showAlternateFields){
-                    if(this.newAltEmail.length === 0){
+                if(this.newAltRelationship.length === 0){
+                    alert("Agent relationship is required.");
+                    return;
+                }
+                if(this.newAltEmail.length === 0){
                         alert("Agent email is required.");
                         return;
                     }else if (this.newAltEmail.length > 0 && ! this.validEmail){
@@ -310,20 +321,20 @@
                         return;
                     }
 
-                    if(this.newAltPhoneNumber.length === 0){
-                        alert("Agent phone number is required.");
-                        return;
-                    }
-
-                    if(this.newAltRelationship.length === 0){
-                        alert("Agent relationship is required.");
-                        return;
-                    }
-                }
             },
 
             saveNewNumber(){
                 this.loading = true;
+                const alternateNewEmail = this.newAltEmail.length > 0
+                ? this.newAltEmail
+                : 'n/a';
+                const alternateNewRelationship = this.newAltRelationship.length > 0
+                ? this.newAltRelationship
+                : 'n/a';
+                const alternateNewName = this.newAltName.length > 0
+                ? this.newAltName
+                : 'n/a';
+
                 if (this.newPhoneType.length === 0){
                     alert("Please choose phone number type");
                     return;
@@ -335,20 +346,27 @@
                     return;
                 }
 
-                this.validateAlternativeFields();
-
+                if (this.showAlternateFields) {
+                    this.validateAlternativeFields();
+                }
                 // If it is the first number then make it primary.
                 if (this.patientPhoneNumbers.length === 0){
                     this.makeNewNumberPrimary = true;
                 }
+
                 axios.post('/manage-patients/new/phone', {
                     phoneType:this.newPhoneType,
                     phoneNumber:this.newPhoneNumber,
                     patientUserId:this.userId,
-                    makePrimary:this.makeNewNumberPrimary
+                    makePrimary:this.makeNewNumberPrimary,
+                    agentName:alternateNewName,
+                    agentRelationship:alternateNewRelationship,
+                    agentEmail:alternateNewEmail,
+                    alternateFieldsEnabled:this.showAlternateFields,
                 })
                     .then((response => {
                         this.getPhoneNumbers();
+                        console.log(response.data.message);
                         if (response.data.hasOwnProperty('message')){
                             alert(response.data.message);
                         }

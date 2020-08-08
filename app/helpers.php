@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
@@ -337,7 +338,7 @@ if ( ! function_exists('getPhoneTypes')) {
         return [
             ucfirst(PhoneNumber::MOBILE),
             ucfirst(PhoneNumber::HOME),
-            ucfirst(PhoneNumber::AGENT),
+            ucfirst(Patient::AGENT),
         ];
     }
 }

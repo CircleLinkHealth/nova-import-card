@@ -182,8 +182,9 @@ class PatientController extends Controller
 
     public function saveNewPhoneNumber(Request $request)
     {
+//        @todo: 1. Make a form request, 2. Handle alternate inputs.
         $phoneType   = $request->input('phoneType');
-        $phoneNumber = ($request->input('phoneNumber'));
+        $phoneNumber = $request->input('phoneNumber');
         $userId      = $request->input('patientUserId');
 
         if ( ! ImportPhones::validatePhoneNumber($phoneNumber)) {
