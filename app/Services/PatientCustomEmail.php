@@ -54,7 +54,7 @@ class PatientCustomEmail extends SendsNotification
         $senderId,
         string $content,
         $address,
-        $attachments = [],
+        array $attachments = [],
         $noteId = null,
         $emailSubject
     ) {
