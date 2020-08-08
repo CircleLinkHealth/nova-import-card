@@ -154,6 +154,7 @@ class Patient extends BaseModel
     use SoftDeletes;
     const BHI_CONSENT_NOTE_TYPE   = 'Consented to BHI';
     const BHI_REJECTION_NOTE_TYPE = 'Did Not Consent to BHI';
+    const AGENT   = 'alternate';
 
     /**
      * Starting on this date, when a patients consents for CCM, they also consent for BHI.
