@@ -337,7 +337,7 @@ if ( ! function_exists('getPhoneTypes')) {
         return [
             ucfirst(PhoneNumber::MOBILE),
             ucfirst(PhoneNumber::HOME),
-            ucfirst(PhoneNumber::WORK),
+            ucfirst(PhoneNumber::AGENT),
         ];
     }
 }

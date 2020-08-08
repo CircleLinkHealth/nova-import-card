@@ -102,11 +102,11 @@ class PatientController extends Controller
     /**
      * @return mixed
      */
-    public static function phoneNumbersFor(Model $user)
+    public static function phoneNumbersFor(User $user)
     {
         return $user->phoneNumbers
-            ->filter(function ($p) {
-                return ! empty($p->number);
+            ->filter(function ($phone) {
+                return ! empty($phone->number);
             });
     }
 
@@ -314,6 +314,7 @@ class PatientController extends Controller
 
     public function showCallPatientPage(CallPatientRequest $request, $patientId)
     {
+        /** @var User $user */
         $user = User::with('phoneNumbers')
             ->with('patientInfo.location')
             ->with('primaryPractice.locations')

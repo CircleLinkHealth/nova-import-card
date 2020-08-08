@@ -88,7 +88,17 @@ class PatientCareplanController extends Controller
             ], 400);
         }
 
-        $patient      = User::findOrFail($request->input('userId'));
+        /** @var User $patient */
+        $patient = User::with('phoneNumbers')
+            ->where('id', $request->input('userId'))
+            ->first();
+
+        if (empty($patient)) {
+            return response()->json([
+                'message' => "User [$patient->id] does not exist.",
+            ], 400);
+        }
+
         $phoneNumbers = PatientController::phoneNumbersFor($patient)->transform(function ($phone) {
             return [
                 'phoneNumberId' => $phone->id,
