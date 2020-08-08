@@ -46,7 +46,7 @@ class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
     const HOME   = 'home';
     const MOBILE = 'mobile';
     const WORK   = 'work';
-    const AGENT   = 'agent';
+    const AGENT   = 'alternate';
 
     public $phi = [
         'number',
