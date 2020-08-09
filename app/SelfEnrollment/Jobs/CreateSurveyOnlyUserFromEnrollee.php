@@ -164,9 +164,14 @@ class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
         );
     }
 
+    public static function nullEmailValues()
+    {
+        return ['noemail@noemail.com', 'null', 'none', 'n/a'];
+    }
+
     public static function sanitizeEmail(Enrollee $enrollee): ?string
     {
-        if (empty($enrollee->email) || in_array(strtolower($enrollee->email), ['noemail@noemail.com', 'null'])) {
+        if (empty($enrollee->email) || in_array(strtolower($enrollee->email), self::nullEmailValues())) {
             return "e{$enrollee->id}@careplanmanager.com";
         }
 

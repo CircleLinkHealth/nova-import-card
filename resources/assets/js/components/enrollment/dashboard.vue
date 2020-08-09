@@ -455,7 +455,10 @@ export default {
                         this.device.on('error', (err) => {
                             console.error('twilio device: error', err);
                             this.callError = err.message;
-                            this.updateCallStatus()
+                            this.updateCallStatus();
+                            if (this.callError && this.callError.toLowerCase().indexOf('token not validated') > -1) {
+                                this.initTwilio(true);
+                            }
                         });
 
                         this.device.on('ready', () => {
