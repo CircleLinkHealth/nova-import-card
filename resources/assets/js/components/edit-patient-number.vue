@@ -48,7 +48,9 @@
                 </button>
                 <br>
             </template>
-            <loader v-if="loading"></loader>
+            <div class="loader">
+                <loader v-if="loading"></loader>
+            </div>
 
             <!--Extra inputs that are requested by user-->
             <div v-for="(input, index) in newInputs" class="extra-inputs">
@@ -91,7 +93,7 @@
                     {{setSaveBtnText}}
                 </button>
 
-                       <div v-if="! showAlternateFields" style="display: flex;">
+                       <div v-if="! showAlternateFields && newPhoneNumber.length !== 0" style="display: flex;">
                            <input id="makePrimary"
                                   class="make-primary"
                                   v-model="makeNewNumberPrimary"
