@@ -311,11 +311,20 @@
             validateAlternativeFields(){
                 if(this.newAltRelationship.length === 0){
                     alert("Agent relationship is required.");
+                    this.loading = false;
+                    return;
                 }
+
                 if(this.newAltEmail.length === 0){
                         alert("Agent email is required.");
-                    }else if (this.newAltEmail.length > 0 && ! this.validEmail){
+                        this.loading = false;
+                        return;
+                }
+
+                if (this.newAltEmail.length > 0 && ! this.validEmail){
                         alert("Agent email is not a valid email format.");
+                        this.loading = false;
+                        return;
                     }
 
             },
@@ -334,20 +343,18 @@
 
                 if (this.newPhoneType.length === 0){
                     alert("Please choose phone number type");
-                    this.loading = false;
+                    // this.loading = false;
                     return;
                 }
 
                 if (this.newPhoneNumber.length === 0){
                     alert("Phone number is required.");
-                    this.loading = false;
+                    // this.loading = false;
                     return;
                 }
 
                 if (this.showAlternateFields) {
                     this.validateAlternativeFields();
-                    this.loading = false;
-                    return;
                 }
                 // If it is the first number then make it primary.
                 if (this.patientPhoneNumbers.length === 0){
@@ -366,7 +373,6 @@
                 })
                     .then((response => {
                         this.getPhoneNumbers();
-                        console.log(response.data.message);
                         if (response.data.hasOwnProperty('message')){
                             alert(response.data.message);
                         }

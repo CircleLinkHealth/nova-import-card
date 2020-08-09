@@ -198,22 +198,22 @@ class PatientController extends Controller
         $patientUser = User::with('patientInfo', 'phoneNumbers')->where('id', $userId)->firstOrFail();
 
         if (0 === strcasecmp($phoneType, Patient::AGENT)) {
-            $patientUser->patientInfo()->updateOrCreate(
+            $patientUser->patientInfo->update(
                 [
                     'agent_name'         => $request->input('agentName'),
                     'agent_email'        => $request->input('agentEmail'),
-                    'agent_telephone'    => $phoneType,
+                    'agent_telephone'    => strtolower($phoneType),
                     'agent_relationship' => $request->input('agentRelationship'),
                 ]
             );
 
             return response()->json([
-                'data'    => $phoneNumber,
+                //                'data'    => $phoneNumber,
                 'message' => 'Agent phone number has been saved!',
             ], 200);
         }
 
-        $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id); // @todo: you re doing the same query  on line 204.
+        $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id);
         $locationId   = optional($patientUser->patientInfo)->location->id ?? null;
         $numberExists = $patientUser->phoneNumbers()->where('type', $phoneType)->exists();
 
@@ -241,7 +241,7 @@ class PatientController extends Controller
             [
                 'user_id' => $userId,
                 'number'  => $phoneNumber,
-                'type'    => $phoneType,
+                'type'    => strtolower($phoneType),
             ],
             [
                 'is_primary'  => $request->input('makePrimary'),
@@ -259,7 +259,7 @@ class PatientController extends Controller
         }
 
         return response()->json([
-            'data'    => $phoneNumber,
+            //            'data'    => $phoneNumber,
             'message' => 'Phone number has been saved!',
         ], 200);
     }
