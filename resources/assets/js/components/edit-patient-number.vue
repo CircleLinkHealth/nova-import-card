@@ -111,7 +111,8 @@
                 Add phone number
             </a>
 
-           <div v-if="showAlternateFields" class="alternate-fields">
+           <div v-if="showAlternateFields || agentContactDetails.length !== 0"
+                class="alternate-fields">
                <input name="alternativeContactName"
                       class="form-control alternative-field"
                       maxlength="40"
@@ -119,20 +120,8 @@
                       type="text"
                       title="Type alternate contact name"
                       placeholder="Alternate name"
-                      v-model="newAltName"
-                      :disabled="loading"/>
-
-               <input name="alternativeRelationship"
-                      style="margin-left: 10px;"
-                      class="form-control alternative-field"
-                      maxlength="20"
-                      minlength="3"
-                      type="text"
-                      title="Type alternate relationship"
-                      placeholder="Alternate relationship"
-                      v-model="newAltRelationship"
-                      :disabled="loading"/>
-               <br>
+                      v-model="agentContactDetails.agentName"
+                      :disabled="true"/>
 
                <input name="alternativeEmail"
                       class="form-control alternative-field"
@@ -143,7 +132,17 @@
                       placeholder="Alternate email"
                       v-model="newAltEmail"
                       :disabled="loading"/>
-
+               <br>
+               <input name="alternativeRelationship"
+                      style="margin-left: 10px;"
+                      class="form-control alternative-field"
+                      maxlength="20"
+                      minlength="3"
+                      type="text"
+                      title="Type alternate relationship"
+                      placeholder="Alternate relationship"
+                      v-model="newAltRelationship"
+                      :disabled="loading"/>
            </div>
 
         </div>
@@ -185,6 +184,7 @@
                 newAltRelationship:'',
                 newAltEmail:'',
                 newAltName:'',
+                agentContactDetails:[],
             }
         },
         computed:{
@@ -285,6 +285,10 @@
                     .then((response => {
                         this.patientPhoneNumbers.push(...response.data.phoneNumbers);
                         this.phoneTypes.push(...response.data.phoneTypes);
+                        if(response.data.hasOwnProperty('agentContactFields')) {
+                            console.log(response.data.agentContactFields);
+                            this.agentContactDetails.push(...response.data.agentContactFields);
+                        }
                         this.emitPrimaryNumber();
                         this.loading = false;
                     })).catch((error) => {

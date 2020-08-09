@@ -89,7 +89,7 @@ class PatientCareplanController extends Controller
         }
 
         /** @var User $patient */
-        $patient = User::with('phoneNumbers')
+        $patient = User::with('phoneNumbers', 'patientInfo')
             ->where('id', $request->input('userId'))
             ->first();
 
@@ -108,11 +108,25 @@ class PatientCareplanController extends Controller
             ];
         });
 
+        $agentContactFields = $patient
+            ->patientInfo()
+            ->select('agent_email', 'agent_relationship', 'agent_telephone', 'agent_name')
+            ->first();
+//            ->transform(function ($patient) {
+//                return [
+//                    $patient['agent_email']        => $patient->agent_email,
+//                    $patient['agent_relationship'] => $patient->agent_relationship,
+//                    $patient['agent_telephone']    => $patient->agent_telephone,
+//                    $patient['agent_name']         => $patient->agent_name,
+//                ];
+//            });
+
         $phoneTypes = getPhoneTypes();
 
         return response()->json([
-            'phoneNumbers' => $phoneNumbers,
-            'phoneTypes'   => $phoneTypes,
+            'phoneNumbers'       => $phoneNumbers,
+            'phoneTypes'         => $phoneTypes,
+            'agentContactFields' => $agentContactFields,
         ], 200);
     }
 
