@@ -100,7 +100,7 @@ class CcdaImporter
         $email = null;
 
         if (optional($this->enrollee)->email) {
-            $email = CreateSurveyOnlyUserFromEnrollee::sanitizeEmail($this->enrollee);
+            $email = CreateSurveyOnlyUserFromEnrollee::sanitizeEmail($this->enrollee->id, $this->enrollee->email);
         }
 
         if (empty($email)) {
