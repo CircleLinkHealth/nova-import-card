@@ -111,7 +111,7 @@ class CcdaImporter
             $email = $newUserId.'@careplanmanager.com';
         }
 
-        if (User::ofType('participant')->where('email', $email)->where('last_name', $this->ccda->patient_last_name)->where('first_name', '!=', $this->ccda->patient_fist_name)->exists()) {
+        if (User::ofType(['participant', 'survey-only'])->where('email', $email)->where('last_name', $this->ccda->patient_last_name)->where('first_name', '!=', $this->ccda->patient_fist_name)->exists()) {
             $email = "family_$email";
         }
 
