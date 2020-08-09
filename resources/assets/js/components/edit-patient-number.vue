@@ -311,14 +311,11 @@
             validateAlternativeFields(){
                 if(this.newAltRelationship.length === 0){
                     alert("Agent relationship is required.");
-                    return;
                 }
                 if(this.newAltEmail.length === 0){
                         alert("Agent email is required.");
-                        return;
                     }else if (this.newAltEmail.length > 0 && ! this.validEmail){
                         alert("Agent email is not a valid email format.");
-                        return;
                     }
 
             },
@@ -337,17 +334,20 @@
 
                 if (this.newPhoneType.length === 0){
                     alert("Please choose phone number type");
+                    this.loading = false;
                     return;
                 }
 
-                // Should not happen.
                 if (this.newPhoneNumber.length === 0){
                     alert("Phone number is required.");
+                    this.loading = false;
                     return;
                 }
 
                 if (this.showAlternateFields) {
                     this.validateAlternativeFields();
+                    this.loading = false;
+                    return;
                 }
                 // If it is the first number then make it primary.
                 if (this.patientPhoneNumbers.length === 0){

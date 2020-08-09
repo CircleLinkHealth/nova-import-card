@@ -195,7 +195,24 @@ class PatientController extends Controller
 
         $phoneNumber = formatPhoneNumberE164($phoneNumber);
         /** @var User $patientUser */
-        $patientUser  = User::with('patientInfo', 'phoneNumbers')->where('id', $userId)->firstOrFail();
+        $patientUser = User::with('patientInfo', 'phoneNumbers')->where('id', $userId)->firstOrFail();
+
+        if (0 === strcasecmp($phoneType, Patient::AGENT)) {
+            $patientUser->patientInfo()->updateOrCreate(
+                [
+                    'agent_name'         => $request->input('agentName'),
+                    'agent_email'        => $request->input('agentEmail'),
+                    'agent_telephone'    => $phoneType,
+                    'agent_relationship' => $request->input('agentRelationship'),
+                ]
+            );
+
+            return response()->json([
+                'data'    => $phoneNumber,
+                'message' => 'Agent phone number has been saved!',
+            ], 200);
+        }
+
         $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id); // @todo: you re doing the same query  on line 204.
         $locationId   = optional($patientUser->patientInfo)->location->id ?? null;
         $numberExists = $patientUser->phoneNumbers()->where('type', $phoneType)->exists();
