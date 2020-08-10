@@ -18,6 +18,7 @@ class AddMonthAndTimeToChargeablesTable extends Migration
     public function down()
     {
         Schema::table('chargeables', function (Blueprint $table) {
+            $table->dropColumn(['month_year', 'time', 'status']);
         });
     }
 
@@ -29,6 +30,12 @@ class AddMonthAndTimeToChargeablesTable extends Migration
     public function up()
     {
         Schema::table('chargeables', function (Blueprint $table) {
+            $table->primary('id');
+            $table->date('month_year')->nullable()->after('amount');
+            $table->unsignedInteger('time')->default(0)->after('month_year');
+            $table->string('status')->nullable()->after('time');
+            //maybe use a relationship count query?
+//            $table->unsignedInteger('no_of_successful_calls')->default(0)->after('time');
         });
     }
 }
