@@ -99,6 +99,6 @@ class EligibilityBatchProcessed extends Notification implements LiveNotification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['database', 'mail'];
     }
 }
