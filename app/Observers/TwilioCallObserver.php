@@ -43,7 +43,7 @@ class TwilioCallObserver
                 'call_id'             => $call->id,
                 'voice_callable_id'   => $twilioCall->id,
                 'voice_callable_type' => TwilioCall::class,
-            ], []);
+            ]);
         }
     }
 }
