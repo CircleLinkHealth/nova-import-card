@@ -142,13 +142,7 @@ class CpmCallAlert extends Resource
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query->with([
-            'cpmCall' => function ($q) {
-                $q->with([
-                    'voiceCalls' => function ($q) {
-                        $q->with('voiceCallable');
-                    },
-                ]);
-            },
+            'cpmCall.voiceCalls.voiceCallable',
         ])
             ->where('resolved', '=', 0);
     }

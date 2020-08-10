@@ -8,11 +8,11 @@ namespace App\Console\Commands;
 
 use App\Call;
 use App\CpmCallAlert;
-use App\TwilioCall;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Laravel\Nova\Nova;
 
 class CheckVoiceCalls extends Command
 {
@@ -55,9 +55,7 @@ class CheckVoiceCalls extends Command
 
         $callIds = collect();
         Call::with([
-            'voiceCalls' => function ($q) {
-                $q->with('voiceCallable');
-            },
+            'voiceCalls.voiceCallable',
         ])
             ->whereIn('status', [Call::REACHED, Call::NOT_REACHED, Call::IGNORED])
             ->whereDoesntHave('cpmCallAlert')
@@ -82,7 +80,8 @@ class CheckVoiceCalls extends Command
             DB::table((new CpmCallAlert())->getTable())
                 ->insert($callIds->toArray());
 
-            sendSlackMessage('#carecoach_ops', 'There are new call alerts pending. Please visit SuperAdmin -> Cpm Call Alerts to resolve them.');
+            $path = Nova::path().'/resources/cpm-call-alerts';
+            sendSlackMessage('#carecoach_ops', "There are new call alerts pending. Please visit $path to resolve them.");
         }
 
         $count = $callIds->count();
