@@ -34,7 +34,7 @@ class UserWithdraw extends Action implements ShouldQueue
 
     /**
      * Not necessary, but prevents an upstream issue that would attempt to call this method regardless of it existed.
-     * https://github.com/laravel/nova-issues/issues/2123
+     * https://github.com/laravel/nova-issues/issues/2123.
      */
     public function failed(ActionFields $fields, Collection $models, \Exception $e): void
     {
