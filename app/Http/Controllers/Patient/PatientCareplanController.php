@@ -80,7 +80,7 @@ class PatientCareplanController extends Controller
         ], 200);
     }
 
-    public function getPatientPhoneNumbers(Request $request)
+    public static function getPatientPhoneNumbers(Request $request)
     {
         if (empty($request->input('userId'))) {
             return response()->json([
@@ -90,7 +90,7 @@ class PatientCareplanController extends Controller
 
         /** @var User $patient */
         $patient = User::with('phoneNumbers', 'patientInfo')
-            ->where('id', $request->input('userId'))
+            ->where('id', '=', $request->input('userId'))
             ->first();
 
         if (empty($patient)) {
@@ -111,15 +111,24 @@ class PatientCareplanController extends Controller
         $agentContactFields = $patient
             ->patientInfo()
             ->select('agent_email', 'agent_relationship', 'agent_telephone', 'agent_name')
-            ->first();
-//            ->transform(function ($patient) {
-//                return [
-//                    $patient['agent_email']        => $patient->agent_email,
-//                    $patient['agent_relationship'] => $patient->agent_relationship,
-//                    $patient['agent_telephone']    => $patient->agent_telephone,
-//                    $patient['agent_name']         => $patient->agent_name,
-//                ];
-//            });
+            ->get()
+            ->transform(function ($patient) {
+                return [
+                    'agentEmail'        => $patient->agent_email,
+                    'agentRelationship' => $patient->agent_relationship,
+                    'agentTelephone'    => [
+                        'isPrimary' => false,
+                        'number'    => $patient->agent_telephone,
+                        'type'      => ucwords(Patient::AGENT),
+                    ],
+
+                    'agentName' => $patient->agent_name,
+                ];
+            });
+
+        if ($agentContactFields->isNotEmpty()) {
+            $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields->first()['agentTelephone']]);
+        }
 
         $phoneTypes = getPhoneTypes();
 

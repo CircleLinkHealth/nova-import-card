@@ -38,7 +38,7 @@
                    title="Delete Phone Number"
                    @click="deletePhone(number.phoneNumberId)"></i>
 
-                <button v-if="isIndexToUpdate(index) && number.isPrimary === false"
+                <button v-if="showMakePrimary(index, number)"
                         class="btn btn-sm update-primaryNumber"
                         type="button"
                         style="display: inline;"
@@ -48,7 +48,7 @@
                 </button>
                 <br>
             </template>
-            <div class="loader">
+            <div>
                 <loader v-if="loading"></loader>
             </div>
 
@@ -104,7 +104,7 @@
                 </div>
             </div>
 
-<!-- this.patientPhoneNumbers.length < 3 is not really dynamic. We only have 3 phone types for now     -->
+<!-- this.patientPhoneNumbers.length < 3 is not really dynamic. We only allow 3 phone types for now     -->
 <!--            @todo: write a function maybe to count phone types on page load instance?-->
             <a v-if="!loading && this.newInputs.length === 0 && this.patientPhoneNumbers.length < 3"
                class="glyphicon glyphicon-plus-sign add-new-number"
@@ -113,7 +113,7 @@
                 Add phone number
             </a>
 
-           <div v-if="showAlternateFields || agentContactDetails.length !== 0"
+           <div v-if="!loading"
                 class="alternate-fields">
                <input name="alternativeContactName"
                       class="form-control alternative-field"
@@ -121,30 +121,41 @@
                       minlength="3"
                       type="text"
                       title="Type alternate contact name"
-                      placeholder="Alternate name"
-                      v-model="agentContactDetails.agentName"
-                      :disabled="true"/>
+                      placeholder="Alternate contact name"
+                      v-model="agentContactDetails[0].agentName"
+                      :disabled="loading"/>
 
                <input name="alternativeEmail"
-                      class="form-control alternative-field"
-                      maxlength="20"
-                      minlength="3"
-                      type="text"
-                      title="Type alternate email"
-                      placeholder="Alternate email"
-                      v-model="newAltEmail"
-                      :disabled="loading"/>
-               <br>
-               <input name="alternativeRelationship"
                       style="margin-left: 10px;"
                       class="form-control alternative-field"
                       maxlength="20"
                       minlength="3"
                       type="text"
-                      title="Type alternate relationship"
-                      placeholder="Alternate relationship"
-                      v-model="newAltRelationship"
+                      title="Type alternate contact email"
+                      placeholder="Alternate contact email"
+                      v-model="agentContactDetails[0].agentEmail"
                       :disabled="loading"/>
+               <br>
+               <input name="alternativeRelationship"
+                      class="form-control alternative-field"
+                      maxlength="20"
+                      minlength="3"
+                      type="text"
+                      title="Type alternate contact relationship"
+                      placeholder="Alternate contact relationship"
+                      v-model="agentContactDetails[0].agentRelationship"
+                      :disabled="loading"/>
+
+<!--               <input name="alternativeTelephone"-->
+<!--                      style="margin-left: 10px;"-->
+<!--                      class="form-control alternative-field"-->
+<!--                      maxlength="10"-->
+<!--                      minlength="10"-->
+<!--                      type="text"-->
+<!--                      title="Type alternate contact telephone"-->
+<!--                      placeholder="Alternate contact telephone"-->
+<!--                      v-model="agentContactDetails[0].agentTelephone"-->
+<!--                      :disabled="loading"/>-->
            </div>
 
         </div>
@@ -186,7 +197,14 @@
                 newAltRelationship:'',
                 newAltEmail:'',
                 newAltName:'',
-                agentContactDetails:[],
+                agentContactDetails:[
+                    {
+                        agentEmail:'',
+                        agentName:'',
+                        agentRelationship:'',
+                        agentTelephone:'',
+                    }
+                ],
             }
         },
         computed:{
@@ -227,6 +245,13 @@
         },
 
         methods: {
+            showMakePrimary(index, number){
+                const phoneType = 'alternate';
+                return this.isIndexToUpdate(index)
+                    && number.isPrimary === false
+                    && number.type.toUpperCase() !== phoneType.toUpperCase();
+            },
+
             emitPrimaryNumber(){
                 const primaryNumber =  this.patientPhoneNumbers.filter(n=>n.isPrimary).map(function (phone) {
                     // Will always be just one primary number with current impl.
@@ -288,8 +313,11 @@
                         this.patientPhoneNumbers.push(...response.data.phoneNumbers);
                         this.phoneTypes.push(...response.data.phoneTypes);
                         if(response.data.hasOwnProperty('agentContactFields')) {
-                            console.log(response.data.agentContactFields);
-                            this.agentContactDetails.push(...response.data.agentContactFields);
+                            const agentDetails = response.data.agentContactFields;
+                            this.agentContactDetails[0].agentEmail = agentDetails[0].agentEmail;
+                            this.agentContactDetails[0].agentName = agentDetails[0].agentName;
+                            this.agentContactDetails[0].agentRelationship = agentDetails[0].agentRelationship;
+                            this.agentContactDetails[0].agentTelephone = agentDetails[0].agentTelephone;
                         }
                         this.emitPrimaryNumber();
                         this.loading = false;
