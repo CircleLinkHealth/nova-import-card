@@ -20,7 +20,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Modules\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -49,6 +51,11 @@ class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
         $this->enrollee = $enrollee;
     }
 
+    public static function fakeCpmFillerEmail(int $id)
+    {
+        return "e{$id}@careplanmanager.com";
+    }
+
     /**
      * Execute the job.
      *
@@ -73,12 +80,12 @@ class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
 
         // If any other reason then something is wrong
         if ( ! empty($this->enrollee->user_id)) {
-            Log::critical("Enrollee with id [$this->enrollee->id] should not have reached this point");
+            Log::critical("Enrollee with id [{$this->enrollee->id}] should not have reached this point");
 
             return;
         }
 
-        $email = self::sanitizeEmail($this->enrollee);
+        $email = self::sanitizeEmail($this->enrollee->id, $this->enrollee->email);
 
         if ( ! $this->enrollee->provider_id && $this->enrollee->referring_provider_name) {
             $this->enrollee->provider_id = optional(CcdaImporterWrapper::searchBillingProvider($this->enrollee->referring_provider_name, $this->enrollee->practice_id))->id;
@@ -164,13 +171,29 @@ class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
         );
     }
 
-    public static function sanitizeEmail(Enrollee $enrollee): ?string
+    public static function nullEmailValues()
     {
-        if (empty($enrollee->email) || in_array(strtolower($enrollee->email), ['noemail@noemail.com', 'null'])) {
-            return "e{$enrollee->id}@careplanmanager.com";
+        return ['noemail@noemail.com', 'null', 'none', 'n/a'];
+    }
+
+    public static function sanitizeEmail(int $id, ?string $email): ?string
+    {
+        $email = str_replace(' ', '', $email);
+
+        if (Validator::make([
+            'email' => $email,
+        ], [
+            'email' => [
+                'required',
+                'filled',
+                'email',
+                Rule::notIn(self::nullEmailValues()),
+            ],
+        ])->fails()) {
+            return self::fakeCpmFillerEmail($id);
         }
 
-        return $enrollee->email;
+        return $email;
     }
 
     private function attachPhones(User $userCreatedFromEnrollee, Enrollee $enrollee)

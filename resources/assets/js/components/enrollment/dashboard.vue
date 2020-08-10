@@ -249,6 +249,16 @@ export default {
             const info = this.getTimeTrackerInfo();
             info.forceSkip = false;
 
+            //if current activity is loading next patient, we modify this activity instead of creating a new one
+            //why? we want to capture loading times on enrollees
+            info.modify = info.activity === ACTIVITY_TITLE_LOADING_PATIENT;
+            if (info.modify) {
+                info.modifyFilter = ACTIVITY_TITLE_LOADING_PATIENT;
+            }
+            else {
+                info.modifyFilter = undefined;
+            }
+
             if (loadingTime) {
                 info.enrolleeId = 0;
                 info.activity = ACTIVITY_TITLE_LOADING_PATIENT;
@@ -445,7 +455,10 @@ export default {
                         this.device.on('error', (err) => {
                             console.error('twilio device: error', err);
                             this.callError = err.message;
-                            this.updateCallStatus()
+                            this.updateCallStatus();
+                            if (this.callError && this.callError.toLowerCase().indexOf('token not validated') > -1) {
+                                this.initTwilio(true);
+                            }
                         });
 
                         this.device.on('ready', () => {

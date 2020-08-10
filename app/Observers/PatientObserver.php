@@ -12,6 +12,7 @@ use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Services\Calls\SchedulerService;
 use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Support\Facades\Artisan;
 
@@ -77,7 +78,7 @@ class PatientObserver
 
         $note = $patient->user->notes()->create(
             [
-                'author_id'    => isProductionEnv() ? 948 : 1,
+                'author_id'    => PatientSupportUser::id(),
                 'body'         => "Patient consented on {$patient->consent_date}",
                 'type'         => 'Patient Consented',
                 'performed_at' => Carbon::now()->toDateTimeString(),

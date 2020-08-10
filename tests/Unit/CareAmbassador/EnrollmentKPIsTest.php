@@ -107,6 +107,6 @@ class EnrollmentKPIsTest extends TestCase
 
         $this->assertEquals($caUniqueCalls, $practiceKPIs['unique_patients_called']);
         $this->assertEquals($caTotalTimeInSeconds, $practiceKPIs['total_time_seconds']);
-        $this->assertEquals($caCost, $practiceKPIs['total_cost']);
+        $this->assertEquals($caCost, $practiceKPIs['total_cost_raw']);
     }
 }
