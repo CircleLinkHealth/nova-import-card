@@ -98,6 +98,6 @@ class InvoiceBeforePayment extends Notification implements HasAttachment, Should
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['database', 'mail'];
     }
 }
