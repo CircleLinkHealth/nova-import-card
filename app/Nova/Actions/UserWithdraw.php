@@ -17,6 +17,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\Select;
@@ -30,6 +31,20 @@ class UserWithdraw extends Action implements ShouldQueue
     use SerializesModels;
 
     public $name = 'Withdraw';
+
+    /**
+     * Not necessary, but prevents an upstream issue that would attempt to call this method regardless of it existed.
+     * https://github.com/laravel/nova-issues/issues/2123.
+     */
+    public function failed(ActionFields $fields, Collection $models, \Exception $e): void
+    {
+        // just some internal logging, customize for your own application
+        Log::error($e->getMessage(), [
+            'fields'    => $fields->toArray(),
+            'models'    => $models->toArray(),
+            'exception' => $e,
+        ]);
+    }
 
     /**
      * Get the fields available on the action.
