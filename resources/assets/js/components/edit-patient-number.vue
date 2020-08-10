@@ -86,7 +86,8 @@
                    title="Remove extra field"
                    @click="removeInputField(index)"></i>
 
-                <button class="btn btn-sm save-number" style="display: inline;"
+                <button class="btn btn-sm save-number"
+                        style="display: inline;"
                         type="button"
                         @click="saveNewNumber"
                         :disabled="disableSaveButton">
@@ -146,16 +147,14 @@
                       v-model="agentContactDetails[0].agentRelationship"
                       :disabled="loading"/>
 
-<!--               <input name="alternativeTelephone"-->
-<!--                      style="margin-left: 10px;"-->
-<!--                      class="form-control alternative-field"-->
-<!--                      maxlength="10"-->
-<!--                      minlength="10"-->
-<!--                      type="text"-->
-<!--                      title="Type alternate contact telephone"-->
-<!--                      placeholder="Alternate contact telephone"-->
-<!--                      v-model="agentContactDetails[0].agentTelephone"-->
-<!--                      :disabled="loading"/>-->
+               <button class="btn btn-sm save-number"
+                       style="display: inline;"
+                       type="button"
+                       @click="saveNewNumber"
+                       :disabled="disableSaveButton">
+                   {{setSaveBtnText}}
+               </button>
+
            </div>
 
         </div>
@@ -194,9 +193,6 @@
                 markPrimaryEnabledForIndex:'',
                 makeNewNumberPrimary:false,
                 primaryNumber:'',
-                newAltRelationship:'',
-                newAltEmail:'',
-                newAltName:'',
                 agentContactDetails:[
                     {
                         agentEmail:'',
@@ -209,9 +205,9 @@
         },
         computed:{
             validEmail(){
-                return this.newAltEmail.length !== 0
-                    && this.newAltEmail.includes("@")
-                    && (this.newAltEmail.includes(".com"));
+                return this.agentContactDetails[0].agentEmail.length !== 0
+                    && this.agentContactDetails[0].agentEmail.includes("@")
+                    && (this.agentContactDetails[0].agentEmail.includes(".com"));
             },
             disableSaveButton(){
                 return this.loading
@@ -343,19 +339,19 @@
             },
 
             validateAlternativeFields(){
-                if(this.newAltRelationship.length === 0){
+                if(this.agentContactDetails[0].agentRelationship.length === 0){
                     alert("Agent relationship is required.");
                     this.loading = false;
                     return;
                 }
 
-                if(this.newAltEmail.length === 0){
+                if(this.agentContactDetails[0].agentEmail.length === 0){
                         alert("Agent email is required.");
                         this.loading = false;
                         return;
                 }
 
-                if (this.newAltEmail.length > 0 && ! this.validEmail){
+                if (this.agentContactDetails[0].agentEmail.length > 0 && ! this.validEmail){
                         alert("Agent email is not a valid email format.");
                         this.loading = false;
                         return;
@@ -365,14 +361,14 @@
 
             saveNewNumber(){
                 this.loading = true;
-                const alternateNewEmail = this.newAltEmail.length > 0
-                ? this.newAltEmail
+                const alternateNewEmail = this.agentContactDetails[0].agentEmail.length > 0
+                ? this.agentContactDetails[0].agentEmail
                 : 'n/a';
-                const alternateNewRelationship = this.newAltRelationship.length > 0
-                ? this.newAltRelationship
+                const alternateNewRelationship = this.agentContactDetails[0].agentRelationship.length > 0
+                ? this.agentContactDetails[0].agentRelationship
                 : 'n/a';
-                const alternateNewName = this.newAltName.length > 0
-                ? this.newAltName
+                const alternateNewName = this.agentContactDetails[0].agentName.length > 0
+                ? this.agentContactDetails[0].agentName
                 : 'n/a';
 
                 if (this.newPhoneType.length === 0){
