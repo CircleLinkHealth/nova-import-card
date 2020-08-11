@@ -491,6 +491,26 @@ class SchedulerService
         return $this->scheduleAsapCallbackTask($patient, $taskNote, $scheduler, $phoneNumber);
     }
 
+    public function scheduledCallQuery(User $patient)
+    {
+        return Call::where(
+            function ($q) {
+                $q->whereNull('type')
+                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
+            }
+        )
+            ->where(
+                function ($q) use (
+                    $patient
+                ) {
+                    $q->where('outbound_cpm_id', $patient->id)
+                        ->orWhere('inbound_cpm_id', $patient->id);
+                }
+            )
+            ->where('status', '=', Call::SCHEDULED)
+            ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
+    }
+
     public function storeScheduledCall(
         $patientId,
         $window_start,
@@ -856,26 +876,6 @@ class SchedulerService
         $prediction['successful'] = Call::REACHED == $callStatus;
 
         return $prediction;
-    }
-
-    private function scheduledCallQuery(User $patient)
-    {
-        return Call::where(
-            function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
-            }
-        )
-            ->where(
-                function ($q) use (
-                    $patient
-                ) {
-                    $q->where('outbound_cpm_id', $patient->id)
-                        ->orWhere('inbound_cpm_id', $patient->id);
-                }
-            )
-            ->where('status', '=', 'scheduled')
-            ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
     }
 
     /**
