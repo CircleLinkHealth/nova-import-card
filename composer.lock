@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "45f5c979bbe70e58b42c50df3065a26f",
+    "content-hash": "68c306c16b4b11e9b3cef6489bd4a219",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1181,11 +1181,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.3.0",
+            "version": "v3.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "9739a98517117fc47def6a3237ebee2a952acae3"
+                "reference": "6919596b278360c6eb73cefb829a0ac4adec1f0f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1210,7 +1210,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-09T04:36:18+00:00"
+            "time": "2020-08-10T15:04:18+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1386,11 +1386,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.5.6",
+            "version": "v1.5.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "fecc10912aba6542c0c3b4aa14a7f403bf7fbddb"
+                "reference": "661c97153ac7b965c9ba1e8171029ed2545f2f75"
             },
             "type": "laravel-module",
             "extra": {
@@ -1413,7 +1413,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-06T21:34:53+00:00"
+            "time": "2020-08-10T15:04:18+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -2592,7 +2592,7 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.19",
+            "version": "2.19.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
@@ -13164,16 +13164,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.3.5",
+            "version": "2.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "58dc4a8df3d41174c677a370b6779b694e4539e7"
+                "reference": "d7d05dba5a0bdbf018a2cb7be268f22f5d73eb81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/58dc4a8df3d41174c677a370b6779b694e4539e7",
-                "reference": "58dc4a8df3d41174c677a370b6779b694e4539e7",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/d7d05dba5a0bdbf018a2cb7be268f22f5d73eb81",
+                "reference": "d7d05dba5a0bdbf018a2cb7be268f22f5d73eb81",
                 "shasum": ""
             },
             "require": {
@@ -13232,7 +13232,7 @@
                 "laravel",
                 "page"
             ],
-            "time": "2020-08-01T21:20:01+00:00"
+            "time": "2020-08-10T13:50:38+00:00"
         },
         {
             "name": "facade/ignition-contracts",
@@ -15896,16 +15896,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.5.5",
+            "version": "3.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "73e2e7f57d958e7228fce50dc0c61f58f017f9f6"
+                "reference": "e97627871a7eab2f70e59166072a6b767d5834e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/73e2e7f57d958e7228fce50dc0c61f58f017f9f6",
-                "reference": "73e2e7f57d958e7228fce50dc0c61f58f017f9f6",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/e97627871a7eab2f70e59166072a6b767d5834e0",
+                "reference": "e97627871a7eab2f70e59166072a6b767d5834e0",
                 "shasum": ""
             },
             "require": {
@@ -15943,7 +15943,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2020-04-17T01:09:41+00:00"
+            "time": "2020-08-10T04:50:15+00:00"
         },
         {
             "name": "symfony/debug",

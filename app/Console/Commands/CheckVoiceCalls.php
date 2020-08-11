@@ -50,9 +50,6 @@ class CheckVoiceCalls extends Command
         $to        = $this->argument('to') ?? now();
         $threshold = $this->getDurationThreshold();
 
-        //1. should check for calls that are 'reached' and have short duration
-        //2. should check for calls that are 'not reached' or 'ignored' and have long duration
-
         $callIds = collect();
         Call::with([
             'voiceCalls.voiceCallable',
@@ -62,10 +59,6 @@ class CheckVoiceCalls extends Command
             ->whereHas('voiceCalls')
             ->whereBetween('called_date', [$from, $to])
             ->each(function ($item) use ($callIds, $threshold) {
-                // we might have more than one voice call associated with a Call model.
-                // if at least one of them is less than the threshold we will reach here
-                // BUT, if at least one of them is higher than the threshold, then there is no reason to raise an alert
-
                 foreach ($item->voiceCalls as $voiceCall) {
                     $duration = $voiceCall->voiceCallable->dial_conference_duration;
                     if (Call::REACHED === $item->status && $duration >= $threshold || Call::REACHED !== $item->status && $duration < $threshold) {
