@@ -80,17 +80,17 @@ class PatientCareplanController extends Controller
         ], 200);
     }
 
-    public static function getPatientPhoneNumbers(Request $request)
+    public static function getPatientPhoneNumbers(/*Request $request*/)
     {
-        if (empty($request->input('userId'))) {
-            return response()->json([
-                'message' => 'User id is null',
-            ], 400);
-        }
+//        if (empty($request->input('userId'))) {
+//            return response()->json([
+//                'message' => 'User id is null',
+//            ], 400);
+//        }
 
         /** @var User $patient */
         $patient = User::with('phoneNumbers', 'patientInfo')
-            ->where('id', '=', $request->input('userId'))
+            ->where('id', '=', /*$request->input('userId')*/27514)
             ->first();
 
         if (empty($patient)) {
@@ -111,6 +111,7 @@ class PatientCareplanController extends Controller
         $agentContactFields = $patient
             ->patientInfo()
             ->select('agent_email', 'agent_relationship', 'agent_telephone', 'agent_name')
+            ->whereNotNull('agent_telephone')
             ->get()
             ->transform(function ($patient) {
                 return [
@@ -126,7 +127,7 @@ class PatientCareplanController extends Controller
                 ];
             });
 
-        if ($agentContactFields->isNotEmpty()) {
+        if ($agentContactFields->isNotEmpty() && ! is_null($agentContactFields->first()['agentTelephone'])) {
             $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields->first()['agentTelephone']]);
         }
 
