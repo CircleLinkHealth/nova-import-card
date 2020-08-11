@@ -51,6 +51,7 @@ class ReschedulerHandler
         })
             ->where('status', Call::SCHEDULED)
             ->with([
+                'inboundUser.patientNurseAsPatient.nurse',
                 'inboundUser.patientInfo',
                 'inboundUser.inboundScheduledCalls' => function ($q) {
                     return $q->where('window_end', '>=', now()->format('H:i'))
@@ -90,15 +91,13 @@ class ReschedulerHandler
                 return;
             }
 
-            $patientInfo = $patientUser->patientInfo;
-
-            if ( ! $patientInfo instanceof Patient) {
+            if ( ! $patientUser->patientInfo instanceof Patient) {
                 return;
             }
 
             $next_predicted_contact_window = (new PatientContactWindow())
                 ->getEarliestWindowForPatientFromDate(
-                    $patientInfo,
+                    $patientUser->patientInfo,
                     Carbon::now()
                 );
 
@@ -106,8 +105,8 @@ class ReschedulerHandler
             $window_end   = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
             $day          = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
 
-            $this->storeCallForPatient($patientInfo, $nurse = $patientInfo->getNurse(), $window_start, $window_end, $day);
-            $this->storeNewCallForFamilyMembers($patientInfo, $nurse, $window_start, $window_end, $day);
+            $this->storeCallForPatient($patientUser->patientInfo, $nurse = $patientUser->patientInfo->getNurse(), $window_start, $window_end, $day);
+            $this->storeNewCallForFamilyMembers($patientUser->patientInfo, $nurse, $window_start, $window_end, $day);
         } catch (\Exception $exception) {
             \Log::critical($exception);
             \Log::info("Call Id {$call->id}");
