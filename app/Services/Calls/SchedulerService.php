@@ -491,6 +491,26 @@ class SchedulerService
         return $this->scheduleAsapCallbackTask($patient, $taskNote, $scheduler, $phoneNumber);
     }
 
+    public function scheduledCallQuery(User $patient)
+    {
+        return Call::where(
+            function ($q) {
+                $q->whereNull('type')
+                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
+            }
+        )
+            ->where(
+                function ($q) use (
+                    $patient
+                ) {
+                    $q->where('outbound_cpm_id', $patient->id)
+                        ->orWhere('inbound_cpm_id', $patient->id);
+                }
+            )
+            ->where('status', '=', Call::SCHEDULED)
+            ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
+    }
+
     public function storeScheduledCall(
         $patientId,
         $window_start,
@@ -506,9 +526,7 @@ class SchedulerService
         $window_start = Carbon::parse($window_start)->format('H:i');
         $window_end   = Carbon::parse($window_end)->format('H:i');
 
-        $nurse_id = ('' == $nurse_id)
-            ? null
-            : $nurse_id;
+        $nurse_id = ! is_numeric($nurse_id) ?: $nurse_id;
 
         if ( ! ($date instanceof Carbon)) {
             $date = Carbon::parse($date);
@@ -525,9 +543,7 @@ class SchedulerService
                 'scheduler' => $scheduler,
                 'is_manual' => $is_manual,
 
-                'inbound_phone_number' => $patient->patientInfo->phone
-                    ? $patient->patientInfo->phone
-                    : '',
+                'inbound_phone_number' => $patient->patientInfo->phone ?? null,
 
                 'outbound_phone_number' => '',
 
@@ -860,26 +876,6 @@ class SchedulerService
         $prediction['successful'] = Call::REACHED == $callStatus;
 
         return $prediction;
-    }
-
-    private function scheduledCallQuery(User $patient)
-    {
-        return Call::where(
-            function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
-            }
-        )
-            ->where(
-                function ($q) use (
-                    $patient
-                ) {
-                    $q->where('outbound_cpm_id', $patient->id)
-                        ->orWhere('inbound_cpm_id', $patient->id);
-                }
-            )
-            ->where('status', '=', 'scheduled')
-            ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
     }
 
     /**

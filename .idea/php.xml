@@ -317,6 +317,7 @@
       <path value="$PROJECT_DIR$/vendor/darkghosthunter/preloader" />
       <path value="$PROJECT_DIR$/vendor/org_heigl/ghostscript" />
       <path value="$PROJECT_DIR$/vendor/shipping-docker/vessel" />
+      <path value="$PROJECT_DIR$/vendor/league/mime-type-detection" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

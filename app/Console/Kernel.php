@@ -102,6 +102,9 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckEmrDirectInbox::class)
             ->everyTwoMinutes();
 
+        $schedule->command(RemoveDuplicateScheduledCalls::class)
+            ->everyMinute();
+
         $schedule->command(FaxAuditReportsAtPracticePreferredDayTime::class)
             ->onOneServer()
             ->everyFiveMinutes();
@@ -113,10 +116,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(ProcessNextEligibilityBatchChunk::class)
             ->everyFiveMinutes()
             ->withoutOverlapping();
-
-        $schedule->command(RemoveDuplicateScheduledCalls::class)
-            ->everyTenMinutes()
-            ->between(6, 23);
 
         $schedule->command(RescheduleMissedCalls::class)
             ->everyFifteenMinutes()
