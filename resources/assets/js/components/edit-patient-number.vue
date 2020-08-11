@@ -152,8 +152,7 @@
                       v-model="agentContactDetails[0].agentRelationship"
                       :disabled="loading"/>
 
-               <button v-if="newInputs.length > 0 && agentDetailsIsEmpty"
-                       class="btn btn-sm save-number"
+               <button class="btn btn-sm save-number"
                        style="display: inline;"
                        type="button"
                        @click="saveNewNumber"
