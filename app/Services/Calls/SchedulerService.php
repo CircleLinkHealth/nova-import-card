@@ -526,7 +526,7 @@ class SchedulerService
         $window_start = Carbon::parse($window_start)->format('H:i');
         $window_end   = Carbon::parse($window_end)->format('H:i');
 
-        $nurse_id = ! is_numeric($nurse_id) ?: $nurse_id;
+        $nurse_id = ! is_numeric($nurse_id) ? null : $nurse_id;
 
         if ( ! ($date instanceof Carbon)) {
             $date = Carbon::parse($date);
