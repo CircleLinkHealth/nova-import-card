@@ -120,6 +120,7 @@
                 class="alternate-fields">
                <input name="alternativeContactName"
                       class="form-control alternative-field"
+                      :class="{borderColor : alternateNumberNoDetails}"
                       maxlength="40"
                       minlength="3"
                       type="text"
@@ -131,6 +132,7 @@
                <input name="alternativeEmail"
                       style="margin-left: 10px;"
                       class="form-control alternative-field"
+                      :class="{borderColor : alternateNumberNoDetails}"
                       maxlength="20"
                       minlength="3"
                       type="text"
@@ -141,6 +143,7 @@
                <br>
                <input name="alternativeRelationship"
                       class="form-control alternative-field"
+                      :class="{borderColor : alternateNumberNoDetails}"
                       maxlength="20"
                       minlength="3"
                       type="text"
@@ -240,6 +243,10 @@
             showAlternateFields(){
                 return this.newPhoneType.toUpperCase() === alternate.toUpperCase();
             },
+
+            alternateNumberNoDetails(){
+                return this.showAlternateFields && this.agentDetailsIsEmpty();
+            },
         },
 
         methods: {
@@ -314,12 +321,13 @@
                     .then((response => {
                         this.patientPhoneNumbers.push(...response.data.phoneNumbers);
                         this.phoneTypes.push(...response.data.phoneTypes);
-                        if(response.data.hasOwnProperty('agentContactFields')) {
+
+                        if(response.data.hasOwnProperty('agentContactFields') && response.data.agentContactFields.length !== 0) {
                             const agentDetails = response.data.agentContactFields;
-                            this.agentContactDetails[0].agentEmail = agentDetails[0].agentEmail;
-                            this.agentContactDetails[0].agentName = agentDetails[0].agentName;
-                            this.agentContactDetails[0].agentRelationship = agentDetails[0].agentRelationship;
-                            this.agentContactDetails[0].agentTelephone = agentDetails[0].agentTelephone;
+                            this.agentContactDetails[0].agentEmail = agentDetails[0].agentEmail ?? '';
+                            this.agentContactDetails[0].agentName = agentDetails[0].agentName ?? '';
+                            this.agentContactDetails[0].agentRelationship = agentDetails[0].agentRelationship ?? '';
+                            this.agentContactDetails[0].agentTelephone = agentDetails[0].agentTelephone ?? '';
                         }
                         this.emitPrimaryNumber();
                         this.loading = false;
@@ -348,38 +356,22 @@
                 this.newInputs.push(arr);
             },
 
-            validateAlternativeFields(){
-                if(this.agentContactDetails[0].agentRelationship.length === 0){
-                    alert("Alternate relationship is required.");
-                    this.loading = false;
-                    return;
-                }
-
-                if(this.agentContactDetails[0].agentEmail.length === 0){
-                        alert("Alternate email is required.");
-                        this.loading = false;
-                        return;
-                }
-
-                if (this.agentContactDetails[0].agentEmail.length > 0 && ! this.validEmail){
-                        alert("Alternate email is not a valid email format.");
-                        this.loading = false;
-                        return;
-                    }
-
-            },
+            // validateAlternativeFields(){
+            //
+            //
+            // },
 
             saveNewNumber(){
                 this.loading = true;
                 const alternateNewEmail = this.agentContactDetails[0].agentEmail.length > 0
                 ? this.agentContactDetails[0].agentEmail
-                : 'n/a';
+                : null;
                 const alternateNewRelationship = this.agentContactDetails[0].agentRelationship.length > 0
                 ? this.agentContactDetails[0].agentRelationship
-                : 'n/a';
+                : null;
                 const alternateNewName = this.agentContactDetails[0].agentName.length > 0
                 ? this.agentContactDetails[0].agentName
-                : 'n/a';
+                : null;
 
                 if (this.newPhoneType.length === 0){
                     alert("Please choose phone number type");
@@ -394,9 +386,25 @@
                 }
 
                 if (this.showAlternateFields) {
-                    this.validateAlternativeFields();
+                    if(this.agentContactDetails[0].agentRelationship.length === 0){
+                        alert("Alternate relationship is required.");
+                        this.loading = false;
+                        return;
+                    }
+
+                    if(this.agentContactDetails[0].agentEmail.length === 0){
+                        alert("Alternate email is required.");
+                        this.loading = false;
+                        return;
+                    }
+
+                    if (this.agentContactDetails[0].agentEmail.length > 0 && ! this.validEmail){
+                        alert("Alternate email is not a valid email format.");
+                        this.loading = false;
+                        return;
+                    }
                 }
-                // If it is the first number then make it primary.
+
                 if (this.patientPhoneNumbers.length === 0){
                     this.makeNewNumberPrimary = true;
                 }
@@ -566,6 +574,10 @@
 
 .bgColor{
     background-color:  #c4ebff;
+}
+
+.borderColor{
+    border: green solid;
 }
 
 </style>

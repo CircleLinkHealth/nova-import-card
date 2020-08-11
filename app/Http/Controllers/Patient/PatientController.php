@@ -202,7 +202,7 @@ class PatientController extends Controller
                 [
                     'agent_name'         => $request->input('agentName'),
                     'agent_email'        => $request->input('agentEmail'),
-                    'agent_telephone'    => strtolower($phoneType),
+                    'agent_telephone'    => strtolower($phoneNumber),
                     'agent_relationship' => $request->input('agentRelationship'),
                 ]
             );
