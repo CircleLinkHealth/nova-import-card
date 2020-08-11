@@ -24,11 +24,16 @@ class PasswordCharacters implements Rule
      */
     public function message()
     {
-        return 'The password must contain at least an uppercase letter, a number and a special character (!,$,#,%,@,&,*).';
+        return 'The password must be at least 8 characters, contain at least an uppercase letter, a number and a special character (!,$,#,%,@,&,*).';
     }
 
     /**
-     * Determine if the validation rule passes.
+     * This regex will enforce these rules:
+     * - At least one upper case English letter, (?=.*?[A-Z])
+     * - At least one lower case English letter, (?=.*?[a-z])
+     * - At least one digit, (?=.*?[0-9])
+     * - At least one special character, (?=.*?[#?!@$%^&*-])
+     * - Minimum eight in length .{8,} (with the anchors).
      *
      * @param string $attribute
      * @param mixed  $value
@@ -37,6 +42,6 @@ class PasswordCharacters implements Rule
      */
     public function passes($attribute, $value)
     {
-        return preg_match('/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\X])(?=.*[!$#%@&*]).*$/', $value);
+        return preg_match('/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/', $value);
     }
 }
