@@ -2104,7 +2104,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function inboundScheduledActivities(Carbon $after = null)
     {
         return $this->inboundActivities()
-            ->where('status', '=', 'scheduled')
+            ->where('status', '=', Call::SCHEDULED)
             ->when(
                 $after,
                 function ($query) use ($after) {
@@ -2117,7 +2117,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function inboundScheduledCalls(Carbon $after = null)
     {
         return $this->inboundCalls()
-            ->where('status', '=', 'scheduled')
+            ->where('status', '=', Call::SCHEDULED)
             ->when(
                 $after,
                 function ($query) use ($after) {
