@@ -36,7 +36,7 @@
                 <i v-if="!loading && number.isPrimary === false"
                    class="glyphicon glyphicon-trash remove-phone"
                    title="Delete Phone Number"
-                   @click="deletePhone(number.phoneNumberId)"></i>
+                   @click="deletePhone(number)"></i>
 
                 <button v-if="showMakePrimary(index, number)"
                         class="btn btn-sm update-primaryNumber"
@@ -86,13 +86,15 @@
                    title="Remove extra field"
                    @click="removeInputField(index)"></i>
 
-                <button class="btn btn-sm save-number"
-                        style="display: inline;"
-                        type="button"
-                        @click="saveNewNumber"
-                        :disabled="disableSaveButton">
-                    {{setSaveBtnText}}
-                </button>
+
+                        <button v-if="addNewFieldClicked"
+                                class="btn btn-sm save-number"
+                                style="display: inline;"
+                                type="button"
+                                @click="saveNewNumber"
+                                :disabled="disableSaveButton">
+                            {{setSaveBtnText}}
+                        </button>
 
                        <div v-if="! showAlternateFields && newPhoneNumber.length !== 0" style="display: flex;">
                            <input id="makePrimary"
@@ -147,12 +149,13 @@
                       v-model="agentContactDetails[0].agentRelationship"
                       :disabled="loading"/>
 
-               <button class="btn btn-sm save-number"
+               <button v-if="newInputs.length > 0 && agentDetailsIsEmpty"
+                       class="btn btn-sm save-number"
                        style="display: inline;"
                        type="button"
                        @click="saveNewNumber"
                        :disabled="disableSaveButton">
-                   {{setSaveBtnText}}
+                   Save alternate contact
                </button>
 
            </div>
@@ -166,7 +169,7 @@
     import axios from "../bootstrap-axios";
     import EventBus from '../admin/time-tracker/comps/event-bus'
     import CallNumber from "./call-number";
-
+    const alternate = 'alternate';
     export default {
         name: "edit-patient-number",
 
@@ -227,7 +230,7 @@
                 }
 
                 if (this.showAlternateFields){
-                    return "Save agent";
+                    return "Save alternate contact";
                 }
 
                 return "Save Number";
@@ -235,17 +238,20 @@
 
             //Alternate fields = agent phone, email, relationship...
             showAlternateFields(){
-                const alternate = 'alternate';
                 return this.newPhoneType.toUpperCase() === alternate.toUpperCase();
             },
         },
 
         methods: {
+            agentDetailsIsEmpty(){
+                return this.agentContactDetails[0].agentTelephone.number.length === 0;
+            },
+
             showMakePrimary(index, number){
-                const phoneType = 'alternate';
                 return this.isIndexToUpdate(index)
+                    && this.agentDetailsIsEmpty
                     && number.isPrimary === false
-                    && number.type.toUpperCase() !== phoneType.toUpperCase();
+                    && number.type.toUpperCase() !== alternate.toUpperCase();
             },
 
             emitPrimaryNumber(){
@@ -322,9 +328,13 @@
                     console.log(error.message);
                 });
             },
+
+            addNewFieldClicked(){
+                return this.newInputs.length > 0;
+            },
+
             addPhoneField(){
                 if (this.newInputs.length > 0) {
-                    //Should never reach here.
                     alert('Please save the existing field first');
                     return;
                 }
@@ -340,19 +350,19 @@
 
             validateAlternativeFields(){
                 if(this.agentContactDetails[0].agentRelationship.length === 0){
-                    alert("Agent relationship is required.");
+                    alert("Alternate relationship is required.");
                     this.loading = false;
                     return;
                 }
 
                 if(this.agentContactDetails[0].agentEmail.length === 0){
-                        alert("Agent email is required.");
+                        alert("Alternate email is required.");
                         this.loading = false;
                         return;
                 }
 
                 if (this.agentContactDetails[0].agentEmail.length > 0 && ! this.validEmail){
-                        alert("Agent email is not a valid email format.");
+                        alert("Alternate email is not a valid email format.");
                         this.loading = false;
                         return;
                     }
@@ -415,16 +425,30 @@
 
             removeInputField(index){
                 this.loading = true;
-              this.newInputs.splice(index, 1);
-              this.loading = false;
+                this.newInputs = [];
+                this.newInputs.splice(index, 1);
+                this.loading = false;
 
             },
 
-            deletePhone(phoneNumberId){
+            deletePhone(number){
                 confirm("Are you sure you want to delete this phone number");
                 this.loading = true;
+
+                let deleteAlternatePhone = false;
+
+                const phoneNumberId = number.hasOwnProperty('phoneNumberId')
+                ? number.phoneNumberId
+                : '';
+
+                if (number.type.toUpperCase() === alternate.toUpperCase()){
+                    deleteAlternatePhone =true;
+                }
+
                 axios.post('/manage-patients/delete-phone', {
-                    phoneId:phoneNumberId
+                    phoneId:phoneNumberId,
+                    patientUserId:this.userId,
+                    deleteAltPhone:deleteAlternatePhone,
                 })
                     .then((response => {
                         this.getPhoneNumbers();

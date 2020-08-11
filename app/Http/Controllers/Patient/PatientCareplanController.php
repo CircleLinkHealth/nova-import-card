@@ -61,26 +61,36 @@ class PatientCareplanController extends Controller
 
     public function deletePhoneNumber(Request $request)
     {
-        if (empty($request->input('phoneId'))) {
-            return response()->json([
-                'message' => 'User id is null',
-            ], 400);
-        }
+//        @todo: Check user id in form request.
+        if ( ! $request->input('deleteAltPhone')) {
+            if (empty($request->input('phoneId'))) {
+                return response()->json([
+                    'message' => 'Phone id is null',
+                ], 400);
+            }
 
-        $phoneNumber = PhoneNumber::whereId($request->input('phoneId'));
-        if ( ! empty($phoneNumber->first()) && $phoneNumber->first()->is_primary) {
-            return response()->json([
-                'message' => 'You cannot delete a primary number',
-            ]);
+            $phoneNumber = PhoneNumber::whereId($request->input('phoneId'));
+            if ( ! empty($phoneNumber->first()) && $phoneNumber->first()->is_primary) {
+                return response()->json([
+                    'message' => 'You cannot delete a primary number',
+                ]);
+            }
+
+            $phoneNumber->delete();
+        } else {
+            Patient::whereUserId($request->input('patientUserId'))->update(
+                [
+                    'agent_telephone' => null,
+                ]
+            );
         }
-        $phoneNumber->delete();
 
         return response()->json([
             'message' => 'Phone Number Has Been Deleted',
         ], 200);
     }
 
-    public static function getPatientPhoneNumbers(/*Request $request*/)
+    public static function getPatientPhoneNumbers(Request $request)
     {
 //        if (empty($request->input('userId'))) {
 //            return response()->json([
@@ -90,7 +100,7 @@ class PatientCareplanController extends Controller
 
         /** @var User $patient */
         $patient = User::with('phoneNumbers', 'patientInfo')
-            ->where('id', '=', /*$request->input('userId')*/27514)
+            ->where('id', '=', /*$request->input('userId')*/166)
             ->first();
 
         if (empty($patient)) {
@@ -112,6 +122,7 @@ class PatientCareplanController extends Controller
             ->patientInfo()
             ->select('agent_email', 'agent_relationship', 'agent_telephone', 'agent_name')
             ->whereNotNull('agent_telephone')
+            ->where('agent_telephone', '!=', '')
             ->get()
             ->transform(function ($patient) {
                 return [
