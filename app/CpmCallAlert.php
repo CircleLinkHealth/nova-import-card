@@ -23,6 +23,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CpmCallAlert newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CpmCallAlert query()
  * @mixin \Eloquent
+ * @property \App\Call|null $cpmCall
  */
 class CpmCallAlert extends BaseModel
 {
