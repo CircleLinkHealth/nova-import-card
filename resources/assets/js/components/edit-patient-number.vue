@@ -13,7 +13,8 @@
                                :checked="numberIsPrimary(number)">
                     </div>
 
-                    <div  @mouseover="enableUpdateButton(index)" style="display: inline-flex;">
+                    <div @mouseover="enableUpdateButton(index)"
+                        style="display: inline-flex;">
                         <div class="types">
                             <input name="type"
                                    class="form-control phone-type"
@@ -36,7 +37,9 @@
                 <i v-if="!loading && number.isPrimary === false"
                    class="glyphicon glyphicon-trash remove-phone"
                    title="Delete Phone Number"
-                   @click="deletePhone(number)"></i>
+                   @click="
+
+                   deletePhone(number)"></i>
 
                 <button v-if="showMakePrimary(index, number)"
                         class="btn btn-sm update-primaryNumber"
@@ -250,7 +253,8 @@
 
         methods: {
             agentDetailsIsEmpty(){
-                return this.agentContactDetails[0].agentTelephone.number.length === 0;
+                return this.agentContactDetails.length !== 0
+                    ?? this.agentContactDetails[0].agentTelephone.number.length === 0;
             },
 
             showMakePrimary(index, number){

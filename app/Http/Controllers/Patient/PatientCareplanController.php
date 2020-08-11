@@ -92,15 +92,15 @@ class PatientCareplanController extends Controller
 
     public static function getPatientPhoneNumbers(Request $request)
     {
-//        if (empty($request->input('userId'))) {
-//            return response()->json([
-//                'message' => 'User id is null',
-//            ], 400);
-//        }
+        if (empty($request->input('userId'))) {
+            return response()->json([
+                'message' => 'User id is null',
+            ], 400);
+        }
 
         /** @var User $patient */
         $patient = User::with('phoneNumbers', 'patientInfo')
-            ->where('id', '=', /*$request->input('userId')*/166)
+            ->where('id', '=', $request->input('userId'))
             ->first();
 
         if (empty($patient)) {
@@ -121,8 +121,6 @@ class PatientCareplanController extends Controller
         $agentContactFields = $patient
             ->patientInfo()
             ->select('agent_email', 'agent_relationship', 'agent_telephone', 'agent_name')
-            ->whereNotNull('agent_telephone')
-            ->where('agent_telephone', '!=', '')
             ->get()
             ->transform(function ($patient) {
                 return [
