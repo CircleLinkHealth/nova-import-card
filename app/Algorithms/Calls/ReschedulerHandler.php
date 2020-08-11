@@ -11,6 +11,7 @@ use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\User;
 
 //READ ME:
 /*
@@ -105,8 +106,8 @@ class ReschedulerHandler
             $window_end   = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
             $day          = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
 
-            $this->storeNewCallForPatient($patient, $call, $window_start, $window_end, $day);
-            $this->storeNewCallForFamilyMembers($patient, $call, $window_start, $window_end, $day);
+            $this->storeNewCallForPatient($patient, $nurse = $patient->getNurse(), $window_start, $window_end, $day);
+            $this->storeNewCallForFamilyMembers($patient, $nurse, $window_start, $window_end, $day);
         } catch (\Exception $exception) {
             \Log::critical($exception);
             \Log::info("Call Id {$call->id}");
@@ -131,7 +132,7 @@ class ReschedulerHandler
         return false;
     }
 
-    private function storeNewCallForFamilyMembers(Patient $patient, $oldCall, $window_start, $window_end, $day)
+    private function storeNewCallForFamilyMembers(Patient $patient, ?User $nurse, $window_start, $window_end, $day)
     {
         if ( ! $patient->hasFamilyId()) {
             return;
@@ -140,27 +141,26 @@ class ReschedulerHandler
         $familyMembers = $patient->getFamilyMembers($patient);
         if ( ! empty($familyMembers)) {
             foreach ($familyMembers as $familyMember) {
-                $familyMemberCall = $this->schedulerService->getScheduledCallForPatient($familyMember->user);
-                //if manually scheduled by nurse or admin, do not do anything
-                if ($familyMemberCall && $familyMemberCall->is_manual) {
-                    continue;
-                }
-                $this->storeNewCallForPatient($familyMember, $oldCall, $window_start, $window_end, $day);
+                $this->storeNewCallForPatient($familyMember, $nurse, $window_start, $window_end, $day);
             }
         }
     }
 
-    private function storeNewCallForPatient(Patient $patient, $oldCall, $window_start, $window_end, $day)
+    private function storeNewCallForPatient(Patient $patient, ?User $nurse, $window_start, $window_end, $day)
     {
+        $scheduledCall = $this->schedulerService->getScheduledCallForPatient($patient->user);
+
+        if ($scheduledCall && $scheduledCall->is_manual) {
+            return;
+        }
+
         $this->rescheduledCalls[] = $this->schedulerService->storeScheduledCall(
             $patient->user->id,
             $window_start,
             $window_end,
             $day,
             'rescheduler algorithm',
-            $oldCall->outbound_cpm_id
-                ? $oldCall->outbound_cpm_id
-                : null,
+            optional($nurse)->id,
             '',
             false
         );
