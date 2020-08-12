@@ -13,7 +13,8 @@
                                :checked="numberIsPrimary(number)">
                     </div>
 
-                    <div @mouseover="enableUpdateButton(index)"
+                    <div v-if="number.number !== null"
+                        @mouseover="enableUpdateButton(index)"
                         style="display: inline-flex;">
                         <div class="types">
                             <input name="type"
