@@ -62,6 +62,7 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
                     $q->enrolled();
                 }
             )
+            ->ofActiveBillablePractice(false)
             ->doesntHave('inboundScheduledCalls')
             ->with(['carePlan', 'patientInfo'])
             ->each(
@@ -70,9 +71,8 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
 
                     if ($this->shouldScheduleCall($patient)) {
                         $schedulerService->ensurePatientHasScheduledCall($patient, 'calls:check');
+                        ++$fixed;
                     }
-
-                    ++$fixed;
                 }
             );
 
