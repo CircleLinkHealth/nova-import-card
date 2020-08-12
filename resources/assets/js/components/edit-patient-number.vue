@@ -32,14 +32,11 @@
                                :value="number.number"
                                :disabled="true"/>
                     </div>
-                    </div>
-
-                <i v-if="!loading && number.isPrimary === false"
+                </div>
+                <i v-if="!loading && number.isPrimary === false && number.number !== null"
                    class="glyphicon glyphicon-trash remove-phone"
                    title="Delete Phone Number"
-                   @click="
-
-                   deletePhone(number)"></i>
+                   @click="deletePhone(number)"></i>
 
                 <button v-if="showMakePrimary(index, number)"
                         class="btn btn-sm update-primaryNumber"
@@ -235,7 +232,7 @@
                 }
 
                 if (this.showAlternateFields){
-                    return "Save alternate contact";
+                    return "Save alternate number";
                 }
 
                 return "Save Number";
@@ -243,7 +240,7 @@
 
             //Alternate fields = agent phone, email, relationship...
             showAlternateFields(){
-                return this.newPhoneType.toUpperCase() === alternate.toUpperCase();
+                return this.newPhoneType.toLowerCase() === alternate;
             },
 
             alternateNumberNoDetails(){
@@ -261,7 +258,7 @@
                 return this.isIndexToUpdate(index)
                     && this.agentDetailsIsEmpty
                     && number.isPrimary === false
-                    && number.type.toUpperCase() !== alternate.toUpperCase();
+                    && number.type.toLowerCase() !== alternate;
             },
 
             emitPrimaryNumber(){
@@ -452,7 +449,7 @@
                 ? number.phoneNumberId
                 : '';
 
-                if (number.type.toUpperCase() === alternate.toUpperCase()){
+                if (number.type.toLowerCase() === alternate){
                     deleteAlternatePhone =true;
                 }
 
