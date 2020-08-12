@@ -306,6 +306,11 @@ class CarePlan extends BaseModel implements PdfReport
         return $this->created_at->isAfter(self::RN_APPROVAL_RELEASE_DATE);
     }
 
+    public function isRnApproved()
+    {
+        return CarePlan::RN_APPROVED == $this->status;
+    }
+
     /**
      * Get the URL to view the CarePlan.
      *
