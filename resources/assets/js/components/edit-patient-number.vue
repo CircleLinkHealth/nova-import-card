@@ -115,11 +115,16 @@
                 Add phone number
             </a>
 
+            <span v-if="agentNumberIsEmpty"
+                class="help-block"
+                style="color: red;">{{alternateContactButtonText}}
+            </span>
+
            <div v-if="!loading"
                 class="alternate-fields">
                <input name="alternativeContactName"
                       class="form-control alternative-field"
-                      :class="{borderColor : alternateNumberNoDetails}"
+                      :class="{borderColor : emphasizeBorder && agentContactDetails[0].agentName.length === 0}"
                       maxlength="40"
                       minlength="3"
                       type="text"
@@ -131,7 +136,7 @@
                <input name="alternativeEmail"
                       style="margin-left: 10px;"
                       class="form-control alternative-field"
-                      :class="{borderColor : alternateNumberNoDetails}"
+                      :class="{borderColor : emphasizeBorder && agentContactDetails[0].agentEmail.length === 0}"
                       maxlength="20"
                       minlength="3"
                       type="text"
@@ -142,7 +147,7 @@
                <br>
                <input name="alternativeRelationship"
                       class="form-control alternative-field"
-                      :class="{borderColor : alternateNumberNoDetails}"
+                      :class="{borderColor : emphasizeBorder && agentContactDetails[0].agentRelationship.length === 0}"
                       maxlength="20"
                       minlength="3"
                       type="text"
@@ -151,13 +156,13 @@
                       v-model="agentContactDetails[0].agentRelationship"
                       :disabled="loading"/>
 
-<!--               <button class="btn btn-sm save-number"-->
-<!--                       style="display: inline;"-->
-<!--                       type="button"-->
-<!--                       @click="saveNewNumber"-->
-<!--                       :disabled="disableSaveButton">-->
-<!--                   Save alternate contact details-->
-<!--               </button>-->
+               <button class="btn btn-sm save-alt-contact"
+                       style="display: inline;"
+                       type="button"
+                       @click="saveNewNumber"
+                       :disabled="disableSaveButton">
+                   What
+               </button>
 
            </div>
 
@@ -193,7 +198,6 @@
                 newPhoneNumber:'',
                 newInputs:[],
                 phoneTypes:[],
-                // saveBtnText:"Save Number",
                 markPrimaryEnabledForIndex:'',
                 makeNewNumberPrimary:false,
                 primaryNumber:'',
@@ -207,7 +211,14 @@
                 ],
             }
         },
+
         computed:{
+            emphasizeBorder(){
+              return this.showAlternateFields
+                  && this.agentNumberIsEmpty
+                  && this.addNewFieldClicked;
+            },
+
             allowAddingNewNumber(){
                 const existingNumbers = this.patientPhoneNumbers.filter(number=>number.number.length !== 0);
                 return !this.loading && this.newInputs.length === 0
@@ -232,6 +243,36 @@
                 return this.patientPhoneNumbers.length === 0;
             },
 
+            agentNumberIsEmpty(){
+                return this.agentContactDetails.length !== 0
+                    && this.agentContactDetails[0].agentTelephone.length !== 0
+                    && this.agentContactDetails[0].agentTelephone.number.length === 0;
+            },
+
+            agentEmailIsEmpty(){
+                return this.agentContactDetails.length !== 0
+                    && this.agentContactDetails[0].agentEmail.count === 0;
+            },
+
+            agentRelationshipIsEmpty(){
+                return this.agentContactDetails.length !== 0
+                    && this.agentContactDetails[0].agentRelationship.count === 0;
+            },
+
+            agentNameIsEmpty(){
+                return this.agentContactDetails.length !== 0
+                    && this.agentContactDetails[0].agentName.count === 0;
+            },
+
+            alternateContactButtonText(){
+                if(this.agentNumberIsEmpty
+                    && ! this.agentNameIsEmpty
+                    && ! this.agentRelationshipIsEmpty
+                    && ! this.agentEmailIsEmpty) {
+                    return " * alternate phone number is missing"
+                }
+            },
+
             setSaveBtnText(){
                 if(this.makeNewNumberPrimary || this.shouldShowError){
                     return'Save & Make Private';
@@ -244,25 +285,18 @@
                 return "Save Number";
             },
 
-            //Alternate fields = agent phone, email, relationship...
             showAlternateFields(){
                 return this.newPhoneType.toLowerCase() === alternate;
             },
 
-            alternateNumberNoDetails(){
-                return this.showAlternateFields && this.agentDetailsIsEmpty();
+            addNewFieldClicked(){
+                return this.newInputs.length > 0;
             },
         },
 
         methods: {
-            agentDetailsIsEmpty(){
-                return this.agentContactDetails.length !== 0
-                    ?? this.agentContactDetails[0].agentTelephone.number.length === 0;
-            },
-
             showMakePrimary(index, number){
                 return this.isIndexToUpdate(index)
-                    && this.agentDetailsIsEmpty
                     && number.isPrimary === false
                     && number.type.toLowerCase() !== alternate;
             },
@@ -341,10 +375,6 @@
                     this.loading = false;
                     console.log(error.message);
                 });
-            },
-
-            addNewFieldClicked(){
-                return this.newInputs.length > 0;
             },
 
             addPhoneField(){
@@ -439,6 +469,8 @@
 
             removeInputField(index){
                 this.loading = true;
+                this.newPhoneType = '';
+                this.newPhoneNumber = '';
                 this.newInputs = [];
                 this.newInputs.splice(index, 1);
                 this.loading = false;
@@ -528,12 +560,20 @@
         color: #50b2e2;
     }
 
+    .save-alt-contact{
+        margin-left: 15px;
+    height: 29px;
+    padding: 5px;
+    color: #50b2e2;
+}
+
     .add-new-number{
         word-spacing: -10px;
         color: #50b2e2;
         font-size: 20px;
         cursor: pointer;
         padding: 10px;
+        margin-bottom: 10px;
     }
     .plus-one{
         padding-right: 26px;
