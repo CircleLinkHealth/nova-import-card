@@ -13,7 +13,7 @@
                                :checked="numberIsPrimary(number)">
                     </div>
 
-                    <div v-if="number.number !== null"
+                    <div v-if="number.number.length !== 0"
                         @mouseover="enableUpdateButton(index)"
                         style="display: inline-flex;">
                         <div class="types">
@@ -34,7 +34,7 @@
                                :disabled="true"/>
                     </div>
                 </div>
-                <i v-if="!loading && number.isPrimary === false && number.number !== null"
+                <i v-if="!loading && number.isPrimary === false && number.number.length !== 0"
                    class="glyphicon glyphicon-trash remove-phone"
                    title="Delete Phone Number"
                    @click="deletePhone(number)"></i>
@@ -108,9 +108,7 @@
                 </div>
             </div>
 
-<!-- this.patientPhoneNumbers.length < 3 is not really dynamic. We only allow 3 phone types for now     -->
-<!--            @todo: write a function maybe to count phone types on page load instance?-->
-            <a v-if="!loading && this.newInputs.length === 0 && this.patientPhoneNumbers.length < 3"
+            <a v-if="allowAddingNewNumber"
                class="glyphicon glyphicon-plus-sign add-new-number"
                title="Add Phone Number"
                @click="addPhoneField()">
@@ -153,13 +151,13 @@
                       v-model="agentContactDetails[0].agentRelationship"
                       :disabled="loading"/>
 
-               <button class="btn btn-sm save-number"
-                       style="display: inline;"
-                       type="button"
-                       @click="saveNewNumber"
-                       :disabled="disableSaveButton">
-                   Save alternate contact
-               </button>
+<!--               <button class="btn btn-sm save-number"-->
+<!--                       style="display: inline;"-->
+<!--                       type="button"-->
+<!--                       @click="saveNewNumber"-->
+<!--                       :disabled="disableSaveButton">-->
+<!--                   Save alternate contact details-->
+<!--               </button>-->
 
            </div>
 
@@ -210,11 +208,18 @@
             }
         },
         computed:{
+            allowAddingNewNumber(){
+                const existingNumbers = this.patientPhoneNumbers.filter(number=>number.number.length !== 0);
+                return !this.loading && this.newInputs.length === 0
+                    && existingNumbers.length < this.phoneTypes.length;
+            },
+
             validEmail(){
                 return this.agentContactDetails[0].agentEmail.length !== 0
                     && this.agentContactDetails[0].agentEmail.includes("@")
                     && (this.agentContactDetails[0].agentEmail.includes(".com"));
             },
+
             disableSaveButton(){
                 return this.loading
                     || this.newPhoneType.length === 0

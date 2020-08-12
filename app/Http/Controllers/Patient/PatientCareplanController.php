@@ -136,7 +136,7 @@ class PatientCareplanController extends Controller
                 ];
             });
 
-        if ($agentContactFields->isNotEmpty() && ! is_null($agentContactFields->first()['agentTelephone'])) {
+        if ( ! empty($agentContactFields->first()) && ! is_null($agentContactFields->first()['agentTelephone'])) {
             $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields->first()['agentTelephone']]);
         }
 
