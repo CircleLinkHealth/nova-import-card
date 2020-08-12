@@ -3077,18 +3077,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->queryOfPracticesRequiringSpecialBhiConsent($builder, 'whereNotIn');
     }
-
+    
     /**
      * Scope for patients who belong to active and billable practices.
      *
      * @param $query
+     * @param bool $includeDemo
      */
-    public function scopeOfActiveBillablePractice($query)
+    public function scopeOfActiveBillablePractice($query, $includeDemo = true)
     {
         $query->whereHas(
             'practices',
-            function ($q) {
-                $q->activeBillable();
+            function ($q) use ($includeDemo) {
+                $q->activeBillable()
+                    ->when(false === $includeDemo, function ($q) {
+                        $q->whereIsDemo(0);
+                    });
             }
         );
     }
