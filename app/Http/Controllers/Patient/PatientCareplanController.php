@@ -112,9 +112,11 @@ class PatientCareplanController extends Controller
         $phoneNumbers = PatientController::phoneNumbersFor($patient)->transform(function ($phone) {
             return [
                 'phoneNumberId' => $phone->id,
-                'number'        => substr(formatPhoneNumberE164($phone->number), 2),
-                'type'          => ucfirst($phone->type),
-                'isPrimary'     => boolval($phone->is_primary),
+                'number'        => ! empty($phone->number)
+                    ? substr(formatPhoneNumberE164($phone->number), 2)
+                    : '',
+                'type'      => ucfirst($phone->type),
+                'isPrimary' => boolval($phone->is_primary),
             ];
         });
 
@@ -124,11 +126,11 @@ class PatientCareplanController extends Controller
             ->get()
             ->transform(function ($patient) {
                 return [
-                    'agentEmail'        => $patient->agent_email,
-                    'agentRelationship' => $patient->agent_relationship,
+                    'agentEmail'        => $patient->agent_email ?? '',
+                    'agentRelationship' => $patient->agent_relationship ?? '',
                     'agentTelephone'    => [
                         'isPrimary' => false,
-                        'number'    => $patient->agent_telephone,
+                        'number'    => $patient->agent_telephone ?? '',
                         'type'      => ucwords(Patient::AGENT),
                     ],
 
