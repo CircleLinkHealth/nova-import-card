@@ -108,6 +108,12 @@
                 </div>
             </div>
 
+            <span v-if="agentNumberIsEmpty"
+                  class="help-block"
+                  style="color: red;">
+                * alternate phone number is empty
+            </span>
+
             <a v-if="allowAddingNewNumber"
                class="glyphicon glyphicon-plus-sign add-new-number"
                title="Add Phone Number"
@@ -115,12 +121,7 @@
                 Add phone number
             </a>
 
-            <span v-if="agentNumberIsEmpty"
-                class="help-block"
-                style="color: red;">{{alternateContactButtonText}}
-            </span>
-
-           <div v-if="!loading"
+            <div v-if="!loading"
                 class="alternate-fields">
                <input name="alternativeContactName"
                       class="form-control alternative-field"
@@ -251,26 +252,17 @@
 
             agentEmailIsEmpty(){
                 return this.agentContactDetails.length !== 0
-                    && this.agentContactDetails[0].agentEmail.count === 0;
+                    && this.agentContactDetails[0].agentEmail.length === 0;
             },
 
             agentRelationshipIsEmpty(){
                 return this.agentContactDetails.length !== 0
-                    && this.agentContactDetails[0].agentRelationship.count === 0;
+                    && this.agentContactDetails[0].agentRelationship.length === 0;
             },
 
             agentNameIsEmpty(){
                 return this.agentContactDetails.length !== 0
-                    && this.agentContactDetails[0].agentName.count === 0;
-            },
-
-            alternateContactButtonText(){
-                if(this.agentNumberIsEmpty
-                    && ! this.agentNameIsEmpty
-                    && ! this.agentRelationshipIsEmpty
-                    && ! this.agentEmailIsEmpty) {
-                    return " * alternate phone number is missing"
-                }
+                    && this.agentContactDetails[0].agentName.length === 0;
             },
 
             setSaveBtnText(){
@@ -279,6 +271,9 @@
                 }
 
                 if (this.showAlternateFields){
+                    if (this.agentRelationshipIsEmpty || this.agentNameIsEmpty || this.agentEmailIsEmpty){
+                        return "Save alternate contact details";
+                    }
                     return "Save alternate number";
                 }
 
@@ -623,7 +618,7 @@
 }
 
 .borderColor{
-    border: green solid;
+    border: red solid;
 }
 
 </style>
