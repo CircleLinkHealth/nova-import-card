@@ -459,10 +459,17 @@ class Patient extends BaseModel
      */
     public function getNurse()
     {
-        $this->loadMissing('patientNurseAsPatient.nurse');
+        if ($this->relationLoaded('patientNurseAsPatient')) {
+            $this->loadMissing('patientNurseAsPatient.nurse');
+            $nursePatient = $this->patientNurseAsPatient;
+        } else {
+            $nursePatient = PatientNurse::where('patient_user_id', '=', $this->user_id)
+                ->with('nurse')
+                ->first();
+        }
 
         /** @var PatientNurse $record */
-        $record = optional($this->patientNurseAsPatient)->nurse;
+        $record = optional($nursePatient)->nurse;
 
         if ( ! $record) {
             return null;
