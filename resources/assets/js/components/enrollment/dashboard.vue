@@ -434,6 +434,7 @@ export default {
                     .then(response => {
                         this.log = 'Initializing.';
                         this.device = new Device(response.data.token, {
+                            codecPreferences: ['opus', 'pcmu'],
                             closeProtection: true,
                             edge: ['ashburn', 'roaming'],
                         });
