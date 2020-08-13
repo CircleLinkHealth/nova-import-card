@@ -57,7 +57,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int                                                                                                 $preferred_calls_per_month
  * @property string|null                                                                                         $last_successful_contact_time
  * @property int|null                                                                                            $no_call_attempts_since_last_success
- * @property string|null                                                                                         $last_contact_time
+
  * @property string                                                                                              $daily_contact_window_start
  * @property string                                                                                              $daily_contact_window_end
  * @property int|null                                                                                            $next_call_id
@@ -238,7 +238,6 @@ class Patient extends BaseModel
         'preferred_calls_per_month',
         'last_successful_contact_time',
         'no_call_attempts_since_last_success',
-        'last_contact_time',
         'daily_contact_window_start',
         'daily_contact_window_end',
         'next_call_id',
