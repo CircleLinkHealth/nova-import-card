@@ -180,10 +180,6 @@
 
     const alternate = 'alternate';
 
-    // let                 initialAgentNameSavedInDB =  '';
-    // let                 initialAgentRelationshipSavedInDB =  '';
-    // let                 initialAgentEmailSavedInDB =  '';
-
     export default {
         name: "edit-patient-number",
 
@@ -224,35 +220,6 @@
         },
 
         computed:{
-            // liveHelperMessage(){
-            //     let baseText =  '* Missing alternate ';
-            //     let emailText = '';
-            //     let nameText = '';
-            //     let phoneText = '';
-            //     let relationshipText = '';
-            //
-            //     if(this.agentNumberIsEmpty) {
-            //         phoneText = "phone number";
-            //     }
-            //
-            //     if (this.agentEmailIsEmpty){
-            //         emailText = "email";
-            //     }
-            //
-            //     if (this.agentNameIsEmpty){
-            //         nameText = "name";
-            //     }
-            //
-            //     if (this.agentRelationshipIsEmpty){
-            //         relationshipText = "relationship";
-            //     }
-            //
-            //     let textArray = [phoneText, emailText, nameText, relationshipText];
-            //     let joinDelimiter = textArray.filter(x=>x === '').length === 2 ? " and " : ", ";
-            //     let resultText = textArray.join(joinDelimiter);
-            //     return baseText.concat(resultText);
-            // },
-
             allowAddingNewNumber(){
                 const existingNumbers = this.patientPhoneNumbers.filter(number=>number.number.length !== 0);
                 return !this.loading && this.newInputs.length === 0
