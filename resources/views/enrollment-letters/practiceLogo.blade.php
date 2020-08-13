@@ -1,7 +1,7 @@
 @if(isset($practiceLogoSrc) && isset($practiceDisplayName))
     <div class="practice-logo">
-        <img src="{{$practiceLogoSrc}}"
-             alt="{{$practiceDisplayName}}"/>
+        <img src="{{asset($practiceLogoSrc)}}"
+             alt="{{asset($practiceDisplayName)}}"/>
     </div>
 @endif
 <style>
