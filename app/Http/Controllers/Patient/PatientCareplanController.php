@@ -90,7 +90,7 @@ class PatientCareplanController extends Controller
         ], 200);
     }
 
-    public static function getPatientPhoneNumbers(Request $request)
+    public static function getPatientContactDetails(Request $request)
     {
         if (empty($request->input('userId'))) {
             return response()->json([
@@ -138,9 +138,9 @@ class PatientCareplanController extends Controller
                 ];
             });
 
-        if ( ! empty($agentContactFields->first()) && ! is_null($agentContactFields->first()['agentTelephone'])) {
-            $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields->first()['agentTelephone']]);
-        }
+//        if ( ! empty($agentContactFields->first()) && ! is_null($agentContactFields->first()['agentTelephone'])) {
+//            $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields->first()['agentTelephone']]);
+//        }
 
         $phoneTypes = getPhoneTypes();
 

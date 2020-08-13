@@ -764,7 +764,7 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:patient.create,patient.update,careplan.update');
 
         Route::post('get-phones', [
-            'uses' => 'Patient\PatientCareplanController@getPatientPhoneNumbers',
+            'uses' => 'Patient\PatientCareplanController@getPatientContactDetails',
             'as'   => 'patient.get.phones',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
 

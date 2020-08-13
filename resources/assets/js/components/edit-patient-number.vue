@@ -108,10 +108,10 @@
                 </div>
             </div>
 
-            <span v-if="agentNumberIsEmpty"
+            <span v-if="agentPhoneIsEmpty"
                   class="help-block"
-                  style="color: red;">
-                * Missing alternate phone number
+                  style="color: red; font-size: 15px;">
+                * Missing alternate contact details
             </span>
 
             <a v-if="allowAddingNewNumber"
@@ -121,8 +121,7 @@
                 Add phone number
             </a>
 
-            <div v-if="!loading"
-                class="alternate-fields">
+            <div v-if="!loading" class="alternate-fields">
                <input name="alternativeContactName"
                       class="form-control alternative-field"
                       :class="{borderColor : agentContactDetails[0].agentName.length === 0}"
@@ -157,14 +156,25 @@
                       v-model="agentContactDetails[0].agentRelationship"
                       :disabled="loading"/>
 
-               <button v-if="alternateSaveBtnVisible"
-                       class="btn btn-sm save-alt-contact"
-                       style="display: inline;"
-                       type="button"
-                       @click="saveNewNumber"
-                       :disabled="loading || disableAltSaveButton">
-                   Save alternate contact person details
-               </button>
+               <div class="alt-phone-number">
+                   <span class="input-group-addon plus-one">+1</span>
+                   <input name="number"
+                          class="form-control phone-number"
+                          type="tel"
+                          v-model="agentContactDetails[0].agentTelephone.number"
+                          :disabled="loading"/>
+               </div>
+
+               <div class="alt-save-btn">
+                   <button v-if="alternateSaveBtnVisible"
+                           class="btn btn-sm save-alt-contact"
+                           style="display: inline;"
+                           type="button"
+                           @click="saveOrUpdateAlternateContact"
+                           :disabled="loading || disableAltSaveButton">
+                       Add alternate contact person details
+                   </button>
+               </div>
 
            </div>
 
@@ -205,15 +215,16 @@
                 markPrimaryEnabledForIndex:'',
                 makeNewNumberPrimary:false,
                 primaryNumber:'',
-                initialAgentEmailSavedInDB:'',
-                initialAgentRelationshipSavedInDB:'',
-                initialAgentNameSavedInDB:'',
+                initialAlternatePhoneSavedInDB:'',
+                initialAlternateEmailSavedInDB:'',
+                initialAlternateRelationshipSavedInDB:'',
+                initialAlternateNameSavedInDB:'',
                 agentContactDetails:[
                     {
                         agentEmail:'',
                         agentName:'',
                         agentRelationship:'',
-                        agentTelephone:'',
+                        agentTelephone:[],
                     }
                 ],
             }
@@ -244,7 +255,7 @@
                 return this.patientPhoneNumbers.length === 0;
             },
 
-            agentNumberIsEmpty(){
+            agentPhoneIsEmpty(){
                 return this.agentContactDetails.length !== 0
                     && this.agentContactDetails[0].agentTelephone.length !== 0
                     && this.agentContactDetails[0].agentTelephone.number.length === 0;
@@ -277,7 +288,7 @@
                     return "Save alternate number";
                 }
 
-                return "Save Number";
+                return "Add Number";
             },
 
             showAlternateFields(){
@@ -290,23 +301,34 @@
 
             alternateSaveBtnVisible(){
                 return ! this.disableAltSaveButton
-                    || this.disableAltSaveButton
-                    && (this.agentNameIsEmpty || this.agentRelationshipIsEmpty || this.agentEmailIsEmpty);
+                    || this.disableAltSaveButton && (this.agentNameIsEmpty
+                        || this.agentRelationshipIsEmpty
+                        || this.agentEmailIsEmpty
+                        || this.agentPhoneIsEmpty);
             },
 
             disableAltSaveButton(){
-                if (this.agentEmailIsEmpty || this.agentRelationshipIsEmpty || this.agentNameIsEmpty){
+                if (this.agentEmailIsEmpty
+                    || this.agentRelationshipIsEmpty
+                    || this.agentNameIsEmpty
+                    || this.agentPhoneIsEmpty){
                     return true;
                 }
 
-                return this.initialAgentRelationshipSavedInDB === this.agentContactDetails[0].agentRelationship
-                    && this.initialAgentEmailSavedInDB === this.agentContactDetails[0].agentEmail
-                    && this.initialAgentNameSavedInDB === this.agentContactDetails[0].agentName;
+                return this.initialAlternateRelationshipSavedInDB === this.agentContactDetails[0].agentRelationship
+                    && this.initialAlternateEmailSavedInDB === this.agentContactDetails[0].agentEmail
+                    && this.initialAlternateNameSavedInDB === this.agentContactDetails[0].agentName
+                    && this.initialAlternatePhoneSavedInDB === this.agentContactDetails[0].agentTelephone.number;
 
             },
         },
 
         methods: {
+            saveOrUpdateAlternateContact(){
+                const isAlternateContact = true;
+                this.saveNewNumber(isAlternateContact);
+            },
+
             showMakePrimary(index, number){
                 return this.isIndexToUpdate(index)
                     && number.isPrimary === false
@@ -380,13 +402,10 @@
                             this.agentContactDetails[0].agentName = agentDetails.agentName;
                             this.agentContactDetails[0].agentRelationship = agentDetails.agentRelationship;
                             this.agentContactDetails[0].agentTelephone = agentDetails.agentTelephone;
-
-
-                            this.initialAgentEmailSavedInDB = agentDetails.agentEmail;
-
-                            this.initialAgentRelationshipSavedInDB = agentDetails.agentRelationship;
-
-                            this.initialAgentNameSavedInDB = agentDetails.agentName;
+                            this.initialAlternatePhoneSavedInDB = agentDetails.agentTelephone.number;
+                            this.initialAlternateEmailSavedInDB = agentDetails.agentEmail;
+                            this.initialAlternateRelationshipSavedInDB = agentDetails.agentRelationship;
+                            this.initialAlternateNameSavedInDB = agentDetails.agentName;
                         }
                         this.emitPrimaryNumber();
                         this.loading = false;
@@ -411,7 +430,7 @@
                 this.newInputs.push(arr);
             },
 
-            saveNewNumber(){
+            saveNewNumber(isAlternateContact = false){
                 this.loading = true;
                 const alternateNewEmail = this.agentContactDetails[0].agentEmail.length > 0
                 ? this.agentContactDetails[0].agentEmail
@@ -618,6 +637,11 @@
         min-width: 140px;
     }
 
+    .alt-phone-number{
+        display: inline-flex;
+        padding-left: 11px;
+    }
+
     .alternative-field{
         background-color: transparent;
         max-width: 270px;
@@ -640,4 +664,7 @@
     border: red solid 1px;
 }
 
+.alt-save-btn{
+    margin-right: 75px;
+}
 </style>
