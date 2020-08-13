@@ -208,8 +208,7 @@ class PatientController extends Controller
             );
 
             return response()->json([
-                //                'data'    => $phoneNumber,
-                'message' => 'Agent phone number has been saved!',
+                'message' => 'Alternate phone number has been saved!',
             ], 200);
         }
 

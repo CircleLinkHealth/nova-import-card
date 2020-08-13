@@ -111,7 +111,7 @@
             <span v-if="agentNumberIsEmpty"
                   class="help-block"
                   style="color: red;">
-                * alternate phone number is empty
+                * Missing alternate phone number
             </span>
 
             <a v-if="allowAddingNewNumber"
@@ -125,7 +125,7 @@
                 class="alternate-fields">
                <input name="alternativeContactName"
                       class="form-control alternative-field"
-                      :class="{borderColor : emphasizeBorder && agentContactDetails[0].agentName.length === 0}"
+                      :class="{borderColor : agentContactDetails[0].agentName.length === 0}"
                       maxlength="40"
                       minlength="3"
                       type="text"
@@ -137,7 +137,7 @@
                <input name="alternativeEmail"
                       style="margin-left: 10px;"
                       class="form-control alternative-field"
-                      :class="{borderColor : emphasizeBorder && agentContactDetails[0].agentEmail.length === 0}"
+                      :class="{borderColor : agentContactDetails[0].agentEmail.length === 0}"
                       maxlength="20"
                       minlength="3"
                       type="text"
@@ -148,7 +148,7 @@
                <br>
                <input name="alternativeRelationship"
                       class="form-control alternative-field"
-                      :class="{borderColor : emphasizeBorder && agentContactDetails[0].agentRelationship.length === 0}"
+                      :class="{borderColor : agentContactDetails[0].agentRelationship.length === 0}"
                       maxlength="20"
                       minlength="3"
                       type="text"
@@ -157,12 +157,13 @@
                       v-model="agentContactDetails[0].agentRelationship"
                       :disabled="loading"/>
 
-               <button class="btn btn-sm save-alt-contact"
+               <button v-if="! disableAltSaveButton"
+                       class="btn btn-sm save-alt-contact"
                        style="display: inline;"
                        type="button"
                        @click="saveNewNumber"
-                       :disabled="disableSaveButton">
-                   What
+                       :disabled="loading || disableAltSaveButton">
+                   Save alternate contact person details
                </button>
 
            </div>
@@ -176,7 +177,9 @@
     import axios from "../bootstrap-axios";
     import EventBus from '../admin/time-tracker/comps/event-bus'
     import CallNumber from "./call-number";
+
     const alternate = 'alternate';
+
     export default {
         name: "edit-patient-number",
 
@@ -202,6 +205,9 @@
                 markPrimaryEnabledForIndex:'',
                 makeNewNumberPrimary:false,
                 primaryNumber:'',
+                initialAgentNameSavedInDB: '',
+                initialAgentRelationshipSavedInDB: '',
+                initialAgentEmailSavedInDB: '',
                 agentContactDetails:[
                     {
                         agentEmail:'',
@@ -214,11 +220,34 @@
         },
 
         computed:{
-            emphasizeBorder(){
-              return this.showAlternateFields
-                  && this.agentNumberIsEmpty
-                  && this.addNewFieldClicked;
-            },
+            // liveHelperMessage(){
+            //     let baseText =  '* Missing alternate ';
+            //     let emailText = '';
+            //     let nameText = '';
+            //     let phoneText = '';
+            //     let relationshipText = '';
+            //
+            //     if(this.agentNumberIsEmpty) {
+            //         phoneText = "phone number";
+            //     }
+            //
+            //     if (this.agentEmailIsEmpty){
+            //         emailText = "email";
+            //     }
+            //
+            //     if (this.agentNameIsEmpty){
+            //         nameText = "name";
+            //     }
+            //
+            //     if (this.agentRelationshipIsEmpty){
+            //         relationshipText = "relationship";
+            //     }
+            //
+            //     let textArray = [phoneText, emailText, nameText, relationshipText];
+            //     let joinDelimiter = textArray.filter(x=>x === '').length === 2 ? " and " : ", ";
+            //     let resultText = textArray.join(joinDelimiter);
+            //     return baseText.concat(resultText);
+            // },
 
             allowAddingNewNumber(){
                 const existingNumbers = this.patientPhoneNumbers.filter(number=>number.number.length !== 0);
@@ -287,6 +316,17 @@
             addNewFieldClicked(){
                 return this.newInputs.length > 0;
             },
+
+            disableAltSaveButton(){
+                if (this.agentEmailIsEmpty || this.agentRelationshipIsEmpty || this.agentNameIsEmpty){
+                    return true;
+                }
+
+                return this.initialAgentRelationshipSavedInDB === this.agentContactDetails[0].agentRelationship
+                    && this.initialAgentEmailSavedInDB === this.agentContactDetails[0].agentEmail
+                    && this.initialAgentNameSavedInDB === this.agentContactDetails[0].agentName;
+
+            },
         },
 
         methods: {
@@ -324,7 +364,7 @@
                     phoneId:phoneNumberId,
                     patientUserId:this.userId,
                 }).then((response => {
-                        this.getPhoneNumbers();
+                        this.getPhonesAndContactDetails();
                         this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
@@ -347,7 +387,7 @@
                 this.makeNewNumberPrimary = false;
             },
 
-            getPhoneNumbers(){
+            getPhonesAndContactDetails(){
                 this.loading = true;
                 this.resetData();
                 axios.post('/manage-patients/get-phones', {
@@ -358,11 +398,18 @@
                         this.phoneTypes.push(...response.data.phoneTypes);
 
                         if(response.data.hasOwnProperty('agentContactFields') && response.data.agentContactFields.length !== 0) {
-                            const agentDetails = response.data.agentContactFields;
-                            this.agentContactDetails[0].agentEmail = agentDetails[0].agentEmail ?? '';
-                            this.agentContactDetails[0].agentName = agentDetails[0].agentName ?? '';
-                            this.agentContactDetails[0].agentRelationship = agentDetails[0].agentRelationship ?? '';
-                            this.agentContactDetails[0].agentTelephone = agentDetails[0].agentTelephone ?? '';
+                            const agentDetails = response.data.agentContactFields[0];
+                            this.agentContactDetails[0].agentEmail = agentDetails.agentEmail;
+                            this.agentContactDetails[0].agentName = agentDetails.agentName;
+                            this.agentContactDetails[0].agentRelationship = agentDetails.agentRelationship;
+                            this.agentContactDetails[0].agentTelephone = agentDetails.agentTelephone;
+
+
+                            this.initialAgentEmailSavedInDB = agentDetails.agentEmail;
+
+                            this.initialAgentRelationshipSavedInDB = agentDetails.agentRelationship;
+
+                            this.initialAgentNameSavedInDB = agentDetails.agentName;
                         }
                         this.emitPrimaryNumber();
                         this.loading = false;
@@ -387,11 +434,6 @@
                 this.newInputs.push(arr);
             },
 
-            // validateAlternativeFields(){
-            //
-            //
-            // },
-
             saveNewNumber(){
                 this.loading = true;
                 const alternateNewEmail = this.agentContactDetails[0].agentEmail.length > 0
@@ -406,13 +448,13 @@
 
                 if (this.newPhoneType.length === 0){
                     alert("Please choose phone number type");
-                    // this.loading = false;
+                    this.loading = false;
                     return;
                 }
 
                 if (this.newPhoneNumber.length === 0){
                     alert("Phone number is required.");
-                    // this.loading = false;
+                    this.loading = false;
                     return;
                 }
 
@@ -451,7 +493,7 @@
                     alternateFieldsEnabled:this.showAlternateFields,
                 })
                     .then((response => {
-                        this.getPhoneNumbers();
+                        this.getPhonesAndContactDetails();
                         if (response.data.hasOwnProperty('message')){
                             alert(response.data.message);
                         }
@@ -492,7 +534,7 @@
                     deleteAltPhone:deleteAlternatePhone,
                 })
                     .then((response => {
-                        this.getPhoneNumbers();
+                        this.getPhonesAndContactDetails();
                         this.loading = false;
                         if (response.data.hasOwnProperty('message')){
                             alert(response.data.message);
@@ -505,7 +547,7 @@
         },
 
         created() {
-            this.getPhoneNumbers();
+            this.getPhonesAndContactDetails();
         }
     }
 </script>
@@ -618,7 +660,7 @@
 }
 
 .borderColor{
-    border: red solid;
+    border: red solid 1px;
 }
 
 </style>
