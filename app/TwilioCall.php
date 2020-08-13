@@ -78,6 +78,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
  * @property \CircleLinkHealth\Customer\Entities\User|null        $outboundUser
  * @property int|null                                             $inbound_enrollee_id
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null $inboundEnrollee
+ * @property \App\VoiceCall|null                                  $voiceCall
  */
 class TwilioCall extends BaseModel
 {
@@ -123,5 +124,10 @@ class TwilioCall extends BaseModel
     public function outboundUser()
     {
         return $this->belongsTo(User::class, 'outbound_user_id', 'id');
+    }
+
+    public function voiceCall()
+    {
+        return $this->morphOne(VoiceCall::class, 'voice_callable');
     }
 }

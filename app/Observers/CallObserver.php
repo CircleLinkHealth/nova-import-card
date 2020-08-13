@@ -9,6 +9,7 @@ namespace App\Observers;
 use App\Call;
 use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Events\CarePlanWasApproved;
+use App\Jobs\MatchCpmCallWithTwilioCallJob;
 use App\Note;
 use App\Notifications\CallCreated;
 use App\Services\ActivityService;
@@ -66,6 +67,8 @@ class CallObserver
                 $date = Carbon::parse($call->updated_at);
 
                 $this->activityService->processMonthlyActivityTime($patient->id, $date);
+
+                $this->matchVoiceCallWithCpmCallRecord($call);
             }
         }
 
@@ -112,6 +115,15 @@ class CallObserver
             return;
         }
         event(new CarePlanWasApproved($patient, $note->author));
+    }
+
+    private function matchVoiceCallWithCpmCallRecord(Call $call)
+    {
+        if ( ! $call->called_date) {
+            return;
+        }
+
+        MatchCpmCallWithTwilioCallJob::dispatch($call);
     }
 
     private function shouldApproveCarePlan(Call $call)

@@ -16,6 +16,7 @@ use App\Console\Commands\CheckForDraftNotesAndQAApproved;
 use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\CheckUserTotalTimeTracked;
+use App\Console\Commands\CheckVoiceCalls;
 use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
@@ -309,6 +310,10 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('04:00');
 
         $schedule->command(OverwriteNBIImportedData::class)->hourly();
+
+        $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
+            ->hourly()
+            ->between('7:00', '23:00');
 
         $schedule->command(OverwriteNBIPatientMRN::class)->everyThirtyMinutes();
 

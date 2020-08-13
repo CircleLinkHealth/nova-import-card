@@ -45,7 +45,7 @@ class PatientEmailController extends Controller
         if ($media) {
             $patient->deleteMedia($media->id);
         }
-        
+
         return response()->json(
             [
                 'success' => true,
