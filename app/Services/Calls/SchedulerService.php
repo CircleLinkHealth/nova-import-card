@@ -96,7 +96,7 @@ class SchedulerService
             $scheduler = 'call checker algorithm';
         }
         $this->storeScheduledCall(
-            $patient->id,
+            $patient,
             $next_predicted_contact_window['window_start'],
             $next_predicted_contact_window['window_end'],
             $next_predicted_contact_window['day'],
@@ -511,6 +511,36 @@ class SchedulerService
             ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
     }
 
+    /**
+     * @param Patient $patient
+     * @param $oldValue
+     * @param $newValue
+     */
+    public function shouldScheduleCall(User $patient): bool
+    {
+        if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
+            return false;
+        }
+
+        if ( ! $patient->carePlan) {
+            return false;
+        }
+
+        if ($patient->carePlan->isClhAdminApproved()) {
+            return true;
+        }
+
+        if ($patient->carePlan->isProviderApproved()) {
+            return true;
+        }
+
+        if ($patient->carePlan->isRnApproved()) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function storeScheduledCall(
         $patientId,
         $window_start,
@@ -521,12 +551,17 @@ class SchedulerService
         $attempt_note = '',
         $is_manual = false
     ) {
-        $patient = User::find($patientId);
+        if ($patientId instanceof User) {
+            $patient = $patientId;
+            $patient->loadMissing('patientInfo');
+        } else {
+            $patient = User::with('patientInfo')->without(['roles', 'perms'])->find($patientId);
+        }
 
         $window_start = Carbon::parse($window_start)->format('H:i');
         $window_end   = Carbon::parse($window_end)->format('H:i');
 
-        $nurse_id = ! is_numeric($nurse_id) ?: $nurse_id;
+        $nurse_id = ! is_numeric($nurse_id) ? null : $nurse_id;
 
         if ( ! ($date instanceof Carbon)) {
             $date = Carbon::parse($date);
@@ -876,31 +911,5 @@ class SchedulerService
         $prediction['successful'] = Call::REACHED == $callStatus;
 
         return $prediction;
-    }
-
-    /**
-     * @param Patient $patient
-     * @param $oldValue
-     * @param $newValue
-     */
-    private function shouldScheduleCall(User $patient): bool
-    {
-        if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
-            return false;
-        }
-
-        if ( ! $patient->carePlan) {
-            return false;
-        }
-
-        if ($patient->carePlan->isClhAdminApproved()) {
-            return true;
-        }
-
-        if ($patient->carePlan->isProviderApproved()) {
-            return true;
-        }
-
-        return false;
     }
 }

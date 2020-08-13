@@ -78,7 +78,7 @@ class SendUnsuccessfulCallPatientsReminderNotification extends Command
 
                 // 3. get last unsuccessful call, which has nurse that called
                 $call = SchedulerService::getLastUnsuccessfulCall($notification->notifiable_id, $notification->created_at);
-                if ($call) {
+                if ($call && $call->inboundUser) {
                     $call->inboundUser->notify(new PatientUnsuccessfulCallNotification($call, true));
                     $userIds->push($call->inbound_cpm_id);
                 }

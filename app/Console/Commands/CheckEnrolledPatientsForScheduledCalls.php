@@ -8,9 +8,7 @@ namespace App\Console\Commands;
 
 use App\Services\Calls\SchedulerService;
 use App\User;
-use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class CheckEnrolledPatientsForScheduledCalls extends Command
 {
@@ -62,45 +60,21 @@ class CheckEnrolledPatientsForScheduledCalls extends Command
                     $q->enrolled();
                 }
             )
+            ->ofActiveBillablePractice(false)
             ->doesntHave('inboundScheduledCalls')
             ->with(['carePlan', 'patientInfo'])
             ->each(
                 function (User $patient) use ($schedulerService, &$fixed, &$loop) {
                     ++$loop;
 
-                    if ($this->shouldScheduleCall($patient)) {
+                    if ($schedulerService->shouldScheduleCall($patient)) {
+                        $this->warn("Scheduling call for patientUser[$patient->id]");
                         $schedulerService->ensurePatientHasScheduledCall($patient, 'calls:check');
+                        ++$fixed;
                     }
-
-                    ++$fixed;
                 }
             );
 
         $this->info("Went through $loop patients. Scheduled $fixed call(s). Done.");
-    }
-
-    private function shouldScheduleCall(User $patient): bool
-    {
-        $patient->loadMissing(['carePlan', 'patientInfo']);
-
-        if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
-            return false;
-        }
-
-        if ( ! $patient->carePlan) {
-            Log::error("Patient[$patient->id] does not have care plan but is enrolled!");
-
-            return false;
-        }
-
-        if ($patient->carePlan->isClhAdminApproved()) {
-            return true;
-        }
-
-        if ($patient->carePlan->isProviderApproved()) {
-            return true;
-        }
-
-        return false;
     }
 }
