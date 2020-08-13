@@ -157,7 +157,7 @@
                       v-model="agentContactDetails[0].agentRelationship"
                       :disabled="loading"/>
 
-               <button v-if="! disableAltSaveButton"
+               <button v-if="alternateSaveBtnVisible"
                        class="btn btn-sm save-alt-contact"
                        style="display: inline;"
                        type="button"
@@ -179,6 +179,10 @@
     import CallNumber from "./call-number";
 
     const alternate = 'alternate';
+
+    // let                 initialAgentNameSavedInDB =  '';
+    // let                 initialAgentRelationshipSavedInDB =  '';
+    // let                 initialAgentEmailSavedInDB =  '';
 
     export default {
         name: "edit-patient-number",
@@ -205,9 +209,9 @@
                 markPrimaryEnabledForIndex:'',
                 makeNewNumberPrimary:false,
                 primaryNumber:'',
-                initialAgentNameSavedInDB: '',
-                initialAgentRelationshipSavedInDB: '',
-                initialAgentEmailSavedInDB: '',
+                initialAgentEmailSavedInDB:'',
+                initialAgentRelationshipSavedInDB:'',
+                initialAgentNameSavedInDB:'',
                 agentContactDetails:[
                     {
                         agentEmail:'',
@@ -315,6 +319,12 @@
 
             addNewFieldClicked(){
                 return this.newInputs.length > 0;
+            },
+
+            alternateSaveBtnVisible(){
+                return ! this.disableAltSaveButton
+                    || this.disableAltSaveButton
+                    && (this.agentNameIsEmpty || this.agentRelationshipIsEmpty || this.agentEmailIsEmpty);
             },
 
             disableAltSaveButton(){
