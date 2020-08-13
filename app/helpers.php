@@ -1628,7 +1628,7 @@ if ( ! function_exists('sendPatientAttestationValidationFailedWarning')) {
         $patientUrl = route('patient.demographics.show', ['patientId' => $patientId]);
 
         sendSlackMessage(
-            '#clinical',
+            '#cpm_general_alerts',
             "$handles Warning! Something went wrong with condition attestation regarding patient: {$patientId}. This is possibly a bug. Please review {$patientUrl}"
         );
     }
