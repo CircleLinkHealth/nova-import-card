@@ -34,7 +34,7 @@ class CallsView extends BaseSqlView
             u1.patient_id,
             u1.patient,
             c.scheduled_date,
-            u4.last_call,
+            (select max(called_date) from calls where `status` in ('reached', 'not reached', 'ignored') and calls.inbound_cpm_id = c.inbound_cpm_id) as last_call,
             if (u5.ccm_time is null, 0, u5.ccm_time) as ccm_time,
             if (u5.bhi_time is null, 0, u5.bhi_time) as bhi_time,
             if (u5.no_of_calls is null, 0, u5.no_of_calls) as no_of_calls,
@@ -66,7 +66,7 @@ class CallsView extends BaseSqlView
 
             left join (select u.id as scheduler_id, u.display_name as `scheduler` from users u) as u3 on c.scheduler = u3.scheduler_id
 
-            left join (select pi.user_id as patient_id, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success, pi.general_comment, pi.ccm_status, pi.preferred_contact_language from patient_info pi where pi.ccm_status in ('enrolled', 'paused')) as u4 on c.inbound_cpm_id = u4.patient_id
+            left join (select pi.user_id as patient_id, pi.no_call_attempts_since_last_success, pi.general_comment, pi.ccm_status, pi.preferred_contact_language from patient_info pi where pi.ccm_status in ('enrolled', 'paused')) as u4 on c.inbound_cpm_id = u4.patient_id
 
             left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, pms.no_of_calls from patient_monthly_summaries pms where month_year = ${startOfMonthQuery}) u5 on c.inbound_cpm_id = u5.patient_id
 
