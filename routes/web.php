@@ -768,11 +768,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.get.phones',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
 
-        Route::get('get-phones-test', [
-            'uses' => 'Patient\PatientCareplanController@getPatientPhoneNumbers',
-            'as'   => 'patient.get.phones',
-        ])->middleware('permission:patient.create,patient.update,careplan.update');
-
         Route::get('dashboard', [
             'uses' => 'Patient\PatientController@showDashboard',
             'as'   => 'patients.dashboard',
