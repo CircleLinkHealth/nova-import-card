@@ -7,38 +7,32 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Customer;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcesor;
-use Illuminate\Database\Eloquent\Builder;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
+use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
+use Modules\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
 
-class Practice implements CustomerBillingProcesor
+class Practice implements CustomerBillingProcessor
 {
-    private $practiceIds;
+    private PracticeProcessorEloquentRepository $repo;
 
-    public function attachServicesToPatients(Carbon $month)
+    public function __construct(PracticeProcessorEloquentRepository $repo)
     {
-        // TODO: Implement attachServicesToPatients() method.
+        $this->repo = $repo;
     }
 
-    public function billablePatientsQuery(Carbon $monthYear): Builder
+    public function fetchApprovablePatients(int $customerModelId, Carbon $month, $pageSize = 30): ApprovablePatientCollection
     {
-        return BillablePatientUsersQuery::query($monthYear)
-            ->ofPractice($this->practiceIds);
+        // TODO: Implement fetchApprovablePatients() method.
     }
 
-    public function patientBillableServicesQuery(Carbon $monthYear): Builder
+    public function processServicesForAllPatients(int $customerModelId, Carbon $month): void
     {
-        return BillableMonthlyChargeableServicesQuery::query($monthYear)
-            ->whereHas('patient', fn ($q) => $q->ofPractice($this->practiceIds));
+        // TODO: Implement processServicesForAllPatients() method.
     }
 
-    /**
-     * @param  mixed    $practiceIds
-     * @return Practice
-     */
-    public function setPracticeIds(array $practiceIds)
+    public function repo(): CustomerBillingProcessorRepository
     {
-        $this->practiceIds = $practiceIds;
-
-        return $this;
+        return $this->repo;
     }
 }

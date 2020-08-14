@@ -4,14 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CcmBilling\Processors\Customer;
+namespace CircleLinkHealth\CcmBilling\Builders;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 
-class BillablePatientUsersQuery
+trait BillablePatientUsersQuery
 {
-    public static function query(Carbon $monthYear)
+    public function billablePatientUsersQuery(Carbon $monthYear)
     {
         return User::with([
             'endOfMonthCcmStatusLog' => function ($q) use ($monthYear) {

@@ -7,34 +7,32 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Customer;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcesor;
-use Illuminate\Database\Eloquent\Builder;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
+use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
+use Modules\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 
-class Location implements CustomerBillingProcesor
+class Location implements CustomerBillingProcessor
 {
-    private array $locationsIds = [];
+    private LocationProcessorEloquentRepository $repo;
 
-    public function attachServicesToPatients(Carbon $month)
+    public function __construct(LocationProcessorEloquentRepository $repo)
     {
-        // TODO: Implement attachServicesToPatients() method.
+        $this->repo = $repo;
     }
 
-    public function billablePatientsQuery(Carbon $monthYear): Builder
+    public function fetchApprovablePatients(int $locationId, Carbon $month, $pageSize = 30): ApprovablePatientCollection
     {
-        return BillablePatientUsersQuery::query($monthYear)
-            ->whereHas('patientInfo', fn ($q) => $q->whereIn('preferred_contact_location', $this->locationsIds));
+        return new ApprovablePatientCollection($this->repo->patients($locationId, $month, $pageSize));
     }
 
-    public function patientBillableServicesQuery(Carbon $monthYear): Builder
+    public function processServicesForAllPatients(int $locationId, Carbon $month): void
     {
-        return BillableMonthlyChargeableServicesQuery::query($monthYear)
-            ->whereHas('patient.patientInfo', fn ($q) => $q->whereIn('preferred_contact_location', $this->locationsIds));
+        // TODO: Implement processServicesForAllPatients() method.
     }
 
-    public function setLocationsIds(array $locationsIds): Location
+    public function repo(): CustomerBillingProcessorRepository
     {
-        $this->locationsIds = $locationsIds;
-
-        return $this;
+        return $this->repo;
     }
 }
