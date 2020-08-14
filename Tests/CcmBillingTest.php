@@ -11,10 +11,9 @@ use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery;
 use Modules\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use Tests\TestCase;
-use Mockery;
 
 class CcmBillingTest extends TestCase
 {
@@ -28,18 +27,22 @@ class CcmBillingTest extends TestCase
         $repoMock      = Mockery::mock(LocationProcessorEloquentRepository::class);
         $paginatorMock = Mockery::mock(LengthAwarePaginator::class);
 
-        $paginatorMock->shouldReceive('first')->andReturn(false);
-        $paginatorMock->shouldReceive('mapInto')->with(ApprovablePatient::class)->once()->andReturn($fakeUsers);
-
+        $paginatorMock
+            ->shouldReceive('first')
+            ->andReturn(false);
+        $paginatorMock->shouldReceive('mapInto')
+            ->with(ApprovablePatient::class)
+            ->once()
+            ->andReturn($fakeUsers);
         $repoMock
             ->shouldReceive('patients')
             ->with($locationId, $monthYear, $pageSize)
             ->once()
             ->andReturn($paginatorMock);
 
-        $biller = new Location($repoMock);
-
+        $biller   = new Location($repoMock);
         $response = $biller->fetchApprovablePatients($locationId, $monthYear, $pageSize);
+
         $this->assertTrue($response instanceof ApprovablePatientCollection);
     }
 }
