@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
-use Modules\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
 
 class Practice implements CustomerBillingProcessor
 {

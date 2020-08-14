@@ -13,8 +13,8 @@ use CircleLinkHealth\CcmBilling\Processors\Customer\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Mockery;
-use Modules\CcmBilling\Repositories\LocationProcessorEloquentRepository;
-use Modules\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
 use Tests\TestCase;
 
 class BillingProcessorsIntegrationTest extends TestCase

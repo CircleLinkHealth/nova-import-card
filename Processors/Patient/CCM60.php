@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Modules\CcmBilling\Processors\Patient;
+namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 
 class CCM60

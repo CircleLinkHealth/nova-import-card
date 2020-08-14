@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Modules\CcmBilling\Domain\Customer;
+namespace CircleLinkHealth\CcmBilling\Domain\Customer;
 
 
 class FetchApprovablePatients
