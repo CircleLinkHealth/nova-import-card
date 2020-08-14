@@ -1,0 +1,46 @@
+{
+    "name": "circlelinkhealth/ccmbilling",
+    "type": "laravel-module",
+    "description": "",
+    "authors": [
+        {
+            "name": "Antonis Antoniou",
+            "email": "antonis@cirlelinkhealth.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Constantinos Kakoushias",
+            "email": "constantinos@cirlelinkhealth.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Michalis Antoniou",
+            "email": "mantoniou@cirlelinkhealth.com",
+            "role": "Lead Developer"
+        },
+        {
+            "name": "Pangratios Cosma",
+            "email": "pangratios@cirlelinkhealth.com",
+            "role": "Lead Developer"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "CircleLinkHealth\\CcmBilling\\": ""
+        }
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-customer.git"
+        }
+    ]
+}
