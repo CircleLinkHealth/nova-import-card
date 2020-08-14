@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use Modules\Eligibility\CcdaImporter\CcdaImporterWrapper;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
