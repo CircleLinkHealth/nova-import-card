@@ -15,4 +15,6 @@ interface CustomerBillingProcesor
     public function patientBillableServicesQuery(Carbon $monthYear): Builder;
     
     public function billablePatientsQuery(Carbon $monthYear): Builder;
+    
+    public function attachServicesToPatients(Carbon $month);
 }
