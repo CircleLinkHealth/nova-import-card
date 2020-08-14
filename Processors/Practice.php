@@ -14,14 +14,6 @@ class Practice implements CustomerBillingProcesor
 {
     private $practiceIds;
     
-    /**
-     * Location constructor.
-     */
-    public function __construct(array $practiceIds)
-    {
-        $this->practiceIds = $practiceIds;
-    }
-    
     public function billablePatientsQuery(Carbon $monthYear): Builder
     {
         // TODO: Implement billablePatientsQuery() method.
@@ -29,6 +21,16 @@ class Practice implements CustomerBillingProcesor
 
     public function patientBillableServicesQuery(Carbon $monthYear): Builder
     {
-        // TODO: Implement patientBillableServicesQuery() method.
+        return (new Location())->setLocationsIds();
+    }
+    
+    /**
+     * @param mixed $practiceIds
+     * @return Practice
+     */
+    public function setPracticeIds($practiceIds)
+    {
+        $this->practiceIds = $practiceIds;
+        return $this;
     }
 }

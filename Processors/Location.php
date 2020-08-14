@@ -13,15 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Location implements CustomerBillingProcesor
 {
-    private $locationsIds;
-
-    /**
-     * Location constructor.
-     */
-    public function __construct(array $locationsIds)
-    {
-        $this->locationsIds = $locationsIds;
-    }
+    private array $locationsIds = [];
 
     public function billablePatientsQuery(Carbon $monthYear): Builder
     {
@@ -55,5 +47,12 @@ class Location implements CustomerBillingProcesor
     public function patientBillableServicesQuery(Carbon $monthYear): Builder
     {
         // TODO: Implement patientBillableServicesQuery() method.
+    }
+
+    public function setLocationsIds(array $locationsIds): Location
+    {
+        $this->locationsIds = $locationsIds;
+
+        return $this;
     }
 }
