@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "24b823bc18c9fcd1628f62906a7c4d17",
+    "content-hash": "e983b5c281accc50ef4e1e19f6bde116",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.149.0",
+            "version": "3.149.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0ab4ac60f94d53d55f2c7374deb75d9a58961970"
+                "reference": "8630a2426622d003e27382e2bd129cde5678ae85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0ab4ac60f94d53d55f2c7374deb75d9a58961970",
-                "reference": "0ab4ac60f94d53d55f2c7374deb75d9a58961970",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8630a2426622d003e27382e2bd129cde5678ae85",
+                "reference": "8630a2426622d003e27382e2bd129cde5678ae85",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-08-13T18:10:50+00:00"
+            "time": "2020-08-14T18:11:00+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -899,11 +899,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "dev-master",
+            "version": "dev-billing_revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "69c832760ee6f74d257a9f74745e4f805a30deea"
+                "reference": "ef539b609fe2b6685aedbf6286d5b457aa77bc5a"
             },
             "type": "laravel-module",
             "extra": {
@@ -939,7 +939,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-08-14T03:37:07+00:00"
+            "time": "2020-08-14T18:15:51+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1201,11 +1201,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.2.1",
+            "version": "dev-billing_revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "00cbaedd3dce1e128f3fc5be287d44424a27a8df"
+                "reference": "d93d8c9b377b19f26b684d186ce839960412df0b"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1239,15 +1239,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-12T19:13:00+00:00"
+            "time": "2020-08-14T18:15:51+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.3.1",
+            "version": "dev-billing_revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "6919596b278360c6eb73cefb829a0ac4adec1f0f"
+                "reference": "d8da32c018aae9ee3c8f7a3e0627589a14c883c1"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1272,7 +1272,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-10T15:04:18+00:00"
+            "time": "2020-08-14T18:15:51+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -17500,6 +17500,8 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccm-billing-module": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
