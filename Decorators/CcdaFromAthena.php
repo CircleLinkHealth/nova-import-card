@@ -14,7 +14,7 @@ use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Facades\DB;
-use Modules\Eligibility\CcdaImporter\CcdaImporterWrapper;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 
 class CcdaFromAthena implements MedicalRecordDecorator
 {

@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Modules\Eligibility\CcdaImporter;
+namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use App\Search\LocationByName;
 use App\Search\ProviderByName;
