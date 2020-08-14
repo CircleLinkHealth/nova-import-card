@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CcmBilling\Processors;
+namespace CircleLinkHealth\CcmBilling\Processors\Customer;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcesor;

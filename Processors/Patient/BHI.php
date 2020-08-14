@@ -1,24 +1,14 @@
 <?php
 
 
-namespace Modules\CcmBilling\Processors;
+namespace Modules\CcmBilling\Processors\Patient;
 
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientBillingProcessor;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
 
-class Patient implements PatientBillingProcessor
+class BHI implements PatientChargeableServiceProcessor
 {
-    /**
-     * @var User
-     */
-    private User $patient;
-    
-    public function __construct(User $patient)
-    {
-        $this->patient = $patient;
-    }
     
     public function attach(Carbon $monthYear)
     {
