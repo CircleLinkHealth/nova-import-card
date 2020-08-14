@@ -9,9 +9,9 @@ namespace CircleLinkHealth\CcmBilling\Builders;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
-trait BillableMonthlyChargeableServicesQuery
+trait ApprovablePatientServicesQuery
 {
-    public function billableMonthlyChargeableServicesQuery(Carbon $monthYear): Builder
+    public function approvablePatientServicesQuery(Carbon $monthYear): Builder
     {
     }
 }

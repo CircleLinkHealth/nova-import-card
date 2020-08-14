@@ -10,9 +10,9 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
-trait BillablePatientUsersQuery
+trait ApprovablePatientUsersQuery
 {
-    public function billablePatientUsersQuery(Carbon $monthYear): Builder
+    public function approvablePatientUsersQuery(Carbon $monthYear): Builder
     {
         return User::with([
             'endOfMonthCcmStatusLog' => function ($q) use ($monthYear) {
