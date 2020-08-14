@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Modules/CcdaParserProcessorPhp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/CcmBilling" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Modules/CerberusGatekeeper" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Modules/ConditionCodeLookup" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Modules/Core" vcs="Git" />
