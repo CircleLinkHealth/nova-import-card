@@ -81,6 +81,9 @@ class PatientCareplanController extends Controller
             Patient::whereUserId($request->input('patientUserId'))->update(
                 [
                     'agent_telephone' => null,
+                    //                    'agent_name'         => null,
+                    //                    'agent_relationship' => null,
+                    //                    'agent_email'        => null,
                 ]
             );
         }
@@ -98,7 +101,7 @@ class PatientCareplanController extends Controller
             ], 400);
         }
 
-        $requestFromCallPage = $request->input('requestIsFromCallPage');
+        $isRequestFromCallPage = $request->input('requestIsFromCallPage');
 
         /** @var User $patient */
         $patient = User::with('phoneNumbers', 'patientInfo')
@@ -127,25 +130,28 @@ class PatientCareplanController extends Controller
             ->select('agent_email', 'agent_relationship', 'agent_telephone', 'agent_name')
             ->get()
             ->transform(function ($patient) {
+                $alternatePhone = ! empty($patient->agent_telephone)
+                    ? substr(formatPhoneNumberE164($patient->agent_telephone), 2)
+                    : '';
+
                 return [
                     'agentEmail'        => $patient->agent_email ?? '',
                     'agentRelationship' => $patient->agent_relationship ?? '',
+                    'agentName'         => $patient->agent_name ?? '',
                     'agentTelephone'    => [
                         'isPrimary' => false,
-                        'number'    => substr(formatPhoneNumberE164($patient->agent_telephone), 2) ?? '',
+                        'number'    => $alternatePhone,
                         'type'      => ucwords(Patient::AGENT),
                     ],
-
-                    'agentName' => $patient->agent_name,
                 ];
             });
 
-        if ($requestFromCallPage && ! empty($agentContactFields->first())
-            && ! is_null($agentContactFields->first()['agentTelephone'])) {
+        if ($isRequestFromCallPage && ! empty($agentContactFields->first())
+            && ! empty($agentContactFields->first()['agentTelephone']['number'])) {
             $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields->first()['agentTelephone']]);
         }
 
-        $phoneTypes = getPhoneTypes($requestFromCallPage);
+        $phoneTypes = getPhoneTypes($isRequestFromCallPage);
 
         return response()->json([
             'phoneNumbers'       => $phoneNumbers,

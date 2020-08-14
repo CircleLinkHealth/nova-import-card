@@ -109,19 +109,19 @@
                 </div>
             </div>
 
-            <span v-if="displayHelpText"
-                  class="help-block"
-                  title="Alternate contact details are missing but they are not required."
-                  style="color: red; font-size: 15px;">
-                * Missing alternate contact details
-            </span>
-
             <a v-if="allowAddingNewNumber"
                class="glyphicon glyphicon-plus-sign add-new-number"
                title="Add Phone Number"
                @click="addPhoneField()">
                 Add phone number
             </a>
+
+            <span v-if="!loading && displayHelpText"
+                  class="help-block"
+                  title="Alternate contact details are missing but they are not required."
+                  style="color: red; font-size: 15px;">
+                {{helperText}}
+            </span>
 
             <div v-if="!loading && shouldDisplayAlternateFields()"
                  class="alternate-fields">
@@ -159,7 +159,8 @@
                       v-model="agentContactDetails[0].agentRelationship"
                       :disabled="loading"/>
 
-               <div class="alt-phone-number">
+               <div v-if="! callEnabled"
+                    class="alt-phone-number">
                    <span class="input-group-addon plus-one">+1</span>
                    <input name="number"
                           class="form-control phone-number"
@@ -169,7 +170,8 @@
                           :disabled="loading"/>
                </div>
 
-               <div class="alt-save-btn">
+               <div v-if="!loading"
+                    class="alt-save-btn">
                    <button v-if="!this.callEnabled && alternateSaveBtnVisible"
                            class="btn btn-sm save-alt-contact"
                            style="display: inline;"
@@ -238,6 +240,15 @@
         computed:{
             displayHelpText(){
                 return this.anyAlternateFieldIsEmpty;
+            },
+
+            helperText(){
+                if(this.agentPhoneIsEmpty && (! this.agentNameIsEmpty
+                    || ! this.agentRelationshipIsEmpty
+                    || ! this.agentEmailIsEmpty)){
+                    return '* Missing alternate contact phone number';
+                }
+                return '* Missing alternate contact details';
             },
 
             anyAlternateFieldIsEmpty(){
