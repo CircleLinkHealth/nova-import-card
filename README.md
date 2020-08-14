@@ -8,4 +8,4 @@ You are familiarized with Approve Billable Patients page (ABP).
 At the beginning of every month we attach "unfulfilled" chargeable services to each patient, depending on which chargeable services are enabled for the patient's location, and the patient's conditions. Every time an admin is loading patients using the ABP, we will re-valuate each patient's chargeable services. We will do the same at the end of the month.
 
 # Important Quality Conditions
-
+- If an admin has made a change to a row on ABP, that row should not be altered by CPM, except for the beginning of the following month when CPM creates the dataset that will power ABP.
