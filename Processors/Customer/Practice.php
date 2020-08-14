@@ -26,9 +26,8 @@ class Practice implements CustomerBillingProcesor
 
     public function patientBillableServicesQuery(Carbon $monthYear): Builder
     {
-        return (new Location())
-            ->setLocationsIds(\CircleLinkHealth\Customer\Entities\Location::whereIn('practice_id', $this->practiceIds)->pluck('id')->all())
-            ->patientBillableServicesQuery($monthYear);
+        return BillableMonthlyChargeableServicesQuery::query($monthYear)
+            ->whereHas('practices', fn ($q) => $q->whereIn('id', $this->practiceIds));
     }
 
     /**

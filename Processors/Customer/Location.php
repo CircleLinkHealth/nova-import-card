@@ -27,7 +27,8 @@ class Location implements CustomerBillingProcesor
 
     public function patientBillableServicesQuery(Carbon $monthYear): Builder
     {
-        // TODO: Implement patientBillableServicesQuery() method.
+        return BillableMonthlyChargeableServicesQuery::query($monthYear)
+            ->whereHas('patient.patientInfo', fn ($q) => $q->whereIn('preferred_contact_location', $this->locationsIds));
     }
 
     public function setLocationsIds(array $locationsIds): Location
