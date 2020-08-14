@@ -98,6 +98,8 @@ class PatientCareplanController extends Controller
             ], 400);
         }
 
+        $requestFromCallPage = $request->input('requestIsFromCallPage');
+
         /** @var User $patient */
         $patient = User::with('phoneNumbers', 'patientInfo')
             ->where('id', '=', $request->input('userId'))
@@ -138,11 +140,12 @@ class PatientCareplanController extends Controller
                 ];
             });
 
-//        if ( ! empty($agentContactFields->first()) && ! is_null($agentContactFields->first()['agentTelephone'])) {
-//            $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields->first()['agentTelephone']]);
-//        }
+        if ($requestFromCallPage && ! empty($agentContactFields->first())
+            && ! is_null($agentContactFields->first()['agentTelephone'])) {
+            $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields->first()['agentTelephone']]);
+        }
 
-        $phoneTypes = getPhoneTypes();
+        $phoneTypes = getPhoneTypes($requestFromCallPage);
 
         return response()->json([
             'phoneNumbers'       => $phoneNumbers,

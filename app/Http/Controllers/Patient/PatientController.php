@@ -360,15 +360,12 @@ class PatientController extends Controller
         //naive authentication for the CPM Caller Service
         $cpmToken = \Hash::make(config('app.key').Carbon::today()->toDateString());
 
-        $phoneTypes = getPhoneTypes();
-        //@todo:get phoneTypes and numbers from vue
+        //$phoneNumbers,$phoneTypes are fetched from <edit-patient-number> when is loaded.
         return view('wpUsers.patient.calls.index')
             ->with([
-                'patient' => $user,
-                //                'phoneNumbers'             => $phoneNumbers,
+                'patient'                  => $user,
                 'clinicalEscalationNumber' => $clinicalEscalationNumber,
                 'cpmToken'                 => $cpmToken,
-                //                'phoneTypes'               => $phoneTypes,
             ]);
     }
 

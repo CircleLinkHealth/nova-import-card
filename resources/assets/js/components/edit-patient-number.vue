@@ -5,11 +5,12 @@
             <h5 v-if="!loading && callEnabled" style="padding-left: 4px; color: #50b2e2;">Number<br>to Call</h5>
             <template v-if="true" v-for="(number, index) in patientPhoneNumbers">
                 <div class="numbers">
-                    <div v-if="callEnabled" style="margin-top: 7px;">
+                    <div v-if="callEnabled && number.number !== ''" style="margin-top: 7px;">
                         <input name="isPrimary"
                                class="to-call"
                                @click="selectedNumber(number.number)"
                                type="radio"
+                               v-model="selectedNumberToCall"
                                :checked="numberIsPrimary(number)">
                     </div>
 
@@ -97,7 +98,7 @@
                             {{setSaveBtnText}}
                         </button>
 
-                       <div v-if="! showAlternateFields && newPhoneNumber.length !== 0" style="display: flex;">
+                       <div v-if="! shouldShowAlternateFields && newPhoneNumber.length !== 0" style="display: flex;">
                            <input id="makePrimary"
                                   class="make-primary"
                                   v-model="makeNewNumberPrimary"
@@ -108,8 +109,9 @@
                 </div>
             </div>
 
-            <span v-if="agentPhoneIsEmpty"
+            <span v-if="displayHelpText"
                   class="help-block"
+                  title="Alternate contact details are missing but they are not required."
                   style="color: red; font-size: 15px;">
                 * Missing alternate contact details
             </span>
@@ -121,7 +123,8 @@
                 Add phone number
             </a>
 
-            <div v-if="!loading" class="alternate-fields">
+            <div v-if="!loading && shouldDisplayAlternateFields()"
+                 class="alternate-fields">
                <input name="alternativeContactName"
                       class="form-control alternative-field"
                       :class="{borderColor : agentContactDetails[0].agentName.length === 0}"
@@ -160,13 +163,14 @@
                    <span class="input-group-addon plus-one">+1</span>
                    <input name="number"
                           class="form-control phone-number"
+                          :class="{borderColor : agentContactDetails[0].agentTelephone.number.length === 0}"
                           type="tel"
                           v-model="agentContactDetails[0].agentTelephone.number"
                           :disabled="loading"/>
                </div>
 
                <div class="alt-save-btn">
-                   <button v-if="alternateSaveBtnVisible"
+                   <button v-if="!this.callEnabled && alternateSaveBtnVisible"
                            class="btn btn-sm save-alt-contact"
                            style="display: inline;"
                            type="button"
@@ -219,6 +223,7 @@
                 initialAlternateEmailSavedInDB:'',
                 initialAlternateRelationshipSavedInDB:'',
                 initialAlternateNameSavedInDB:'',
+                selectedNumberToCall:'',
                 agentContactDetails:[
                     {
                         agentEmail:'',
@@ -231,6 +236,17 @@
         },
 
         computed:{
+            displayHelpText(){
+                return this.anyAlternateFieldIsEmpty;
+            },
+
+            anyAlternateFieldIsEmpty(){
+                return this.agentNameIsEmpty
+                || this.agentRelationshipIsEmpty
+                || this.agentEmailIsEmpty
+                || this.agentPhoneIsEmpty;
+            },
+
             allowAddingNewNumber(){
                 const existingNumbers = this.patientPhoneNumbers.filter(number=>number.number.length !== 0);
                 return !this.loading && this.newInputs.length === 0
@@ -281,7 +297,7 @@
                     return'Save & Make Private';
                 }
 
-                if (this.showAlternateFields){
+                if (this.shouldShowAlternateFields){
                     if (this.agentRelationshipIsEmpty || this.agentNameIsEmpty || this.agentEmailIsEmpty){
                         return "Save alternate contact details";
                     }
@@ -291,7 +307,7 @@
                 return "Add Number";
             },
 
-            showAlternateFields(){
+            shouldShowAlternateFields(){
                 return this.newPhoneType.toLowerCase() === alternate;
             },
 
@@ -301,17 +317,11 @@
 
             alternateSaveBtnVisible(){
                 return ! this.disableAltSaveButton
-                    || this.disableAltSaveButton && (this.agentNameIsEmpty
-                        || this.agentRelationshipIsEmpty
-                        || this.agentEmailIsEmpty
-                        || this.agentPhoneIsEmpty);
+                    || this.disableAltSaveButton && this.anyAlternateFieldIsEmpty;
             },
 
             disableAltSaveButton(){
-                if (this.agentEmailIsEmpty
-                    || this.agentRelationshipIsEmpty
-                    || this.agentNameIsEmpty
-                    || this.agentPhoneIsEmpty){
+                if (this.anyAlternateFieldIsEmpty){
                     return true;
                 }
 
@@ -319,11 +329,18 @@
                     && this.initialAlternateEmailSavedInDB === this.agentContactDetails[0].agentEmail
                     && this.initialAlternateNameSavedInDB === this.agentContactDetails[0].agentName
                     && this.initialAlternatePhoneSavedInDB === this.agentContactDetails[0].agentTelephone.number;
-
             },
         },
 
         methods: {
+            shouldDisplayAlternateFields(){
+                if (! this.callEnabled){
+                    return true;
+                }
+
+                return this.newPhoneType.toLowerCase() === alternate;
+            },
+
             saveOrUpdateAlternateContact(){
                 const isAlternateContact = true;
                 this.saveNewNumber(isAlternateContact);
@@ -390,7 +407,8 @@
                 this.loading = true;
                 this.resetData();
                 axios.post('/manage-patients/get-phones', {
-                    userId:this.userId
+                    userId:this.userId,
+                    requestIsFromCallPage:this.callEnabled,
                 })
                     .then((response => {
                         this.patientPhoneNumbers.push(...response.data.phoneNumbers);
@@ -454,7 +472,7 @@
                     return;
                 }
 
-                if (this.showAlternateFields) {
+                if (this.shouldShowAlternateFields) {
                     if(this.agentContactDetails[0].agentRelationship.length === 0){
                         alert("Alternate relationship is required.");
                         this.loading = false;
@@ -486,7 +504,7 @@
                     agentName:alternateNewName,
                     agentRelationship:alternateNewRelationship,
                     agentEmail:alternateNewEmail,
-                    alternateFieldsEnabled:this.showAlternateFields,
+                    alternateFieldsEnabled:this.shouldShowAlternateFields,
                 })
                     .then((response => {
                         this.getPhonesAndContactDetails();
