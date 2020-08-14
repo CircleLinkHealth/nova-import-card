@@ -22,7 +22,7 @@ class PracticeProcessorEloquentRepository implements CustomerBillingProcessorRep
             ->ofPractice($customerModelId);
     }
 
-    public function patientServicesQuery(int $customerModelId, Carbon $monthYear): Builder
+    public function patientServices(int $customerModelId, Carbon $monthYear): Builder
     {
         return BillableMonthlyChargeableServicesQuery::query($monthYear)
             ->whereHas('patient', fn ($q) => $q->ofPractice($customerModelId));

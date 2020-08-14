@@ -14,11 +14,12 @@ use Illuminate\Database\Eloquent\Builder;
 
 class LocationProcessorEloquentRepository implements CustomerBillingProcessorRepository
 {
+    use BillableMonthlyChargeableServicesQuery;
     use BillablePatientUsersQuery;
     
-    public function patientServicesQuery(int $locationId, Carbon $monthYear): Builder
+    public function patientServices(int $locationId, Carbon $monthYear): Builder
     {
-        return BillableMonthlyChargeableServicesQuery::query($monthYear)
+        return $this->billableMonthlyChargeableServicesQuery($monthYear)
             ->whereHas('patient.patientInfo', fn ($q) => $q->where('preferred_contact_location', $locationId));
     }
     

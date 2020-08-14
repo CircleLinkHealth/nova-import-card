@@ -8,10 +8,11 @@ namespace CircleLinkHealth\CcmBilling\Builders;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Database\Eloquent\Builder;
 
 trait BillablePatientUsersQuery
 {
-    public function billablePatientUsersQuery(Carbon $monthYear)
+    public function billablePatientUsersQuery(Carbon $monthYear): Builder
     {
         return User::with([
             'endOfMonthCcmStatusLog' => function ($q) use ($monthYear) {

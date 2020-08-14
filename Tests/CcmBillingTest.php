@@ -17,7 +17,7 @@ use Tests\TestCase;
 
 class CcmBillingTest extends TestCase
 {
-    public function test_it_fetches_approvable_patients_for_location()
+    public function test_it_fetches_approvable_patient_summaries_for_location()
     {
         $locationId = 5;
         $monthYear  = now()->startOfMonth();

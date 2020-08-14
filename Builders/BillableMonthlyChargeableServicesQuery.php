@@ -7,34 +7,11 @@
 namespace CircleLinkHealth\CcmBilling\Builders;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
-class BillableMonthlyChargeableServicesQuery
+trait BillableMonthlyChargeableServicesQuery
 {
-    public static function query(Carbon $monthYear)
+    public function billableMonthlyChargeableServicesQuery(Carbon $monthYear): Builder
     {
-//        return User::with([
-//            'endOfMonthCcmStatusLog' => function ($q) use ($monthYear) {
-//                $q->createdOn($monthYear, 'month_year');
-//            },
-//            'patientMonthlySummaries' => function ($q) use ($monthYear) {
-//                $q->createdOn($monthYear, 'month_year');
-//            },
-//            'attestedProblems' => function ($q) use ($monthYear) {
-//                $q
-//                    ->with([
-//                        'cpmProblem',
-//                        'icd10Codes',
-//                    ])
-//                    ->createdOn($monthYear, 'month_year');
-//            },
-//            'billingProvider.user',
-//            'patientInfo',
-//            'ccdProblems' => function ($problem) {
-//                $problem->with(['cpmProblem', 'codes', 'icd10Codes']);
-//            },
-//            'chargeableMonthlySummary' => function ($q) use ($monthYear) {
-//                $q->createdOn($monthYear, 'month_year');
-//            },
-//        ]);
     }
 }

@@ -14,5 +14,5 @@ interface CustomerBillingProcessorRepository
     public function patients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
     //billable patient monthly summaries equivalent
-    public function patientServicesQuery(int $customerModelId, Carbon $monthYear): Builder;
+    public function patientServices(int $customerModelId, Carbon $monthYear): Builder;
 }
