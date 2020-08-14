@@ -21,13 +21,14 @@ class Practice implements CustomerBillingProcesor
 
     public function billablePatientsQuery(Carbon $monthYear): Builder
     {
-        return BillablePatientUsersQuery::query($monthYear)->whereHas('practices', fn ($q) => $q->whereIn('id', $this->practiceIds));
+        return BillablePatientUsersQuery::query($monthYear)
+            ->ofPractice($this->practiceIds);
     }
 
     public function patientBillableServicesQuery(Carbon $monthYear): Builder
     {
         return BillableMonthlyChargeableServicesQuery::query($monthYear)
-            ->whereHas('practices', fn ($q) => $q->whereIn('id', $this->practiceIds));
+            ->whereHas('patient', fn ($q) => $q->ofPractice($this->practiceIds));
     }
 
     /**
