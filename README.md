@@ -1,5 +1,5 @@
 # CCM Billing Module
-This module handles everything related to billing customers for CCM services.
+This module handles everything related to billing **Customers** for CCM services provided to **Patients**.
 
 # Assumptions
 You are familiarized with Approve Billable Patients page (ABP).
