@@ -1,29 +1,28 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace CircleLinkHealth\CcmBilling\Processors;
-
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\BillingProcesor;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 
 class Location implements BillingProcesor
 {
-    private $locations;
-    
-    public function __construct(\CircleLinkHealth\Customer\Entities\Location ...$locations)
+    private $locationsIds;
+
+    /**
+     * Location constructor.
+     */
+    public function __construct(array $locationsIds)
     {
-        $this->locations = ! ($locations instanceof Collection || $locations instanceof \Illuminate\Database\Eloquent\Collection) ? collect($locations) : $locations;
+        $this->locationsIds = $locationsIds;
     }
-    
-    public function patientBillableServicesQuery(Carbon $monthYear): Builder
-    {
-        // TODO: Implement patientBillableServicesQuery() method.
-    }
-    
+
     public function billablePatientsQuery(Carbon $monthYear): Builder
     {
         return
@@ -50,6 +49,11 @@ class Location implements BillingProcesor
                 'chargeableMonthlySummary' => function ($q) use ($monthYear) {
                     $q->createdOn($monthYear, 'month_year');
                 },
-            ])->whereHas('patientInfo', fn($q) => $q->whereIn('preferred_contact_location', $this->locations->pluck('id')->all()));
+            ])->whereHas('patientInfo', fn ($q) => $q->whereIn('preferred_contact_location', $this->locationsIds));
+    }
+
+    public function patientBillableServicesQuery(Carbon $monthYear): Builder
+    {
+        // TODO: Implement patientBillableServicesQuery() method.
     }
 }
