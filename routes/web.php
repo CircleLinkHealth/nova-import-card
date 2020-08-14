@@ -793,6 +793,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.phone.create',
         ])->middleware('permission:patient.create,patient.update,location.read,practice.read');
 
+        Route::post('new/alternate/phone', [
+            'uses' => 'Patient\PatientController@saveNewAlternatePhoneNumber',
+            'as'   => 'patient.alternate.phone.create',
+        ])->middleware('permission:patient.create,patient.update,location.read,practice.read');
+
         Route::post('mark/primary-phone', [
             'uses' => 'Patient\PatientController@markAsPrimaryPhone',
             'as'   => 'primary.phone.mark',

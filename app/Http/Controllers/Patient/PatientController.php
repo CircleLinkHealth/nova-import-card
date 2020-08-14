@@ -180,6 +180,35 @@ class PatientController extends Controller
         return response()->json($patients);
     }
 
+    public function saveNewAlternatePhoneNumber(Request $request)
+    {
+        $altPhoneNumber = $request->input('phoneNumber');
+        $userId         = $request->input('patientUserId');
+
+        if ( ! ImportPhones::validatePhoneNumber($altPhoneNumber)) {
+            return response()->json([
+                'message' => 'Phone number is not a valid US number',
+            ]);
+        }
+
+        $altPhoneNumber = formatPhoneNumberE164($altPhoneNumber);
+        /** @var User $patientUser */
+        $patientUser = User::with('patientInfo')->where('id', $userId)->firstOrFail();
+
+        $patientUser->patientInfo->update(
+            [
+                'agent_name'         => $request->input('agentName'),
+                'agent_email'        => $request->input('agentEmail'),
+                'agent_telephone'    => strtolower($altPhoneNumber),
+                'agent_relationship' => $request->input('agentRelationship'),
+            ]
+        );
+
+        return response()->json([
+            'message' => 'Alternate phone number has been saved!',
+        ], 200);
+    }
+
     public function saveNewPhoneNumber(Request $request)
     {
 //        @todo: 1. Make a form request, 2. Handle alternate inputs.
@@ -196,21 +225,6 @@ class PatientController extends Controller
         $phoneNumber = formatPhoneNumberE164($phoneNumber);
         /** @var User $patientUser */
         $patientUser = User::with('patientInfo', 'phoneNumbers')->where('id', $userId)->firstOrFail();
-
-        if (0 === strcasecmp($phoneType, Patient::AGENT)) {
-            $patientUser->patientInfo->update(
-                [
-                    'agent_name'         => $request->input('agentName'),
-                    'agent_email'        => $request->input('agentEmail'),
-                    'agent_telephone'    => strtolower($phoneNumber),
-                    'agent_relationship' => $request->input('agentRelationship'),
-                ]
-            );
-
-            return response()->json([
-                'message' => 'Alternate phone number has been saved!',
-            ], 200);
-        }
 
         $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id);
         $locationId   = optional($patientUser->patientInfo)->location->id ?? null;

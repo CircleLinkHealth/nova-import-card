@@ -132,7 +132,7 @@ class PatientCareplanController extends Controller
                     'agentRelationship' => $patient->agent_relationship ?? '',
                     'agentTelephone'    => [
                         'isPrimary' => false,
-                        'number'    => $patient->agent_telephone ?? '',
+                        'number'    => substr(formatPhoneNumberE164($patient->agent_telephone), 2) ?? '',
                         'type'      => ucwords(Patient::AGENT),
                     ],
 

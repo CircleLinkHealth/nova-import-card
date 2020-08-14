@@ -93,12 +93,12 @@
                                 class="btn btn-sm save-number"
                                 style="display: inline;"
                                 type="button"
-                                @click="saveNewNumber"
+                                @click="addNewNumber"
                                 :disabled="disableSaveButton">
                             {{setSaveBtnText}}
                         </button>
 
-                       <div v-if="! shouldShowAlternateFields && newPhoneNumber.length !== 0" style="display: flex;">
+                       <div v-if="! newNumberIsAlternate && newPhoneNumber.length !== 0" style="display: flex;">
                            <input id="makePrimary"
                                   class="make-primary"
                                   v-model="makeNewNumberPrimary"
@@ -174,7 +174,7 @@
                            class="btn btn-sm save-alt-contact"
                            style="display: inline;"
                            type="button"
-                           @click="saveOrUpdateAlternateContact"
+                           @click="saveNewAlternateNumberAndContactDetails"
                            :disabled="loading || disableAltSaveButton">
                        Add alternate contact person details
                    </button>
@@ -272,6 +272,10 @@
             },
 
             agentPhoneIsEmpty(){
+                if(this.newNumberIsAlternate){
+                    return this.newPhoneNumber.length === 0;
+                }
+
                 return this.agentContactDetails.length !== 0
                     && this.agentContactDetails[0].agentTelephone.length !== 0
                     && this.agentContactDetails[0].agentTelephone.number.length === 0;
@@ -297,8 +301,8 @@
                     return'Save & Make Private';
                 }
 
-                if (this.shouldShowAlternateFields){
-                    if (this.agentRelationshipIsEmpty || this.agentNameIsEmpty || this.agentEmailIsEmpty){
+                if (this.newNumberIsAlternate){
+                    if (this.anyAlternateFieldIsEmpty){
                         return "Save alternate contact details";
                     }
                     return "Save alternate number";
@@ -307,7 +311,7 @@
                 return "Add Number";
             },
 
-            shouldShowAlternateFields(){
+            newNumberIsAlternate(){
                 return this.newPhoneType.toLowerCase() === alternate;
             },
 
@@ -338,12 +342,7 @@
                     return true;
                 }
 
-                return this.newPhoneType.toLowerCase() === alternate;
-            },
-
-            saveOrUpdateAlternateContact(){
-                const isAlternateContact = true;
-                this.saveNewNumber(isAlternateContact);
+                return this.newNumberIsAlternate;
             },
 
             showMakePrimary(index, number){
@@ -448,18 +447,76 @@
                 this.newInputs.push(arr);
             },
 
-            saveNewNumber(isAlternateContact = false){
-                this.loading = true;
-                const alternateNewEmail = this.agentContactDetails[0].agentEmail.length > 0
-                ? this.agentContactDetails[0].agentEmail
-                : null;
-                const alternateNewRelationship = this.agentContactDetails[0].agentRelationship.length > 0
-                ? this.agentContactDetails[0].agentRelationship
-                : null;
-                const alternateNewName = this.agentContactDetails[0].agentName.length > 0
-                ? this.agentContactDetails[0].agentName
-                : null;
+            addNewNumber(){
+                if (this.newNumberIsAlternate){
+                    this.saveNewAlternateNumberAndContactDetails();
+                }else{
+                    this.saveNewNumber();
+                }
 
+            },
+
+            saveNewAlternateNumberAndContactDetails(){
+                this.loading = true;
+                const alternateNewEmail = this.agentContactDetails[0].agentEmail;
+                const alternateNewRelationship = this.agentContactDetails[0].agentRelationship;
+                const alternateNewName = this.agentContactDetails[0].agentName;
+                const alternatePhoneNumber = this.newNumberIsAlternate
+                    ? this.newPhoneNumber :
+                    this.agentContactDetails[0].agentTelephone.number;
+
+                if(alternatePhoneNumber.length === 0){
+                    alert("Alternate contact phone number is required.");
+                    this.loading = false;
+                    return;
+                }
+
+                if(alternateNewRelationship.length === 0){
+                    alert("Alternate contact relationship is required.");
+                    this.loading = false;
+                    return;
+                }
+
+                if(alternateNewName.length === 0){
+                    alert("Alternate contact name is required.");
+                    this.loading = false;
+                    return;
+                }
+
+                if(alternateNewEmail.length === 0){
+                    alert("Alternate contact email is required.");
+                    this.loading = false;
+                    return;
+                }
+
+                if (alternateNewEmail.length > 0 && ! this.validEmail){
+                    alert("Alternate email is not a valid email format.");
+                    this.loading = false;
+                    return;
+                }
+
+                axios.post('/manage-patients/new/alternate/phone', {
+                    phoneNumber:alternatePhoneNumber,
+                    patientUserId:this.userId,
+                    agentName:alternateNewName,
+                    agentRelationship:alternateNewRelationship,
+                    agentEmail:alternateNewEmail,
+                })
+                    .then((response => {
+                        this.getPhonesAndContactDetails();
+                        if (response.data.hasOwnProperty('message')){
+                            alert(response.data.message);
+                        }
+                        this.loading = false;
+                    })).catch((error) => {
+                    this.loading = false;
+                    console.log(error);
+                });
+
+            },
+
+            saveNewNumber(){
+                this.loading = true;
                 if (this.newPhoneType.length === 0){
                     alert("Please choose phone number type");
                     this.loading = false;
@@ -472,26 +529,6 @@
                     return;
                 }
 
-                if (this.shouldShowAlternateFields) {
-                    if(this.agentContactDetails[0].agentRelationship.length === 0){
-                        alert("Alternate relationship is required.");
-                        this.loading = false;
-                        return;
-                    }
-
-                    if(this.agentContactDetails[0].agentEmail.length === 0){
-                        alert("Alternate email is required.");
-                        this.loading = false;
-                        return;
-                    }
-
-                    if (this.agentContactDetails[0].agentEmail.length > 0 && ! this.validEmail){
-                        alert("Alternate email is not a valid email format.");
-                        this.loading = false;
-                        return;
-                    }
-                }
-
                 if (this.patientPhoneNumbers.length === 0){
                     this.makeNewNumberPrimary = true;
                 }
@@ -501,10 +538,6 @@
                     phoneNumber:this.newPhoneNumber,
                     patientUserId:this.userId,
                     makePrimary:this.makeNewNumberPrimary,
-                    agentName:alternateNewName,
-                    agentRelationship:alternateNewRelationship,
-                    agentEmail:alternateNewEmail,
-                    alternateFieldsEnabled:this.shouldShowAlternateFields,
                 })
                     .then((response => {
                         this.getPhonesAndContactDetails();
