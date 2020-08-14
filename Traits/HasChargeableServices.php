@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Customer\Traits;
 
 use Cache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use Modules\Customer\Entities\Chargeable;
+use CircleLinkHealth\Customer\Entities\Chargeable;
 
 trait HasChargeableServices
 {
