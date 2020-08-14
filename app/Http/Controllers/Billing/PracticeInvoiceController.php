@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Billing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ApprovableBillablePatient;
+use App\Http\Resources\ApprovablePatient;
 use App\Jobs\CreatePracticeInvoice;
 use App\Notifications\PracticeInvoice;
 use App\Repositories\PatientSummaryEloquentRepository;
@@ -369,7 +369,7 @@ class PracticeInvoiceController extends Controller
                         ->detachDefaultChargeableService($summary, $default_code_id);
                 }
 
-                return ApprovableBillablePatient::make($summary);
+                return ApprovablePatient::make($summary);
             });
 
         return response()->json($summaries);

@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\Http\Resources\ApprovableBillablePatient;
+use App\Http\Resources\ApprovablePatient;
 use App\Repositories\BillablePatientsEloquentRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
@@ -101,7 +101,7 @@ class ApproveBillablePatientsService
                     $summary = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($aSummary);
                 }
 
-                return ApprovableBillablePatient::make($summary);
+                return ApprovablePatient::make($summary);
             }
         );
 
