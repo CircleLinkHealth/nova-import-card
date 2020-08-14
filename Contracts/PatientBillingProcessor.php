@@ -8,7 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Contracts;
 
 use Carbon\Carbon;
 
-interface ChargeablePatientUser
+interface PatientBillingProcessor
 {
     public function attach(Carbon $monthYear);
 

@@ -9,7 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Contracts;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
-interface BillingProcesor
+interface CustomerBillingProcesor
 {
     //Returns billable patient monthly summaries equvalent
     public function patientBillableServicesQuery(Carbon $monthYear): Builder;

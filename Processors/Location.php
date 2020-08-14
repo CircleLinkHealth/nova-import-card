@@ -7,11 +7,11 @@
 namespace CircleLinkHealth\CcmBilling\Processors;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\BillingProcesor;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcesor;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class Location implements BillingProcesor
+class Location implements CustomerBillingProcesor
 {
     private $locationsIds;
 
