@@ -40,7 +40,5 @@ class AlgoTestController extends Controller
         if (isProductionEnv()) {
             return 'Sorry, this cannot be run on the production environment.';
         }
-
-        return (new \App\Services\Calls\SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
     }
 }

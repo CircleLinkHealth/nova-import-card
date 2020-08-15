@@ -21,7 +21,6 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
@@ -727,90 +726,6 @@ class SchedulerService
         return $familyCalls;
     }
 
-    public function tuneScheduledCallsWithUpdatedCCMTime()
-    {
-        //Get all enrolled Patients
-        $patients = Patient::enrolled()->get();
-
-        $reprocess_bucket = [];
-
-        foreach ($patients as $patient) {
-            if ( ! $patient->user) {
-                continue;
-            }
-
-            //Get time for last note entered
-            $last_note_time = Activity::whereType('Patient Note Creation')
-                ->wherePatientId($patient->user_id)
-                ->orderBy('created_at', 'desc')
-                ->pluck('created_at')
-                ->first();
-
-            //Get time for last activity recorded
-            $last_activity_time = Activity::wherePatientId($patient->user_id)
-                ->orderBy('created_at', 'desc')
-                ->pluck('created_at')
-                ->first();
-
-            //check if they both exist
-            if (null != $last_note_time && null != $last_activity_time) {
-                //then check if the note was made before the last activity
-                if ($last_note_time < $last_activity_time) {
-                    try {
-                        //have to pull the last scheduled call, but only if it was made by the algo
-                        //since we don't mess with calls scheduled manually
-                        $scheduled_call = $patient->user->inboundCalls()
-                            ->where('status', 'scheduled')
-                            ->where('scheduler', 'algorithm')
-                            ->first();
-
-                        $last_attempted_call = $patient->user->inboundCalls()
-                            ->where('status', '!=', 'scheduled')
-                            ->orderBy('created_at', 'desc')
-                            ->first();
-                    } catch (\Exception $exception) {
-                        \Log::critical($exception);
-                        \Log::info("Patient Info Id {$patient->id}");
-                        continue;
-                    }
-
-                    //make sure we have a call attempt and a scheduled call.
-                    if (is_object($scheduled_call) && is_object($last_attempted_call)) {
-                        $status = ('reached' == $last_attempted_call->status)
-                            ? true
-                            : false;
-
-                        $last_attempted_time = $last_attempted_call->called_date;
-
-                        if ($status) {
-                            $data = (new SuccessfulHandler(
-                                $patient,
-                                Carbon::parse($last_attempted_time),
-                                $last_attempted_call
-                            ));
-                        } else {
-                            $data = (new UnsuccessfulHandler(
-                                $patient,
-                                Carbon::parse($last_attempted_time),
-                                $last_attempted_call
-                            ));
-                        }
-
-                        $scheduled_call->scheduler      = 'refresher algorithm';
-                        $scheduled_call->scheduled_date = $data['date'];
-                        $scheduled_call->save();
-
-                        $reprocess_bucket[] = 'Patient: '.$patient->user_id.' was tuned, will now be called on '.$scheduled_call->scheduled_date;
-                    }
-                }
-            }
-        }
-
-        return empty($reprocess_bucket)
-            ? 'No Patients Need Refreshin\'!'
-            : $reprocess_bucket;
-    }
-
     /**
      * Update a call based on info received from note.
      * If a call does not exist, one is created and linked to this note.
@@ -870,13 +785,13 @@ class SchedulerService
      * @return array
      */
     public function updateTodaysCallAndPredictNext(
-        $patient,
-        $noteId,
+        User $patient,
+        Note $note,
         $callStatus,
         $attestedProblems = null
     ) {
         $scheduled_call = $this->updateOrCreateCallWithNote(
-            $note = Note::find($noteId),
+            $note,
             $scheduled_call = $this->getTodaysCall($patient->id),
             $callStatus,
             $attestedProblems
