@@ -334,19 +334,10 @@ if ( ! function_exists('extractNumbers')) {
 
 if ( ! function_exists('getPhoneTypes')) {
     /**
-     * @param $requestFromCallPage
      * @return array
      */
-    function getPhoneTypes($requestFromCallPage)
+    function getPhoneTypes()
     {
-        if ($requestFromCallPage) {
-            return [
-                ucfirst(PhoneNumber::MOBILE),
-                ucfirst(PhoneNumber::HOME),
-                ucfirst(Patient::AGENT),
-            ];
-        }
-
         return [
             ucfirst(PhoneNumber::MOBILE),
             ucfirst(PhoneNumber::HOME),

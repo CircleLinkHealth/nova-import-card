@@ -151,7 +151,7 @@ class PatientCareplanController extends Controller
             $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields->first()['agentTelephone']]);
         }
 
-        $phoneTypes = getPhoneTypes($isRequestFromCallPage);
+        $phoneTypes = getPhoneTypes();
 
         return response()->json([
             'phoneNumbers'       => $phoneNumbers,
