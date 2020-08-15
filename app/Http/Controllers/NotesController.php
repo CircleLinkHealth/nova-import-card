@@ -732,7 +732,7 @@ class NotesController extends Controller
                     if ( ! $is_saas && ! $is_withdrawn) {
                         $prediction = $schedulerService->updateTodaysCallAndPredictNext(
                             $patient,
-                            $note->id,
+                            $note,
                             $call_status,
                             $attestedProblems
                         );
