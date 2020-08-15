@@ -38,7 +38,6 @@ use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\SendSelfEnrollmentReminders;
 use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
-use App\Console\Commands\TuneScheduledCalls;
 use App\Notifications\NurseDailyReport;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
@@ -155,10 +154,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)
             ->dailyAt('00:10')
-            ->onOneServer();
-
-        $schedule->command(TuneScheduledCalls::class)
-            ->dailyAt('00:15')
             ->onOneServer();
 
         //Run at 12:45am every 1st of month
