@@ -763,6 +763,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.phone.delete',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
 
+        Route::post('delete-alternate-contact', [
+            'uses' => 'Patient\PatientCareplanController@deleteAlternateContact',
+            'as'   => 'patient.alternate.contact.delete',
+        ])->middleware('permission:patient.create,patient.update,careplan.update');
+
         Route::post('get-phones', [
             'uses' => 'Patient\PatientCareplanController@getPatientContactDetails',
             'as'   => 'patient.get.phones',

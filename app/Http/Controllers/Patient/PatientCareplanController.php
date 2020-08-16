@@ -59,34 +59,55 @@ class PatientCareplanController extends Controller
         return $this->editOrCreateDemographics($request);
     }
 
+    public function deleteAlternateContact(Request $request)
+    {
+//        @todo: FormRequest validation user_id.
+        $valuesToDelete = [
+            'agent_telephone' => null,
+        ];
+
+        if ( ! $request->input('deleteOnlyPhone')) {
+            $valuesToDelete = [
+                'agent_telephone'    => null,
+                'agent_name'         => null,
+                'agent_relationship' => null,
+                'agent_email'        => null,
+            ];
+        }
+
+        $altContactDeleteQuery = Patient::whereUserId($request->input('patientUserId'))->update(
+            $valuesToDelete
+        );
+
+        $message   = 'Alternate Contact has been deleted';
+        $errorCode = 200;
+
+        if ( ! $altContactDeleteQuery) {
+            $message   = 'Something went wrong. Alternate Contact not deleted.';
+            $errorCode = 400;
+        }
+
+        return response()->json([
+            'message' => $message,
+        ], $errorCode);
+    }
+
     public function deletePhoneNumber(Request $request)
     {
 //        @todo: Check user id in form request.
-        if ( ! $request->input('deleteAltPhone')) {
-            if (empty($request->input('phoneId'))) {
-                return response()->json([
-                    'message' => 'Phone id is null',
-                ], 400);
-            }
-
-            $phoneNumber = PhoneNumber::whereId($request->input('phoneId'));
-            if ( ! empty($phoneNumber->first()) && $phoneNumber->first()->is_primary) {
-                return response()->json([
-                    'message' => 'You cannot delete a primary number',
-                ]);
-            }
-
-            $phoneNumber->delete();
-        } else {
-            Patient::whereUserId($request->input('patientUserId'))->update(
-                [
-                    'agent_telephone' => null,
-                    //                    'agent_name'         => null,
-                    //                    'agent_relationship' => null,
-                    //                    'agent_email'        => null,
-                ]
-            );
+        if (empty($request->input('phoneId'))) {
+            return response()->json([
+                'message' => 'Phone id is null',
+            ], 400);
         }
+        $phoneNumber = PhoneNumber::whereId($request->input('phoneId'));
+        if ( ! empty($phoneNumber->first()) && $phoneNumber->first()->is_primary) {
+            return response()->json([
+                'message' => 'You cannot delete a primary number',
+            ]);
+        }
+
+        $phoneNumber->delete();
 
         return response()->json([
             'message' => 'Phone Number Has Been Deleted',

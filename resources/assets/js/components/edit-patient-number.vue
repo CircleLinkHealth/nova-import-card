@@ -159,7 +159,10 @@
 
                <div v-if="! callEnabled || helperTextClicked"
                     class="alt-phone-number">
-                   <span class="input-group-addon plus-one">+1</span>
+                   <span class="input-group-addon plus-one"
+                         :class="{borderColor : alternateContactDetails[0].agentTelephone.number.length === 0}">
+                       +1
+                   </span>
                    <input name="number"
                           class="form-control phone-number"
                           :class="{borderColor : alternateContactDetails[0].agentTelephone.number.length === 0}"
@@ -184,7 +187,7 @@
                    <button v-if="alternateClearBtnIsVisible"
                             class="btn btn-sm clear-alt-contact"
                             type="button"
-                            @click=""
+                            @click="deleteAlternateContact(false)"
                             :disabled="loading">
                         Clear alternate contact
                     </button>
@@ -345,7 +348,7 @@
 
             setSaveBtnText(){
                 if(this.makeNewNumberPrimary || this.emptyPatientPhones){
-                    return'Save & Make Private';
+                    return'Save & Make Primary';
                 }
 
                 if (this.newNumberIsAlternate){
@@ -407,6 +410,24 @@
         },
 
         methods: {
+            deleteAlternateContact(deleteAlternatePhoneOnly){
+                confirm("Are you sure you want to delete alternate contact?");
+                this.loading = true;
+                axios.post('/manage-patients/delete-alternate-contact', {
+                    patientUserId:this.userId,
+                    deleteOnlyPhone:deleteAlternatePhoneOnly
+                }).then((response => {
+                    if (response.data.hasOwnProperty('message')){
+                        alert(response.data.message);
+                    }
+                    this.getPhonesAndContactDetails();
+                    this.loading = false;
+                })).catch((error) => {
+                    this.loading = false;
+                    console.log(error.message);
+                });
+            },
+
             showAlternateFields(){
                 this.removeInputField();
                 if(this.helperTextClicked){
@@ -652,23 +673,19 @@
             },
 
             deletePhone(number){
+                if (number.type.toLowerCase() === alternate){
+                    this.deleteAlternateContact(true);
+                }
+
                 confirm("Are you sure you want to delete this phone number");
                 this.loading = true;
-
-                let deleteAlternatePhone = false;
-
                 const phoneNumberId = number.hasOwnProperty('phoneNumberId')
                 ? number.phoneNumberId
                 : '';
 
-                if (number.type.toLowerCase() === alternate){
-                    deleteAlternatePhone =true;
-                }
-
                 axios.post('/manage-patients/delete-phone', {
                     phoneId:phoneNumberId,
                     patientUserId:this.userId,
-                    deleteAltPhone:deleteAlternatePhone,
                 })
                     .then((response => {
                         this.getPhonesAndContactDetails();
