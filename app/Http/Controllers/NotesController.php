@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Algorithms\Calls\NextCallCalculator\Prediction;
+use App\Algorithms\Calls\NextCallCalculator\NextCallPrediction;
 use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\CarePlanWasApproved;
@@ -757,7 +757,7 @@ class NotesController extends Controller
                         $ccm_above = true;
                     }
 
-                    return view('wpUsers.patient.calls.create', ($prediction ?? new Prediction())->toArray())
+                    return view('wpUsers.patient.calls.create', ($prediction ?? new NextCallPrediction())->toArray())
                         ->with('ccm_above', $ccm_above)
                         ->with('patient', $patient);
                 }

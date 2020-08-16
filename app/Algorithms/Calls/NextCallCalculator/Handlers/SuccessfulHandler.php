@@ -7,12 +7,12 @@
 namespace App\Algorithms\Calls\NextCallCalculator\Handlers;
 
 use App\Algorithms\Calls\NextCallCalculator\CallHandlerResponse;
-use App\Algorithms\Calls\NextCallCalculator\Prediction;
+use App\Algorithms\Calls\NextCallCalculator\NextCallPrediction;
 use App\Contracts\CallHandler;
 
 class SuccessfulHandler implements CallHandler
 {
-    public function createSchedulerInfoString(Prediction $prediction)
+    public function createSchedulerInfoString(NextCallPrediction $prediction)
     {
         $status = '<span style="color: #008000">successfully</span>';
 

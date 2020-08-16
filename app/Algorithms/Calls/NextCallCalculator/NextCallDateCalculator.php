@@ -33,7 +33,7 @@ class NextCallDateCalculator
         );
     }
 
-    private function formatAlgoDataForView(Prediction $prediction)
+    private function formatAlgoDataForView(NextCallPrediction $prediction)
     {
         $ccm_time_achieved = false;
         if ($prediction->ccmTimeInSeconds >= 1200) {
@@ -52,7 +52,7 @@ class NextCallDateCalculator
         return $prediction;
     }
 
-    private function getAssignedNurse(Prediction $prediction): Prediction
+    private function getAssignedNurse(NextCallPrediction $prediction): NextCallPrediction
     {
         if ($nurse = app(NurseFinderRepository::class)->find($prediction->patient->id)) {
             $prediction->nurse              = $nurse->id;
@@ -67,7 +67,7 @@ class NextCallDateCalculator
         return $prediction;
     }
 
-    private function getNextCallDate(Prediction $prediction, CallHandler $handler): Prediction
+    private function getNextCallDate(NextCallPrediction $prediction, CallHandler $handler): NextCallPrediction
     {
         $response = $handler->getNextCallDate(
             $prediction->patient->id,
@@ -83,7 +83,7 @@ class NextCallDateCalculator
         return $prediction;
     }
 
-    private function getNextPatientWindow(Prediction $prediction)
+    private function getNextPatientWindow(NextCallPrediction $prediction)
     {
         if ('Call This Weekend' != $prediction->attempt_note) {
             $next_predicted_contact_window['day']          = $prediction->nextCallDate->next(Carbon::SATURDAY)->toDateString();
@@ -108,16 +108,16 @@ class NextCallDateCalculator
         return $prediction;
     }
 
-    private function getPredicament(Prediction $prediction, CallHandler $handler): Prediction
+    private function getPredicament(NextCallPrediction $prediction, CallHandler $handler): NextCallPrediction
     {
         $prediction->predicament = $handler->createSchedulerInfoString($prediction);
 
         return $prediction;
     }
 
-    private function initializePrediction(User $patient): Prediction
+    private function initializePrediction(User $patient): NextCallPrediction
     {
-        $prediction                         = new Prediction();
+        $prediction                         = new NextCallPrediction();
         $prediction->patient                = $patient;
         $prediction->ccmTimeInSeconds       = $prediction->patient->getCcmTime();
         $prediction->no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth(

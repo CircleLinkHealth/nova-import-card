@@ -1811,7 +1811,7 @@ $files = [
     '/Users/michalis/Code/app-cpm-web/Modules/Eligibility/Entities/PcmProblem.php',
     '/Users/michalis/Code/app-cpm-web/app/Algorithms/Calls/NextCallDateCalculator.php',
     '/Users/michalis/Code/app-cpm-web/app/Algorithms/Calls/Handling/Handlers/SuccessfulHandler.php',
-    '/Users/michalis/Code/app-cpm-web/app/Algorithms/Calls/Handling/Prediction.php',
+    '/Users/michalis/Code/app-cpm-web/app/Algorithms/Calls/Handling/NextCallPrediction.php',
     '/Users/michalis/Code/app-cpm-web/app/Contracts/CallHandler.php',
     '/Users/michalis/Code/app-cpm-web/app/Events/CallIsReadyForAttestedProblemsAttachment.php',
     '/Users/michalis/Code/app-cpm-web/app/Events/NoteFinalSaved.php',

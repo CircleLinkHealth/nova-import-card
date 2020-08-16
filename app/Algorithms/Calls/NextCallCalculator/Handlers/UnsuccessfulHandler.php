@@ -7,14 +7,14 @@
 namespace App\Algorithms\Calls\NextCallCalculator\Handlers;
 
 use App\Algorithms\Calls\NextCallCalculator\CallHandlerResponse;
-use App\Algorithms\Calls\NextCallCalculator\Prediction;
+use App\Algorithms\Calls\NextCallCalculator\NextCallPrediction;
 use App\Call;
 use App\Contracts\CallHandler;
 use Carbon\Carbon;
 
 class UnsuccessfulHandler implements CallHandler
 {
-    public function createSchedulerInfoString(Prediction $prediction)
+    public function createSchedulerInfoString(NextCallPrediction $prediction)
     {
         $status = '<span style="color: red">unsuccessfully</span>';
         $result = 'You just called '.$prediction->patient->getFullName()

@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Support\Arrayable;
 
-class Prediction implements Arrayable
+class NextCallPrediction implements Arrayable
 {
     public string $attempt_note;
     public bool $ccm_time_achieved;
