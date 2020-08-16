@@ -360,6 +360,7 @@
     "process-timeout": 3000
   },
   "extra": {
+    "module-dir": "CircleLinkHealth",
     "laravel": {
       "dont-discover": [
         "laravel/dusk",
