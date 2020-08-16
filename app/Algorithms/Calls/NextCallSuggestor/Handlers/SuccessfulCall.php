@@ -42,7 +42,7 @@ class SuccessfulCall implements CallHandler
             if (1 == $currentWeekOfMonth || 2 == $currentWeekOfMonth) { // We are in the first two weeks of the month
                 if ($once_monthly) {
                     //handle all cases with 28 days, prevent jump on 31st to next+1 mon, 'Add a month, 1x preference override'th
-                    return new HandlerResponse(now()->addMonth()->startOfMonth());
+                    return new HandlerResponse(now()->addMonth()->startOfMonth(), 'Patient wants to be called 1x monthly and already has over 20 minutes CCM time.');
                 }
 
                 return new HandlerResponse(now()->endOfMonth()->subWeek(), 'Call patient in the last week of the month');
