@@ -6,7 +6,7 @@
 
 namespace App\Algorithms\Calls\NextCallCalculator;
 
-use App\Algorithms\Calls\NurseFinderRepository;
+use App\Algorithms\Calls\NurseFinderEloquentRepository;
 use App\Call;
 use App\Contracts\CallHandler;
 use Carbon\Carbon;
@@ -54,7 +54,7 @@ class NextCallDateCalculator
 
     private function getAssignedNurse(NextCallPrediction $prediction): NextCallPrediction
     {
-        if ($nurse = app(NurseFinderRepository::class)->find($prediction->patient->id)) {
+        if ($nurse = app(NurseFinderEloquentRepository::class)->find($prediction->patient->id)) {
             $prediction->nurse              = $nurse->id;
             $prediction->nurse_display_name = $nurse->display_name;
             $prediction->window_match       = "Assigning next call to {$nurse->display_name}.";

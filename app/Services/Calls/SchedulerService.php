@@ -9,7 +9,7 @@ namespace App\Services\Calls;
 use App\Algorithms\Calls\NextCallCalculator\Handlers\SuccessfulHandler;
 use App\Algorithms\Calls\NextCallCalculator\Handlers\UnsuccessfulHandler;
 use App\Algorithms\Calls\NextCallCalculator\NextCallDateCalculator;
-use App\Algorithms\Calls\NurseFinderRepository;
+use App\Algorithms\Calls\NurseFinderEloquentRepository;
 use App\Call;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Note;
@@ -416,7 +416,7 @@ class SchedulerService
             now()
         );
 
-        if ( ! $nurseId = app(NurseFinderRepository::class)->find($patient->id) ?? StandByNurseUser::id()) {
+        if ( ! $nurseId = app(NurseFinderEloquentRepository::class)->find($patient->id) ?? StandByNurseUser::id()) {
             throw new \Exception("could not find nurse for patient[$patient->id]");
         }
 

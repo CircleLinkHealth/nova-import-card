@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
 
-class NurseFinderRepository implements NurseFinderRepositoryContract
+class NurseFinderEloquentRepository implements NurseFinderRepositoryContract
 {
     public function assignedNurse(int $patientUserId): ?PatientNurse
     {

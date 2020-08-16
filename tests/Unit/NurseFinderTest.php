@@ -8,16 +8,14 @@ namespace Tests\Unit;
 
 use App\Algorithms\Calls\NextCallCalculator\Handlers\SuccessfulHandler;
 use App\Algorithms\Calls\NextCallCalculator\NextCallDateCalculator;
-use App\Algorithms\Calls\NurseFinderRepository;
+use App\Algorithms\Calls\NurseFinderEloquentRepository;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\User;
 use Mockery;
 use Tests\TestCase;
 
-class NurseFinderV2Test extends TestCase
+class NurseFinderTest extends TestCase
 {
-    use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-
     public function test_it_returns_patient_associated_nurse()
     {
         $patient = factory(User::class)->make([
@@ -26,18 +24,17 @@ class NurseFinderV2Test extends TestCase
         $nurse = factory(User::class)->make([
             'id' => rand(1, 9999999),
         ]);
-        $repo = Mockery::mock(NurseFinderRepository::class);
+        $repo = Mockery::mock(NurseFinderEloquentRepository::class);
 
         $repo->shouldReceive('find')
             ->with($patient->id)
             ->once()
             ->andReturn($nurse);
 
-        $this->instance(NurseFinderRepository::class, $repo);
+        $this->instance(NurseFinderEloquentRepository::class, $repo);
 
         $prediction = (new NextCallDateCalculator())->handle($patient, new SuccessfulHandler());
-
-        $this->assertTrue($prediction->nurse instanceof User);
+        
         $this->assertTrue($prediction->nurse === $nurse->id);
     }
 
@@ -64,14 +61,14 @@ class NurseFinderV2Test extends TestCase
         $patient = factory(User::class)->make([
             'id' => rand(1, 9999999),
         ]);
-        $repo = Mockery::mock(NurseFinderRepository::class);
+        $repo = Mockery::mock(NurseFinderEloquentRepository::class);
 
         $repo->shouldReceive('find')
             ->with($patient->id)
             ->once()
             ->andReturn(null);
 
-        $this->instance(NurseFinderRepository::class, $repo);
+        $this->instance(NurseFinderEloquentRepository::class, $repo);
 
         $prediction = (new NextCallDateCalculator())->handle($patient, new SuccessfulHandler());
 
