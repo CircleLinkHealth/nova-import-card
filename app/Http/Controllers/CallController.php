@@ -26,6 +26,11 @@ class CallController extends Controller
         $this->scheduler = $callScheduler;
     }
 
+    public function canChangeNursePatientRelation(User $user): bool
+    {
+        return $user->isAdmin();
+    }
+
     public function create(Request $request)
     {
         $input = $request->all();
@@ -508,7 +513,7 @@ class CallController extends Controller
 
     private function processNursePatientRelation(User $patient, $input)
     {
-        if ( ! auth()->check() || ! auth()->user()->isAdmin) {
+        if ( ! auth()->check() || ! $this->canChangeNursePatientRelation(auth()->user())) {
             return;
         }
 

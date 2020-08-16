@@ -34,7 +34,7 @@ class NurseFinderTest extends TestCase
         $this->instance(NurseFinderEloquentRepository::class, $repo);
 
         $prediction = (new NextCallDateCalculator())->handle($patient, new SuccessfulHandler());
-        
+
         $this->assertTrue($prediction->nurse === $nurse->id);
     }
 
