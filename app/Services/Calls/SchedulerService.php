@@ -6,9 +6,10 @@
 
 namespace App\Services\Calls;
 
-use App\Algorithms\Calls\NurseFinder;
-use App\Algorithms\Calls\SuccessfulHandler;
-use App\Algorithms\Calls\UnsuccessfulHandler;
+use App\Algorithms\Calls\NextCallCalculator\Handlers\SuccessfulHandler;
+use App\Algorithms\Calls\NextCallCalculator\Handlers\UnsuccessfulHandler;
+use App\Algorithms\Calls\NextCallCalculator\NextCallDateCalculator;
+use App\Algorithms\Calls\NurseFinderRepository;
 use App\Call;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Note;
@@ -173,14 +174,6 @@ class SchedulerService
             ->orderBy('scheduled_date', 'desc');
     }
 
-    public static function getNextScheduledActivity($patientId, $subType, $excludeToday = false)
-    {
-        return self::getNextScheduledActivities($patientId, $excludeToday)
-            ->where('type', '=', 'task')
-            ->where('sub_type', '=', $subType)
-            ->first();
-    }
-
     public static function getNextScheduledCall($patientId, $excludeToday = false): ?Call
     {
         return self::getNextScheduledActivities($patientId, $excludeToday)
@@ -210,10 +203,6 @@ class SchedulerService
      */
     public function getPreviousCall($patient, $scheduled_call_id = null)
     {
-        //be careful not to consider call just made,
-        //since algo already updates it before getting here.
-        //check for day != today
-
         $call = Call::where(
             function ($q) {
                 $q->whereNull('type')
@@ -226,16 +215,6 @@ class SchedulerService
             ->where('called_date', '<', Carbon::today()->startOfDay()->toDateTimeString())
             ->orderBy('called_date', 'desc')
             ->first();
-
-        /*
-        $call = Call
-            ::where('inbound_cpm_id', $patient->id)
-            ->where('status', '!=', 'scheduled')
-            ->where('called_date', '!=', '')
-//            ->where('id', '!=', $scheduled_call_id)
-            ->orderBy('called_date', 'desc')
-            ->first();
-        */
 
         return $call;
     }
@@ -437,20 +416,7 @@ class SchedulerService
             now()
         );
 
-        $previousCall = Call::where('inbound_cpm_id', '=', $patient->id)
-            ->orderBy('scheduled_date', 'desc')
-            ->first();
-
-        $nurseId     = null;
-        $nurseFinder = (new NurseFinder($patient->patientInfo, null, null, null, $previousCall))->find();
-        if ($nurseFinder && isset($nurseFinder['nurse'])) {
-            $nurseId = $nurseFinder['nurse'];
-        }
-        if ( ! $nurseId) {
-            $nurseId = StandByNurseUser::id();
-        }
-
-        if ( ! $nurseId) {
+        if ( ! $nurseId = app(NurseFinderRepository::class)->find($patient->id) ?? StandByNurseUser::id()) {
             throw new \Exception("could not find nurse for patient[$patient->id]");
         }
 
@@ -797,6 +763,8 @@ class SchedulerService
             $attestedProblems
         );
 
+        $patient->loadMissing(['patientInfo']);
+
         $this->patientWriteRepository->updateCallLogs(
             $patient->patientInfo,
             Call::REACHED == $callStatus,
@@ -807,23 +775,12 @@ class SchedulerService
             return null;
         }
 
-        $previousCall = $this->getPreviousCall($patient, optional($scheduled_call)->id);
+        $prediction = (new NextCallDateCalculator(
+            $patient,
+            $this->getPreviousCall($patient, optional($scheduled_call)->id)
+        ))->handle(Call::REACHED == $callStatus ? new SuccessfulHandler() : new UnsuccessfulHandler());
 
-        if (Call::REACHED == $callStatus) {
-            $prediction = (new SuccessfulHandler(
-                $patient->patientInfo,
-                Carbon::now(),
-                $previousCall
-            ))->handle();
-        } else {
-            $prediction = (new UnsuccessfulHandler(
-                $patient->patientInfo,
-                Carbon::now(),
-                $previousCall
-            ))->handle();
-        }
-
-        $prediction['successful'] = Call::REACHED == $callStatus;
+        $prediction->successful = Call::REACHED == $callStatus;
 
         return $prediction;
     }

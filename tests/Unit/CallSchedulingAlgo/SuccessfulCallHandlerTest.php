@@ -6,7 +6,7 @@
 
 namespace Tests\Unit\CallSchedulingAlgo;
 
-use App\Algorithms\Calls\SuccessfulHandler;
+use App\Algorithms\Calls\NextCallCalculator\Handlers\SuccessfulHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;

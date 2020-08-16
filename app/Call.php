@@ -227,7 +227,7 @@ class Call extends BaseModel implements AttachableToNotification
         return $record->no_of_calls;
     }
 
-    public static function numberOfSuccessfulCallsForPatientForMonth(User $user, $date)
+    public static function numberOfSuccessfulCallsForPatientForMonth(User $user, $date): int
     {
         if ($date) {
             $d = Carbon::parse($date);
@@ -246,7 +246,7 @@ class Call extends BaseModel implements AttachableToNotification
             })
             ->where('called_date', '>=', $d->startOfMonth()->toDateTimeString())
             ->where('called_date', '<=', $d->endOfMonth()->toDateTimeString())
-            ->where('status', 'reached');
+            ->where('status', Call::REACHED);
 
         return $calls->count();
     }
