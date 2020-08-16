@@ -16,8 +16,6 @@ use CircleLinkHealth\Customer\Entities\User;
 class NextCallDateCalculator
 {
     private ?int $ccmTime = null;
-    private CallHandler $handler;
-    private ?Call $lastCall;
     private User $patient;
 
     public function __construct(User $patient)
