@@ -28,6 +28,6 @@ class NurseFinderRepository implements NurseFinderRepositoryContract
 
     public function standByNurse(): ?User
     {
-        return StandByNurseUser::user();
+        return app(StandByNurseUser::class)::user();
     }
 }
