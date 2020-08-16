@@ -236,31 +236,23 @@ class SchedulerService
      */
     public function getTodaysCall($patientId): ?Call
     {
-        $query = Call::where(
+        $base = Call::where(
             function ($q) {
                 $q->whereNull('type')
                     ->orWhere('type', '=', SchedulerService::CALL_TYPE);
             }
         )
             ->where('inbound_cpm_id', $patientId)
-            ->where('status', 'scheduled')
             ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
             ->orderBy('updated_at', 'desc');
 
-        if (0 == $query->count()) {
-            $query = Call::where(
-                function ($q) {
-                    $q->whereNull('type')
-                        ->orWhere('type', '=', SchedulerService::CALL_TYPE);
-                }
-            )
-                ->where('inbound_cpm_id', $patientId)
-                ->whereNotIn('status', ['reached', 'not reached'])
-                ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
-                ->orderBy('updated_at', 'desc');
+        $scheduled = $base->where('status', Call::SCHEDULED);
+
+        if (0 < $scheduled->count()) {
+            return $scheduled->first();
         }
 
-        return $query->first();
+        return $base->whereNotIn('status', [Call::REACHED, Call::NOT_REACHED])->first();
     }
 
     public function hasScheduledCall(User $patient)
