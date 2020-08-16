@@ -284,7 +284,7 @@
     ],
     "psr-4": {
       "App\\": "app/",
-      "Modules\\": "Modules/"
+      "CircleLinkHealth\\": "CircleLinkHealth/"
     },
     "files": [
       "app/helpers.php"
@@ -295,7 +295,7 @@
       "Tests\\": "tests/"
     },
     "files": [
-      "Modules/Core/Helpers/helpers.php"
+      "CircleLinkHealth/Core/Helpers/helpers.php"
     ]
   },
   "scripts": {
