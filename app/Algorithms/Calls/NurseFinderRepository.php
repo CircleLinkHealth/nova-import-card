@@ -6,12 +6,12 @@
 
 namespace App\Algorithms\Calls;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderContract;
+use App\Algorithms\Calls\NurseFinder\NurseFinderRepositoryContract;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
 
-class NurseFinderRepository implements NurseFinderContract
+class NurseFinderRepository implements NurseFinderRepositoryContract
 {
     public function assignedNurse(int $patientUserId): ?PatientNurse
     {
@@ -26,7 +26,7 @@ class NurseFinderRepository implements NurseFinderContract
         return optional($this->assignedNurse($patientUserId))->permanentNurse ?? $this->standByNurse();
     }
 
-    private function standByNurse(): ?User
+    public function standByNurse(): ?User
     {
         return StandByNurseUser::user();
     }

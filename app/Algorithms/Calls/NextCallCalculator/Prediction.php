@@ -14,13 +14,14 @@ class Prediction implements Arrayable
 {
     public string $attempt_note;
     public bool $ccm_time_achieved;
+    public int $ccmTimeInSeconds;
     public string $date;
     public string $formatted_monthly_time;
     public string $logic;
     public Carbon $nextCallDate;
     public int $no_of_successful_calls;
-    public int $nurse;
-    public string $nurse_display_name;
+    public ?int $nurse;
+    public ?string $nurse_display_name;
     public User $patient;
     public string $predicament;
     public bool $successful;
@@ -51,6 +52,7 @@ class Prediction implements Arrayable
             'window_end'             => $this->window_end ?? null,
             'window_match'           => $this->window_match ?? null,
             'window_start'           => $this->window_start ?? null,
+            'ccmTimeInSeconds'       => $this->ccmTimeInSeconds ?? null,
         ];
     }
 }

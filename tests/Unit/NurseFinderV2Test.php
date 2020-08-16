@@ -6,8 +6,9 @@
 
 namespace Tests\Unit;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderContract;
-use App\User;
+use App\Algorithms\Calls\NextCallCalculator\Handlers\SuccessfulHandler;
+use App\Algorithms\Calls\NextCallCalculator\NextCallDateCalculator;
+use App\Algorithms\Calls\NurseFinderRepository;
 use Mockery;
 use Tests\TestCase;
 
@@ -15,74 +16,47 @@ class NurseFinderV2Test extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-    public function test_patient_doesnt_have_associated_nurse()
+    public function test_patient_doesnt_have_associated_nurse_and_standby_nurse_is_not_set()
     {
-        $patientId = 2;
+        $patient = factory(\CircleLinkHealth\Customer\Entities\User::class)->make([
+            'id' => rand(1, 9999999),
+        ]);
+        $repo = Mockery::mock(NurseFinderRepository::class);
 
-        //
-        // MOCKS
-        //
-        $m = Mockery::mock(NurseFinderContract::class);
-
-        //
-        // EXPECTATIONS
-        //
-        $m->shouldReceive('find')
-            ->with($patientId)
+        $repo->shouldReceive('find')
+            ->with($patient->id)
             ->once()
             ->andReturn(null);
 
-        //
-        // ACT OUT OUR LOGIC
-        //
-        $concr = new AFakeClassThatUsesNurseFinderV2($m);
+        $this->instance(NurseFinderRepository::class, $repo);
 
-        //
-        // MAKE ASSERTIONS
-        //
-        $this->assertTrue(is_null($concr->iOnlyExistForTesting($patientId)));
+        $prediction = (new NextCallDateCalculator())->handle($patient, new SuccessfulHandler());
+
+        $this->assertTrue(is_null($prediction->nurse));
     }
 
     public function test_patient_has_associated_nurse()
     {
-        $patientId = 2;
+        $patient = factory(\CircleLinkHealth\Customer\Entities\User::class)->make([
+            'id' => rand(1, 9999999),
+        ]);
+        $nurse = factory(\CircleLinkHealth\Customer\Entities\User::class)->make([
+            'id' => rand(1, 9999999),
+        ]);
+        $repo = Mockery::mock(NurseFinderRepository::class);
 
-        //
-        // MOCKS
-        //
-        $m = Mockery::mock(NurseFinderContract::class);
-
-        //
-        // EXPECTATIONS
-        //
-        $m->shouldReceive('find')
-            ->with($patientId)
+        $repo->shouldReceive('find')
+            ->with($patient->id)
             ->once()
-            ->andReturn(new User());
+            ->andReturn($nurse);
 
-        //
-        // ACT OUT OUR LOGIC
-        //
-        $concr = new AFakeClassThatUsesNurseFinderV2($m);
+        $this->instance(NurseFinderRepository::class, $repo);
 
-        //
-        // MAKE ASSERTIONS
-        //
-        $this->assertTrue($concr->iOnlyExistForTesting($patientId) instanceof User);
-    }
-}
+        $prediction = (new NextCallDateCalculator())->handle($patient, new SuccessfulHandler());
 
-class AFakeClassThatUsesNurseFinderV2
-{
-    public NurseFinderContract $nurseFinderV2;
-
-    public function __construct(NurseFinderContract $nurseFinderV2)
-    {
-        $this->nurseFinderV2 = $nurseFinderV2;
-    }
-
-    public function iOnlyExistForTesting(int $patientId)
-    {
-        return $this->nurseFinderV2->find($patientId);
+        $this->assertTrue(
+            $prediction->nurse
+            === $nurse->id
+        );
     }
 }

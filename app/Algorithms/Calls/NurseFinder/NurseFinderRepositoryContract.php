@@ -8,7 +8,7 @@ namespace App\Algorithms\Calls\NurseFinder;
 
 use CircleLinkHealth\Customer\Entities\User;
 
-interface NurseFinderContract
+interface NurseFinderRepositoryContract
 {
     public function find(int $patientUserId): ?User;
 }
