@@ -508,12 +508,15 @@ class CallController extends Controller
 
     private function processNursePatientRelation(User $patient, $input)
     {
+        if ( ! auth()->check() || ! auth()->user()->isAdmin) {
+            return;
+        }
+
         $isReschedule = $input['is_reschedule'] ?? false;
         $isTemporary  = $input['is_temporary'] ?? false;
         $tempFrom     = $input['temporary_from'] ?? null;
         $tempTo       = $input['temporary_to'] ?? null;
 
-        //request came from Notes Pages Call Reschedule
         if ($isReschedule) {
             return;
         }
