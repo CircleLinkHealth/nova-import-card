@@ -177,7 +177,8 @@ class Patient extends BaseModel
      * Withdrawn on 1st Call.
      * */
     const WITHDRAWN_1ST_CALL = 'withdrawn_1st_call';
-
+    const DEFAULT_CALLS_PER_MONTH = 1;
+    
     public $phi = [
         'agent_name',
         'agent_telephone',
