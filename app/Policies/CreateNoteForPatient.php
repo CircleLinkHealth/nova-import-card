@@ -9,7 +9,7 @@ namespace App\Policies;
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use CircleLinkHealth\Customer\Entities\User;
 
-class CreateNotForPatient
+class CreateNoteForPatient
 {
     private NurseFinderEloquentRepository $repo;
 

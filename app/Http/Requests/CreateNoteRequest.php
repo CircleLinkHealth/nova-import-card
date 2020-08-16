@@ -6,6 +6,7 @@
 
 namespace App\Http\Requests;
 
+use App\Policies\CreateNoteForPatient;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateNoteRequest extends FormRequest
@@ -17,7 +18,7 @@ class CreateNoteRequest extends FormRequest
      */
     public function authorize()
     {
-        return app(\App\Policies\CreateNotForPatient::class)->can(auth()->id(), $this->route('patientId'));
+        return app(CreateNoteForPatient::class)->can(auth()->id(), $this->route('patientId'));
     }
 
     /**

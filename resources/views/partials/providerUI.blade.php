@@ -8,7 +8,7 @@
             @include('partials.providerUI.patientnav')
         @endif
 
-        @if(!empty($patient->id) && auth()->user()->isCareCoach() && app(App\Policies\CreateNotForPatient::class)->can(auth()->id(), $patient->id))
+        @if(!empty($patient->id) && auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
             @include('partials.fab')
         @endif
     @endif

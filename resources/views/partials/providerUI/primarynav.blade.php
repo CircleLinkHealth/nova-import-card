@@ -110,7 +110,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
                         @if(!$isTwoFaRoute)
-                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(App\Policies\CreateNotForPatient::class)->can(auth()->id(), $patient->id))
+                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
                                 <li>
                                     <time-tracker-call-mode ref="timeTrackerCallMode"
                                                             :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"

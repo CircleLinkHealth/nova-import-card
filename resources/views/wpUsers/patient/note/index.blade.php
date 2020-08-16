@@ -30,7 +30,7 @@
                     Notes and Activities
                 </div>
                 @include('partials.userheader')
-                @if(auth()->user()->isCareCoach() && app(App\Policies\CreateNotForPatient::class)->can(auth()->id(), $patient->id))
+                @if(auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
                     <div class="col-sm-6 col-xs-4">
                         <a href="{{ route('patient.note.create', [$patient->id]) }}"
                            class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">

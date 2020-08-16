@@ -17,7 +17,7 @@ class CallPatientRequest extends FormRequest
      */
     public function authorize()
     {
-        return app(\App\Policies\CreateNotForPatient::class)->can(auth()->id(), $this->route('patientId'));
+        return app(\App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $this->route('patientId'));
     }
 
     /**
