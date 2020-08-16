@@ -4,13 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Algorithms\Calls\NextCallCalculator;
+namespace App\Algorithms\Calls\NextCallSuggestor;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Support\Arrayable;
 
-class NextCallPrediction implements Arrayable
+class Suggestion implements Arrayable
 {
     public string $attempt_note;
     public bool $ccm_time_achieved;

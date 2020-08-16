@@ -4,9 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Algorithms\Calls;
+namespace App\Algorithms\Calls\NurseFinder;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderRepositoryContract;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;

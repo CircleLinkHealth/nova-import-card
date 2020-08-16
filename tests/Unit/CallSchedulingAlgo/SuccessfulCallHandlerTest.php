@@ -6,7 +6,7 @@
 
 namespace Tests\Unit\CallSchedulingAlgo;
 
-use App\Algorithms\Calls\NextCallCalculator\Handlers\SuccessfulHandler;
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
@@ -68,7 +68,7 @@ class SuccessfulCallHandlerTest extends TestCase
         $patient->patientInfo->save();
 
         Carbon::setTestNow(now()->startOfMonth()->addDays(10));
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
+        $prediction = (new SuccessfulCall($patient->patientInfo, $called, $patient->inboundCalls->first()))
             ->handle();
 
         $this->assertNotEmpty($prediction);
@@ -85,7 +85,7 @@ class SuccessfulCallHandlerTest extends TestCase
         $called  = Carbon::now()->endOfMonth()->subWeek()->addDays(3);
         $patient = $this->fakePatient($called);
 
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
+        $prediction = (new SuccessfulCall($patient->patientInfo, $called, $patient->inboundCalls->first()))
             ->handle();
 
         $this->assertNotEmpty($prediction);
@@ -104,7 +104,7 @@ class SuccessfulCallHandlerTest extends TestCase
 
         $patient->patientInfo->preferred_calls_per_month = 1;
 
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
+        $prediction = (new SuccessfulCall($patient->patientInfo, $called, $patient->inboundCalls->first()))
             ->handle();
 
         $this->assertNotEmpty($prediction);
@@ -123,7 +123,7 @@ class SuccessfulCallHandlerTest extends TestCase
 
         $patient->patientInfo->preferred_calls_per_month = 1;
 
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
+        $prediction = (new SuccessfulCall($patient->patientInfo, $called, $patient->inboundCalls->first()))
             ->handle();
 
         $this->assertNotEmpty($prediction);

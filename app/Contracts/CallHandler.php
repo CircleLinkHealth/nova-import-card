@@ -6,7 +6,7 @@
 
 namespace App\Contracts;
 
-use App\Algorithms\Calls\NextCallCalculator\CallHandlerResponse;
+use App\Algorithms\Calls\NextCallSuggestor\HandlerResponse;
 
 interface CallHandler
 {
@@ -16,5 +16,5 @@ interface CallHandler
         int $currentWeekOfMonth,
         int $successfulCallsThisMonth,
         int $patientPreferredNumberOfMonthlyCalls
-    ): CallHandlerResponse;
+    ): HandlerResponse;
 }

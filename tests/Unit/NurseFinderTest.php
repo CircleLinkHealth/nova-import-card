@@ -6,9 +6,9 @@
 
 namespace Tests\Unit;
 
-use App\Algorithms\Calls\NextCallCalculator\Handlers\SuccessfulHandler;
-use App\Algorithms\Calls\NextCallCalculator\NextCallDateCalculator;
-use App\Algorithms\Calls\NurseFinderEloquentRepository;
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
+use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\User;
 use Mockery;
@@ -33,7 +33,7 @@ class NurseFinderTest extends TestCase
 
         $this->instance(NurseFinderEloquentRepository::class, $repo);
 
-        $prediction = (new NextCallDateCalculator())->handle($patient, new SuccessfulHandler());
+        $prediction = (new Suggestor())->handle($patient, new SuccessfulCall());
 
         $this->assertTrue($prediction->nurse === $nurse->id);
     }
@@ -51,7 +51,7 @@ class NurseFinderTest extends TestCase
             $mock->shouldReceive('user')->atLeast(1)->andReturn($nurse);
         });
 
-        $prediction = (new NextCallDateCalculator())->handle($patient, new SuccessfulHandler());
+        $prediction = (new Suggestor())->handle($patient, new SuccessfulCall());
 
         $this->assertTrue($prediction->nurse === $nurse->id);
     }
@@ -70,7 +70,7 @@ class NurseFinderTest extends TestCase
 
         $this->instance(NurseFinderEloquentRepository::class, $repo);
 
-        $prediction = (new NextCallDateCalculator())->handle($patient, new SuccessfulHandler());
+        $prediction = (new Suggestor())->handle($patient, new SuccessfulCall());
 
         $this->assertTrue(is_null($prediction->nurse));
     }

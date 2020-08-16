@@ -4,17 +4,18 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Algorithms\Calls\NextCallCalculator;
+namespace App\Algorithms\Calls\NextCallSuggestor;
 
-use App\Algorithms\Calls\NurseFinderEloquentRepository;
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Contracts\CallHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
+use App\Algorithms\Calls\NextCallSuggestor\Suggestion as NextCallSuggestion;
 
-class NextCallDateCalculator
+class Suggestor
 {
     public function handle(User $patient, CallHandler $handler)
     {
@@ -33,7 +34,7 @@ class NextCallDateCalculator
         );
     }
 
-    private function formatAlgoDataForView(NextCallPrediction $prediction)
+    private function formatAlgoDataForView(NextCallSuggestion $prediction)
     {
         $ccm_time_achieved = false;
         if ($prediction->ccmTimeInSeconds >= 1200) {
@@ -52,7 +53,7 @@ class NextCallDateCalculator
         return $prediction;
     }
 
-    private function getAssignedNurse(NextCallPrediction $prediction): NextCallPrediction
+    private function getAssignedNurse(NextCallSuggestion $prediction): NextCallSuggestion
     {
         if ($nurse = app(NurseFinderEloquentRepository::class)->find($prediction->patient->id)) {
             $prediction->nurse              = $nurse->id;
@@ -67,7 +68,7 @@ class NextCallDateCalculator
         return $prediction;
     }
 
-    private function getNextCallDate(NextCallPrediction $prediction, CallHandler $handler): NextCallPrediction
+    private function getNextCallDate(NextCallSuggestion $prediction, CallHandler $handler): NextCallSuggestion
     {
         $response = $handler->getNextCallDate(
             $prediction->patient->id,
@@ -83,7 +84,7 @@ class NextCallDateCalculator
         return $prediction;
     }
 
-    private function getNextPatientWindow(NextCallPrediction $prediction)
+    private function getNextPatientWindow(NextCallSuggestion $prediction)
     {
         if ('Call This Weekend' != $prediction->attempt_note) {
             $next_predicted_contact_window['day']          = $prediction->nextCallDate->next(Carbon::SATURDAY)->toDateString();
@@ -108,16 +109,16 @@ class NextCallDateCalculator
         return $prediction;
     }
 
-    private function getPredicament(NextCallPrediction $prediction, CallHandler $handler): NextCallPrediction
+    private function getPredicament(NextCallSuggestion $prediction, CallHandler $handler): NextCallSuggestion
     {
         $prediction->predicament = $handler->createSchedulerInfoString($prediction);
 
         return $prediction;
     }
 
-    private function initializePrediction(User $patient): NextCallPrediction
+    private function initializePrediction(User $patient): NextCallSuggestion
     {
-        $prediction                         = new NextCallPrediction();
+        $prediction                         = new NextCallSuggestion();
         $prediction->patient                = $patient;
         $prediction->ccmTimeInSeconds       = $prediction->patient->getCcmTime();
         $prediction->no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth(

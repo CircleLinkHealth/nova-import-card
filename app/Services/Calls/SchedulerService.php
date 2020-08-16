@@ -6,10 +6,10 @@
 
 namespace App\Services\Calls;
 
-use App\Algorithms\Calls\NextCallCalculator\Handlers\SuccessfulHandler;
-use App\Algorithms\Calls\NextCallCalculator\Handlers\UnsuccessfulHandler;
-use App\Algorithms\Calls\NextCallCalculator\NextCallDateCalculator;
-use App\Algorithms\Calls\NurseFinderEloquentRepository;
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
+use App\Algorithms\Calls\NextCallSuggestor\Suggestor as NextCallDateSuggestor;
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Note;
@@ -767,7 +767,7 @@ class SchedulerService
             return null;
         }
 
-        $prediction = app(NextCallDateCalculator::class)->handle($patient, Call::REACHED == $callStatus ? new SuccessfulHandler() : new UnsuccessfulHandler());
+        $prediction = app(NextCallDateSuggestor::class)->handle($patient, Call::REACHED == $callStatus ? new SuccessfulCall() : new UnsuccessfulCall());
 
         $prediction->successful = Call::REACHED == $callStatus;
 

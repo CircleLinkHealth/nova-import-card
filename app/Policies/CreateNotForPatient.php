@@ -6,7 +6,7 @@
 
 namespace App\Policies;
 
-use App\Algorithms\Calls\NurseFinderEloquentRepository;
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CreateNotForPatient
