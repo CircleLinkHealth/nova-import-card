@@ -20,10 +20,9 @@ class NextCallDateCalculator
     private ?Call $lastCall;
     private User $patient;
 
-    public function __construct(User $patient, ?Call $lastCall)
+    public function __construct(User $patient)
     {
-        $this->patient  = $patient;
-        $this->lastCall = $lastCall;
+        $this->patient = $patient;
     }
 
     public function ccmTime()
@@ -54,7 +53,7 @@ class NextCallDateCalculator
         return $prediction;
     }
 
-    public function getNextPatientWindow(Prediction &$prediction)
+    public function getNextPatientWindow(Prediction $prediction)
     {
         if ('Call This Weekend' == $prediction->attempt_note) {
             $next_predicted_contact_window['day']          = $prediction->nextCallDate->next(Carbon::SATURDAY)->toDateString();
@@ -77,27 +76,55 @@ class NextCallDateCalculator
 
     public function handle(CallHandler $handler)
     {
-        $prediction                         = new Prediction();
-        $prediction->patient                = $this->patient;
-        $prediction->no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth(
-            $this->patient,
-            Carbon::now()->toDateTimeString()
+        return $this->getPredicament(
+            $this->getAssignedNurse(
+                $this->formatAlgoDataForView(
+                    $this->getNextPatientWindow(
+                        $this->getNextCallDate(
+                            $this->initializePrediction(),
+                            $handler
+                        )
+                    )
+                )
+            ),
+            $handler
         );
+    }
 
-        $response                 = $handler->getNextCallDate($this->patient->id, $this->ccmTime(), now()->weekOfMonth, $prediction->no_of_successful_calls, $this->patient->patientInfo->preferred_calls_per_month);
-        $prediction->attempt_note = $response->attemptNote;
-        $prediction->logic        = $response->reasoning;
-        $prediction->nextCallDate = $response->nextCallDate;
-
-        $this->formatAlgoDataForView($this->getNextPatientWindow($prediction));
-
+    private function getAssignedNurse(Prediction $prediction): Prediction
+    {
         if ($nurse = app(NurseFinderRepository::class)->find($this->patient->id)) {
             $prediction->nurse              = $nurse->id;
             $prediction->nurse_display_name = $nurse->display_name;
             $prediction->window_match       = "Assigning next call to {$nurse->display_name}.";
         }
 
+        return $prediction;
+    }
+
+    private function getNextCallDate(Prediction $prediction, CallHandler $handler): Prediction
+    {
+        $response                 = $handler->getNextCallDate($this->patient->id, $this->ccmTime(), now()->weekOfMonth, $prediction->no_of_successful_calls, $this->patient->patientInfo->preferred_calls_per_month);
+        $prediction->attempt_note = $response->attemptNote;
+        $prediction->logic        = $response->reasoning;
+        $prediction->nextCallDate = $response->nextCallDate;
+
+        return $prediction;
+    }
+
+    private function getPredicament(Prediction $prediction, CallHandler $handler): Prediction
+    {
         $prediction->predicament = $handler->createSchedulerInfoString($prediction);
+    }
+
+    private function initializePrediction(): Prediction
+    {
+        $prediction                         = new Prediction();
+        $prediction->patient                = $this->patient;
+        $prediction->no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth(
+            $this->patient,
+            Carbon::now()->toDateTimeString()
+        );
 
         return $prediction;
     }

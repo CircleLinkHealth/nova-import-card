@@ -776,8 +776,7 @@ class SchedulerService
         }
 
         $prediction = (new NextCallDateCalculator(
-            $patient,
-            $this->getPreviousCall($patient, optional($scheduled_call)->id)
+            $patient
         ))->handle(Call::REACHED == $callStatus ? new SuccessfulHandler() : new UnsuccessfulHandler());
 
         $prediction->successful = Call::REACHED == $callStatus;

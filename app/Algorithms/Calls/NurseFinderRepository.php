@@ -13,11 +13,21 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class NurseFinderRepository implements NurseFinderContract
 {
-    public function find(int $patientUserId): ?User
+    public function assignedNurse(int $patientUserId): ?PatientNurse
     {
-        return optional(PatientNurse::with('permanentNurse')
+        return PatientNurse::with('permanentNurse')
             ->whereHas('permanentNurse')
             ->where('patient_user_id', $patientUserId)
-            ->first())->permanentNurse ?? StandByNurseUser::user();
+            ->first();
+    }
+
+    public function find(int $patientUserId): ?User
+    {
+        return optional($this->assignedNurse($patientUserId))->permanentNurse ?? $this->standByNurse();
+    }
+
+    private function standByNurse(): ?User
+    {
+        return StandByNurseUser::user();
     }
 }
