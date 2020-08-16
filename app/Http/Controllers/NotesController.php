@@ -12,6 +12,7 @@ use App\Contracts\ReportFormatter;
 use App\Events\CarePlanWasApproved;
 use App\Events\NoteFinalSaved;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\Http\Requests\CreateNoteRequest;
 use App\Http\Requests\NotesReport;
 use App\Jobs\SendSingleNotification;
 use App\Note;
@@ -59,13 +60,11 @@ class NotesController extends Controller
     }
 
     public function create(
-        Request $request,
+        CreateNoteRequest $request,
         $patientId,
         $noteId = null,
         CpmMedicationService $medicationService
     ) {
-        //@todo segregate to helper functions :/
-
         if ( ! $patientId) {
             return response('Missing param: patientId', 401);
         }
