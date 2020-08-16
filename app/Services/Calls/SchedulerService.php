@@ -425,7 +425,7 @@ class SchedulerService
                 'inbound_phone_number'  => $phoneNumber ?? '',
                 'outbound_phone_number' => '',
                 'inbound_cpm_id'        => $patient->id,
-                'outbound_cpm_id'       => $nurseId,
+                'outbound_cpm_id'       => parseIds($nurseId)[0] ?? null,
                 'call_time'             => 0,
                 'asap'                  => true,
                 'is_cpm_outbound'       => true,
