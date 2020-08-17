@@ -467,18 +467,7 @@ class Patient extends BaseModel
                 ->first();
         }
 
-        /** @var PatientNurse $record */
-        $record = optional($nursePatient)->nurse;
-
-        if ( ! $record) {
-            return null;
-        }
-
-        if ( ! $record->nurse) {
-            return null;
-        }
-
-        return $record->nurse;
+        return optional($nursePatient)->nurse;
     }
 
     /**
