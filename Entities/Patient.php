@@ -178,7 +178,8 @@ class Patient extends BaseModel
      * Withdrawn on 1st Call.
      * */
     const WITHDRAWN_1ST_CALL = 'withdrawn_1st_call';
-
+    const DEFAULT_CALLS_PER_MONTH = 1;
+    
     public $phi = [
         'agent_name',
         'agent_telephone',
@@ -450,71 +451,6 @@ class Patient extends BaseModel
     public function getLastNameAttribute()
     {
         return $this->user->getLastName();
-    }
-
-    /**
-     * Returns current nurse of patient (could be temporary or permanent.
-     *
-     * @return User|null
-     */
-    public function getNurse()
-    {
-        if ($this->relationLoaded('patientNurseAsPatient')) {
-            $this->loadMissing('patientNurseAsPatient.nurse');
-            $nursePatient = $this->patientNurseAsPatient;
-        } else {
-            $nursePatient = PatientNurse::where('patient_user_id', '=', $this->user_id)
-                ->with('nurse')
-                ->first();
-        }
-
-        /** @var PatientNurse $record */
-        $record = optional($nursePatient)->nurse;
-
-        if ( ! $record) {
-            return null;
-        }
-
-        if ( ! $record->nurse) {
-            return null;
-        }
-
-        return $record->nurse;
-    }
-
-    /**
-     * Get current nurse (could be parmanent or temporary) and upcoming (temporary).
-     */
-    public function getNurses()
-    {
-        /** @var PatientNurse $record */
-        $record = PatientNurse::where('patient_user_id', '=', $this->user_id)
-            ->with(['permanentNurse', 'temporaryNurse'])
-            ->first();
-
-        if ( ! $record) {
-            return null;
-        }
-
-        $result = [];
-        if ($record->permanentNurse) {
-            $result['permanent'] = [
-                'user' => $record->permanentNurse,
-            ];
-        }
-
-        $now = Carbon::now();
-        if ($record->temporaryNurse && $now->isBefore($record->temporary_to)) {
-            $result['temporary'] = [
-                'from' => $record->temporary_from,
-                'to'   => $record->temporary_to,
-                'user' => $record->temporaryNurse,
-            ];
-        }
-
-        return empty($result)
-            ? null
-            : $result;
     }
 
     public function getPreferences()

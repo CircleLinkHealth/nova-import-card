@@ -50,46 +50,15 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  */
 class PatientNurse extends BaseModel
 {
-    protected $dates = [
-        'temporary_from',
-        'temporary_to',
-    ];
-
     protected $fillable = [
         'patient_user_id',
         'nurse_user_id',
-        'temporary_nurse_user_id',
-        'temporary_from',
-        'temporary_to',
     ];
 
     protected $table = 'patients_nurses';
 
-    /**
-     * Get a patient's permanent nurse.
-     */
-    public static function getPermanentNurse(int $patientUserId): ?User
-    {
-        return optional((new static())->where('patient_user_id', $patientUserId)->with('permanentNurse')->has('permanentNurse')->first())->permanentNurse;
-    }
-
-    public function hasTemporaryNurse()
-    {
-        $now = Carbon::now();
-
-        return $this->temporary_nurse_user_id && $now->isBetween($this->temporary_from, $this->temporary_to);
-    }
-
     public function nurse()
     {
-        if ($this->hasTemporaryNurse()) {
-            $record = $this->temporaryNurse();
-
-            if ($record->exists()) {
-                return $record;
-            }
-        }
-
         return $this->permanentNurse();
     }
 
@@ -101,14 +70,6 @@ class PatientNurse extends BaseModel
     public function permanentNurse()
     {
         return $this->belongsTo(User::class, 'nurse_user_id', 'id')
-            ->whereHas('nurseInfo', function ($q) {
-                $q->where('status', 'active');
-            });
-    }
-
-    public function temporaryNurse()
-    {
-        return $this->belongsTo(User::class, 'temporary_nurse_user_id', 'id')
             ->whereHas('nurseInfo', function ($q) {
                 $q->where('status', 'active');
             });
