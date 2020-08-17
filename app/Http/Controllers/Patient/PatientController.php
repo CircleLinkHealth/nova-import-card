@@ -10,6 +10,7 @@ use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CallPatientRequest;
+use App\Http\Requests\ContactDetailsValidator;
 use App\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
@@ -180,16 +181,11 @@ class PatientController extends Controller
         return response()->json($patients);
     }
 
-    public function saveNewAlternatePhoneNumber(Request $request)
+    public function saveNewAlternatePhoneNumber(ContactDetailsValidator $request)
     {
-        $altPhoneNumber = $request->input('phoneNumber');
-        $userId         = $request->input('patientUserId');
-
-        if ( ! ImportPhones::validatePhoneNumber($altPhoneNumber)) {
-            return response()->json([
-                'message' => 'Phone number is not a valid US number',
-            ]);
-        }
+        $input          = $request->validated();
+        $altPhoneNumber = $input['phoneNumber'];
+        $userId         = $input['patientUserId'];
 
         $altPhoneNumber = formatPhoneNumberE164($altPhoneNumber);
         /** @var User $patientUser */
@@ -197,10 +193,10 @@ class PatientController extends Controller
 
         $patientUser->patientInfo->update(
             [
-                'agent_name'         => $request->input('agentName'),
-                'agent_email'        => $request->input('agentEmail'),
+                'agent_name'         => $input['agentName'],
+                'agent_email'        => $input['agentEmail'],
                 'agent_telephone'    => strtolower($altPhoneNumber),
-                'agent_relationship' => $request->input('agentRelationship'),
+                'agent_relationship' => $input['agentRelationship'],
             ]
         );
 

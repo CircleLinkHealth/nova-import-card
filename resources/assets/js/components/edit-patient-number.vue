@@ -1,7 +1,6 @@
 <template>
     <div class="phone-numbers">
         <div class="input-group">
-            <span v-if="this.errorMessage !== ''" class="help-block" style="color: red">{{this.errorMessage}}</span>
             <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Number<br>to Call</h5>
             <template v-if="true" v-for="(number, index) in patientPhoneNumbers">
                 <div class="numbers">
@@ -189,7 +188,7 @@
                             type="button"
                             @click="deleteAlternateContact(false)"
                             :disabled="loading">
-                        Clear alternate contact
+                        Delete alternate contact details
                     </button>
                </div>
 
@@ -217,7 +216,6 @@
 
         props: [
             'userId',
-            'errorMessage',
             'callEnabled',
         ],
 
@@ -621,9 +619,16 @@
                         this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
-                    console.log(error);
+                    this.responseErrorMessage(error.response)
                 });
 
+            },
+
+            responseErrorMessage(exception){
+                if (exception.status === 422) {
+                    const e = exception.data;
+                    alert(e);
+                }
             },
 
             saveNewNumber(){
@@ -658,7 +663,7 @@
                         this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
-                    console.log(error);
+                    this.responseErrorMessage(error.response)
                 });
             },
 
