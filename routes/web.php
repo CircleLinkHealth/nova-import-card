@@ -1022,7 +1022,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'call.create',
             ])->middleware('permission:call.create');
             Route::post('schedule', [
-                'uses' => 'CallController@schedule',
+                'uses' => 'CallController@scheduleManualCall',
                 'as'   => 'call.schedule',
             ])->middleware('permission:call.create');
             Route::get('edit/{actId}', [

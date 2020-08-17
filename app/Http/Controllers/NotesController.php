@@ -751,7 +751,8 @@ class NotesController extends Controller
 
                     return view('wpUsers.patient.calls.create', ($prediction ?? new Suggestion())->toArray())
                         ->with('ccm_above', $ccm_above)
-                        ->with('patient', $patient);
+                        ->with('patient', $patient)
+                        ->with('messages', ['Successfully Created Note!']);
                 }
             }
 

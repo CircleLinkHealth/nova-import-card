@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
+use App\Http\Requests\ScheduleManualCall;
 use App\Http\Resources\Call as CallResource;
 use App\Rules\DateBeforeUsingCarbon;
 use App\Services\Calls\SchedulerService;
@@ -125,38 +126,15 @@ class CallController extends Controller
 
         return $this->create($request);
     }
-
+    
     /**
-     * This handler is only used by nurses, so calls scheduled from here
-     * have is_manual = true.
-     *
+     * @param Request $request
      * @param $patientId
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function schedule(Request $request, $patientId)
+    public function scheduleManualCall(ScheduleManualCall $request, $patientId)
     {
         $input = $request->all();
-
-        $validation = \Validator::make($input, [
-            'nurse'          => 'required|integer',
-            'suggested_date' => 'required|date',
-            'date'           => ['required', 'date:after_or_equal:today', new DateBeforeUsingCarbon()],
-            'window_start'   => 'required|date_format:H:i',
-            'window_end'     => 'required|date_format:H:i',
-            'attempt_note'   => 'sometimes',
-        ]);
-
-        if ($validation->fails()) {
-            \Log::error('Could not schedule call for patient:'.$patientId);
-
-            return redirect()
-                ->route('patient.note.index', [
-                    'patientId' => $patientId,
-                ])
-                ->with('messages', ['Successfully Created Note, but could not schedule next call:'])
-                ->withErrors($validation);
-        }
 
         $window_start = Carbon::parse($input['window_start'])->format('H:i');
         $window_end   = Carbon::parse($input['window_end'])->format('H:i');
@@ -176,7 +154,7 @@ class CallController extends Controller
             $window_end,
             $input['date'],
             $scheduler,
-            $input['nurse'],
+            optional(app(NurseFinderEloquentRepository::class)->find($patientId))->id,
             isset($input['attempt_note'])
                 ? $input['attempt_note']
                 : '',
