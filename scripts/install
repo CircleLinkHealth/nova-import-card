@@ -20,5 +20,5 @@ function copyHooksTo {
 }
 copyHooksTo $BASEDIR/../.git/hooks/
 
-{ find $BASEDIR/../Modules -maxdepth 1 -type d -exec printf '%s\0' {} + | while IFS= read -ru3 -d '' file; do
+{ find $BASEDIR/../CircleLinkHealth -maxdepth 1 -type d -exec printf '%s\0' {} + | while IFS= read -ru3 -d '' file; do
   copyHooksTo "$file"/.git/hooks/; done 3<&0 <&4 4<&-; } 4<&0

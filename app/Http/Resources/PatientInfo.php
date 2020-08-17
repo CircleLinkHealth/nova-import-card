@@ -27,7 +27,6 @@ class PatientInfo extends JsonResource
             'gender'                              => $this->gender,
             'general_comment'                     => $this->general_comment,
             'last_call_status'                    => $this->last_call_status,
-            'last_contact_time'                   => $this->last_contact_time,
             'last_successful_contact_time'        => $this->last_successful_contact_time,
             'no_call_attempts_since_last_success' => $this->no_call_attempts_since_last_success,
             'preferred_contact_language'          => $this->preferred_contact_language,

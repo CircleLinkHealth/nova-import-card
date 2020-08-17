@@ -6,6 +6,7 @@
 
 namespace App\Algorithms\Calls;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
@@ -105,7 +106,7 @@ class ReschedulerHandler
             $window_end   = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
             $day          = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
 
-            $this->storeCallForPatient($patientUser->patientInfo, $nurse = $patientUser->patientInfo->getNurse(), $window_start, $window_end, $day);
+            $this->storeCallForPatient($patientUser->patientInfo, $nurse = app(NurseFinderEloquentRepository::class)->find($patientUser->id), $window_start, $window_end, $day);
             $this->storeNewCallForFamilyMembers($patientUser->patientInfo, $nurse, $window_start, $window_end, $day);
         } catch (\Exception $exception) {
             \Log::critical($exception);

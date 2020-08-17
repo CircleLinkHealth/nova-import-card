@@ -345,6 +345,7 @@ trait UserHelpers
             $patient->patientInfo->consent_date = $consentDate;
         }
 
+        $patient->patientInfo->ccm_status = Patient::ENROLLED;
         $patient->patientInfo->save();
         $cpmProblems = CpmProblem::get();
 

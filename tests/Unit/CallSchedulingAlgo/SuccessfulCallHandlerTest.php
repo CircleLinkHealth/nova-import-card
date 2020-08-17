@@ -6,7 +6,8 @@
 
 namespace Tests\Unit\CallSchedulingAlgo;
 
-use App\Algorithms\Calls\SuccessfulHandler;
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
+use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
@@ -68,12 +69,11 @@ class SuccessfulCallHandlerTest extends TestCase
         $patient->patientInfo->save();
 
         Carbon::setTestNow(now()->startOfMonth()->addDays(10));
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
-            ->handle();
+        $prediction = (new Suggestor())->handle($patient, new SuccessfulCall());
 
         $this->assertNotEmpty($prediction);
 
-        $this->assertTrue($prediction['date'] <= $called->copy()->endOfMonth()->toDateString() && $prediction['date'] >= $called->copy()->endOfMonth()->subWeek()->toDateString());
+        $this->assertTrue($prediction->date <= $called->copy()->endOfMonth()->toDateString() && $prediction->date >= $called->copy()->endOfMonth()->subWeek()->toDateString());
     }
 
     /**
@@ -85,12 +85,11 @@ class SuccessfulCallHandlerTest extends TestCase
         $called  = Carbon::now()->endOfMonth()->subWeek()->addDays(3);
         $patient = $this->fakePatient($called);
 
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
-            ->handle();
+        $prediction = (new Suggestor())->handle($patient, new SuccessfulCall());
 
         $this->assertNotEmpty($prediction);
 
-        $this->assertTrue($prediction['date'] <= $called->copy()->addMonth()->endOfMonth()->subWeek(2)->toDateString() && $prediction['date'] > $called->copy()->addWeek()->toDateString());
+        $this->assertTrue($prediction->date <= $called->copy()->addMonth()->endOfMonth()->subWeek(2)->toDateString() && $prediction->date > $called->copy()->addWeek()->toDateString());
     }
 
     /**
@@ -104,12 +103,11 @@ class SuccessfulCallHandlerTest extends TestCase
 
         $patient->patientInfo->preferred_calls_per_month = 1;
 
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
-            ->handle();
+        $prediction = (new Suggestor())->handle($patient, new SuccessfulCall());
 
         $this->assertNotEmpty($prediction);
 
-        $this->assertTrue($prediction['date'] > $called->copy()->endOfMonth()->toDateString() && $prediction['date'] <= $called->copy()->addMonth()->endOfMonth()->toDateString());
+        $this->assertTrue($prediction->date > $called->copy()->endOfMonth()->toDateString() && $prediction->date <= $called->copy()->addMonth()->endOfMonth()->toDateString());
     }
 
     /**
@@ -123,11 +121,10 @@ class SuccessfulCallHandlerTest extends TestCase
 
         $patient->patientInfo->preferred_calls_per_month = 1;
 
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
-            ->handle();
+        $prediction = (new Suggestor())->handle($patient, new SuccessfulCall());
 
         $this->assertNotEmpty($prediction);
 
-        $this->assertTrue($prediction['date'] > $called->copy()->endOfMonth()->toDateString() && $prediction['date'] <= $called->copy()->addMonth()->endOfMonth()->subWeek(2)->toDateString());
+        $this->assertTrue($prediction->date > $called->copy()->endOfMonth()->toDateString() && $prediction->date <= $called->copy()->addMonth()->endOfMonth()->subWeek(2)->toDateString());
     }
 }

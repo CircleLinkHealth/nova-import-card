@@ -6,13 +6,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Http\Resources\Call as CallResource;
 use App\Rules\DateBeforeUsingCarbon;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +24,11 @@ class CallController extends Controller
     public function __construct(SchedulerService $callScheduler)
     {
         $this->scheduler = $callScheduler;
+    }
+
+    public function canChangeNursePatientRelation(User $user): bool
+    {
+        return $user->isAdmin();
     }
 
     public function create(Request $request)
@@ -96,10 +101,7 @@ class CallController extends Controller
             'id',
             'outbound_cpm_id'
         );
-
-        //if no outbound id is set, we user the authenticated user's id
-        //we do not have outbound_cpm_id when we are not sending a call to reschedule/cancel
-        //and we are just creating a new one.
+        
         if (empty($input['outbound_cpm_id'])) {
             $user = Auth::user();
             if ($user->isCareCoach()) {
@@ -211,9 +213,6 @@ class CallController extends Controller
             'columnName',
             'value',
             'familyOverride',
-            'is_temporary',
-            'temporary_from',
-            'temporary_to'
         );
 
         $columnsToCheckForOverride = ['scheduled_date', 'window_start', 'window_end'];
@@ -319,9 +318,6 @@ class CallController extends Controller
 
         if ('outbound_cpm_id' === $col) {
             $this->processNursePatientRelation($call->inboundUser, [
-                'is_temporary'    => $data['is_temporary'] ?? false,
-                'temporary_to'    => $data['temporary_to'] ?? null,
-                'temporary_from'  => $data['temporary_from'] ?? null,
                 'outbound_cpm_id' => $data['value'],
             ]);
         }
@@ -394,10 +390,7 @@ class CallController extends Controller
             'is_manual'       => 'required|boolean',
             'family_override' => '',
             'asap'            => '',
-            'is_temporary'    => 'sometimes|boolean',
             'is_reschedule'   => 'sometimes|boolean',
-            'temporary_from'  => ['nullable', 'after_or_equal:today', new DateBeforeUsingCarbon()],
-            'temporary_to'    => ['nullable', 'after_or_equal:today', new DateBeforeUsingCarbon()],
         ]);
 
         if ($validation->fails()) {
@@ -508,44 +501,17 @@ class CallController extends Controller
 
     private function processNursePatientRelation(User $patient, $input)
     {
-        $isReschedule = $input['is_reschedule'] ?? false;
-        $isTemporary  = $input['is_temporary'] ?? false;
-        $tempFrom     = $input['temporary_from'] ?? null;
-        $tempTo       = $input['temporary_to'] ?? null;
-
-        //request came from Notes Pages Call Reschedule
-        if ($isReschedule) {
+        if ( ! auth()->check() || ! $this->canChangeNursePatientRelation(auth()->user())) {
             return;
         }
 
-        if ($isTemporary) {
-            if ( ! ($tempFrom instanceof Carbon)) {
-                $tempFrom = Carbon::parse($tempFrom);
-            }
-            if ( ! ($tempTo instanceof Carbon)) {
-                $tempTo = Carbon::parse($tempTo);
-            }
+        $isReschedule = $input['is_reschedule'] ?? false;
 
-            PatientNurse::updateOrCreate(
-                ['patient_user_id' => $patient->id],
-                [
-                    'patient_user_id'         => $patient->id,
-                    'temporary_nurse_user_id' => $input['outbound_cpm_id'],
-                    'temporary_from'          => $tempFrom,
-                    'temporary_to'            => $tempTo,
-                ]
-            );
-        } else {
-            PatientNurse::updateOrCreate(
-                ['patient_user_id' => $patient->id],
-                [
-                    'patient_user_id'         => $patient->id,
-                    'nurse_user_id'           => $input['outbound_cpm_id'],
-                    'temporary_nurse_user_id' => null,
-                    'temporary_from'          => null,
-                    'temporary_to'            => null,
-                ]
-            );
+        if ($isReschedule) {
+            return;
+        }
+        if (is_numeric($input['outbound_cpm_id'])) {
+            app(NurseFinderEloquentRepository::class)->assign($patient->id, (int) $input['outbound_cpm_id']);
         }
     }
 

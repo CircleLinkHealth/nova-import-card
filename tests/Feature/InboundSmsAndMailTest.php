@@ -6,13 +6,13 @@
 
 namespace Tests\Feature;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Facades\Notification;
-use CircleLinkHealth\Customer\Entities\PatientNurse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tests\Concerns\TwilioFake\Twilio;
@@ -29,15 +29,9 @@ class InboundSmsAndMailTest extends CustomerTestCase
 
         $nurse   = $this->careCoach();
         $patient = $this->patient();
-        PatientNurse::updateOrCreate(
-            ['patient_user_id' => $patient->id],
-            [
-                'nurse_user_id'           => $nurse->id,
-                'temporary_nurse_user_id' => null,
-                'temporary_from'          => null,
-                'temporary_to'            => null,
-            ]
-        );
+
+        app(NurseFinderEloquentRepository::class)->assign($patient->id, $nurse->id);
+
         //need to have an entry in db to actually handle inbound sms/mail
         DatabaseNotification::create([
             'id'              => Str::random(36),

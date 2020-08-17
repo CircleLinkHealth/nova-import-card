@@ -6,11 +6,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Algorithms\Calls\NextCallSuggestor\Suggestion;
 use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\CarePlanWasApproved;
 use App\Events\NoteFinalSaved;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\Http\Requests\CreateNoteRequest;
 use App\Http\Requests\NotesReport;
 use App\Jobs\SendSingleNotification;
 use App\Note;
@@ -58,13 +60,11 @@ class NotesController extends Controller
     }
 
     public function create(
-        Request $request,
+        CreateNoteRequest $request,
         $patientId,
         $noteId = null,
         CpmMedicationService $medicationService
     ) {
-        //@todo segregate to helper functions :/
-
         if ( ! $patientId) {
             return response('Missing param: patientId', 401);
         }
@@ -687,12 +687,6 @@ class NotesController extends Controller
                     }
                 }
 
-                if ('Call Back' === $call->sub_type) {
-                    // add last contact time regardless of if success
-                    $info->last_contact_time = $note->performed_at->format('Y-m-d H:i:s');
-                    $info->save();
-                }
-
                 $call->note_id = $note->id;
 
                 if ($call->isDirty()) {
@@ -722,7 +716,6 @@ class NotesController extends Controller
 
                     $call_status = $input['call_status'];
                     $is_saas     = $author->isSaas();
-                    $prediction  = null;
 
                     if (Call::REACHED == $call_status) {
                         //Updates when the patient was successfully contacted last
@@ -737,11 +730,10 @@ class NotesController extends Controller
                             $attestedProblems
                         );
                     }
-                    // add last contact time regardless of if success
-                    $info->last_contact_time = $note->performed_at->format('Y-m-d H:i:s');
+
                     $info->save();
 
-                    if ($is_withdrawn || null == $prediction || $is_saas) {
+                    if ($is_withdrawn || $is_saas) {
                         return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
                             'messages',
                             ['Successfully Created Note']
@@ -757,9 +749,9 @@ class NotesController extends Controller
                         $ccm_above = true;
                     }
 
-                    $prediction['ccm_above'] = $ccm_above;
-
-                    return view('wpUsers.patient.calls.create', $prediction);
+                    return view('wpUsers.patient.calls.create', ($prediction ?? new Suggestion())->toArray())
+                        ->with('ccm_above', $ccm_above)
+                        ->with('patient', $patient);
                 }
             }
 

@@ -10,6 +10,7 @@ use App\Console\Commands\AutoApproveValidCarePlansAs;
 use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CallPatientRequest;
 use App\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
@@ -135,7 +136,7 @@ class PatientController extends Controller
         return response()->json($patients);
     }
 
-    public function showCallPatientPage(Request $request, $patientId)
+    public function showCallPatientPage(CallPatientRequest $request, $patientId)
     {
         $user = User::with('phoneNumbers')
             ->with('patientInfo.location')

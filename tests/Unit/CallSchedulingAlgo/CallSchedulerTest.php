@@ -6,6 +6,7 @@
 
 namespace Tests\Unit\CallSchedulingAlgo;
 
+use App\Http\Controllers\CallController;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
@@ -28,6 +29,12 @@ class CallSchedulerTest extends CustomerTestCase
         $patientInfo->fresh();
 
         $this->assertEquals(Patient::UNREACHABLE, $patientInfo->ccm_status);
+    }
+
+    public function test_only_admins_can_change_nurse_patient_association()
+    {
+        $this->assertFalse(app(CallController::class)->canChangeNursePatientRelation($this->careCoach()));
+        $this->assertTrue(app(CallController::class)->canChangeNursePatientRelation($this->superadmin()));
     }
 
     public function tests_it_schedules_call_for_next_weekday_for_patient_without_call_windows()
