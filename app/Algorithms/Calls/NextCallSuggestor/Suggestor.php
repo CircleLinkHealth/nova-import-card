@@ -6,6 +6,7 @@
 
 namespace App\Algorithms\Calls\NextCallSuggestor;
 
+use App\Algorithms\Calls\NextCallSuggestor\Suggestion as NextCallSuggestion;
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Contracts\CallHandler;
@@ -13,7 +14,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
-use App\Algorithms\Calls\NextCallSuggestor\Suggestion as NextCallSuggestion;
 
 class Suggestor
 {
@@ -75,7 +75,7 @@ class Suggestor
             $prediction->ccmTimeInSeconds,
             now()->weekOfMonth,
             $prediction->no_of_successful_calls,
-            $prediction->patient && optional($prediction->patient->patientInfo)->preferred_calls_per_month ?? Patient::DEFAULT_CALLS_PER_MONTH
+            $prediction->patient && optional($prediction->patient->patientInfo)->preferred_calls_per_month ? optional($prediction->patient->patientInfo)->preferred_calls_per_month : Patient::DEFAULT_CALLS_PER_MONTH
         );
         $prediction->attempt_note = $response->attemptNote;
         $prediction->logic        = $response->reasoning;
