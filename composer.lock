@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b639c1af6b765af6199d27c3ff9a62ce",
+    "content-hash": "92a271ed1282fbecb0056a7c73291cb1",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.149.1",
+            "version": "3.149.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8630a2426622d003e27382e2bd129cde5678ae85"
+                "reference": "e8a0d608e8379ad8b283812064136229ba2c1d11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8630a2426622d003e27382e2bd129cde5678ae85",
-                "reference": "8630a2426622d003e27382e2bd129cde5678ae85",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e8a0d608e8379ad8b283812064136229ba2c1d11",
+                "reference": "e8a0d608e8379ad8b283812064136229ba2c1d11",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-08-14T18:11:00+00:00"
+            "time": "2020-08-17T18:11:59+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -887,11 +887,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "dev-billing_revamp",
+            "version": "dev-ROAD-288-billing-new-schema-models",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "ef539b609fe2b6685aedbf6286d5b457aa77bc5a"
+                "reference": "5a1d9b58e5662d2f43771978e06aebd1a3099b57"
             },
             "type": "laravel-module",
             "extra": {
@@ -927,7 +927,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-08-14T18:15:51+00:00"
+            "time": "2020-08-17T15:21:20+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",

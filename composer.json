@@ -181,7 +181,7 @@
     "ashallendesign/short-url": "3.0.3",
     "barryvdh/laravel-snappy": "0.4.7",
     "circlelinkhealth/ccda-parser-processor-php-module": "1.1.2",
-    "circlelinkhealth/ccm-billing-module": "dev-billing_revamp",
+    "circlelinkhealth/ccm-billing-module": "dev-ROAD-288-billing-new-schema-models",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.1.7",
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/clh-nova-theme": "*",
