@@ -7,34 +7,34 @@
 namespace CircleLinkHealth\CcmBilling\Entities;
 
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Database\Eloquent\Model;
 
-class ChargeablePatientMonthlySummary extends Model
+class ChargeableLocationMonthlySummary extends Model
 {
     protected $casts = [
-        'is_fulfilled' => 'boolean',
+        'is_locked' => 'boolean',
     ];
 
     protected $dates = [
         'chargeable_month',
     ];
     protected $fillable = [
-        'patient_user_id',
+        'location_id',
         'chargeable_service_id',
         'chargeable_month',
-        'actor_id',
-        'is_fulfilled',
+        'amount',
+        'is_locked',
     ];
-    
+
     //todo: placeholder for now, maybe move in trait
     public function chargeableService()
     {
         return $this->hasOne(ChargeableService::class, 'chargeable_service_id');
     }
 
-    public function patient()
+    public function location()
     {
-        return $this->belongsTo(User::class, 'patient_user_id');
+        return $this->belongsTo(Location::class, 'location_id');
     }
 }
