@@ -31,8 +31,8 @@ class ScheduleManualCall extends FormRequest
         return [
             'suggested_date' => 'required|date',
             'date'           => ['required', 'date:after_or_equal:today', new DateBeforeUsingCarbon()],
-            'window_start'   => 'required|date_format:H:i',
-            'window_end'     => 'required|date_format:H:i',
+            'window_start'   => 'required|date_format:H:i:s',
+            'window_end'     => 'required|date_format:H:i:s',
             'attempt_note'   => 'sometimes',
         ];
     }
