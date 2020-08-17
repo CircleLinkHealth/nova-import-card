@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2102d7efbfb0974e7b12ccb759612f94",
+    "content-hash": "0f3001e2d6a5da34822d1223d9d1bfa1",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1127,11 +1127,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.3.8",
+            "version": "dev-call_revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "fb670365b41616977ccb67087743cc9a1b345fbf"
+                "reference": "ec5454cc1a57bbbae15f26204cc0d8129628bf1d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1153,7 +1153,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-13T04:19:29+00:00"
+            "time": "2020-08-17T04:28:48+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1161,7 +1161,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "6728d896c08bb54b2a286062f9da5c4eedcc5d26"
+                "reference": "16950e48d79abcddab450aa5d9c0f1a5a0a8000f"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1195,7 +1195,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-17T03:26:32+00:00"
+            "time": "2020-08-17T04:28:48+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -17455,6 +17455,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/shared-models-module": 20,
