@@ -11,6 +11,7 @@ use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CallPatientRequest;
 use App\Http\Requests\ContactDetailsValidator;
+use App\Http\Requests\MarkPrimaryPhone;
 use App\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
@@ -59,38 +60,33 @@ class PatientController extends Controller
         return view('patient.create-test-patients');
     }
 
-    public function markAsPrimaryPhone(Request $request)
+    public function markAsPrimaryPhone(MarkPrimaryPhone $request)
     {
-        $phoneId       = $request->input('phoneId');
-        $patientUserId = $request->input('patientUserId');
+        $newPrimaryPhoneId = $request->input('phoneId');
 
-        if ( ! empty($phoneId) || ! empty($patientUserId)) {
-            /** @var PhoneNumber $phones */
-            $phones = $this->getAllNumbersOfPatient($patientUserId);
-            foreach ($phones as $phone) {
-                // One trip to DB
-                $this->setPrimaryPhone($phone, $phoneId);
+        /** @var User $patientUser */
+        $patientUser = $request->get('patientUser');
 
-                if ($phone->id === $phoneId) {
-                    // One more trip to DB
-                    $phone->is_primary = true;
-                    $phone->save();
-                }
-            }
+        /** @var PhoneNumber $currentPrimaryPhone */
+        $currentPrimaryPhone = $patientUser->phoneNumbers
+            ->where('is_primary', true)
+            ->first();
 
-            return response()->json(
-                [
-                ],
-                200
-            );
+        if ( ! empty($currentPrimaryPhone)) {
+            $this->unsetCurrentPrimaryNumber($currentPrimaryPhone, $newPrimaryPhoneId);
         }
 
-        //else
+        $patientUser->phoneNumbers()
+            ->where('id', $newPrimaryPhoneId)->update(
+                [
+                    'is_primary' => true,
+                ]
+            );
+
         return response()->json(
             [
-                'message' => 'Required Parameters missing',
             ],
-            400
+            200
         );
     }
 
@@ -211,11 +207,12 @@ class PatientController extends Controller
 
         $phoneNumber = formatPhoneNumberE164($phoneNumber);
         /** @var User $patientUser */
-        $patientUser  = $request->get('patientUser');
-        $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id);
-        $locationId   = $request->get('locationId');
+        $patientUser = $request->get('patientUser');
+//        $phoneNumbers = $patientUser->phoneNumbers();
+        $locationId = $request->get('locationId');
 
-        $newPhoneNumber = PhoneNumber::firstOrCreate(
+        /** @var PhoneNumber $newPhoneNumber */
+        $newPhoneNumber = $patientUser->phoneNumbers()->firstOrCreate(
             [
                 'user_id' => $userId,
                 'number'  => $phoneNumber,
@@ -227,9 +224,12 @@ class PatientController extends Controller
             ]
         );
 
-        $existingPrimaryNumber = $phoneNumbers->where('is_primary', '=', true)->first();
+        $existingPrimaryNumber = $patientUser->phoneNumbers
+            ->where('is_primary', '=', true)
+            ->first();
+
         if ($request->input('makePrimary') && ! empty($existingPrimaryNumber)) {
-            $this->setPrimaryPhone($existingPrimaryNumber, $newPhoneNumber->id);
+            $this->unsetCurrentPrimaryNumber($existingPrimaryNumber, $newPhoneNumber->id);
         }
 
         return response()->json([
@@ -711,14 +711,6 @@ class PatientController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @return \App\PhoneNumber[]|Builder[]|\Illuminate\Database\Eloquent\Collection
-     */
-    private function getAllNumbersOfPatient(int $patientUserId)
-    {
-        return PhoneNumber::whereUserId($patientUserId)->get();
-    }
-
     private function prepareForWebix($observation)
     {
         return [
@@ -736,7 +728,7 @@ class PatientController extends Controller
         ];
     }
 
-    private function setPrimaryPhone(PhoneNumber $phone, int $newPhoneId)
+    private function unsetCurrentPrimaryNumber(PhoneNumber $currentPrimaryPhone, int $newPrimaryPhoneId)
     /**
      * @return \App\PhoneNumber[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
@@ -747,9 +739,9 @@ class PatientController extends Controller
 
     private function updatePreviousPrimaryPhone(PhoneNumber $phone, int $newPhoneId)
     {
-        if ($phone->id !== $newPhoneId && $phone->is_primary) {
-            $phone->is_primary = false;
-            $phone->save();
+        if ($currentPrimaryPhone->id !== $newPrimaryPhoneId && $currentPrimaryPhone->is_primary) {
+            $currentPrimaryPhone->is_primary = false;
+            $currentPrimaryPhone->save();
         }
     }
 }
