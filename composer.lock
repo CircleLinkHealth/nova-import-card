@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e983b5c281accc50ef4e1e19f6bde116",
+    "content-hash": "b639c1af6b765af6199d27c3ff9a62ce",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1163,11 +1163,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.3.7",
+            "version": "dev-billing-shenanigans",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "3d8470cdf824f14d527c6e793193fa940eceabbf"
+                "reference": "b92300160379f74df794bf3c28dde4c474c79350"
             },
             "type": "laravel-module",
             "extra": {
@@ -1189,7 +1189,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-12T12:28:45+00:00"
+            "time": "2020-08-17T14:36:40+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -15798,6 +15798,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2019-09-17T06:23:10+00:00"
         },
         {
@@ -17320,6 +17321,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccm-billing-module": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
         "heroku/heroku-buildpack-php": 20,
