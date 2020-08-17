@@ -192,12 +192,13 @@
                     <div class="form-block col-md-12">
                         <div class="row">
                             <div class="new-note-item">
-                                <!-- Send To CareTeam -->
                                 <div class="form-block col-md-12">
                                     <div class="row">
+                                        @if(auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
                                         <div class="new-note-item">
-                                            @include('partials.sendToCareTeam')
-                                        </div>
+                                                @include('partials.sendToCareTeam')
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
 

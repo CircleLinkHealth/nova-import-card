@@ -101,10 +101,7 @@ class CallController extends Controller
             'id',
             'outbound_cpm_id'
         );
-
-        //if no outbound id is set, we user the authenticated user's id
-        //we do not have outbound_cpm_id when we are not sending a call to reschedule/cancel
-        //and we are just creating a new one.
+        
         if (empty($input['outbound_cpm_id'])) {
             $user = Auth::user();
             if ($user->isCareCoach()) {
