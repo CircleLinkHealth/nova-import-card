@@ -32,18 +32,6 @@ class CreatePatientNurseTable extends Migration
                 ->nullable(true)
                 ->default(null);
 
-            $table->unsignedInteger('temporary_nurse_user_id')
-                ->nullable(true)
-                ->default(null);
-
-            $table->date('temporary_from')
-                ->nullable(true)
-                ->default(null);
-
-            $table->date('temporary_to')
-                ->nullable(true)
-                ->default(null);
-
             $table->timestamps();
 
             $table->foreign('patient_user_id')
@@ -52,11 +40,6 @@ class CreatePatientNurseTable extends Migration
                 ->onDelete('CASCADE');
 
             $table->foreign('nurse_user_id')
-                ->references('id')
-                ->on('users')
-                ->onDelete('SET NULL');
-
-            $table->foreign('temporary_nurse_user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('SET NULL');
