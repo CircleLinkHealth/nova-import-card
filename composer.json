@@ -191,7 +191,7 @@
     "circlelinkhealth/generate-success-stories-report": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/invoices-download": "*",
-    "circlelinkhealth/nurseinvoices-module": "1.5.7",
+    "circlelinkhealth/nurseinvoices-module": "dev-fix-nurse-invoice-message",
     "circlelinkhealth/patientapi-module": "1.3.3",
     "circlelinkhealth/raygun-module": "1.1",
     "circlelinkhealth/revisionable-module": "6.1.1",
