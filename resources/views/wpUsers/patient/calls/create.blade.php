@@ -13,17 +13,6 @@
                     return false;
                 });
             });
-
-            const nurse =@json($nurse);
-            const nurseAlt =@json($nurse_alt ?? null);
-            const windowMatch =@json($window_match ?? null);
-            const windowMatchAlt =@json($window_match_alt ?? null);
-
-            function dateChanged(d) {
-
-            }
-
-            const current = @json($date);
         </script>
     @endpush
 
@@ -89,7 +78,6 @@
                 </div>
 
                 <input type="hidden" name="suggested_date" value="{{\Carbon\Carbon::parse($date)->format('Y-m-d')}}">
-                <input type="hidden" name="nurse" id="nurse" value="{{$nurse}}">
 
                 <div class="form-block col-md-8" style="padding-top: 15px">
                     <div class="row form-inline">
