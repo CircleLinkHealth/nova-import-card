@@ -12,6 +12,15 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class NurseFinderEloquentRepository implements NurseFinderRepositoryContract
 {
+    public function assign(int $patientUserId, int $nurseUserId): bool
+    {
+        return (bool) PatientNurse::updateOrInsert([
+            'patient_user_id' => $patientUserId,
+        ], [
+            'nurse_user_id' => $nurseUserId,
+        ]);
+    }
+
     public function assignedNurse(int $patientUserId): ?PatientNurse
     {
         return PatientNurse::with('permanentNurse')
@@ -28,14 +37,5 @@ class NurseFinderEloquentRepository implements NurseFinderRepositoryContract
     public function standByNurse(): ?User
     {
         return app(StandByNurseUser::class)::user();
-    }
-    
-    public function assign(int $patientUserId, int $nurseUserId): bool
-    {
-        return PatientNurse::updateOrInsert([
-            'patient_user_id' => $patientUserId
-        ], [
-            'nurse_user_id' => $nurseUserId
-        ]);
     }
 }
