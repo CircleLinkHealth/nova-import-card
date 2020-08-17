@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Http\Resources\Call as CallResource;
 use App\Rules\DateBeforeUsingCarbon;
@@ -544,16 +545,7 @@ class CallController extends Controller
                 ]
             );
         } else {
-            PatientNurse::updateOrCreate(
-                ['patient_user_id' => $patient->id],
-                [
-                    'patient_user_id'         => $patient->id,
-                    'nurse_user_id'           => $input['outbound_cpm_id'],
-                    'temporary_nurse_user_id' => null,
-                    'temporary_from'          => null,
-                    'temporary_to'            => null,
-                ]
-            );
+            app(NurseFinderEloquentRepository::class)->assign($patient->id, $input['outbound_cpm_id']);
         }
     }
 

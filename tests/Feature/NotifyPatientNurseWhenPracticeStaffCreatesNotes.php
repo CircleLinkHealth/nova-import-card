@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Note;
 use App\Notifications\PracticeStaffCreatedNote;
 use CircleLinkHealth\Core\Facades\Notification;
@@ -40,12 +41,7 @@ class NotifyPatientNurseWhenPracticeStaffCreatesNotes extends CustomerTestCase
 
     public function test_it_does_not_send_notification_when_a_non_member_of_practice_staff_writes_note()
     {
-        $patientNurse = PatientNurse::create(
-            [
-                'patient_user_id' => $this->patient()->id,
-                'nurse_user_id'   => $this->careCoach()->id,
-            ]
-        );
+        app(NurseFinderEloquentRepository::class)->assign($this->patient()->id, $this->careCoach()->id);
 
         Notification::fake();
 
@@ -56,12 +52,7 @@ class NotifyPatientNurseWhenPracticeStaffCreatesNotes extends CustomerTestCase
 
     public function test_it_sends_notification_when_practice_staff_writes_note()
     {
-        $patientNurse = PatientNurse::create(
-            [
-                'patient_user_id' => $this->patient()->id,
-                'nurse_user_id'   => $this->careCoach()->id,
-            ]
-        );
+        app(NurseFinderEloquentRepository::class)->assign($this->patient()->id, $this->careCoach()->id);
 
         Notification::fake();
 

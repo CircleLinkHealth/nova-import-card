@@ -20,7 +20,6 @@ use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
-use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Support\Str;
 use Tests\CustomerTestCase;
@@ -39,11 +38,9 @@ class ApproveCPViaDM extends CustomerTestCase
         $this->patient()->setCarePlanStatus(CarePlan::QA_APPROVED);
         $this->assertEquals(CarePlan::QA_APPROVED, $this->patient()->carePlan->status);
 
-        PatientNurse::create(
-            [
-                'patient_user_id' => $this->patient()->id,
-                'nurse_user_id'   => $this->careCoach()->id,
-            ]
+        app(NurseFinderEloquentRepository::class)->assign(
+            $this->patient()->id,
+            $this->careCoach()->id
         );
 
         $task         = $this->fakeTask();

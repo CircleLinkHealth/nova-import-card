@@ -11,4 +11,5 @@ use CircleLinkHealth\Customer\Entities\User;
 interface NurseFinderRepositoryContract
 {
     public function find(int $patientUserId): ?User;
+    public function assign(int $patientUserId, int $nurseUserId): bool;
 }

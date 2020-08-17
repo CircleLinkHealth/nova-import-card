@@ -29,4 +29,13 @@ class NurseFinderEloquentRepository implements NurseFinderRepositoryContract
     {
         return app(StandByNurseUser::class)::user();
     }
+    
+    public function assign(int $patientUserId, int $nurseUserId): bool
+    {
+        return PatientNurse::updateOrInsert([
+            'patient_user_id' => $patientUserId
+        ], [
+            'nurse_user_id' => $nurseUserId
+        ]);
+    }
 }
