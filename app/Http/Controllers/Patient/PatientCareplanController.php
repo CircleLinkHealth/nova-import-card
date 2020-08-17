@@ -12,6 +12,7 @@ use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
+use App\Http\Requests\DeletePatientPhone;
 use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
@@ -21,8 +22,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
-use CircleLinkHealth\Customer\Entities\PatientNurse;
-use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -92,20 +91,9 @@ class PatientCareplanController extends Controller
         ], $errorCode);
     }
 
-    public function deletePhoneNumber(Request $request)
+    public function deletePhoneNumber(DeletePatientPhone $request)
     {
-//        @todo: Check user id in form request.
-        if (empty($request->input('phoneId'))) {
-            return response()->json([
-                'message' => 'Phone id is null',
-            ], 400);
-        }
-        $phoneNumber = PhoneNumber::whereId($request->input('phoneId'));
-        if ( ! empty($phoneNumber->first()) && $phoneNumber->first()->is_primary) {
-            return response()->json([
-                'message' => 'You cannot delete a primary number',
-            ]);
-        }
+        $phoneNumber = $request->get('phoneNumber');
 
         $phoneNumber->delete();
 
