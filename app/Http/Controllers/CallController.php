@@ -513,7 +513,9 @@ class CallController extends Controller
         if ($isReschedule) {
             return;
         }
-        app(NurseFinderEloquentRepository::class)->assign($patient->id, $input['outbound_cpm_id']);
+        if (is_numeric($input['outbound_cpm_id'])) {
+            app(NurseFinderEloquentRepository::class)->assign($patient->id, (int) $input['outbound_cpm_id']);
+        }
     }
 
     /**

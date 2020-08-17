@@ -41,7 +41,6 @@ class CallObserver
      */
     public function createNotificationAndSendToPusher($call)
     {
-        //could be called from a job, or from command line
         if ( ! auth()->check()) {
             return;
         }
@@ -71,21 +70,7 @@ class CallObserver
                 $this->matchVoiceCallWithCpmCallRecord($call);
             }
         }
-
-        //moved to saving()
-        /*
-        if ($call->asap && in_array($call->status, [Call::REACHED, 'done'])) {
-            Call::where('id', $call->id)->update(['asap' => false]);
-            $call->markAttachmentNotificationAsRead($call->outboundUser);
-        }
-
-        //If sub_type = "addendum_response" means it has already been created by AddendumObserver
-        //@todo:come up with a better solution for this
-        if ($call->shouldSendLiveNotification()) {
-            $this->createNotificationAndSendToPusher($call);
-        }
-        */
-
+        
         if (Carbon::parse($call->called_date)->isLastMonth()) {
             app(CountPatientMonthlySummaryCalls::class)->countCalls(now()->subMonth()->startOfMonth(), [$call->patientId()]);
         }
@@ -93,9 +78,6 @@ class CallObserver
 
     public function saving(Call $call)
     {
-        // If sub_type = "addendum_response" means it has already been created by AddendumObserver
-        // @todo:come up with a better solution for this
-        // Call::shouldSendLiveNotification checks for asap, so we have to call it before we update to false
         if ($call->shouldSendLiveNotification()) {
             $this->createNotificationAndSendToPusher($call);
         }
