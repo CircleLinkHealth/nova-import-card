@@ -99,7 +99,7 @@ export default {
 
             }).catch(error => {
                 console.log(error);
-                this.$toasted.error(error.response.data);
+                this.$toasted.error(error.response.data.message);
                 this.loading = false;
             });
         },
