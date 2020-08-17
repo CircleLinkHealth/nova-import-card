@@ -15,6 +15,7 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
@@ -515,6 +516,11 @@ class PatientAttestedConditionsTest extends TestCase
                 'cpm_problem_id' => $problem->id,
             ]);
         }
+
+        PatientNurse::updateOrCreate([
+            'patient_user_id' => $this->patient->id,
+            'nurse_user_id'   => $this->nurse->id,
+        ]);
 
         //setup call
         Call::create([

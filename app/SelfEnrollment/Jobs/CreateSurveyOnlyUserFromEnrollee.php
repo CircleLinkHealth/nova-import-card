@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
@@ -23,7 +24,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Modules\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue

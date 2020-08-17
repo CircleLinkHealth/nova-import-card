@@ -26,6 +26,11 @@ class CallController extends Controller
         $this->scheduler = $callScheduler;
     }
 
+    public function canChangeNursePatientRelation(User $user): bool
+    {
+        return $user->isAdmin();
+    }
+
     public function create(Request $request)
     {
         $input = $request->all();
@@ -508,12 +513,15 @@ class CallController extends Controller
 
     private function processNursePatientRelation(User $patient, $input)
     {
+        if ( ! auth()->check() || ! $this->canChangeNursePatientRelation(auth()->user())) {
+            return;
+        }
+
         $isReschedule = $input['is_reschedule'] ?? false;
         $isTemporary  = $input['is_temporary'] ?? false;
         $tempFrom     = $input['temporary_from'] ?? null;
         $tempTo       = $input['temporary_to'] ?? null;
 
-        //request came from Notes Pages Call Reschedule
         if ($isReschedule) {
             return;
         }

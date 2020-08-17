@@ -54,7 +54,7 @@ return [
         |
         */
 
-        'modules' => base_path('Modules'),
+        'modules' => base_path('CircleLinkHealth'),
         /*
         |--------------------------------------------------------------------------
         | Modules assets path

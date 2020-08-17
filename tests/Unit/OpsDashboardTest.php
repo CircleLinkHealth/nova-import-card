@@ -215,7 +215,7 @@ class OpsDashboardTest extends \Tests\TestCase
         $initialStatus                          = $this->patient->patientInfo->ccm_status;
         $this->patient->patientInfo->ccm_status = Patient::PAUSED;
         $this->patient->patientInfo->save();
-
+        sleep(2);
         /**
          * @var Collection
          * */

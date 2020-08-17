@@ -84,7 +84,7 @@
                     @endif
                 </div>
                 {!!
-                Form::open(['url' => route('call.schedule', ['patientId' => $patient->user_id]), 'method' => 'POST', 'id' => 'sched-call-form', 'class' => 'form-prevent-multi-submit'])
+                Form::open(['url' => route('call.schedule', ['patientId' => $patient->id]), 'method' => 'POST', 'id' => 'sched-call-form', 'class' => 'form-prevent-multi-submit'])
                 !!}
 
                 <div class="form-block col-md-4" style="padding-top: 0px">
@@ -154,9 +154,7 @@
             <input type="hidden" name="attempt_note" value="{{$attempt_note}}"/>
 
 
-            {{--@if($next_contact_windows)--}}
             @include('partials.calls.callInfo')
-            {{--@endif--}}
 
             <div class="form-block col-md-12">
                 <div class="row">

@@ -16,9 +16,10 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
+use Tests\CustomerTestCase;
 use Tests\TestCase;
 
-class PatientCcmStatusUpdateTest extends TestCase
+class PatientCcmStatusUpdateTest extends CustomerTestCase
 {
     use UserHelpers;
     use WithoutMiddleware;
@@ -34,11 +35,11 @@ class PatientCcmStatusUpdateTest extends TestCase
     {
         parent::setUp();
 
-        $this->practice = factory(Practice::class)->create();
-        $this->patient  = $this->createUser($this->practice->id, 'participant');
-        $this->admin    = $this->createUser($this->practice->id, 'administrator');
+        $this->practice = $this->practice();
+        $this->patient  = $this->patient();
+        $this->admin    = $this->superadmin();
 
-        $this->nurse = $this->createUser($this->practice->id, 'care-center');
+        $this->nurse = $this->careCoach();
     }
 
     /**

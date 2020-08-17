@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b680a70488aa36144831f62ade72805a",
+    "content-hash": "2102d7efbfb0974e7b12ccb759612f94",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -292,20 +292,20 @@
         },
         {
             "name": "appstract/laravel-opcache",
-            "version": "4.0.0",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/appstract/laravel-opcache.git",
-                "reference": "3b9ec5391020da5c4f60cf8da2021cd59e40f5ff"
+                "reference": "414f2f0f26e254f70126723b1462a25cb913448b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/3b9ec5391020da5c4f60cf8da2021cd59e40f5ff",
-                "reference": "3b9ec5391020da5c4f60cf8da2021cd59e40f5ff",
+                "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/414f2f0f26e254f70126723b1462a25cb913448b",
+                "reference": "414f2f0f26e254f70126723b1462a25cb913448b",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": "^6.3",
+                "guzzlehttp/guzzle": "^6.3.1|^7.0",
                 "laravel/framework": ">=7.0",
                 "php": "^7.2.5"
             },
@@ -346,7 +346,7 @@
                 "laravel",
                 "php"
             ],
-            "time": "2020-03-29T15:02:12+00:00"
+            "time": "2020-08-13T08:00:24+00:00"
         },
         {
             "name": "ashallendesign/short-url",
@@ -511,16 +511,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.148.3",
+            "version": "3.149.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "04c268f63c915fe251954927713d506ed21c4b49"
+                "reference": "8630a2426622d003e27382e2bd129cde5678ae85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/04c268f63c915fe251954927713d506ed21c4b49",
-                "reference": "04c268f63c915fe251954927713d506ed21c4b49",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8630a2426622d003e27382e2bd129cde5678ae85",
+                "reference": "8630a2426622d003e27382e2bd129cde5678ae85",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +592,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-08-12T18:16:38+00:00"
+            "time": "2020-08-14T18:11:00+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1157,11 +1157,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.2.2",
+            "version": "dev-call_revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "b8f0791f10485984296602b979c14721e32ae2ea"
+                "reference": "91845dc7eabbb5396b016ea69e9ba253c1621957"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1195,15 +1195,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-13T04:22:06+00:00"
+            "time": "2020-08-16T02:06:23+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.3.1",
+            "version": "dev-call_revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "6919596b278360c6eb73cefb829a0ac4adec1f0f"
+                "reference": "d8da32c018aae9ee3c8f7a3e0627589a14c883c1"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1228,7 +1228,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-10T15:04:18+00:00"
+            "time": "2020-08-14T18:15:51+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1555,11 +1555,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.7.4",
+            "version": "dev-call_revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "9809a6e6bef6cced231fff940da0d9c6139ef547"
+                "reference": "2c071cd7cfda945f252f7b89d2bb59781cfd84d1"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1573,7 +1573,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-12T19:20:39+00:00"
+            "time": "2020-08-14T18:15:51+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1730,21 +1730,21 @@
         },
         {
             "name": "composer/package-versions-deprecated",
-            "version": "1.10.99",
+            "version": "1.10.99.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/package-versions-deprecated.git",
-                "reference": "dd51b4443d58b34b6d9344cf4c288e621c9a826f"
+                "reference": "68c9b502036e820c33445ff4d174327f6bb87486"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/package-versions-deprecated/zipball/dd51b4443d58b34b6d9344cf4c288e621c9a826f",
-                "reference": "dd51b4443d58b34b6d9344cf4c288e621c9a826f",
+                "url": "https://api.github.com/repos/composer/package-versions-deprecated/zipball/68c9b502036e820c33445ff4d174327f6bb87486",
+                "reference": "68c9b502036e820c33445ff4d174327f6bb87486",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.1.0 || ^2.0",
-                "php": "^7"
+                "php": "^7 || ^8"
             },
             "replace": {
                 "ocramius/package-versions": "1.10.99"
@@ -1795,7 +1795,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-07-15T08:39:18+00:00"
+            "time": "2020-08-13T12:55:41+00:00"
         },
         {
             "name": "consoletvs/charts",
@@ -3199,16 +3199,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.7.1",
+            "version": "8.12.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "fda8a51ad0769d82ce7023255e52e9c45efc1e75"
+                "reference": "5a6e4e730de52f55882d2db27016e2916f8791e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/fda8a51ad0769d82ce7023255e52e9c45efc1e75",
-                "reference": "fda8a51ad0769d82ce7023255e52e9c45efc1e75",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/5a6e4e730de52f55882d2db27016e2916f8791e9",
+                "reference": "5a6e4e730de52f55882d2db27016e2916f8791e9",
                 "shasum": ""
             },
             "require": {
@@ -3263,7 +3263,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-07-25T15:34:01+00:00"
+            "time": "2020-08-13T17:48:08+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -8848,16 +8848,16 @@
         },
         {
             "name": "seld/jsonlint",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/jsonlint.git",
-                "reference": "ff2aa5420bfbc296cf6a0bc785fa5b35736de7c1"
+                "reference": "3d5eb71705adfa34bd34b993400622932b2f62fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/ff2aa5420bfbc296cf6a0bc785fa5b35736de7c1",
-                "reference": "ff2aa5420bfbc296cf6a0bc785fa5b35736de7c1",
+                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/3d5eb71705adfa34bd34b993400622932b2f62fd",
+                "reference": "3d5eb71705adfa34bd34b993400622932b2f62fd",
                 "shasum": ""
             },
             "require": {
@@ -8903,7 +8903,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-04-30T19:05:18+00:00"
+            "time": "2020-08-13T09:07:59+00:00"
         },
         {
             "name": "sentry/sdk",
@@ -8940,16 +8940,16 @@
         },
         {
             "name": "sentry/sentry",
-            "version": "2.4.2",
+            "version": "2.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "b3b4f4a08b184c3f22b208f357e8720ef42938b0"
+                "reference": "89fd1f91657b33ec9139f33f8a201eb086276103"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/b3b4f4a08b184c3f22b208f357e8720ef42938b0",
-                "reference": "b3b4f4a08b184c3f22b208f357e8720ef42938b0",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/89fd1f91657b33ec9139f33f8a201eb086276103",
+                "reference": "89fd1f91657b33ec9139f33f8a201eb086276103",
                 "shasum": ""
             },
             "require": {
@@ -9033,7 +9033,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2020-07-24T07:02:19+00:00"
+            "time": "2020-08-13T10:54:32+00:00"
         },
         {
             "name": "sentry/sentry-laravel",
@@ -14424,12 +14424,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/heroku/heroku-buildpack-php.git",
-                "reference": "11809152efa1c7fbe2101d28ef530d689d1e56b9"
+                "reference": "caa1d9171f3b3a88b31e81dc303066a77b9871c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/heroku/heroku-buildpack-php/zipball/11809152efa1c7fbe2101d28ef530d689d1e56b9",
-                "reference": "11809152efa1c7fbe2101d28ef530d689d1e56b9",
+                "url": "https://api.github.com/repos/heroku/heroku-buildpack-php/zipball/caa1d9171f3b3a88b31e81dc303066a77b9871c6",
+                "reference": "caa1d9171f3b3a88b31e81dc303066a77b9871c6",
                 "shasum": ""
             },
             "bin": [
@@ -14460,7 +14460,7 @@
                 "nginx",
                 "php"
             ],
-            "time": "2020-07-09T18:00:35+00:00"
+            "time": "2020-08-13T22:57:50+00:00"
         },
         {
             "name": "jkocik/laravel-profiler",
@@ -15453,16 +15453,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "5.2.0",
+            "version": "5.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "3170448f5769fe19f456173d833734e0ff1b84df"
+                "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/3170448f5769fe19f456173d833734e0ff1b84df",
-                "reference": "3170448f5769fe19f456173d833734e0ff1b84df",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/d870572532cd70bc3fab58f2e23ad423c8404c44",
+                "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44",
                 "shasum": ""
             },
             "require": {
@@ -15501,7 +15501,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2020-07-20T20:05:34+00:00"
+            "time": "2020-08-15T11:14:08+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -15917,6 +15917,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2019-09-17T06:23:10+00:00"
         },
         {
@@ -17454,6 +17455,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },

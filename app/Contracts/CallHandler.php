@@ -6,11 +6,15 @@
 
 namespace App\Contracts;
 
+use App\Algorithms\Calls\NextCallSuggestor\HandlerResponse;
+
 interface CallHandler
 {
-    //calculate how much time to wait before next call
-    public function getPatientOffset($ccmTime, $week);
-
-    //exec function
-    public function handle();
+    public function getNextCallDate(
+        int $patientId,
+        int $ccmTimeInSeconds,
+        int $currentWeekOfMonth,
+        int $successfulCallsThisMonth,
+        int $patientPreferredNumberOfMonthlyCalls
+    ): HandlerResponse;
 }
