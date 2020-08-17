@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Customer\AppConfig;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * A stand by nurse User is used by ops team to assign all care plans after CarePlan Approval by a CLH admin.
@@ -26,5 +27,12 @@ class StandByNurseUser
         }
 
         return null;
+    }
+
+    public static function user()
+    {
+        return \Cache::remember(self::STAND_BY_NURSE_USER_ID_NOVA_KEY.'_user_object', 2, function () {
+            return User::find(self::id());
+        });
     }
 }
