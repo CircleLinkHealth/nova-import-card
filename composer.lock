@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f3001e2d6a5da34822d1223d9d1bfa1",
+    "content-hash": "74bf5cb4c0483e2ca464721eb72a5c3f",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -899,17 +899,11 @@
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
-            "version": "v3.1.7",
+            "version": "v3.1.9",
             "source": {
                 "type": "git",
-                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
-                "reference": "d81ab94a80a723ff0201b3e8194a27f80d6184f4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/d81ab94a80a723ff0201b3e8194a27f80d6184f4",
-                "reference": "d81ab94a80a723ff0201b3e8194a27f80d6184f4",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/cerberus-gatekeeper-module.git",
+                "reference": "384cc9561cfc4c694f72b6ec9762b8eef70c9ddc"
             },
             "require": {
                 "illuminate/cache": "~5.0|~6.0|~7.0",
@@ -942,7 +936,11 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/Middleware/MiddlewareTest.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -978,7 +976,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2020-06-30T22:03:56+00:00"
+            "time": "2020-08-17T04:36:06+00:00"
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
