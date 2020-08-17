@@ -68,29 +68,8 @@ class SchedulerService
             $patient->patientInfo,
             $now
         );
-
-        //by default we do not assign a nurse
-        $nurseId = null;
-
-        //get patient's assigned nurse for this window
-        $patientNurses = $patient->patientInfo->getNurses();
-        if ($patientNurses) {
-            if (isset($patientNurses['temporary'])) {
-                $temp = $patientNurses['temporary'];
-                if ($now->isBetween($temp['from'], $temp['to'])) {
-                    $nurseId = $temp['user']->id;
-                }
-            } else {
-                $nurseId = $patientNurses['permanent']['user']->id;
-            }
-        } else {
-            //if we do not have an assigned nurse, look for last call attempt
-            /** @var Call $previousCall */
-            $previousCall = $this->getPreviousCall($patient);
-            if ($previousCall) {
-                $nurseId = $previousCall->outbound_cpm_id;
-            }
-        }
+        
+        $nurseId = app(NurseFinderEloquentRepository::class)->find($patient->id);
 
         if ( ! $scheduler) {
             $scheduler = 'call checker algorithm';

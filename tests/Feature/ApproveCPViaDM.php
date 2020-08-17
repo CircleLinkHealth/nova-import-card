@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\AppConfig\DMDomainForAutoApproval;
 use App\Call;
 use App\DirectMailMessage;
@@ -283,7 +284,7 @@ class ApproveCPViaDM extends CustomerTestCase
                 'attempt_note'    => $taskBody,
                 'scheduler'       => $this->provider()->id,
                 'inbound_cpm_id'  => $patient->id,
-                'outbound_cpm_id' => $patient->patientInfo->getNurse(),
+                'outbound_cpm_id' => $this->app->make(NurseFinderEloquentRepository::class)->find($patient->id),
                 'asap'            => true,
                 'note_id'         => $note->id,
             ]
@@ -338,7 +339,7 @@ class ApproveCPViaDM extends CustomerTestCase
                 'attempt_note'    => 'This is a task',
                 'scheduler'       => $this->provider()->id,
                 'inbound_cpm_id'  => $this->patient()->id,
-                'outbound_cpm_id' => $this->patient()->patientInfo->getNurse()->id,
+                'outbound_cpm_id' => $this->app->make(NurseFinderEloquentRepository::class)->find($this->patient()->id),
                 'asap'            => true,
                 'note_id'         => $note->id,
             ]
