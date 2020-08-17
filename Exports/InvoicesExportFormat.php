@@ -63,8 +63,6 @@ class InvoicesExportFormat
                 $payStructure = 'hourly';
             }
 
-            $this->sanitizedInvoiceData('nurseFullName', $invoice);
-
             return [
                 'Nurse'          => $this->sanitizedInvoiceData('nurseFullName', $invoice),
                 'Hour Total'     => $this->sanitizedInvoiceData('systemTimeInHours', $invoice),
