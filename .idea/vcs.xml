@@ -2,6 +2,21 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CcdaParserProcessorPhp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CerberusGatekeeper" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/ConditionCodeLookup" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Core" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CpmMigrations" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Customer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Eligibility" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Nurseinvoices" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Patientapi" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Raygun" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Revisionable" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SharedModels" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Sqlviews" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Timetracking" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Twofa" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Modules/CcdaParserProcessorPhp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Modules/CerberusGatekeeper" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Modules/ConditionCodeLookup" vcs="Git" />
