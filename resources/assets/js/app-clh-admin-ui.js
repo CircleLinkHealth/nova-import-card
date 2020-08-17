@@ -60,7 +60,6 @@ Vue.use(ServerTable, {}, false)
 
 Vue.component('nurse-daily-report', NurseDailyReport)
 Vue.component('v-datepicker', DatepickerComponent)
-Vue.component('call-mgmt-app', CallMgmtApp)
 Vue.component('call-mgmt-app-v2', CallMgmtAppV2)
 Vue.component('ca-director-panel', CaDirectorPanel)
 Vue.component('enrollee-list', EnrolleeList)
