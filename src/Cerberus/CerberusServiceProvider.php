@@ -45,8 +45,6 @@ class CerberusServiceProvider extends ServiceProvider
         }
 
         $this->bladeDirectives();
-
-        $this->registerUserObserver();
     }
 
     /**
