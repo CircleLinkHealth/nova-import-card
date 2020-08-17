@@ -19,17 +19,14 @@ class AttachChargeableServicesToPatient implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
-    /**
-     * @var User
-     */
+
     private User $patientUser;
-    
+
     public function __construct(User $patientUser)
     {
         $this->patientUser = $patientUser;
     }
-    
+
     public function handle()
     {
     }

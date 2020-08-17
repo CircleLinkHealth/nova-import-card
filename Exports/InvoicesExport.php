@@ -14,12 +14,12 @@ class InvoicesExport implements FromQuery, WithMapping
 {
     use Exportable;
 
-    public function query()
-    {
-    }
-    
     public function map($row): array
     {
         // TODO: Implement map() method.
+    }
+
+    public function query()
+    {
     }
 }

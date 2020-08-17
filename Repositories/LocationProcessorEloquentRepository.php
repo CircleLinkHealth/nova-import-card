@@ -16,17 +16,17 @@ class LocationProcessorEloquentRepository implements CustomerBillingProcessorRep
 {
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
-    
-    public function patientServices(int $locationId, Carbon $monthYear): Builder
-    {
-        return $this->approvablePatientServicesQuery($monthYear)
-            ->whereHas('patient.patientInfo', fn ($q) => $q->where('preferred_contact_location', $locationId));
-    }
-    
-    public function patients(int $locationId, Carbon $monthYear, int $pageSize):\Illuminate\Contracts\Pagination\LengthAwarePaginator
+
+    public function patients(int $locationId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->approvablePatientUsersQuery($monthYear)
             ->whereHas('patientInfo', fn ($q) => $q->where('preferred_contact_location', $locationId))
             ->paginate($pageSize);
+    }
+
+    public function patientServices(int $locationId, Carbon $monthYear): Builder
+    {
+        return $this->approvablePatientServicesQuery($monthYear)
+            ->whereHas('patient.patientInfo', fn ($q) => $q->where('preferred_contact_location', $locationId));
     }
 }

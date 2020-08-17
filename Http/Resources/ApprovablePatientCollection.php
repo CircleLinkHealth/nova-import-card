@@ -16,7 +16,7 @@ class ApprovablePatientCollection extends ResourceCollection
      * @var string
      */
     public $collects = ApprovablePatient::class;
-    
+
     /**
      * Transform the resource collection into an array.
      *

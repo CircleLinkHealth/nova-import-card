@@ -27,7 +27,7 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
 //        $this->registerTranslations();
         $this->registerViews();
 //        $this->registerConfig();
-    
+
         if ($this->app->runningInConsole()) {
 //        $this->registerFactories();
             $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');

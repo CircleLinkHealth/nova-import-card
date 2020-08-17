@@ -10,11 +10,11 @@ use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Mockery;
-use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
-use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
 use Tests\TestCase;
 
 class BillingProcessorsIntegrationTest extends TestCase
