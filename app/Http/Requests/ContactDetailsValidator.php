@@ -6,10 +6,12 @@
 
 namespace App\Http\Requests;
 
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class ContactDetailsValidator extends FormRequest
 {
@@ -36,16 +38,52 @@ class ContactDetailsValidator extends FormRequest
             'agentRelationship' => 'sometimes|alpha',
             'agentName'         => 'sometimes|alpha',
             'agentEmail'        => 'sometimes|email',
+            'phoneType'         => 'sometimes|required',
         ];
     }
 
+    /**
+     * @param $validator
+     */
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
             $input = $validator->getData();
+            $userId = $input['patientUserId'];
+            $phoneType = $input['phoneType'];
+
+            /** @var User $patientUser */
+            $patientUser = User::with('patientInfo.location', 'phoneNumbers', 'primaryPractice')
+                ->where('id', $userId)
+                ->first();
+
+            $userLocationExists = isset($patientUser->patientInfo->location->id);
+            $primaryLocationExists = isset($patientUser->primaryPractice->primary_location_id);
+
+            if (empty($patientUser)) {
+                Log::error("User [$userId] not found");
+                $validator->errors()->add('patientUserId', "User [$userId] not found");
+            }
+
+            if ($patientUser->phoneNumbers()->where('type', $phoneType)->exists()) {
+                $validator->errors()->add('phoneNumber', "Phone type '$phoneType' already exists for patient");
+            }
+
             if ( ! ImportPhones::validatePhoneNumber($input['phoneNumber'])) {
                 $validator->errors()->add('phoneNumber', 'Phone number is not a valid US number');
             }
+
+            if ( ! $userLocationExists && ! $primaryLocationExists) {
+                Log::error("Location for patient with user id: {$userId} not found");
+                $validator->errors()->add('patientUserId', 'User location is missing');
+            }
+
+            $this->request->add([
+                'patientUser' => $patientUser,
+                'locationId'  => $userLocationExists
+                    ? $patientUser->patientInfo->location->id
+                    : $patientUser->primaryPractice->primary_location_id,
+            ]);
         });
     }
 

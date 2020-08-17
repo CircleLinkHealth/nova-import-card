@@ -20,7 +20,6 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
@@ -70,7 +69,7 @@ class PatientController extends Controller
             $phones = $this->getAllNumbersOfPatient($patientUserId);
             foreach ($phones as $phone) {
                 // One trip to DB
-                $this->updatePreviousPrimaryPhone($phone, $phoneId);
+                $this->setPrimaryPhone($phone, $phoneId);
 
                 if ($phone->id === $phoneId) {
                     // One more trip to DB
@@ -183,9 +182,8 @@ class PatientController extends Controller
 
     public function saveNewAlternatePhoneNumber(ContactDetailsValidator $request)
     {
-        $input          = $request->validated();
-        $altPhoneNumber = $input['phoneNumber'];
-        $userId         = $input['patientUserId'];
+        $altPhoneNumber = $request->input('phoneNumber');
+        $userId         = $request->input('patientUserId');
 
         $altPhoneNumber = formatPhoneNumberE164($altPhoneNumber);
         /** @var User $patientUser */
@@ -193,10 +191,10 @@ class PatientController extends Controller
 
         $patientUser->patientInfo->update(
             [
-                'agent_name'         => $input['agentName'],
-                'agent_email'        => $input['agentEmail'],
+                'agent_name'         => $request->input('agentName'),
+                'agent_email'        => $request->input('agentEmail'),
                 'agent_telephone'    => strtolower($altPhoneNumber),
-                'agent_relationship' => $input['agentRelationship'],
+                'agent_relationship' => $request->input('agentRelationship'),
             ]
         );
 
@@ -205,47 +203,18 @@ class PatientController extends Controller
         ], 200);
     }
 
-    public function saveNewPhoneNumber(Request $request)
+    public function saveNewPhoneNumber(ContactDetailsValidator $request)
     {
-//        @todo: 1. Make a form request, 2. Handle alternate inputs.
         $phoneType   = $request->input('phoneType');
         $phoneNumber = $request->input('phoneNumber');
         $userId      = $request->input('patientUserId');
 
-        if ( ! ImportPhones::validatePhoneNumber($phoneNumber)) {
-            return response()->json([
-                'message' => 'Phone number is not a valid US number',
-            ]);
-        }
-
         $phoneNumber = formatPhoneNumberE164($phoneNumber);
         /** @var User $patientUser */
-        $patientUser = User::with('patientInfo', 'phoneNumbers')->where('id', $userId)->firstOrFail();
-
+        $patientUser  = $request->get('patientUser');
         $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id);
-        $locationId   = optional($patientUser->patientInfo)->location->id ?? null;
-        $numberExists = $patientUser->phoneNumbers()->where('type', $phoneType)->exists();
+        $locationId   = $request->get('locationId');
 
-        if (is_null($locationId)) {
-            $patientWithPractice = $patientUser->loadMissing('primaryPractice');
-            try {
-                $practice = $patientWithPractice->primaryPractice;
-            } catch (\Exception $e) {
-                throw new \Exception("Practice for patient with user id: {$patientUser->id} not found");
-            }
-
-            $locationId = $practice->primary_location_id;
-        }
-
-        if ($numberExists) {
-            return response()->json(
-                [
-                    'message' => "The Phone Type Number '$phoneType' already exists for this patient",
-                ],
-            );
-        }
-
-        // One trip to DB
         $newPhoneNumber = PhoneNumber::firstOrCreate(
             [
                 'user_id' => $userId,
@@ -258,17 +227,12 @@ class PatientController extends Controller
             ]
         );
 
-        //should only be one
-        $existingPrimaryNumbers = $phoneNumbers->where('is_primary', '=', true)->all();
-        if ($request->input('makePrimary') && ! empty($existingPrimaryNumbers)) {
-            foreach ($existingPrimaryNumbers as $number) {
-                // One more trip to DB
-                $this->updatePreviousPrimaryPhone($number, $newPhoneNumber->id);
-            }
+        $existingPrimaryNumber = $phoneNumbers->where('is_primary', '=', true)->first();
+        if ($request->input('makePrimary') && ! empty($existingPrimaryNumber)) {
+            $this->setPrimaryPhone($existingPrimaryNumber, $newPhoneNumber->id);
         }
 
         return response()->json([
-            //            'data'    => $phoneNumber,
             'message' => 'Phone number has been saved!',
         ], 200);
     }
@@ -772,6 +736,7 @@ class PatientController extends Controller
         ];
     }
 
+    private function setPrimaryPhone(PhoneNumber $phone, int $newPhoneId)
     /**
      * @return \App\PhoneNumber[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
