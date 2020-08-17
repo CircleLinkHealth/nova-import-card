@@ -27,7 +27,7 @@ class CreateChargeableLocationMonthlySummariesTable extends Migration
      */
     public function up()
     {
-        Schema::create('chargeable_pocation_monthly_summaries', function (Blueprint $table) {
+        Schema::create('chargeable_location_monthly_summaries', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('location_id');
             $table->unsignedInteger('chargeable_service_id');
