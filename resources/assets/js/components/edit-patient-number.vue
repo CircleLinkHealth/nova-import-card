@@ -514,7 +514,7 @@
                 this.loading = true;
                 this.resetData();
                 axios.post('/manage-patients/get-phones', {
-                    userId:this.userId,
+                    patientUserId:this.userId,
                     requestIsFromCallPage:this.callEnabled,
                 })
                     .then((response => {
@@ -536,7 +536,7 @@
                         this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
-                    console.log(error.message);
+                    this.responseErrorMessage(error.response);
                 });
             },
 

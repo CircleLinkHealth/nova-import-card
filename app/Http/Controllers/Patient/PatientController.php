@@ -183,7 +183,7 @@ class PatientController extends Controller
 
         $altPhoneNumber = formatPhoneNumberE164($altPhoneNumber);
         /** @var User $patientUser */
-        $patientUser = User::with('patientInfo')->where('id', $userId)->firstOrFail();
+        $patientUser = $request->get('patientUser');
 
         $patientUser->patientInfo->update(
             [

@@ -42,6 +42,14 @@ class ContactDetailsValidator extends FormRequest
         ];
     }
 
+    public static function validateUser(User $patientUser, Validator $validator)
+    {
+        if (empty($patientUser)) {
+            Log::error("User [$patientUser->id] not found");
+            $validator->errors()->add('patientUserId', "User [$patientUser->id] not found");
+        }
+    }
+
     /**
      * @param $validator
      */
@@ -50,22 +58,19 @@ class ContactDetailsValidator extends FormRequest
         $validator->after(function ($validator) {
             $input = $validator->getData();
             $userId = $input['patientUserId'];
-            $phoneType = $input['phoneType'];
+            $phoneType = isset($input['phoneType']) ? $input['phoneType'] : null;
 
             /** @var User $patientUser */
             $patientUser = User::with('patientInfo.location', 'phoneNumbers', 'primaryPractice')
                 ->where('id', $userId)
                 ->first();
 
+            self::validateUser($patientUser, $validator);
+
             $userLocationExists = isset($patientUser->patientInfo->location->id);
             $primaryLocationExists = isset($patientUser->primaryPractice->primary_location_id);
 
-            if (empty($patientUser)) {
-                Log::error("User [$userId] not found");
-                $validator->errors()->add('patientUserId', "User [$userId] not found");
-            }
-
-            if ($patientUser->phoneNumbers()->where('type', $phoneType)->exists()) {
+            if ( ! is_null($phoneType) && $patientUser->phoneNumbers()->where('type', $phoneType)->exists()) {
                 $validator->errors()->add('phoneNumber', "Phone type '$phoneType' already exists for patient");
             }
 

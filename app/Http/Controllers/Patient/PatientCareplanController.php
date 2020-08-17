@@ -12,7 +12,9 @@ use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
+use App\Http\Requests\DeleteAlternateContactDetails;
 use App\Http\Requests\DeletePatientPhone;
+use App\Http\Requests\PatientAltContactGet;
 use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
@@ -58,9 +60,8 @@ class PatientCareplanController extends Controller
         return $this->editOrCreateDemographics($request);
     }
 
-    public function deleteAlternateContact(Request $request)
+    public function deleteAlternateContact(DeleteAlternateContactDetails $request)
     {
-//        @todo: FormRequest validation user_id.
         $valuesToDelete = [
             'agent_telephone' => null,
         ];
@@ -74,21 +75,11 @@ class PatientCareplanController extends Controller
             ];
         }
 
-        $altContactDeleteQuery = Patient::whereUserId($request->input('patientUserId'))->update(
-            $valuesToDelete
-        );
-
-        $message   = 'Alternate Contact has been deleted';
-        $errorCode = 200;
-
-        if ( ! $altContactDeleteQuery) {
-            $message   = 'Something went wrong. Alternate Contact not deleted.';
-            $errorCode = 400;
-        }
+        $request->get('patient')->update($valuesToDelete);
 
         return response()->json([
-            'message' => $message,
-        ], $errorCode);
+            'message' => 'Alternate Contact has been deleted',
+        ], 200);
     }
 
     public function deletePhoneNumber(DeletePatientPhone $request)
@@ -102,26 +93,10 @@ class PatientCareplanController extends Controller
         ], 200);
     }
 
-    public static function getPatientContactDetails(Request $request)
+    public static function getPatientContactDetails(PatientAltContactGet $request)
     {
-        if (empty($request->input('userId'))) {
-            return response()->json([
-                'message' => 'User id is null',
-            ], 400);
-        }
-
         $isRequestFromCallPage = $request->input('requestIsFromCallPage');
-
-        /** @var User $patient */
-        $patient = User::with('phoneNumbers', 'patientInfo')
-            ->where('id', '=', $request->input('userId'))
-            ->first();
-
-        if (empty($patient)) {
-            return response()->json([
-                'message' => "User [$patient->id] does not exist.",
-            ], 400);
-        }
+        $patient               = $request->get('patientUser');
 
         $phoneNumbers = PatientController::phoneNumbersFor($patient)->transform(function ($phone) {
             return [
