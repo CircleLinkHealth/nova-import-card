@@ -103,7 +103,7 @@ class Kernel extends ConsoleKernel
             ->everyTwoMinutes();
 
         $schedule->command(RemoveDuplicateScheduledCalls::class)
-            ->everyMinute();
+            ->everyFiveMinutes();
 
         $schedule->command(FaxAuditReportsAtPracticePreferredDayTime::class)
             ->onOneServer()
