@@ -10,7 +10,7 @@ use App\Rules\DateBeforeUsingCarbon;
 use App\Rules\DateValidatorMultipleFormats;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ScheduleManualCall extends FormRequest
+class StoreManualScheduledCall extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

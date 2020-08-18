@@ -59,10 +59,12 @@ class PatientProgramSecurity
         $patientId = $request->route()->parameter('patientId');
 
         if ($patientId) {
-            $patient = User::whereId($patientId)
-                ->intersectPracticesWith(auth()->user())
-                ->has('patientInfo')
-                ->exists();
+            $patient = \Cache::remember("user_{$loggedInUser->id}_can_see_patient_$patientId", 2, function () use ($patientId, $loggedInUser) {
+                return User::whereId($patientId)
+                    ->intersectPracticesWith($loggedInUser)
+                    ->has('patientInfo')
+                    ->exists();
+            });
 
             if ( ! $patient) {
                 return response('Could not locate patient.', 401);

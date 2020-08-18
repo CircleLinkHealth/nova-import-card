@@ -17,6 +17,7 @@ launch.json
 .phpstorm.meta.php
 storage/oauth-private.key
 storage/oauth-public.key
+storage/preload.php
 public/js/uploader.js
 public/js/uploader.js.map
 storage/patient/pdf-careplans/

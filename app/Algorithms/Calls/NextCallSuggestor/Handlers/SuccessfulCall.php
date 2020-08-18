@@ -12,17 +12,17 @@ use App\Contracts\CallHandler;
 
 class SuccessfulCall implements CallHandler
 {
-    public function createSchedulerInfoString(Suggestion $prediction)
+    public function createSchedulerInfoString(Suggestion $suggestion)
     {
         $status = '<span style="color: #008000">successfully</span>';
 
-        $result = 'You just called '.$prediction->patient->getFullName()
+        $result = 'You just called '.$suggestion->patient->getFullName()
                   .' '.$status.' in <b>week '
                   .now()->weekOfMonth.'. </b> <br/> <br/> <b>'
                   .'Please confirm or amend the above next predicted call time. </b>';
 
-        if (isset($prediction->nurse) && $prediction->nurse !== auth()->id() && isset($prediction->nurse_display_name)) {
-            $nurseName = $prediction->nurse_display_name;
+        if (isset($suggestion->nurse) && $suggestion->nurse !== auth()->id() && isset($suggestion->nurse_display_name)) {
+            $nurseName = $suggestion->nurse_display_name;
             $result .= "<br/><br/>Note: Next call will be assigned to <b>$nurseName</b>";
         }
 

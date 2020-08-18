@@ -8,7 +8,6 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
-use App\Http\Requests\ScheduleManualCall;
 use App\Http\Resources\Call as CallResource;
 use App\Rules\DateBeforeUsingCarbon;
 use App\Services\Calls\SchedulerService;
@@ -125,53 +124,6 @@ class CallController extends Controller
         $request->merge(['is_reschedule' => true]);
 
         return $this->create($request);
-    }
-    
-    /**
-     * @param Request $request
-     * @param $patientId
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function scheduleManualCall(ScheduleManualCall $request, $patientId)
-    {
-        $input = $request->all();
-
-        $window_start = Carbon::parse($input['window_start'])->format('H:i');
-        $window_end   = Carbon::parse($input['window_end'])->format('H:i');
-
-        //If the suggested date doesn't match the one in the input,
-        //the scheduler has changed the date, mark it.
-        $scheduler = ($input['suggested_date'] == $input['date'])
-            ? 'core algorithm'
-            : Auth::user()->id;
-
-        $is_manual = 'core algorithm' !== $scheduler;
-
-        //We are storing the current caller as the next scheduled call's outbound cpm_id
-        $this->scheduler->storeScheduledCall(
-            $patientId,
-            $window_start,
-            $window_end,
-            $input['date'],
-            $scheduler,
-            optional(app(NurseFinderEloquentRepository::class)->find($patientId))->id,
-            isset($input['attempt_note'])
-                ? $input['attempt_note']
-                : '',
-            $is_manual
-        );
-
-        //not used ??
-        //$patient = Patient::where('user_id', intval($patientId))->first();
-
-        return redirect()->route('patient.note.index', [
-            'patientId' => $patientId,
-        ])
-            ->with('messages', ['Successfully Created Note']);
-    }
-
-    public function show($id)
-    {
     }
 
     public function showCallsForPatient($patientId)

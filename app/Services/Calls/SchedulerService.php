@@ -6,9 +6,6 @@
 
 namespace App\Services\Calls;
 
-use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
-use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
-use App\Algorithms\Calls\NextCallSuggestor\Suggestor as NextCallDateSuggestor;
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
@@ -68,7 +65,7 @@ class SchedulerService
             $patient->patientInfo,
             $now
         );
-        
+
         $nurseId = app(NurseFinderEloquentRepository::class)->find($patient->id);
 
         if ( ! $scheduler) {
@@ -706,27 +703,15 @@ class SchedulerService
     }
 
     /**
-     * Success is the call's status
-     * (true for 'reached', false for 'not reached').
-     *
-     * Update today's call based on note.
-     * Check if a next call is already scheduled.
-     * If a call is scheduled return null.
-     * If no call is scheduled return a prediction.
-     *
-     * @param $patient
-     * @param $noteId
-     * @param $callStatus - 'reached', 'not reached', 'ignored'
-     * @param mixed $attestedProblems
-     *
-     * @return array
+     * @param $callStatus
+     * @param null $attestedProblems
      */
-    public function updateTodaysCallAndPredictNext(
+    public function updateTodaysCall(
         User $patient,
         Note $note,
         $callStatus,
         $attestedProblems = null
-    ) {
+    ): void {
         $scheduled_call = $this->updateOrCreateCallWithNote(
             $note,
             $scheduled_call = $this->getTodaysCall($patient->id),
@@ -741,15 +726,5 @@ class SchedulerService
             Call::REACHED == $callStatus,
             ! is_null($scheduled_call) && SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type
         );
-
-        if (SchedulerService::getNextScheduledCall($patient->id, true)) {
-            return null;
-        }
-
-        $prediction = app(NextCallDateSuggestor::class)->handle($patient, Call::REACHED == $callStatus ? new SuccessfulCall() : new UnsuccessfulCall());
-
-        $prediction->successful = Call::REACHED == $callStatus;
-
-        return $prediction;
     }
 }
