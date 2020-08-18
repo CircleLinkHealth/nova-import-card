@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Algorithms\Calls\NextCallSuggestor\Suggestion;
 use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\CarePlanWasApproved;
@@ -722,15 +721,6 @@ class NotesController extends Controller
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                     }
 
-                    if ( ! $is_saas && ! $is_withdrawn) {
-                        $prediction = $schedulerService->updateTodaysCallAndPredictNext(
-                            $patient,
-                            $note,
-                            $call_status,
-                            $attestedProblems
-                        );
-                    }
-
                     $info->save();
 
                     if ($is_withdrawn || $is_saas) {
@@ -740,19 +730,25 @@ class NotesController extends Controller
                         );
                     }
 
-                    $seconds = $patient->getCcmTime();
+                    $schedulerService->updateTodaysCall(
+                        $patient,
+                        $note,
+                        $call_status,
+                        $attestedProblems
+                    );
 
-                    $ccm_above = false;
-                    if ($seconds > 1199) {
-                        $ccm_above = true;
-                    } elseif ($seconds > 3599) {
-                        $ccm_above = true;
+                    if (SchedulerService::getNextScheduledCall($patient->id, true)) {
+                        return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
+                            'messages',
+                            ['Successfully Created Note']
+                        );
                     }
+                    \Session::flash(ManualCallController::SESSION_KEY, new \App\ValueObjects\CreateManualCallAfterNote($patient, $call_status));
 
-                    return view('wpUsers.patient.calls.create', ($prediction ?? new Suggestion())->toArray())
-                        ->with('ccm_above', $ccm_above)
-                        ->with('patient', $patient)
-                        ->with('messages', ['Successfully Created Note!']);
+                    return redirect()->route('manual.call.create', ['patientId' => $patientId])->with(
+                        'messages',
+                        ['Successfully Created Note']
+                    );
                 }
             }
 

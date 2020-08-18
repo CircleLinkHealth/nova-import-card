@@ -1021,10 +1021,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'CallController@create',
                 'as'   => 'call.create',
             ])->middleware('permission:call.create');
-            Route::post('schedule', [
-                'uses' => 'CallController@scheduleManualCall',
-                'as'   => 'call.schedule',
-            ])->middleware('permission:call.create');
             Route::get('edit/{actId}', [
                 'uses' => 'CallController@edit',
                 'as'   => 'call.edit',
@@ -1037,6 +1033,17 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'CallController@reschedule',
                 'as'   => 'call.reschedule',
             ])->middleware('permission:call.update');
+        });
+    
+        Route::group(['prefix' => 'manual-call', 'middleware' => 'permission:call.create'], function () {
+            Route::get('create', [
+                'uses' => 'ManualCallController@create',
+                'as'   => 'manual.call.create',
+            ]);
+            Route::post('store', [
+                'uses' => 'ManualCallController@store',
+                'as'   => 'manual.call.store',
+            ]);
         });
 
         Route::get('family-members', [

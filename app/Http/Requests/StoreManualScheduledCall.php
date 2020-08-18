@@ -9,7 +9,7 @@ namespace App\Http\Requests;
 use App\Rules\DateBeforeUsingCarbon;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ScheduleManualCall extends FormRequest
+class StoreManualScheduledCall extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,8 +31,8 @@ class ScheduleManualCall extends FormRequest
         return [
             'suggested_date' => 'required|date',
             'date'           => ['required', 'date:after_or_equal:today', new DateBeforeUsingCarbon()],
-            'window_start'   => 'required|date_format:H:i:s',
-            'window_end'     => 'required|date_format:H:i:s',
+            'window_start'   => 'required|date_format:H:i',
+            'window_end'     => 'required|date_format:H:i',
             'attempt_note'   => 'sometimes',
         ];
     }

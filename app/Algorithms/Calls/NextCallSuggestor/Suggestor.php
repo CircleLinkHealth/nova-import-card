@@ -6,6 +6,7 @@
 
 namespace App\Algorithms\Calls\NextCallSuggestor;
 
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestion as NextCallSuggestion;
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
@@ -24,7 +25,7 @@ class Suggestor
                 $this->formatAlgoDataForView(
                     $this->getNextPatientWindow(
                         $this->getNextCallDate(
-                            $this->initializePrediction($patient),
+                            $this->initializePrediction($patient, $handler),
                             $handler
                         )
                     )
@@ -88,8 +89,8 @@ class Suggestor
     {
         if ('Call This Weekend' != $prediction->attempt_note) {
             $next_predicted_contact_window['day']          = $prediction->nextCallDate->next(Carbon::SATURDAY)->toDateString();
-            $next_predicted_contact_window['window_start'] = '10:00:00';
-            $next_predicted_contact_window['window_end']   = '17:00:00';
+            $next_predicted_contact_window['window_start'] = '10:00';
+            $next_predicted_contact_window['window_end']   = '17:00';
         } elseif ($prediction->patient->patientInfo) {
             $next_predicted_contact_window = (new PatientContactWindow())
                 ->getEarliestWindowForPatientFromDate(
@@ -98,8 +99,8 @@ class Suggestor
                 );
         } else {
             $next_predicted_contact_window['day']          = $prediction->nextCallDate->toDateString();
-            $next_predicted_contact_window['window_start'] = '10:00:00';
-            $next_predicted_contact_window['window_end']   = '17:00:00';
+            $next_predicted_contact_window['window_start'] = '10:00';
+            $next_predicted_contact_window['window_end']   = '17:00';
         }
 
         $prediction->date         = $next_predicted_contact_window['day'];
@@ -116,10 +117,11 @@ class Suggestor
         return $prediction;
     }
 
-    private function initializePrediction(User $patient): NextCallSuggestion
+    private function initializePrediction(User $patient, CallHandler $handler): NextCallSuggestion
     {
         $prediction                         = new NextCallSuggestion();
         $prediction->patient                = $patient;
+        $prediction->successful             = $handler instanceof SuccessfulCall;
         $prediction->ccmTimeInSeconds       = $prediction->patient->getCcmTime();
         $prediction->no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth(
             $prediction->patient->id,
