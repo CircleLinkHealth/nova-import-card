@@ -149,6 +149,7 @@ class Call extends BaseModel implements AttachableToNotification
 
     public function attachAttestedProblems(array $attestedProblems)
     {
+        //todo: revisit and fix
         $summary = PatientMonthlySummary::where('patient_id', $this->inbound_cpm_id)
             ->getCurrent()
             ->first();
@@ -168,6 +169,13 @@ class Call extends BaseModel implements AttachableToNotification
     public function attestedProblems()
     {
         return $this->belongsToMany(Problem::class, 'call_problems', 'call_id', 'ccd_problem_id')
+            //todo: add attestation pivot model - maybe we can query directly, or relate that to the patient user directly.
+            ->withPivot([
+                'chargeable_month',
+                'patient_user_id',
+                'ccd_problem_name',
+                'ccd_problem_icd_10_code',
+            ])
             ->withTimestamps();
     }
 
