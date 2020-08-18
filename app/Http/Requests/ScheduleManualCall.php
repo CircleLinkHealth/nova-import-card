@@ -7,6 +7,7 @@
 namespace App\Http\Requests;
 
 use App\Rules\DateBeforeUsingCarbon;
+use App\Rules\DateValidatorMultipleFormats;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ScheduleManualCall extends FormRequest
@@ -28,12 +29,20 @@ class ScheduleManualCall extends FormRequest
      */
     public function rules()
     {
+        $acceptedDateFormats = ['H:i', 'H:i:s'];
+
         return [
             'suggested_date' => 'required|date',
             'date'           => ['required', 'date:after_or_equal:today', new DateBeforeUsingCarbon()],
-            'window_start'   => 'required|date_format:H:i',
-            'window_end'     => 'required|date_format:H:i',
-            'attempt_note'   => 'sometimes',
+            'window_start'   => [
+                'required',
+                new DateValidatorMultipleFormats($acceptedDateFormats),
+            ],
+            'window_end' => [
+                'required',
+                new DateValidatorMultipleFormats($acceptedDateFormats),
+            ],
+            'attempt_note' => 'sometimes',
         ];
     }
 }
