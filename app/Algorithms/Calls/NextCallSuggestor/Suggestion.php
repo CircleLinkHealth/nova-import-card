@@ -13,8 +13,9 @@ use Illuminate\Contracts\Support\Arrayable;
 class Suggestion implements Arrayable
 {
     public string $attempt_note;
+    public bool $ccm_above;
     public bool $ccm_time_achieved;
-    public int $ccmTimeInSeconds;
+    public int $ccm_time_in_seconds;
     public string $date;
     public string $formatted_monthly_time;
     public string $logic;
@@ -39,6 +40,7 @@ class Suggestion implements Arrayable
         return [
             'attempt_note'           => $this->attempt_note ?? null,
             'ccm_time_achieved'      => $this->ccm_time_achieved ?? null,
+            'ccm_above'              => $this->ccm_above ?? null,
             'date'                   => $this->date ?? null,
             'formatted_monthly_time' => $this->formatted_monthly_time ?? null,
             'logic'                  => $this->logic ?? null,
@@ -52,7 +54,7 @@ class Suggestion implements Arrayable
             'window_end'             => $this->window_end ?? null,
             'window_match'           => $this->window_match ?? null,
             'window_start'           => $this->window_start ?? null,
-            'ccmTimeInSeconds'       => $this->ccmTimeInSeconds ?? null,
+            'ccmTimeInSeconds'       => $this->ccm_time_in_seconds ?? null,
         ];
     }
 }

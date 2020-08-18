@@ -6,15 +6,16 @@
 
 namespace App\ValueObjects;
 
+use App\Contracts\CallHandler;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Support\Arrayable;
 
 class CreateManualCallAfterNote implements Arrayable
 {
     /**
-     * @var string
+     * @var CallHandler
      */
-    private string $callStatus;
+    private CallHandler $callHandler;
     /**
      * @var User|User
      */
@@ -24,10 +25,23 @@ class CreateManualCallAfterNote implements Arrayable
      * CreateManualCallAfterNote constructor.
      * @param mixed|string $lastCallStatus
      */
-    public function __construct(User $patient, string $lastCallStatus)
+    public function __construct(User $patient, CallHandler $callHandler)
     {
-        $this->patient    = $patient;
-        $this->callStatus = $lastCallStatus;
+        $this->patient     = $patient;
+        $this->callHandler = $callHandler;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getCallHandler()
+    {
+        return $this->callHandler;
+    }
+
+    public function getPatient(): User
+    {
+        return $this->patient;
     }
 
     /**
@@ -38,24 +52,8 @@ class CreateManualCallAfterNote implements Arrayable
     public function toArray()
     {
         return [
-            'callStatus' => $this->callStatus,
-            'patient'    => $this->patient,
+            'callHandler' => $this->callHandler,
+            'patient'     => $this->patient,
         ];
-    }
-    
-    /**
-     * @return mixed|string
-     */
-    public function getCallStatus()
-    {
-        return $this->callStatus;
-    }
-    
-    /**
-     * @return User
-     */
-    public function getPatient(): User
-    {
-        return $this->patient;
     }
 }

@@ -6,6 +6,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
 use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\CarePlanWasApproved;
@@ -24,6 +26,7 @@ use App\Services\CPM\CpmMedicationService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\NoteService;
 use App\Services\PatientCustomEmail;
+use App\ValueObjects\CreateManualCallAfterNote;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -743,7 +746,7 @@ class NotesController extends Controller
                             ['Successfully Created Note']
                         );
                     }
-                    \Session::flash(ManualCallController::SESSION_KEY, new \App\ValueObjects\CreateManualCallAfterNote($patient, $call_status));
+                    \Session::flash(ManualCallController::SESSION_KEY, new CreateManualCallAfterNote($patient, Call::REACHED === $call_status ? new SuccessfulCall() : new UnsuccessfulCall()));
 
                     return redirect()->route('manual.call.create', ['patientId' => $patientId])->with(
                         'messages',
