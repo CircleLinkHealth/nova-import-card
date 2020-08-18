@@ -18,6 +18,9 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class Suggestor
 {
+    const DEFAULT_WINDOW_END   = '17:00:00';
+    const DEFAULT_WINDOW_START = '10:00:00';
+
     public function handle(User $patient, CallHandler $handler)
     {
         return $this->getPredicament(
@@ -89,8 +92,8 @@ class Suggestor
     {
         if ('Call This Weekend' != $prediction->attempt_note) {
             $next_predicted_contact_window['day']          = $prediction->nextCallDate->next(Carbon::SATURDAY)->toDateString();
-            $next_predicted_contact_window['window_start'] = '10:00';
-            $next_predicted_contact_window['window_end']   = '17:00';
+            $next_predicted_contact_window['window_start'] = self::DEFAULT_WINDOW_START;
+            $next_predicted_contact_window['window_end']   = self::DEFAULT_WINDOW_END;
         } elseif ($prediction->patient->patientInfo) {
             $next_predicted_contact_window = (new PatientContactWindow())
                 ->getEarliestWindowForPatientFromDate(
@@ -99,8 +102,8 @@ class Suggestor
                 );
         } else {
             $next_predicted_contact_window['day']          = $prediction->nextCallDate->toDateString();
-            $next_predicted_contact_window['window_start'] = '10:00';
-            $next_predicted_contact_window['window_end']   = '17:00';
+            $next_predicted_contact_window['window_start'] = self::DEFAULT_WINDOW_START;
+            $next_predicted_contact_window['window_end']   = self::DEFAULT_WINDOW_END;
         }
 
         $prediction->date         = $next_predicted_contact_window['day'];
