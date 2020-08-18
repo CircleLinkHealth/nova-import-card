@@ -12,13 +12,13 @@ use Illuminate\Contracts\Support\Arrayable;
 class CreateManualCallAfterNote implements Arrayable
 {
     /**
-     * @var mixed|string
+     * @var string
      */
-    private $callStatus;
+    private string $callStatus;
     /**
      * @var User|User
      */
-    private $patient;
+    private User $patient;
 
     /**
      * CreateManualCallAfterNote constructor.
