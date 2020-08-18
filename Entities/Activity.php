@@ -9,6 +9,7 @@ namespace CircleLinkHealth\TimeTracking\Entities;
 use App\CcmTimeApiLog;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -102,6 +103,7 @@ class Activity extends BaseModel
         'provider_id',
         'logger_id',
         'comment_id',
+        'chargeable_service_id',
         'is_behavioral',
         'logged_from',
         'performed_at',
@@ -297,5 +299,9 @@ class Activity extends BaseModel
         }
 
         return $raw;
+    }
+    
+    public function chargeableService(){
+        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
     }
 }
