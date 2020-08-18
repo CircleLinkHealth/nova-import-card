@@ -91,7 +91,7 @@ class Suggestor
 
     private function getNextPatientWindow(NextCallSuggestion $suggestion)
     {
-        if ('Call This Weekend' != $suggestion->attempt_note) {
+        if ('Call This Weekend' == $suggestion->attempt_note) {
             $next_predicted_contact_window['day']          = $suggestion->nextCallDate->next(Carbon::SATURDAY)->toDateString();
             $next_predicted_contact_window['window_start'] = self::DEFAULT_WINDOW_START;
             $next_predicted_contact_window['window_end']   = self::DEFAULT_WINDOW_END;
