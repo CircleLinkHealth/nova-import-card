@@ -73,7 +73,7 @@ class PatientController extends Controller
             ->first();
 
         if ( ! empty($currentPrimaryPhone)) {
-            $this->unsetCurrentPrimaryNumber($currentPrimaryPhone, $newPrimaryPhoneId);
+            $this->unsetCurrentPrimaryNumber($currentPrimaryPhone);
         }
 
         $patientUser->phoneNumbers()
@@ -206,8 +206,15 @@ class PatientController extends Controller
         $phoneNumber = formatPhoneNumberE164($phoneNumber);
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
-//        $phoneNumbers = $patientUser->phoneNumbers();
-        $locationId = $request->get('locationId');
+        $locationId  = $request->get('locationId');
+
+        $existingPrimaryNumber = $patientUser->phoneNumbers
+            ->where('is_primary', '=', true)
+            ->first();
+
+        if ($request->input('makePrimary') && ! empty($existingPrimaryNumber)) {
+            $this->unsetCurrentPrimaryNumber($existingPrimaryNumber);
+        }
 
         /** @var PhoneNumber $newPhoneNumber */
         $newPhoneNumber = $patientUser->phoneNumbers()->firstOrCreate(
@@ -221,14 +228,6 @@ class PatientController extends Controller
                 'location_id' => $locationId,
             ]
         );
-
-        $existingPrimaryNumber = $patientUser->phoneNumbers
-            ->where('is_primary', '=', true)
-            ->first();
-
-        if ($request->input('makePrimary') && ! empty($existingPrimaryNumber)) {
-            $this->unsetCurrentPrimaryNumber($existingPrimaryNumber, $newPhoneNumber->id);
-        }
 
         return response()->json([
             'message' => 'Phone number has been saved!',
@@ -718,7 +717,7 @@ class PatientController extends Controller
         ];
     }
 
-    private function unsetCurrentPrimaryNumber(PhoneNumber $currentPrimaryPhone, int $newPrimaryPhoneId)
+    private function unsetCurrentPrimaryNumber(PhoneNumber $currentPrimaryPhone)
     /**
      * @return \App\PhoneNumber[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
@@ -729,9 +728,7 @@ class PatientController extends Controller
 
     private function updatePreviousPrimaryPhone(PhoneNumber $phone, int $newPhoneId)
     {
-        if ($currentPrimaryPhone->id !== $newPrimaryPhoneId && $currentPrimaryPhone->is_primary) {
-            $currentPrimaryPhone->is_primary = false;
-            $currentPrimaryPhone->save();
-        }
+        $currentPrimaryPhone->is_primary = false;
+        $currentPrimaryPhone->save();
     }
 }
