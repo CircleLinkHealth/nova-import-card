@@ -16,6 +16,15 @@
         </script>
     @endpush
 
+    <div class="col-lg-8 col-lg-offset-2">
+        <div>
+            @include('errors.messages')
+        </div>
+        <div>
+            @include('errors.errors')
+        </div>
+    </div>
+
     <div id="confirmButtonModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
 
@@ -48,7 +57,7 @@
                     @endif
                 </div>
                 {!!
-                Form::open(['url' => route('call.schedule', ['patientId' => $patient->id]), 'method' => 'POST', 'id' => 'sched-call-form', 'class' => 'form-prevent-multi-submit'])
+                Form::open(['url' => route('manual.call.store', ['patientId' => $patient->id]), 'method' => 'POST', 'id' => 'sched-call-form', 'class' => 'form-prevent-multi-submit'])
                 !!}
 
                 <div class="form-block col-md-4" style="padding-top: 0px">
