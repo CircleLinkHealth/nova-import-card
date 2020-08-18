@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "639fe7bea0b41e367cf22c99fa36f540",
+    "content-hash": "0dcbe96506a5be660a8ea58a10d5c557",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -897,7 +897,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "dee205f202e5e33b98e329f69770de46704cb9f2"
+                "reference": "1cca567552c89f8059c4261027644a03a5f3ba96"
             },
             "type": "laravel-module",
             "extra": {
@@ -933,7 +933,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-08-18T14:50:40+00:00"
+            "time": "2020-08-18T15:52:33+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1199,11 +1199,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-billing_revamp",
+            "version": "dev-ROAD-288-billing-new-schema-models",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "91845dc7eabbb5396b016ea69e9ba253c1621957"
+                "reference": "ea98ede991559e341550f92143435f6aebf57d5d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1237,7 +1237,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-16T02:06:23+00:00"
+            "time": "2020-08-18T15:52:33+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
