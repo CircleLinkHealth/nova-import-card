@@ -27,7 +27,8 @@ trait ApprovablePatientUsersQuery
                 $problem->with(['cpmProblem', 'codes', 'icd10Codes']);
             },
             'chargeableMonthlySummary' => function ($q) use ($monthYear) {
-                $q->createdOn($monthYear, 'month_year');
+                $q->with(['chargeableService'])
+                    ->createdOn($monthYear, 'month_year');
             },
         ]);
     }

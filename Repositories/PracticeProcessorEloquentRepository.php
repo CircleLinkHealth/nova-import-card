@@ -25,6 +25,7 @@ class PracticeProcessorEloquentRepository implements CustomerBillingProcessorRep
 
     public function patientServices(int $customerModelId, Carbon $monthYear): Builder
     {
+        //todo: fix relationship name
         return $this->approvablePatientServicesQuery($monthYear)
             ->whereHas('patient', fn ($q) => $q->ofPractice($customerModelId));
     }

@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\CcmBilling\Entities;
 
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Database\Eloquent\Model;
 
-class ChargeablePatientMonthlySummary extends Model
+class ChargeablePatientMonthlySummary extends BaseModel
 {
     protected $casts = [
         'is_fulfilled' => 'boolean',
@@ -26,7 +26,7 @@ class ChargeablePatientMonthlySummary extends Model
         'actor_id',
         'is_fulfilled',
     ];
-    
+
     //todo: placeholder for now, maybe move in trait
     public function chargeableService()
     {

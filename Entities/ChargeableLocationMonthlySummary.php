@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\CcmBilling\Entities;
 
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
-use Illuminate\Database\Eloquent\Model;
 
-class ChargeableLocationMonthlySummary extends Model
+class ChargeableLocationMonthlySummary extends BaseModel
 {
     protected $casts = [
         'is_locked' => 'boolean',
