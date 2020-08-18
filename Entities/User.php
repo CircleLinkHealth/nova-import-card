@@ -19,6 +19,9 @@ use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
@@ -616,6 +619,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return false;
     }
 
+    public function attestedProblems()
+    {
+        return $this->hasMany(AttestedProblem::class, 'patient_user_id');
+    }
+
     public function authyUser()
     {
         return $this->hasOne(AuthyUser::class);
@@ -1043,6 +1051,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function emailSettings()
     {
         return $this->hasOne(EmailSettings::class);
+    }
+
+    public function endOfMonthCcmStatusLog()
+    {
+        return $this->hasMany(EndOfMonthCcmStatusLog::class, 'patient_user_id');
     }
 
     public function enrollee()
@@ -2499,6 +2512,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->get();
     }
 
+    public function chargeableMonthlySummaries()
+    {
+        return $this->hasMany(ChargeablePatientMonthlySummary::class, 'patient_user_id');
+    }
+
     public function patientNurseAsPatient()
     {
         return $this->hasOne(PatientNurse::class, 'patient_user_id');
@@ -3077,7 +3095,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->queryOfPracticesRequiringSpecialBhiConsent($builder, 'whereNotIn');
     }
-    
+
     /**
      * Scope for patients who belong to active and billable practices.
      *
