@@ -6,14 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
-use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestion as NextCallSuggestion;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor as NextCallDateSuggestor;
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
-use App\Call;
-use App\Http\Requests\StoreManualScheduledCall;
 use App\Http\Requests\ShowCreateManualCallForm;
+use App\Http\Requests\StoreManualScheduledCall;
 use App\Services\Calls\SchedulerService;
 use App\ValueObjects\CreateManualCallAfterNote;
 use Carbon\Carbon;
@@ -33,24 +30,17 @@ class ManualCallController extends Controller
 
     public function create(ShowCreateManualCallForm $request)
     {
+        // 4. I wanna test that ccm_above = true if $nextCallSuggestion->ccmTimeInSeconds > 1199 or if $nextCallSuggestion->ccmTimeInSeconds > 3599
         $message = \Session::pull(self::SESSION_KEY);
 
         if ( ! $message instanceof CreateManualCallAfterNote) {
-            throw new Exception('Type Error in ManualCallController:'.__LINE__.' `$message` should be an instance of.');
+            throw new \DomainException('Type Error in ManualCallController `$message` should be an instance of.');
         }
-
-        $nextCallSuggestion = app(NextCallDateSuggestor::class)->handle($message->getPatient(), Call::REACHED == $message->getCallStatus() ? new SuccessfulCall() : new UnsuccessfulCall());
-
-        $ccm_above = false;
-        if ($nextCallSuggestion->ccmTimeInSeconds > 1199) {
-            $ccm_above = true;
-        } elseif ($nextCallSuggestion->ccmTimeInSeconds > 3599) {
-            $ccm_above = true;
-        }
+        $nextCallSuggestion = app(NextCallDateSuggestor::class)
+            ->handle($message->getPatient(), $message->getCallHandler());
 
         return view('wpUsers.patient.calls.create', ($nextCallSuggestion ?? new NextCallSuggestion())->toArray())
-            ->with('ccm_above', $ccm_above)
-            ->with('patient', $nextCallSuggestion->patient)
+            ->with('patient', $message->getPatient())
             ->with('messages', ['Successfully Created Note!']);
     }
 

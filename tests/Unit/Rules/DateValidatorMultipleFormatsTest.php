@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Feature\Rules;
+namespace Tests\Unit\Rules;
 
 use App\Rules\DateValidatorMultipleFormats;
 use Tests\TestCase;
