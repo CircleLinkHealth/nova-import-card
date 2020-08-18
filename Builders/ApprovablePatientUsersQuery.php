@@ -18,16 +18,8 @@ trait ApprovablePatientUsersQuery
             'endOfMonthCcmStatusLog' => function ($q) use ($monthYear) {
                 $q->createdOn($monthYear, 'month_year');
             },
-            'patientMonthlySummaries' => function ($q) use ($monthYear) {
-                $q->createdOn($monthYear, 'month_year');
-            },
             'attestedProblems' => function ($q) use ($monthYear) {
-                $q
-                    ->with([
-                        'cpmProblem',
-                        'icd10Codes',
-                    ])
-                    ->createdOn($monthYear, 'month_year');
+                $q->createdOn($monthYear, 'month_year');
             },
             'billingProvider.user',
             'patientInfo',
