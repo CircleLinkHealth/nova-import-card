@@ -179,8 +179,6 @@ class PatientController extends Controller
     public function saveNewAlternatePhoneNumber(ContactDetailsValidator $request)
     {
         $altPhoneNumber = $request->input('phoneNumber');
-        $userId         = $request->input('patientUserId');
-
         $altPhoneNumber = formatPhoneNumberE164($altPhoneNumber);
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
@@ -312,13 +310,6 @@ class PatientController extends Controller
             ->where('id', $patientId)
             ->firstOrFail();
 
-        $phoneNumbers = self::phoneNumbersFor($user)->transform(function ($p) {
-            return [
-                'number' => $p->number,
-                'type'   => ucfirst($p->type),
-            ];
-        });
-
         $clinicalEscalationNumber = null;
         if (optional($user->patientInfo->location)->clinical_escalation_phone) {
             $clinicalEscalationNumber = $user->patientInfo->location->clinical_escalation_phone;
@@ -334,7 +325,6 @@ class PatientController extends Controller
         //naive authentication for the CPM Caller Service
         $cpmToken = \Hash::make(config('app.key').Carbon::today()->toDateString());
 
-        //$phoneNumbers,$phoneTypes are fetched from <edit-patient-number> when is loaded.
         return view('wpUsers.patient.calls.index')
             ->with([
                 'patient'                  => $user,

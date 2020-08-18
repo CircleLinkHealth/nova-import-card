@@ -31,7 +31,7 @@ class PatientAltContactGet extends FormRequest
     public function rules()
     {
         return [
-            'requestIsFromCallPage' => 'required|boolean',
+            'requestIsFromCallPage' => 'sometimes|boolean',
             'patientUserId'         => 'required',
         ];
     }

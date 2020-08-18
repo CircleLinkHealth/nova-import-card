@@ -34,7 +34,6 @@
                 <div class="col-xs-12">
                     <edit-patient-number ref="editPatientNumber"
                                          :user-id="inboundUserId"
-                                         error-message=""
                                          :call-enabled=true>
                     </edit-patient-number>
 

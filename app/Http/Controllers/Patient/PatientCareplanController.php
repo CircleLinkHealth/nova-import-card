@@ -93,7 +93,18 @@ class PatientCareplanController extends Controller
         ], 200);
     }
 
-    public static function getPatientContactDetails(PatientAltContactGet $request)
+    public function getPatientAlternateContact(PatientAltContactGet $request)
+    {
+        /** @var User $patient */
+        $patient            = $request->get('patientUser');
+        $agentContactFields = $this->getAlternateContactData($patient);
+
+        return response()->json([
+            'agentContactFields' => $agentContactFields,
+        ], 200);
+    }
+
+    public function getPatientPhoneNumbers(PatientAltContactGet $request)
     {
         $isRequestFromCallPage = $request->input('requestIsFromCallPage');
         $patient               = $request->get('patientUser');
@@ -109,26 +120,7 @@ class PatientCareplanController extends Controller
             ];
         });
 
-        $agentContactFields = $patient
-            ->patientInfo()
-            ->select('agent_email', 'agent_relationship', 'agent_telephone', 'agent_name')
-            ->get()
-            ->transform(function ($patient) {
-                $alternatePhone = ! empty($patient->agent_telephone)
-                    ? substr(formatPhoneNumberE164($patient->agent_telephone), 2)
-                    : '';
-
-                return [
-                    'agentEmail'        => $patient->agent_email ?? '',
-                    'agentRelationship' => $patient->agent_relationship ?? '',
-                    'agentName'         => $patient->agent_name ?? '',
-                    'agentTelephone'    => [
-                        'isPrimary' => false,
-                        'number'    => $alternatePhone,
-                        'type'      => ucwords(Patient::AGENT),
-                    ],
-                ];
-            });
+        $agentContactFields = $this->getAlternateContactData($patient);
 
         if ($isRequestFromCallPage && ! empty($agentContactFields->first())
             && ! empty($agentContactFields->first()['agentTelephone']['number'])) {
@@ -138,9 +130,8 @@ class PatientCareplanController extends Controller
         $phoneTypes = getPhoneTypes();
 
         return response()->json([
-            'phoneNumbers'       => $phoneNumbers,
-            'phoneTypes'         => $phoneTypes,
-            'agentContactFields' => $agentContactFields,
+            'phoneNumbers' => $phoneNumbers,
+            'phoneTypes'   => $phoneTypes,
         ], 200);
     }
 
@@ -547,6 +538,33 @@ class PatientCareplanController extends Controller
                 ]
             )
         );
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    private function getAlternateContactData(User $patient)
+    {
+        return $patient
+            ->patientInfo()
+            ->select('agent_email', 'agent_relationship', 'agent_telephone', 'agent_name')
+            ->get()
+            ->transform(function ($patient) {
+                $alternatePhone = ! empty($patient->agent_telephone)
+                    ? substr(formatPhoneNumberE164($patient->agent_telephone), 2)
+                    : '';
+
+                return [
+                    'agentEmail'        => $patient->agent_email ?? '',
+                    'agentRelationship' => $patient->agent_relationship ?? '',
+                    'agentName'         => $patient->agent_name ?? '',
+                    'agentTelephone'    => [
+                        'isPrimary' => false,
+                        'number'    => $alternatePhone,
+                        'type'      => ucwords(Patient::AGENT),
+                    ],
+                ];
+            });
     }
 
     //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)

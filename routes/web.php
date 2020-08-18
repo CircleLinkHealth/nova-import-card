@@ -768,8 +768,13 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.alternate.contact.delete',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
 
+        Route::post('get-alternate-contact', [
+            'uses' => 'Patient\PatientCareplanController@getPatientAlternateContact',
+            'as'   => 'patient.get.alternate.contact',
+        ])->middleware('permission:patient.create,patient.update,careplan.update');
+
         Route::post('get-phones', [
-            'uses' => 'Patient\PatientCareplanController@getPatientContactDetails',
+            'uses' => 'Patient\PatientCareplanController@getPatientPhoneNumbers',
             'as'   => 'patient.get.phones',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
 

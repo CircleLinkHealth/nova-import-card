@@ -45,7 +45,7 @@ class DeleteAlternateContactDetails extends FormRequest
         $validator->after(function ($validator) {
             $input = $validator->getData();
             $userId = $input['patientUserId'];
-            $patient = Patient::whereUserId($input('patientUserId'))->first();
+            $patient = Patient::whereUserId($input['patientUserId'])->first();
 
             if (empty($patient)) {
                 Log::error("Patient with user id [$userId] not found");
