@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers;
 
-use _HumbugBox3b5d526a7336\Nette\Neon\Exception;
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestion as NextCallSuggestion;
