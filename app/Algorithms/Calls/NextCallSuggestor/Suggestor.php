@@ -88,8 +88,8 @@ class Suggestor
     {
         if ('Call This Weekend' != $prediction->attempt_note) {
             $next_predicted_contact_window['day']          = $prediction->nextCallDate->next(Carbon::SATURDAY)->toDateString();
-            $next_predicted_contact_window['window_start'] = '10:00:00';
-            $next_predicted_contact_window['window_end']   = '17:00:00';
+            $next_predicted_contact_window['window_start'] = '10:00';
+            $next_predicted_contact_window['window_end']   = '17:00';
         } elseif ($prediction->patient->patientInfo) {
             $next_predicted_contact_window = (new PatientContactWindow())
                 ->getEarliestWindowForPatientFromDate(
@@ -98,8 +98,8 @@ class Suggestor
                 );
         } else {
             $next_predicted_contact_window['day']          = $prediction->nextCallDate->toDateString();
-            $next_predicted_contact_window['window_start'] = '10:00:00';
-            $next_predicted_contact_window['window_end']   = '17:00:00';
+            $next_predicted_contact_window['window_start'] = '10:00';
+            $next_predicted_contact_window['window_end']   = '17:00';
         }
 
         $prediction->date         = $next_predicted_contact_window['day'];
