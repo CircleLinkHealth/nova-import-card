@@ -444,7 +444,7 @@ class NoteService
         $scheduler,
         $attemptNote = ''
     ) {
-        if ( ! $note->successful_clinical_call) {
+        if (Call::REACHED === $status && ! $note->successful_clinical_call) {
             $note->successful_clinical_call = 1;
             $note->save();
         }

@@ -40,6 +40,11 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 ### After all boxes below can be checked
 ### Assign @developers
 
+- [ ] I have considered whether my code should be in a separate module or not
+- [ ] If passing more than 1 value as function arguments, I have used typed value objects instead of arrays
+- [ ] I have created FormRequest classes and performed validation in there
+- [ ] I have created constants over strings and magic numbers
+- [ ] I have 0 new comments
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to any existing documentation

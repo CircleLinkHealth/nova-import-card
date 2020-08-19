@@ -234,10 +234,7 @@
         text: null,
         isManual: 0,
         familyOverride: 0,
-        asapChecked: 0,
-        isTemporary: 0,
-        temporaryFrom: null,
-        temporaryTo: null
+        asapChecked: 0
     };
 
     function getNewAction() {
@@ -662,10 +659,7 @@
                             attempt_note: data.text,
                             is_manual: data.isManual,
                             asap: data.asapChecked,
-                            family_override: data.familyOverride,
-                            is_temporary: data.isTemporary,
-                            temporary_from: data.temporaryFrom,
-                            temporary_to: data.temporaryTo
+                            family_override: data.familyOverride
                         };
                     });
 

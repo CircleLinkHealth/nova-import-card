@@ -11,35 +11,7 @@
                         <input type="checkbox" v-model="showOnlyPatientsWithNurses"> Show only patients with nurses
                     </label>
                 </div>
-                <div class="col-sm-12" v-if="filterPatients.length">
-                    <label>
-                        <input type="checkbox" v-model="isTemporary"> Is this a temporary assignment?
-                    </label>
-                </div>
-                <div class="col-sm-12" v-show="isTemporary">
-                    <div class="col-sm-6">
-                        <label for="temporary_from">From</label>
-                        <input type="date"
-                               v-model="temporaryFrom"
-                               id="temporary_from"
-                               name="temporary_from"
-                               class="form-control height-40"
-                               :disabled="loaders.nurses"
-                               :required="isTemporary"/>
 
-
-                    </div>
-                    <div class="col-sm-6">
-                        <label for="temporary_to">To</label>
-                        <input :disabled="loaders.nurses"
-                               type="date"
-                               v-model="temporaryTo"
-                               id="temporary_to"
-                               name="temporary_to"
-                               class="form-control height-40"
-                               :required="isTemporary"/>
-                    </div>
-                </div>
                 <div class="col-sm-12" style="margin-top: 5px">
                     <div class="text-center" v-if="!filterPatients.length">
                         No available Nurses for select patients
@@ -123,9 +95,6 @@
                 },
                 patients: [],
                 showOnlyPatientsWithNurses: true,
-                isTemporary: 0,
-                temporaryFrom: null,
-                temporaryTo: null,
                 selectNursesModalInfo: {
                     onChange(e, patient) {
                         if (e && patient) {
@@ -150,9 +119,6 @@
                                         callId: patient.callId,
                                         columnName: 'outbound_cpm_id',
                                         value: patient.selectedNurseId,
-                                        is_temporary: $vm.isTemporary,
-                                        temporary_from: $vm.temporaryFrom,
-                                        temporary_to: $vm.temporaryTo
                                     })
                                     .then(response => {
                                         console.log('select-nurse:update', response.data)

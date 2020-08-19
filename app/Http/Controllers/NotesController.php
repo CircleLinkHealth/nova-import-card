@@ -6,11 +6,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
+use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
 use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\CarePlanWasApproved;
 use App\Events\NoteFinalSaved;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\Http\Requests\CreateNoteRequest;
 use App\Http\Requests\NotesReport;
 use App\Jobs\SendSingleNotification;
 use App\Note;
@@ -23,6 +26,7 @@ use App\Services\CPM\CpmMedicationService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\NoteService;
 use App\Services\PatientCustomEmail;
+use App\ValueObjects\CreateManualCallAfterNote;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -58,13 +62,11 @@ class NotesController extends Controller
     }
 
     public function create(
-        Request $request,
+        CreateNoteRequest $request,
         $patientId,
         $noteId = null,
         CpmMedicationService $medicationService
     ) {
-        //@todo segregate to helper functions :/
-
         if ( ! $patientId) {
             return response('Missing param: patientId', 401);
         }
@@ -687,12 +689,6 @@ class NotesController extends Controller
                     }
                 }
 
-                if ('Call Back' === $call->sub_type) {
-                    // add last contact time regardless of if success
-                    $info->last_contact_time = $note->performed_at->format('Y-m-d H:i:s');
-                    $info->save();
-                }
-
                 $call->note_id = $note->id;
 
                 if ($call->isDirty()) {
@@ -722,44 +718,40 @@ class NotesController extends Controller
 
                     $call_status = $input['call_status'];
                     $is_saas     = $author->isSaas();
-                    $prediction  = null;
 
                     if (Call::REACHED == $call_status) {
                         //Updates when the patient was successfully contacted last
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                     }
 
-                    if ( ! $is_saas && ! $is_withdrawn) {
-                        $prediction = $schedulerService->updateTodaysCallAndPredictNext(
-                            $patient,
-                            $note->id,
-                            $call_status,
-                            $attestedProblems
-                        );
-                    }
-                    // add last contact time regardless of if success
-                    $info->last_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                     $info->save();
 
-                    if ($is_withdrawn || null == $prediction || $is_saas) {
+                    if ($is_withdrawn || $is_saas) {
                         return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
                             'messages',
                             ['Successfully Created Note']
                         );
                     }
 
-                    $seconds = $patient->getCcmTime();
+                    $schedulerService->updateTodaysCall(
+                        $patient,
+                        $note,
+                        $call_status,
+                        $attestedProblems
+                    );
 
-                    $ccm_above = false;
-                    if ($seconds > 1199) {
-                        $ccm_above = true;
-                    } elseif ($seconds > 3599) {
-                        $ccm_above = true;
+                    if (SchedulerService::getNextScheduledCall($patient->id, true)) {
+                        return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
+                            'messages',
+                            ['Successfully Created Note']
+                        );
                     }
+                    \Session::flash(ManualCallController::SESSION_KEY, new CreateManualCallAfterNote($patient, Call::REACHED === $call_status ? new SuccessfulCall() : new UnsuccessfulCall()));
 
-                    $prediction['ccm_above'] = $ccm_above;
-
-                    return view('wpUsers.patient.calls.create', $prediction);
+                    return redirect()->route('manual.call.create', ['patientId' => $patientId])->with(
+                        'messages',
+                        ['Successfully Created Note']
+                    );
                 }
             }
 

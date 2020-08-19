@@ -6,6 +6,7 @@
 
 namespace App\Observers;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Constants;
 use App\Note;
 use App\Notifications\PracticeStaffCreatedNote;
@@ -16,7 +17,7 @@ class NoteObserver
 {
     public function created(Note $note)
     {
-        if (User::ofType(Constants::PRACTICE_STAFF_ROLE_NAMES)->where('id', $note->author_id)->exists() && $nurse = PatientNurse::getPermanentNurse($note->patient_id)) {
+        if (User::ofType(Constants::PRACTICE_STAFF_ROLE_NAMES)->where('id', $note->author_id)->exists() && $nurse = app(NurseFinderEloquentRepository::class)->find($note->patient_id)) {
             $nurse->notify(new PracticeStaffCreatedNote($note));
         }
     }
