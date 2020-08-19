@@ -20,7 +20,7 @@ class CallsView extends BaseSqlView
     public function createSqlView(): bool
     {
         $startOfMonthQuery = $this->safeStartOfMonthQuery();
-        
+
         return \DB::statement("
         CREATE VIEW {$this->getViewName()}
         AS
@@ -78,7 +78,7 @@ class CallsView extends BaseSqlView
 
             left join patients_ccm_view pccm on c.inbound_cpm_id = pccm.id
 
-            left join (select pbp.user_id as patient_id, u.display_name as billing_provider from users u join (select pctm.user_id, pctm.member_user_id from users u 		left join patient_care_team_members pctm on u.id = pctm.user_id where pctm.type = 'billing_provider') pbp on pbp.member_user_id = u.id) u8 on c.inbound_cpm_id = u8.patient_id
+            left join (select pbp.user_id as patient_id, u.display_name as billing_provider from users u join (select pctm.user_id, pctm.member_user_id from users u 		left join patient_care_team_members pctm on u.id = pctm.user_id where pctm.type = 'billing_provider') pbp on pbp.member_user_id = u.id limit 1) u8 on c.inbound_cpm_id = u8.patient_id
 
             left join (select pi.patient_user_id as patient_id, u.id as patient_nurse_id, CONCAT(u.first_name, ' ', u.last_name, ' ', (if (u.suffix is null, '', u.suffix))) as patient_nurse from users u join patients_nurses pi on u.id = pi.nurse_user_id) as u9 on c.inbound_cpm_id = u9.patient_id
             
@@ -94,19 +94,19 @@ class CallsView extends BaseSqlView
                 c.sub_type is not null
             )
       ");
-        
+
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
         // because we store scheduled_date in New York time (EST), but we the timezone in database can be anything (UTC or local)
-        
+
         // removed where clause: c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York'))
         // calls table is now an actions table.
         // we have tasks that may be due in the past
         // assuming that re-scheduler service is dropping past calls, we will only have type `task` that are in the past
-        
+
         // update:
         // modified where clause to optimize query and cover comments above
     }
-    
+
     /**
      * Get the name of the sql view.
      */
@@ -114,7 +114,7 @@ class CallsView extends BaseSqlView
     {
         return 'calls_view';
     }
-    
+
     /**
      * Return a start of month query compatible with both sqlite and mysql.
      *
