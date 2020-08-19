@@ -9,8 +9,8 @@ namespace CircleLinkHealth\CcmBilling\Providers;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
-use Modules\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
-use Modules\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
 
 class CcmBillingServiceProvider extends ServiceProvider implements DeferrableProvider
 {

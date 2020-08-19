@@ -4,12 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Modules\CcmBilling\Tests\Fakes;
+namespace CircleLinkHealth\CcmBilling\Tests\Fakes;
 
 use Carbon\Carbon;
-use Modules\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
-use Modules\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
-use Modules\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
+use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
 
 class FakeMonthlyBillingProcessor implements PatientMonthlyBillingProcessor
 {

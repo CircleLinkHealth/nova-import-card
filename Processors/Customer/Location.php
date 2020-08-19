@@ -11,7 +11,7 @@ use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
-use Modules\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
 
 class Location implements CustomerBillingProcessor
 {

@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Modules\CcmBilling\ValueObjects;
+namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 use CircleLinkHealth\CcmBilling\Processors\Patient\AWV1;
 use CircleLinkHealth\CcmBilling\Processors\Patient\AWV2;

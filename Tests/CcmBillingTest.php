@@ -15,7 +15,7 @@ use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Mockery;
-use Modules\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
 use Tests\TestCase;
 
 class BillingProcessorsIntegrationTest extends TestCase

@@ -4,11 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Modules\CcmBilling\Repositories;
+namespace CircleLinkHealth\CcmBilling\Repositories;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use Modules\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
+use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 
 class PatientProcessorEloquentRepository
 {
