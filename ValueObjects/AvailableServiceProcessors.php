@@ -14,6 +14,7 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM60;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Collection;
 
 class AvailableServiceProcessors implements Arrayable
 {
@@ -114,5 +115,10 @@ class AvailableServiceProcessors implements Arrayable
             $this->pcm,
             $this->bhi,
         ]);
+    }
+
+    public function toCollection(): Collection
+    {
+        return collect($this->toArray());
     }
 }

@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Tests\Fakes;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
@@ -23,7 +24,14 @@ class FakeMonthlyBillingProcessor implements PatientMonthlyBillingProcessor
 
     public function process(PatientMonthlyBillingStub $patientStub): PatientMonthlyBillingStub
     {
-        //call each processor -> each processor attaches etc
+        $patientStub->getAvailableServiceProcessors()->toCollection()->each(function (PatientChargeableServiceProcessor $processor) use ($patientStub) {
+            if ($processor->shouldAttach($patientStub->getPatientProblems(), $patientStub->getChargeableMonth())) {
+                $processor->attach($patientStub->getChargeableMonth());
+            }
+        });
+        
+        //
+
         return $this->processReturnValue;
     }
 }

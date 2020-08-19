@@ -7,19 +7,17 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\BelongsToFamilyOfServices;
 use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\Sequenceable;
+use CircleLinkHealth\CcmBilling\Traits\PropagatesSequence;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CCM implements PatientChargeableServiceProcessor
 {
-    private User $patient;
-
-    public function __construct(User $patient)
-    {
-        $this->patient = $patient;
-    }
-
-    public function attach(Carbon $monthYear)
+    use PropagatesSequence;
+    
+    public function attach(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement attach() method.
     }
@@ -27,6 +25,9 @@ class CCM implements PatientChargeableServiceProcessor
     public function fulfill(Carbon $monthYear)
     {
         // TODO: Implement fulfill() method.
+        
+        
+       $this->attachNext();
     }
 
     public function isAttached(Carbon $monthYear)
@@ -44,7 +45,7 @@ class CCM implements PatientChargeableServiceProcessor
         // TODO: Implement processBilling() method.
     }
 
-    public function shouldAttach(Carbon $monthYear)
+    public function shouldAttach($patientProblems, Carbon $monthYear)
     {
         // TODO: Implement shouldAttach() method.
     }
@@ -52,5 +53,25 @@ class CCM implements PatientChargeableServiceProcessor
     public function shouldFulfill(Carbon $monthYear)
     {
         // TODO: Implement shouldFulfill() method.
+    }
+    
+    public function name(): string
+    {
+        // TODO: Implement name() method.
+    }
+    
+    public function minimumNumberOfCalls(): int
+    {
+        // TODO: Implement minimumNumberOfCalls() method.
+    }
+    
+    public function minimumTimeInSeconds(): int
+    {
+        // TODO: Implement minimumTimeInSeconds() method.
+    }
+    
+    public function next(): PatientChargeableServiceProcessor
+    {
+        return new CCM40();
     }
 }

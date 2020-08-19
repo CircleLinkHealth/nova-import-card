@@ -6,16 +6,21 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests;
 
+use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice;
+use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
+use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Mockery;
-use CircleLinkHealth\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
 use Tests\TestCase;
 
 class BillingProcessorsIntegrationTest extends TestCase
@@ -79,30 +84,43 @@ class BillingProcessorsIntegrationTest extends TestCase
         $this->assertTrue($response instanceof ApprovablePatientCollection);
         $this->assertTrue($response->collection->count() === $fakeUsers->count());
     }
-    
-    public function test_it_processes_patient_chargeable_services_at_the_start_of_month(){
+
+    public function test_it_processes_patient_chargeable_services_at_the_start_of_month()
+    {
         //for a given Patient User
         //of  a given Practice
         //of a specific preferred Location
-        
+
         //attempt to process CS for the current (on the start of) month
         //1. take user problems
         //2. take Location enable CS? (QUESTION)
         //3. (4.)Call Patient CS Processors individually
         //    a) BHI->attach check should attach, return bool
         //    b) Is fulfilled - it would probably deduce/return false
-        
+
         //mock to job to recieve patient and month
         // X determines current CSs/summary
         //
-        
+
         // WE NEED PATIENT REPOSITORY
         // PATIENT PROCESSOR - returns collection of Classes (CS individual processors) ->getChargeableServicesForMonth()
         // ccdProblems.cpmProblems(.chargeableServices)
         // locationChargeableService
-        
+
         $patient = factory(User::class)->make();
-        
+
+        $availableCs = new AvailableServiceProcessors();
+        $availableCs->setBhi(new BHI());
+        $availableCs->setCcm(new CCM());
+
+        $stub = new PatientMonthlyBillingStub();
+        $stub->setAvailableServiceProcessors($availableCs);
+        $stub->setChargeableMonth(Carbon::now()->startOfMonth()->startOfDay());
+        //array will contain chargeable name with cpm problem id
+        $stub->setPatientProblems(collect([]));
+
         $fakeProcessor = new FakeMonthlyBillingProcessor();
+
+        $fakeProcessor->process($stub);
     }
 }

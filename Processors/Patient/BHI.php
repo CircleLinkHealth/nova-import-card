@@ -8,11 +8,10 @@ namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 
 class BHI implements PatientChargeableServiceProcessor
 {
-    public function attach(Carbon $monthYear)
+    public function attach(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement attach() method.
     }
@@ -32,14 +31,28 @@ class BHI implements PatientChargeableServiceProcessor
         // TODO: Implement isFulfilled() method.
     }
 
+    public function minimumNumberOfCalls(): int
+    {
+        return 1;
+    }
+
+    public function minimumTimeInSeconds(): int
+    {
+        return 1200;
+    }
+
+    public function name(): string
+    {
+    }
+
     public function processBilling(Carbon $monthYear)
     {
         // TODO: Implement processBilling() method.
     }
 
-    public function shouldAttach(Carbon $monthYear)
+    public function shouldAttach($patientProblems, Carbon $monthYear)
     {
-        // TODO: Implement shouldAttach() method.
+        //patient has at least 1 cpm problem which has BHI CS
     }
 
     public function shouldFulfill(Carbon $monthYear)
