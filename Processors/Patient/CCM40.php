@@ -8,29 +8,34 @@ namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Traits\PropagatesSequence;
 
 class CCM40 implements PatientChargeableServiceProcessor
 {
     use PropagatesSequence;
 
-    public function attach(int $patientId,Carbon $monthYear)
+    public function attach(int $patientId, Carbon $monthYear): ChargeablePatientMonthlySummary
     {
         // TODO: Implement attach() method.
-        $this->attachNext();
     }
 
-    public function fulfill(Carbon $monthYear)
+    public function code()
+    {
+        // TODO: Implement code() method.
+    }
+
+    public function fulfill(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement fulfill() method.
     }
 
-    public function isAttached(Carbon $monthYear)
+    public function isAttached(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement isAttached() method.
     }
 
-    public function isFulfilled(Carbon $monthYear)
+    public function isFulfilled(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement isFulfilled() method.
     }
@@ -52,10 +57,10 @@ class CCM40 implements PatientChargeableServiceProcessor
 
     public function next(): PatientChargeableServiceProcessor
     {
-        return new CCM60();
+        // TODO: Implement next() method.
     }
 
-    public function processBilling(Carbon $monthYear)
+    public function processBilling(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement processBilling() method.
     }
@@ -65,7 +70,7 @@ class CCM40 implements PatientChargeableServiceProcessor
         // TODO: Implement shouldAttach() method.
     }
 
-    public function shouldFulfill(Carbon $monthYear)
+    public function shouldFulfill(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement shouldFulfill() method.
     }

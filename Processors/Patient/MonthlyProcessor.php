@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CcmBilling\Tests\Fakes;
+namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
@@ -12,14 +12,12 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
 
-class FakeMonthlyBillingProcessor implements PatientMonthlyBillingProcessor
+class MonthlyProcessor implements PatientMonthlyBillingProcessor
 {
-    public PatientChargeableSummaryCollection $getServicesForTimeTrackerValue;
-    public PatientMonthlyBillingStub $processReturnValue;
-
     public function getServicesForTimeTracker(int $patientId, Carbon $month): PatientChargeableSummaryCollection
     {
-        return $this->getServicesForTimeTrackerValue;
+        //summary repository
+        return new PatientChargeableSummaryCollection();
     }
 
     public function process(PatientMonthlyBillingStub $patientStub): PatientMonthlyBillingStub
@@ -29,5 +27,7 @@ class FakeMonthlyBillingProcessor implements PatientMonthlyBillingProcessor
                 $processor->attach($patientStub->getPatientId(), $patientStub->getChargeableMonth());
             }
         });
+        
+        return $patientStub;
     }
 }

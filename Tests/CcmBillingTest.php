@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
+use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
@@ -22,6 +23,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Mockery;
 use Tests\TestCase;
+use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePatientRepository;
 
 class BillingProcessorsIntegrationTest extends TestCase
 {
@@ -106,21 +108,31 @@ class BillingProcessorsIntegrationTest extends TestCase
         // PATIENT PROCESSOR - returns collection of Classes (CS individual processors) ->getChargeableServicesForMonth()
         // ccdProblems.cpmProblems(.chargeableServices)
         // locationChargeableService
-
+        
+        FakePatientRepository::fake();
+    
         $patient = factory(User::class)->make();
-
+        
         $availableCs = new AvailableServiceProcessors();
-        $availableCs->setBhi(new BHI());
-        $availableCs->setCcm(new CCM());
+        
+        
+        $availableCs->setCcm( $ccmProcessor = new CCM());
+        $availableCs->setBhi( $bhiProcessor = new BHI());
 
         $stub = new PatientMonthlyBillingStub();
         $stub->setAvailableServiceProcessors($availableCs);
-        $stub->setChargeableMonth(Carbon::now()->startOfMonth()->startOfDay());
+        
+        $stub->setChargeableMonth($startOfMonth = Carbon::now()->startOfMonth()->startOfDay());
+        
         //array will contain chargeable name with cpm problem id
         $stub->setPatientProblems(collect([]));
+        $stub->setPatientId(1);
 
-        $fakeProcessor = new FakeMonthlyBillingProcessor();
+        $fakeProcessor = new MonthlyProcessor();
 
         $fakeProcessor->process($stub);
+        
+        FakePatientRepository::assertChargeableSummaryCreated(1, $ccmProcessor->code(), $startOfMonth);
+        FakePatientRepository::assertChargeableSummaryCreated(1, $bhiProcessor->code(), $startOfMonth);
     }
 }

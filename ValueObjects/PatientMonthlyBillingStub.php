@@ -15,6 +15,8 @@ class PatientMonthlyBillingStub
 
     protected Carbon $chargeableMonth;
 
+    protected int $patientId;
+
     protected Collection $patientProblems;
 
     public function getAvailableServiceProcessors(): AvailableServiceProcessors
@@ -25,6 +27,11 @@ class PatientMonthlyBillingStub
     public function getChargeableMonth(): Carbon
     {
         return $this->chargeableMonth;
+    }
+
+    public function getPatientId(): int
+    {
+        return $this->patientId;
     }
 
     public function getPatientProblems(): Collection
@@ -40,6 +47,11 @@ class PatientMonthlyBillingStub
     public function setChargeableMonth(Carbon $chargeableMonth): void
     {
         $this->chargeableMonth = $chargeableMonth;
+    }
+
+    public function setPatientId(int $patientId): void
+    {
+        $this->patientId = $patientId;
     }
 
     public function setPatientProblems(Collection $patientProblems): void

@@ -8,55 +8,74 @@ namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class BHI implements PatientChargeableServiceProcessor
 {
-    public function attach(int $patientId, Carbon $monthYear)
-    {
-        // TODO: Implement attach() method.
-    }
-
-    public function fulfill(Carbon $monthYear)
+    private PatientProcessorEloquentRepository $repo;
+    
+    public function fulfill(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement fulfill() method.
     }
-
-    public function isAttached(Carbon $monthYear)
+    
+    public function isAttached(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement isAttached() method.
     }
-
-    public function isFulfilled(Carbon $monthYear)
+    
+    public function isFulfilled(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement isFulfilled() method.
     }
-
+    
     public function minimumNumberOfCalls(): int
     {
-        return 1;
+        // TODO: Implement minimumNumberOfCalls() method.
     }
-
+    
     public function minimumTimeInSeconds(): int
     {
-        return 1200;
+        // TODO: Implement minimumTimeInSeconds() method.
     }
-
-    public function name(): string
-    {
-    }
-
-    public function processBilling(Carbon $monthYear)
+    
+    public function processBilling(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement processBilling() method.
     }
-
+    
     public function shouldAttach($patientProblems, Carbon $monthYear)
     {
-        //patient has at least 1 cpm problem which has BHI CS
+        return $patientProblems->where('code', $this->code())->count() >= $this->minimumNumberOfProblems();
     }
-
-    public function shouldFulfill(Carbon $monthYear)
+    
+    public function shouldFulfill(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement shouldFulfill() method.
+    }
+    
+    public function minimumNumberOfProblems(){
+        return 1;
+    }
+    
+    public function code()
+    {
+        return ChargeableService::BHI;
+    }
+    
+    public function attach(int $patientId, Carbon $monthYear): ChargeablePatientMonthlySummary
+    {
+        return $this->repo()->store($patientId, $this->code(), $monthYear);
+    }
+    
+    public function repo(): PatientProcessorEloquentRepository
+    {
+        if ( ! isset($this->repo)) {
+            $this->repo = app(PatientProcessorEloquentRepository::class);
+        }
+        
+        return $this->repo;
     }
 }

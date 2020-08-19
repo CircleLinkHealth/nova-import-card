@@ -6,10 +6,13 @@
 
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
+use App\Http\Resources\ChargeableService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository as Repository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use Illuminate\Support\Facades\Cache;
 
-class PatientProcessorEloquentRepository
+class PatientProcessorEloquentRepository implements Repository
 {
     public function getChargeablePatientSummaries(int $patientId, Carbon $month)
     {
@@ -21,11 +24,20 @@ class PatientProcessorEloquentRepository
             ->get();
     }
 
-    public function store(int $patientId, int $chargeableServiceId, Carbon $month): ChargeablePatientMonthlySummary
+    public function store(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         return ChargeablePatientMonthlySummary::updateOrCreate([
-            'patient_user_id'  => $patientId,
-            'chargeable_month' => $chargeableServiceId,
+            'patient_user_id'       => $patientId,
+            'chargeable_month'      => $month,
+            'chargeable_service_id' => $this->chargeableSercviceId($chargeableServiceCode),
         ]);
+    }
+
+    private function chargeableSercviceId(string $code): int
+    {
+        return Cache::remember("name:chargeable_service_$code", 2, function () use ($code) {
+            return ChargeableService::where('code', $code)
+                ->value('id');
+        });
     }
 }

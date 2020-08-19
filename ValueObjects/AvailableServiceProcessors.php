@@ -107,13 +107,13 @@ class AvailableServiceProcessors implements Arrayable
     public function toArray(): array
     {
         return array_filter([
-            $this->awv1,
-            $this->awv2,
-            $this->ccm,
-            $this->ccm40,
-            $this->ccm60,
-            $this->pcm,
-            $this->bhi,
+            $this->awv1 ?? null,
+            $this->awv2 ?? null,
+            $this->ccm ?? null,
+            $this->ccm40 ?? null,
+            $this->ccm60 ?? null,
+            $this->pcm ?? null,
+            $this->bhi ?? null,
         ]);
     }
 
