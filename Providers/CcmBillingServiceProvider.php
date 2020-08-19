@@ -9,6 +9,8 @@ namespace CircleLinkHealth\CcmBilling\Providers;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
+use Modules\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
+use Modules\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
 
 class CcmBillingServiceProvider extends ServiceProvider implements DeferrableProvider
 {
@@ -51,6 +53,8 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        
+        $this->app->bind(PatientMonthlyBillingProcessor::class, new FakeMonthlyBillingProcessor());
     }
 
     /**

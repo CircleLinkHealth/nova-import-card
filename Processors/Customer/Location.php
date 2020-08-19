@@ -11,6 +11,7 @@ use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
+use Modules\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
 
 class Location implements CustomerBillingProcessor
 {
@@ -29,6 +30,15 @@ class Location implements CustomerBillingProcessor
     public function processServicesForAllPatients(int $locationId, Carbon $month): void
     {
         // TODO: Implement processServicesForAllPatients() method.
+        $valueObjectOnAndoF =  $this->getLocationEnabledCs();
+        
+        //call job to dispatch jobs per 100-1000 jobs
+        $locationPatients = \CircleLinkHealth\Customer\Entities\Location::findOrFail($locationId)->getPatients();
+        
+        $fake = new FakeMonthlyBillingProcessor();
+        foreach ($locationPatients as $patient){
+            $fake->process($patient->id, $month, $valueObjectOnAndoF);
+        }
     }
 
     public function repo(): CustomerBillingProcessorRepository

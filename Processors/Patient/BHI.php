@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 
 class BHI implements PatientChargeableServiceProcessor
 {
