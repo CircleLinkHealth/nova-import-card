@@ -6,6 +6,10 @@ You are familiarized with Approve Billable Patients page (ABP).
 
 # Key Concepts
 - A **Customer** is someone whom we service **Patients** for specific Chargeable Services (CPT Codes).
+  Examples of Customer are Locations, and Practices.
+- A **Processor** is a class responsible for processing billing and giving us data. There are 2 kinds of processors.
+  A Patient processor would process a billing code for a Patient. Each billing code's billing logic is lives in a separate class with the billing code's friendly     name, (eg. CCM, BHI, AWV1, AWV2, PCM, etc)
+  A Customer processor would call all Patient processors on each Patient to produce each month's billing for the Customer.
 
 # High Level Description of Business Logic
 At the beginning of every month we attach "unfulfilled" chargeable services to each patient, depending on which chargeable services are enabled for the patient's Location, and the patient's conditions. Every time an admin is loading patients using the ABP, we will re-valuate each patient's chargeable services. We will do the same at the end of the month.
