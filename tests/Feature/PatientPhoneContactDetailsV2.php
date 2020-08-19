@@ -9,7 +9,6 @@ namespace Tests\Feature;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class PatientPhoneContactDetailsV2 extends TestCase
@@ -24,7 +23,9 @@ class PatientPhoneContactDetailsV2 extends TestCase
     {
         $practice = Practice::firstOrFail();
         $auth     = $this->createUser($practice->id);
-        Auth::login($auth);
+
+        $this->actingAs($auth);
+
         $patient = $this->createUser($practice, 'participant');
 
         $phone = $this->createTestPhoneNumberForPatient($patient->id, self::PHONE_NUMBER_1);
@@ -39,11 +40,9 @@ class PatientPhoneContactDetailsV2 extends TestCase
         $practice = Practice::firstOrFail();
         $auth     = $this->createUser($practice->id);
         $patient  = $this->createUser($practice, 'participant');
-        Auth::login($auth);
+        $this->actingAs($auth);
 
-        $response = $this->withHeaders([
-            'X-Header' => 'Value',
-        ])->json(
+        $response = $this->json(
             'POST',
             route('patient.alternate.phone.create'),
             [
@@ -63,11 +62,9 @@ class PatientPhoneContactDetailsV2 extends TestCase
         $practice = Practice::firstOrFail();
         $auth     = $this->createUser($practice->id);
         $patient  = $this->createUser($practice, 'participant');
-        Auth::login($auth);
+        $this->actingAs($auth);
 
-        $response = $this->withHeaders([
-            'X-Header' => 'Value',
-        ])->json(
+        $response = $this->json(
             'POST',
             route('patient.phone.create'),
             [
@@ -85,13 +82,14 @@ class PatientPhoneContactDetailsV2 extends TestCase
     {
         $practice = Practice::firstOrFail();
         $auth     = $this->createUser($practice->id);
-        Auth::login($auth);
-        $patient = $this->createUser($practice, 'participant');
+        $this->actingAs($auth);
+        $patient = $this->createUser($practice, 'participant')->load('phoneNumbers');
 
         $phone    = $this->createTestPhoneNumberForPatient($patient->id, self::PHONE_NUMBER_1);
         $response = $this->callMarkAsPrimaryEndpoint($patient->id, $phone);
         $response->assertStatus(200);
         $patientPrimaryPhones = $this->getTestPatientPrimaryPhones($patient);
+
         self::assertTrue(1 === $patientPrimaryPhones->count());
         self::assertTrue(self::PHONE_NUMBER_1 === $patientPrimaryPhones->first()->number);
 
@@ -99,15 +97,14 @@ class PatientPhoneContactDetailsV2 extends TestCase
         $response = $this->callMarkAsPrimaryEndpoint($patient->id, $phone2);
         $response->assertStatus(200);
         $patientPrimaryPhones = $this->getTestPatientPrimaryPhones($patient);
+
         self::assertTrue(1 === $patientPrimaryPhones->count());
         self::assertTrue(self::PHONE_NUMBER_2 === $patientPrimaryPhones->first()->number);
     }
 
     private function callMarkAsPrimaryEndpoint(int $id, PhoneNumber $phone)
     {
-        return $this->withHeaders([
-            'X-Header' => 'Value',
-        ])->json(
+        return $this->json(
             'POST',
             route('primary.phone.mark'),
             [
@@ -130,7 +127,7 @@ class PatientPhoneContactDetailsV2 extends TestCase
 
     private function getTestPatientPrimaryPhones(\CircleLinkHealth\Customer\Entities\User $patient)
     {
-        return $patient->load('phoneNumbers')
+        return $patient
             ->phoneNumbers()
             ->where('is_primary', true);
     }

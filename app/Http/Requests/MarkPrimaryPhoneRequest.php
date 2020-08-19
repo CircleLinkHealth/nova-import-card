@@ -6,13 +6,14 @@
 
 namespace App\Http\Requests;
 
-use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class DeleteAlternateContactDetails extends FormRequest
+class MarkPrimaryPhoneRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,7 +22,7 @@ class DeleteAlternateContactDetails extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -32,8 +33,8 @@ class DeleteAlternateContactDetails extends FormRequest
     public function rules()
     {
         return [
-            'deleteOnlyPhone' => 'sometimes|boolean',
-            'patientUserId'   => 'required',
+            'patientUserId' => 'required',
+            'phoneId'       => 'required',
         ];
     }
 
@@ -45,14 +46,19 @@ class DeleteAlternateContactDetails extends FormRequest
         $validator->after(function ($validator) {
             $input = $validator->getData();
             $userId = $input['patientUserId'];
-            $patient = Patient::whereUserId($input['patientUserId'])->first();
 
-            if (empty($patient)) {
-                Log::error("Patient with user id [$userId] not found");
-                $validator->errors()->add('patientUserId', "Patient with user id [$userId] not found");
+            /** @var User $patientUser */
+            $patientUser = User::with('patientInfo.location', 'phoneNumbers', 'primaryPractice')
+                ->where('id', $userId)
+                ->first();
+
+            if (empty($patientUser)) {
+                Log::error("User [$userId] not found");
+                $validator->errors()->add('patientUserId', "User [$userId] not found");
             }
+
             $this->request->add([
-                'patient' => $patient,
+                'patientUser' => $patientUser,
             ]);
         });
     }

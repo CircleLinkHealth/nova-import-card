@@ -11,9 +11,10 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class ContactDetailsValidator extends FormRequest
+class ContactDetailsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +23,7 @@ class ContactDetailsValidator extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -67,8 +68,9 @@ class ContactDetailsValidator extends FormRequest
 
             self::validateUser($patientUser, $validator);
 
-            $userLocationExists = isset($patientUser->patientInfo->location->id);
-            $primaryLocationExists = isset($patientUser->primaryPractice->primary_location_id);
+            $userLocation = $patientUser->patientInfo->location->id
+                ?? $patientUser->primaryPractice->primary_location_id
+                ?? null;
 
             if ( ! is_null($phoneType) && $patientUser->phoneNumbers()->where('type', $phoneType)->exists()) {
                 $validator->errors()->add('phoneNumber', "Phone type '$phoneType' already exists for patient");
@@ -78,16 +80,14 @@ class ContactDetailsValidator extends FormRequest
                 $validator->errors()->add('phoneNumber', 'Phone number is not a valid US number');
             }
 
-            if ( ! $userLocationExists && ! $primaryLocationExists) {
+            if (is_null($userLocation)) {
                 Log::error("Location for patient with user id: {$userId} not found");
                 $validator->errors()->add('patientUserId', 'User location is missing');
             }
 
             $this->request->add([
                 'patientUser' => $patientUser,
-                'locationId'  => $userLocationExists
-                    ? $patientUser->patientInfo->location->id
-                    : $patientUser->primaryPractice->primary_location_id,
+                'locationId'  => $userLocation,
             ]);
         });
     }

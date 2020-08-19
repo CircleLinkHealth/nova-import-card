@@ -18,9 +18,11 @@ class CallPatientRequest extends FormRequest
      */
     public function authorize()
     {
-        return ! App::environment(['local', 'testing'])
-            ? app(\App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $this->route('patientId'))
-            : true;
+        if (App::environment(['local', 'testing'])) {
+            return true;
+        }
+
+        return app(\App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $this->route('patientId'));
     }
 
     /**

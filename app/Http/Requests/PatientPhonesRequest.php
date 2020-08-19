@@ -10,8 +10,9 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 
-class PatientAltContactGet extends FormRequest
+class PatientPhonesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,7 +21,7 @@ class PatientAltContactGet extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -47,7 +48,7 @@ class PatientAltContactGet extends FormRequest
                 ->where('id', $userId)
                 ->first();
 
-            ContactDetailsValidator::validateUser($patientUser, $validator);
+            ContactDetailsRequest::validateUser($patientUser, $validator);
 
             $this->request->add([
                 'patientUser' => $patientUser,

@@ -12,9 +12,9 @@ use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
-use App\Http\Requests\DeleteAlternateContactDetails;
-use App\Http\Requests\DeletePatientPhone;
-use App\Http\Requests\PatientAltContactGet;
+use App\Http\Requests\DeleteAlternateContactRequest;
+use App\Http\Requests\DeletePatientPhoneRequest;
+use App\Http\Requests\PatientPhonesRequest;
 use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
@@ -24,6 +24,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -60,7 +61,7 @@ class PatientCareplanController extends Controller
         return $this->editOrCreateDemographics($request);
     }
 
-    public function deleteAlternateContact(DeleteAlternateContactDetails $request)
+    public function deleteAlternateContact(DeleteAlternateContactRequest $request)
     {
         $valuesToDelete = [
             'agent_telephone' => null,
@@ -82,7 +83,7 @@ class PatientCareplanController extends Controller
         ], 200);
     }
 
-    public function deletePhoneNumber(DeletePatientPhone $request)
+    public function deletePhoneNumber(DeletePatientPhoneRequest $request)
     {
         $phoneNumber = $request->get('phoneNumber');
 
@@ -93,7 +94,7 @@ class PatientCareplanController extends Controller
         ], 200);
     }
 
-    public function getPatientAlternateContact(PatientAltContactGet $request)
+    public function getPatientAlternateContact(PatientPhonesRequest $request)
     {
         /** @var User $patient */
         $patient            = $request->get('patientUser');
@@ -104,7 +105,7 @@ class PatientCareplanController extends Controller
         ], 200);
     }
 
-    public function getPatientPhoneNumbers(PatientAltContactGet $request)
+    public function getPatientPhoneNumbers(PatientPhonesRequest $request)
     {
         $isRequestFromCallPage = $request->input('requestIsFromCallPage');
         $patient               = $request->get('patientUser');
@@ -120,14 +121,14 @@ class PatientCareplanController extends Controller
             ];
         });
 
-        $agentContactFields = $this->getAlternateContactData($patient);
+        $agentContactFields = $this->getAlternateContactData($patient)->first();
 
-        if ($isRequestFromCallPage && ! empty($agentContactFields->first())
-            && ! empty($agentContactFields->first()['agentTelephone']['number'])) {
-            $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields->first()['agentTelephone']]);
+        if ($isRequestFromCallPage && ! empty($agentContactFields)
+            && ! empty($agentContactFields['agentTelephone']['number'])) {
+            $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields['agentTelephone']]);
         }
 
-        $phoneTypes = getPhoneTypes();
+        $phoneTypes = $this->getPhoneTypes();
 
         return response()->json([
             'phoneNumbers' => $phoneNumbers,
@@ -565,6 +566,17 @@ class PatientCareplanController extends Controller
                     ],
                 ];
             });
+    }
+
+    /**
+     * @return array
+     */
+    private function getPhoneTypes()
+    {
+        return [
+            ucfirst(PhoneNumber::MOBILE),
+            ucfirst(PhoneNumber::HOME),
+        ];
     }
 
     //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)

@@ -10,8 +10,8 @@ use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CallPatientRequest;
-use App\Http\Requests\ContactDetailsValidator;
-use App\Http\Requests\MarkPrimaryPhone;
+use App\Http\Requests\ContactDetailsRequest;
+use App\Http\Requests\MarkPrimaryPhoneRequest;
 use App\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
@@ -60,7 +60,7 @@ class PatientController extends Controller
         return view('patient.create-test-patients');
     }
 
-    public function markAsPrimaryPhone(MarkPrimaryPhone $request)
+    public function markAsPrimaryPhone(MarkPrimaryPhoneRequest $request)
     {
         $newPrimaryPhoneId = $request->input('phoneId');
 
@@ -83,11 +83,7 @@ class PatientController extends Controller
                 ]
             );
 
-        return response()->json(
-            [
-            ],
-            200
-        );
+        return $this->ok();
     }
 
     public function patientAjaxSearch(Request $request)
@@ -176,7 +172,7 @@ class PatientController extends Controller
         return response()->json($patients);
     }
 
-    public function saveNewAlternatePhoneNumber(ContactDetailsValidator $request)
+    public function saveNewAlternatePhoneNumber(ContactDetailsRequest $request)
     {
         $altPhoneNumber = $request->input('phoneNumber');
         $altPhoneNumber = formatPhoneNumberE164($altPhoneNumber);
@@ -197,7 +193,7 @@ class PatientController extends Controller
         ], 200);
     }
 
-    public function saveNewPhoneNumber(ContactDetailsValidator $request)
+    public function saveNewPhoneNumber(ContactDetailsRequest $request)
     {
         $phoneType   = $request->input('phoneType');
         $phoneNumber = $request->input('phoneNumber');
