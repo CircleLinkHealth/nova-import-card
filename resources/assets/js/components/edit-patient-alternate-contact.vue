@@ -66,7 +66,7 @@
                      class="alt-save-btn">
                     <br>
                     <button v-if="alternateSaveBtnIsVisible"
-                            class="btn btn-sm save-alt-contact"
+                            class="btn btn-success btn-sm save-alt-contact"
                             type="button"
                             @click="saveNewAlternateNumberAndContactDetails"
                             :disabled="loading || disableAltSaveButton">
@@ -428,7 +428,7 @@ export default {
     display: inline;
     height: 29px;
     padding: 5px;
-    color: #50b2e2;
+    color: white;
 }
 
 .clear-alt-contact{

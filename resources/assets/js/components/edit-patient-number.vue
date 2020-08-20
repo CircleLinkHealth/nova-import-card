@@ -7,6 +7,7 @@
                     <div v-if="callEnabled && number.number !== ''" style="margin-top: 7px;">
                         <input name="isPrimary"
                                class="to-call"
+                               style="margin-left: 20px;"
                                @click="selectedNumber(number.number)"
                                type="radio"
                                v-model="selectedNumberToCall"
@@ -33,20 +34,25 @@
                                :value="number.number"
                                :disabled="true"/>
                     </div>
-                </div>
-                <i v-if="!loading && number.isPrimary === false && number.number.length !== 0"
-                   class="glyphicon glyphicon-trash remove-phone"
-                   title="Delete Phone Number"
-                   @click="deletePhone(number)"></i>
 
-                <button v-if="showMakePrimary(index, number)"
-                        class="btn btn-sm update-primaryNumber"
-                        type="button"
-                        style="display: inline;"
-                        @click="updatePrimaryPhone(number.phoneNumberId)"
-                        :disabled="number.isPrimary">
-                    Make primary
-                </button>
+                    <button v-if="showMakePrimary(index, number)"
+                            class="btn btn-success btn-sm update-primaryNumber"
+                            type="button"
+                            style="display: inline;"
+                            @click="updatePrimaryPhone(number.phoneNumberId)"
+                            :disabled="number.isPrimary">
+                        Make primary
+                    </button>
+
+                    <button v-if="!loading && number.isPrimary === false && number.number.length !== 0"
+                            type="button"
+                            class="btn btn-danger btn-sm remove-phone"
+                            title="Delete Phone Number"
+                            @click="deletePhone(number)">Delete</button>
+                </div>
+
+
+
                 <br>
             </template>
             <div>
@@ -90,14 +96,15 @@
                             {{setSaveBtnText}}
                         </button>
 
-                       <div v-if="! newNumberIsAlternate && newPhoneNumber.length !== 0" style="display: flex;">
-                           <input id="makePrimary"
-                                  class="make-primary"
-                                  v-model="makeNewNumberPrimary"
-                                  type="checkbox">
-                           <label for="makePrimary" style="padding-left: 30px;">Make Primary</label>
-                       </div>
-                </div>
+<!--                       <div v-if="! newNumberIsAlternate && newPhoneNumber.length !== 0" -->
+<!--                            style="display: flex;">-->
+<!--                           <input id="makePrimary"-->
+<!--                                  class="make-primary"-->
+<!--                                  v-model="makeNewNumberPrimary"-->
+<!--                                  type="checkbox">-->
+<!--                           <label for="makePrimary" style="padding-left: 30px;">Make Primary</label>-->
+<!--                       </div>-->
+                    </div>
                 </div>
             </div>
 
@@ -473,13 +480,12 @@
         text-align: center;
         background-color: transparent;
     }
-
-.remove-phone{
-        top: -7px;
-        padding-left: 3px;
-        color: red;
+    .remove-phone{
         cursor: pointer;
-    }
+        margin-left: 10px;
+        height: 29px;
+        }
+
     .remove-input{
         margin-left: 19px;
         padding-top: 5px;
@@ -537,9 +543,8 @@
     .update-primaryNumber{
         height: 29px;
         padding: 5px;
-        color: #50b2e2;
-        margin-left: 10px;
-        margin-top: -20px
+        background-color: #5cb85c;
+        color: white;
     }
 
     .bgColor{
