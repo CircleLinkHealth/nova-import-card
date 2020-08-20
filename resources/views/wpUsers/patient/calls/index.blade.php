@@ -39,12 +39,6 @@
                                         <li><span> <b>Regular Dr.</b>: {{$regularDoctor->getFullName()}}  </span></li>
                                     @endif
                                     <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} </span></li>
-{{--                                    @if($patient->getAgentName())--}}
-{{--                                        <li class="inline-block"><b>Alternate Contact</b>: <span--}}
-{{--                                                    title="{{$patient->getAgentEmail()}}">({{$patient->getAgentRelationship()}}--}}
-{{--                                                ) {{$patient->getAgentName()}} {{$patient->getAgentPhone()}}</span></li>--}}
-{{--                                        <li class="inline-block"></li>--}}
-{{--                                    @endif--}}
                                 </ul>
                             </div>
 
