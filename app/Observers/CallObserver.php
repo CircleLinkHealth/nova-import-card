@@ -70,7 +70,7 @@ class CallObserver
                 $this->matchVoiceCallWithCpmCallRecord($call);
             }
         }
-        
+
         if (Carbon::parse($call->called_date)->isLastMonth()) {
             app(CountPatientMonthlySummaryCalls::class)->countCalls(now()->subMonth()->startOfMonth(), [$call->patientId()]);
         }

@@ -22,7 +22,7 @@ class Suggestor
     const DEFAULT_WINDOW_END   = '17:00:00';
     const DEFAULT_WINDOW_START = '10:00:00';
 
-    public function handle(User $patient, CallHandler $handler):NextCallSuggestion
+    public function handle(User $patient, CallHandler $handler): NextCallSuggestion
     {
         return $this->getPredicament(
             $this->getAssignedNurse(

@@ -10,7 +10,6 @@ use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Constants;
 use App\Note;
 use App\Notifications\PracticeStaffCreatedNote;
-use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
 
 class NoteObserver
