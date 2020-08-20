@@ -41,7 +41,7 @@
             </div>
             <div class="row" style="padding-top: 25px;">
             <div class="col-xs-12">
-                <label>Selected Phone Number To Call</label>
+                <label>Selected Phone Number</label>
             </div>
             <div class="col-xs-12">
                 <div class="col-xs-9 no-padding">

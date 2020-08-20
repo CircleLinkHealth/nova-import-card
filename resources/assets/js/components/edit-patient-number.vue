@@ -58,16 +58,10 @@
                 <div style="padding-right: 14px; margin-left: -10px;">
                     <div class="numbers">
                         <div class="types">
-                       <select2 id="numberType"
-                                class="form-control"
-                                style="width: 81px;"
-                                v-model="newPhoneType">
-                           <option v-for="(phoneType, key) in phoneTypesFiltered"
-                                   :key="key"
-                                   :value="phoneType">
-                               {{phoneType}}
-                           </option>
-                       </select2>
+                       <v-select id="numberType"
+                                 v-model="newPhoneType"
+                                 :options="phoneTypesFiltered">
+                       </v-select>
                    </div>
 
 
@@ -132,6 +126,7 @@
     import EventBus from '../admin/time-tracker/comps/event-bus'
     import CallNumber from "./call-number";
     import EditPatientAlternateContact from "./edit-patient-alternate-contact";
+    import VueSelect from "vue-select";
 
     const alternate = 'alternate';
 
@@ -141,7 +136,8 @@
         components: {
             'loader': LoaderComponent,
             'call-number':CallNumber,
-            'edit-patient-alternate-contact':EditPatientAlternateContact
+            'edit-patient-alternate-contact':EditPatientAlternateContact,
+            'v-select': VueSelect
         },
 
         props: [
