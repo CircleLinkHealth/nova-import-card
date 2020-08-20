@@ -33,8 +33,8 @@ class MarkPrimaryPhoneRequest extends FormRequest
     public function rules()
     {
         return [
-            'patientUserId' => 'required',
-            'phoneId'       => 'required',
+            'patientUserId' => 'required|int',
+            'phoneId'       => 'required|int',
         ];
     }
 

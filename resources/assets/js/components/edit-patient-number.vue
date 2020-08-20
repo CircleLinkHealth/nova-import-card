@@ -120,17 +120,6 @@
                                                 :alt-contact="alternateContactDetails[0]">
                 </edit-patient-alternate-contact>
             </div>
-
-<!--            <div v-if="shouldDisplayAlternateDetailsText"-->
-<!--                 class="alt-contact-block">-->
-<!--                <a class="inline-block">-->
-<!--                    <b>Alternate Contact</b>:-->
-<!--                    <span>({{alternateContactDetails[0].agentRelationship}})-->
-<!--                        {{alternateContactDetails[0].agentName}}</span>-->
-<!--                </a>-->
-<!--                <a class="inline-block"></a>-->
-<!--            </div>-->
-
         </div>
     </div>
 
