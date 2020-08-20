@@ -85,14 +85,12 @@ class CallsView extends BaseSqlView
             left join (select pi.user_id as patient_id, l.state from locations l left join patient_info pi on l.id = pi.preferred_contact_location) as u10 on c.inbound_cpm_id = u10.patient_id
 
         WHERE
-            c.scheduled_date is not null
-            AND (
-                # calls need to be scheduled and in the future
-                c.sub_type is null and c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York'))
-                OR
-                # tasks can be in the past
-                c.sub_type is not null
-            )
+            # calls need to be scheduled and in the future
+            (c.type = 'call' and c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')))
+            OR
+            # tasks can be in the past
+            c.type != 'call'
+            
       ");
 
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()

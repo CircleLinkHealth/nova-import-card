@@ -58,14 +58,11 @@ class CallsViewNurses extends BaseSqlView
             left join (select pbp.user_id as patient_id, u.display_name as billing_provider from users u join (select pctm.user_id, pctm.member_user_id from users u
                                                                                                                 left join patient_care_team_members pctm on u.id = pctm.user_id where pctm.type = 'billing_provider') pbp on pbp.member_user_id = u.id limit 1) u8 on c.inbound_cpm_id = u8.patient_id
         WHERE
-            c.scheduled_date is not null
-            AND (
-                # calls need to be scheduled and in the future
-                c.sub_type is null and c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York'))
-                OR
-                # tasks can be in the past
-                c.sub_type is not null
-            )
+            # calls need to be scheduled and in the future
+            (c.type = 'call' and c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')))
+            OR
+            # tasks can be in the past
+            c.type != 'call'
       ");
 
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
