@@ -20,7 +20,7 @@ class CallsView extends BaseSqlView
     public function createSqlView(): bool
     {
         $startOfMonthQuery = $this->safeStartOfMonthQuery();
-        
+
         return \DB::statement("
         CREATE VIEW {$this->getViewName()}
         AS
@@ -85,28 +85,26 @@ class CallsView extends BaseSqlView
             left join (select pi.user_id as patient_id, l.state from locations l left join patient_info pi on l.id = pi.preferred_contact_location) as u10 on c.inbound_cpm_id = u10.patient_id
 
         WHERE
-            c.scheduled_date is not null
-            AND (
-                # calls need to be scheduled and in the future
-                c.sub_type is null and c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York'))
-                OR
-                # tasks can be in the past
-                c.sub_type is not null
-            )
+            # calls need to be scheduled and in the future
+            (c.type = 'call' and c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')))
+            OR
+            # tasks can be in the past
+            c.type != 'call'
+            
       ");
-        
+
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
         // because we store scheduled_date in New York time (EST), but we the timezone in database can be anything (UTC or local)
-        
+
         // removed where clause: c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York'))
         // calls table is now an actions table.
         // we have tasks that may be due in the past
         // assuming that re-scheduler service is dropping past calls, we will only have type `task` that are in the past
-        
+
         // update:
         // modified where clause to optimize query and cover comments above
     }
-    
+
     /**
      * Get the name of the sql view.
      */
@@ -114,7 +112,7 @@ class CallsView extends BaseSqlView
     {
         return 'calls_view';
     }
-    
+
     /**
      * Return a start of month query compatible with both sqlite and mysql.
      *
