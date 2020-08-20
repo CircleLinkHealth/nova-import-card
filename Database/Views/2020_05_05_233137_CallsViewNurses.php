@@ -13,15 +13,13 @@ class CallsViewNurses extends BaseSqlView
      */
     public function createSqlView(): bool
     {
-        $startOfMonthQuery = $this->safeStartOfMonthQuery();
-
         return \DB::statement("
         CREATE VIEW {$this->getViewName()}
         AS
         SELECT
             c.id,
             if(c.type = 'call' or c.type is null, 'call', c.sub_type) as type,
-            u2.nurse_id,
+            c.outbound_cpm_id as nurse_id,
             u1.patient_id,
             u1.patient,
             c.scheduled_date,
@@ -36,22 +34,22 @@ class CallsViewNurses extends BaseSqlView
             c.window_start as call_time_start,
             c.window_end as call_time_end,
             c.asap,
-            u6.preferred_call_days,
+            u2.preferred_call_days,
             u8.billing_provider,
             c.attempt_note,
-            u4.general_comment,
-            u4.ccm_status
+            u2.general_comment,
+            u2.ccm_status
         FROM
             calls c
-            join (select u.id as patient_id, CONCAT(u.display_name) as patient, u.timezone from users u where u.deleted_at is null) as u1 on c.inbound_cpm_id = u1.patient_id
+            join (select u.id as patient_id, u.display_name as patient, u.timezone from users u where u.deleted_at is null) as u1 on c.inbound_cpm_id = u1.patient_id
+            
+            left join (select pi.user_id as patient_id, pi.general_comment, pi.ccm_status, GROUP_CONCAT(pcw.day_of_week) as preferred_call_days
+						from patient_info pi
+						left join patient_contact_window pcw on pi.id = pcw.patient_info_id
+						where pi.ccm_status in ('enrolled', 'paused')
+						group by pi.user_id) as u2 on c.inbound_cpm_id = u2.patient_id
 
-            left join (select u.id as nurse_id from users u) as u2 on c.outbound_cpm_id = u2.nurse_id
-
-            left join (select pi.user_id as patient_id, pi.no_call_attempts_since_last_success, pi.general_comment, pi.ccm_status from patient_info pi where pi.ccm_status in ('enrolled', 'paused')) as u4 on c.inbound_cpm_id = u4.patient_id
-
-            left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, pms.no_of_calls from patient_monthly_summaries pms where month_year = ${startOfMonthQuery}) u5 on c.inbound_cpm_id = u5.patient_id
-
-			left join (select pi.user_id, GROUP_CONCAT(pcw.day_of_week) as preferred_call_days from patient_info pi left join patient_contact_window pcw on pi.id = pcw.patient_info_id group by pi.user_id) as u6 on c.inbound_cpm_id = u6.user_id
+            left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, pms.no_of_calls from patient_monthly_summaries pms where month_year = DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) u5 on c.inbound_cpm_id = u5.patient_id
 
 			left join (select u.id as user_id, p.id as practice_id, p.display_name as practice from practices p join users u on u.program_id = p.id where p.active = 1) u7 on c.inbound_cpm_id = u7.user_id
 			
@@ -83,22 +81,5 @@ class CallsViewNurses extends BaseSqlView
     public function getViewName(): string
     {
         return 'calls_view_nurses';
-    }
-
-    /**
-     * Return a start of month query compatible with both sqlite and mysql.
-     *
-     * For this to work, you need to have time zone info in your database. Run the following command if you get nulls.
-     * mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
-     *
-     * Alternative command: DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY)
-     *
-     * @return string
-     */
-    private function safeStartOfMonthQuery()
-    {
-        return 'mysql' === config('database.connections')[config('database.default')]['driver']
-            ? "DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)"
-            : "date('now','start of month')"; //sqlite
     }
 }
