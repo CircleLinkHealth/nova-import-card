@@ -353,7 +353,11 @@ export default {
 
 
         deleteAlternateContact(deleteAlternatePhoneOnly){
-            confirm("Are you sure you want to delete alternate phone?");
+
+            if (! confirm("Are you sure you want to delete alternate phone?")){
+                return;
+            }
+
             this.loading = true;
             axios.post('/manage-patients/delete-alternate-contact', {
                 patientUserId:this.userId,

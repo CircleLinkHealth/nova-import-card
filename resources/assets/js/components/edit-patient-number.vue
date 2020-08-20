@@ -283,7 +283,6 @@
             },
 
             updatePrimaryPhone(phoneNumberId){
-                confirm("Are you sure you want to mark this number as primary number");
                 this.loading = true;
                 axios.post('/manage-patients/mark/primary-phone', {
                     phoneId:phoneNumberId,
@@ -427,12 +426,15 @@
                      return;
                 }
 
-                confirm("Are you sure you want to delete this phone number");
-                this.loading = true;
+                if (! confirm("Are you sure you want to delete this phone number")){
+                    return;
+                }
+
                 const phoneNumberId = number.hasOwnProperty('phoneNumberId')
                 ? number.phoneNumberId
                 : '';
 
+                this.loading = true;
                 axios.post('/manage-patients/delete-phone', {
                     phoneId:phoneNumberId,
                     patientUserId:this.userId,
