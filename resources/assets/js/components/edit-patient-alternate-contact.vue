@@ -138,8 +138,16 @@ export default {
                 return this.helperTextClicked ? 'Hide alternate contact'
                     : 'Add missing alternate contact phone number';
             }
+
+            if (this.anyAlternateFieldIsEmpty){
+                return this.helperTextClicked ? 'Hide alternate contact'
+                    : 'Add missing alternate contact details';
+            }
+
             return this.helperTextClicked ? 'Hide alternate contact'
-                : 'Add missing alternate contact details';
+                : 'Show alternate contact details';
+
+
         },
 
         alternateClearBtnIsVisible(){
@@ -149,10 +157,8 @@ export default {
         },
 
         shouldDisplayHelpText(){
-            if (! this.callEnabled){
-                return false;
-            }
-            return this.anyAlternateFieldIsEmpty;
+            return this.callEnabled;
+
         },
 
         anyAlternateFieldIsEmpty(){
@@ -288,11 +294,11 @@ export default {
                     if (this.callEnabled){
                         EventBus.$emit("refresh:phoneData");
                     }
-                    
+
                     if (response.data.hasOwnProperty('message')){
                         console.log(response.data.message);
                     }
-                    
+
                     this.loading = false;
                 })).catch((error) => {
                 this.loading = false;
@@ -422,8 +428,8 @@ export default {
     margin-left: 12px;
 }
 
-.alternate-fields{
-    margin-top: 15px;
-    margin-bottom: 15px;
-}
+    .alternate-fields{
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
 </style>

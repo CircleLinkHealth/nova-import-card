@@ -131,8 +131,9 @@ class PatientCareplanController extends Controller
         $phoneTypes = $this->getPhoneTypes();
 
         return response()->json([
-            'phoneNumbers' => $phoneNumbers,
-            'phoneTypes'   => $phoneTypes,
+            'phoneNumbers'       => $phoneNumbers,
+            'phoneTypes'         => $phoneTypes,
+            'agentContactFields' => $agentContactFields,
         ], 200);
     }
 

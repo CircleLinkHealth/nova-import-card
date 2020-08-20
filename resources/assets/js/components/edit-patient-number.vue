@@ -113,12 +113,23 @@
                @click="addPhoneField()">
                 Add phone number
             </a>
-            <div v-if="!loading && callEnabled">
+            <div v-if="shouldShowAlternateContactComponent">
                 <edit-patient-alternate-contact ref="editPatientAlternateContact"
                                                 :user-id="userId"
                                                 :call-enabled="callEnabled">
                 </edit-patient-alternate-contact>
             </div>
+
+<!--            <div v-if="shouldDisplayAlternateDetailsText"-->
+<!--                 class="alt-contact-block">-->
+<!--                <a class="inline-block">-->
+<!--                    <b>Alternate Contact</b>:-->
+<!--                    <span>({{alternateContactDetails[0].agentRelationship}})-->
+<!--                        {{alternateContactDetails[0].agentName}}</span>-->
+<!--                </a>-->
+<!--                <a class="inline-block"></a>-->
+<!--            </div>-->
+
         </div>
     </div>
 
@@ -161,11 +172,28 @@
                 primaryNumber:'',
                 selectedNumberToCall:'',
                 phoneTypesFiltered:[],
-
+                alternateContactDetails:[
+                    {
+                        agentEmail:'',
+                        agentName:'',
+                        agentRelationship:'',
+                        agentTelephone:[],
+                    }
+                ],
             }
         },
 
         computed:{
+            shouldShowAlternateContactComponent(){
+                return this.alternateNumberIsSet || (!this.loading && this.callEnabled);
+            },
+
+            shouldDisplayAlternateDetailsText(){
+                 return this.callEnabled
+                     && this.alternateContactDetails[0].agentRelationship.length !==0
+                     && this.alternateContactDetails[0].agentName.length !==0;
+            },
+
             shouldDisplayNumberToCallText(){
                 return this.callEnabled && ! this.emptyPatientPhones;
             },
@@ -208,6 +236,11 @@
 
             addNewFieldClicked(){
                 return this.newInputs.length > 0;
+            },
+
+            alternateNumberIsSet(){
+                return this.patientPhoneNumbers.filter(number=>number.number.length !== 0
+                    && number.type.toLowerCase() === alternate).length !== 0;
             },
         },
 
@@ -296,6 +329,17 @@
                     .then((response => {
                         this.patientPhoneNumbers.push(...response.data.phoneNumbers);
                         this.phoneTypes.push(...response.data.phoneTypes);
+                        if (response.data.agentContactFields.length !== 0){
+                            const agentDetails = response.data.agentContactFields;
+                            this.alternateContactDetails[0].agentEmail = agentDetails.agentEmail;
+                            this.alternateContactDetails[0].agentName = agentDetails.agentName;
+                            this.alternateContactDetails[0].agentRelationship = agentDetails.agentRelationship;
+                            this.alternateContactDetails[0].agentTelephone = agentDetails.agentTelephone;
+                            this.initialAlternatePhoneSavedInDB = agentDetails.agentTelephone.number;
+                            this.initialAlternateEmailSavedInDB = agentDetails.agentEmail;
+                            this.initialAlternateRelationshipSavedInDB = agentDetails.agentRelationship;
+                            this.initialAlternateNameSavedInDB = agentDetails.agentName;
+                        }
                         this.emitPrimaryNumber();
                         this.loading = false;
                     })).catch((error) => {
@@ -334,6 +378,8 @@
                     const e = exception.data;
                     alert(e);
                 }
+
+                console.log(e);
             },
 
             saveNewNumber(){
@@ -406,9 +452,17 @@
                         }
                     })).catch((error) => {
                     this.loading = false;
-                    console.log(error.message);
+                    this.responseErrorMessage(error.response);
                 });
-            }
+            },
+
+            // setAlternateContactRelationship(){
+            //     const alternateContact = this.$refs.editPatientAlternateContact.alternateContactDetails;
+            //     if (alternateContact === undefined){
+            //         return '';
+            //     }
+            //     return this.$refs.editPatientAlternateContact.alternateContactDetails[0].agentRelationship;
+            // },
         },
 
         created() {
@@ -510,14 +564,13 @@
         margin-top: -20px
     }
 
-.bgColor{
-    background-color:  #c4ebff;
-}
+    .bgColor{
+        background-color:  #c4ebff;
+    }
 
-
-.alternate-fields{
-    margin-top: 15px;
-    margin-bottom: 15px;
-}
+    .alt-contact-block{
+        margin-top: 30px;
+        margin-bottom: -15px;
+    }
 
 </style>
