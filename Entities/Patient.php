@@ -57,7 +57,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int                                                                                                 $preferred_calls_per_month
  * @property string|null                                                                                         $last_successful_contact_time
  * @property int|null                                                                                            $no_call_attempts_since_last_success
-
  * @property string                                                                                              $daily_contact_window_start
  * @property string                                                                                              $daily_contact_window_end
  * @property int|null                                                                                            $next_call_id
@@ -163,6 +162,7 @@ class Patient extends BaseModel
      * services. As of 07/23/2018, there exist ~200 BHI eligible patients who have consented before 07/23/2018.
      */
     const DATE_CONSENT_INCLUDES_BHI = '2018-07-23 00:00:00';
+    const DEFAULT_CALLS_PER_MONTH   = 1;
 
     /**
      * Available Patient Statuses.
@@ -177,8 +177,7 @@ class Patient extends BaseModel
      * Withdrawn on 1st Call.
      * */
     const WITHDRAWN_1ST_CALL = 'withdrawn_1st_call';
-    const DEFAULT_CALLS_PER_MONTH = 1;
-    
+
     public $phi = [
         'agent_name',
         'agent_telephone',

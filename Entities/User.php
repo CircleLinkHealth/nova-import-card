@@ -3077,7 +3077,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->queryOfPracticesRequiringSpecialBhiConsent($builder, 'whereNotIn');
     }
-    
+
     /**
      * Scope for patients who belong to active and billable practices.
      *
@@ -3217,10 +3217,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->whereHas(
                 'carePlan',
                 function ($q) {
-                    $q->whereIn('status', [CarePlan::RN_APPROVED]);
+                    $q->where('status', CarePlan::RN_APPROVED);
                 }
             )
-            ->intersectPracticesWith($approver)
             ->when(true === $approveOwnCarePlansOnly, function ($q) use ($approveOwnCarePlansOnly, $approver) {
                 $q->whereHas(
                     'careTeamMembers',
