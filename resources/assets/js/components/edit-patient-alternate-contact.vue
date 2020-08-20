@@ -25,9 +25,9 @@
                        placeholder="Alternate contact name"
                        v-model="alternateContactDetails[0].agentName"
                        :disabled="loading"/>
-
+                <!--                       style="margin-left: 10px;"-->
                 <input name="alternativeEmail"
-                       style="margin-left: 10px;"
+
                        class="form-control alternative-field"
                        :class="{borderColor : alternateContactDetails[0].agentEmail.length === 0}"
                        type="text"
@@ -402,7 +402,7 @@ export default {
 
 .alt-phone-number{
     display: inline-flex;
-    padding-left: 11px;
+    /*padding-left: 11px;*/
 }
 
 .phone-number{
@@ -416,6 +416,7 @@ export default {
     max-width: 270px;
     min-width: 270px;
     margin-bottom: 18px;
+    margin-right: 10px;
 }
 
 .plus-one{
