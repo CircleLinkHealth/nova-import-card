@@ -25,9 +25,8 @@
                        placeholder="Alternate contact name"
                        v-model="alternateContactDetails[0].agentName"
                        :disabled="loading"/>
-                <!--                       style="margin-left: 10px;"-->
-                <input name="alternativeEmail"
 
+                <input name="alternativeEmail"
                        class="form-control alternative-field"
                        :class="{borderColor : alternateContactDetails[0].agentEmail.length === 0}"
                        type="text"
