@@ -224,9 +224,9 @@ export default {
         },
 
         isValidEmail(){
-            return this.alternateContactDetails[0].agentEmail.length !== 0
-                && this.alternateContactDetails[0].agentEmail.includes("@")
-                && (this.alternateContactDetails[0].agentEmail.includes(".com"));
+            const pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+            return ! this.alternateEmailIsEmpty
+                && pattern.test(this.alternateContactDetails[0].agentEmail);
         },
 
         initialValueIsUnchanged(){
