@@ -215,6 +215,7 @@ class Patient extends BaseModel
         'paused_letter_printed_at',
         'consent_date',
         'gender',
+        'last_contact_time',
         'date_paused',
         'date_withdrawn',
         'withdrawn_reason',
