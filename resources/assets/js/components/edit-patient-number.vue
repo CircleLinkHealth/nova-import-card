@@ -116,7 +116,8 @@
             <div v-if="shouldShowAlternateContactComponent">
                 <edit-patient-alternate-contact ref="editPatientAlternateContact"
                                                 :user-id="userId"
-                                                :call-enabled="callEnabled">
+                                                :call-enabled="callEnabled"
+                                                :alt-contact="alternateContactDetails[0]">
                 </edit-patient-alternate-contact>
             </div>
 

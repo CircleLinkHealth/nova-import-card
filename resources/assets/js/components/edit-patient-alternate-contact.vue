@@ -106,6 +106,7 @@ export default {
     props:[
         'userId',
         'callEnabled',
+        'altContact',
     ],
     data(){
         return {
@@ -316,12 +317,13 @@ export default {
         },
 
         getAlternateContactData(){
-            this.loading = true;
+            if (!this.callEnabled){
+                this.loading = true;
 
-            axios.post('/manage-patients/get-alternate-contact', {
-                patientUserId:this.userId,
-                requestIsFromCallPage:this.callEnabled,
-            }).then((response => {
+                axios.post('/manage-patients/get-alternate-contact', {
+                    patientUserId:this.userId,
+                    requestIsFromCallPage:this.callEnabled,
+                }).then((response => {
                     if (response.data.agentContactFields.length !== 0){
                         const agentDetails = response.data.agentContactFields[0];
                         this.alternateContactDetails[0].agentEmail = agentDetails.agentEmail;
@@ -335,9 +337,19 @@ export default {
                     }
                     this.loading = false;
                 })).catch((error) => {
-                this.loading = false;
-                this.responseErrorMessage(error);
-            });
+                    this.loading = false;
+                    this.responseErrorMessage(error);
+                });
+            }else {
+                this.alternateContactDetails[0].agentEmail = this.altContact.agentEmail;
+                this.alternateContactDetails[0].agentName = this.altContact.agentName;
+                this.alternateContactDetails[0].agentRelationship = this.altContact.agentRelationship;
+                this.alternateContactDetails[0].agentTelephone = this.altContact.agentTelephone;
+                this.initialAlternatePhoneSavedInDB = this.altContact.agentTelephone.number;
+                this.initialAlternateEmailSavedInDB = this.altContact.agentEmail;
+                this.initialAlternateRelationshipSavedInDB = this.altContact.agentRelationship;
+                this.initialAlternateNameSavedInDB = this.altContact.agentName;
+            }
         },
 
 
