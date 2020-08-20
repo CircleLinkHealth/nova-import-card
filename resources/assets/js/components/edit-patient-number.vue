@@ -441,14 +441,6 @@
                     this.responseErrorMessage(error.response);
                 });
             },
-
-            // setAlternateContactRelationship(){
-            //     const alternateContact = this.$refs.editPatientAlternateContact.alternateContactDetails;
-            //     if (alternateContact === undefined){
-            //         return '';
-            //     }
-            //     return this.$refs.editPatientAlternateContact.alternateContactDetails[0].agentRelationship;
-            // },
         },
 
         created() {
