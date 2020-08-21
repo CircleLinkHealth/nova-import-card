@@ -200,9 +200,33 @@ $user_info = [];
                                                 <span class="help-block">{{ $errors->first('zip') }}</span>
                                             </div>
 
-                                            <div class="form-item col-sm-12">
-                                                @if(empty($patient->id))
+
+                                                <div class="form-item col-sm-12">
+                                                    @if(empty($patient->id))
                                                     <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group {{ $errors->first('agent_name') ? 'has-error' : '' }}">
+                                                                <input type="text" class="form-control" name="agent_name"
+                                                                       id="agent_name" placeholder="Agent Name"
+                                                                       value="{{ (old('agent_name') ? old('agent_name') : ($patient->getAgentName() ? $patient->getAgentName() : '')) }}">
+                                                                <span class="help-block">{{ $errors->first('agent_name') }}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group {{ $errors->first('agent_telephone') ? 'has-error' : '' }}">
+                                                                <label class="sr-only" for="agent_telephone">Agent
+                                                                    Telephone</label>
+                                                                <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                                       class="form-control" name="agent_telephone"
+                                                                       id="agent_telephone" placeholder="Agent Telephone"
+                                                                       value="{{ (old('agent_telephone') ? old('agent_telephone') : ($patient->getAgentTelephone() ? $patient->getAgentTelephone() : '')) }}">
+                                                                <span class="help-block">{{ $errors->first('agent_telephone') }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-item col-sm-12">
+                                                <div class="row">
                                                         <div class="col-sm-6">
                                                             <div class="form-group {{ $errors->first('agent_relationship') ? 'has-error' : '' }}">
                                                                 <input type="text" class="form-control"
