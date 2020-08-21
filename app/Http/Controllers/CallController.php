@@ -101,7 +101,7 @@ class CallController extends Controller
             'id',
             'outbound_cpm_id'
         );
-        
+
         if (empty($input['outbound_cpm_id'])) {
             $user = Auth::user();
             if ($user->isCareCoach()) {

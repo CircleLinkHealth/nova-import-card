@@ -10,7 +10,6 @@ use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Events\CarePlanWasQAApproved;
 use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
-use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Database\QueryException;

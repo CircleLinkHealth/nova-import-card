@@ -12,9 +12,6 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class CreateManualCallAfterNote implements Arrayable
 {
-    /**
-     * @var CallHandler
-     */
     private CallHandler $callHandler;
     /**
      * @var User|User

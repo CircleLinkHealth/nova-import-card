@@ -1034,7 +1034,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'call.reschedule',
             ])->middleware('permission:call.update');
         });
-    
+
         Route::group(['prefix' => 'manual-call', 'middleware' => 'permission:call.create'], function () {
             Route::get('create', [
                 'uses' => 'ManualCallController@create',

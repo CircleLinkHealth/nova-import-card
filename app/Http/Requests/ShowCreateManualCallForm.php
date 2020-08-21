@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests;
 
 use App\Http\Controllers\ManualCallController;
@@ -26,7 +30,6 @@ class ShowCreateManualCallForm extends FormRequest
     public function rules()
     {
         return [
-            //
         ];
     }
 }
