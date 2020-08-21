@@ -9,6 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\Nurseinvoices\GenerateInvoicesExport;
 use CircleLinkHealth\NurseInvoices\Notifications\NurseInvoicesDownloaded;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,7 +18,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Modules\Nurseinvoices\GenerateInvoicesExport;
 
 class ExportAndDispatchInvoices implements ShouldQueue
 {
@@ -67,13 +67,11 @@ class ExportAndDispatchInvoices implements ShouldQueue
                 });
             });
 
-        // Code execution will continue. Notification will contain info text that nothing was generated.
         if ($invoices->isEmpty()) {
             Log::warning("Invoices to download for {$startDate} not found");
         }
-        // Generate pdf / csv.
+
         $invoicesMediaIds = $this->generateInvoicesMedia(collect([$invoices]), $startDate);
-        // Send notification with attachment.
         $this->auth->notify(new NurseInvoicesDownloaded($invoicesMediaIds, $startDate, $this->downloadFormat));
     }
 
@@ -99,7 +97,6 @@ class ExportAndDispatchInvoices implements ShouldQueue
             return collect($invoiceDocument)->pluck('id')->toArray();
         }
 
-        //        If for any reason. It is handled in NurseInvoicesDownloaded::class.
         return [];
     }
 }
