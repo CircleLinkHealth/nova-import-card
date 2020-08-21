@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f355bcc3aa164ac531f023a708498c50",
+    "content-hash": "90828571acbe55cc4da455603ef04c02",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1593,11 +1593,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.7.5",
+            "version": "dev-ROAD-288-billing-revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "2c071cd7cfda945f252f7b89d2bb59781cfd84d1"
+                "reference": "cdf44ab67412f992843c139d37fa2c95afe5f760"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1611,7 +1611,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-14T18:15:51+00:00"
+            "time": "2020-08-21T21:21:28+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -3876,16 +3876,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.97",
+            "version": "v1.2.98",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "6356ff2b4a534276d9b29f674cb59b97ba016f93"
+                "reference": "02b24e5d4dc347737577f48c688ee14c3b5dfd4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/6356ff2b4a534276d9b29f674cb59b97ba016f93",
-                "reference": "6356ff2b4a534276d9b29f674cb59b97ba016f93",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/02b24e5d4dc347737577f48c688ee14c3b5dfd4f",
+                "reference": "02b24e5d4dc347737577f48c688ee14c3b5dfd4f",
                 "shasum": ""
             },
             "require": {
@@ -3921,7 +3921,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2020-08-18T20:43:48+00:00"
+            "time": "2020-08-20T18:36:15+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
@@ -5001,17 +5001,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.8.3",
+            "version": "v3.8.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "b4281b89961ebfa9293c6ff39513cfd142275858"
+                "reference": "1ee33dcf3394fcbd4d6f0ebc94a155c0643b5359"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-b4281b89961ebfa9293c6ff39513cfd142275858-zip-22f859.zip",
-                "reference": "b4281b89961ebfa9293c6ff39513cfd142275858",
-                "shasum": "850d41ecb278ecadba957f5f274dcdb2b06e8d49"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-1ee33dcf3394fcbd4d6f0ebc94a155c0643b5359-zip-e59c0f.zip",
+                "reference": "1ee33dcf3394fcbd4d6f0ebc94a155c0643b5359",
+                "shasum": "13a09d4023c3b30737e053e505d589e22c219699"
             },
             "require": {
                 "brick/money": "^0.4.2",
@@ -5071,7 +5071,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-08-18T17:35:45+00:00"
+            "time": "2020-08-21T17:45:15+00:00"
         },
         {
             "name": "laravel/passport",
@@ -17326,6 +17326,7 @@
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/timetracking-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
