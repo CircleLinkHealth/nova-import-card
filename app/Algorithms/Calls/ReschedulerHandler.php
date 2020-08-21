@@ -51,6 +51,13 @@ class ReschedulerHandler
                 ->orWhere('type', '=', 'call');
         })
             ->where('status', Call::SCHEDULED)
+            ->where(function ($q) {
+                $q->where('scheduled_date', '<', now()->toDateString())
+                    ->orWhere(function ($q) {
+                        $q->where('scheduled_date', '<=', now()->toDateString())
+                            ->where('window_end', '<=', now()->format('H:i'));
+                    });
+            })
             ->with([
                 'inboundUser.patientNurseAsPatient.nurse',
                 'inboundUser.patientInfo',
@@ -59,8 +66,6 @@ class ReschedulerHandler
                         ->where('scheduled_date', '>=', now()->toDateString());
                 },
             ])
-            ->where('scheduled_date', '<=', now()->toDateString())
-            ->where('window_end', '<=', now()->format('H:i'))
             ->chunkById(100, function ($calls) {
                 \DB::transaction(function () use ($calls) {
                     foreach ($calls as $call) {
@@ -79,6 +84,8 @@ class ReschedulerHandler
     {
         try {
             if (is_null($patientUser = $call->inboundUser)) {
+                $this->expireCall($call);
+
                 return;
             }
 
@@ -139,7 +146,7 @@ class ReschedulerHandler
      */
     private function canBeCarriedOut(Call $call)
     {
-        return now()
+        return Carbon::parse($call->scheduled_date)
             ->setTimezone($call->inboundUser->timezone ?? config('app.timezone'))
             ->setTimeFromTimeString($call->window_end)
             ->addHours(self::CUSHION_FOR_NURSE_TO_RESCHEDULE_IN_HOURS)
