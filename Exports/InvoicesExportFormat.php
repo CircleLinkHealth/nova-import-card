@@ -96,16 +96,18 @@ class InvoicesExportFormat
             $invoice->invoice_data ?? [],
         );
     }
-
+    
     /**
+     * @param string $index
+     * @param array $array
      * @return mixed|string
      */
     private function sanitizedInvoiceData(string $index, array $array)
     {
-        if ( ! isset($array[$index])) {
+        if ( ! isset($array[$index]) || 0 === $array[$index]) {
             return '-';
         }
-
-        return 0 === $array[$index] ? '-' : $array[$index];
+    
+        return $array[$index];
     }
 }
