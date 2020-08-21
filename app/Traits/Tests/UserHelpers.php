@@ -220,7 +220,7 @@ trait UserHelpers
                 'address2'          => '',
                 'city'              => $faker->city,
                 'state'             => 'AL',
-                'zip'               => '12345',
+                'zip'               => '55555',
                 'is_auto_generated' => true,
                 'roles'             => $roles,
                 'timezone'          => 'America/New_York',
