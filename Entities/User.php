@@ -3079,7 +3079,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->queryOfPracticesRequiringSpecialBhiConsent($builder, 'whereNotIn');
     }
-    
+
     /**
      * Scope for patients who belong to active and billable practices.
      *
