@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Decorators;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
@@ -14,7 +15,6 @@ use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Facades\DB;
-use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 
 class CcdaFromAthena implements MedicalRecordDecorator
 {
