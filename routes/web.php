@@ -761,7 +761,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('delete-phone', [
             'uses' => 'Patient\PatientCareplanController@deletePhoneNumber',
             'as'   => 'patient.phone.delete',
-        ])->middleware('permission:patient.create,patient.update,careplan.update');
+        ])->middleware('permission:phoneNumber.create,phoneNumber.update,careplan.update');
 
         Route::post('delete-alternate-contact', [
             'uses' => 'Patient\PatientCareplanController@deleteAlternateContact',
@@ -776,7 +776,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('get-phones', [
             'uses' => 'Patient\PatientCareplanController@getPatientPhoneNumbers',
             'as'   => 'patient.get.phones',
-        ])->middleware('permission:patient.create,patient.update,careplan.update');
+        ])->middleware('permission:phoneNumber.create,phoneNumber.update');
 
         Route::get('dashboard', [
             'uses' => 'Patient\PatientController@showDashboard',
@@ -801,7 +801,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('new/phone', [
             'uses' => 'Patient\PatientController@saveNewPhoneNumber',
             'as'   => 'patient.phone.create',
-        ])->middleware('permission:patient.create,patient.update,location.read,practice.read');
+        ])->middleware('permission:phoneNumber.create,phoneNumber.update,practice.read');
 
         Route::post('new/alternate/phone', [
             'uses' => 'Patient\PatientController@saveNewAlternatePhoneNumber',
@@ -811,7 +811,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('mark/primary-phone', [
             'uses' => 'Patient\PatientController@markAsPrimaryPhone',
             'as'   => 'primary.phone.mark',
-        ])->middleware('permission:patient.create,patient.update,location.read,practice.read');
+        ])->middleware('permission:phoneNumber.create,phoneNumber.update,practice.read');
 
         Route::get('listing/pdf', [
             'uses' => 'Patient\PatientController@showPatientListingPdf',
