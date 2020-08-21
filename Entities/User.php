@@ -3215,7 +3215,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->whereHas(
                 'carePlan',
                 function ($q) {
-                    $q->where('status', CarePlan::RN_APPROVED);
+                    $q->where('status', '=', CarePlan::RN_APPROVED);
                 }
             )
             ->when($isProvider = $approver->isProvider(), function ($q) use ($approver) {
@@ -3232,7 +3232,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 $q->whereHas(
                     'billingProvider.user.forwardAlertsTo',
                     function ($q) use ($approver) {
-                        $q->where('id', $approver->id);
+                        $q->where('id', '=', $approver->id);
                     }
                 );
             })
@@ -3247,7 +3247,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     'patientInfo.location',
                     'primaryPractice',
                     'carePlan',
-                    'billingProvider.user.forwardAlertsTo',
                 ]
             );
     }
