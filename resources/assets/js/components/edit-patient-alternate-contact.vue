@@ -73,11 +73,11 @@
                     </button>
 
                     <button v-if="alternateClearBtnIsVisible"
-                            class="btn btn-sm clear-alt-contact"
+                            class="btn btn-danger btn-sm delete-alt-contact"
                             type="button"
                             @click="deleteAlternateContact(false)"
                             :disabled="loading">
-                        Delete alternate contact details
+                        Delete alternate contact
                     </button>
                 </div>
             </div>
@@ -429,6 +429,13 @@ export default {
 }
 
 .save-alt-contact{
+    display: inline;
+    height: 29px;
+    padding: 5px;
+    color: white;
+}
+
+.delete-alt-contact{
     display: inline;
     height: 29px;
     padding: 5px;
