@@ -3209,9 +3209,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function scopePatientsPendingProviderApproval($query, User $approver)
     {
-        $approveOwnCarePlansOnly = (bool) optional($approver->providerInfo)->approve_own_care_plans;
-
-        return $query->intersectPracticesWith($approver)
+        return $query->ofPractice($approver->practices)
             ->ofType('participant')
             ->whereHas('patientInfo', function ($q) {
                 $q->enrolled();
@@ -3219,42 +3217,24 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->whereHas(
                 'carePlan',
                 function ($q) {
-                    $q->whereIn('status', [CarePlan::RN_APPROVED]);
+                    $q->where('status', '=', CarePlan::RN_APPROVED);
                 }
             )
-            ->intersectPracticesWith($approver)
-            ->when(true === $approveOwnCarePlansOnly, function ($q) use ($approveOwnCarePlansOnly, $approver) {
+            ->when($isProvider = $approver->isProvider(), function ($q) use ($approver) {
+                if ((bool) $approver->providerInfo->approve_own_care_plans) {
+                    $q->whereHas(
+                        'billingProvider',
+                        function ($q) use ($approver) {
+                            $q->where('member_user_id', '=', $approver->id);
+                        }
+                    );
+                }
+            })
+            ->when(false === $isProvider, function ($q) use ($approver) {
                 $q->whereHas(
-                    'careTeamMembers',
-                    function ($q) use ($approveOwnCarePlansOnly, $approver) {
-                        $q->where(
-                            [
-                                ['type', '=', CarePerson::BILLING_PROVIDER],
-                                ['member_user_id', '=', $approver->id],
-                            ]
-                        )
-                            ->orWhere(
-                                function ($q) use ($approver) {
-                                    $q->whereHas(
-                                        'user',
-                                        function ($q) use ($approver) {
-                                            $q->whereHas(
-                                                'forwardAlertsTo',
-                                                function ($q) use ($approver) {
-                                                    $q->where('contactable_id', $approver->id)
-                                                        ->orWhereIn(
-                                                            'name',
-                                                            [
-                                                                'forward_careplan_approval_emails_instead_of_provider',
-                                                                'forward_careplan_approval_emails_in_addition_to_provider',
-                                                            ]
-                                                        );
-                                                }
-                                            );
-                                        }
-                                    );
-                                }
-                            );
+                    'billingProvider.user.forwardAlertsTo',
+                    function ($q) use ($approver) {
+                        $q->where('id', '=', $approver->id);
                     }
                 );
             })
