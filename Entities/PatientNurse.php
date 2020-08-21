@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
