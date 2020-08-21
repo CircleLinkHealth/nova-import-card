@@ -1,6 +1,7 @@
 <template>
     <div class="phone-numbers">
         <div class="input-group">
+            <span v-if="this.error !== ''" class="help-block" style="color: red">{{this.error}}</span>
             <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Number<br>to Call</h5>
             <template v-if="true" v-for="(number, index) in patientPhoneNumbers">
                 <div class="numbers">
@@ -150,6 +151,7 @@
         props: [
             'userId',
             'callEnabled',
+            'error',
         ],
 
         data(){
