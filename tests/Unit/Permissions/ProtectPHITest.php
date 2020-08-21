@@ -35,16 +35,6 @@ class ProtectPHITest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        //could not make it work at the moment
-//        $app = m::mock('app')->shouldReceive('instance')->getMock();
-//        $this->facadeMocks['config'] = m::mock('config');
-//        $this->facadeMocks['cache']  = m::mock('cache');
-//
-//        Config::setFacadeApplication($app);
-//        Config::swap($this->facadeMocks['config']);
-//
-//        Cache::setFacadeApplication($app);
-//        Cache::swap($this->facadeMocks['cache']);
 
         $this->practice = factory(Practice::class)->create();
 
