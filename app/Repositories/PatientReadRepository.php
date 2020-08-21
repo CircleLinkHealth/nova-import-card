@@ -60,7 +60,7 @@ class PatientReadRepository
                 },
             ])
             ->when(array_key_exists('patientsPendingAuthUserApproval', $filtersInput), function ($q) {
-                if (auth()->user()->isProvider()) {
+                if (auth()->user()->canApproveCarePlans()) {
                     $q->patientsPendingProviderApproval(auth()->user());
                 } elseif (auth()->user()->isAdmin()) {
                     $q->patientsPendingCLHApproval(auth()->user());

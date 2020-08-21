@@ -226,10 +226,11 @@ trait UserHelpers
                 'timezone'          => 'America/New_York',
 
                 //provider Info
-                'prefix'     => 'Dr',
-                'suffix'     => 'MD',
-                'npi_number' => 1234567890,
-                'specialty'  => 'Unit Tester',
+                'prefix'                 => 'Dr',
+                'suffix'                 => 'MD',
+                'npi_number'             => 1234567890,
+                'specialty'              => 'Unit Tester',
+                'approve_own_care_plans' => true,
 
                 //phones
                 'home_phone_number' => $workPhone,
