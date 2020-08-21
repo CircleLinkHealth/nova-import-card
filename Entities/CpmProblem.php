@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 
@@ -186,5 +187,15 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     public function user()
     {
         return $this->hasMany(CpmProblemUser::class, 'cpm_problem_id');
+    }
+    
+    public function locationChargeableServices(){
+        return $this->belongsToMany(ChargeableService::class, 'location_problem_services', 'chargeable_service_id')->withPivot(['location_id']);
+    }
+    
+    public function scopeWithChargeableServicesForLocation($query, $locationId){
+        return $query->with(['locationChargeableServices' => function ($lps) use ($locationId){
+            $lps->where('pivot.location_id', $locationId);
+        }]);
     }
 }
