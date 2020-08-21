@@ -89,7 +89,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        ini_set('max_execution_time', 300);
+        ini_set('max_execution_time', 900);
         ini_set('memory_limit', '800M');
 
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)
@@ -100,21 +100,21 @@ class Kernel extends ConsoleKernel
             ->onOneServer();
 
         $schedule->command(CheckEmrDirectInbox::class)
-            ->everyTwoMinutes();
+            ->everyFiveMinutes();
 
         $schedule->command(RemoveDuplicateScheduledCalls::class)
-            ->everyFiveMinutes();
+            ->everyFifteenMinutes();
 
         $schedule->command(FaxAuditReportsAtPracticePreferredDayTime::class)
             ->onOneServer()
             ->everyFiveMinutes();
 
         $schedule->command(AutoApproveValidCarePlansAs::class, ['--reimport'])
-            ->everyFiveMinutes()
+            ->everyTwoHours()
             ->between('8:00', '23:00');
 
         $schedule->command(ProcessNextEligibilityBatchChunk::class)
-            ->everyFiveMinutes()
+            ->everyThirtyMinutes()
             ->withoutOverlapping();
 
         $schedule->command(RescheduleMissedCalls::class)
@@ -126,7 +126,7 @@ class Kernel extends ConsoleKernel
             ->onOneServer();
 
         $schedule->command('horizon:snapshot')
-            ->everyFifteenMinutes();
+            ->everyThirtyMinutes();
 
         $schedule->command(OverwriteNBIPatientMRN::class)
             ->everyThirtyMinutes();
