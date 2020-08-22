@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -32,9 +32,7 @@ class AddUserScopeToUser extends Migration
         }
         Schema::table('users', function (Blueprint $table) {
             $table->enum('scope', [
-                Practice::SCOPE_CARE_TEAM,
-                Practice::SCOPE_LOCATION,
-                Practice::SCOPE_PRACTICE,
+                User::SCOPE_LOCATION,
             ])->nullable()->after('program_id');
         });
     }
