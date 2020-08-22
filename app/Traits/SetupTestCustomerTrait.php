@@ -27,10 +27,10 @@ trait SetupTestCustomerTrait
     public function createAdmin(Practice $practice)
     {
         $roles = [
-            Role::whereName('administrator')->first()->id,
+            Role::whereName($roleName = 'administrator')->first()->id,
         ];
 
-        return $this->setupUser($practice->id, $roles);
+        return $this->setupUser($practice->id, $roles, $roleName);
     }
 
     /**
@@ -65,10 +65,10 @@ trait SetupTestCustomerTrait
     public function createPatient(Practice $practice, $providerId)
     {
         $roles = [
-            Role::byName('participant')->id,
+            Role::byName($roleName = 'participant')->id,
         ];
 
-        $patient = $this->setupUser($practice->id, $roles);
+        $patient = $this->setupUser($practice->id, $roles, $roleName);
         $date    = Carbon::now();
 
         $attr = \factory(Patient::class)->raw();
@@ -203,7 +203,7 @@ trait SetupTestCustomerTrait
             Role::whereName('provider')->first()->id,
         ];
 
-        return $this->setupUser($practice->id, $roles);
+        return $this->setupUser($practice->id, $roles, 'provider');
     }
 
     /**

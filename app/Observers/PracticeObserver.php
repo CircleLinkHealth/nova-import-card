@@ -6,6 +6,7 @@
 
 namespace App\Observers;
 
+use App\Constants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -19,14 +20,14 @@ class PracticeObserver
         User::withTrashed()
             ->where('saas_account_id', $practice->saas_account_id)
             ->where('auto_attach_programs', true)
-            ->with('roles')
-            ->has('roles')
             ->whereDoesntHave('practices', function ($q) use ($practice) {
                 $q->where('practices.id', $practice->id);
             })
             ->get()
-            ->map(function ($user) use ($practice) {
-                $user->attachRoleForSite($user->roles->first()->id, $practice->id);
+            ->each(function ($user) use ($practice) {
+                foreach ($user->roles as $role) {
+                    $user->attachRoleForSite($role->id, $practice->id);
+                }
             });
     }
 
@@ -37,6 +38,14 @@ class PracticeObserver
     {
         if ( ! $practice->saas_account_id && ! auth()->guest()) {
             $practice->saas_account_id = auth()->user()->saas_account_id;
+        }
+    }
+    
+    public function saved(Practice $practice) {
+        if ($practice->isDirty('default_user_scope') && $practice->default_user_scope !== $practice->getOriginal('default_user_scope')) {
+            User::ofPractice($practice)->ofType(Constants::PRACTICE_STAFF_ROLE_NAMES)->update([
+                'scope' => $practice->default_user_scope
+            ]);
         }
     }
 }
