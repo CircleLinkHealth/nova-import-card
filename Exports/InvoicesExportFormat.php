@@ -64,14 +64,14 @@ class InvoicesExportFormat
             }
 
             return [
-                'Nurse'          => $invoice['nurseFullName'],
-                'Hour Total'     => 0 === $invoice['systemTimeInHours'] ? '-' : $invoice['systemTimeInHours'],
-                'Visit Total'    => 0 === $invoice['visitsCount'] ? '-' : $invoice['visitsCount'],
+                'Nurse'          => $this->sanitizedInvoiceData('nurseFullName', $invoice),
+                'Hour Total'     => $this->sanitizedInvoiceData('systemTimeInHours', $invoice),
+                'Visit Total'    => $this->sanitizedInvoiceData('visitsCount', $invoice),
                 'Pay Structure'  => $payStructure,
                 'Visit Hour Pay' => 0 === $baseSalary ? '-' : "$$baseSalary",
-                'Extra Time'     => 0 === $invoice['addedTimeAmount'] ? '-' : $invoice['addedTimeAmount'],
-                'Bonus'          => 0 === $invoice['bonus'] ? '-' : $invoice['bonus'],
-                'Pay Total'      => 0 === $invoice['formattedInvoiceTotalAmount'] ? '-' : $invoice['formattedInvoiceTotalAmount'],
+                'Extra Time'     => $this->sanitizedInvoiceData('addedTimeAmount', $invoice),
+                'Bonus'          => $this->sanitizedInvoiceData('bonus', $invoice),
+                'Pay Total'      => $this->sanitizedInvoiceData('formattedInvoiceTotalAmount', $invoice),
             ];
         })->toArray();
     }
@@ -95,5 +95,17 @@ class InvoicesExportFormat
             ],
             $invoice->invoice_data ?? [],
         );
+    }
+
+    /**
+     * @return mixed|string
+     */
+    private function sanitizedInvoiceData(string $index, array $array)
+    {
+        if ( ! isset($array[$index]) || 0 === $array[$index]) {
+            return '-';
+        }
+
+        return $array[$index];
     }
 }
