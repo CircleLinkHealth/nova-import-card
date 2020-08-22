@@ -3222,7 +3222,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 }
             )
             ->when($isProvider = $approver->isProvider(), function ($q) use ($approver) {
-                if ((bool) $approver->providerInfo->approve_own_care_plans) {
+                if ((bool) optional($approver->providerInfo)->approve_own_care_plans) {
                     $q->whereHas(
                         'billingProvider',
                         function ($q) use ($approver) {
