@@ -13,7 +13,7 @@ class PracticeDefaultScopeTest extends CustomerTestCase
 {
     public function test_it_adds_default_scope_to_practice_staff_roles()
     {
-        self::assertNull($this->provider()->scope);
+        self::assertNotEquals(User::SCOPE_LOCATION, $this->provider()->scope);
         
         $this->practice()->default_user_scope = User::SCOPE_LOCATION;
         $this->practice()->save();
