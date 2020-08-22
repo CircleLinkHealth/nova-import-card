@@ -8,6 +8,7 @@ namespace Tests\Unit;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
+use App\Note;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\CCD\CcdProblemService;
 use App\Traits\Tests\UserHelpers;
@@ -21,6 +22,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\TestCase;
 
@@ -229,6 +231,71 @@ class PatientAttestedConditionsTest extends TestCase
         $this->assertFalse($responseData['attestationRequirements']['disabled']);
         $this->assertTrue(1 === $responseData['attestationRequirements']['bhi_problems_attested']);
         $this->assertTrue(2 === $responseData['attestationRequirements']['ccm_problems_attested']);
+    }
+
+    public function test_attested_problems_can_have_addendum_id()
+    {
+        $this->actingAs($this->nurse);
+
+        $call = $this->patient->inboundCalls()->with(['note'])->first();
+        $note = $call->note;
+        $note->addendums()->create(
+            [
+                'body'           => 'test addendum body',
+                'author_user_id' => auth()->user()->id,
+            ]
+        );
+        $addendum        = $note->addendums()->first();
+        $pms             = $this->patient->patientSummaryForMonth();
+        $patientProblems = $this->patient->ccdProblems()->get();
+
+        $this->assertNotNull($pms);
+        $this->assertEquals($call->attestedProblems()->count(), 0);
+
+        $call->attachAttestedProblems($patientProblems->pluck('id')->toArray(), $addendum->id);
+
+        $callAttestedProblems = $call->attestedProblems()->get();
+
+        $this->assertEquals($callAttestedProblems->count(), $patientProblems->count());
+        $this->assertNotNull($callAttestedProblems->first()->created_at);
+        $this->assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
+
+        $this->assertTrue(DB::table('call_problems')->where('addendum_id', $addendum->id)->count() === $patientProblems->count());
+    }
+
+    public function test_command_to_attest_problems_to_addendum()
+    {
+        //needed for addendum creation
+        $this->actingAs($this->nurse);
+
+        $call = $this->patient->inboundCalls()->with(['note'])->first();
+        $note = $call->note;
+        $note->addendums()->create(
+            [
+                'body'           => 'test addendum body',
+                'author_user_id' => $this->nurse->id,
+            ]
+        );
+        $addendum        = $note->addendums()->first();
+        $pms             = $this->patient->patientSummaryForMonth();
+        $patientProblems = $this->patient->ccdProblems()->get();
+
+        $this->assertNotNull($pms);
+        $this->assertEquals($call->attestedProblems()->count(), 0);
+
+        Artisan::call('billing:attest-problems', [
+            'problemIds' => $patientProblems->pluck('id')->implode(','),
+            'noteId'     => $note->id,
+            'addendumId' => $addendum->id,
+        ]);
+
+        $callAttestedProblems = $call->attestedProblems()->get();
+
+        $this->assertEquals($callAttestedProblems->count(), $patientProblems->count());
+        $this->assertNotNull($callAttestedProblems->first()->created_at);
+        $this->assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
+
+        $this->assertTrue(DB::table('call_problems')->where('addendum_id', $addendum->id)->count() === $patientProblems->count());
     }
 
     public function test_complex_validation_rules_disabled_for_practice()
@@ -519,10 +586,21 @@ class PatientAttestedConditionsTest extends TestCase
 
         app(NurseFinderEloquentRepository::class)->assign($this->patient->id, $this->nurse->id);
 
+        $note = $this->patient->notes()->create([
+            'author_id'                => $this->nurse->id,
+            'body'                     => 'test',
+            'type'                     => 'General (Clinical)',
+            'performed_at'             => Carbon::now(),
+            'logger_id'                => $this->nurse->id,
+            'status'                   => Note::STATUS_COMPLETE,
+            'successful_clinical_call' => 1,
+        ]);
+
         //setup call
         Call::create([
             'service' => 'phone',
             'status'  => 'scheduled',
+            'note_id' => $note->id,
 
             'scheduler' => 'core algorithm',
 

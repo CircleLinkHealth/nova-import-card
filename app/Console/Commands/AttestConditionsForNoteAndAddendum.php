@@ -55,12 +55,13 @@ class AttestConditionsForNoteAndAddendum extends Command
             return;
         }
 
-        if ($call = $note->call) {
+        if ( ! $call = $note->call) {
             $this->error("Call not found for note with ID: $noteId");
 
             return;
         }
 
         $call->attachAttestedProblems($problemIds, $this->argument('addendumId'));
+        $this->info('Conditions attested!');
     }
 }
