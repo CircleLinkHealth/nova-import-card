@@ -9,7 +9,10 @@ Route::group(['prefix' => 'api'], function () {
         'prefix'     => 'patients',
         'middleware' => ['patientProgramSecurity'],
     ], function () {
-        Route::get('', 'PatientController@index')->middleware('permission:patient.read');
+        Route::get('', [
+            'uses' => 'PatientController@index',
+            'as'   => 'get.patientlist.index',
+        ])->middleware('permission:patient.read');
 
         Route::group(
             [
