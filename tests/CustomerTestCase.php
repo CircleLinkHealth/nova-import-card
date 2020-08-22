@@ -182,6 +182,10 @@ class CustomerTestCase extends TestCase
         return $this->medicalAssistant;
     }
 
+    protected function resetPatient() {
+        $this->patient = null;
+    }
+    
     /**
      * @return array|User
      */
