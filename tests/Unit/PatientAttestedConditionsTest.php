@@ -233,36 +233,6 @@ class PatientAttestedConditionsTest extends TestCase
         $this->assertTrue(2 === $responseData['attestationRequirements']['ccm_problems_attested']);
     }
 
-    public function test_attested_problems_can_have_addendum_id()
-    {
-        $this->actingAs($this->nurse);
-
-        $call = $this->patient->inboundCalls()->with(['note'])->first();
-        $note = $call->note;
-        $note->addendums()->create(
-            [
-                'body'           => 'test addendum body',
-                'author_user_id' => auth()->user()->id,
-            ]
-        );
-        $addendum        = $note->addendums()->first();
-        $pms             = $this->patient->patientSummaryForMonth();
-        $patientProblems = $this->patient->ccdProblems()->get();
-
-        $this->assertNotNull($pms);
-        $this->assertEquals($call->attestedProblems()->count(), 0);
-
-        $call->attachAttestedProblems($patientProblems->pluck('id')->toArray(), $addendum->id);
-
-        $callAttestedProblems = $call->attestedProblems()->get();
-
-        $this->assertEquals($callAttestedProblems->count(), $patientProblems->count());
-        $this->assertNotNull($callAttestedProblems->first()->created_at);
-        $this->assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
-
-        $this->assertTrue(DB::table('call_problems')->where('addendum_id', $addendum->id)->count() === $patientProblems->count());
-    }
-
     public function test_command_to_attest_problems_to_addendum()
     {
         //needed for addendum creation
