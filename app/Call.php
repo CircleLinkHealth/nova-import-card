@@ -150,7 +150,7 @@ class Call extends BaseModel implements AttachableToNotification
         'is_cpm_outbound',
     ];
 
-    public function attachAttestedProblems(array $attestedProblems, int $addendumId = null)
+    public function attachAttestedProblems(array $attestedProblems, ?int $addendumId = null)
     {
         $summary = PatientMonthlySummary::where('patient_id', $this->inbound_cpm_id)
             ->getCurrent()
