@@ -39,7 +39,7 @@ abstract class TestCase extends CustomerTestCase
         parent::setUp();
 
         $this->patient(2);
-        
+
         collect($this->newLocations = factory(Location::class, 2)->create([
             'practice_id' => $this->practice()->id,
         ]))->each(function ($location) {
@@ -84,8 +84,16 @@ abstract class TestCase extends CustomerTestCase
         $this->reset();
     }
 
-    public function assertLocation(User $actor, Collection $collection, string $key)
+    public function assertLocation(User $actor, Collection $collection, ?string $key = null)
     {
+        $actorLocations = $actor->locations->pluck('id')->all();
+
+        if ( ! $key) {
+            $this->assertTrue($collection->reject(function ($locationId) use ($actorLocations) {
+                return in_array($locationId, $actorLocations);
+            })->isEmpty(), 'The response contains location IDs the actor does not have.');
+        }
+
         $candidates = $collection->pluck($key)->filter();
 
         if ($candidates->isEmpty()) {
@@ -95,15 +103,23 @@ abstract class TestCase extends CustomerTestCase
         $this->assertTrue($collection->whereNotIn($key, $actor->locations->pluck('id')->all())->isEmpty(), 'The response contains patients from other Locations.');
     }
 
-    public function assertPractice(User $actor, Collection $collection, string $key)
+    public function assertPractice(User $actor, Collection $collection, ?string $key = null)
     {
+        $actorPractices = $actor->practices->pluck('id')->all();
+
+        if ( ! $key) {
+            $this->assertTrue($collection->reject(function ($practiceId) use ($actorPractices) {
+                return in_array($practiceId, $actorPractices);
+            })->isEmpty(), 'The response contains practice IDs the actor does not have.');
+        }
+
         $candidates = $collection->pluck($key)->filter();
 
         if ($candidates->isEmpty()) {
             throw new \Exception("`$key` not found in response data");
         }
 
-        $this->assertTrue($collection->whereNotIn($key, $actor->practices->pluck('id')->all())->isEmpty(), 'The response contains patients from other Practices.');
+        $this->assertTrue($collection->whereNotIn($key, $actorPractices)->isEmpty(), 'The response contains patients from other Practices.');
     }
 
     public function calling($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null): self
@@ -141,10 +157,10 @@ abstract class TestCase extends CustomerTestCase
         return $this;
     }
 
-    private function extractResponseData(TestResponse $response): Collection
+    protected function extractResponseData(TestResponse $response): Collection
     {
         $responseData = null;
-        
+
         if (is_json($response->getContent())) {
             $responseData = $response->decodeResponseJson();
         }
