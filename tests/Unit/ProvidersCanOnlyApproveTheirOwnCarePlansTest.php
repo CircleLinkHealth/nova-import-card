@@ -36,7 +36,7 @@ class ProvidersCanOnlyApproveTheirOwnCarePlansTest extends CustomerTestCase
 
         $this->allowViewingAllPracticeCarePlans($forwards);
         self::assertSeesAllPracticeCarePlans($forwards);
-    
+
         $this->allowViewingAllPracticeCarePlans($doesntForward);
         self::assertSeesAllPracticeCarePlans($doesntForward);
     }
