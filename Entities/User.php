@@ -332,7 +332,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER     = 'forward_careplan_approval_emails_instead_of_provider';
     
     const SCOPE_LOCATION  = 'location';
-
+    const SCOPE_PRACTICE = 'practice';
+    
     const SURVEY_ONLY = 'survey-only';
     /**
      * Package Clockwork is hardcoded to look for $user->name. Adding this so that it will work.

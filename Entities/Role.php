@@ -36,6 +36,7 @@ use Michalisantoniou6\Cerberus\CerberusRole;
 class Role extends CerberusRole
 {
     use Searchable;
+    const ALL_CPM_ROLES_CACHE_KEY = 'all_cpm_roles';
 
     const CCM_TIME_ROLES = [
         'care-center',
@@ -64,6 +65,17 @@ class Role extends CerberusRole
 
     protected $with = ['perms'];
 
+    public static function allRoles()
+    {
+        return \Cache::remember(
+            self::ALL_CPM_ROLES_CACHE_KEY,
+            Role::CACHE_ROLES_MINUTES,
+            function () {
+                return Role::all();
+            }
+        );
+    }
+
     public static function byName(string $name)
     {
         return \Cache::remember("cached_role_$name", 2, function () use ($name) {
@@ -78,13 +90,7 @@ class Role extends CerberusRole
      */
     public static function getIdsFromNames(array $roleNames = [])
     {
-        return \Cache::remember(
-            'all_cpm_roles',
-            Role::CACHE_ROLES_MINUTES,
-            function () {
-                return Role::all();
-            }
-        )
+        return self::allRoles()
             ->whereIn('name', $roleNames)
             ->pluck('id')
             ->all();

@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Repositories;
 
+use App\Http\Controllers\API\PracticeStaffController;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\GoogleDrive;
@@ -79,11 +80,14 @@ class UserRepository
             throw new ValidationException($validator);
         }
 
+        $practice = Practice::findOrFail($params->get('program_id'));
+
         $user = User::create([
-            'saas_account_id' => $params->get('saas_account_id') ?? Practice::whereId($params->get('program_id'))->value('saas_account_id'),
+            'saas_account_id' => $params->get('saas_account_id') ?? $practice->saas_account_id,
             'first_name'      => capitalizeWords($params->get('first_name')),
             'last_name'       => capitalizeWords($params->get('last_name')),
             'program_id'      => $params->get('program_id'),
+            'scope'           => Role::allRoles()->whereIn('id', $params->get('roles'))->whereIn('name', PracticeStaffController::PRACTICE_STAFF_ROLES)->isEmpty() ? null : $practice->default_user_scope,
             'email'           => $params->get('email'),
             'username'        => $params->get('username'),
         ]);
