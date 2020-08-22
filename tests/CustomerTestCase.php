@@ -69,9 +69,9 @@ class CustomerTestCase extends TestCase
      */
     public function castToFake(object $instance, string $destinationClass)
     {
-        $src      = new ReflectionObject($instance);
-        $destReflection     = new ReflectionObject($destinationClass = new $destinationClass());
-        $srcProps = $src->getProperties();
+        $src            = new ReflectionObject($instance);
+        $destReflection = new ReflectionObject($destinationClass = new $destinationClass());
+        $srcProps       = $src->getProperties();
         foreach ($srcProps as $prop) {
             $prop->setAccessible(true);
             $name  = $prop->getName();
@@ -182,10 +182,6 @@ class CustomerTestCase extends TestCase
         return $this->medicalAssistant;
     }
 
-    protected function resetPatient() {
-        $this->patient = null;
-    }
-    
     /**
      * @return array|User
      */
@@ -221,6 +217,11 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->provider;
+    }
+
+    protected function resetPatient()
+    {
+        $this->patient = null;
     }
 
     /**

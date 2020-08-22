@@ -38,6 +38,8 @@ abstract class TestCase extends CustomerTestCase
     {
         parent::setUp();
 
+        $this->patient(2);
+        
         collect($this->newLocations = factory(Location::class, 2)->create([
             'practice_id' => $this->practice()->id,
         ]))->each(function ($location) {
@@ -120,13 +122,13 @@ abstract class TestCase extends CustomerTestCase
     public function withLocationScope(): self
     {
         $this->actor = $this->provider();
-        
+
         $this->actor->scope = User::SCOPE_LOCATION;
         $this->actor->save();
 
         $detached = $this->actor->locations()->detach($this->newLocations->first()->id);
         $this->actor->load('locations');
-        
+
         $this->assertEquals(1, $detached);
 
         return $this;
@@ -141,7 +143,11 @@ abstract class TestCase extends CustomerTestCase
 
     private function extractResponseData(TestResponse $response): Collection
     {
-        $responseData = $response->decodeResponseJson();
+        $responseData = null;
+        
+        if (is_json($response->getContent())) {
+            $responseData = $response->decodeResponseJson();
+        }
 
         if ( ! $responseData) {
             $responseData = $response->original->gatherData();

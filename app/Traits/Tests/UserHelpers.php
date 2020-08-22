@@ -68,15 +68,15 @@ trait UserHelpers
      * @param mixed  $ccmStatus
      */
     public function createUser(
-        $practiceId = 8,
-        $roleName = 'provider',
-        $ccmStatus = 'enrolled'
+        int $practiceId = 8,
+        string $roleName = 'provider',
+        string $ccmStatus = 'enrolled'
     ): User {
         $practiceId = parseIds($practiceId)[0];
         $roles      = [Role::whereName($roleName)->firstOrFail()->id];
 
         //creates the User
-        $user = $this->setupUser($practiceId, $roles, $ccmStatus);
+        $user = $this->setupUser($practiceId, $roles, $roleName, $ccmStatus);
 
         $email     = $user->email;
         $locations = $user->locations->pluck('id')->all();
@@ -195,12 +195,12 @@ trait UserHelpers
         );
     }
 
-    public function setupUser($practiceId, $roles, $ccmStatus = 'enrolled')
+    public function setupUser($practiceId, $roles, $roleName, $ccmStatus = 'enrolled')
     {
         $faker = Factory::create();
 
         $firstName = $faker->firstName;
-        $lastName  = $faker->lastName;
+        $lastName  = "$faker->lastName Role:$roleName";
         $email     = $faker->email;
         $workPhone = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
 
