@@ -32,7 +32,7 @@ class ChangeSchedulerCall extends Migration
         });
 
         Schema::table('ccd_problems', function (Blueprint $table) {
-            $table->index(['id','is_monitored', 'patient_id']);
+            $table->index(['id', 'is_monitored', 'patient_id']);
         });
     }
 }
