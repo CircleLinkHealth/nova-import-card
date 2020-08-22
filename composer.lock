@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3dd2b0ff4080109b2d15f9824ec61d55",
+    "content-hash": "93359918dd678da1bc02990db7941cf8",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1161,7 +1161,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "82e84a16cfc1a58e4ebb03a8e5eed09d955323fd"
+                "reference": "59c41912531ffe6a1c756366216643d87e988b2f"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1195,7 +1195,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-22T06:59:37+00:00"
+            "time": "2020-08-22T18:30:08+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1414,11 +1414,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "dev-ROAD-258",
+            "version": "v1.5.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "a082adc40244109baca93292398ea384d1eb9623"
+                "reference": "cdc9b5b41563b2af8f21f44e06207e39fe3bc18b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1441,7 +1441,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-22T03:52:20+00:00"
+            "time": "2020-08-22T18:12:56+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -5712,16 +5712,16 @@
         },
         {
             "name": "league/flysystem-aws-s3-v3",
-            "version": "1.0.27",
+            "version": "1.0.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem-aws-s3-v3.git",
-                "reference": "090ae8f00a5af90dbda1f1751738a8f64b2c89fa"
+                "reference": "af7384a12f7cd7d08183390d930c9d0ec629c990"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-aws-s3-v3/zipball/090ae8f00a5af90dbda1f1751738a8f64b2c89fa",
-                "reference": "090ae8f00a5af90dbda1f1751738a8f64b2c89fa",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-aws-s3-v3/zipball/af7384a12f7cd7d08183390d930c9d0ec629c990",
+                "reference": "af7384a12f7cd7d08183390d930c9d0ec629c990",
                 "shasum": ""
             },
             "require": {
@@ -5755,7 +5755,7 @@
                 }
             ],
             "description": "Flysystem adapter for the AWS S3 SDK v3.x",
-            "time": "2020-08-22T08:17:59+00:00"
+            "time": "2020-08-22T08:43:01+00:00"
         },
         {
             "name": "league/flysystem-cached-adapter",
@@ -17457,7 +17457,6 @@
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/patientapi-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
