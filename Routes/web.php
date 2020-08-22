@@ -42,19 +42,6 @@ Route::prefix('nurseinvoices')->middleware(['auth'])->group(function () {
         'as'   => 'nurseinvoices.admin.show',
     ]);
 
-    Route::group([
-        'middleware' => [
-            'auth',
-            'permission:admin-access',
-        ],
-        'prefix' => 'admin/download',
-    ], function () {
-        Route::get('invoices', [
-            'uses' => 'TestDownloadInvoice@collectInvoicesFor',
-            'as'   => 'collect.nurses.invoices',
-        ])->middleware('auth');
-    });
-
     Route::get('download-zipped-invoices/{user_id}/{media_ids}', [
         'uses' => 'InvoiceDownloadController@downloadZippedInvoices',
         'as'   => 'download.zipped.invoices',
