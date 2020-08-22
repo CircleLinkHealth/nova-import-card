@@ -120,11 +120,14 @@ abstract class TestCase extends CustomerTestCase
     public function withLocationScope(): self
     {
         $this->actor = $this->provider();
+        
+        $this->actor->scope = User::SCOPE_LOCATION;
+        $this->actor->save();
 
-        $detached = $this->actor->locations()->detach($this->newLocations->pluck('id')->all());
+        $detached = $this->actor->locations()->detach($this->newLocations->first()->id);
         $this->actor->load('locations');
         
-        $this->assertEquals($this->newLocations->count(), $detached);
+        $this->assertEquals(1, $detached);
 
         return $this;
     }
