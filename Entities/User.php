@@ -330,10 +330,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER                       = 'forward_alerts_instead_of_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER     = 'forward_careplan_approval_emails_instead_of_provider';
-
-    const SCOPE_CARE_TEAM = 'careteam';
+    
     const SCOPE_LOCATION  = 'location';
-    const SCOPE_PRACTICE  = 'practice';
 
     const SURVEY_ONLY = 'survey-only';
     /**
