@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "43121e5b62b47baa201c94475ef0e9ca",
+    "content-hash": "768fc3af1ecfafc3e9f8ff54e4705bcb",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1121,11 +1121,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.4.2",
+            "version": "dev-hotfix-attesting-for-addendums",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "7fb12954f4a7b629f189204c4a5dd3d34aad4bfd"
+                "reference": "734d3004681ab9931f4cc06d0e794fdb774f6b6c"
             },
             "type": "laravel-module",
             "extra": {
@@ -1147,7 +1147,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-20T21:40:48+00:00"
+            "time": "2020-08-22T17:29:25+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -17278,6 +17278,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },
