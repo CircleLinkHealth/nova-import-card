@@ -4105,25 +4105,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function viewableProviderIds()
     {
-        // get all patients who are in the same programs
-        $programIds = $this->viewableProgramIds();
-        $patientIds = User::whereHas(
-            'practices',
-            function ($q) use (
-                $programIds
-            ) {
-                $q->whereIn('program_id', $programIds);
-            }
-        );
-
-        $patientIds->whereHas(
+        return User::intersectPracticesWith(auth()->user())->whereHas(
             'roles',
             function ($q) {
                 $q->where('name', '=', 'provider');
             }
-        );
-
-        return $patientIds->pluck('id')->all();
+        )->pluck('id')->all();
     }
 
     public function viewableUserIds()
