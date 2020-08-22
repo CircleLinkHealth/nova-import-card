@@ -295,7 +295,7 @@ Please update their profiles <a href='{$route}'>here</a>.");
             $update['user_id'] = $request->input('lead_id');
         }
     
-        $update['default_user_scope'] = $request->input('user_scope');
+        $update['default_user_scope'] = $request->input('default_user_scope');
     
         if (auth()->user()->isAdmin()) {
             $update['bill_to_name'] = $request->input('bill_to_name');
