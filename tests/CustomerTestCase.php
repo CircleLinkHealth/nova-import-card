@@ -223,6 +223,11 @@ class CustomerTestCase extends TestCase
     {
         $this->patient = null;
     }
+    
+    protected function resetProvider()
+    {
+        $this->provider = null;
+    }
 
     /**
      * @return array|User
