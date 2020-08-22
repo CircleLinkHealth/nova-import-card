@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -177,8 +178,7 @@ class PracticeStaffController extends Controller
         $formData = $request->input();
 
         $implementationLead = $primaryPractice->lead;
-
-        //role names, NOT display names
+        
         $roleNames = $formData['role_names'];
         $roles     = Role::whereIn('name', $roleNames)->get()->keyBy('id');
 
@@ -214,23 +214,20 @@ class PracticeStaffController extends Controller
         }
 
         $user->attachPractice($primaryPractice, $roles->keys()->toArray(), $sendBillingReports);
-
-        //attach phone
+        
         $phone = $user->clearAllPhonesAndAddNewPrimary(
             $formData['phone_number'],
             $formData['phone_type'],
             true,
             $formData['phone_extension']
         );
-
-        //clean up forwardAlertsTo before adding the new ones
+        
         $user->forwardAlertsTo()->sync([]);
 
         if ('billing_provider' != $formData['forward_alerts_to']['who']) {
             foreach ($formData['forward_alerts_to']['user_ids'] as $user_id) {
                 $user->forwardTo($user_id, $formData['forward_alerts_to']['who']);
             }
-//            $user->forwardTo($formData['forward_alerts_to']['user_id'], $formData['forward_alerts_to']['who']);
         }
 
         if ( ! $formData['canApproveAllCareplans'] && $user->canApproveCarePlans()) {
@@ -242,19 +239,17 @@ class PracticeStaffController extends Controller
         }
 
         if (in_array('provider', $roleNames)) {
+            $providerInfoCreated = ProviderInfo::firstOrCreate([
+                'user_id' => $user->id,
+            ]);
             if ('billing_provider' != $formData['forward_careplan_approval_emails_to']['who']) {
                 foreach ($formData['forward_careplan_approval_emails_to']['user_ids'] as $user_id) {
                     $user->forwardTo($user_id, $formData['forward_careplan_approval_emails_to']['who']);
                 }
-//                $user->forwardTo(
-//                    $formData['forward_careplan_approval_emails_to']['user_id'],
-//                    $formData['forward_careplan_approval_emails_to']['who']
-//                );
             }
         }
 
         if (in_array('care-center-external', $roleNames)) {
-            // add nurse info
             if ( ! $user->nurseInfo) {
                 $nurseInfo          = new Nurse();
                 $nurseInfo->status  = 'active';
@@ -267,8 +262,6 @@ class PracticeStaffController extends Controller
             $user->nurseInfo->status = 'inactive';
             $user->nurseInfo->save();
         }
-
-//                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
 
         return response()->json($this->present($user, $primaryPractice, $roles));
     }
