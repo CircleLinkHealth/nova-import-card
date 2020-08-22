@@ -331,6 +331,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER     = 'forward_careplan_approval_emails_instead_of_provider';
 
+    const SCOPE_CARE_TEAM = 'careteam';
+    const SCOPE_LOCATION  = 'location';
+    const SCOPE_PRACTICE  = 'practice';
+
     const SURVEY_ONLY = 'survey-only';
     /**
      * Package Clockwork is hardcoded to look for $user->name. Adding this so that it will work.
@@ -364,6 +368,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      * @var array
      */
     protected $fillable = [
+        'scope',
         'saas_account_id',
         'skip_browser_checks',
         'username',
@@ -2897,9 +2902,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $query,
         $user
     ) {
-        $viewableLocations = $user->isAdmin()
-            ? Location::all()->pluck('id')->all()
-            : $user->locations->pluck('id')->all();
+        $viewableLocations = $user->locations->pluck('id')->all();
 
         return $query->whereHas(
             'locations',
@@ -2933,7 +2936,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ) {
                 $q->whereIn('practices.id', $viewablePractices);
             }
-        );
+        )->when(auth()->check() && self::SCOPE_LOCATION === auth()->user()->scope, fn($q) => $q->intersectLocationsWith(auth()->user()));
     }
 
     /**
@@ -3107,12 +3110,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         $practiceId = parseIds($practiceId);
 
-        $query->whereHas(
+        $query->where(fn ($q) => $q->whereHas(
             'practices',
             function ($q) use ($practiceId) {
-                $q->whereIn('practices.id', $practiceId);
-            }
-        )->orWhereIn('program_id', $practiceId);
+            $q->whereIn('practices.id', $practiceId);
+        }
+        )->orWhereIn('program_id', $practiceId))
+        ->when(auth()->check() && self::SCOPE_LOCATION === auth()->user()->scope, fn($q) => $q->intersectLocationsWith(auth()->user()));
     }
 
     /**
