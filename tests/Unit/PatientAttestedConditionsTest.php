@@ -238,6 +238,8 @@ class PatientAttestedConditionsTest extends TestCase
         //needed for addendum creation
         $this->actingAs($this->nurse);
 
+        self::assertNotNull(auth()->user(), 'Logged in user needed for this test case');
+
         $call = $this->patient->inboundCalls()->with(['note'])->first();
         $note = $call->note;
         $note->addendums()->create(
@@ -250,8 +252,8 @@ class PatientAttestedConditionsTest extends TestCase
         $pms             = $this->patient->patientSummaryForMonth();
         $patientProblems = $this->patient->ccdProblems()->get();
 
-        $this->assertNotNull($pms);
-        $this->assertEquals($call->attestedProblems()->count(), 0);
+        self::assertNotNull($pms);
+        self::assertEquals($call->attestedProblems()->count(), 0);
 
         Artisan::call('billing:attest-problems', [
             'problemIds' => $patientProblems->pluck('id')->implode(','),
@@ -261,11 +263,11 @@ class PatientAttestedConditionsTest extends TestCase
 
         $callAttestedProblems = $call->attestedProblems()->get();
 
-        $this->assertEquals($callAttestedProblems->count(), $patientProblems->count());
-        $this->assertNotNull($callAttestedProblems->first()->created_at);
-        $this->assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
+        self::assertEquals($callAttestedProblems->count(), $patientProblems->count());
+        self::assertNotNull($callAttestedProblems->first()->created_at);
+        self::assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
 
-        $this->assertTrue(DB::table('call_problems')->where('addendum_id', $addendum->id)->count() === $patientProblems->count());
+        self::assertTrue(DB::table('call_problems')->where('addendum_id', $addendum->id)->count() === $patientProblems->count());
     }
 
     public function test_complex_validation_rules_disabled_for_practice()
