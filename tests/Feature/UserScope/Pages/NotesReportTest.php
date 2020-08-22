@@ -15,10 +15,7 @@ class NotesReportTest extends UserScopeTestCase
     public function test_user_scopes_on_patients_to_approve_list()
     {
         $this->withPracticeScope()
-            ->calling('GET', $route = route('patient.note.listing'), $params = [
-                'rows' => 'all',
-                'patientsPendingAuthUserApproval',
-            ])
+            ->calling('GET', $route = route('patient.note.listing'))
             ->assertCallback(function (TestResponse $response, User $actor) {
                 $responseData = $this->extractResponseData($response);
 
@@ -28,7 +25,7 @@ class NotesReportTest extends UserScopeTestCase
             });
 
         $this->withLocationScope()
-            ->calling('GET', $route, $params)
+            ->calling('GET', $route)
             ->assertCallback(function (TestResponse $response, User $actor) {
                 $responseData = $this->extractResponseData($response);
 
