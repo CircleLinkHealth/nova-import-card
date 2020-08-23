@@ -137,6 +137,11 @@ class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->belongsTo('CircleLinkHealth\TimeTracking\Entities\Activity', 'id', 'page_timer_id');
     }
 
+    public function chargeableService()
+    {
+        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
+    }
+
     public function logger()
     {
         return $this->belongsTo('CircleLinkHealth\Customer\Entities\User', 'provider_id', 'id');
@@ -145,9 +150,5 @@ class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
     public function patient()
     {
         return $this->belongsTo('CircleLinkHealth\Customer\Entities\User', 'patient_id', 'id');
-    }
-    
-    public function chargeableService(){
-        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
     }
 }

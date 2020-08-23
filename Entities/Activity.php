@@ -129,6 +129,11 @@ class Activity extends BaseModel
         return $this->hasOne(CcmTimeApiLog::class);
     }
 
+    public function chargeableService()
+    {
+        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
+    }
+
     /**
      * Get all activities with all their meta for a given patient.
      *
@@ -299,9 +304,5 @@ class Activity extends BaseModel
         }
 
         return $raw;
-    }
-    
-    public function chargeableService(){
-        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
     }
 }
