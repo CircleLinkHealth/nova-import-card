@@ -9,11 +9,11 @@
                 @endif
             </div>
             <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    <patient-list :show-provider-patients-button="{{json_encode(auth()->user()->isProvider())}}"
-                                  :is-admin="{{json_encode(auth()->user()->isAdmin())}}"
-                                  :can-approve-careplans="{{json_encode(auth()->user()->canApproveCarePlans())}}"
+                    <patient-list :show-provider-patients-button="@json(auth()->user()->isProvider() && auth()->user()->scope !== App\User::SCOPE_LOCATION)"
+                                  :is-admin="@json(auth()->user()->isAdmin())"
+                                  :can-approve-careplans="@json(auth()->user()->canApproveCarePlans())"
                                   url-filter="patientsPendingAuthUserApproval"
-                                  :hide-download-buttons="{{json_encode(true)}}"
+                                  :hide-download-buttons="@json(true)"
                                   ref="patientList">
                     </patient-list>
             </div>
