@@ -7,8 +7,8 @@
 namespace App\Observers;
 
 use App\Constants;
-use App\Http\Resources\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 
