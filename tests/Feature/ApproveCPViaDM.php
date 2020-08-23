@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\AppConfig\DMDomainForAutoApproval;
 use App\Call;
 use App\DirectMailMessage;
@@ -19,7 +20,6 @@ use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
-use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Support\Str;
 use Tests\CustomerTestCase;
@@ -38,11 +38,9 @@ class ApproveCPViaDM extends CustomerTestCase
         $this->patient()->setCarePlanStatus(CarePlan::QA_APPROVED);
         $this->assertEquals(CarePlan::QA_APPROVED, $this->patient()->carePlan->status);
 
-        PatientNurse::create(
-            [
-                'patient_user_id' => $this->patient()->id,
-                'nurse_user_id'   => $this->careCoach()->id,
-            ]
+        app(NurseFinderEloquentRepository::class)->assign(
+            $this->patient()->id,
+            $this->careCoach()->id
         );
 
         $task         = $this->fakeTask();
@@ -283,7 +281,7 @@ class ApproveCPViaDM extends CustomerTestCase
                 'attempt_note'    => $taskBody,
                 'scheduler'       => $this->provider()->id,
                 'inbound_cpm_id'  => $patient->id,
-                'outbound_cpm_id' => $patient->patientInfo->getNurse(),
+                'outbound_cpm_id' => $this->app->make(NurseFinderEloquentRepository::class)->find($patient->id),
                 'asap'            => true,
                 'note_id'         => $note->id,
             ]
@@ -338,7 +336,7 @@ class ApproveCPViaDM extends CustomerTestCase
                 'attempt_note'    => 'This is a task',
                 'scheduler'       => $this->provider()->id,
                 'inbound_cpm_id'  => $this->patient()->id,
-                'outbound_cpm_id' => $this->patient()->patientInfo->getNurse()->id,
+                'outbound_cpm_id' => $this->app->make(NurseFinderEloquentRepository::class)->find($this->patient()->id),
                 'asap'            => true,
                 'note_id'         => $note->id,
             ]

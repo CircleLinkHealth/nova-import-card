@@ -6,10 +6,10 @@
 
 namespace App\Listeners;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Events\CarePlanWasQAApproved;
 use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
-use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Database\QueryException;
@@ -57,15 +57,7 @@ class AssignPatientToStandByNurse
     private static function makeStandByNursePrimary(User $patient)
     {
         try {
-            return PatientNurse::updateOrCreate(
-                ['patient_user_id' => $patient->id],
-                [
-                    'nurse_user_id'           => StandByNurseUser::id(),
-                    'temporary_nurse_user_id' => null,
-                    'temporary_from'          => null,
-                    'temporary_to'            => null,
-                ]
-            );
+            return app(NurseFinderEloquentRepository::class)->assign($patient->id, StandByNurseUser::id());
         } catch (QueryException $e) {
             $errorCode = $e->errorInfo[1] ?? null;
             if (1062 != $errorCode) {

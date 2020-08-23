@@ -63,20 +63,18 @@ trait UserHelpers
     }
 
     /**
-     * @param int    $practiceId
-     * @param string $roleName
-     * @param mixed  $ccmStatus
+     * @param mixed $ccmStatus
      */
     public function createUser(
-        $practiceId = 8,
-        $roleName = 'provider',
-        $ccmStatus = 'enrolled'
+        int $practiceId = 8,
+        string $roleName = 'provider',
+        string $ccmStatus = 'enrolled'
     ): User {
         $practiceId = parseIds($practiceId)[0];
         $roles      = [Role::whereName($roleName)->firstOrFail()->id];
 
         //creates the User
-        $user = $this->setupUser($practiceId, $roles, $ccmStatus);
+        $user = $this->setupUser($practiceId, $roles, $roleName, $ccmStatus);
 
         $email     = $user->email;
         $locations = $user->locations->pluck('id')->all();
@@ -195,12 +193,12 @@ trait UserHelpers
         );
     }
 
-    public function setupUser($practiceId, $roles, $ccmStatus = 'enrolled')
+    public function setupUser($practiceId, $roles, $roleName, $ccmStatus = 'enrolled')
     {
         $faker = Factory::create();
 
         $firstName = $faker->firstName;
-        $lastName  = $faker->lastName;
+        $lastName  = "$faker->lastName Role:$roleName";
         $email     = $faker->email;
         $workPhone = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
 
@@ -220,16 +218,17 @@ trait UserHelpers
                 'address2'          => '',
                 'city'              => $faker->city,
                 'state'             => 'AL',
-                'zip'               => '12345',
+                'zip'               => '55555',
                 'is_auto_generated' => true,
                 'roles'             => $roles,
                 'timezone'          => 'America/New_York',
 
                 //provider Info
-                'prefix'     => 'Dr',
-                'suffix'     => 'MD',
-                'npi_number' => 1234567890,
-                'specialty'  => 'Unit Tester',
+                'prefix'                 => 'Dr',
+                'suffix'                 => 'MD',
+                'npi_number'             => 1234567890,
+                'specialty'              => 'Unit Tester',
+                'approve_own_care_plans' => true,
 
                 //phones
                 'home_phone_number' => $workPhone,
@@ -345,6 +344,7 @@ trait UserHelpers
             $patient->patientInfo->consent_date = $consentDate;
         }
 
+        $patient->patientInfo->ccm_status = Patient::ENROLLED;
         $patient->patientInfo->save();
         $cpmProblems = CpmProblem::get();
 

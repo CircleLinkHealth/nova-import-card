@@ -16,6 +16,7 @@ use App\Console\Commands\CheckForDraftNotesAndQAApproved;
 use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\CheckUserTotalTimeTracked;
+use App\Console\Commands\CheckVoiceCalls;
 use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
@@ -38,7 +39,6 @@ use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\SendSelfEnrollmentReminders;
 use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
-use App\Console\Commands\TuneScheduledCalls;
 use App\Notifications\NurseDailyReport;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
@@ -102,6 +102,9 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckEmrDirectInbox::class)
             ->everyTwoMinutes();
 
+        $schedule->command(RemoveDuplicateScheduledCalls::class)
+            ->everyFiveMinutes();
+
         $schedule->command(FaxAuditReportsAtPracticePreferredDayTime::class)
             ->onOneServer()
             ->everyFiveMinutes();
@@ -113,10 +116,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(ProcessNextEligibilityBatchChunk::class)
             ->everyFiveMinutes()
             ->withoutOverlapping();
-
-        $schedule->command(RemoveDuplicateScheduledCalls::class)
-            ->everyTenMinutes()
-            ->between(6, 23);
 
         $schedule->command(RescheduleMissedCalls::class)
             ->everyFifteenMinutes()
@@ -156,10 +155,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)
             ->dailyAt('00:10')
-            ->onOneServer();
-
-        $schedule->command(TuneScheduledCalls::class)
-            ->dailyAt('00:15')
             ->onOneServer();
 
         //Run at 12:45am every 1st of month
@@ -310,6 +305,10 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('04:00');
 
         $schedule->command(OverwriteNBIImportedData::class)->hourly();
+
+        $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
+            ->hourly()
+            ->between('7:00', '23:00');
 
         $schedule->command(OverwriteNBIPatientMRN::class)->everyThirtyMinutes();
 

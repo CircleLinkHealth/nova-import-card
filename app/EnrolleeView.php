@@ -159,6 +159,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property string|null $source
  * @property string|null $callback_note
  * @property int         $invited
+ * @property string|null $facility_name
  */
 class EnrolleeView extends SqlViewModel
 {

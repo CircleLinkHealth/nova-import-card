@@ -36,7 +36,7 @@ class NotificationController extends Controller
         $notificationsWithElapsedTime = $this->service->prepareNotifications($notifications);
 
         return response()->json([
-            'notifications' => $notificationsWithElapsedTime,
+            'notifications' => $notificationsWithElapsedTime->values(),
             'totalCount'    => $allUnreadNotificationsCount,
         ]);
     }

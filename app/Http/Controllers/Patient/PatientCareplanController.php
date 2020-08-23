@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\CarePlanPrintListView;
 use App\Constants;
 use App\Contracts\ReportFormatter;
@@ -20,7 +21,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
-use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -210,7 +210,7 @@ class PatientCareplanController extends Controller
             $gender            = $user->patientInfo->gender;
             $title             = 'm' === strtolower($gender) ? 'Mr.' : ('f' === strtolower($gender) ? 'Ms.' : null);
             $practiceNumber    = $user->primaryPractice->number_with_dashes;
-            $assignedNurseName = optional(PatientNurse::getPermanentNurse($user->id))->first_name;
+            $assignedNurseName = optional(app(NurseFinderEloquentRepository::class)->find($user->id))->first_name;
 
             //if permanent assigned nurse does not exist, get nurse from scheduled call - CPM-1829
             if ( ! $assignedNurseName) {

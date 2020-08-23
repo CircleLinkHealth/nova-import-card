@@ -101,7 +101,7 @@ class ProviderController extends Controller
 
     public function listLocations()
     {
-        return Location::whereIn('practice_id', auth()->user()->viewableProgramIds())->whereNotNull('name')->get()->transform(function ($location) {
+        return auth()->user()->locations->whereNotNull('name')->transform(function ($location) {
             return [
                 'id'   => $location->id,
                 'name' => $location->name,

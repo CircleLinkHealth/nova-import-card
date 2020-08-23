@@ -91,6 +91,10 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
  * @property int|null                                                           $attested_problems_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call unassigned()
+ *
+ * @property \App\VoiceCall[]|\Illuminate\Database\Eloquent\Collection $voiceCalls
+ * @property int|null                                                  $voice_calls_count
+ * @property \App\CpmCallAlert|null                                    $cpmCallAlert
  */
 class Call extends BaseModel implements AttachableToNotification
 {
@@ -179,6 +183,11 @@ class Call extends BaseModel implements AttachableToNotification
             ->withTimestamps();
     }
 
+    public function cpmCallAlert()
+    {
+        return $this->hasOne(CpmCallAlert::class, 'call_id', 'id');
+    }
+
     public function getIsFromCareCenterAttribute()
     {
         if ( ! $this->schedulerUser instanceof User) {
@@ -227,28 +236,21 @@ class Call extends BaseModel implements AttachableToNotification
         return $record->no_of_calls;
     }
 
-    public static function numberOfSuccessfulCallsForPatientForMonth(User $user, $date)
+    public static function numberOfSuccessfulCallsForPatientForMonth(int $patientId, Carbon $date): int
     {
-        if ($date) {
-            $d = Carbon::parse($date);
-        } else {
-            $d = Carbon::now();
-        }
-
-        $calls = Call::where(function ($q) {
+        return Call::where(function ($q) {
             $q->whereNull('type')
                 ->orWhere('type', '=', 'call')
                 ->orWhere('sub_type', '=', 'Call Back');
         })
-            ->where(function ($q) use ($user, $d) {
-                $q->where('outbound_cpm_id', $user->id)
-                    ->orWhere('inbound_cpm_id', $user->id);
+            ->where(function ($q) use ($patientId, $date) {
+                $q->where('outbound_cpm_id', $patientId)
+                    ->orWhere('inbound_cpm_id', $patientId);
             })
-            ->where('called_date', '>=', $d->startOfMonth()->toDateTimeString())
-            ->where('called_date', '<=', $d->endOfMonth()->toDateTimeString())
-            ->where('status', 'reached');
-
-        return $calls->count();
+            ->where('called_date', '>=', $date->startOfMonth()->toDateTimeString())
+            ->where('called_date', '<=', $date->endOfMonth()->toDateTimeString())
+            ->where('status', Call::REACHED)
+            ->count();
     }
 
     public function outboundUser()
@@ -347,5 +349,10 @@ class Call extends BaseModel implements AttachableToNotification
         return $this->outbound_cpm_id !== auth()->id()
             && true === $this->asap
             && 'addendum_response' !== $this->sub_type;
+    }
+
+    public function voiceCalls()
+    {
+        return $this->hasMany(VoiceCall::class, 'call_id', 'id');
     }
 }

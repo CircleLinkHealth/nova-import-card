@@ -246,12 +246,10 @@ class CallFilters extends QueryFilters
 
     public function sort_lastCall($term = null)
     {
-        $patientInfoTable = (new Patient())->getTable();
-
         return $this->builder
             ->with('inboundUser.patientInfo')
-            ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "${patientInfoTable}.user_id")
-            ->orderBy("${patientInfoTable}.last_contact_time", $term)
+            ->join('calls_view', 'calls.inbound_cpm_id', '=', 'calls_view.patient_id')
+            ->orderBy('calls_view.last_call', $term)
             ->groupBy('calls.inbound_cpm_id')
             ->select(['calls.*']);
     }

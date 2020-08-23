@@ -6,6 +6,7 @@
 
 namespace Tests\Unit;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\CCD\CcdProblemService;
@@ -515,6 +516,8 @@ class PatientAttestedConditionsTest extends TestCase
                 'cpm_problem_id' => $problem->id,
             ]);
         }
+
+        app(NurseFinderEloquentRepository::class)->assign($this->patient->id, $this->nurse->id);
 
         //setup call
         Call::create([

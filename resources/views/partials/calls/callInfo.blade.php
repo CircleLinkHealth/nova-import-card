@@ -5,24 +5,14 @@
                 <div class="col-sm-12">
                     <div class="form-group">
                         <div class="form-item form-item-spacing">
-                            {{--<div class="col-sm-12" style="padding-bottom: 4px;">--}}
-                            {{--<label for="activityKey">--}}
-                            {{--Patient's Next Available Call Windows:--}}
-                            {{--</label>--}}
-                            {{--</div>--}}
+
                             <div class="col-sm-12">
                                 <span style="font-size: 1.1em;">
                                 {!! $predicament ? $predicament : ''!!}
-                                    {{--<ul class="list-group">--}}
-                                    {{--@foreach($next_contact_windows as $contact_window)--}}
-                                    {{--<li class="list-group-item">--}}
-                                    {{--On {{\Carbon\Carbon::parse($contact_window['string_start'])->toFormattedDateString()}} between {{\Carbon\Carbon::parse($contact_window['string_start'])->format('h:i A')}} and {{\Carbon\Carbon::parse($contact_window['string_end'])->format('h:i A')}}--}}
-                                    {{--</li>--}}
-                                    {{--@endforeach--}}
-                                    {{--</ul>--}}
+
                                 </span>
                             </div>
-                            {{--                            @if(isProductionEnv()) --}}
+
                             @if(!empty($logic))
                                 <div class="col-sm-12"><br>
                                     <span style="font-size: 1.1em;"><b>Logic:</b> {{$logic}}
@@ -33,7 +23,7 @@
                                 </span>
                                 </div>
                             @endif
-                            {{--                            @endif--}}
+
                         </div>
                     </div>
                 </div>

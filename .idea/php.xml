@@ -299,7 +299,6 @@
       <path value="$PROJECT_DIR$/vendor/julien-c/iso3166" />
       <path value="$PROJECT_DIR$/vendor/xethron/migrations-generator" />
       <path value="$PROJECT_DIR$/vendor/xethron/laravel-4-generators" />
-      <path value="$PROJECT_DIR$/vendor/sensiolabs/security-checker" />
       <path value="$PROJECT_DIR$/vendor/jorijn/laravel-security-checker" />
       <path value="$PROJECT_DIR$/vendor/nexmo/client" />
       <path value="$PROJECT_DIR$/vendor/nexmo/client-core" />
@@ -317,6 +316,7 @@
       <path value="$PROJECT_DIR$/vendor/darkghosthunter/preloader" />
       <path value="$PROJECT_DIR$/vendor/org_heigl/ghostscript" />
       <path value="$PROJECT_DIR$/vendor/shipping-docker/vessel" />
+      <path value="$PROJECT_DIR$/vendor/league/mime-type-detection" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

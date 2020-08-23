@@ -43,8 +43,8 @@
             <a class="btn btn-primary" href="{{ URL::previous() }}"
                style="text-decoration:none;font-weight:bold;">Go back</a> or
 
-            <a class="btn btn-primary" href="{{ route('patients.dashboard', array()) }}"
-               style="text-decoration:none;font-weight:bold;">Go to Dashboard</a>
+            <a class="btn btn-primary" href="{{ route('home', array()) }}"
+               style="text-decoration:none;font-weight:bold;">Go to Homepage</a>
         @endif
     </div>
 </div>

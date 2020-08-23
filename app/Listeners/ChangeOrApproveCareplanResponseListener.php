@@ -6,6 +6,7 @@
 
 namespace App\Listeners;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\AppConfig\DMDomainForAutoApproval;
 use App\Call;
 use App\DirectMailMessage;
@@ -124,7 +125,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
                 'inbound_cpm_id' => $cp->user_id,
             ];
 
-            if ($nurse = $cp->patient->patientInfo->getNurse()) {
+            if ($nurse = app(NurseFinderEloquentRepository::class)->find($cp->patient->id)) {
                 $newCallArgs['outbound_cpm_id'] = $nurse->id;
             }
 

@@ -6,11 +6,13 @@
 
 namespace App\Algorithms\Calls;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\User;
 
 //READ ME:
 /*
@@ -48,14 +50,23 @@ class ReschedulerHandler
             $q->whereNull('type')
                 ->orWhere('type', '=', 'call');
         })
-            ->whereStatus('scheduled')
-            ->with('inboundUser.patientInfo')
+            ->where('status', Call::SCHEDULED)
+            ->with([
+                'inboundUser.patientNurseAsPatient.nurse',
+                'inboundUser.patientInfo',
+                'inboundUser.inboundScheduledCalls' => function ($q) {
+                    return $q->where('window_end', '>=', now()->format('H:i'))
+                        ->where('scheduled_date', '>=', now()->toDateString());
+                },
+            ])
             ->where('scheduled_date', '<=', now()->toDateString())
             ->where('window_end', '<=', now()->format('H:i'))
             ->chunkById(100, function ($calls) {
-                foreach ($calls as $call) {
-                    $this->reschedule($call);
-                }
+                \DB::transaction(function () use ($calls) {
+                    foreach ($calls as $call) {
+                        $this->reschedule($call);
+                    }
+                });
             });
     }
 
@@ -67,46 +78,36 @@ class ReschedulerHandler
     public function reschedule(Call $call)
     {
         try {
-            $patientUser = $call->inboundUser;
-
-            if (is_null($patientUser)) {
+            if (is_null($patientUser = $call->inboundUser)) {
                 return;
             }
 
-            if (now()
-                ->setTimezone($patientUser->timezone ?? config('app.timezone'))
-                ->setTimeFromTimeString($call->window_end)
-                ->addHours(self::CUSHION_FOR_NURSE_TO_RESCHEDULE_IN_HOURS)
-                ->isFuture()) {
+            if ($this->canBeCarriedOut($call)) {
                 return;
             }
 
-            $call->status    = 'dropped';
-            $call->scheduler = 'rescheduler algorithm';
-            $call->save();
+            $this->expireCall($call);
 
-            $patient = $patientUser->patientInfo;
-
-            if ( ! $patient instanceof Patient) {
+            if ($this->hasValidFutureScheduledCall($patientUser)) {
                 return;
             }
 
-            if ($patient->hasFamilyId() && $this->schedulerService->getScheduledCallForPatient($call->inboundUser)) {
+            if ( ! $patientUser->patientInfo instanceof Patient) {
                 return;
             }
 
-            //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
-            $next_predicted_contact_window = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
-                $patient,
-                Carbon::now()
-            );
+            $next_predicted_contact_window = (new PatientContactWindow())
+                ->getEarliestWindowForPatientFromDate(
+                    $patientUser->patientInfo,
+                    Carbon::now()
+                );
 
             $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
             $window_end   = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
             $day          = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
 
-            $this->storeNewCallForPatient($patient, $call, $window_start, $window_end, $day);
-            $this->storeNewCallForFamilyMembers($patient, $call, $window_start, $window_end, $day);
+            $this->storeCallForPatient($patientUser->patientInfo, $nurse = app(NurseFinderEloquentRepository::class)->find($patientUser->id), $window_start, $window_end, $day);
+            $this->storeNewCallForFamilyMembers($patientUser->patientInfo, $nurse, $window_start, $window_end, $day);
         } catch (\Exception $exception) {
             \Log::critical($exception);
             \Log::info("Call Id {$call->id}");
@@ -131,26 +132,37 @@ class ReschedulerHandler
         return false;
     }
 
-    private function storeNewCallForFamilyMembers(Patient $patient, $oldCall, $window_start, $window_end, $day)
+    /**
+     * Is it still possible to call this patient on their preferred contact day/time, or are we past the latest possible day/time?
+     *
+     * @return bool
+     */
+    private function canBeCarriedOut(Call $call)
     {
-        if ( ! $patient->hasFamilyId()) {
-            return;
-        }
-
-        $familyMembers = $patient->getFamilyMembers($patient);
-        if ( ! empty($familyMembers)) {
-            foreach ($familyMembers as $familyMember) {
-                $familyMemberCall = $this->schedulerService->getScheduledCallForPatient($familyMember->user);
-                //if manually scheduled by nurse or admin, do not do anything
-                if ($familyMemberCall && $familyMemberCall->is_manual) {
-                    continue;
-                }
-                $this->storeNewCallForPatient($familyMember, $oldCall, $window_start, $window_end, $day);
-            }
-        }
+        return now()
+            ->setTimezone($call->inboundUser->timezone ?? config('app.timezone'))
+            ->setTimeFromTimeString($call->window_end)
+            ->addHours(self::CUSHION_FOR_NURSE_TO_RESCHEDULE_IN_HOURS)
+            ->isFuture();
     }
 
-    private function storeNewCallForPatient(Patient $patient, $oldCall, $window_start, $window_end, $day)
+    private function expireCall(Call $call)
+    {
+        $call->status    = 'dropped';
+        $call->scheduler = 'rescheduler algorithm';
+        $call->save();
+    }
+
+    private function hasValidFutureScheduledCall(User $patientUser)
+    {
+        return $patientUser
+            ->inboundScheduledCalls
+            ->reject(function ($call) {
+                return ! $this->canBeCarriedOut($call);
+            })->count() > 0;
+    }
+
+    private function storeCallForPatient(Patient $patient, ?User $nurse, $window_start, $window_end, $day)
     {
         $this->rescheduledCalls[] = $this->schedulerService->storeScheduledCall(
             $patient->user->id,
@@ -158,11 +170,20 @@ class ReschedulerHandler
             $window_end,
             $day,
             'rescheduler algorithm',
-            $oldCall->outbound_cpm_id
-                ? $oldCall->outbound_cpm_id
-                : null,
+            optional($nurse)->id,
             '',
             false
         );
+    }
+
+    private function storeNewCallForFamilyMembers(Patient $patient, ?User $nurse, $window_start, $window_end, $day)
+    {
+        if ( ! $patient->hasFamilyId()) {
+            return;
+        }
+
+        foreach ($patient->getFamilyMembers($patient) as $familyMember) {
+            $this->storeCallForPatient($familyMember, $nurse, $window_start, $window_end, $day);
+        }
     }
 }

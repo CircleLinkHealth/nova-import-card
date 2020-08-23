@@ -711,6 +711,7 @@
                         .then(response => {
                             self.log = 'Initializing Twilio';
                             self.device = new Device(response.data.token, {
+                                codecPreferences: ['opus', 'pcmu'],
                                 closeProtection: true, //show warning when closing the page with active call - NOT WORKING
                                 debug: true,
                                 warnings: true,

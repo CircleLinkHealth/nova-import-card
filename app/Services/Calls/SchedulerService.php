@@ -6,9 +6,7 @@
 
 namespace App\Services\Calls;
 
-use App\Algorithms\Calls\NurseFinder;
-use App\Algorithms\Calls\SuccessfulHandler;
-use App\Algorithms\Calls\UnsuccessfulHandler;
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Note;
@@ -21,7 +19,6 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
@@ -69,34 +66,13 @@ class SchedulerService
             $now
         );
 
-        //by default we do not assign a nurse
-        $nurseId = null;
-
-        //get patient's assigned nurse for this window
-        $patientNurses = $patient->patientInfo->getNurses();
-        if ($patientNurses) {
-            if (isset($patientNurses['temporary'])) {
-                $temp = $patientNurses['temporary'];
-                if ($now->isBetween($temp['from'], $temp['to'])) {
-                    $nurseId = $temp['user']->id;
-                }
-            } else {
-                $nurseId = $patientNurses['permanent']['user']->id;
-            }
-        } else {
-            //if we do not have an assigned nurse, look for last call attempt
-            /** @var Call $previousCall */
-            $previousCall = $this->getPreviousCall($patient);
-            if ($previousCall) {
-                $nurseId = $previousCall->outbound_cpm_id;
-            }
-        }
+        $nurseId = app(NurseFinderEloquentRepository::class)->find($patient->id);
 
         if ( ! $scheduler) {
             $scheduler = 'call checker algorithm';
         }
         $this->storeScheduledCall(
-            $patient->id,
+            $patient,
             $next_predicted_contact_window['window_start'],
             $next_predicted_contact_window['window_end'],
             $next_predicted_contact_window['day'],
@@ -174,14 +150,6 @@ class SchedulerService
             ->orderBy('scheduled_date', 'desc');
     }
 
-    public static function getNextScheduledActivity($patientId, $subType, $excludeToday = false)
-    {
-        return self::getNextScheduledActivities($patientId, $excludeToday)
-            ->where('type', '=', 'task')
-            ->where('sub_type', '=', $subType)
-            ->first();
-    }
-
     public static function getNextScheduledCall($patientId, $excludeToday = false): ?Call
     {
         return self::getNextScheduledActivities($patientId, $excludeToday)
@@ -211,10 +179,6 @@ class SchedulerService
      */
     public function getPreviousCall($patient, $scheduled_call_id = null)
     {
-        //be careful not to consider call just made,
-        //since algo already updates it before getting here.
-        //check for day != today
-
         $call = Call::where(
             function ($q) {
                 $q->whereNull('type')
@@ -227,16 +191,6 @@ class SchedulerService
             ->where('called_date', '<', Carbon::today()->startOfDay()->toDateTimeString())
             ->orderBy('called_date', 'desc')
             ->first();
-
-        /*
-        $call = Call
-            ::where('inbound_cpm_id', $patient->id)
-            ->where('status', '!=', 'scheduled')
-            ->where('called_date', '!=', '')
-//            ->where('id', '!=', $scheduled_call_id)
-            ->orderBy('called_date', 'desc')
-            ->first();
-        */
 
         return $call;
     }
@@ -258,31 +212,23 @@ class SchedulerService
      */
     public function getTodaysCall($patientId): ?Call
     {
-        $query = Call::where(
+        $base = Call::where(
             function ($q) {
                 $q->whereNull('type')
                     ->orWhere('type', '=', SchedulerService::CALL_TYPE);
             }
         )
             ->where('inbound_cpm_id', $patientId)
-            ->where('status', 'scheduled')
             ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
             ->orderBy('updated_at', 'desc');
 
-        if (0 == $query->count()) {
-            $query = Call::where(
-                function ($q) {
-                    $q->whereNull('type')
-                        ->orWhere('type', '=', SchedulerService::CALL_TYPE);
-                }
-            )
-                ->where('inbound_cpm_id', $patientId)
-                ->whereNotIn('status', ['reached', 'not reached'])
-                ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
-                ->orderBy('updated_at', 'desc');
+        $scheduled = $base->where('status', Call::SCHEDULED);
+
+        if (0 < $scheduled->count()) {
+            return $scheduled->first();
         }
 
-        return $query->first();
+        return $base->whereNotIn('status', [Call::REACHED, Call::NOT_REACHED])->first();
     }
 
     public function hasScheduledCall(User $patient)
@@ -438,20 +384,7 @@ class SchedulerService
             now()
         );
 
-        $previousCall = Call::where('inbound_cpm_id', '=', $patient->id)
-            ->orderBy('scheduled_date', 'desc')
-            ->first();
-
-        $nurseId     = null;
-        $nurseFinder = (new NurseFinder($patient->patientInfo, null, null, null, $previousCall))->find();
-        if ($nurseFinder && isset($nurseFinder['nurse'])) {
-            $nurseId = $nurseFinder['nurse'];
-        }
-        if ( ! $nurseId) {
-            $nurseId = StandByNurseUser::id();
-        }
-
-        if ( ! $nurseId) {
+        if ( ! $nurseId = app(NurseFinderEloquentRepository::class)->find($patient->id) ?? StandByNurseUser::id()) {
             throw new \Exception("could not find nurse for patient[$patient->id]");
         }
 
@@ -468,7 +401,7 @@ class SchedulerService
                 'inbound_phone_number'  => $phoneNumber ?? '',
                 'outbound_phone_number' => '',
                 'inbound_cpm_id'        => $patient->id,
-                'outbound_cpm_id'       => $nurseId,
+                'outbound_cpm_id'       => parseIds($nurseId)[0] ?? null,
                 'call_time'             => 0,
                 'asap'                  => true,
                 'is_cpm_outbound'       => true,
@@ -491,6 +424,56 @@ class SchedulerService
         return $this->scheduleAsapCallbackTask($patient, $taskNote, $scheduler, $phoneNumber);
     }
 
+    public function scheduledCallQuery(User $patient)
+    {
+        return Call::where(
+            function ($q) {
+                $q->whereNull('type')
+                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
+            }
+        )
+            ->where(
+                function ($q) use (
+                    $patient
+                ) {
+                    $q->where('outbound_cpm_id', $patient->id)
+                        ->orWhere('inbound_cpm_id', $patient->id);
+                }
+            )
+            ->where('status', '=', Call::SCHEDULED)
+            ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
+    }
+
+    /**
+     * @param Patient $patient
+     * @param $oldValue
+     * @param $newValue
+     */
+    public function shouldScheduleCall(User $patient): bool
+    {
+        if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
+            return false;
+        }
+
+        if ( ! $patient->carePlan) {
+            return false;
+        }
+
+        if ($patient->carePlan->isClhAdminApproved()) {
+            return true;
+        }
+
+        if ($patient->carePlan->isProviderApproved()) {
+            return true;
+        }
+
+        if ($patient->carePlan->isRnApproved()) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function storeScheduledCall(
         $patientId,
         $window_start,
@@ -501,14 +484,17 @@ class SchedulerService
         $attempt_note = '',
         $is_manual = false
     ) {
-        $patient = User::find($patientId);
+        if ($patientId instanceof User) {
+            $patient = $patientId;
+            $patient->loadMissing('patientInfo');
+        } else {
+            $patient = User::with('patientInfo')->without(['roles', 'perms'])->find($patientId);
+        }
 
         $window_start = Carbon::parse($window_start)->format('H:i');
         $window_end   = Carbon::parse($window_end)->format('H:i');
 
-        $nurse_id = ('' == $nurse_id)
-            ? null
-            : $nurse_id;
+        $nurse_id = ! is_numeric($nurse_id) ? null : $nurse_id;
 
         if ( ! ($date instanceof Carbon)) {
             $date = Carbon::parse($date);
@@ -525,9 +511,7 @@ class SchedulerService
                 'scheduler' => $scheduler,
                 'is_manual' => $is_manual,
 
-                'inbound_phone_number' => $patient->patientInfo->phone
-                    ? $patient->patientInfo->phone
-                    : '',
+                'inbound_phone_number' => $patient->patientInfo->phone ?? null,
 
                 'outbound_phone_number' => '',
 
@@ -676,90 +660,6 @@ class SchedulerService
         return $familyCalls;
     }
 
-    public function tuneScheduledCallsWithUpdatedCCMTime()
-    {
-        //Get all enrolled Patients
-        $patients = Patient::enrolled()->get();
-
-        $reprocess_bucket = [];
-
-        foreach ($patients as $patient) {
-            if ( ! $patient->user) {
-                continue;
-            }
-
-            //Get time for last note entered
-            $last_note_time = Activity::whereType('Patient Note Creation')
-                ->wherePatientId($patient->user_id)
-                ->orderBy('created_at', 'desc')
-                ->pluck('created_at')
-                ->first();
-
-            //Get time for last activity recorded
-            $last_activity_time = Activity::wherePatientId($patient->user_id)
-                ->orderBy('created_at', 'desc')
-                ->pluck('created_at')
-                ->first();
-
-            //check if they both exist
-            if (null != $last_note_time && null != $last_activity_time) {
-                //then check if the note was made before the last activity
-                if ($last_note_time < $last_activity_time) {
-                    try {
-                        //have to pull the last scheduled call, but only if it was made by the algo
-                        //since we don't mess with calls scheduled manually
-                        $scheduled_call = $patient->user->inboundCalls()
-                            ->where('status', 'scheduled')
-                            ->where('scheduler', 'algorithm')
-                            ->first();
-
-                        $last_attempted_call = $patient->user->inboundCalls()
-                            ->where('status', '!=', 'scheduled')
-                            ->orderBy('created_at', 'desc')
-                            ->first();
-                    } catch (\Exception $exception) {
-                        \Log::critical($exception);
-                        \Log::info("Patient Info Id {$patient->id}");
-                        continue;
-                    }
-
-                    //make sure we have a call attempt and a scheduled call.
-                    if (is_object($scheduled_call) && is_object($last_attempted_call)) {
-                        $status = ('reached' == $last_attempted_call->status)
-                            ? true
-                            : false;
-
-                        $last_attempted_time = $last_attempted_call->called_date;
-
-                        if ($status) {
-                            $data = (new SuccessfulHandler(
-                                $patient,
-                                Carbon::parse($last_attempted_time),
-                                $last_attempted_call
-                            ));
-                        } else {
-                            $data = (new UnsuccessfulHandler(
-                                $patient,
-                                Carbon::parse($last_attempted_time),
-                                $last_attempted_call
-                            ));
-                        }
-
-                        $scheduled_call->scheduler      = 'refresher algorithm';
-                        $scheduled_call->scheduled_date = $data['date'];
-                        $scheduled_call->save();
-
-                        $reprocess_bucket[] = 'Patient: '.$patient->user_id.' was tuned, will now be called on '.$scheduled_call->scheduled_date;
-                    }
-                }
-            }
-        }
-
-        return empty($reprocess_bucket)
-            ? 'No Patients Need Refreshin\'!'
-            : $reprocess_bucket;
-    }
-
     /**
      * Update a call based on info received from note.
      * If a call does not exist, one is created and linked to this note.
@@ -803,108 +703,28 @@ class SchedulerService
     }
 
     /**
-     * Success is the call's status
-     * (true for 'reached', false for 'not reached').
-     *
-     * Update today's call based on note.
-     * Check if a next call is already scheduled.
-     * If a call is scheduled return null.
-     * If no call is scheduled return a prediction.
-     *
-     * @param $patient
-     * @param $noteId
-     * @param $callStatus - 'reached', 'not reached', 'ignored'
-     * @param mixed $attestedProblems
-     *
-     * @return array
+     * @param $callStatus
+     * @param null $attestedProblems
      */
-    public function updateTodaysCallAndPredictNext(
-        $patient,
-        $noteId,
+    public function updateTodaysCall(
+        User $patient,
+        Note $note,
         $callStatus,
         $attestedProblems = null
-    ) {
+    ): void {
         $scheduled_call = $this->updateOrCreateCallWithNote(
-            $note = Note::find($noteId),
+            $note,
             $scheduled_call = $this->getTodaysCall($patient->id),
             $callStatus,
             $attestedProblems
         );
+
+        $patient->loadMissing(['patientInfo']);
 
         $this->patientWriteRepository->updateCallLogs(
             $patient->patientInfo,
             Call::REACHED == $callStatus,
             ! is_null($scheduled_call) && SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type
         );
-
-        if (SchedulerService::getNextScheduledCall($patient->id, true)) {
-            return null;
-        }
-
-        $previousCall = $this->getPreviousCall($patient, optional($scheduled_call)->id);
-
-        if (Call::REACHED == $callStatus) {
-            $prediction = (new SuccessfulHandler(
-                $patient->patientInfo,
-                Carbon::now(),
-                $previousCall
-            ))->handle();
-        } else {
-            $prediction = (new UnsuccessfulHandler(
-                $patient->patientInfo,
-                Carbon::now(),
-                $previousCall
-            ))->handle();
-        }
-
-        $prediction['successful'] = Call::REACHED == $callStatus;
-
-        return $prediction;
-    }
-
-    private function scheduledCallQuery(User $patient)
-    {
-        return Call::where(
-            function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
-            }
-        )
-            ->where(
-                function ($q) use (
-                    $patient
-                ) {
-                    $q->where('outbound_cpm_id', $patient->id)
-                        ->orWhere('inbound_cpm_id', $patient->id);
-                }
-            )
-            ->where('status', '=', 'scheduled')
-            ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
-    }
-
-    /**
-     * @param Patient $patient
-     * @param $oldValue
-     * @param $newValue
-     */
-    private function shouldScheduleCall(User $patient): bool
-    {
-        if (Patient::ENROLLED != $patient->patientInfo->ccm_status) {
-            return false;
-        }
-
-        if ( ! $patient->carePlan) {
-            return false;
-        }
-
-        if ($patient->carePlan->isClhAdminApproved()) {
-            return true;
-        }
-
-        if ($patient->carePlan->isProviderApproved()) {
-            return true;
-        }
-
-        return false;
     }
 }

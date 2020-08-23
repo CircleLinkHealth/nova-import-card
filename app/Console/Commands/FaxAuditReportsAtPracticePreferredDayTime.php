@@ -141,7 +141,10 @@ class FaxAuditReportsAtPracticePreferredDayTime extends Command
             return;
         }
 
-        if (DatabaseNotification::where('type', SendAuditReport::class)->where('patient_id', $user->id)->exists()) {
+        if (DatabaseNotification::where('type', SendAuditReport::class)
+            ->where('media_collection_name', PatientDailyAuditReport::mediaCollectionName($date))
+            ->where('patient_id', $user->id)
+            ->exists()) {
             \Log::error("Error! User[$user->id] has a SendAuditReport::class attempt and should not have been sent this again.");
 
             return;

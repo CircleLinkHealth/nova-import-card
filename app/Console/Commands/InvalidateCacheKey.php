@@ -6,42 +6,50 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Command;
 
-class TuneScheduledCalls extends Command
+class InvalidateCacheKey extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Tune scheduled calls according to updated ccm time.';
+    protected $description = 'Invalidate a specific key from the cache.';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'calls:tune';
-    private $schedulerService;
+    protected $signature = 'cache:invalidate-key {key}';
 
     /**
      * Create a new command instance.
+     *
+     * @return void
      */
-    public function __construct(SchedulerService $schedulerService)
+    public function __construct()
     {
         parent::__construct();
-
-        $this->schedulerService = $schedulerService;
     }
 
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return int
      */
     public function handle()
     {
-        return $this->schedulerService->tuneScheduledCallsWithUpdatedCCMTime();
+        $key = $this->argument('key');
+
+        if (empty($key)) {
+            $this->info('Empty key provided.');
+        }
+
+        $this->info("Invalidating key: $key");
+
+        \Cache::forget($key);
+
+        $this->info('Key forgotten.');
     }
 }
