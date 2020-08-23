@@ -13,8 +13,8 @@ class PatientChargeableSummary extends JsonResource
     public function toArray($request)
     {
         return [
-            'patient_id'          => $this->patient_user_id,
-            'chargeable_services' => ChargeableServiceForTimeTracker::make($this->whenLoaded('chargeableService')),
+            'patient_id'         => $this->patient_user_id,
+            'chargeable_service' => ChargeableServiceForTimeTracker::make($this->whenLoaded('chargeableService')),
         ];
     }
 }
