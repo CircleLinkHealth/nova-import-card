@@ -157,12 +157,24 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->where('contains', 'LIKE', "%${name}%");
     }
 
+    public function locationChargeableServices()
+    {
+        return $this->belongsToMany(ChargeableService::class, 'location_problem_services', 'chargeable_service_id')->withPivot(['location_id']);
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_problems_users', 'patient_id');
+    }
+
+    public function scopeWithChargeableServicesForLocation($query, $locationId)
+    {
+        return $query->with(['locationChargeableServices' => function ($lps) use ($locationId) {
+            $lps->where('pivot.location_id', $locationId);
+        }]);
     }
 
     public function scopeWithIcd10Codes($builder)
@@ -187,15 +199,5 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     public function user()
     {
         return $this->hasMany(CpmProblemUser::class, 'cpm_problem_id');
-    }
-    
-    public function locationChargeableServices(){
-        return $this->belongsToMany(ChargeableService::class, 'location_problem_services', 'chargeable_service_id')->withPivot(['location_id']);
-    }
-    
-    public function scopeWithChargeableServicesForLocation($query, $locationId){
-        return $query->with(['locationChargeableServices' => function ($lps) use ($locationId){
-            $lps->where('pivot.location_id', $locationId);
-        }]);
     }
 }
