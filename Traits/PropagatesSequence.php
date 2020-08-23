@@ -11,6 +11,8 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
 
 trait PropagatesSequence
 {
+    abstract public function next(): PatientChargeableServiceProcessor;
+
     protected function attachNext(int $patientId, Carbon $chargeableMonth)
     {
         if (method_exists($this, 'next')) {
@@ -19,6 +21,4 @@ trait PropagatesSequence
             $processor->attach($patientId, $chargeableMonth);
         }
     }
-    
-    abstract public function next(): PatientChargeableServiceProcessor;
 }

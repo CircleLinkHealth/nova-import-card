@@ -27,7 +27,7 @@ class MonthlyProcessor implements PatientMonthlyBillingProcessor
                 $processor->attach($patientStub->getPatientId(), $patientStub->getChargeableMonth());
             }
         });
-        
+
         return $patientStub;
     }
 }

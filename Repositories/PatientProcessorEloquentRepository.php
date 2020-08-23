@@ -26,7 +26,7 @@ class PatientProcessorEloquentRepository implements Repository
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
-        return ChargeablePatientMonthlySummary::updateOrCreate([
+        return ChargeablePatientMonthlySummary::firstOrCreate([
             'patient_user_id'       => $patientId,
             'chargeable_month'      => $month,
             'chargeable_service_id' => $this->chargeableSercviceId($chargeableServiceCode),

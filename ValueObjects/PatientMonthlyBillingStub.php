@@ -19,6 +19,20 @@ class PatientMonthlyBillingStub
 
     protected Collection $patientProblems;
 
+    public function forMonth(Carbon $chargeableMonth): self
+    {
+        $this->chargeableMonth = $chargeableMonth;
+
+        return $this;
+    }
+
+    public function forPatient(int $patientId): self
+    {
+        $this->patientId = $patientId;
+
+        return $this;
+    }
+
     public function getAvailableServiceProcessors(): AvailableServiceProcessors
     {
         return $this->availableServiceProcessors;
@@ -39,23 +53,17 @@ class PatientMonthlyBillingStub
         return $this->patientProblems;
     }
 
-    public function setAvailableServiceProcessors(AvailableServiceProcessors $availableServiceProcessors): void
+    public function subscribe(AvailableServiceProcessors $availableServiceProcessors): self
     {
         $this->availableServiceProcessors = $availableServiceProcessors;
+
+        return $this;
     }
 
-    public function setChargeableMonth(Carbon $chargeableMonth): void
-    {
-        $this->chargeableMonth = $chargeableMonth;
-    }
-
-    public function setPatientId(int $patientId): void
-    {
-        $this->patientId = $patientId;
-    }
-
-    public function setPatientProblems(Collection $patientProblems): void
+    public function withProblems(Collection $patientProblems): self
     {
         $this->patientProblems = $patientProblems;
+
+        return $this;
     }
 }

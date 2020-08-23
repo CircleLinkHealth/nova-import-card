@@ -77,11 +77,16 @@ class CCM implements PatientChargeableServiceProcessor
 
     public function shouldAttach($patientProblems, Carbon $monthYear)
     {
-        return true;
+        return $patientProblems->where('code', $this->code())->count() >= $this->minimumNumberOfProblems();
     }
 
     public function shouldFulfill(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement shouldFulfill() method.
+    }
+    
+    public function minimumNumberOfProblems()
+    {
+        return 2;
     }
 }

@@ -1,5 +1,6 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
@@ -11,6 +12,6 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 interface PatientProcessorEloquentRepository
 {
     public function getChargeablePatientSummaries(int $patientId, Carbon $month);
-    
+
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 }

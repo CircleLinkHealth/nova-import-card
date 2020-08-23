@@ -30,13 +30,13 @@ class Location implements CustomerBillingProcessor
     public function processServicesForAllPatients(int $locationId, Carbon $month): void
     {
         // TODO: Implement processServicesForAllPatients() method.
-        $valueObjectOnAndoF =  $this->getLocationEnabledCs();
-        
+        $valueObjectOnAndoF = $this->getLocationEnabledCs();
+
         //call job to dispatch jobs per 100-1000 jobs
         $locationPatients = \CircleLinkHealth\Customer\Entities\Location::findOrFail($locationId)->getPatients();
-        
+
         $fake = new FakeMonthlyBillingProcessor();
-        foreach ($locationPatients as $patient){
+        foreach ($locationPatients as $patient) {
             $fake->process($patient->id, $month, $valueObjectOnAndoF);
         }
     }

@@ -66,6 +66,17 @@ class AvailableServiceProcessors implements Arrayable
         return $this->pcm;
     }
 
+    public static function push(array $serviceProcessors)
+    {
+        $self = new static();
+        foreach ($serviceProcessors as $processor) {
+            $func = 'set'.ucwords(self::classMap()[get_class($processor)]);
+            $self->$func($processor);
+        }
+
+        return $self;
+    }
+
     public function setAwv1(?AWV1 $awv1): void
     {
         $this->awv1 = $awv1;
@@ -120,5 +131,18 @@ class AvailableServiceProcessors implements Arrayable
     public function toCollection(): Collection
     {
         return collect($this->toArray());
+    }
+
+    private static function classMap(): array
+    {
+        return [
+            CCM::class   => 'ccm',
+            BHI::class   => 'bhi',
+            CCM40::class => 'ccm40',
+            CCM60::class => 'ccm60',
+            PCM::class   => 'pcm',
+            AWV1::class  => 'awv1',
+            AWV2::class  => 'awv2',
+        ];
     }
 }

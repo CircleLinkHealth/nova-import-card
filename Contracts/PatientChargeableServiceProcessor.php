@@ -8,10 +8,13 @@ namespace CircleLinkHealth\CcmBilling\Contracts;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 
 interface PatientChargeableServiceProcessor
 {
+    public function attach(int $patientId, Carbon $monthYear): ChargeablePatientMonthlySummary;
+
+    public function code();
+
     public function fulfill(int $patientId, Carbon $monthYear);
 
     public function isAttached(int $patientId, Carbon $monthYear);
@@ -30,8 +33,4 @@ interface PatientChargeableServiceProcessor
     public function shouldAttach($patientProblems, Carbon $monthYear);
 
     public function shouldFulfill(int $patientId, Carbon $monthYear);
-    
-    public function code();
-    
-    public function attach(int $patientId, Carbon $monthYear): ChargeablePatientMonthlySummary;
 }
