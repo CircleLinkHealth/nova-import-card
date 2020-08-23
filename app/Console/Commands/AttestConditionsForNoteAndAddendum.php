@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Note;
+use App\Jobs\AttestConditionsForNoteAndAddendum as Job;
 use Illuminate\Console\Command;
 
 class AttestConditionsForNoteAndAddendum extends Command
@@ -22,7 +22,7 @@ class AttestConditionsForNoteAndAddendum extends Command
      *
      * @var string
      */
-    protected $signature = 'billing:attest-problems {problemIds} {noteId} {addendumId?}';
+    protected $signature = 'billing:attest-problems {problemIds} {noteId} {addendumId}';
 
     /**
      * Create a new command instance.
@@ -41,27 +41,10 @@ class AttestConditionsForNoteAndAddendum extends Command
      */
     public function handle()
     {
-        $this->info('Preparing for problem attestation');
-
-        if (empty($problemIds = explode(',', $this->argument('problemIds')))) {
-            $this->error('No attested problem IDs have been inputted');
-
-            return;
-        }
-
-        if ( ! $note = Note::with('call')->find($noteId = $this->argument('noteId'))) {
-            $this->error("Note with ID: $noteId not found");
-
-            return;
-        }
-
-        if ( ! $call = $note->call) {
-            $this->error("Call not found for note with ID: $noteId");
-
-            return;
-        }
-
-        $call->attachAttestedProblems($problemIds, $this->argument('addendumId'));
-        $this->info('Conditions attested!');
+        Job::dispatch(
+            (string) $this->argument('problemIds'),
+            (int) $this->argument('noteId'),
+            (int) $this->argument('addendumId')
+        );
     }
 }
