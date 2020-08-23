@@ -165,6 +165,7 @@ if (isset($patient) && ! empty($patient)) {
                                                        mode="web"
                                                        ccm-status="{{$patientCcmStatus}}"
                                                        careplan-status="{{$careplanStatus}}"
+                                                       user-scope="{{auth()->user()->scope}}"
                                                        :is-provider="@json(auth()->user()->providerInfo && auth()->user()->isProvider())"
                                                        :is-care-coach="@json(auth()->user()->isCareCoach())"
                                                        :is-admin="@json(auth()->user()->isAdmin())"
