@@ -89,26 +89,6 @@ class BillingProcessorsIntegrationTest extends TestCase
 
     public function test_it_processes_patient_chargeable_services_at_the_start_of_month()
     {
-        //for a given Patient User
-        //of  a given Practice
-        //of a specific preferred Location
-
-        //attempt to process CS for the current (on the start of) month
-        //1. take user problems
-        //2. take Location enable CS? (QUESTION)
-        //3. (4.)Call Patient CS Processors individually
-        //    a) BHI->attach check should attach, return bool
-        //    b) Is fulfilled - it would probably deduce/return false
-
-        //mock to job to recieve patient and month
-        // X determines current CSs/summary
-        //
-
-        // WE NEED PATIENT REPOSITORY
-        // PATIENT PROCESSOR - returns collection of Classes (CS individual processors) ->getChargeableServicesForMonth()
-        // ccdProblems.cpmProblems(.chargeableServices)
-        // locationChargeableService
-
         FakePatientRepository::fake();
 
         $stub = (new PatientMonthlyBillingStub())
