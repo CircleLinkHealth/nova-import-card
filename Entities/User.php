@@ -2901,7 +2901,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $query,
         $user
     ) {
-        $viewableLocations = $user->locations->pluck('id')->all();
+        $viewableLocations = $user->viewableLocationIds();
 
         return $query->whereHas(
             'locations',
@@ -4101,15 +4101,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->pluck('id')
             ->all();
     }
+    
+    public function viewableLocationIds(): array
+    {
+        return $this->locations
+            ->pluck('id')
+            ->all();
+    }
 
     public function viewableProviderIds()
     {
-        return User::intersectPracticesWith(auth()->user())->whereHas(
-            'roles',
-            function ($q) {
-                $q->where('name', '=', 'provider');
-            }
-        )->pluck('id')->all();
+        return User::intersectPracticesWith(auth()->user())->ofType('provider')->pluck('id')->all();
     }
 
     public function viewableUserIds()

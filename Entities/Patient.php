@@ -683,6 +683,23 @@ class Patient extends BaseModel
         return $query->whereNotNull('family_id');
     }
 
+    /**
+     * Scope a query to intersect locations with the given user.
+     *
+     * @param $query
+     * @param $user
+     */
+    public function scopeIntersectLocationsWith(
+        $query,
+        $user
+    ) {
+        return $query->when(User::SCOPE_LOCATION === $user->scope, function ($q) use ($user) {
+            $q->whereIn('preferred_contact_location', [
+                $user->viewableLocationIds(),
+            ]);
+        });
+    }
+
     public function setAddressAttribute($value)
     {
         $this->user->address = $value;
