@@ -355,21 +355,10 @@ class PatientCareplanController extends Controller
             $programId = $user->program_id;
         }
         $patient = $user;
-
-        // locations @todo get location id for Program
+        
         $program   = Practice::find($programId);
-        $locations = [];
-        if ($program) {
-            $locations = $program->locations->pluck('name', 'id')->all();
-        }
-
-        // get program
+        
         $programs = Practice::whereIn('id', Auth::user()->viewableProgramIds())->pluck(
-            'display_name',
-            'id'
-        )->all();
-
-        $billingProviders = User::ofType('provider')->ofPractice(Auth::user()->program_id)->pluck(
             'display_name',
             'id'
         )->all();
@@ -391,17 +380,15 @@ class PatientCareplanController extends Controller
 
         $withdrawnReasons       = array_combine($reasons, $reasons);
         $patientWithdrawnReason = $patient->getWithdrawnReason();
-
-        // States (for dropdown)
+        
         $states = usStatesArrayForDropdown();
-
-        // timezones for dd
+        
         $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
         foreach ($timezones_raw as $timezone) {
             $timezones[$timezone] = $timezone;
         }
 
-        $showApprovalButton = false; // default hide
+        $showApprovalButton = false;
         if (Auth::user()->isProvider()) {
             if (CarePlan::PROVIDER_APPROVED != $patient->getCarePlanStatus()) {
                 $showApprovalButton = true;
@@ -427,7 +414,6 @@ class PatientCareplanController extends Controller
                 [
                     'patient',
                     'states',
-                    'locations',
                     'timezones',
                     'messages',
                     'patientRoleId',
@@ -437,7 +423,6 @@ class PatientCareplanController extends Controller
                     'insurancePolicies',
                     'contact_days_array',
                     'contactWindows',
-                    'billingProviders',
                     'withdrawnReasons',
                     'patientWithdrawnReason',
                 ]

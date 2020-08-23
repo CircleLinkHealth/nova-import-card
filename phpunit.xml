@@ -28,6 +28,9 @@
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
+        <testsuite name="UserScope">
+            <directory suffix="Test.php">./tests/Feature/UserScope</directory>
+        </testsuite>
         <testsuite name="Deployment">
             <directory suffix="Test.php">./tests/integration/</directory>
             <directory suffix="Test.php">./tests/Unit</directory>

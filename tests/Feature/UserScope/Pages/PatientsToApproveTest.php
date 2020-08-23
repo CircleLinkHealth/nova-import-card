@@ -12,22 +12,35 @@ use Tests\Feature\UserScope\TestCase as UserScopeTestCase;
 
 class PatientsToApproveTest extends UserScopeTestCase
 {
-    public function test_user_scopes_on_patients_to_approve_list()
+    public function test_patients_to_approve_list_page_shows_patients_from_the_same_location_only()
     {
-        $searchTerm = 'Role:participant';
-        
-        $this->withPracticeScope()
-            ->calling('GET', $route = route('get.patientlist.index', [$searchTerm]), $params = [
-                'rows' => 'all',
-                'patientsPendingAuthUserApproval',
-            ])
-            ->assert(new Practice('data', 'program_id'));
-
         $this->withLocationScope()
-            ->calling('GET', $route, $params)
+            ->calling('GET', $this->route(), $this->params())
             ->assert(
                 new Practice('data', 'program_id'),
                 new Location('data', 'location_id'),
             );
+    }
+
+    public function test_patients_to_approve_list_page_shows_patients_from_the_same_practice_only()
+    {
+        $this->withPracticeScope()
+            ->calling('GET', $this->route(), $this->params())
+            ->assert(new Practice('data', 'program_id'));
+    }
+
+    private function params()
+    {
+        return [
+            'rows' => 'all',
+            'patientsPendingAuthUserApproval',
+        ];
+    }
+
+    private function route()
+    {
+        $searchTerm = 'Role:participant';
+
+        return route('get.patientlist.index', [$searchTerm]);
     }
 }

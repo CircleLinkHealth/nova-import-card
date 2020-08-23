@@ -318,23 +318,37 @@ $user_info = [];
                                                     </div>
                                                 @endif
                                                 <input type=hidden name=program_id value="{{ $programId }}">
-                                                <div class="form-group form-item form-item-spacing col-lg-12 col-sm-12 col-xs-12 {{ $errors->first('program') ? 'has-error' : '' }}">
-                                                    {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:') !!}
-                                                    {!! Form::select('preferred_contact_location', $locations, $patient->getPreferredContactLocation(), ['class' => 'form-control select-picker'/*, 'style' => 'width:90;'*/]) !!}
-                                                </div>
                                             @else
                                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
                                                     {!! Form::label('program_id', 'Program:') !!}
                                                     {!! Form::select('program_id', $programs, $patient->program_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
                                                 </div>
+                                                <div class="form-group form-item form-item-spacing col-lg-12 col-sm-12 col-xs-12 {{ $errors->first('program') ? 'has-error' : '' }}">
+                                                    {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:') !!}
+                                                    {!! Form::select('preferred_contact_location', [], null, ['class' => 'form-control select-picker']) !!}
+                                                </div>
                                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('provider_id') ? 'has-error' : '' }}">
                                                     {!! Form::label('provider_id', 'Billing Provider:') !!}
-                                                    {!! Form::select('provider_id', $billingProviders, null, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
+                                                    {!! Form::select('provider_id', [], null, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
                                                 </div>
                                                 @push('scripts')
                                                     <script>
                                                         (function () {
-                                                            function setBillingProvider(practiceId) {
+                                                            function populateBillingProviderDropdown(practiceId) {
+                                                                return $.ajax({
+                                                                    url: '/api/practices/' + practiceId + '/providers',
+                                                                    type: 'GET',
+                                                                    success: function (providers) {
+                                                                        console.log('practice:providers', providers)
+                                                                        $('[name="provider_id"]').html('')
+                                                                        providers.forEach(function (provider) {
+                                                                            $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.name))
+                                                                        })
+                                                                    }
+                                                                })
+                                                            }
+
+                                                            function populateLocationsDropdown(practiceId) {
                                                                 return $.ajax({
                                                                     url: '/api/practices/' + practiceId + '/providers',
                                                                     type: 'GET',
@@ -349,10 +363,10 @@ $user_info = [];
                                                             }
 
                                                             $('[name="program_id"]').change(function () {
-                                                                setBillingProvider($(this).val())
+                                                                populateBillingProviderDropdown($(this).val())
                                                             })
 
-                                                            setBillingProvider($('[name="program_id"]').val())
+                                                            populateBillingProviderDropdown($('[name="program_id"]').val())
                                                         })();
 
                                                     </script>

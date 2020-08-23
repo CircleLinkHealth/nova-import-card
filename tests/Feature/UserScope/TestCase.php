@@ -6,16 +6,13 @@
 
 namespace Tests\Feature\UserScope;
 
-use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\TestResponse;
-use Tests\CustomerTestCase;
 use Tests\Feature\UserScope\Assertions\Assertion;
+use Tests\TestCase as BaseTestCase;
 
-abstract class TestCase extends CustomerTestCase
+abstract class TestCase extends BaseTestCase
 {
     /**
      * @var \CircleLinkHealth\Customer\Entities\User
@@ -26,40 +23,9 @@ abstract class TestCase extends CustomerTestCase
     private array $cookies;
     private array $files;
     private string $method;
-    /**
-     * @var \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed
-     */
-    private \Illuminate\Database\Eloquent\Collection $newLocations;
     private array $parameters;
     private array $server;
     private string $uri;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->patient(2);
-
-        collect($this->newLocations = factory(Location::class, 2)->create([
-            'practice_id' => $this->practice()->id,
-        ]))->each(function ($location) {
-            $this->resetPatient();
-            $patients = collect($this->patient(3));
-
-            Patient::whereIn('user_id', $patients->pluck('id')->all())->update([
-                'preferred_contact_location' => $location->id,
-            ]);
-
-            $patients->each(function ($patient) use ($location) {
-                $patient->locations()->sync([$location->id]);
-
-                CarePlan::where('user_id', $patient->id)
-                    ->update([
-                        'status' => CarePlan::PROVIDER_APPROVED,
-                    ]);
-            });
-        });
-    }
 
     public function assert(Assertion ...$assertions)
     {
@@ -84,17 +50,9 @@ abstract class TestCase extends CustomerTestCase
         $this->reset();
     }
 
-    public function assertLocation(User $actor, Collection $collection, ?string $key = null)
+    public function assertLocation(User $actor, Collection $collection, string $key)
     {
-        $actorLocations = $actor->locations->pluck('id')->all();
-
-        if ( ! $key) {
-            $this->assertTrue($collection->reject(function ($locationId) use ($actorLocations) {
-                return in_array($locationId, $actorLocations);
-            })->isEmpty(), 'The response contains location IDs the actor does not have.');
-        }
-
-        $candidates = $collection->pluck($key)->filter();
+        $candidates = $collection->pluck($key)->filter()->values();
 
         if ($candidates->isEmpty()) {
             throw new \Exception("`$key` not found in response data");
@@ -103,23 +61,15 @@ abstract class TestCase extends CustomerTestCase
         $this->assertTrue($collection->whereNotIn($key, $actor->locations->pluck('id')->all())->isEmpty(), 'The response contains patients from other Locations.');
     }
 
-    public function assertPractice(User $actor, Collection $collection, ?string $key = null)
+    public function assertPractice(User $actor, Collection $collection, string $key)
     {
-        $actorPractices = $actor->practices->pluck('id')->all();
-
-        if ( ! $key) {
-            $this->assertTrue($collection->reject(function ($practiceId) use ($actorPractices) {
-                return in_array($practiceId, $actorPractices);
-            })->isEmpty(), 'The response contains practice IDs the actor does not have.');
-        }
-
         $candidates = $collection->pluck($key)->filter();
 
         if ($candidates->isEmpty()) {
             throw new \Exception("`$key` not found in response data");
         }
 
-        $this->assertTrue($collection->whereNotIn($key, $actorPractices)->isEmpty(), 'The response contains patients from other Practices.');
+        $this->assertTrue($collection->whereNotIn($key, $actor->practices->pluck('id')->all())->isEmpty(), 'The response contains patients from other Practices.');
     }
 
     public function calling($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null): self
@@ -137,22 +87,28 @@ abstract class TestCase extends CustomerTestCase
 
     public function withLocationScope(): self
     {
-        $this->actor = $this->provider();
+        $this->actor = User::whereFirstName(\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME)
+            ->whereLastName(\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME)
+            ->with(['practices', 'locations'])
+            ->first();
 
-        $this->actor->scope = User::SCOPE_LOCATION;
-        $this->actor->save();
-
-        $detached = $this->actor->locations()->detach($this->newLocations->first()->id);
-        $this->actor->load('locations');
-
-        $this->assertEquals(1, $detached);
+        if (is_null($this->actor)) {
+            throw new \Exception('Please run `php artisan db:seed --class=UserScopeTestsSeeder`');
+        }
 
         return $this;
     }
 
     public function withPracticeScope(): self
     {
-        $this->actor = $this->provider();
+        $this->actor = User::whereFirstName(\UserScopeTestsSeeder::PROVIDER_WITH_PRACTICE_SCOPE_FIRST_NAME)
+            ->whereLastName(\UserScopeTestsSeeder::PROVIDER_WITH_PRACTICE_SCOPE_LAST_NAME)
+            ->with(['practices', 'locations'])
+            ->first();
+
+        if (is_null($this->actor)) {
+            throw new \Exception('Please run `php artisan db:seed --class=UserScopeTestsSeeder`');
+        }
 
         return $this;
     }
@@ -166,7 +122,7 @@ abstract class TestCase extends CustomerTestCase
         }
 
         if ( ! $responseData) {
-            $responseData = $response->original->gatherData();
+            $responseData = $response->original->getData();
         }
 
         if (empty($responseData)) {
@@ -187,7 +143,7 @@ abstract class TestCase extends CustomerTestCase
         $response = $this->actingAs($this->actor)
             ->call($this->method, $this->uri, $this->parameters, $this->cookies, $this->files, $this->server, $this->content);
 
-        $response->assertOk();
+        $this->assertTrue(in_array($response->status(), [200, 302]), 'It seems like the request failed');
 
         return $response;
     }

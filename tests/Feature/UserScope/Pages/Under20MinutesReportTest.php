@@ -12,23 +12,26 @@ use Tests\Feature\UserScope\TestCase as UserScopeTestCase;
 
 class Under20MinutesReportTest extends UserScopeTestCase
 {
-    public function test_user_scopes_on_patients_to_approve_list()
+    public function test_under_20_minutes_report_page_shows_patients_from_the_same_location_only()
     {
-        $this->withPracticeScope()
-            ->calling('GET', $route = route('patient.reports.u20'))
-            ->assertCallback(function (TestResponse $response, User $actor) {
-                $responseData = $this->extract($response);
-
-                $this->assertPractice($actor, $responseData, 'practice_id');
-            });
-
         $this->withLocationScope()
-            ->calling('GET', $route)
+            ->calling('GET', route('patient.reports.u20'))
             ->assertCallback(function (TestResponse $response, User $actor) {
                 $responseData = $this->extract($response);
 
                 $this->assertPractice($actor, $responseData, 'practice_id');
                 $this->assertLocation($actor, $responseData, 'location_id');
+            });
+    }
+
+    public function test_under_20_minutes_report_page_shows_patients_from_the_same_practice_only()
+    {
+        $this->withPracticeScope()
+            ->calling('GET', route('patient.reports.u20'))
+            ->assertCallback(function (TestResponse $response, User $actor) {
+                $responseData = $this->extract($response);
+
+                $this->assertPractice($actor, $responseData, 'practice_id');
             });
     }
 

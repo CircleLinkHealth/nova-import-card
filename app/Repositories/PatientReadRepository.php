@@ -78,7 +78,9 @@ class PatientReadRepository
                     });
                 }
             )
-            ->whereHas('patientInfo')
+            ->whereHas('patientInfo', function ($q) {
+                $q->intersectLocationsWith(auth()->user());
+            })
             ->intersectPracticesWith(auth()->user())
             ->filter($filters);
 
