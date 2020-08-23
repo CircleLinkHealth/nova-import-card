@@ -1,11 +1,25 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateEndOfMonthCcmStatusLogTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('end_of_month_ccm_status_log');
+    }
+
     /**
      * Run the migrations.
      *
@@ -20,21 +34,11 @@ class CreateEndOfMonthCcmStatusLogTable extends Migration
             $table->string('closed_ccm_status');
 
             $table->timestamps();
-            
+
             $table->foreign('patient_user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('end_of_month_ccm_status_log');
     }
 }
