@@ -54,7 +54,7 @@ class PracticeObserver
                     $q->select('user_id')
                         ->from('practice_role_user')
                         ->where('program_id', $practice->id)
-                        ->whereIn('role_id', Role::getIdsFromNames(Constants::PRACTICE_STAFF_ROLE_NAMES));
+                        ->whereIn('role_id', Role::getIdsFromNames(['provider']));
                 })->update([
                     'approve_own_care_plans' => true,
                 ]);
