@@ -99,7 +99,7 @@ export default {
 
             }).catch(error => {
                 let msg = 'There has been an error.';
-                if (error.response && error.response.data && error.response.data.message) {
+                if (error.response?.data?.message) {
                     msg = error.response.data.message;
                 }
                 this.$toasted.error(msg);
