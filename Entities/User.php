@@ -868,6 +868,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(Problem::class, 'patient_id');
     }
 
+    public function chargeableMonthlySummaries()
+    {
+        return $this->hasMany(ChargeablePatientMonthlySummary::class, 'patient_user_id');
+    }
+
     public function chargeableServices()
     {
         return $this->morphToMany(ChargeableService::class, 'chargeable')
@@ -2510,11 +2515,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 ]
             )
             ->get();
-    }
-
-    public function chargeableMonthlySummaries()
-    {
-        return $this->hasMany(ChargeablePatientMonthlySummary::class, 'patient_user_id');
     }
 
     public function patientNurseAsPatient()
