@@ -7,12 +7,11 @@
 namespace Circlelinkhealth\InvoicesDownload;
 
 use Carbon\Carbon;
-use CircleLinkHealth\NurseInvoices\Http\Requests\DownloadInvoicesNova;
 use CircleLinkHealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
 
 class InvoicesDownloadController
 {
-    public function downloadInvoices(DownloadInvoicesNova $request)
+    public function downloadInvoices(InvoicesDownloadRequest $request)
     {
         $auth = auth()->user();
 
