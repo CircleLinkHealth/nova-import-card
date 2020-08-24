@@ -60,6 +60,7 @@ class PostDeploymentTasks extends Command
             'route:cache',
             'horizon:terminate',
             'queue:restart',
+            'schedule-monitor:sync',
         ]);
 
         collect(
