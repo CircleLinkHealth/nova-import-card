@@ -886,7 +886,10 @@
                     }
 
                     function onTaskSelected(e) {
-                        //get id of task
+                        if (!e.currentTarget || !e.currentTarget.value) {
+                            return;
+                        }
+
                         const task = editingTaskType ? {sub_type: editingTaskType} : patientNurseTasks.find(x => x.id === +e.currentTarget.value);
                         if (!task) {
                             return;
@@ -1023,7 +1026,7 @@
                         const SECONDS_THRESHOLD = 90 * 1000;
                         const CHARACTERS_THRESHOLD = 100;
                         let showModal = false;
-                        const noteBody = form['body'].value;
+                        const noteBody = (form['body'] || {value: ''}).value;
                         const noteBodyWithoutMeds = getNoteBodyExcludingMedications(noteBody);
 
                         //CPM-182:

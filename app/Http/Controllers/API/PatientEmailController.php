@@ -58,30 +58,29 @@ class PatientEmailController extends Controller
     {
         $patient = User::findOrFail($patientId);
 
-        $file = $request->file()['file'];
-
-        if ($file) {
-            //check if media exists, if yes return it
-            $media = $patient->addMedia($file)
-                ->withCustomProperties(['doc_type' => 'patient-mail-attachment'])
-                ->toMediaCollection('patient-email-attachments');
-
+        $files = $request->file();
+        if ( ! $files || ! isset($files['file'])) {
             return response()->json(
                 [
-                    'media_id' => $media->id,
-                    'path'     => $media->getPath(),
-                    'url'      => $media->getFullUrl(),
-                    'name'     => $file->getClientOriginalName(),
+                    'success' => false,
                 ],
-                200
+                400
             );
         }
 
+        $file = $files['file'];
+        $media = $patient->addMedia($file)
+            ->withCustomProperties(['doc_type' => 'patient-mail-attachment'])
+            ->toMediaCollection('patient-email-attachments');
+
         return response()->json(
             [
-                'success' => false,
+                'media_id' => $media->id,
+                'path'     => $media->getPath(),
+                'url'      => $media->getFullUrl(),
+                'name'     => $file->getClientOriginalName(),
             ],
-            400
+            200
         );
     }
 

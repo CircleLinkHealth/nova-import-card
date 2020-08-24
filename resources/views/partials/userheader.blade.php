@@ -20,7 +20,7 @@
                         let reason = document.getElementById("withdrawn_reason");
                         let reasonOther = document.getElementById('withdrawn_reason_other');
 
-                        if (reason.value === "Other") {
+                        if (reason && reason.value === "Other") {
                             $('#header-withdrawn-reason-other').removeClass('hidden');
                             reasonOther.setAttribute('required', '');
                         } else {
