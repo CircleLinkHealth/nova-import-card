@@ -35,81 +35,29 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserRepository
 {
+    /**
+     * @throws ValidationException
+     * @return \Illuminate\Database\Eloquent\Model|User
+     */
     public function createNewUser(
         ParameterBag $params
     ) {
         if ($this->isPatient($params)) {
-            $validator = \Validator::make($params->all(), $this->createNewPatientRules(), [
-                'required'                   => 'The :attribute field is required.',
-                'home_phone_number.required' => 'The patient phone number field is required.',
-            ]);
-
-            if ($validator->fails()) {
-                if ($params->get('program_id') &&
-                    $params->get('first_name') &&
-                    $params->get('last_name') &&
-                    $params->get('birth_date')) {
-                    //also check for duplicates, in case the validation failed due to the same email
-                    self::validatePatientDoesNotAlreadyExist(
-                        $params->get('program_id'),
-                        $params->get('first_name'),
-                        $params->get('last_name'),
-                        $params->get('birth_date'),
-                        $params->get('mrn_number')
-                    );
-                }
-
-                throw new ValidationException($validator);
-            }
-
-            self::validatePatientDoesNotAlreadyExist(
-                $params->get('program_id'),
-                $params->get('first_name'),
-                $params->get('last_name'),
-                $params->get('birth_date'),
-                $params->get('mrn_number')
-            );
+            $this->validateNewPatientUser($params);
         } else {
-            $validator = \Validator::make($params->all(), $this->createNewUserRules(), [
-                'required'                   => 'The :attribute field is required.',
-                'home_phone_number.required' => 'The patient phone number field is required.',
-            ]);
-        }
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
+            $this->validateNewNonPatientUser($params);
         }
 
         $practice = Practice::findOrFail($params->get('program_id'));
 
-        $user = User::create([
-            'saas_account_id' => $params->get('saas_account_id') ?? $practice->saas_account_id,
-            'first_name'      => capitalizeWords($params->get('first_name')),
-            'last_name'       => capitalizeWords($params->get('last_name')),
-            'program_id'      => $params->get('program_id'),
-            'scope'           => Role::allRoles()->whereIn('id', $params->get('roles'))->whereIn('name', PracticeStaffController::PRACTICE_STAFF_ROLES)->isEmpty() ? null : $practice->default_user_scope,
-            'email'           => $params->get('email'),
-            'username'        => $params->get('username'),
-        ]);
-
-        $user->username = $user->email = $params->get('email');
-        $user->password = bcrypt($params->get('password'));
-
-        if ( ! $user || is_null($user->id)) {
-            \Log::error('User has not been created.', [
-                'email_exists_in_parameters' => ! is_null($params->get('email')),
-            ]);
-        }
+        $user = $this->storeAndReturnNewUser($practice, $params);
 
         $this->saveOrUpdatePasswordsHistory($user, $params);
 
-        // set registration date field on users
         $user->user_registered = date('Y-m-d H:i:s');
 
-        // the basics
         $this->saveOrUpdateUserInfo($user, $params);
 
-        // roles
         $this->saveOrUpdateRoles($user, $params);
 
         if ( ! empty($params->get('roles')) && 0 == $user->roles()->count()) {
@@ -117,36 +65,29 @@ class UserRepository
                 'user_id' => $user->id,
             ]);
         }
-        // phone numbers
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
-//        /for survey only
         if ($user->isSurveyOnly()) {
             $this->saveOrUpdatePatientInfo($user, $params);
         }
 
-        // participant info
         if ($user->isParticipant()) {
             $this->saveOrUpdatePatientInfo($user, $params);
             $this->saveOrUpdatePatientMonthlySummary($user);
         }
 
-        // provider info
         if ($user->isProvider()) {
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
-        // nurse info
         if ($user->isCareCoach()) {
             $this->saveOrUpdateNurseInfo($user, $params);
         }
 
-        // care ambassador info
         if ($user->hasRole(['care-ambassador', 'care-ambassador-view-only'])) {
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
         }
 
-        // ehr report writer info
         if ($user->hasRole('ehr-report-writer')) {
             $this->saveOrUpdateEhrReportWriterInfo($user);
         }
@@ -415,12 +356,12 @@ class UserRepository
             $params->remove('careplan_status');
             $params->remove('careplan_mode');
         }
-    
+
         if ($params->has('provider_id')) {
             $user->setBillingProviderId($params->get('provider_id'));
         }
-        
-            foreach ($patientInfo as $key => $value) {
+
+        foreach ($patientInfo as $key => $value) {
             // hack for date_paused and date_withdrawn
             if ('date_paused' == $key
                 || 'date_withdrawn' == $key
@@ -722,6 +663,20 @@ class UserRepository
         }
     }
 
+    private function getUserScope(Practice $practice, array $roleIds): ?string
+    {
+        $isPracticeStaff = Role::allRoles()
+            ->whereIn('id', $roleIds)
+            ->whereIn('name', PracticeStaffController::PRACTICE_STAFF_ROLES)
+            ->isEmpty();
+
+        if ($isPracticeStaff) {
+            return $practice->default_user_scope;
+        }
+
+        return null;
+    }
+
     private function isPatient(ParameterBag $params): bool
     {
         $participantRoleId = Role::byName('participant')->id;
@@ -739,5 +694,75 @@ class UserRepository
         }
 
         return false;
+    }
+
+    private function storeAndReturnNewUser(Practice $practice, ParameterBag $params)
+    {
+        $user = User::create([
+            'saas_account_id' => $params->get('saas_account_id') ?? $practice->saas_account_id,
+            'first_name'      => capitalizeWords($params->get('first_name')),
+            'last_name'       => capitalizeWords($params->get('last_name')),
+            'program_id'      => $params->get('program_id'),
+            'scope'           => $this->getUserScope($practice, $params->get('roles')),
+            'email'           => $params->get('email'),
+            'username'        => $params->get('username'),
+        ]);
+
+        $user->username = $user->email = $params->get('email');
+        $user->password = bcrypt($params->get('password'));
+
+        if ( ! $user || is_null($user->id)) {
+            \Log::error('User has not been created.', [
+                'email_exists_in_parameters' => ! is_null($params->get('email')),
+            ]);
+        }
+
+        return $user;
+    }
+
+    private function validateNewNonPatientUser(ParameterBag $params): void
+    {
+        $validator = \Validator::make($params->all(), $this->createNewUserRules(), [
+            'required'                   => 'The :attribute field is required.',
+            'home_phone_number.required' => 'The patient phone number field is required.',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    private function validateNewPatientUser(ParameterBag $params): void
+    {
+        $validator = \Validator::make($params->all(), $this->createNewPatientRules(), [
+            'required'                   => 'The :attribute field is required.',
+            'home_phone_number.required' => 'The patient phone number field is required.',
+        ]);
+
+        if ($validator->fails()) {
+            if ($params->get('program_id') &&
+                $params->get('first_name') &&
+                $params->get('last_name') &&
+                $params->get('birth_date')) {
+                //also check for duplicates, in case the validation failed due to the same email
+                self::validatePatientDoesNotAlreadyExist(
+                    $params->get('program_id'),
+                    $params->get('first_name'),
+                    $params->get('last_name'),
+                    $params->get('birth_date'),
+                    $params->get('mrn_number')
+                );
+            }
+
+            throw new ValidationException($validator);
+        }
+
+        self::validatePatientDoesNotAlreadyExist(
+            $params->get('program_id'),
+            $params->get('first_name'),
+            $params->get('last_name'),
+            $params->get('birth_date'),
+            $params->get('mrn_number')
+        );
     }
 }
