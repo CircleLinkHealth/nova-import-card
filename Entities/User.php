@@ -2454,7 +2454,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function patientInfo()
     {
-        return $this->hasOne(Patient::class, 'user_id', 'id');
+        return $this->hasOne(Patient::class, 'user_id', 'id')
+            ->when(auth()->check() && self::SCOPE_LOCATION === auth()->user()->scope, function ($q) {
+                $q->intersectLocationsWith(auth()->user());
+            });
     }
 
     public function patientIsUPG0506(): bool
