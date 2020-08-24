@@ -8,6 +8,7 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\SeedEligibilityJobsForEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -80,6 +81,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'clh_pppm'              => 0,
                 'term_days'             => 30,
                 'outgoing_phone_number' => 2025550196,
+                'saas_account_id'       => SaasAccount::whereName('CircleLink Health')->first()->id,
             ]
         );
 
@@ -124,19 +126,5 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             ]);
             ++$n;
         }
-
-//        $n     = 1;
-//        $limit = 5;
-//        while ($n <= $limit) {
-//            $user = $this->createUser($practice->id, 'participant', self::CCM_STATUS_UNREACHABLE);
-//            $user->phoneNumbers()->update(['number' => $phoneTester]);
-//            $user->update(['email' => $faker->unique()->safeEmail]);
-//            $user->patientInfo()->update([
-//                'birth_date'       => \Carbon\Carbon::parse('1901-01-01'),
-//                'date_unreachable' => now(),
-//            ]);
-//            ++$n;
-////            There is PatientObesrver
-//        }
     }
 }

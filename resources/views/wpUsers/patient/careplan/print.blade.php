@@ -161,10 +161,11 @@ if (isset($patient) && ! empty($patient)) {
                                             : null;
                                         ?>
 
-                                        <pdf-careplans v-cloak
+                                        <careplan-actions v-cloak
                                                        mode="web"
                                                        ccm-status="{{$patientCcmStatus}}"
                                                        careplan-status="{{$careplanStatus}}"
+                                                       user-scope="{{auth()->user()->scope}}"
                                                        :is-provider="@json(auth()->user()->providerInfo && auth()->user()->isProvider())"
                                                        :is-care-coach="@json(auth()->user()->isCareCoach())"
                                                        :is-admin="@json(auth()->user()->isAdmin())"
@@ -181,7 +182,7 @@ if (isset($patient) && ! empty($patient)) {
                                                        route-switch-to-pdf="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
                                                        route-print-care-plan="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}"
                                                        route-care-plan-not-eligible="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id])}}">
-                                        </pdf-careplans>
+                                        </careplan-actions>
                                     @endif
                                 </div>
                             </div>

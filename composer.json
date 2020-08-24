@@ -9,22 +9,22 @@
     {
       "name": "Antonis Antoniou",
       "email": "antonis@cirlelinkhealth.com",
-      "role": "Developerr"
+      "role": "Developer"
     },
     {
       "name": "Constantinos Kakoushias",
       "email": "constantinos@cirlelinkhealth.com",
-      "role": "Developerr"
+      "role": "Developer"
     },
     {
       "name": "Michalis Antoniou",
       "email": "mantoniou@cirlelinkhealth.com",
-      "role": "Lead Developerr"
+      "role": "Lead Developer"
     },
     {
       "name": "Pangratios Cosma",
       "email": "pangratios@cirlelinkhealth.com",
-      "role": "Lead Developerr"
+      "role": "Lead Developer"
     }
   ],
   "license": "MIT",
@@ -182,17 +182,17 @@
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
-    "circlelinkhealth/core-module": "1.7.4",
+    "circlelinkhealth/core-module": "1.7.5",
     "circlelinkhealth/cpm-migrations-module": "dev-hotfix-attesting-for-addendums",
-    "circlelinkhealth/customer-module": "3.2.6",
+    "circlelinkhealth/customer-module": "dev-ROAD-258",
     "circlelinkhealth/eligibility-module": "3.3.3",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/invoices-download": "*",
-    "circlelinkhealth/nurseinvoices-module": "1.5.7",
-    "circlelinkhealth/patientapi-module": "1.3.3",
+    "circlelinkhealth/nurseinvoices-module": "1.5.8",
+    "circlelinkhealth/patientapi-module": "dev-ROAD-258",
     "circlelinkhealth/raygun-module": "1.1",
     "circlelinkhealth/revisionable-module": "6.1.1",
     "circlelinkhealth/shared-models-module": "1.7.5",
@@ -244,6 +244,7 @@
     "sparclex/nova-import-card": "^7.0.1",
     "spatie/laravel-medialibrary": "^7.19",
     "spatie/laravel-rate-limited-job-middleware": "^1.3",
+    "spatie/laravel-schedule-monitor": "^1.0",
     "spatie/laravel-slack-slash-command": "^1.10",
     "spatie/laravel-view-models": "^1.3",
     "spatie/pdf-to-text": "^1.2",

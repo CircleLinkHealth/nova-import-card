@@ -98,8 +98,11 @@ export default {
                 this.loading = false;
 
             }).catch(error => {
-                console.log(error);
-                this.$toasted.error(error.response.data);
+                let msg = 'There has been an error.';
+                if (error.response?.data?.message) {
+                    msg = error.response.data.message;
+                }
+                this.$toasted.error(msg);
                 this.loading = false;
             });
         },

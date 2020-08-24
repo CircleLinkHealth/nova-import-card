@@ -558,6 +558,7 @@ class ReportsController extends Controller
             ->with(
                 [
                     'primaryPractice',
+                    'patientInfo',
                     'activities' => function ($q) use ($start, $end) {
                         $q->select(
                             DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration')
@@ -575,8 +576,9 @@ class ReportsController extends Controller
                 ]
             )
             ->has('primaryPractice')
-            ->has('patientInfo')
-            ->with('patientInfo')
+            ->whereHas('patientInfo', function ($q) {
+                $q->intersectLocationsWith(auth()->user());
+            })
             ->whereHas(
                 'patientSummaries',
                 function ($q) use ($time) {
@@ -639,6 +641,8 @@ class ReportsController extends Controller
             $u20_patients[$patient_counter]['mrn']          = $patient->patientInfo->mrn_number;
             $u20_patients[$patient_counter]['patient_name'] = $patient->getFullName();
             $u20_patients[$patient_counter]['patient_id']   = $patient->id;
+            $u20_patients[$patient_counter]['practice_id']  = $patient->program_id;
+            $u20_patients[$patient_counter]['location_id']  = optional($patient->patientInfo)->preferred_contact_location;
             $acts                                           = $patient->activities;
 
             foreach ($acts as $activity) {
