@@ -54,17 +54,10 @@ class UserRepository
 
         $this->saveOrUpdatePasswordsHistory($user, $params);
 
-        $user->user_registered = date('Y-m-d H:i:s');
-
         $this->saveOrUpdateUserInfo($user, $params);
 
         $this->saveOrUpdateRoles($user, $params);
 
-        if ( ! empty($params->get('roles')) && 0 == $user->roles()->count()) {
-            \Log::error('User roles have not been attached.', [
-                'user_id' => $user->id,
-            ]);
-        }
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         if ($user->isSurveyOnly()) {
@@ -538,6 +531,12 @@ class UserRepository
             $ehrReportWriterInfo->save();
             $user->load('ehrReportWriterInfo');
         }
+
+        if ( ! empty($params->get('roles')) && 0 == $user->roles()->count()) {
+            \Log::error('User roles have not been attached.', [
+                'user_id' => $user->id,
+            ]);
+        }
     }
 
     public function saveOrUpdateUserInfo(
@@ -705,11 +704,10 @@ class UserRepository
             'program_id'      => $params->get('program_id'),
             'scope'           => $this->getUserScope($practice, $params->get('roles')),
             'email'           => $params->get('email'),
-            'username'        => $params->get('username'),
+            'username'        => $params->get('email'),
+            'user_registered' => date('Y-m-d H:i:s'),
+            'password'        => bcrypt($params->get('password')),
         ]);
-
-        $user->username = $user->email = $params->get('email');
-        $user->password = bcrypt($params->get('password'));
 
         if ( ! $user || is_null($user->id)) {
             \Log::error('User has not been created.', [
