@@ -7,7 +7,6 @@
 namespace Tests\Feature\UserScope\Pages;
 
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Collection;
 use Illuminate\Testing\TestResponse;
 use Tests\Feature\UserScope\TestCase as UserScopeTestCase;
 use Tests\Feature\UserScope\Traits\AssertsLocationsAndPracticesWithCollection;
