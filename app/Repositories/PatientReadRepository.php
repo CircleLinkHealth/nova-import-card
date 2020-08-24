@@ -7,7 +7,7 @@
 namespace App\Repositories;
 
 use App\Filters\PatientFilters;
-use App\PatientSearchModel;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -48,15 +48,25 @@ class PatientReadRepository
 
         $users = $this->model()
             ->with([
-                'carePlan',
-                'phoneNumbers',
+                'carePlan' => function ($q) {
+                    $q->select(['user_id', 'status']);
+                },
+                'phoneNumbers' => function ($q) {
+                    $q->select(['user_id', 'is_primary', 'number', 'type']);
+                },
+                'patientSummaries' => function ($q) {
+                    $q->whereMonthYear(Carbon::now()->startOfMonth()->toDateString())
+                        ->select(['patient_id', 'ccm_time', 'bhi_time', 'month_year']);
+                },
                 'patientInfo.location',
-                'primaryPractice',
-                'providerInfo',
-                'billingProvider',
+                'billingProvider' => function ($q) {
+                    $q->with(['user' => function ($q) {
+                        $q->without(['perms', 'roles'])
+                            ->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
+                    }]);
+                },
                 'observations' => function ($q) {
-                    $q
-                        ->latest();
+                    $q->latest();
                 },
             ])
             ->when(array_key_exists('patientsPendingAuthUserApproval', $filtersInput), function ($q) {
@@ -129,11 +139,6 @@ class PatientReadRepository
             });
 
         return $this;
-    }
-
-    public function search(PatientSearchModel $searchModel)
-    {
-        return $searchModel->results();
     }
 
     /**
