@@ -352,21 +352,23 @@ class PatientCareplanController extends Controller
         $locations = [];
         $providers = [];
         if ($patientId) {
-            $user = User::with(['patientInfo.contactWindows', 'careTeamMembers'])->find($patientId);
+            $user = User::with(['patientInfo.contactWindows', 'careTeamMembers', 'ccdInsurancePolicies', 'carePlan', 'primaryPractice.locations' => function ($q) {
+                    $q->when(User::SCOPE_LOCATION === auth()->user()->scope, function ($q) {
+                        $q->whereIn('id', auth()->user()->viewableLocationIds());
+                    })->whereHas('providers')->with('providers');
+                }])->find($patientId);
             if ( ! $user) {
                 return response('User not found', 401);
             }
             $programId = $user->program_id;
-            $program   = Practice::with([
-                'locations' => function ($q) {
-                    $q->when(User::SCOPE_LOCATION === auth()->user()->scope, function ($q) {
-                        $q->whereIn('id', auth()->user()->viewableLocationIds());
-                    })->whereHas('providers')->with('providers');
-                },
-            ])->find($programId);
-            $locations       = $program->locations->pluck('name', 'id')->all();
-            $patientLocation = $program->locations->where('id', $user->patientInfo->preferred_contact_location)->first();
-            $providers       = $patientLocation->providers->pluck('display_name', 'id')->all();
+            $program   = $user->primaryPractice;
+            $locations = $program->locations->pluck('name', 'id')->all();
+            if ($user->patientInfo) {
+                $patientLocation = $program->locations->where('id', $user->patientInfo->preferred_contact_location)->first();
+                if ($patientLocation && $patientLocation->providers) {
+                    $providers = $patientLocation->providers->pluck('display_name', 'id')->all();
+                }
+            }
         }
         $patient = $user;
 
@@ -412,11 +414,11 @@ class PatientCareplanController extends Controller
             }
         }
 
-        $insurancePolicies = $patient->ccdInsurancePolicies()->get();
+        $insurancePolicies = $patient->ccdInsurancePolicies;
 
         $contact_days_array = [];
         $contactWindows     = [];
-        if ($patient->patientInfo()->exists()) {
+        if ($patient->patientInfo) {
             $contactWindows     = $patient->patientInfo->contactWindows;
             $contact_days_array = $contactWindows->pluck('day_of_week')->toArray();
         }
