@@ -175,6 +175,7 @@ class Practice extends BaseModel implements HasMedia
         'send_alerts',
         'outgoing_phone_number',
         'term_days',
+        'default_user_scope',
     ];
 
     public function careAmbassadorLogs()
