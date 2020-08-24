@@ -9,6 +9,7 @@ namespace App\Services;
 use App\Constants;
 use App\Repositories\PatientReadRepository;
 use CircleLinkHealth\Core\Services\PdfService;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 
 class PrintPausedPatientLettersService
@@ -64,8 +65,8 @@ class PrintPausedPatientLettersService
      */
     public function makePausedLettersPdf(array $userIdsToPrint, bool $viewOnly = false)
     {
-        $files = $this->patientReadRepository
-            ->model()
+        $files = User::ofType('participant')
+            ->with('patientInfo')
             ->whereIn('id', $userIdsToPrint)
             ->get()
             ->map(

@@ -111,9 +111,11 @@ class UserScopeTestsSeeder extends Seeder
 
         $provider               = $this->createUser($locations->first()->practice_id, 'provider');
         $provider->scope        = $scope;
+        $provider->username     = $firstName;
         $provider->first_name   = $firstName;
         $provider->last_name    = $lastName;
         $provider->display_name = $firstName.' '.$lastName.' MD';
+        $provider->password     = Hash::make('hello');
         $provider->save();
 
         $provider->locations()->sync($locations->pluck('id')->all());
