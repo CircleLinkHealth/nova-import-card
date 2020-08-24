@@ -18,7 +18,7 @@ class PatientsToApproveTest extends UserScopeTestCase
             ->calling('GET', $this->route(), $this->params())
             ->assert(
                 new Practice('data', 'program_id'),
-                new Location('data', 'location_id'),
+                new Location('data', 'location_id', 'billing_provider_id'),
             );
     }
 

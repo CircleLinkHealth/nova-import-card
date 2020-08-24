@@ -40,25 +40,21 @@ class UserScopeTestsSeeder extends Seeder
         $location2 = $this->createLocation($practice->id, self::LOCATION_2_NAME);
         $location3 = $this->createLocation($practice->id, self::LOCATION_3_NAME);
 
-        $this->createPatients($location1, 2);
-        $this->createPatients($location2, 3);
-        $this->createPatients($location3, 4);
-
-        $this->createProvider(
+        $prov1 = $this->createProvider(
             self::PROVIDER_WITH_LOCATION_2_SCOPE_FIRST_NAME,
             self::PROVIDER_WITH_LOCATION_2_SCOPE_LAST_NAME,
             User::SCOPE_LOCATION,
             $location2
         );
 
-        $this->createProvider(
+        $prov2 = $this->createProvider(
             self::PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME,
             self::PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME,
             User::SCOPE_LOCATION,
             $location3
         );
 
-        $this->createProvider(
+        $prov3 = $this->createProvider(
             self::PROVIDER_WITH_PRACTICE_SCOPE_FIRST_NAME,
             self::PROVIDER_WITH_PRACTICE_SCOPE_LAST_NAME,
             User::SCOPE_PRACTICE,
@@ -66,6 +62,12 @@ class UserScopeTestsSeeder extends Seeder
             $location2,
             $location3
         );
+
+        $this->createPatients($location1, $prov3, 1);
+        $this->createPatients($location2, $prov3, 2);
+        $this->createPatients($location3, $prov3, 3);
+        $this->createPatients($location2, $prov1, 4);
+        $this->createPatients($location3, $prov2, 5);
     }
 
     private function createLocation(int $practiceId, string $name)
@@ -82,7 +84,7 @@ class UserScopeTestsSeeder extends Seeder
         ]);
     }
 
-    private function createPatients(Location $location, int $count)
+    private function createPatients(Location $location, User $provider, int $count)
     {
         $patients = collect();
 
@@ -92,8 +94,10 @@ class UserScopeTestsSeeder extends Seeder
 
             CarePlan::where('user_id', $patient->id)
                 ->update([
-                    'status' => CarePlan::PROVIDER_APPROVED,
+                    'status' => CarePlan::RN_APPROVED,
                 ]);
+
+            $patient->setBillingProviderId($provider->id);
         }
 
         Patient::whereIn('user_id', $patients->pluck('id')->all())->update([
