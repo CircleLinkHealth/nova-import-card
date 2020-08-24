@@ -42,7 +42,7 @@ abstract class TestCase extends BaseTestCase
             if ($collection->isEmpty()) {
                 throw new \Exception('No data found in response');
             }
-            call_user_func(\Closure::fromCallable([$this, 'assert'.class_basename($assertion)]), $this->actor, $collection, $assertion->key);
+            call_user_func(\Closure::fromCallable([$this, 'assert'.class_basename($assertion)]), $this->actor, $collection, $assertion->key, $assertion->billingProviderId);
         });
 
         $this->reset();
@@ -55,15 +55,19 @@ abstract class TestCase extends BaseTestCase
         $this->reset();
     }
 
-    public function assertLocation(User $actor, Collection $collection, string $key)
+    public function assertLocation(User $actor, Collection $collection, string $locationIdKey, ?string $billingProviderIdKey)
     {
-        $candidates = $collection->pluck($key)->filter()->values();
+        $candidates = $collection->pluck($locationIdKey)->filter()->values();
 
         if ($candidates->isEmpty()) {
-            throw new \Exception("`$key` not found in response data");
+            throw new \Exception("`$locationIdKey` not found in response data");
         }
 
-        $this->assertTrue($collection->whereNotIn($key, $actor->locations->pluck('id')->all())->isEmpty(), 'The response contains patients from other Locations.');
+        $this->assertTrue($collection->whereNotIn($locationIdKey, $actor->locations->pluck('id')->all())->isEmpty(), 'The response contains patients from other Locations.');
+
+        if (true === (bool) $actor->providerInfo->approve_own_care_plans) {
+            $this->assertTrue($collection->where($billingProviderIdKey, '!=', $actor->id)->isEmpty(), 'The response contains other Billing providers\' patients.');
+        }
     }
 
     public function assertPractice(User $actor, Collection $collection, string $key)

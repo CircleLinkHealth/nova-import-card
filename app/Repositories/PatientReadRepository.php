@@ -25,7 +25,16 @@ class PatientReadRepository
         $shouldSetDefaultRows = false;
         $filtersInput         = $filters->filters();
 
-        $showPracticePatients = $filtersInput['showPracticePatients'] ?? null;
+        $showPracticePatients = null;
+        $showPracticePatientsInput = $filtersInput['showPracticePatients'] ?? null;
+        
+        if (auth()->user()->isProvider() && User::SCOPE_LOCATION === auth()->user()->scope) {
+            $showPracticePatients = false;
+        } elseif (auth()->user()->isProvider() && 'false' === $showPracticePatientsInput) {
+            $showPracticePatients = false;
+        } else {
+            $showPracticePatients = $showPracticePatientsInput;
+        }
 
         $users = User::ofType('participant')
             ->with([
@@ -40,11 +49,15 @@ class PatientReadRepository
                         ->select(['patient_id', 'ccm_time', 'bhi_time', 'month_year']);
                 },
                 'patientInfo.location',
-                'billingProvider' => function ($q) {
+                'careTeamMembers' => function ($q) {
                     $q->with(['user' => function ($q) {
                         $q->without(['perms', 'roles'])
                             ->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
-                    }]);
+                    }])->where('member_user_id', auth()->user()->id)
+                        ->whereIn(
+                            'type',
+                            [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                        );
                 },
                 'observations' => function ($q) {
                     $q->latest();
@@ -58,10 +71,10 @@ class PatientReadRepository
                 }
             })
             ->when(
-                auth()->user()->isProvider() && User::SCOPE_LOCATION !== auth()->user()->scope && 'false' == $showPracticePatients,
+                false === $showPracticePatients,
                 function ($query) {
                     $query->whereHas('careTeamMembers', function ($subQuery) {
-                        $subQuery->where('member_user_id', auth()->user()->id)
+                        $subQuery->where('member_user_id', auth()->id())
                             ->whereIn(
                                 'type',
                                 [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
@@ -82,7 +95,7 @@ class PatientReadRepository
         if ($shouldSetDefaultRows) {
             $filtersInput['rows'] = 15;
         }
-        $x = $users->toRawSql();
+
         if ('all' == $filtersInput['rows']) {
             $users = $users->paginate($users->count());
         } else {
