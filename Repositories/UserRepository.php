@@ -667,7 +667,7 @@ class UserRepository
         $isPracticeStaff = Role::allRoles()
             ->whereIn('id', $roleIds)
             ->whereIn('name', PracticeStaffController::PRACTICE_STAFF_ROLES)
-            ->isEmpty();
+            ->isNotEmpty();
 
         if ($isPracticeStaff) {
             return $practice->default_user_scope;
