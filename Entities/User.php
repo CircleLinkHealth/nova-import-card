@@ -3215,7 +3215,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $query->ofPractice($approver->practices)
             ->ofType('participant')
             ->whereHas('patientInfo', function ($q) use ($approver) {
-                $q->enrolled()->intersectLocationsWith($approver);
+                $q->enrolled();
             })
             ->whereHas(
                 'carePlan',
@@ -4081,9 +4081,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function viewableLocationIds(): array
     {
-        return $this->locations
-            ->pluck('id')
+        return \DB::table('location_user')
+            ->where('user_id', $this->id)
+            ->select('location_id')
+            ->get()
+            ->pluck('location_id')
             ->all();
+
+//        return $this->locations
+//            ->pluck('pivot.location_id')
+//            ->unique()
+//            ->filter()
+//            ->all();
     }
 
     public function viewablePatientIds(): array
