@@ -1213,11 +1213,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getBhiTime()
     {
+        if ($this->relationLoaded('patientSummaries')) {
+            $pms = $this->patientSummaries->where('month_year', '=', now()->startOfMonth())->first();
+            if ($pms) {
+                return $pms->bhi_time;
+            }
+        }
+        
         return optional(
             $this->patientSummaries()
                 ->select(['bhi_time', 'id'])
                 ->orderBy('id', 'desc')
-                ->whereMonthYear(Carbon::now()->startOfMonth())
+                ->whereMonthYear(now()->startOfMonth())
                 ->first()
         )->bhi_time ?? 0;
     }
@@ -1443,11 +1450,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getCcmTime()
     {
+        if ($this->relationLoaded('patientSummaries')) {
+            $pms = $this->patientSummaries->where('month_year', '=', now()->startOfMonth())->first();
+            if ($pms) {
+                return $pms->ccm_time;
+            }
+        }
+
         return optional(
             $this->patientSummaries()
                 ->select(['ccm_time', 'id'])
                 ->orderBy('id', 'desc')
-                ->whereMonthYear(Carbon::now()->startOfMonth())
+                ->whereMonthYear(now()->startOfMonth())
                 ->first()
         )->ccm_time ?? 0;
     }
