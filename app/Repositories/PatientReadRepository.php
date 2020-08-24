@@ -58,7 +58,7 @@ class PatientReadRepository
                     $q->whereMonthYear(Carbon::now()->startOfMonth()->toDateString())
                         ->select(['patient_id', 'ccm_time', 'bhi_time', 'month_year']);
                 },
-                'patientInfo',
+                'patientInfo.location',
                 'billingProvider' => function ($q) {
                     $q->with(['user' => function ($q) {
                         $q->without(['perms', 'roles'])
