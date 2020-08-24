@@ -33,10 +33,10 @@ class TestSuiteSeeder extends Seeder
         $this->call(ChargeableServiceSeeder::class);
         $this->call(ProblemCodeSystemsSeeder::class);
         $this->call(PracticeTableSeeder::class);
-        $this->call(UserTableSeeder::class);
         $this->call(EnrolleesSeeder::class);
         $this->call(PrepareDataForReEnrollmentTestSeeder::class);
         $this->call(CareAmbassadorDefaultScriptsSeeder::class);
         $this->call(UserScopeTestsSeeder::class);
+        $this->call(UserTableSeeder::class);
     }
 }

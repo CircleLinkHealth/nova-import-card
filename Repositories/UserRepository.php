@@ -415,8 +415,12 @@ class UserRepository
             $params->remove('careplan_status');
             $params->remove('careplan_mode');
         }
-
-        foreach ($patientInfo as $key => $value) {
+    
+        if ($params->has('provider_id')) {
+            $user->setBillingProviderId($params->get('provider_id'));
+        }
+        
+            foreach ($patientInfo as $key => $value) {
             // hack for date_paused and date_withdrawn
             if ('date_paused' == $key
                 || 'date_withdrawn' == $key
