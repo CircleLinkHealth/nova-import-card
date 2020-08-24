@@ -66,6 +66,9 @@ abstract class TestCase extends BaseTestCase
         $this->assertTrue($collection->whereNotIn($locationIdKey, $actor->locations->pluck('id')->all())->isEmpty(), 'The response contains patients from other Locations.');
 
         if (true === (bool) $actor->providerInfo->approve_own_care_plans) {
+            if ( ! $billingProviderIdKey) {
+                throw new \Exception('$billingProviderIdKey is null');
+            }
             $this->assertTrue($collection->where($billingProviderIdKey, '!=', $actor->id)->isEmpty(), 'The response contains other Billing providers\' patients.');
         }
     }
