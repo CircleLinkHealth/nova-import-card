@@ -331,6 +331,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER     = 'forward_careplan_approval_emails_instead_of_provider';
 
+    const SCOPE_LOCATION = 'location';
+    const SCOPE_PRACTICE = 'practice';
+
     const SURVEY_ONLY = 'survey-only';
     /**
      * Package Clockwork is hardcoded to look for $user->name. Adding this so that it will work.
@@ -364,6 +367,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      * @var array
      */
     protected $fillable = [
+        'scope',
         'saas_account_id',
         'skip_browser_checks',
         'username',
@@ -1221,14 +1225,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getBillingProviderId()
     {
         $bp = '';
-        if ( ! $this->careTeamMembers) {
-            return '';
+        if ($this->careTeamMembers->isEmpty()) {
+            return $bp;
         }
-        if ($this->careTeamMembers->count() > 0) {
-            foreach ($this->careTeamMembers as $careTeamMember) {
-                if ('billing_provider' == $careTeamMember->type) {
-                    $bp = $careTeamMember->member_user_id;
-                }
+
+        foreach ($this->careTeamMembers as $careTeamMember) {
+            if ('billing_provider' == $careTeamMember->type) {
+                $bp = $careTeamMember->member_user_id;
             }
         }
 
