@@ -1,0 +1,20 @@
+<?php
+
+
+namespace Tests\Feature\UserScope\Traits;
+
+
+use CircleLinkHealth\Customer\Entities\User;
+
+trait AssertsLocationsAndPracticesWithCollection
+{
+    public function assertLocations(User $actor, Collection $locationIds)
+    {
+        return $locationIds->intersect($actor->locations->pluck('id'))->count() > 1;
+    }
+    
+    public function assertPractices(User $actor, Collection $practiceIds)
+    {
+        return $practiceIds->intersect($actor->practices->pluck('id'))->count() > 1;
+    }
+}

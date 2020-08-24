@@ -385,7 +385,10 @@ Route::group(['middleware' => 'auth'], function () {
             )->middleware('permission:location.read');
             Route::get(
                 '{practiceId}/locations/{locationId}/providers',
-                'API\PracticeController@getLocationProviders'
+                [
+                    'uses' => 'API\PracticeController@getLocationProviders',
+                    'as'   => 'api.get.location.providers',
+                ]
             )->middleware('permission:provider.read');
             Route::get(
                 'all',

@@ -8,6 +8,7 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\SeedEligibilityJobsForEnrollees;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -80,6 +81,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                 'clh_pppm'              => 0,
                 'term_days'             => 30,
                 'outgoing_phone_number' => 2025550196,
+                'saas_account_id'       => SaasAccount::whereName('CircleLink Health')->first()->id,
             ]
         );
 

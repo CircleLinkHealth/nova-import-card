@@ -8,6 +8,7 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Database\Seeder;
@@ -49,7 +50,7 @@ class UserScopeTestsSeeder extends Seeder
             User::SCOPE_LOCATION,
             $location2
         );
-    
+
         $this->createProvider(
             self::PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME,
             self::PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME,
@@ -129,8 +130,9 @@ class UserScopeTestsSeeder extends Seeder
         }
 
         return factory(Practice::class)->create([
-            'name'         => self::PRACTICE_NAME,
-            'display_name' => snakeToSentenceCase(self::PRACTICE_NAME),
+            'name'            => self::PRACTICE_NAME,
+            'display_name'    => snakeToSentenceCase(self::PRACTICE_NAME),
+            'saas_account_id' => SaasAccount::whereName('CircleLink Health')->first()->id,
         ]);
     }
 }

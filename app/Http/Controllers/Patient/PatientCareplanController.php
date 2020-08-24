@@ -30,6 +30,7 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use DateTime;
 use DateTimeZone;
+use function GuzzleHttp\Promise\all;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -346,24 +347,36 @@ class PatientCareplanController extends Controller
 
         // determine if existing user or new user
         $user      = new User();
-        $programId = false;
+        $programId = null;
+        $program   = null;
+        $locations = [];
+        $providers = [];
         if ($patientId) {
-            $user = User::with('patientInfo.contactWindows')->find($patientId);
+            $user = User::with(['patientInfo.contactWindows', 'careTeamMembers'])->find($patientId);
             if ( ! $user) {
                 return response('User not found', 401);
             }
             $programId = $user->program_id;
+            $program   = Practice::with([
+                'locations' => function ($q) {
+                    $q->when(User::SCOPE_LOCATION === auth()->user()->scope, function ($q) {
+                        $q->whereIn('id', auth()->user()->viewableLocationIds());
+                    })->whereHas('providers')->with('providers');
+                },
+            ])->find($programId);
+            $locations       = $program->locations->pluck('name', 'id')->all();
+            $patientLocation = $program->locations->where('id', $user->patientInfo->preferred_contact_location)->first();
+            $providers       = $patientLocation->providers->pluck('display_name', 'id')->all();
         }
         $patient = $user;
-        
-        $program   = Practice::find($programId);
-        
-        $programs = Practice::whereIn('id', Auth::user()->viewableProgramIds())->pluck(
-            'display_name',
-            'id'
-        )->all();
 
-        // roles
+        $programs = Practice::whereHas('locations.providers')
+            ->whereIn('id', Auth::user()->viewableProgramIds())
+            ->pluck('display_name', 'id')
+            ->all();
+
+        $programId ??= array_keys($programs)[0] ?? null;
+
         $patientRoleId = Role::byName('participant')->id;
 
         $reasons = [
@@ -380,9 +393,9 @@ class PatientCareplanController extends Controller
 
         $withdrawnReasons       = array_combine($reasons, $reasons);
         $patientWithdrawnReason = $patient->getWithdrawnReason();
-        
+
         $states = usStatesArrayForDropdown();
-        
+
         $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
         foreach ($timezones_raw as $timezone) {
             $timezones[$timezone] = $timezone;
@@ -408,10 +421,15 @@ class PatientCareplanController extends Controller
             $contact_days_array = $contactWindows->pluck('day_of_week')->toArray();
         }
 
+        $billingProviderUserId = $patient->getBillingProviderId();
+
         return view(
             'wpUsers.patient.careplan.patient',
             compact(
                 [
+                    'providers',
+                    'locations',
+                    'billingProviderUserId',
                     'patient',
                     'states',
                     'timezones',

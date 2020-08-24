@@ -27,6 +27,11 @@ abstract class TestCase extends BaseTestCase
     private array $server;
     private string $uri;
 
+    public function actor(): ?User
+    {
+        return $this->actor;
+    }
+
     public function assert(Assertion ...$assertions)
     {
         $responseData = $this->extractResponseData($response = $this->sendRequest());
@@ -85,6 +90,11 @@ abstract class TestCase extends BaseTestCase
         return $this;
     }
 
+    public function resetActor(): void
+    {
+        $this->actor = null;
+    }
+
     public function withLocationScope(): self
     {
         $this->actor = User::whereFirstName(\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME)
@@ -135,7 +145,6 @@ abstract class TestCase extends BaseTestCase
     private function reset()
     {
         $this->callArgs = [];
-        $this->actor    = null;
     }
 
     private function sendRequest(): TestResponse
