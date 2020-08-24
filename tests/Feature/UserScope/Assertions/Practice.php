@@ -10,10 +10,12 @@ class Practice implements Assertion
 {
     public string $key;
     public string $lookIn;
-
-    public function __construct(string $lookIn, string $key)
+    public ?string $billingProviderId;
+    
+    public function __construct(string $lookIn, string $key, string $billingProviderId = null)
     {
         $this->lookIn = $lookIn;
         $this->key    = $key;
+        $this->billingProviderId = $billingProviderId;
     }
 }

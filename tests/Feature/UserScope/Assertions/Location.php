@@ -8,12 +8,14 @@ namespace Tests\Feature\UserScope\Assertions;
 
 class Location implements Assertion
 {
+    public ?string $billingProviderId;
     public string $key;
     public string $lookIn;
 
-    public function __construct(string $lookIn, string $key)
+    public function __construct(string $lookIn, string $locationIdKey, string $billingProviderId = null)
     {
-        $this->lookIn = $lookIn;
-        $this->key    = $key;
+        $this->lookIn            = $lookIn;
+        $this->key               = $locationIdKey;
+        $this->billingProviderId = $billingProviderId;
     }
 }

@@ -23,7 +23,7 @@ class Under20MinutesReportTest extends UserScopeTestCase
                 $responseData = $this->extractWebixResponseData($response, 'activity_json');
 
                 $this->assertPractice($actor, $responseData, 'practice_id');
-                $this->assertLocation($actor, $responseData, 'location_id');
+                $this->assertLocation($actor, $responseData, 'location_id', 'billing_provider_id');
             });
     }
 
