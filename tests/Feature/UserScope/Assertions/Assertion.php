@@ -8,5 +8,4 @@ namespace Tests\Feature\UserScope\Assertions;
 
 interface Assertion
 {
-
 }

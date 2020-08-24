@@ -47,6 +47,7 @@ class ManualCallController extends Controller
     /**
      * @param Request $request
      * @param $patientId
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreManualScheduledCall $request, $patientId)

@@ -184,10 +184,10 @@ trait UserHelpers
                 'patient_id' => $patient->user_id,
             ],
             [
-                'ccm_time'                            => 0,
-                'bhi_time'                            => 0,
-                'no_of_calls'                         => 0,
-                'no_of_successful_calls'              => 0,
+                'ccm_time'               => 0,
+                'bhi_time'               => 0,
+                'no_of_calls'            => 0,
+                'no_of_successful_calls' => 0,
             ]
         );
     }

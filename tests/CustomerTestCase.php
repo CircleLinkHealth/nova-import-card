@@ -65,6 +65,7 @@ class CustomerTestCase extends TestCase
      * Useful when wanting to add extra functionality (eg. assertions) to an object.
      *
      * @throws \ReflectionException
+     *
      * @return mixed|string
      */
     public function castToFake(object $instance, string $destinationClass)
@@ -223,7 +224,7 @@ class CustomerTestCase extends TestCase
     {
         $this->patient = null;
     }
-    
+
     protected function resetProvider()
     {
         $this->provider = null;
