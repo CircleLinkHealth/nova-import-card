@@ -318,6 +318,8 @@
       <path value="$PROJECT_DIR$/vendor/shipping-docker/vessel" />
       <path value="$PROJECT_DIR$/vendor/league/mime-type-detection" />
       <path value="$PROJECT_DIR$/vendor/sensiolabs/security-checker" />
+      <path value="$PROJECT_DIR$/vendor/spatie/laravel-schedule-monitor" />
+      <path value="$PROJECT_DIR$/vendor/lorisleiva/cron-translator" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
