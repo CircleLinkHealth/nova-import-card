@@ -4,11 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ChangeSchedulerCall extends Migration
+class AddUserScopeToUser extends Migration
 {
     /**
      * Reverse the migrations.
@@ -26,13 +27,14 @@ class ChangeSchedulerCall extends Migration
      */
     public function up()
     {
-        Schema::table('calls', function (Blueprint $table) {
-            $table->string('scheduler')->change();
-            $table->index(['type', 'status', 'scheduled_date']);
-        });
-
-        Schema::table('ccd_problems', function (Blueprint $table) {
-            $table->index(['id', 'is_monitored', 'patient_id']);
+        if (Schema::hasColumn('users', 'scope')) {
+            return;
+        }
+        Schema::table('users', function (Blueprint $table) {
+            $table->enum('scope', [
+                User::SCOPE_LOCATION,
+                User::SCOPE_PRACTICE,
+            ])->nullable()->after('program_id');
         });
     }
 }
