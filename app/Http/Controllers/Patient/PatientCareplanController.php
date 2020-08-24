@@ -30,7 +30,6 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use DateTime;
 use DateTimeZone;
-use function GuzzleHttp\Promise\all;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -353,10 +352,10 @@ class PatientCareplanController extends Controller
         $providers = [];
         if ($patientId) {
             $user = User::with(['patientInfo.contactWindows', 'careTeamMembers', 'ccdInsurancePolicies', 'carePlan', 'primaryPractice.locations' => function ($q) {
-                    $q->when(User::SCOPE_LOCATION === auth()->user()->scope, function ($q) {
-                        $q->whereIn('id', auth()->user()->viewableLocationIds());
-                    })->whereHas('providers')->with('providers');
-                }])->find($patientId);
+                $q->when(User::SCOPE_LOCATION === auth()->user()->scope, function ($q) {
+                    $q->whereIn('id', auth()->user()->viewableLocationIds());
+                })->whereHas('providers')->with('providers');
+            }])->find($patientId);
             if ( ! $user) {
                 return response('User not found', 401);
             }
