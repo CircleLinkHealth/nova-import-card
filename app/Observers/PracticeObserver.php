@@ -19,18 +19,18 @@ class PracticeObserver
      */
     public function created(Practice $practice)
     {
-        User::withTrashed()
-            ->where('saas_account_id', $practice->saas_account_id)
+        User::where('saas_account_id', $practice->saas_account_id)
             ->where('auto_attach_programs', true)
             ->whereDoesntHave('practices', function ($q) use ($practice) {
                 $q->where('practices.id', $practice->id);
             })
-            ->get()
-            ->each(function ($user) use ($practice) {
-                foreach ($user->roles as $role) {
-                    $user->attachRoleForSite($role->id, $practice->id);
+            ->each(function ($users) use ($practice) {
+                foreach ($users as $user) {
+                    foreach ($user->roles->pluck('id')->unique()->all() as $roleId) {
+                        $user->attachRoleForSite($roleId, $practice->id);
+                    }
                 }
-            });
+            }, 500);
     }
 
     /**

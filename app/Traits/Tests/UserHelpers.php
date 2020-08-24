@@ -63,9 +63,7 @@ trait UserHelpers
     }
 
     /**
-     * @param int    $practiceId
-     * @param string $roleName
-     * @param mixed  $ccmStatus
+     * @param mixed $ccmStatus
      */
     public function createUser(
         int $practiceId = 8,
@@ -187,10 +185,9 @@ trait UserHelpers
             ],
             [
                 'ccm_time'                            => 0,
-                'bhi'                                 => 0,
+                'bhi_time'                            => 0,
                 'no_of_calls'                         => 0,
                 'no_of_successful_calls'              => 0,
-                'no_call_attempts_since_last_success' => 0,
             ]
         );
     }
