@@ -20,6 +20,7 @@ class CreateManualCallAfterNote implements Arrayable
 
     /**
      * CreateManualCallAfterNote constructor.
+     *
      * @param mixed|string $lastCallStatus
      */
     public function __construct(User $patient, CallHandler $callHandler)

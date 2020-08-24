@@ -14,7 +14,7 @@ use Tests\Feature\UserScope\Traits\ExtractsDataFromWebixResponse;
 class Under20MinutesReportTest extends UserScopeTestCase
 {
     use ExtractsDataFromWebixResponse;
-    
+
     public function test_under_20_minutes_report_page_shows_patients_from_the_same_location_only()
     {
         $this->withLocationScope()

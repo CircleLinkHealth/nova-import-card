@@ -178,7 +178,7 @@ class PracticeStaffController extends Controller
         $formData = $request->input();
 
         $implementationLead = $primaryPractice->lead;
-        
+
         $roleNames = $formData['role_names'];
         $roles     = Role::whereIn('name', $roleNames)->get()->keyBy('id');
 
@@ -214,14 +214,14 @@ class PracticeStaffController extends Controller
         }
 
         $user->attachPractice($primaryPractice, $roles->keys()->toArray(), $sendBillingReports);
-        
+
         $phone = $user->clearAllPhonesAndAddNewPrimary(
             $formData['phone_number'],
             $formData['phone_type'],
             true,
             $formData['phone_extension']
         );
-        
+
         $user->forwardAlertsTo()->sync([]);
 
         if ('billing_provider' != $formData['forward_alerts_to']['who']) {
