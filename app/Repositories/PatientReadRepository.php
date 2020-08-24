@@ -14,29 +14,10 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class PatientReadRepository
 {
-    private $user;
-
-    public function __construct(User $user)
+    public function fetch()
     {
-        $this->user = $user::ofType('participant')
-            ->with('patientInfo');
-    }
-
-    public function fetch($resetQuery = true)
-    {
-        $result = $this->user->get();
-
-        if ($resetQuery) {
-            $this->user = User::ofType('participant')
-                ->with('patientInfo');
-        }
-
-        return $result;
-    }
-
-    public function model()
-    {
-        return $this->user;
+        return User::ofType('participant')
+            ->with('patientInfo')->get();
     }
 
     public function patients(PatientFilters $filters)
@@ -46,7 +27,7 @@ class PatientReadRepository
 
         $showPracticePatients = $filtersInput['showPracticePatients'] ?? null;
 
-        $users = $this->model()
+        $users = User::ofType('participant')
             ->with([
                 'carePlan',
                 'phoneNumbers',
@@ -67,7 +48,7 @@ class PatientReadRepository
                 }
             })
             ->when(
-                auth()->user()->isProvider() && 'false' == $showPracticePatients,
+                auth()->user()->isProvider() && User::SCOPE_LOCATION !== auth()->user()->scope && 'false' == $showPracticePatients,
                 function ($query) {
                     $query->whereHas('careTeamMembers', function ($subQuery) {
                         $subQuery->where('member_user_id', auth()->user()->id)
@@ -91,7 +72,7 @@ class PatientReadRepository
         if ($shouldSetDefaultRows) {
             $filtersInput['rows'] = 15;
         }
-
+        $x = $users->toRawSql();
         if ('all' == $filtersInput['rows']) {
             $users = $users->paginate($users->count());
         } else {
@@ -108,7 +89,8 @@ class PatientReadRepository
      */
     public function paused()
     {
-        $this->user
+        User::ofType('participant')
+            ->with('patientInfo')
             ->whereHas('patientInfo', function ($q) {
                 $q->ccmStatus('paused');
             });
@@ -123,7 +105,8 @@ class PatientReadRepository
      */
     public function pausedLetterNotPrinted()
     {
-        $this->user
+        User::ofType('participant')
+            ->with('patientInfo')
             ->whereHas('patientInfo', function ($q) {
                 $q->whereNull('paused_letter_printed_at');
             });
@@ -143,7 +126,8 @@ class PatientReadRepository
      */
     public function unreachable()
     {
-        $this->user
+        User::ofType('participant')
+            ->with('patientInfo')
             ->whereHas('patientInfo', function ($q) {
                 $q->ccmStatus(Patient::UNREACHABLE);
             });
