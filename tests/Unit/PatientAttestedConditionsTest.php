@@ -235,7 +235,6 @@ class PatientAttestedConditionsTest extends TestCase
 
     public function test_command_to_attest_problems_to_addendum()
     {
-        //needed for addendum creation
         $this->actingAs($this->nurse);
 
         self::assertNotNull(auth()->user(), 'Logged in user needed for this test case');
