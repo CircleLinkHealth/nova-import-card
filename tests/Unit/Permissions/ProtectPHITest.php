@@ -12,12 +12,10 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Mockery as m;
 use Tests\TestCase;
 
 class ProtectPHITest extends TestCase
 {
-    use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
     use UserHelpers;
     protected $admin;
     protected $enrollee;

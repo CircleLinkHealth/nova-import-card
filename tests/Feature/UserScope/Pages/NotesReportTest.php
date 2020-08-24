@@ -7,31 +7,38 @@
 namespace Tests\Feature\UserScope\Pages;
 
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Collection;
 use Illuminate\Testing\TestResponse;
 use Tests\Feature\UserScope\TestCase as UserScopeTestCase;
+use Tests\Feature\UserScope\Traits\AssertsLocationsAndPracticesWithCollection;
 
 class NotesReportTest extends UserScopeTestCase
 {
-    public function test_user_scopes_on_patients_to_approve_list()
+    use AssertsLocationsAndPracticesWithCollection;
+
+    public function test_notes_report_page_shows_patients_from_the_same_location_only()
     {
-        $this->withPracticeScope()
-            ->calling('GET', $route = route('patient.note.listing'))
+        $this->withLocationScope()
+            ->calling('GET', route('patient.note.listing'))
             ->assertCallback(function (TestResponse $response, User $actor) {
                 $responseData = $this->extractResponseData($response);
 
                 $responseData->get('providers')->each(function ($name, $id) use ($actor) {
-                    $this->assertPractice($actor, $this->getPractices($id));
+                    $this->assertPractices($actor, $this->getPractices($id));
+                    $this->assertLocations($actor, $this->getLocations($id));
                 });
             });
+    }
 
-        $this->withLocationScope()
-            ->calling('GET', $route)
+    public function test_notes_report_page_shows_patients_from_the_same_practice_only()
+    {
+        $this->withPracticeScope()
+            ->calling('GET', route('patient.note.listing'))
             ->assertCallback(function (TestResponse $response, User $actor) {
                 $responseData = $this->extractResponseData($response);
 
                 $responseData->get('providers')->each(function ($name, $id) use ($actor) {
-                    $this->assertPractice($actor, $this->getPractices($id));
-                    $this->assertLocation($actor, $this->getLocations($id));
+                    $this->assertPractices($actor, $this->getPractices($id));
                 });
             });
     }

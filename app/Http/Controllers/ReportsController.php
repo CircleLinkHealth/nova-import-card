@@ -576,7 +576,9 @@ class ReportsController extends Controller
                 ]
             )
             ->has('primaryPractice')
-            ->has('patientInfo')
+            ->whereHas('patientInfo', function ($q) {
+                $q->intersectLocationsWith(auth()->user());
+            })
             ->whereHas(
                 'patientSummaries',
                 function ($q) use ($time) {

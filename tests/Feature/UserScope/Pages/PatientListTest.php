@@ -12,24 +12,32 @@ use Tests\Feature\UserScope\TestCase as UserScopeTestCase;
 
 class PatientListTest extends UserScopeTestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_user_scopes_on_patient_list_page()
+    public function test_patient_list_page_shows_patients_from_the_same_location_only()
     {
-        $this->withPracticeScope()
-            ->calling('GET', $route = route('get.patientlist.index'), $params = [
-                'rows' => 'all',
-            ])
-            ->assert(new Practice('data', 'program_id'));
-
         $this->withLocationScope()
-            ->calling('GET', $route, $params)
+            ->calling('GET', $this->route(), $this->params())
             ->assert(
                 new Practice('data', 'program_id'),
                 new Location('data', 'location_id'),
             );
+    }
+
+    public function test_patient_list_page_shows_patients_from_the_same_practice_only()
+    {
+        $this->withPracticeScope()
+            ->calling('GET', $this->route(), $this->params())
+            ->assert(new Practice('data', 'program_id'));
+    }
+
+    private function params()
+    {
+        return [
+            'rows' => 'all',
+        ];
+    }
+
+    private function route()
+    {
+        return route('get.patientlist.index');
     }
 }
