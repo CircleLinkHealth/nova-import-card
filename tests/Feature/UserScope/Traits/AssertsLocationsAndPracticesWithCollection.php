@@ -5,6 +5,7 @@ namespace Tests\Feature\UserScope\Traits;
 
 
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Collection;
 
 trait AssertsLocationsAndPracticesWithCollection
 {
