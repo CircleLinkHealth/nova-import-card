@@ -1,25 +1,39 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    protected $chargeableMonth;
+
+    protected $fulfill;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Carbon $chargeableMonth, bool $fulfill)
     {
-        //
+        $this->chargeableMonth = $chargeableMonth;
+        $this->fulfill         = $fulfill;
     }
 
     /**
@@ -29,6 +43,11 @@ class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
      */
     public function handle()
     {
-        //
+        Practice::activeBillable()
+            ->chunk(10, function ($practices) {
+                foreach ($practices as $practice) {
+                    ProcessPracticePatientMonthlyServices::dispatch($practice->id, $this->chargeableMonth, $this->fulfill);
+                }
+            });
     }
 }

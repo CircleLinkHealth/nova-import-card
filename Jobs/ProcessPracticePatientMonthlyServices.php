@@ -2,6 +2,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -17,9 +18,9 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(int $practiceId, Carbon $chargeableMonth, bool $fulfill)
     {
-        //
+    
     }
 
     /**

@@ -27,19 +27,13 @@ class Location implements CustomerBillingProcessor
         return new ApprovablePatientCollection($this->repo->patients($locationId, $month, $pageSize));
     }
 
-    public function processServicesForAllPatients(int $locationId, Carbon $month): void
+    public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth): void
     {
-        $locationServiceProcessors = $this->repo->availableLocationServiceProcessors();
+        $locationServiceProcessors = $this->repo->availableLocationServiceProcessors($locationId, $chargeableMonth);
 
         //call job to dispatch jobs per 100-1000 jobs
         $locationPatients = \CircleLinkHealth\Customer\Entities\Location::findOrFail($locationId)->getPatients();
-
-        $fake = new FakeMonthlyBillingProcessor();
-        foreach ($locationPatients as $patient) {
-            //set stub
-            $patientStub = '';
-            $fake->process();
-        }
+        
     }
 
     public function repo(): CustomerBillingProcessorRepository

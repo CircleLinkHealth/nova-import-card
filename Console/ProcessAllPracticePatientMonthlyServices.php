@@ -1,26 +1,29 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\CcmBilling\Console;
 
+use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices as Job;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class ProcessAllPracticePatientMonthlyServices extends Command
 {
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'command:name';
-
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description.';
+    protected $description = 'Process all practice patients';
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'billing:process-all-practice-patients {month?} {--fulfill}';
 
     /**
      * Create a new command instance.
@@ -39,30 +42,13 @@ class ProcessAllPracticePatientMonthlyServices extends Command
      */
     public function handle()
     {
-        //
-    }
+        /** @var Carbon */
+        $month = ! empty($this->argument('month')) ? Carbon::parse($this->argument('month')) : Carbon::now()->startOfMonth();
 
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            ['example', InputArgument::REQUIRED, 'An example argument.'],
-        ];
-    }
+        if ($month->notEqualTo($month->copy()->startOfMonth())) {
+            $month->startOfMonth();
+        }
 
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return [
-            ['example', null, InputOption::VALUE_OPTIONAL, 'An example option.', null],
-        ];
+        Job::dispatch($this->argument('month'), (bool) $this->option('fulfill'));
     }
 }
