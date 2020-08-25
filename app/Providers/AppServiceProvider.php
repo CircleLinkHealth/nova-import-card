@@ -6,6 +6,7 @@
 
 namespace App\Providers;
 
+use App\Contracts\ChunksEloquentBuilder;
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use App\Notifications\Channels\FaxChannel;
@@ -105,6 +106,20 @@ class AppServiceProvider extends ServiceProvider
             'toRawSql',
             function () {
                 return $this->getQuery()->toRawSql();
+            }
+        );
+
+        EloquentBuilder::macro(
+            'chunkIntoJobs',
+            function (int $limit, ChunksEloquentBuilder $job) {
+                $count = $this->count();
+                $offset = 0;
+
+                while ($offset < $count) {
+                    $job->setBuilder($offset, $limit, $this);
+                    $job->dispatch();
+                    $offset = $offset + $limit;
+                }
             }
         );
 
