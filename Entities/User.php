@@ -2586,11 +2586,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     return $id;
                 }
 
-                return Role::find($id);
+                return Role::allRoles()
+                    ->whereIn('id', $id)
+                    ->first();
             }
         }
 
-        return $this->roles->first();
+        return optional($this->roles)->first();
     }
 
     public function practices(
