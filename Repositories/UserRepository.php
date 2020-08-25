@@ -29,7 +29,7 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
+use CircleLinkHealth\Customer\Exceptions\ValidationException;
 use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
