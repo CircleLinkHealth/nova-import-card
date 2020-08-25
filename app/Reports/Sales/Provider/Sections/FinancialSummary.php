@@ -29,9 +29,15 @@ class FinancialSummary extends SalesReportSection
         $this->clhpppm  = $this->provider->primaryPractice->clh_pppm ?? false;
     }
 
+    /**
+     * @param $amount
+     * @return bool|string
+     */
     public function formatDollar($amount)
     {
-        return money_format('%.0n', $amount);
+        $formatter = new \NumberFormatter('us_US', \NumberFormatter::CURRENCY);
+
+        return $formatter->format(intval($amount));
     }
 
     public function render()
@@ -40,9 +46,8 @@ class FinancialSummary extends SalesReportSection
 
         $total                       = $this->service->totalBilled();
         $this->data['billed_so_far'] = $total;
-
-        $this->data['revenue_so_far'] = money_format('%.0n', round($total * 40, -2));
-        $this->data['profit_so_far']  = money_format('%.0n', $total * 40 - $total * $this->clhpppm);
+        $this->data['revenue_so_far'] = $this->formatDollar(round($total * 40, -2));
+        $this->data['profit_so_far']  = $this->formatDollar($total * 40 - $total * $this->clhpppm);
 
         for ($i = 0; $i < 3; ++$i) {
             if (0 == $i) {
