@@ -85,10 +85,15 @@ class NextCallSuggestorTest extends TestCase
         self::assertEquals('', $suggestion->attempt_note);
         self::assertEquals(false, $suggestion->ccm_time_achieved);
         self::assertEquals(false, $suggestion->ccm_above);
-        self::assertTrue(Carbon::parse($suggestion->date)->isCurrentMonth());
         self::assertEquals('00:00:00', $suggestion->formatted_monthly_time);
         self::assertEquals('Call patient after a week', $suggestion->logic);
-        self::assertTrue($suggestion->nextCallDate->isCurrentMonth());
+        if (now()->weekOfMonth < 3) {
+            self::assertTrue($suggestion->nextCallDate->isCurrentMonth());
+            self::assertTrue(Carbon::parse($suggestion->date)->isCurrentMonth());
+        } else {
+            self::assertTrue($suggestion->nextCallDate->isNextMonth());
+            self::assertTrue(Carbon::parse($suggestion->date)->isNextMonth());
+        }
         self::assertEquals(0, $suggestion->no_of_successful_calls);
         self::assertNull($suggestion->nurse_display_name);
         self::assertEquals($patient, $suggestion->patient);
@@ -107,10 +112,15 @@ class NextCallSuggestorTest extends TestCase
         self::assertEquals('', $suggestion->attempt_note);
         self::assertEquals(false, $suggestion->ccm_time_achieved);
         self::assertEquals(false, $suggestion->ccm_above);
-        self::assertTrue(Carbon::parse($suggestion->date)->isCurrentMonth());
         self::assertEquals('00:00:00', $suggestion->formatted_monthly_time);
         self::assertEquals('Call patient after a week', $suggestion->logic);
-        self::assertTrue($suggestion->nextCallDate->isCurrentMonth());
+        if (now()->weekOfMonth < 3) {
+            self::assertTrue($suggestion->nextCallDate->isCurrentMonth());
+            self::assertTrue(Carbon::parse($suggestion->date)->isCurrentMonth());
+        } else {
+            self::assertTrue($suggestion->nextCallDate->isNextMonth());
+            self::assertTrue(Carbon::parse($suggestion->date)->isNextMonth());
+        }
         self::assertEquals(0, $suggestion->no_of_successful_calls);
         self::assertEquals($nurse->id, $suggestion->nurse);
         self::assertEquals($nurse->display_name, $suggestion->nurse_display_name);

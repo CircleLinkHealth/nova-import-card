@@ -52,6 +52,6 @@
 </div> <!-- end #app -->
 
 @include('partials.sentry-js')
+@stack('scripts')
 </body>
-
 </html>

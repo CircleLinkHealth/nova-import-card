@@ -26,7 +26,7 @@ class PracticeObserver
             })
             ->each(function ($users) use ($practice) {
                 foreach ($users as $user) {
-                    foreach ($user->roles->pluck('id')->unique()->all() as $roleId) {
+                    if ($roleId = $user->practiceOrGlobalRole(true)) {
                         $user->attachRoleForSite($roleId, $practice->id);
                     }
                 }

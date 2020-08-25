@@ -198,43 +198,51 @@ trait UserHelpers
 
         $firstName = $faker->firstName;
         $lastName  = "$faker->lastName Role:$roleName";
-        $email     = $faker->email;
+        $email     = now()->timestamp.$faker->email;
         $workPhone = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
 
-        $bag = new ParameterBag(
-            [
-                'saas_account_id' => SaasAccount::firstOrFail()->id,
-                'email'           => $email,
-                'password'        => 'password',
-                'display_name'    => "$firstName $lastName",
-                'first_name'      => $firstName,
-                'last_name'       => $lastName,
-                'username'        => $faker->userName,
-                'program_id'      => $practiceId,
-                //id=9 is testdrive
-                'address'           => $faker->streetAddress,
-                'user_status'       => 1,
-                'address2'          => '',
-                'city'              => $faker->city,
-                'state'             => 'AL',
-                'zip'               => '55555',
-                'is_auto_generated' => true,
-                'roles'             => $roles,
-                'timezone'          => 'America/New_York',
+        $args = [
+            'saas_account_id' => SaasAccount::firstOrFail()->id,
+            'email'           => $email,
+            'password'        => 'password',
+            'display_name'    => "$firstName $lastName",
+            'first_name'      => $firstName,
+            'last_name'       => $lastName,
+            'username'        => $email,
+            'program_id'      => $practiceId,
 
-                //provider Info
+            'address'           => $faker->streetAddress,
+            'user_status'       => 1,
+            'address2'          => '',
+            'city'              => $faker->city,
+            'state'             => 'AL',
+            'zip'               => '55555',
+            'is_auto_generated' => true,
+            'roles'             => $roles,
+            'timezone'          => 'America/New_York',
+
+            'home_phone_number' => $workPhone,
+        ];
+
+        if ('participant' === $roleName) {
+            $args = array_merge($args, [
+                'ccm_status' => $ccmStatus,
+                'birth_date' => $faker->date('Y-m-d'),
+            ]);
+        }
+
+        if ('provider' === $roleName) {
+            $args = array_merge($args, [
                 'prefix'                 => 'Dr',
                 'suffix'                 => 'MD',
                 'npi_number'             => 1234567890,
                 'specialty'              => 'Unit Tester',
                 'approve_own_care_plans' => true,
+            ]);
+        }
 
-                //phones
-                'home_phone_number' => $workPhone,
-
-                'ccm_status' => $ccmStatus,
-                'birth_date' => $faker->date('Y-m-d'),
-            ]
+        $bag = new ParameterBag(
+            $args
         );
 
         //create a user
