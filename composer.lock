@@ -16,7 +16,6 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexbowers/nova-prepopulate-searchable/zipball/e4b7d0a19190689cfb312dafd979bd73c42274d2",
                 "reference": "e4b7d0a19190689cfb312dafd979bd73c42274d2",
                 "shasum": ""
             },
