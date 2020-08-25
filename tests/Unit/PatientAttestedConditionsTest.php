@@ -397,6 +397,28 @@ class PatientAttestedConditionsTest extends TestCase
         }
     }
 
+    /**
+     * A basic unit test example.
+     *
+     * @return void
+     */
+    public function test_patient_with_attested_conditions_can_be_deleted()
+    {
+        $this->actingAs($this->nurse);
+
+        $call            = $this->patient->inboundCalls()->first();
+        $pms             = $this->patient->patientSummaryForMonth();
+        $patientProblems = $this->patient->ccdProblems()->get();
+
+        $this->assertNotNull($pms);
+        $this->assertEquals($call->attestedProblems()->count(), 0);
+
+        //attach problems to call
+        $call->attachAttestedProblems($patientProblems->pluck('id')->toArray());
+
+        $this->patient->forceDelete();
+    }
+
     public function test_problems_are_automatically_attested_to_pms_if_they_should_bhi()
     {
         $bhiCsId       = ChargeableService::bhi()->first()->id;

@@ -193,7 +193,7 @@ class Call extends BaseModel implements AttachableToNotification
     {
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
-    
+
     public function note()
     {
         return $this->belongsTo(Note::class, 'note_id', 'id');
