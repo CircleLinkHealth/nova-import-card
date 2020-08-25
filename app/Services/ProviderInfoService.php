@@ -32,7 +32,7 @@ class ProviderInfoService
         $providers = ProviderInfo::whereHas('user', function ($q) {
             $q->when($isLoc = UserRepository::isLocationScopeProvider(auth()->user()), function ($q) {
                 $q->where('id', auth()->id());
-            })->when(! $isLoc, function ($q) {
+            })->when( ! $isLoc, function ($q) {
                 $q->ofPractice(auth()->user()->practices);
             });
         })
