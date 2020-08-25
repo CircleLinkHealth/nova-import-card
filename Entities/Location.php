@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -265,6 +266,9 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         return $loc;
     }
 
+    public function chargeableServiceSummaries(){
+        return $this->hasMany(ChargeableLocationMonthlySummary::class, 'location_id');
+    }
     /**
      * Get the indexable data array for the model.
      *

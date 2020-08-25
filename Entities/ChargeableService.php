@@ -6,6 +6,14 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
+use CircleLinkHealth\CcmBilling\Processors\Patient\AWV1;
+use CircleLinkHealth\CcmBilling\Processors\Patient\AWV2;
+use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
+use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
+use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
+use CircleLinkHealth\CcmBilling\Processors\Patient\CCM60;
+use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
@@ -133,5 +141,25 @@ class ChargeableService extends BaseModel
     public function scopeSoftwareOnly($query)
     {
         return $query->where('code', self::SOFTWARE_ONLY);
+    }
+    
+    public function processor() : PatientChargeableServiceProcessor
+    {
+        $class = $this->processorClassMap()[$this->code] ?? null;
+        
+        return $class ? new $class : null;
+    }
+    
+    public function processorClassMap() : array
+    {
+        return [
+            self::CCM => CCM::class,
+            self::BHI => BHI::class,
+            self::CCM_PLUS_40 => CCM40::class,
+            self::CCM_PLUS_60 => CCM60::class,
+            self::PCM => PCM::class,
+            self::AWV_INITIAL => AWV1::class,
+            self::AWV_SUBSEQUENT => AWV2::class
+        ];
     }
 }
