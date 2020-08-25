@@ -397,11 +397,6 @@ class PatientAttestedConditionsTest extends TestCase
         }
     }
 
-    /**
-     * A basic unit test example.
-     *
-     * @return void
-     */
     public function test_patient_with_attested_conditions_can_be_deleted()
     {
         $this->actingAs($this->nurse);
