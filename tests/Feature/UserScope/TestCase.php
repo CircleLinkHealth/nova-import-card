@@ -102,10 +102,10 @@ abstract class TestCase extends BaseTestCase
         $this->actor = null;
     }
 
-    public function withLocationScope(): self
+    public function withMultiLocationScope(): self
     {
-        $this->actor = User::whereFirstName(\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME)
-            ->whereLastName(\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME)
+        $this->actor = User::whereFirstName(\UserScopeTestsSeeder::PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME)
+            ->whereLastName(\UserScopeTestsSeeder::PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME)
             ->with(['practices', 'locations'])
             ->first();
 
@@ -120,6 +120,20 @@ abstract class TestCase extends BaseTestCase
     {
         $this->actor = User::whereFirstName(\UserScopeTestsSeeder::PROVIDER_WITH_PRACTICE_SCOPE_FIRST_NAME)
             ->whereLastName(\UserScopeTestsSeeder::PROVIDER_WITH_PRACTICE_SCOPE_LAST_NAME)
+            ->with(['practices', 'locations'])
+            ->first();
+
+        if (is_null($this->actor)) {
+            throw new \Exception('Please run `php artisan db:seed --class=UserScopeTestsSeeder`');
+        }
+
+        return $this;
+    }
+
+    public function withSingleLocationScope(): self
+    {
+        $this->actor = User::whereFirstName(\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME)
+            ->whereLastName(\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME)
             ->with(['practices', 'locations'])
             ->first();
 

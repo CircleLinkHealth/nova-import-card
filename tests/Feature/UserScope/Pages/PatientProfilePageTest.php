@@ -18,7 +18,7 @@ class PatientProfilePageTest extends UserScopeTestCase
 
     public function test_patient_profile_page_dropdown_shows_providers_from_the_same_location_only()
     {
-        $this->withLocationScope();
+        $this->withSingleLocationScope();
 
         $this->actor()->locations->each(function (Location $location) {
             $this->calling('GET', route('api.get.location.providers', [$location->practice_id, $location->id]))
