@@ -11,7 +11,22 @@
     <div class="container">
         <div class="row">
             {!! Form::open(['url' => route('provider.dashboard.store.chargeable-services', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12', 'id'=>'practice-chargeable-services-form']) !!}
+            <div class="input-field col s6">
+                <select>
+                    <option value="" disabled selected>Choose your option</option>
+                    <option value="1">For Entire Practice</option>
+                    <option value="2">Per Location</option>
+                </select>
+            </div>
 
+            <div class="input-field col s6">
+                <select>
+                    <option value="" disabled selected>Choose Locations</option>
+                    @foreach($locations as $locationName => $id)
+                      <option value="{{$id}}">{{$locationName}}</option>
+                    @endforeach
+                </select>
+            </div>
             <div class="row">
                 @foreach($chargeableServices as $service)
                     <div class="col s12 m6">
