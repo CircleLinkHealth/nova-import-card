@@ -23,13 +23,13 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
+use CircleLinkHealth\Customer\Exceptions\ValidationException;
 use CircleLinkHealth\Customer\Rules\PatientIsNotDuplicate;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use CircleLinkHealth\Customer\Exceptions\ValidationException;
 use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -137,6 +137,11 @@ class UserRepository
     public function exists($id)
     {
         return User::where('id', $id)->exists();
+    }
+
+    public static function isLocationScopeProvider(User $user)
+    {
+        return $user->isProvider() && User::SCOPE_LOCATION == $user->scope;
     }
 
     public function saveAndGetPractice(
