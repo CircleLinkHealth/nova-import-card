@@ -26,11 +26,16 @@ class LocationProcessorEloquentRepository implements CustomerBillingProcessorRep
         return AvailableServiceProcessors::push($this->getProcessorsFromLocationServiceCodes($locationId, $chargeableMonth));
     }
 
-    public function patients(int $locationId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    public function patients(int $locationId, Carbon $monthYear): Builder
     {
         return $this->approvablePatientUsersQuery($monthYear)
-            ->whereHas('patientInfo', fn ($q) => $q->where('preferred_contact_location', $locationId))
-            ->paginate($pageSize);
+            ->whereHas('patientInfo', fn ($q) => $q->where('preferred_contact_location', $locationId));
+    }
+    
+    public function paginatePatients(int $locationId, Carbon $chargeableMonth, int $pageSize) : \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->patients($locationId, $chargeableMonth)->paginate($pageSize);
+        
     }
 
     public function patientServices(int $locationId, Carbon $monthYear): Builder

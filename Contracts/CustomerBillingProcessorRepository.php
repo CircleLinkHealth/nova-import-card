@@ -11,8 +11,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 interface CustomerBillingProcessorRepository
 {
-    public function patients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+    public function patients(int $customerModelId, Carbon $monthYear): Builder;
+    
+    public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-    //billable patient monthly summaries equivalent
     public function patientServices(int $customerModelId, Carbon $monthYear): Builder;
 }

@@ -10,8 +10,8 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientsChunk;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
-use CircleLinkHealth\CcmBilling\Tests\Fakes\FakeMonthlyBillingProcessor;
 
 class Location implements CustomerBillingProcessor
 {
@@ -24,16 +24,16 @@ class Location implements CustomerBillingProcessor
 
     public function fetchApprovablePatients(int $locationId, Carbon $month, $pageSize = 30): ApprovablePatientCollection
     {
-        return new ApprovablePatientCollection($this->repo->patients($locationId, $month, $pageSize));
+        return new ApprovablePatientCollection($this->repo->paginatePatients($locationId, $month, $pageSize));
     }
 
     public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth): void
     {
-        $locationServiceProcessors = $this->repo->availableLocationServiceProcessors($locationId, $chargeableMonth);
+        $availableLocationServiceProcessors = $this->repo->availableLocationServiceProcessors($locationId, $chargeableMonth);
+        $job                                = new ProcessLocationPatientsChunk($availableLocationServiceProcessors, $chargeableMonth);
 
-        //call job to dispatch jobs per 100-1000 jobs
-        $locationPatients = \CircleLinkHealth\Customer\Entities\Location::findOrFail($locationId)->getPatients();
-        
+        $this->repo->patients($locationId, $chargeableMonth)
+            ->chunkIntoJobs(100, $job);
     }
 
     public function repo(): CustomerBillingProcessorRepository

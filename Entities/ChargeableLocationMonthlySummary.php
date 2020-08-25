@@ -33,13 +33,13 @@ class ChargeableLocationMonthlySummary extends BaseModel
         return $this->hasOne(ChargeableService::class, 'chargeable_service_id');
     }
 
+    public function getServiceCode()
+    {
+        return optional($this->chargeableService)->code;
+    }
+
     public function location()
     {
         return $this->belongsTo(Location::class, 'location_id');
     }
-    
-    public function getServiceCode(){
-        return optional($this->chargeableService)->code;
-    }
-    
 }

@@ -17,7 +17,13 @@ class PracticeProcessorEloquentRepository implements CustomerBillingProcessorRep
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
 
-    public function patients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    public function paginatePatients(int $customerModelId, Carbon $chargeableMonth, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->patients($customerModelId, $chargeableMonth)
+            ->paginate($pageSize);
+    }
+
+    public function patients(int $customerModelId, Carbon $monthYear): Builder
     {
         return $this->approvablePatientUsersQuery($monthYear)
             ->ofPractice($customerModelId);

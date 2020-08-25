@@ -31,6 +31,19 @@ class AvailableServiceProcessors implements Arrayable
 
     private ?PCM $pcm;
 
+    public static function classMap(): array
+    {
+        return [
+            CCM::class   => 'ccm',
+            BHI::class   => 'bhi',
+            CCM40::class => 'ccm40',
+            CCM60::class => 'ccm60',
+            PCM::class   => 'pcm',
+            AWV1::class  => 'awv1',
+            AWV2::class  => 'awv2',
+        ];
+    }
+
     public function getAwv1(): ?AWV1
     {
         return $this->awv1;
@@ -131,18 +144,5 @@ class AvailableServiceProcessors implements Arrayable
     public function toCollection(): Collection
     {
         return collect($this->toArray());
-    }
-
-    public static function classMap(): array
-    {
-        return [
-            CCM::class   => 'ccm',
-            BHI::class   => 'bhi',
-            CCM40::class => 'ccm40',
-            CCM60::class => 'ccm60',
-            PCM::class   => 'pcm',
-            AWV1::class  => 'awv1',
-            AWV2::class  => 'awv2',
-        ];
     }
 }

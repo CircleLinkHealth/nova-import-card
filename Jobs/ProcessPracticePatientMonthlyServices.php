@@ -1,17 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ProcessPracticePatientMonthlyServices implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new job instance.
@@ -20,7 +27,6 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
      */
     public function __construct(int $practiceId, Carbon $chargeableMonth, bool $fulfill)
     {
-    
     }
 
     /**
@@ -30,6 +36,5 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
      */
     public function handle()
     {
-        //
     }
 }
