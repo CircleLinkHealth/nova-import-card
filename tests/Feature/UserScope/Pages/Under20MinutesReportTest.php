@@ -17,13 +17,13 @@ class Under20MinutesReportTest extends UserScopeTestCase
 
     public function test_under_20_minutes_report_page_shows_patients_from_the_same_location_only()
     {
-        $this->withLocationScope()
+        $this->withSingleLocationScope()
             ->calling('GET', route('patient.reports.u20'))
             ->assertCallback(function (TestResponse $response, User $actor) {
                 $responseData = $this->extractWebixResponseData($response, 'activity_json');
 
                 $this->assertPractice($actor, $responseData, 'practice_id');
-                $this->assertLocation($actor, $responseData, 'location_id');
+                $this->assertLocation($actor, $responseData, 'location_id', 'billing_provider_id');
             });
     }
 

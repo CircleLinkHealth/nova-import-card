@@ -14,11 +14,11 @@ class PatientsToApproveTest extends UserScopeTestCase
 {
     public function test_patients_to_approve_list_page_shows_patients_from_the_same_location_only()
     {
-        $this->withLocationScope()
+        $this->withSingleLocationScope()
             ->calling('GET', $this->route(), $this->params())
             ->assert(
                 new Practice('data', 'program_id'),
-                new Location('data', 'location_id'),
+                new Location('data', 'location_id', 'billing_provider_id'),
             );
     }
 

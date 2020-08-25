@@ -204,16 +204,6 @@ class Call extends BaseModel implements AttachableToNotification
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
 
-    /**
-     * Mark the Notification this Model is attached to as read.
-     *
-     * @param $notifiable
-     */
-    public function markAttachmentNotificationAsRead($notifiable)
-    {
-        // TODO: Implement markAttachmentNotificationAsRead() method.
-    }
-
     public function note()
     {
         return $this->belongsTo(Note::class, 'note_id', 'id');

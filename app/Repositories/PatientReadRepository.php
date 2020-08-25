@@ -7,36 +7,17 @@
 namespace App\Repositories;
 
 use App\Filters\PatientFilters;
-use App\PatientSearchModel;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 
 class PatientReadRepository
 {
-    private $user;
-
-    public function __construct(User $user)
+    public function fetch()
     {
-        $this->user = $user::ofType('participant')
-            ->with('patientInfo');
-    }
-
-    public function fetch($resetQuery = true)
-    {
-        $result = $this->user->get();
-
-        if ($resetQuery) {
-            $this->user = User::ofType('participant')
-                ->with('patientInfo');
-        }
-
-        return $result;
-    }
-
-    public function model()
-    {
-        return $this->user;
+        return User::ofType('participant')
+            ->with('patientInfo')->get();
     }
 
     public function patients(PatientFilters $filters)
@@ -44,19 +25,42 @@ class PatientReadRepository
         $shouldSetDefaultRows = false;
         $filtersInput         = $filters->filters();
 
-        $showPracticePatients = $filtersInput['showPracticePatients'] ?? null;
+        $showPracticePatients      = null;
+        $showPracticePatientsInput = $filtersInput['showPracticePatients'] ?? null;
 
-        $users = $this->model()
+        if (auth()->user()->isProvider() && User::SCOPE_LOCATION === auth()->user()->scope) {
+            $showPracticePatients = false;
+        } elseif (auth()->user()->isProvider() && 'false' === $showPracticePatientsInput) {
+            $showPracticePatients = false;
+        } else {
+            $showPracticePatients = $showPracticePatientsInput;
+        }
+
+        $users = User::ofType('participant')
             ->with([
-                'carePlan',
-                'phoneNumbers',
+                'carePlan' => function ($q) {
+                    $q->select(['user_id', 'status']);
+                },
+                'phoneNumbers' => function ($q) {
+                    $q->select(['user_id', 'is_primary', 'number', 'type']);
+                },
+                'patientSummaries' => function ($q) {
+                    $q->whereMonthYear(Carbon::now()->startOfMonth()->toDateString())
+                        ->select(['patient_id', 'ccm_time', 'bhi_time', 'month_year']);
+                },
                 'patientInfo.location',
-                'primaryPractice',
-                'providerInfo',
-                'billingProvider',
+                'careTeamMembers' => function ($q) {
+                    $q->with(['user' => function ($q) {
+                        $q->without(['perms', 'roles'])
+                            ->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
+                    }])->where('member_user_id', auth()->user()->id)
+                        ->whereIn(
+                            'type',
+                            [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                        );
+                },
                 'observations' => function ($q) {
-                    $q
-                        ->latest();
+                    $q->latest();
                 },
             ])
             ->when(array_key_exists('patientsPendingAuthUserApproval', $filtersInput), function ($q) {
@@ -67,10 +71,10 @@ class PatientReadRepository
                 }
             })
             ->when(
-                auth()->user()->isProvider() && 'false' == $showPracticePatients,
+                false === $showPracticePatients,
                 function ($query) {
                     $query->whereHas('careTeamMembers', function ($subQuery) {
-                        $subQuery->where('member_user_id', auth()->user()->id)
+                        $subQuery->where('member_user_id', auth()->id())
                             ->whereIn(
                                 'type',
                                 [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
@@ -108,7 +112,8 @@ class PatientReadRepository
      */
     public function paused()
     {
-        $this->user
+        User::ofType('participant')
+            ->with('patientInfo')
             ->whereHas('patientInfo', function ($q) {
                 $q->ccmStatus('paused');
             });
@@ -123,17 +128,13 @@ class PatientReadRepository
      */
     public function pausedLetterNotPrinted()
     {
-        $this->user
+        User::ofType('participant')
+            ->with('patientInfo')
             ->whereHas('patientInfo', function ($q) {
                 $q->whereNull('paused_letter_printed_at');
             });
 
         return $this;
-    }
-
-    public function search(PatientSearchModel $searchModel)
-    {
-        return $searchModel->results();
     }
 
     /**
@@ -143,7 +144,8 @@ class PatientReadRepository
      */
     public function unreachable()
     {
-        $this->user
+        User::ofType('participant')
+            ->with('patientInfo')
             ->whereHas('patientInfo', function ($q) {
                 $q->ccmStatus(Patient::UNREACHABLE);
             });

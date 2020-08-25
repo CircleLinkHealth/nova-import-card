@@ -234,6 +234,7 @@ namespace App;
  *
  * @property \CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision[]|\Illuminate\Database\Eloquent\Collection $patientCcmStatusRevisions
  * @property int|null                                                                                                $patient_ccm_status_revisions_count
+ * @property string|null                                                                                             $scope
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

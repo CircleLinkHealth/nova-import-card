@@ -42,7 +42,7 @@ abstract class TestCase extends BaseTestCase
             if ($collection->isEmpty()) {
                 throw new \Exception('No data found in response');
             }
-            call_user_func(\Closure::fromCallable([$this, 'assert'.class_basename($assertion)]), $this->actor, $collection, $assertion->key);
+            call_user_func(\Closure::fromCallable([$this, 'assert'.class_basename($assertion)]), $this->actor, $collection, $assertion->key, $assertion->billingProviderId);
         });
 
         $this->reset();
@@ -55,15 +55,22 @@ abstract class TestCase extends BaseTestCase
         $this->reset();
     }
 
-    public function assertLocation(User $actor, Collection $collection, string $key)
+    public function assertLocation(User $actor, Collection $collection, string $locationIdKey, ?string $billingProviderIdKey)
     {
-        $candidates = $collection->pluck($key)->filter()->values();
+        $candidates = $collection->pluck($locationIdKey)->filter()->values();
 
         if ($candidates->isEmpty()) {
-            throw new \Exception("`$key` not found in response data");
+            throw new \Exception("`$locationIdKey` not found in response data");
         }
 
-        $this->assertTrue($collection->whereNotIn($key, $actor->locations->pluck('id')->all())->isEmpty(), 'The response contains patients from other Locations.');
+        $this->assertTrue($collection->whereNotIn($locationIdKey, $actor->locations->pluck('id')->all())->isEmpty(), 'The response contains patients from other Locations.');
+
+        if (true === (bool) $actor->providerInfo->approve_own_care_plans) {
+            if ( ! $billingProviderIdKey) {
+                throw new \Exception('$billingProviderIdKey is null');
+            }
+            $this->assertTrue($collection->where($billingProviderIdKey, '!=', $actor->id)->isEmpty(), 'The response contains other Billing providers\' patients.');
+        }
     }
 
     public function assertPractice(User $actor, Collection $collection, string $key)
@@ -95,10 +102,10 @@ abstract class TestCase extends BaseTestCase
         $this->actor = null;
     }
 
-    public function withLocationScope(): self
+    public function withMultiLocationScope(): self
     {
-        $this->actor = User::whereFirstName(\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME)
-            ->whereLastName(\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME)
+        $this->actor = User::whereFirstName(\UserScopeTestsSeeder::PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME)
+            ->whereLastName(\UserScopeTestsSeeder::PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME)
             ->with(['practices', 'locations'])
             ->first();
 
@@ -113,6 +120,20 @@ abstract class TestCase extends BaseTestCase
     {
         $this->actor = User::whereFirstName(\UserScopeTestsSeeder::PROVIDER_WITH_PRACTICE_SCOPE_FIRST_NAME)
             ->whereLastName(\UserScopeTestsSeeder::PROVIDER_WITH_PRACTICE_SCOPE_LAST_NAME)
+            ->with(['practices', 'locations'])
+            ->first();
+
+        if (is_null($this->actor)) {
+            throw new \Exception('Please run `php artisan db:seed --class=UserScopeTestsSeeder`');
+        }
+
+        return $this;
+    }
+
+    public function withSingleLocationScope(): self
+    {
+        $this->actor = User::whereFirstName(\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME)
+            ->whereLastName(\UserScopeTestsSeeder::PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME)
             ->with(['practices', 'locations'])
             ->first();
 

@@ -7,7 +7,6 @@
 namespace Tests\Feature\UserScope\Pages;
 
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Collection;
 use Illuminate\Testing\TestResponse;
 use Tests\Feature\UserScope\TestCase as UserScopeTestCase;
 use Tests\Feature\UserScope\Traits\AssertsLocationsAndPracticesWithCollection;
@@ -18,7 +17,7 @@ class NotesReportTest extends UserScopeTestCase
 
     public function test_notes_report_page_shows_patients_from_the_same_location_only()
     {
-        $this->withLocationScope()
+        $this->withSingleLocationScope()
             ->calling('GET', route('patient.note.listing'))
             ->assertCallback(function (TestResponse $response, User $actor) {
                 $responseData = $this->extractResponseData($response);

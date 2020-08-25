@@ -12,28 +12,61 @@ use Tests\Feature\UserScope\TestCase as UserScopeTestCase;
 
 class PatientListTest extends UserScopeTestCase
 {
-    public function test_patient_list_page_shows_patients_from_the_same_location_only()
+    public function test_patient_list_page_shows_all_patients_for_provider_with_multiple_locations()
     {
-        $this->withLocationScope()
-            ->calling('GET', $this->route(), $this->params())
+        $this->withMultiLocationScope()
+            ->calling('GET', $this->route(), [
+                'rows'                 => 'all',
+                'showPracticePatients' => 'false',
+            ])
             ->assert(
                 new Practice('data', 'program_id'),
-                new Location('data', 'location_id'),
+                new Location('data', 'location_id', 'billing_provider_id'),
             );
     }
 
-    public function test_patient_list_page_shows_patients_from_the_same_practice_only()
+    public function test_patient_list_page_shows_all_patients_from_the_same_location_only_for_provider_with_one_location()
+    {
+        $this->withSingleLocationScope()
+            ->calling('GET', $this->route(), [
+                'rows' => 'all',
+            ])
+            ->assert(
+                new Practice('data', 'program_id'),
+                new Location('data', 'location_id', 'billing_provider_id'),
+            );
+    }
+
+    public function test_patient_list_page_shows_all_patients_from_the_same_practice_only()
     {
         $this->withPracticeScope()
-            ->calling('GET', $this->route(), $this->params())
+            ->calling('GET', $this->route(), [
+                'rows' => 'all',
+            ])
             ->assert(new Practice('data', 'program_id'));
     }
 
-    private function params()
+    public function test_patient_list_page_shows_only_provider_patients_from_the_same_location_only()
     {
-        return [
-            'rows' => 'all',
-        ];
+        $this->withSingleLocationScope()
+            ->calling('GET', $this->route(), [
+                'rows'                 => 'all',
+                'showPracticePatients' => 'false',
+            ])
+            ->assert(
+                new Practice('data', 'program_id'),
+                new Location('data', 'location_id', 'billing_provider_id'),
+            );
+    }
+
+    public function test_patient_list_page_shows_only_provider_patients_from_the_same_practice_only()
+    {
+        $this->withPracticeScope()
+            ->calling('GET', $this->route(), [
+                'rows'                 => 'all',
+                'showPracticePatients' => 'false',
+            ])
+            ->assert(new Practice('data', 'program_id'));
     }
 
     private function route()

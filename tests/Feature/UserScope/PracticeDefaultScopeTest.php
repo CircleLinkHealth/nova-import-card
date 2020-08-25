@@ -15,8 +15,19 @@ class PracticeDefaultScopeTest extends CustomerTestCase
     {
         self::assertNotEquals(User::SCOPE_LOCATION, $this->provider()->scope);
 
-        $this->practice()->default_user_scope = User::SCOPE_LOCATION;
-        $this->practice()->save();
+        $this->assertDatabaseMissing('practices', [
+            'default_user_scope' => User::SCOPE_LOCATION,
+            'id'                 => $this->practice()->id,
+        ]);
+
+        $updated = $this->practice()->update([
+            'default_user_scope' => User::SCOPE_LOCATION,
+        ]);
+
+        $this->assertDatabaseHas('practices', [
+            'default_user_scope' => User::SCOPE_LOCATION,
+            'id'                 => $this->practice()->id,
+        ]);
 
         $this->resetProvider();
         self::assertEquals(User::SCOPE_LOCATION, $this->provider()->scope);
