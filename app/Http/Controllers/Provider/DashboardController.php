@@ -69,18 +69,18 @@ class DashboardController extends Controller
             });
 
         $noLocationsForPractice = false;
-        $locations = $this->primaryPractice->locations->pluck('id', 'name');
-        if (empty($locations)){
+        $locations              = $this->primaryPractice->locations->pluck('id', 'name');
+        if (empty($locations)) {
             $noLocationsForPractice = true;
         }
 
         return view('provider.chargableServices.create', array_merge([
-            'practice'           => $this->primaryPractice,
-            'locations'          => $locations,
+            'practice'               => $this->primaryPractice,
+            'locations'              => $locations,
             'noLocationsForPractice' => $noLocationsForPractice,
-            'practiceSlug'       => $this->practiceSlug,
-            'practiceSettings'   => $this->primaryPractice->cpmSettings(),
-            'chargeableServices' => PracticeChargeableServices::collection($allChargeableServices),
+            'practiceSlug'           => $this->practiceSlug,
+            'practiceSettings'       => $this->primaryPractice->cpmSettings(),
+            'chargeableServices'     => PracticeChargeableServices::collection($allChargeableServices),
         ], $this->returnWithAll));
     }
 
