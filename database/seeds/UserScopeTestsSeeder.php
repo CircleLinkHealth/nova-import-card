@@ -16,16 +16,26 @@ use Illuminate\Database\Seeder;
 class UserScopeTestsSeeder extends Seeder
 {
     use UserHelpers;
-    const LOCATION_1_NAME                           = 'Liopetri';
-    const LOCATION_2_NAME                           = 'Trivilloura';
-    const LOCATION_3_NAME                           = 'Germasogeia';
-    const PRACTICE_NAME                             = 'tasoulla_clinic';
-    const PROVIDER_WITH_LOCATION_2_SCOPE_FIRST_NAME = 'Martis';
-    const PROVIDER_WITH_LOCATION_2_SCOPE_LAST_NAME  = 'Kourti';
-    const PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME = 'Iordanis';
-    const PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME  = 'Pouros';
-    const PROVIDER_WITH_PRACTICE_SCOPE_FIRST_NAME   = 'Soulla';
-    const PROVIDER_WITH_PRACTICE_SCOPE_LAST_NAME    = 'Masoulla';
+    const LOCATION_1_NAME                                       = 'Liopetri';
+    const LOCATION_2_NAME                                       = 'Trivilloura';
+    const LOCATION_3_NAME                                       = 'Germasogeia';
+    const MED_ASS_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME      = 'Panayiotis';
+    const MED_ASS_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME       = 'Cornos';
+    const MED_ASS_WITH_ONE_LOCATION_SCOPE_FIRST_NAME            = 'Pantelitsa';
+    const MED_ASS_WITH_ONE_LOCATION_SCOPE_LAST_NAME             = 'Hadjidiamanti';
+    const OFFICE_ADMIN_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME = 'Martha';
+    const OFFICE_ADMIN_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME  = 'Kaiser';
+    const OFFICE_ADMIN_WITH_ONE_LOCATION_SCOPE_FIRST_NAME       = 'Judah';
+    const OFFICE_ADMIN_WITH_ONE_LOCATION_SCOPE_LAST_NAME        = 'Capillé Du Libanaise';
+    const PRACTICE_NAME                                         = 'tasoulla_clinic';
+    const PROVIDER_WITH_LOCATION_2_SCOPE_FIRST_NAME             = 'Martis';
+    const PROVIDER_WITH_LOCATION_2_SCOPE_LAST_NAME              = 'Kourti';
+    const PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME             = 'Iordanis';
+    const PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME              = 'Pouros';
+    const PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME     = 'Markella';
+    const PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME      = 'Istrefi';
+    const PROVIDER_WITH_PRACTICE_SCOPE_FIRST_NAME               = 'Soulla';
+    const PROVIDER_WITH_PRACTICE_SCOPE_LAST_NAME                = 'Masoulla';
 
     /**
      * Run the database seeds.
@@ -40,21 +50,22 @@ class UserScopeTestsSeeder extends Seeder
         $location2 = $this->createLocation($practice->id, self::LOCATION_2_NAME);
         $location3 = $this->createLocation($practice->id, self::LOCATION_3_NAME);
 
-        $prov1 = $this->createProvider(
+        $prov1 = $this->createStaffMember(
+            'provider',
             self::PROVIDER_WITH_LOCATION_2_SCOPE_FIRST_NAME,
             self::PROVIDER_WITH_LOCATION_2_SCOPE_LAST_NAME,
             User::SCOPE_LOCATION,
             $location2
         );
-
-        $prov2 = $this->createProvider(
+        $prov2 = $this->createStaffMember(
+            'provider',
             self::PROVIDER_WITH_LOCATION_3_SCOPE_FIRST_NAME,
             self::PROVIDER_WITH_LOCATION_3_SCOPE_LAST_NAME,
             User::SCOPE_LOCATION,
             $location3
         );
-
-        $prov3 = $this->createProvider(
+        $prov3 = $this->createStaffMember(
+            'provider',
             self::PROVIDER_WITH_PRACTICE_SCOPE_FIRST_NAME,
             self::PROVIDER_WITH_PRACTICE_SCOPE_LAST_NAME,
             User::SCOPE_PRACTICE,
@@ -62,12 +73,54 @@ class UserScopeTestsSeeder extends Seeder
             $location2,
             $location3
         );
+        $prov4 = $this->createStaffMember(
+            'provider',
+            self::PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME,
+            self::PROVIDER_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME,
+            User::SCOPE_LOCATION,
+            $location2,
+            $location3
+        );
 
-        $this->createPatients($location1, $prov3, 1);
+        $this->createPatients($location1, $prov3, 8);
         $this->createPatients($location2, $prov3, 2);
         $this->createPatients($location3, $prov3, 3);
         $this->createPatients($location2, $prov1, 4);
         $this->createPatients($location3, $prov2, 5);
+        $this->createPatients($location3, $prov4, 6);
+        $this->createPatients($location2, $prov4, 7);
+
+        $medAss1 = $this->createStaffMember(
+            'med_assistant',
+            self::MED_ASS_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME,
+            self::MED_ASS_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME,
+            User::SCOPE_LOCATION,
+            $location2,
+            $location3
+        );
+        $medAss2 = $this->createStaffMember(
+            'med_assistant',
+            self::MED_ASS_WITH_ONE_LOCATION_SCOPE_FIRST_NAME,
+            self::MED_ASS_WITH_ONE_LOCATION_SCOPE_LAST_NAME,
+            User::SCOPE_LOCATION,
+            $location2
+        );
+
+        $officeAdmin1 = $this->createStaffMember(
+            'office_admin',
+            self::OFFICE_ADMIN_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME,
+            self::OFFICE_ADMIN_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME,
+            User::SCOPE_LOCATION,
+            $location2,
+            $location3
+        );
+        $officeAdmin2 = $this->createStaffMember(
+            'office_admin',
+            self::OFFICE_ADMIN_WITH_ONE_LOCATION_SCOPE_FIRST_NAME,
+            self::OFFICE_ADMIN_WITH_ONE_LOCATION_SCOPE_LAST_NAME,
+            User::SCOPE_LOCATION,
+            $location1
+        );
     }
 
     private function createLocation(int $practiceId, string $name)
@@ -107,13 +160,13 @@ class UserScopeTestsSeeder extends Seeder
         return $patients;
     }
 
-    private function createProvider(string $firstName, string $lastName, string $scope, Location ...$locations)
+    private function createStaffMember(string $roleName, string $firstName, string $lastName, string $scope, Location ...$locations)
     {
         $locations = collect($locations);
 
         User::whereFirstName($firstName)->whereLastName($lastName)->forceDelete();
 
-        $provider               = $this->createUser($locations->first()->practice_id, 'provider');
+        $provider               = $this->createUser($locations->first()->practice_id, $roleName);
         $provider->scope        = $scope;
         $provider->username     = $firstName;
         $provider->first_name   = $firstName;
