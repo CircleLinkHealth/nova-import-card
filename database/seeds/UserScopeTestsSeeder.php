@@ -23,10 +23,10 @@ class UserScopeTestsSeeder extends Seeder
     const MED_ASS_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME       = 'Cornos';
     const MED_ASS_WITH_ONE_LOCATION_SCOPE_FIRST_NAME            = 'Pantelitsa';
     const MED_ASS_WITH_ONE_LOCATION_SCOPE_LAST_NAME             = 'Hadjidiamanti';
-    const OFFICE_ADMIN_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME = 'Martha';
-    const OFFICE_ADMIN_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME  = 'Kaiser';
-    const OFFICE_ADMIN_WITH_ONE_LOCATION_SCOPE_FIRST_NAME       = 'Judah';
-    const OFFICE_ADMIN_WITH_ONE_LOCATION_SCOPE_LAST_NAME        = 'Capillé Du Libanaise';
+    const OFFICE_ADMIN_WITH_MULTIPLE_LOCATIONS_SCOPE_FIRST_NAME = 'Markos';
+    const OFFICE_ADMIN_WITH_MULTIPLE_LOCATIONS_SCOPE_LAST_NAME  = 'Poutsis';
+    const OFFICE_ADMIN_WITH_ONE_LOCATION_SCOPE_FIRST_NAME       = 'Tanjelou';
+    const OFFICE_ADMIN_WITH_ONE_LOCATION_SCOPE_LAST_NAME        = 'Capillé Du Liban';
     const PRACTICE_NAME                                         = 'tasoulla_clinic';
     const PROVIDER_WITH_LOCATION_2_SCOPE_FIRST_NAME             = 'Martis';
     const PROVIDER_WITH_LOCATION_2_SCOPE_LAST_NAME              = 'Kourti';
