@@ -68,7 +68,7 @@ class PatientEmailController extends Controller
             );
         }
 
-        $file = $files['file'];
+        $file  = $files['file'];
         $media = $patient->addMedia($file)
             ->withCustomProperties(['doc_type' => 'patient-mail-attachment'])
             ->toMediaCollection('patient-email-attachments');

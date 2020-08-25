@@ -749,7 +749,7 @@ if ( ! function_exists('generateRandomString')) {
     }
 }
 
-if ( ! function_exists('windowToTimestamps')) {
+if ( ! function_exists('clhWindowToTimestamps')) {
     /**
      * Convert timestamps to a Contact Window.
      *
@@ -856,7 +856,7 @@ if ( ! function_exists('timezones')) {
     }
 }
 
-if ( ! function_exists('defaultCarePlanTemplate')) {
+if ( ! function_exists('getDefaultCarePlanTemplate')) {
     /**
      * Returns CircleLink's default CarePlanTemplate.
      */
