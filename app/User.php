@@ -234,6 +234,7 @@ namespace App;
  * @property int|null                                                                                                         $chargeable_monthly_summaries_count
  * @property \CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog[]|\Illuminate\Database\Eloquent\Collection          $endOfMonthCcmStatusLog
  * @property int|null                                                                                                         $end_of_month_ccm_status_log_count
+ * @property string|null                                                                                                      $scope
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
