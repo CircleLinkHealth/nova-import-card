@@ -102,6 +102,26 @@ class ChargeableService extends BaseModel
             ->withTimestamps();
     }
 
+    public function processor(): PatientChargeableServiceProcessor
+    {
+        $class = $this->processorClassMap()[$this->code] ?? null;
+
+        return $class ? new $class() : null;
+    }
+
+    public function processorClassMap(): array
+    {
+        return [
+            self::CCM            => CCM::class,
+            self::BHI            => BHI::class,
+            self::CCM_PLUS_40    => CCM40::class,
+            self::CCM_PLUS_60    => CCM60::class,
+            self::PCM            => PCM::class,
+            self::AWV_INITIAL    => AWV1::class,
+            self::AWV_SUBSEQUENT => AWV2::class,
+        ];
+    }
+
     public function providers()
     {
         return $this->morphedByMany(User::class, 'chargeable')
@@ -141,25 +161,5 @@ class ChargeableService extends BaseModel
     public function scopeSoftwareOnly($query)
     {
         return $query->where('code', self::SOFTWARE_ONLY);
-    }
-    
-    public function processor() : PatientChargeableServiceProcessor
-    {
-        $class = $this->processorClassMap()[$this->code] ?? null;
-        
-        return $class ? new $class : null;
-    }
-    
-    public function processorClassMap() : array
-    {
-        return [
-            self::CCM => CCM::class,
-            self::BHI => BHI::class,
-            self::CCM_PLUS_40 => CCM40::class,
-            self::CCM_PLUS_60 => CCM60::class,
-            self::PCM => PCM::class,
-            self::AWV_INITIAL => AWV1::class,
-            self::AWV_SUBSEQUENT => AWV2::class
-        ];
     }
 }

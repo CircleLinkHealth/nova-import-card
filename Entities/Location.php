@@ -119,6 +119,11 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         'ehr_password',
     ];
 
+    public function chargeableServiceSummaries()
+    {
+        return $this->hasMany(ChargeableLocationMonthlySummary::class, 'location_id');
+    }
+
     public function clinicalEmergencyContact()
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
@@ -266,9 +271,6 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         return $loc;
     }
 
-    public function chargeableServiceSummaries(){
-        return $this->hasMany(ChargeableLocationMonthlySummary::class, 'location_id');
-    }
     /**
      * Get the indexable data array for the model.
      *
