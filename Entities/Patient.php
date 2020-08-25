@@ -694,9 +694,7 @@ class Patient extends BaseModel
         $user
     ) {
         return $query->when(User::SCOPE_LOCATION === $user->scope, function ($q) use ($user) {
-            $q->whereIn('preferred_contact_location', [
-                $user->viewableLocationIds(),
-            ]);
+            $q->whereIn('preferred_contact_location', $user->viewableLocationIds());
         });
     }
 

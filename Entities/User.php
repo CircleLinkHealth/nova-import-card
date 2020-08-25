@@ -1219,7 +1219,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 return $pms->bhi_time;
             }
         }
-        
+
         return optional(
             $this->patientSummaries()
                 ->select(['bhi_time', 'id'])
@@ -2917,16 +2917,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $query,
         $user
     ) {
-        $viewableLocations = $user->viewableLocationIds();
-
-        return $query->whereHas(
-            'locations',
-            function ($q) use (
-                $viewableLocations
-            ) {
-                $q->whereIn('locations.id', $viewableLocations);
-            }
-        );
+        return $query->where(function ($q) use ($user){
+            $q->whereHas(
+                'locations',
+                function ($q) use ($user) {
+                    $q->whereIn('locations.id', $user->viewableLocationIds());
+                }
+            )->orWhereHas('patientInfo', function ($q) use ($user) {
+                $q->intersectLocationsWith($user);
+            });
+        });
     }
 
     /**
