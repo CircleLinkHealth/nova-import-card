@@ -37,15 +37,15 @@ class FinancialSummary extends SalesReportSection
     {
         $formatter = new \NumberFormatter('us_US', \NumberFormatter::CURRENCY);
 
-        return $formatter->format(intval($amount));
+        return $formatter->format($amount);
     }
 
     public function render()
     {
         setlocale(LC_MONETARY, 'en_US.UTF-8');
 
-        $total                        = $this->service->totalBilled();
-        $this->data['billed_so_far']  = $total;
+        $total                       = $this->service->totalBilled();
+        $this->data['billed_so_far'] = $total;
         $this->data['revenue_so_far'] = $this->formatDollar(round($total * 40, -2));
         $this->data['profit_so_far']  = $this->formatDollar($total * 40 - $total * $this->clhpppm);
 
