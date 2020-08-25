@@ -37,4 +37,9 @@ class ChargeableLocationMonthlySummary extends BaseModel
     {
         return $this->belongsTo(Location::class, 'location_id');
     }
+    
+    public function getServiceCode(){
+        return optional($this->chargeableService)->code;
+    }
+    
 }

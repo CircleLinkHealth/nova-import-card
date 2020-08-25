@@ -133,7 +133,7 @@ class AvailableServiceProcessors implements Arrayable
         return collect($this->toArray());
     }
 
-    private static function classMap(): array
+    public static function classMap(): array
     {
         return [
             CCM::class   => 'ccm',

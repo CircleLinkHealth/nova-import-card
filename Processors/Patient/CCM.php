@@ -51,6 +51,11 @@ class CCM implements PatientChargeableServiceProcessor
         // TODO: Implement minimumNumberOfCalls() method.
     }
 
+    public function minimumNumberOfProblems()
+    {
+        return 2;
+    }
+
     public function minimumTimeInSeconds(): int
     {
         // TODO: Implement minimumTimeInSeconds() method.
@@ -83,10 +88,5 @@ class CCM implements PatientChargeableServiceProcessor
     public function shouldFulfill(int $patientId, Carbon $monthYear)
     {
         // TODO: Implement shouldFulfill() method.
-    }
-    
-    public function minimumNumberOfProblems()
-    {
-        return 2;
     }
 }
