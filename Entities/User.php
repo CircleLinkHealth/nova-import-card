@@ -2576,13 +2576,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      *
      * @return Role|null
      */
-    public function practiceOrGlobalRole()
+    public function practiceOrGlobalRole(bool $returnId = false)
     {
         if ($this->practice($this->primaryPractice)) {
             $primaryPractice = $this->practice($this->primaryPractice);
 
-            if ($primaryPractice->pivot->role_id) {
-                return Role::find($primaryPractice->pivot->role_id);
+            if ($id = $primaryPractice->pivot->role_id) {
+                if ($returnId) {
+                    return $id;
+                }
+
+                return Role::find($id);
             }
         }
 
@@ -2917,7 +2921,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $query,
         $user
     ) {
-        return $query->where(function ($q) use ($user){
+        return $query->where(function ($q) use ($user) {
             $q->whereHas(
                 'locations',
                 function ($q) use ($user) {
