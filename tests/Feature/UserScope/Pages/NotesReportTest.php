@@ -18,7 +18,7 @@ class NotesReportTest extends UserScopeTestCase
 
     public function test_notes_report_page_shows_patients_from_the_same_location_only()
     {
-        $this->withLocationScope()
+        $this->withSingleLocationScope()
             ->calling('GET', route('patient.note.listing'))
             ->assertCallback(function (TestResponse $response, User $actor) {
                 $responseData = $this->extractResponseData($response);
