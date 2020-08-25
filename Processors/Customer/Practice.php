@@ -26,7 +26,7 @@ class Practice implements CustomerBillingProcessor
         return new ApprovablePatientCollection($this->repo->patients($practiceId, $month, $pageSize));
     }
 
-    public function processServicesForAllPatients(int $practiceId, Carbon $month): void
+    public function processServicesForAllPatients(int $practiceId, Carbon $month, bool $fulfill): void
     {
         // TODO: Implement processServicesForAllPatients() method.
     }

@@ -21,9 +21,9 @@ class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    protected $chargeableMonth;
+    protected Carbon $chargeableMonth;
 
-    protected $fulfill;
+    protected bool $fulfill;
 
     /**
      * Create a new job instance.
