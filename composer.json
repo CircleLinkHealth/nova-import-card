@@ -163,6 +163,7 @@
     "ext-bcmath": "*",
     "ext-dom": "*",
     "ext-imagick": "*",
+    "ext-intl": "*",
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-pdo": "*",
