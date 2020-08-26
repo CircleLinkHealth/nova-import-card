@@ -21,9 +21,9 @@ class CCM implements PatientChargeableServiceProcessor
 
     private PatientProcessorEloquentRepository $repo;
 
-    public function attach(int $patientId, Carbon $monthYear): ChargeablePatientMonthlySummary
+    public function attach(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
     {
-        return $this->repo()->store($patientId, $this->code(), $monthYear);
+        return $this->repo()->store($patientId, $this->code(), $chargeableMonth);
     }
 
     public function code(): string
@@ -40,19 +40,19 @@ class CCM implements PatientChargeableServiceProcessor
         return $summary;
     }
 
-    public function isAttached(int $patientId, Carbon $monthYear): bool
+    public function isAttached(int $patientId, Carbon $chargeableMonth): bool
     {
         // TODO: Implement isAttached() method.
     }
 
-    public function isFulfilled(int $patientId, Carbon $monthYear): bool
+    public function isFulfilled(int $patientId, Carbon $chargeableMonth): bool
     {
         // TODO: Implement isFulfilled() method.
     }
 
     public function minimumNumberOfCalls(): int
     {
-        // TODO: Implement minimumNumberOfCalls() method.
+        return 1;
     }
 
     public function minimumNumberOfProblems(): int
@@ -70,7 +70,7 @@ class CCM implements PatientChargeableServiceProcessor
         return new CCM40();
     }
 
-    public function processBilling(int $patientId, Carbon $monthYear)
+    public function processBilling(int $patientId, Carbon $chargeableMonth)
     {
         // TODO: Implement processBilling() method.
     }
@@ -84,7 +84,7 @@ class CCM implements PatientChargeableServiceProcessor
         return $this->repo;
     }
 
-    public function shouldAttach(Collection $patientProblems, Carbon $monthYear): bool
+    public function shouldAttach(Collection $patientProblems, Carbon $chargeableMonth): bool
     {
         return $patientProblems->filter(function (PatientProblemForProcessing $problemToProcess) {
             return in_array($this->code(), $problemToProcess->getServiceCodes());
@@ -92,7 +92,7 @@ class CCM implements PatientChargeableServiceProcessor
             ->count() >= $this->minimumNumberOfProblems();
     }
 
-    public function shouldFulfill(int $patientId, Carbon $monthYear): bool
+    public function shouldFulfill(int $patientId, Carbon $chargeableMonth): bool
     {
         // TODO: Implement shouldFulfill() method.
     }

@@ -29,11 +29,18 @@ class Location implements CustomerBillingProcessor
 
     public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth, bool $fulfill): void
     {
-        $availableLocationServiceProcessors = $this->repo->availableLocationServiceProcessors($locationId, $chargeableMonth);
-        $job                                = new ProcessLocationPatientsChunk($availableLocationServiceProcessors, $chargeableMonth);
-
-        $this->repo->patients($locationId, $chargeableMonth)
-            ->chunkIntoJobs(100, $job);
+        $this->repo
+            ->patients($locationId, $chargeableMonth)
+            ->chunkIntoJobs(
+                100,
+                new ProcessLocationPatientsChunk(
+                    $this->repo->availableLocationServiceProcessors(
+                        $locationId,
+                        $chargeableMonth
+                    ),
+                    $chargeableMonth
+                )
+            );
     }
 
     public function repo(): CustomerBillingProcessorRepository
