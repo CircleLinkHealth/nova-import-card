@@ -347,16 +347,24 @@ class NotesController extends Controller
 
     public function listing(NotesReport $request)
     {
+        /** @var User $session_user */
         $session_user = auth()->user();
 
         if ($request->has('getNotesFor')) {
             $providers = $this->getProviders($request->getNotesFor);
         }
 
-        $data['providers'] = User::whereIn('id', $session_user->viewableProviderIds())
-            ->pluck('display_name', 'id')->sort();
-        $data['practices'] = Practice::whereIn('id', $session_user->viewableProgramIds())
-            ->pluck('display_name', 'id')->sort();
+        $data['providers'] = User::SCOPE_LOCATION === $session_user->scope
+            ? collect([$session_user->id])
+            : User::whereIn('id', $session_user->viewableProviderIds())
+                ->pluck('display_name', 'id')
+                ->sort();
+
+        $data['practices'] = User::SCOPE_LOCATION === $session_user->scope
+            ? collect()
+            : Practice::whereIn('id', $session_user->viewableProgramIds())
+                ->pluck('display_name', 'id')
+                ->sort();
 
         $start = Carbon::now()->startOfMonth()->subMonth(
             $request->has('range')
