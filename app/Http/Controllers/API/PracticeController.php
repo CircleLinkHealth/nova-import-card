@@ -54,8 +54,8 @@ class PracticeController extends Controller
     {
         $practiceId          = $request->route()->parameters()['practiceId'];
         $locationId          = $request->route()->parameters()['locationId'];
-        $providersCollection = Location::where('id', $locationId)->get(['id'])->map(function ($location) {
-            return collect($location['providers'])
+        $providersCollection = Location::where('practice_id', $practiceId)->whereHas('providers')->with('providers')->where('id', $locationId)->get(['id'])->map(function ($location) {
+            return $location->providers
                 ->map(function ($provider) {
                     return [
                         'id'           => $provider->id,
@@ -159,24 +159,25 @@ class PracticeController extends Controller
     public function getPracticeLocations(Request $request)
     {
         $practiceId         = $request->route()->parameters()['practiceId'];
-        $locationCollection = Location::where('practice_id', $practiceId)->get([
+        $locationCollection = Location::where('practice_id', $practiceId)->with('providers')->get([
             'id',
             'is_primary',
             'state',
             'name',
             'timezone',
             'practice_id',
-        ])->map(function ($location) {
-            return [
-                'id'          => $location->id,
-                'is_primary'  => $location->is_primary,
-                'state'       => $location->state,
-                'name'        => $location->name,
-                'timezone'    => $location->timezone,
-                'practice_id' => $location->practice_id,
-                'providers'   => collect($location['providers'])->count(),
-            ];
-        });
+        ])
+            ->map(function ($location) {
+                return [
+                    'id'          => $location->id,
+                    'is_primary'  => $location->is_primary,
+                    'state'       => $location->state,
+                    'name'        => $location->name,
+                    'timezone'    => $location->timezone,
+                    'practice_id' => $location->practice_id,
+                    'providers'   => collect($location['providers'])->count(),
+                ];
+            });
 
         return response()->json($locationCollection->toArray());
     }

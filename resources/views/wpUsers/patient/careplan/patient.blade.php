@@ -310,6 +310,8 @@ $user_info = [];
                                                 </div>
                                             @endif
 
+                                            <input type="hidden" name="program_id" value="{{ $programId }}">
+
                                             @if(isset($patient->id) )
                                                 @if(($patient->primaryPractice) )
                                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }} hidden">
@@ -317,42 +319,118 @@ $user_info = [];
                                                         <strong>{{ $patient->primaryPractice->display_name }}</strong>
                                                     </div>
                                                 @endif
-                                                <input type=hidden name=program_id value="{{ $programId }}">
-                                                <div class="form-group form-item form-item-spacing col-lg-12 col-sm-12 col-xs-12 {{ $errors->first('program') ? 'has-error' : '' }}">
+                                                <div id="preferred_contact_location_container" class="form-group form-item form-item-spacing col-lg-12 col-sm-12 col-xs-12 {{ $errors->first('program') ? 'has-error' : '' }}">
                                                     {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:') !!}
-                                                    {!! Form::select('preferred_contact_location', $locations, $patient->getPreferredContactLocation(), ['class' => 'form-control select-picker'/*, 'style' => 'width:90;'*/]) !!}
+                                                    {!! Form::select('preferred_contact_location', $locations, $patient->patientInfo->preferred_contact_location, ['class' => 'form-control select-picker']) !!}
                                                 </div>
+                                                <div id="provider_id_container" class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('provider_id') ? 'has-error' : '' }}">
+                                                    {!! Form::label('provider_id', 'Billing Provider:') !!}
+                                                    <span id="provider_id_loader" class="hide loader-right"><div class="loader" style="width: 22px;height: 22px;display: inline-block;"></div></span>
+                                                    {!! Form::select('provider_id', $providers, $billingProviderUserId, ['class' => 'form-control select-picker']) !!}
+                                                </div>
+                                                    @push('scripts')
+                                                        <script>
+                                                            (function () {
+                                                                function htmlHide(selector) {
+                                                                    $(selector).html('')
+                                                                }
+
+                                                                function populateBillingProviderDropdown(practiceId, locationId) {
+                                                                    $('#provider_id_loader').removeClass('hide');
+                                                                    return $.ajax({
+                                                                        url: '/api/practices/' + practiceId + '/locations/' + locationId + '/providers',
+                                                                        type: 'GET',
+                                                                        success: function (providers) {
+                                                                            console.log('practice:providers', providers)
+                                                                            providers.forEach(function (provider) {
+                                                                                $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.display_name))
+                                                                            })
+                                                                            $('#provider_id_container').removeClass('hide')
+                                                                            $('#provider_id_loader').addClass('hide');
+                                                                        }
+                                                                    })
+                                                                }
+
+                                                                $('[name="preferred_contact_location"]').change(function () {
+                                                                    htmlHide('[name="provider_id"]')
+                                                                    populateBillingProviderDropdown($('[name="program_id"]').val(), $(this).val())
+                                                                })
+                                                            })();
+
+                                                        </script>
+                                                    @endpush
                                             @else
                                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
                                                     {!! Form::label('program_id', 'Program:') !!}
-                                                    {!! Form::select('program_id', $programs, $patient->program_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
+                                                    {!! Form::select('program_id', $programs, null, ['class' => 'form-control select-picker']) !!}
                                                 </div>
-                                                <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('provider_id') ? 'has-error' : '' }}">
+                                                <div id="preferred_contact_location_container" class="hide form-group form-item form-item-spacing col-lg-12 col-sm-12 col-xs-12 {{ $errors->first('program') ? 'has-error' : '' }}">
+                                                    {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:') !!}
+                                                    <span id="preferred_contact_location_loader" class="hide loader-right"><div class="loader" style="width: 22px;height: 22px;display: inline-block;"></div></span>
+                                                    {!! Form::select('preferred_contact_location', [], null, ['class' => 'form-control select-picker']) !!}
+                                                </div>
+                                                <div id="provider_id_container" class="hide form-group form-item form-item-spacing col-sm-12 {{ $errors->first('provider_id') ? 'has-error' : '' }}">
                                                     {!! Form::label('provider_id', 'Billing Provider:') !!}
-                                                    {!! Form::select('provider_id', $billingProviders, null, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
+                                                    <span id="provider_id_loader" class="hide loader-right"><div class="loader" style="width: 22px;height: 22px;display: inline-block;"></div></span>
+                                                    {!! Form::select('provider_id', [], null, ['class' => 'form-control select-picker']) !!}
                                                 </div>
+
                                                 @push('scripts')
                                                     <script>
                                                         (function () {
-                                                            function setBillingProvider(practiceId) {
+                                                            function htmlHide(selector) {
+                                                                $(selector).html('')
+                                                            }
+                                                            function populateLocationsDropdown(practiceId) {
+                                                                $('#preferred_contact_location_loader').removeClass('hide');
+
                                                                 return $.ajax({
-                                                                    url: '/api/practices/' + practiceId + '/providers',
+                                                                    url: '/api/practices/' + practiceId + '/locations',
+                                                                    type: 'GET',
+                                                                    success: function (locations) {
+                                                                        console.log('practice:locations', locations)
+                                                                        locations.forEach(function (location) {
+                                                                            $('[name="preferred_contact_location"]').append($('<option />').val(location.id).text(location.name))
+                                                                        })
+                                                                        $('#preferred_contact_location_container').removeClass('hide')
+                                                                        if (locations.length > 0) {
+                                                                            populateBillingProviderDropdown(practiceId, locations[0].id)
+                                                                        }
+                                                                        $('#preferred_contact_location_loader').addClass('hide');
+                                                                    }
+                                                                })
+                                                            }
+
+                                                            function populateBillingProviderDropdown(practiceId, locationId) {
+                                                                $('#provider_id_loader').removeClass('hide');
+                                                                return $.ajax({
+                                                                    url: '/api/practices/' + practiceId + '/locations/' + locationId + '/providers',
                                                                     type: 'GET',
                                                                     success: function (providers) {
                                                                         console.log('practice:providers', providers)
-                                                                        $('[name="provider_id"]').html('')
                                                                         providers.forEach(function (provider) {
-                                                                            $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.name))
+                                                                            $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.display_name))
                                                                         })
+                                                                        $('#provider_id_container').removeClass('hide')
+                                                                        $('#provider_id_loader').addClass('hide');
+
                                                                     }
                                                                 })
                                                             }
 
                                                             $('[name="program_id"]').change(function () {
-                                                                setBillingProvider($(this).val())
+                                                                $('[name="program_id"]').val($(this).val())
+                                                                htmlHide('[name="preferred_contact_location"]')
+                                                                htmlHide('[name="provider_id"]')
+                                                                populateLocationsDropdown($(this).val())
                                                             })
 
-                                                            setBillingProvider($('[name="program_id"]').val())
+                                                            $('[name="preferred_contact_location"]').change(function () {
+                                                                htmlHide('[name="provider_id"]')
+                                                                populateBillingProviderDropdown($('[name="program_id"]').val(), $(this).val())
+                                                            })
+
+                                                            populateLocationsDropdown($('[name="program_id"]').val());
                                                         })();
 
                                                     </script>
@@ -501,7 +579,7 @@ $user_info = [];
                                 <hr style="border-top: 3px solid #50b2e2;">
                             </div>
                             <div class="main-form-block main-form-secondary col-lg-12 text-center">
-                                <button class="btn btn-primary">Save Profile</button>
+                                <button id="save-patient-btn" class="btn btn-primary">Save Profile</button>
                                 <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
                             </div>
                         </div>

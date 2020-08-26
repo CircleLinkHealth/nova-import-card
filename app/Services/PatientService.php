@@ -11,7 +11,6 @@ use App\Http\Resources\UserAutocompleteResource;
 use App\Http\Resources\UserCsvResource;
 use App\Http\Resources\UserSafeResource;
 use App\Repositories\PatientReadRepository;
-use App\Services\CCD\CcdAllergyService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -27,11 +26,9 @@ class PatientService
 
     public function __construct(
         PatientWriteRepository $patientRepo,
-        PatientReadRepository $patientReadRepo,
-        CcdAllergyService $allergyService
+        PatientReadRepository $patientReadRepo
     ) {
         $this->patientRepo     = $patientRepo;
-        $this->allergyService  = $allergyService;
         $this->patientReadRepo = $patientReadRepo;
     }
 

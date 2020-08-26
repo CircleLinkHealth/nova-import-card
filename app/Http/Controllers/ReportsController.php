@@ -19,6 +19,7 @@ use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -558,6 +559,7 @@ class ReportsController extends Controller
             ->with(
                 [
                     'primaryPractice',
+                    'patientInfo',
                     'activities' => function ($q) use ($start, $end) {
                         $q->select(
                             DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration')
@@ -572,11 +574,34 @@ class ReportsController extends Controller
                             ->groupBy(DB::raw('provider_id, DATE(performed_at),type,lv_activities.id'))
                             ->orderBy('performed_at', 'desc');
                     },
+                    'careTeamMembers' => function ($q) {
+                        $q->with(['user' => function ($q) {
+                            $q->without(['perms', 'roles'])
+                                ->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
+                        }])->where('member_user_id', auth()->user()->id)
+                            ->whereIn(
+                                'type',
+                                [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                            );
+                    },
                 ]
             )
             ->has('primaryPractice')
-            ->has('patientInfo')
-            ->with('patientInfo')
+            ->whereHas('patientInfo', function ($q) {
+                $q->intersectLocationsWith(auth()->user());
+            })
+            ->when(
+                auth()->user()->isProvider() && User::SCOPE_LOCATION === auth()->user()->scope,
+                function ($query) {
+                    $query->whereHas('careTeamMembers', function ($subQuery) {
+                        $subQuery->where('member_user_id', auth()->id())
+                            ->whereIn(
+                                'type',
+                                [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                            );
+                    });
+                }
+            )
             ->whereHas(
                 'patientSummaries',
                 function ($q) use ($time) {
@@ -636,10 +661,13 @@ class ReportsController extends Controller
             $u20_patients[$patient_counter]['dob']             = Carbon::parse($patient->getBirthDate())->format(
                 'm/d/Y'
             );
-            $u20_patients[$patient_counter]['mrn']          = $patient->patientInfo->mrn_number;
-            $u20_patients[$patient_counter]['patient_name'] = $patient->getFullName();
-            $u20_patients[$patient_counter]['patient_id']   = $patient->id;
-            $acts                                           = $patient->activities;
+            $u20_patients[$patient_counter]['mrn']                 = $patient->patientInfo->mrn_number;
+            $u20_patients[$patient_counter]['patient_name']        = $patient->getFullName();
+            $u20_patients[$patient_counter]['patient_id']          = $patient->id;
+            $u20_patients[$patient_counter]['practice_id']         = $patient->program_id;
+            $u20_patients[$patient_counter]['location_id']         = optional($patient->patientInfo)->preferred_contact_location;
+            $u20_patients[$patient_counter]['billing_provider_id'] = $patient->getBillingProviderId();
+            $acts                                                  = $patient->activities;
 
             foreach ($acts as $activity) {
                 if (in_array($activity->type, $CarePlan)) {

@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Foundation\Testing\WithFaker;
+use ReflectionObject;
 
 class CustomerTestCase extends TestCase
 {
@@ -58,6 +59,52 @@ class CustomerTestCase extends TestCase
      * @var array|User
      */
     private $surveyOnly;
+
+    /**
+     * Cast an object to an insteance of a fake object.
+     * Useful when wanting to add extra functionality (eg. assertions) to an object.
+     *
+     * @throws \ReflectionException
+     *
+     * @return mixed|string
+     */
+    public function castToFake(object $instance, string $destinationClass)
+    {
+        $src            = new ReflectionObject($instance);
+        $destReflection = new ReflectionObject($destinationClass = new $destinationClass());
+        $srcProps       = $src->getProperties();
+        foreach ($srcProps as $prop) {
+            $prop->setAccessible(true);
+            $name  = $prop->getName();
+            $value = $prop->getValue($instance);
+            if ($destReflection->hasProperty($name)) {
+                $propDest = $destReflection->getProperty($name);
+                $propDest->setAccessible(true);
+                $propDest->setValue($destinationClass, $value);
+
+                continue;
+            }
+            $destinationClass->$name = $value;
+        }
+
+        return $destinationClass;
+    }
+
+    /**
+     * @return array|User
+     */
+    public function createUsersOfType(string $roleName, int $number = 1)
+    {
+        if ($number > 1) {
+            for ($i = 1; $i <= $number; ++$i) {
+                $users[] = $this->createUser($this->practice()->id, $roleName);
+            }
+        } else {
+            $users = $this->createUser($this->practice()->id, $roleName);
+        }
+
+        return $users;
+    }
 
     /**
      * @return array|User
@@ -173,6 +220,16 @@ class CustomerTestCase extends TestCase
         return $this->provider;
     }
 
+    protected function resetPatient()
+    {
+        $this->patient = null;
+    }
+
+    protected function resetProvider()
+    {
+        $this->provider = null;
+    }
+
     /**
      * @return array|User
      */
@@ -195,21 +252,5 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->surveyOnly;
-    }
-
-    /**
-     * @return array|User
-     */
-    private function createUsersOfType(string $roleName, int $number = 1)
-    {
-        if ($number > 1) {
-            for ($i = 1; $i <= $number; ++$i) {
-                $users[] = $this->createUser($this->practice()->id, $roleName);
-            }
-        } else {
-            $users = $this->createUser($this->practice()->id, $roleName);
-        }
-
-        return $users;
     }
 }
