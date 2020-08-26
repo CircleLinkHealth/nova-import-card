@@ -36,9 +36,7 @@ class DashboardController extends Controller
 
         $this->practiceSlug = request()->route('practiceSlug');
 
-        $this->primaryPractice = Practice::with('locations')
-            ->where('name', $this->practiceSlug)
-            ->first();
+        $this->primaryPractice = Practice::whereName($this->practiceSlug)->first();
 
         //return these with all requests
         $this->returnWithAll = [
@@ -68,19 +66,11 @@ class DashboardController extends Controller
                 return $service;
             });
 
-        $noLocationsForPractice = false;
-        $locations              = $this->primaryPractice->locations->pluck('id', 'name');
-        if (empty($locations)) {
-            $noLocationsForPractice = true;
-        }
-
         return view('provider.chargableServices.create', array_merge([
-            'practice'               => $this->primaryPractice,
-            'locations'              => $locations,
-            'noLocationsForPractice' => $noLocationsForPractice,
-            'practiceSlug'           => $this->practiceSlug,
-            'practiceSettings'       => $this->primaryPractice->cpmSettings(),
-            'chargeableServices'     => PracticeChargeableServices::collection($allChargeableServices),
+            'practice'           => $this->primaryPractice,
+            'practiceSlug'       => $this->practiceSlug,
+            'practiceSettings'   => $this->primaryPractice->cpmSettings(),
+            'chargeableServices' => PracticeChargeableServices::collection($allChargeableServices),
         ], $this->returnWithAll));
     }
 
