@@ -11,7 +11,24 @@
     <div class="container">
         <div class="row">
             {!! Form::open(['url' => route('provider.dashboard.store.chargeable-services', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12', 'id'=>'practice-chargeable-services-form']) !!}
+           <div class="input-field col s12">
+               <div class="input-field col s6">
+                   <select id="locationsOption" onchange="showLocationsDropdown()">
+                       <option disabled selected>Choose your option</option>
+                       <option value="practice">For Entire Practice</option>
+                       <option value="locations">Per Location</option>
+                   </select>
+               </div>
 
+               <div id="locationsDropdown" class="input-field col s6 locations-dropdown">
+                   <select>
+                       <option value="" disabled selected>Choose Locations</option>
+                       @foreach($locations as $locationName => $id)
+                           <option value="{{$id}}">{{$locationName}}</option>
+                       @endforeach
+                   </select>
+               </div>
+           </div>
             <div class="row">
                 @foreach($chargeableServices as $service)
                     <div class="col s12 m6">
@@ -63,6 +80,12 @@
         </div>
         @endsection
 
+        <style>
+            .locations-dropdown{
+                display: none;
+            }
+        </style>
+
         @push('scripts')
             <script>
                 $(document).ready(function () {
@@ -79,5 +102,14 @@
                         ccmPlus40Elem.prop('checked', e.currentTarget.checked);
                     });
                 });
+
+                function showLocationsDropdown(){
+                    let selectElement = document.getElementById('locationsOption');
+                    if (selectElement.options[selectElement.selectedIndex].value === 'locations'){
+                        document.getElementById('locationsDropdown').style.display = 'block';
+                        return;
+                    }
+                    document.getElementById('locationsDropdown').style.display = 'none';
+                }
             </script>
     @endpush

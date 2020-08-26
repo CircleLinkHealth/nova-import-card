@@ -9,7 +9,6 @@ namespace App\Http\Controllers;
 use App\Events\CarePlanWasApproved;
 use App\Note;
 use App\Services\ProviderInfoService;
-use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Http\Request;
@@ -101,7 +100,7 @@ class ProviderController extends Controller
 
     public function listLocations()
     {
-        return Location::whereIn('practice_id', auth()->user()->viewableProgramIds())->whereNotNull('name')->get()->transform(function ($location) {
+        return auth()->user()->locations->whereNotNull('name')->transform(function ($location) {
             return [
                 'id'   => $location->id,
                 'name' => $location->name,

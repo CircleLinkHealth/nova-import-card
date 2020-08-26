@@ -63,20 +63,18 @@ trait UserHelpers
     }
 
     /**
-     * @param int    $practiceId
-     * @param string $roleName
-     * @param mixed  $ccmStatus
+     * @param mixed $ccmStatus
      */
     public function createUser(
-        $practiceId = 8,
-        $roleName = 'provider',
-        $ccmStatus = 'enrolled'
+        int $practiceId = 8,
+        string $roleName = 'provider',
+        string $ccmStatus = 'enrolled'
     ): User {
         $practiceId = parseIds($practiceId)[0];
         $roles      = [Role::whereName($roleName)->firstOrFail()->id];
 
         //creates the User
-        $user = $this->setupUser($practiceId, $roles, $ccmStatus);
+        $user = $this->setupUser($practiceId, $roles, $roleName, $ccmStatus);
 
         $email     = $user->email;
         $locations = $user->locations->pluck('id')->all();
@@ -186,57 +184,65 @@ trait UserHelpers
                 'patient_id' => $patient->user_id,
             ],
             [
-                'ccm_time'                            => 0,
-                'bhi'                                 => 0,
-                'no_of_calls'                         => 0,
-                'no_of_successful_calls'              => 0,
-                'no_call_attempts_since_last_success' => 0,
+                'ccm_time'               => 0,
+                'bhi_time'               => 0,
+                'no_of_calls'            => 0,
+                'no_of_successful_calls' => 0,
             ]
         );
     }
 
-    public function setupUser($practiceId, $roles, $ccmStatus = 'enrolled')
+    public function setupUser($practiceId, $roles, $roleName, $ccmStatus = 'enrolled')
     {
         $faker = Factory::create();
 
         $firstName = $faker->firstName;
-        $lastName  = $faker->lastName;
-        $email     = $faker->email;
+        $lastName  = "$faker->lastName Role:$roleName";
+        $email     = now()->timestamp.$faker->email;
         $workPhone = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
 
-        $bag = new ParameterBag(
-            [
-                'saas_account_id' => SaasAccount::firstOrFail()->id,
-                'email'           => $email,
-                'password'        => 'password',
-                'display_name'    => "$firstName $lastName",
-                'first_name'      => $firstName,
-                'last_name'       => $lastName,
-                'username'        => $faker->userName,
-                'program_id'      => $practiceId,
-                //id=9 is testdrive
-                'address'           => $faker->streetAddress,
-                'user_status'       => 1,
-                'address2'          => '',
-                'city'              => $faker->city,
-                'state'             => 'AL',
-                'zip'               => '12345',
-                'is_auto_generated' => true,
-                'roles'             => $roles,
-                'timezone'          => 'America/New_York',
+        $args = [
+            'saas_account_id' => SaasAccount::firstOrFail()->id,
+            'email'           => $email,
+            'password'        => 'password',
+            'display_name'    => "$firstName $lastName",
+            'first_name'      => $firstName,
+            'last_name'       => $lastName,
+            'username'        => $email,
+            'program_id'      => $practiceId,
 
-                //provider Info
-                'prefix'     => 'Dr',
-                'suffix'     => 'MD',
-                'npi_number' => 1234567890,
-                'specialty'  => 'Unit Tester',
+            'address'           => $faker->streetAddress,
+            'user_status'       => 1,
+            'address2'          => '',
+            'city'              => $faker->city,
+            'state'             => 'AL',
+            'zip'               => '55555',
+            'is_auto_generated' => true,
+            'roles'             => $roles,
+            'timezone'          => 'America/New_York',
 
-                //phones
-                'home_phone_number' => $workPhone,
+            'home_phone_number' => $workPhone,
+        ];
 
+        if ('participant' === $roleName) {
+            $args = array_merge($args, [
                 'ccm_status' => $ccmStatus,
                 'birth_date' => $faker->date('Y-m-d'),
-            ]
+            ]);
+        }
+
+        if ('provider' === $roleName) {
+            $args = array_merge($args, [
+                'prefix'                 => 'Dr',
+                'suffix'                 => 'MD',
+                'npi_number'             => 1234567890,
+                'specialty'              => 'Unit Tester',
+                'approve_own_care_plans' => true,
+            ]);
+        }
+
+        $bag = new ParameterBag(
+            $args
         );
 
         //create a user

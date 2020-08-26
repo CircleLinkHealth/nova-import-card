@@ -36,7 +36,9 @@ class DashboardController extends Controller
 
         $this->practiceSlug = request()->route('practiceSlug');
 
-        $this->primaryPractice = Practice::whereName($this->practiceSlug)->first();
+        $this->primaryPractice = Practice::with('locations')
+            ->where('name', $this->practiceSlug)
+            ->first();
 
         //return these with all requests
         $this->returnWithAll = [
@@ -66,11 +68,19 @@ class DashboardController extends Controller
                 return $service;
             });
 
+        $noLocationsForPractice = false;
+        $locations              = $this->primaryPractice->locations->pluck('id', 'name');
+        if (empty($locations)) {
+            $noLocationsForPractice = true;
+        }
+
         return view('provider.chargableServices.create', array_merge([
-            'practice'           => $this->primaryPractice,
-            'practiceSlug'       => $this->practiceSlug,
-            'practiceSettings'   => $this->primaryPractice->cpmSettings(),
-            'chargeableServices' => PracticeChargeableServices::collection($allChargeableServices),
+            'practice'               => $this->primaryPractice,
+            'locations'              => $locations,
+            'noLocationsForPractice' => $noLocationsForPractice,
+            'practiceSlug'           => $this->practiceSlug,
+            'practiceSettings'       => $this->primaryPractice->cpmSettings(),
+            'chargeableServices'     => PracticeChargeableServices::collection($allChargeableServices),
         ], $this->returnWithAll));
     }
 
@@ -119,6 +129,10 @@ class DashboardController extends Controller
             'practiceSlug' => $this->practiceSlug,
             'staff'        => $users['existingUsers'],
             'locations'    => $locations,
+            'userScopes'   => [
+                User::SCOPE_LOCATION => 'Their Location only',
+                User::SCOPE_PRACTICE => 'The entire Practice',
+            ],
         ], $this->returnWithAll));
     }
 
@@ -290,6 +304,8 @@ Please update their profiles <a href='{$route}'>here</a>.");
         if ($request->input('lead_id')) {
             $update['user_id'] = $request->input('lead_id');
         }
+
+        $update['default_user_scope'] = $request->input('default_user_scope');
 
         if (auth()->user()->isAdmin()) {
             $update['bill_to_name'] = $request->input('bill_to_name');

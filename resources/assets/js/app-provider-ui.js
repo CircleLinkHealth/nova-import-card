@@ -45,7 +45,7 @@ const Select2Component = () => import(/* webpackChunkName: "chunk-misc" */ './co
 const FabComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/fab')
 const OpenModalComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/shared/open-modal')
 const NotificationsComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/shared/notifications/notifications')
-const PdfCarePlans = () => import(/* webpackChunkName: "chunk" */ './components/pages/view-care-plan/pdf-careplans')
+const CareplanActions = () => import(/* webpackChunkName: "chunk" */ './components/pages/view-care-plan/careplan-actions')
 const CareDocsIndex = () => import(/* webpackChunkName: "chunk" */ './components/pages/care-docs/index')
 const MedicationsListComponent = () => import(/* webpackChunkName: "chunk" */ './ccd-models/medications')
 const ProblemsList = () => import(/* webpackChunkName: "chunk" */ './ccd-models/problems')
@@ -104,7 +104,7 @@ Vue.component('send-email-to-patient', SendEmailToPatientComponent);
 Vue.component('fab', FabComponent);
 Vue.component('openModal', OpenModalComponent);
 Vue.component('notifications', NotificationsComponent);
-Vue.component('pdfCareplans', PdfCarePlans);
+Vue.component('careplanActions', CareplanActions);
 Vue.component('careDocsIndex', CareDocsIndex);
 Vue.component('medicationsList', MedicationsListComponent);
 Vue.component('problemsList', ProblemsList);

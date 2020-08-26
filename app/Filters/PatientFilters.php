@@ -6,7 +6,6 @@
 
 namespace App\Filters;
 
-use App\Repositories\PatientReadRepository;
 use App\User;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -20,7 +19,7 @@ class PatientFilters extends QueryFilters
 {
     protected $request;
 
-    public function __construct(Request $request, PatientReadRepository $patientRepository)
+    public function __construct(Request $request)
     {
         $this->request = $request;
         parent::__construct($request);

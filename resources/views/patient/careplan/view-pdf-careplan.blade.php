@@ -69,9 +69,9 @@ $canSwitchToWeb = $patient->carePlan && CircleLinkHealth\SharedModels\Entities\C
             </div>
         </div>
 
-        <pdf-careplans mode="pdf"
+        <careplan-actions mode="pdf"
                        route-switch-to-web="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan ? $patient->carePlan->id : 0])}}"
                        :can-switch-to-web="@json($canSwitchToWeb)">
-        </pdf-careplans>
+        </careplan-actions>
     </div>
 @endsection

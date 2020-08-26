@@ -36,7 +36,8 @@
             'patientCarePlanPdfsHasItems',
             'shouldShowApprovalButton',
             'routeSwitchToWeb',
-            'canSwitchToWeb'
+            'canSwitchToWeb',
+            'userScope'
         ],
 
         created() {
@@ -92,6 +93,9 @@
             }
         },
         computed: {
+            canOnlySeeLocation() {
+                return this.userScope === 'location'
+            },
             pdfSwitchUrl() {
                 return rootUrl(`manage-patients/switch-to-pdf-careplan/${this.patientCareplanId}`)
             },
@@ -251,7 +255,7 @@
     <div class="col-md-12" style="padding-top: 2%;" v-cloak>
         <div class="row" v-if="mode === Modes.Web">
             <div class="col-md-5 text-left">
-                <template v-if="isProvider && isEnrolled()">
+                <template v-if="isProvider && isEnrolled() && ! canOnlySeeLocation">
                     <form id="form-provider-approve" class="inline-block" style="text-align: left"
                           :action="routeApproveOwn"
                           method="POST">

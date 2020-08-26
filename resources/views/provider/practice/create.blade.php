@@ -99,6 +99,19 @@
                     <label for="is_demo">Is Demo</label>
                 </div>
             </div>
+
+            <div class="row" style="padding-top: 5%;">
+                <div class="input-field col s6">
+                    <label for="default_user_scope" class="active" data-error="required">Staff can view patients from</label>
+                    <div style="height: 15px;"></div>
+                    <select id="default_user_scope" name="default_user_scope"
+                            class="validate" required>
+                        @foreach($userScopes as $scopeId => $scopeDescription)
+                            <option value="{{$scopeId}}" @if($scopeId==$practice->default_user_scope){{'selected'}}@endif>{{$scopeDescription}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
         @endif
 
         <br/>

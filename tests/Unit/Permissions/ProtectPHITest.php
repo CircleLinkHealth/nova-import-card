@@ -12,12 +12,10 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Mockery as m;
 use Tests\TestCase;
 
 class ProtectPHITest extends TestCase
 {
-    use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
     use UserHelpers;
     protected $admin;
     protected $enrollee;
@@ -35,16 +33,6 @@ class ProtectPHITest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        //could not make it work at the moment
-//        $app = m::mock('app')->shouldReceive('instance')->getMock();
-//        $this->facadeMocks['config'] = m::mock('config');
-//        $this->facadeMocks['cache']  = m::mock('cache');
-//
-//        Config::setFacadeApplication($app);
-//        Config::swap($this->facadeMocks['config']);
-//
-//        Cache::setFacadeApplication($app);
-//        Cache::swap($this->facadeMocks['cache']);
 
         $this->practice = factory(Practice::class)->create();
 
