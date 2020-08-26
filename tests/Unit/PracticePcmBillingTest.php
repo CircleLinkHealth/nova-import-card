@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\Http\Resources\ApprovablePatient;
+use App\Http\Resources\ApprovableBillablePatient;
 use App\Services\ApproveBillablePatientsService;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
@@ -43,7 +43,7 @@ class PracticePcmBillingTest extends TestCase
         $patientId    = $patient->id;
         $billedForCcm = false;
         $billedForPcm = false;
-        $summaries->each(function (ApprovablePatient $item) use ($patientId, &$billedForCcm, &$billedForPcm) {
+        $summaries->each(function (ApprovableBillablePatient $item) use ($patientId, &$billedForCcm, &$billedForPcm) {
             $arr = $item->toArray(null);
             if ($arr['id'] !== $patientId) {
                 return;
@@ -77,7 +77,7 @@ class PracticePcmBillingTest extends TestCase
         $patientId    = $patient->id;
         $billedForCcm = false;
         $billedForPcm = false;
-        $summaries->each(function (ApprovablePatient $item) use ($patientId, &$billedForCcm, &$billedForPcm) {
+        $summaries->each(function (ApprovableBillablePatient $item) use ($patientId, &$billedForCcm, &$billedForPcm) {
             $arr = $item->toArray(null);
             if ($arr['id'] !== $patientId) {
                 return;
@@ -111,7 +111,7 @@ class PracticePcmBillingTest extends TestCase
         $patientId    = $patient->id;
         $billedForCcm = false;
         $billedForPcm = false;
-        $summaries->each(function (ApprovablePatient $item) use ($patientId, &$billedForCcm, &$billedForPcm) {
+        $summaries->each(function (ApprovableBillablePatient $item) use ($patientId, &$billedForCcm, &$billedForPcm) {
             $arr = $item->toArray(null);
             if ($arr['id'] !== $patientId) {
                 return;
@@ -145,7 +145,7 @@ class PracticePcmBillingTest extends TestCase
         $patientId    = $patient->id;
         $billedForCcm = false;
         $billedForPcm = false;
-        $summaries->each(function (ApprovablePatient $item) use ($patientId, &$billedForCcm, &$billedForPcm) {
+        $summaries->each(function (ApprovableBillablePatient $item) use ($patientId, &$billedForCcm, &$billedForPcm) {
             $arr = $item->toArray(null);
             if ($arr['id'] !== $patientId) {
                 return;
