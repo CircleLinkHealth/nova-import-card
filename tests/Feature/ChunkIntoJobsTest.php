@@ -34,9 +34,11 @@ class ChunkIntoJobsTest extends TestCase
 
         $count = User::count();
 
-        User::chunkIntoJobs(10, new FakeJob());
+        $chunkSize = 10;
 
-        Queue::assertPushed(FakeJob::class, (int) ceil($count / 10));
+        User::chunkIntoJobs($chunkSize, new FakeJob());
+
+        Queue::assertPushed(FakeJob::class, (int) ceil($count / $chunkSize));
     }
 }
 
