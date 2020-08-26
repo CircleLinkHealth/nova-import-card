@@ -25,15 +25,11 @@ class PatientReadRepository
         $shouldSetDefaultRows = false;
         $filtersInput         = $filters->filters();
 
-        $showPracticePatients      = null;
         $showPracticePatientsInput = $filtersInput['showPracticePatients'] ?? null;
-
-        if (auth()->user()->isProvider() && User::SCOPE_LOCATION === auth()->user()->scope) {
+        $isProvider                = auth()->user()->isProvider();
+        $showPracticePatients      = true;
+        if ($isProvider && (User::SCOPE_LOCATION === auth()->user()->scope || 'false' === $showPracticePatientsInput)) {
             $showPracticePatients = false;
-        } elseif (auth()->user()->isProvider() && 'false' === $showPracticePatientsInput) {
-            $showPracticePatients = false;
-        } else {
-            $showPracticePatients = $showPracticePatientsInput;
         }
 
         $users = User::ofType('participant')

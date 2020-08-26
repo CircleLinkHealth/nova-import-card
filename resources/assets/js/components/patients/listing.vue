@@ -111,7 +111,7 @@
                 <span class="pad-10"></span>
 
                 <a v-if="! this.hideDownloadButtons" class="btn btn-patients-table" :class="{ disabled: loaders.pdf }" @click="exportPdf"
-                   :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
+                   :href="rootUrl('manage-patients/listing/pdf?showPracticePatients=' + this.showPracticePatients)" download="patient-list.pdf">Export as PDF</a>
                 <span class="pad-10"></span>
 
                 <input v-if="! this.hideDownloadButtons" type="button" class="btn btn-patients-table" :class="{ disabled: loaders.excel }"

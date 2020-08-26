@@ -83,19 +83,19 @@
                                                           ! auth()->user()->isCareCoach())
                                     required
                                     @endif>
+                                @if($practices->isNotEmpty())
                                 <optgroup label="All Providers at Practice">
                                     @foreach($practices as $key => $value)
-
                                         <option value="practice:{{$key}}"
                                                 @if(isset($input['getNotesFor']) && in_array("practice:{$key}", $input['getNotesFor']))
                                                 selected @endif>{{$value}}</option>
-
                                     @endforeach
                                 </optgroup>
+                                @endif
                                 <optgroup label="Provider">
                                     @foreach($providers as $key => $value)
                                         <option value="provider:{{$key}}"
-                                                @if(isset($input['getNotesFor']) && in_array("provider:{$key}", $input['getNotesFor']))
+                                                @if($providers->count() === 1 || (isset($input['getNotesFor']) && in_array("provider:{$key}", $input['getNotesFor'])))
                                                 selected @endif>{{$value}}</option>
 
                                     @endforeach
