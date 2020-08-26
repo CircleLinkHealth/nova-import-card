@@ -184,7 +184,7 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "1.7.5",
-    "circlelinkhealth/cpm-migrations-module": "2.4.5",
+    "circlelinkhealth/cpm-migrations-module": "2.4.6",
     "circlelinkhealth/customer-module": "dev-ROAD-258",
     "circlelinkhealth/eligibility-module": "3.3.3",
     "circlelinkhealth/enrollment-invites": "*",
