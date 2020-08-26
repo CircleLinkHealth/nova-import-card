@@ -7,7 +7,6 @@
 namespace App\Console;
 
 use App\Console\Commands\AssignUnassignedPatientsToStandByNurse;
-use App\Console\Commands\AutoApproveValidCarePlansAs;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
@@ -45,6 +44,8 @@ use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\ConsentedEnrollees as ImportAndAutoQAApproveConsentedEnrollees;
+use CircleLinkHealth\Eligibility\AutoCarePlanQAApproval\Patients as AutoQAApproveValidPatients;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointmentsForTomorrowFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
@@ -109,8 +110,12 @@ class Kernel extends ConsoleKernel
             ->onOneServer()
             ->everyFiveMinutes();
 
-        $schedule->command(AutoApproveValidCarePlansAs::class, ['--reimport'])
-            ->everyTwoHours()
+        $schedule->job(AutoQAApproveValidPatients::class)
+            ->everyFifteenMinutes()
+            ->between('8:00', '23:00');
+
+        $schedule->job(ImportAndAutoQAApproveConsentedEnrollees::class)
+            ->everyFifteenMinutes()
             ->between('8:00', '23:00');
 
         $schedule->command(ProcessNextEligibilityBatchChunk::class)
