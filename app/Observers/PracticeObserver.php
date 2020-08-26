@@ -24,11 +24,9 @@ class PracticeObserver
             ->whereDoesntHave('practices', function ($q) use ($practice) {
                 $q->where('practices.id', $practice->id);
             })
-            ->each(function ($users) use ($practice) {
-                foreach ($users as $user) {
-                    if ($roleId = $user->practiceOrGlobalRole(true)) {
-                        $user->attachRoleForSite($roleId, $practice->id);
-                    }
+            ->each(function ($user) use ($practice) {
+                if ($roleId = $user->practiceOrGlobalRole(true)) {
+                    $user->attachRoleForSite($roleId, $practice->id);
                 }
             }, 500);
     }
