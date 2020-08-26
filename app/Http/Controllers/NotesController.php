@@ -355,7 +355,7 @@ class NotesController extends Controller
         }
 
         $data['providers'] = User::SCOPE_LOCATION === $session_user->scope
-            ? collect([$session_user->id])
+            ? collect([$session_user->id => $session_user->display_name])
             : User::whereIn('id', $session_user->viewableProviderIds())
                 ->pluck('display_name', 'id')
                 ->sort();

@@ -95,7 +95,7 @@
                                 <optgroup label="Provider">
                                     @foreach($providers as $key => $value)
                                         <option value="provider:{{$key}}"
-                                                @if(isset($input['getNotesFor']) && in_array("provider:{$key}", $input['getNotesFor']))
+                                                @if($providers->count() === 1 || (isset($input['getNotesFor']) && in_array("provider:{$key}", $input['getNotesFor'])))
                                                 selected @endif>{{$value}}</option>
 
                                     @endforeach
