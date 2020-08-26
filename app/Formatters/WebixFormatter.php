@@ -522,14 +522,14 @@ class WebixFormatter implements ReportFormatter
         );
     }
 
-    public function patients(Collection $patients = null)
+    public function patients(Collection $patients = null, bool $showPracticePatients = true)
     {
         $patientData = [];
         /** @var User $auth */
         $auth = \Auth::user();
 
         if ( ! $patients) {
-            $patients = $auth->patientList();
+            $patients = $auth->patientList($showPracticePatients);
         }
 
         $foundUsers    = []; // save resources, no duplicate db calls
