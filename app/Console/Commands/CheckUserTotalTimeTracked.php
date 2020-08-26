@@ -7,8 +7,8 @@
 namespace App\Console\Commands;
 
 use App\UserTotalTimeChecker;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class CheckUserTotalTimeTracked extends Command

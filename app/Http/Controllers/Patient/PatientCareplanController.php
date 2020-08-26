@@ -346,35 +346,38 @@ class PatientCareplanController extends Controller
 
         // determine if existing user or new user
         $user      = new User();
-        $programId = false;
+        $programId = null;
+        $program   = null;
+        $locations = [];
+        $providers = [];
         if ($patientId) {
-            $user = User::with('patientInfo.contactWindows')->find($patientId);
+            $user = User::with(['patientInfo.contactWindows', 'careTeamMembers', 'ccdInsurancePolicies', 'carePlan', 'primaryPractice.locations' => function ($q) {
+                $q->when(User::SCOPE_LOCATION === auth()->user()->scope, function ($q) {
+                    $q->whereIn('id', auth()->user()->viewableLocationIds());
+                })->whereHas('providers')->with('providers');
+            }])->find($patientId);
             if ( ! $user) {
                 return response('User not found', 401);
             }
             $programId = $user->program_id;
+            $program   = $user->primaryPractice;
+            $locations = $program->locations->pluck('name', 'id')->all();
+            if ($user->patientInfo) {
+                $patientLocation = $program->locations->where('id', $user->patientInfo->preferred_contact_location)->first();
+                if ($patientLocation && $patientLocation->providers) {
+                    $providers = $patientLocation->providers->pluck('display_name', 'id')->all();
+                }
+            }
         }
         $patient = $user;
 
-        // locations @todo get location id for Program
-        $program   = Practice::find($programId);
-        $locations = [];
-        if ($program) {
-            $locations = $program->locations->pluck('name', 'id')->all();
-        }
+        $programs = Practice::whereHas('locations.providers')
+            ->whereIn('id', Auth::user()->viewableProgramIds())
+            ->pluck('display_name', 'id')
+            ->all();
 
-        // get program
-        $programs = Practice::whereIn('id', Auth::user()->viewableProgramIds())->pluck(
-            'display_name',
-            'id'
-        )->all();
+        $programId ??= array_keys($programs)[0] ?? null;
 
-        $billingProviders = User::ofType('provider')->ofPractice(Auth::user()->program_id)->pluck(
-            'display_name',
-            'id'
-        )->all();
-
-        // roles
         $patientRoleId = Role::byName('participant')->id;
 
         $reasons = [
@@ -392,16 +395,14 @@ class PatientCareplanController extends Controller
         $withdrawnReasons       = array_combine($reasons, $reasons);
         $patientWithdrawnReason = $patient->getWithdrawnReason();
 
-        // States (for dropdown)
         $states = usStatesArrayForDropdown();
 
-        // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
         foreach ($timezones_raw as $timezone) {
             $timezones[$timezone] = $timezone;
         }
 
-        $showApprovalButton = false; // default hide
+        $showApprovalButton = false;
         if (Auth::user()->isProvider()) {
             if (CarePlan::PROVIDER_APPROVED != $patient->getCarePlanStatus()) {
                 $showApprovalButton = true;
@@ -412,22 +413,26 @@ class PatientCareplanController extends Controller
             }
         }
 
-        $insurancePolicies = $patient->ccdInsurancePolicies()->get();
+        $insurancePolicies = $patient->ccdInsurancePolicies;
 
         $contact_days_array = [];
         $contactWindows     = [];
-        if ($patient->patientInfo()->exists()) {
+        if ($patient->patientInfo) {
             $contactWindows     = $patient->patientInfo->contactWindows;
             $contact_days_array = $contactWindows->pluck('day_of_week')->toArray();
         }
+
+        $billingProviderUserId = $patient->getBillingProviderId();
 
         return view(
             'wpUsers.patient.careplan.patient',
             compact(
                 [
+                    'providers',
+                    'locations',
+                    'billingProviderUserId',
                     'patient',
                     'states',
-                    'locations',
                     'timezones',
                     'messages',
                     'patientRoleId',
@@ -437,7 +442,6 @@ class PatientCareplanController extends Controller
                     'insurancePolicies',
                     'contact_days_array',
                     'contactWindows',
-                    'billingProviders',
                     'withdrawnReasons',
                     'patientWithdrawnReason',
                 ]

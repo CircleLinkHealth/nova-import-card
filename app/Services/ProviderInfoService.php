@@ -8,6 +8,7 @@ namespace App\Services;
 
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\UserRepository;
 
 class ProviderInfoService
 {
@@ -29,12 +30,20 @@ class ProviderInfoService
     public function list()
     {
         $providers = ProviderInfo::whereHas('user', function ($q) {
-            $q->intersectPracticesWith(auth()->user());
+            $q->ofType('provider')
+                ->when($isLoc = UserRepository::isLocationScopeProvider(auth()->user()), function ($q) {
+                    $q->where('id', auth()->id());
+                })
+                ->when( ! $isLoc, function ($q) {
+                    $q->ofPractice(auth()->user()->practices);
+                });
         })
             ->select(['id', 'user_id', 'specialty'])
             ->orderBy('id', 'desc')->with(['user' => function ($q) {
                 $q->select(['id', 'display_name', 'address']);
-            }])->get()->transform(function ($p) {
+            }])
+            ->get()
+            ->transform(function ($p) {
                 return [
                     'id'        => $p->id,
                     'user_id'   => $p->user_id,

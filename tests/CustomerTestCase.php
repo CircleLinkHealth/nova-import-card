@@ -65,13 +65,14 @@ class CustomerTestCase extends TestCase
      * Useful when wanting to add extra functionality (eg. assertions) to an object.
      *
      * @throws \ReflectionException
+     *
      * @return mixed|string
      */
     public function castToFake(object $instance, string $destinationClass)
     {
-        $src      = new ReflectionObject($instance);
-        $destReflection     = new ReflectionObject($destinationClass = new $destinationClass());
-        $srcProps = $src->getProperties();
+        $src            = new ReflectionObject($instance);
+        $destReflection = new ReflectionObject($destinationClass = new $destinationClass());
+        $srcProps       = $src->getProperties();
         foreach ($srcProps as $prop) {
             $prop->setAccessible(true);
             $name  = $prop->getName();
@@ -217,6 +218,16 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->provider;
+    }
+
+    protected function resetPatient()
+    {
+        $this->patient = null;
+    }
+
+    protected function resetProvider()
+    {
+        $this->provider = null;
     }
 
     /**

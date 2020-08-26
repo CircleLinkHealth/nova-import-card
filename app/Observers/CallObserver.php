@@ -74,17 +74,14 @@ class CallObserver
         if (Carbon::parse($call->called_date)->isLastMonth()) {
             app(CountPatientMonthlySummaryCalls::class)->countCalls(now()->subMonth()->startOfMonth(), [$call->patientId()]);
         }
-    }
 
-    public function saving(Call $call)
-    {
-        if ($call->shouldSendLiveNotification()) {
-            $this->createNotificationAndSendToPusher($call);
+        if (Call::REACHED === $call->status || Call::DONE === $call->status) {
+            Call::where('id', $call->id)->update(['asap' => false]);
+            $call->markAttachmentNotificationAsRead($call->outboundUser);
         }
 
-        if ($call->asap && in_array($call->status, [Call::REACHED, Call::DONE])) {
-            $call->asap = false;
-            $call->markAttachmentNotificationAsRead($call->outboundUser);
+        if ($call->shouldSendLiveNotification()) {
+            $this->createNotificationAndSendToPusher($call);
         }
     }
 

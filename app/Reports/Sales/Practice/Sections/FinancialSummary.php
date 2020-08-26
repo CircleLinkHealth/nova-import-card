@@ -11,6 +11,7 @@ use App\Reports\Sales\SalesReportSection;
 use App\Reports\Sales\StatsHelper;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
+use NumberFormatter;
 
 class FinancialSummary extends SalesReportSection
 {
@@ -29,12 +30,14 @@ class FinancialSummary extends SalesReportSection
 
     public function render()
     {
+        $formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+
         setlocale(LC_MONETARY, 'en_US.UTF-8');
         $total                       = $this->service->totalBilled();
         $this->data['billed_so_far'] = $total;
 
-        $this->data['revenue_so_far'] = money_format('%.0n', round($total * 40, -2));
-        $this->data['profit_so_far']  = money_format('%.0n', $total * 40 - $total * $this->clhpppm);
+        $this->data['revenue_so_far'] = $formatter->formatCurrency(round($total * 40, -2), 'USD');
+        $this->data['profit_so_far']  = $formatter->formatCurrency($total * 40 - $total * $this->clhpppm, 'USD');
 
         for ($i = 0; $i < 3; ++$i) {
             if (0 == $i) {
@@ -63,7 +66,7 @@ class FinancialSummary extends SalesReportSection
 
             $this->data['historical']['CCM Profit (Approx.)'][$month]
                 = (0 != $this->clhpppm)
-                ? money_format('%.0n', round($profit, 0))
+                ? $formatter->formatCurrency(round($profit, 0), 'USD')
                 : 'N/A';
         }
 
