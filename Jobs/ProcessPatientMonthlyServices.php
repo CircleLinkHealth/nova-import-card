@@ -8,13 +8,12 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
-use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
-use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -61,17 +60,7 @@ class ProcessPatientMonthlyServices implements ShouldQueue
             ->subscribe($this->availableServiceProcessors)
             ->forPatient($this->patient->id)
             ->forMonth($this->chargeableMonth)
-            ->withProblems(collect([
-                [
-                    'code' => ChargeableService::CCM,
-                ],
-                [
-                    'code' => ChargeableService::CCM,
-                ],
-                [
-                    'code' => ChargeableService::BHI,
-                ],
-            ]));
+            ->withProblems($this->patient->patientProblemsForBillingProcessing());
 
         $this->processor->process($stub);
     }

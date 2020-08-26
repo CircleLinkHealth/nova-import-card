@@ -24,7 +24,7 @@ trait ApprovablePatientUsersQuery
             'billingProvider.user',
             'patientInfo',
             'ccdProblems' => function ($problem) {
-                $problem->with(['cpmProblem', 'codes', 'icd10Codes']);
+                $problem->with(['cpmProblem.locationChargeableServices', 'codes', 'icd10Codes']);
             },
             'chargeableMonthlySummary' => function ($q) use ($monthYear) {
                 $q->with(['chargeableService'])
