@@ -27,7 +27,7 @@ class Location implements CustomerBillingProcessor
         return new ApprovablePatientCollection($this->repo->paginatePatients($locationId, $month, $pageSize));
     }
 
-    public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth): void
+    public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth, bool $fulfill): void
     {
         $availableLocationServiceProcessors = $this->repo->availableLocationServiceProcessors($locationId, $chargeableMonth);
         $job                                = new ProcessLocationPatientsChunk($availableLocationServiceProcessors, $chargeableMonth);

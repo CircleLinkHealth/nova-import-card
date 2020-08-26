@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -20,13 +21,24 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    protected Carbon $chargeableMonth;
+
+    protected bool $fulfill;
+
+    protected int $practiceId;
+    
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param int $practiceId
+     * @param Carbon $chargeableMonth
+     * @param bool $fulfill
      */
     public function __construct(int $practiceId, Carbon $chargeableMonth, bool $fulfill)
     {
+        $this->practiceId      = $practiceId;
+        $this->chargeableMonth = $chargeableMonth;
+        $this->fulfill         = $fulfill;
     }
 
     /**
@@ -36,5 +48,10 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
      */
     public function handle()
     {
+        Location::where('practice_id', $this->practiceId)
+            ->get()
+            ->each(function (Location $location) {
+                ProcessLocationPatientMonthlyServices::dispatch($location->id, $this->chargeableMonth, $this->fulfill);
+            });
     }
 }
