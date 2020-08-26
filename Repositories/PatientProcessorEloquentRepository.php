@@ -32,6 +32,17 @@ class PatientProcessorEloquentRepository implements Repository
             'chargeable_service_id' => $this->chargeableSercviceId($chargeableServiceCode),
         ]);
     }
+    
+    public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
+    {
+        return ChargeablePatientMonthlySummary::updateOrCreate([
+            'patient_user_id'       => $patientId,
+            'chargeable_month'      => $month,
+            'chargeable_service_id' => $this->chargeableSercviceId($chargeableServiceCode),
+        ], [
+            'is_fulfilled' => true
+        ]);
+    }
 
     private function chargeableSercviceId(string $code): int
     {

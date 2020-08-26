@@ -8,29 +8,29 @@ namespace CircleLinkHealth\CcmBilling\Contracts;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use Illuminate\Support\Collection;
 
 interface PatientChargeableServiceProcessor
 {
-    public function attach(int $patientId, Carbon $monthYear): ChargeablePatientMonthlySummary;
+    public function attach(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary;
 
-    public function code();
+    public function code(): string;
 
-    public function fulfill(int $patientId, Carbon $monthYear);
+    public function fulfill(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary;
 
-    public function isAttached(int $patientId, Carbon $monthYear);
+    public function isAttached(int $patientId, Carbon $chargeableMonth): bool;
 
-    // At any point in time we check if this service has been fulfilled
-    public function isFulfilled(int $patientId, Carbon $monthYear);
+    public function isFulfilled(int $patientId, Carbon $chargeableMonth): bool;
 
     public function minimumNumberOfCalls(): int;
 
     public function minimumTimeInSeconds(): int;
 
-    // Check if there is an entry in ChargeableMonthlySummaries where there is a fulfilled chargeable service
-    public function processBilling(int $patientId, Carbon $monthYear);
+    public function processBilling(int $patientId, Carbon $chargeableMonth);
 
-    // At the beginning or end of the month. Should we attach this chargeable service to this patient and attempt to fulfill it throughout the month?
-    public function shouldAttach($patientProblems, Carbon $monthYear);
+    public function repo(): PatientProcessorEloquentRepository;
 
-    public function shouldFulfill(int $patientId, Carbon $monthYear);
+    public function shouldAttach(Collection $patientProblems, Carbon $monthYear): bool;
+
+    public function shouldFulfill(int $patientId, Carbon $chargeableMonth): bool;
 }

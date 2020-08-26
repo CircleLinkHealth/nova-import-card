@@ -30,6 +30,19 @@ class Eloquent implements PatientProcessorEloquentRepository
         );
     }
 
+    public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
+    {
+        //TODO: TEST
+        $this->collection->push([
+            'patientId'             => $patientId,
+            'chargeableServiceCode' => $chargeableServiceCode,
+            'month'                 => $month,
+            'is_fulfilled'          => true,
+        ]);
+
+        return new ChargeablePatientMonthlySummary();
+    }
+
     public function getChargeablePatientSummaries(int $patientId, Carbon $month)
     {
         // TODO: Implement getChargeablePatientSummaries() method.

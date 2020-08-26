@@ -11,7 +11,9 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Traits\PropagatesSequence;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use Illuminate\Support\Collection;
 
 class CCM implements PatientChargeableServiceProcessor
 {
@@ -29,19 +31,21 @@ class CCM implements PatientChargeableServiceProcessor
         return ChargeableService::CCM;
     }
 
-    public function fulfill(int $patientId, Carbon $monthYear)
+    public function fulfill(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
     {
-        // TODO: Implement fulfill() method.
+        $summary = $this->repo()->fulfill($patientId, $this->code(), $chargeableMonth);
 
-        $this->attachNext($patientId, $monthYear);
+        $this->attachNext($patientId, $chargeableMonth);
+
+        return $summary;
     }
 
-    public function isAttached(int $patientId, Carbon $monthYear)
+    public function isAttached(int $patientId, Carbon $monthYear): bool
     {
         // TODO: Implement isAttached() method.
     }
 
-    public function isFulfilled(int $patientId, Carbon $monthYear)
+    public function isFulfilled(int $patientId, Carbon $monthYear): bool
     {
         // TODO: Implement isFulfilled() method.
     }
@@ -51,7 +55,7 @@ class CCM implements PatientChargeableServiceProcessor
         // TODO: Implement minimumNumberOfCalls() method.
     }
 
-    public function minimumNumberOfProblems()
+    public function minimumNumberOfProblems(): int
     {
         return 2;
     }
@@ -80,12 +84,15 @@ class CCM implements PatientChargeableServiceProcessor
         return $this->repo;
     }
 
-    public function shouldAttach($patientProblems, Carbon $monthYear)
+    public function shouldAttach(Collection $patientProblems, Carbon $monthYear): bool
     {
-        return $patientProblems->where('code', $this->code())->count() >= $this->minimumNumberOfProblems();
+        return $patientProblems->filter(function (PatientProblemForProcessing $problemToProcess) {
+            return in_array($this->code(), $problemToProcess->getServiceCodes());
+        })
+            ->count() >= $this->minimumNumberOfProblems();
     }
 
-    public function shouldFulfill(int $patientId, Carbon $monthYear)
+    public function shouldFulfill(int $patientId, Carbon $monthYear): bool
     {
         // TODO: Implement shouldFulfill() method.
     }

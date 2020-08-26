@@ -14,4 +14,6 @@ interface PatientProcessorEloquentRepository
     public function getChargeablePatientSummaries(int $patientId, Carbon $month);
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
+    
+    public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 }
