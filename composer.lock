@@ -897,7 +897,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "cd0819f4e19f605f826b397593ac7bb9ee70f9d9"
+                "reference": "e9a39362fd51f293076cd6344f17a9503c41b074"
             },
             "type": "laravel-module",
             "extra": {
@@ -933,7 +933,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-08-26T12:55:25+00:00"
+            "time": "2020-08-26T14:34:03+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1199,7 +1199,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "a3e25fc28bcecc90d4006d0fbc48fd1cbe32c3c6"
+                "reference": "692f8903c4b1b9870b4e797e28b23d4d43151302"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1233,7 +1233,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-25T23:52:34+00:00"
+            "time": "2020-08-26T14:34:03+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1597,7 +1597,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "7d6d1963eb21df12e85ce49941e0e10b40cd8d22"
+                "reference": "4c2f605b38e25a24afa1568c24b019ee52ba4727"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1611,7 +1611,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-23T00:04:08+00:00"
+            "time": "2020-08-26T14:34:03+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
