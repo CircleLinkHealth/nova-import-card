@@ -111,11 +111,11 @@ class CcdaImporter
             $email = $newUserId.'@careplanmanager.com';
         }
 
-        if (User::ofType(['participant', 'survey-only'])->where('email', $email)->where('last_name', $this->ccda->patient_last_name)->where('first_name', '!=', $this->ccda->patient_fist_name)->exists()) {
+        $demographics = $this->ccda->bluebuttonJson()->demographics;
+
+        if ($this->isFamily($email, $demographics)) {
             $email = "family_$email";
         }
-
-        $demographics = $this->ccda->bluebuttonJson()->demographics;
 
         $newPatientUser = (new UserRepository())->createNewUser(
             new ParameterBag(
@@ -385,6 +385,23 @@ class CcdaImporter
         ImportVitals::for($this->ccda->patient, $this->ccda);
 
         return $this;
+    }
+
+    private function isFamily(string $email, object $demographics)
+    {
+        $address = $demographics->address->street[0] ?? null;
+
+        if ( ! $address) {
+            return false;
+        }
+
+        return User::ofType(['participant', 'survey-only'])
+            ->where('email', $email)
+            ->where('first_name', '!=', $this->ccda->patient_fist_name)
+            ->where('address', $address)
+            ->where('city', $demographics->address->city)
+            ->where('state', $demographics->address->state)
+            ->exists();
     }
 
     /**
