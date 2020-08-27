@@ -20,6 +20,24 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
+if ( ! function_exists('should_show_notes_report')) {
+    /**
+     * This is used to hide Notes Report page from Commonwealth Users because it will not work for them due to the large number of patients. To enable after optimizing.
+     *
+     * @return bool
+     */
+    function should_show_notes_report()
+    {
+        if ( ! isProductionEnv()) {
+            return true;
+        }
+        if (auth()->check() && 232 == auth()->user()->program_id) {
+            return false;
+        }
+
+        return true;
+    }
+}
 if ( ! function_exists('sanitize_array_keys')) {
     function sanitize_array_keys(array $array)
     {

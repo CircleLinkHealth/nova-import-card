@@ -15,6 +15,18 @@ use Tests\CustomerTestCase;
 
 class CallSchedulerTest extends CustomerTestCase
 {
+    public function test_callbacks_do_not_affect_unsuccessful_attemts_count()
+    {
+        $patientInfo = $this->patient()->patientInfo()->create(['no_call_attempts_since_last_success' => 4]);
+
+        $patientSummary = $this->app->make(PatientWriteRepository::class)->updateCallLogs($patientInfo, true);
+    
+        $this->assertDatabaseMissing('patient_info', [
+            'id'         => $patientInfo->id,
+            'ccm_status' => Patient::UNREACHABLE,
+        ]);
+    }
+
     public function test_it_pauses_patient_after_5_unsuccessful_calls()
     {
         $patientInfo = $this->patient()->patientInfo()->create(['no_call_attempts_since_last_success' => 4]);
@@ -25,10 +37,6 @@ class CallSchedulerTest extends CustomerTestCase
             'id'         => $patientInfo->id,
             'ccm_status' => Patient::UNREACHABLE,
         ]);
-
-        $patientInfo->fresh();
-
-        $this->assertEquals(Patient::UNREACHABLE, $patientInfo->ccm_status);
     }
 
     public function test_only_admins_can_change_nurse_patient_association()
