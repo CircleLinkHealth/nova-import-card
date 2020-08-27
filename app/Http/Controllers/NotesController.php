@@ -347,6 +347,10 @@ class NotesController extends Controller
 
     public function listing(NotesReport $request)
     {
+        if ( ! should_show_notes_report()) {
+            return redirect()->back();
+        }
+
         /** @var User $session_user */
         $session_user = auth()->user();
 
