@@ -31,6 +31,7 @@ class ApproveIfValid implements ShouldQueue
     {
         $this->patient  = $patient;
         $this->approver = $approver;
+        $this->logs     = collect();
     }
 
     /**
@@ -40,8 +41,6 @@ class ApproveIfValid implements ShouldQueue
      */
     public function handle()
     {
-        $this->logs = collect();
-
         if ( ! $this->approveIfValid($this->patient, $this->approver)) {
             $this->fail(new \Exception('Patient failed auto QA-approve validation.'));
         }
