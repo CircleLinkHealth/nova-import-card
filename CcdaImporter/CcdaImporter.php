@@ -114,7 +114,7 @@ class CcdaImporter
         $demographics = $this->ccda->bluebuttonJson()->demographics;
 
         if ($this->isFamily($email, $demographics)) {
-            $email = "family_$email";
+            $email = "family_{$this->ccda->patient_first_name}_$email";
         }
 
         $newPatientUser = (new UserRepository())->createNewUser(
