@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
+use App\Constants;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
@@ -62,7 +63,7 @@ class CCM implements PatientChargeableServiceProcessor
 
     public function minimumTimeInSeconds(): int
     {
-        // TODO: Implement minimumTimeInSeconds() method.
+        return Constants::TWENTY_MINUTES_IN_SECONDS;
     }
 
     public function next(): PatientChargeableServiceProcessor
