@@ -108,10 +108,14 @@ class PatientWriteRepository
         $successful_call_increment = 0;
         if ($successfulLastCall) {
             $successful_call_increment = 1;
-            // reset call attempts back to 0
-            $patient->no_call_attempts_since_last_success = 0;
-        } elseif ( ! $isCallBack) {
-            $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
+        }
+
+        if ( ! $isCallBack) {
+            if ($successfulLastCall) {
+                $patient->no_call_attempts_since_last_success = 0;
+            } else {
+                $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
+            }
         }
 
         // Determine whether to add to record or not
