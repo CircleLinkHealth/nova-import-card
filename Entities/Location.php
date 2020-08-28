@@ -88,9 +88,6 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     use Searchable;
     use SoftDeletes;
 
-    //Aprima's constant location id.
-    const UPG_PARENT_LOCATION_ID = 26;
-
     /**
      * Mass assignable attributes.
      *

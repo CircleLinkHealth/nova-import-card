@@ -75,9 +75,9 @@ class ChargeableService extends BaseModel
         'CPT 99489',
         'G0511',
     ];
-    const GENERAL_CARE_MANAGEMENT = 'G0511';
-    const PCM                     = 'G2065';
-    const SOFTWARE_ONLY           = 'Software-Only';
+    const G0511         = 'G0511';
+    const PCM           = 'G2065';
+    const SOFTWARE_ONLY = 'Software-Only';
 
     protected $fillable = [
         'code',
@@ -148,7 +148,7 @@ class ChargeableService extends BaseModel
 
     public function scopeGeneralCareManagement($query)
     {
-        return $query->where('code', self::GENERAL_CARE_MANAGEMENT);
+        return $query->where('code', self::G0511);
     }
 
     public function scopePcm($query)
