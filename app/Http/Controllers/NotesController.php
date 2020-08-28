@@ -36,12 +36,14 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Validator;
 
@@ -347,6 +349,10 @@ class NotesController extends Controller
 
     public function listing(NotesReport $request)
     {
+        if ( ! should_show_notes_report()) {
+            return redirect()->back();
+        }
+
         /** @var User $session_user */
         $session_user = auth()->user();
 
@@ -1070,6 +1076,10 @@ class NotesController extends Controller
                 $patient->email = $input['custom-patient-email'];
                 $patient->save();
             }
+        }
+
+        if (Str::contains($address, CcdaImporter::FAMILY_EMAIL_SUFFIX)) {
+            $address = CcdaImporter::convertFamilyEmailToValidEmail($address);
         }
 
         SendSingleNotification::dispatch(new PatientCustomEmail(
