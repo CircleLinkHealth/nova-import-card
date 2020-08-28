@@ -37,6 +37,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CcdaImporter
 {
+    const FAMILY_EMAIL_SUFFIX = '+family';
     /**
      * How many times to try the importing process.
      */
@@ -81,11 +82,16 @@ class CcdaImporter
         return $this->ccda;
     }
 
+    public static function convertFamilyEmailToValidEmail(string $emailAddress)
+    {
+        return preg_replace('/\+family\d*/', '', $emailAddress);
+    }
+
     public static function convertToFamilyEmail(string $email)
     {
         return substr_replace(
             $email,
-            '+family'.random_int(1000, 999999),
+            self::FAMILY_EMAIL_SUFFIX.random_int(1000, 999999),
             strpos($email, '@'),
             0
         );

@@ -134,6 +134,13 @@ class CcdaImporterTest extends CustomerTestCase
         $this->assertTrue($this->patient()->program_id === $differentPracticeId);
     }
 
+    public function test_it_converts_family_email_to_valid_email()
+    {
+        self::assertEquals($email = 'hello@gmail.com', CcdaImporter::convertFamilyEmailToValidEmail(
+            CcdaImporter::convertToFamilyEmail($email)
+        ));
+    }
+  
     public function test_it_converts_to_family_email()
     {
         self::assertRegExp('/^hello\+family\d*@gmail.com/', CcdaImporter::convertToFamilyEmail('hello@gmail.com'));
