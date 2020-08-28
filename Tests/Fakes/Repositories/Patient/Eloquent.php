@@ -30,16 +30,7 @@ class Eloquent implements PatientServiceProcessorRepository
         $this->isFulfilledStubs              = collect();
         $this->chargeableServiceSummaryStubs = collect();
     }
-    
-    private function wasChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month)
-    {
-        return 1 === $this->summariesCreated->where('patientId', $patientId)
-                ->where('chargeableServiceCode', $chargeableServiceCode)
-                ->where('month', $month)
-                ->count();
-    }
-    
-    
+
     public function assertChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month): void
     {
         PHPUnit::assertTrue(
@@ -149,5 +140,13 @@ class Eloquent implements PatientServiceProcessorRepository
         ]);
 
         return new ChargeablePatientMonthlySummary();
+    }
+
+    private function wasChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month)
+    {
+        return 1 === $this->summariesCreated->where('patientId', $patientId)
+            ->where('chargeableServiceCode', $chargeableServiceCode)
+            ->where('month', $month)
+            ->count();
     }
 }
