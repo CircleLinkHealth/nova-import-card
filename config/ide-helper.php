@@ -71,7 +71,7 @@ return [
     'helper_files' => [
         base_path().'/vendor/laravel/framework/src/Illuminate/Support/helpers.php',
         base_path().'/app/helpers.php',
-        base_path().'/Modules/Core/Helpers/helpers.php',
+        base_path().'/CircleLinkHealth/Core/Helpers/helpers.php',
         base_path().'/tests/Concerns/TwilioFake/Twilio.php',
     ],
 
@@ -87,7 +87,7 @@ return [
 
     'model_locations' => [
         'app',
-        'Modules',
+        'CircleLinkHealth',
     ],
 
     /*
