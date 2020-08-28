@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 class PatientMonthlyBillingStub
 {
@@ -17,7 +16,7 @@ class PatientMonthlyBillingStub
 
     protected int $patientId;
 
-    protected Collection $patientProblems;
+    protected array $patientProblems;
 
     public function forMonth(Carbon $chargeableMonth): self
     {
@@ -48,7 +47,7 @@ class PatientMonthlyBillingStub
         return $this->patientId;
     }
 
-    public function getPatientProblems(): Collection
+    public function getPatientProblems(): array
     {
         return $this->patientProblems;
     }
@@ -60,7 +59,7 @@ class PatientMonthlyBillingStub
         return $this;
     }
 
-    public function withProblems(Collection $patientProblems): self
+    public function withProblems(PatientProblemForProcessing ...$patientProblems): self
     {
         $this->patientProblems = $patientProblems;
 

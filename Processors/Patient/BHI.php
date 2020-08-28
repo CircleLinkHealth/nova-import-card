@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class BHI implements PatientChargeableServiceProcessor
@@ -71,9 +72,11 @@ class BHI implements PatientChargeableServiceProcessor
         return $this->repo;
     }
 
-    public function shouldAttach($patientProblems, Carbon $monthYear): bool
+    public function shouldAttach(Carbon $monthYear, PatientProblemForProcessing ...$patientProblems): bool
     {
-        return $patientProblems->where('code', $this->code())->count() >= $this->minimumNumberOfProblems();
+        return collect($patientProblems)->filter(
+            fn (PatientProblemForProcessing $problem) => collect($problem->getServiceCodes())->contains($this->code())
+        )->filter()->count() >= $this->minimumNumberOfProblems();
     }
 
     public function shouldFulfill(int $patientId, Carbon $monthYear): bool

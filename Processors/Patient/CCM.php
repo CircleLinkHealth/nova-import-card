@@ -85,9 +85,9 @@ class CCM implements PatientChargeableServiceProcessor
         return $this->repo;
     }
 
-    public function shouldAttach(Collection $patientProblems, Carbon $chargeableMonth): bool
+    public function shouldAttach(Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
-        return $patientProblems->filter(function (PatientProblemForProcessing $problemToProcess) {
+        return collect($patientProblems)->filter(function (PatientProblemForProcessing $problemToProcess) {
             return in_array($this->code(), $problemToProcess->getServiceCodes());
         })
             ->count() >= $this->minimumNumberOfProblems();

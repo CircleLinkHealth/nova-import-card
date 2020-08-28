@@ -25,7 +25,7 @@ class FakeMonthlyBillingProcessor implements PatientMonthlyBillingProcessor
     public function process(PatientMonthlyBillingStub $patientStub): PatientMonthlyBillingStub
     {
         $patientStub->getAvailableServiceProcessors()->toCollection()->each(function (PatientChargeableServiceProcessor $processor) use ($patientStub) {
-            if ($processor->shouldAttach($patientStub->getPatientProblems(), $patientStub->getChargeableMonth())) {
+            if ($processor->shouldAttach($patientStub->getChargeableMonth(), $patientStub->getPatientProblems())) {
                 $processor->attach($patientStub->getPatientId(), $patientStub->getChargeableMonth());
             }
         });

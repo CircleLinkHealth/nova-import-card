@@ -19,6 +19,7 @@ use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePatientRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -95,17 +96,28 @@ class BillingProcessorsIntegrationTest extends TestCase
             ->subscribe(AvailableServiceProcessors::push([new CCM(), new BHI()]))
             ->forPatient(1)
             ->forMonth($startOfMonth = Carbon::now()->startOfMonth()->startOfDay())
-            ->withProblems(collect([
-                [
-                    'code' => ChargeableService::CCM,
-                ],
-                [
-                    'code' => ChargeableService::CCM,
-                ],
-                [
-                    'code' => ChargeableService::BHI,
-                ],
-            ]));
+            ->withProblems(
+                (new PatientProblemForProcessing())
+                     ->setId(123)
+                     ->setCode('1234')
+                     ->setServiceCodes([
+                         ChargeableService::CCM,
+                         ChargeableService::BHI,
+                     ]),
+                (new PatientProblemForProcessing())
+                    ->setId(1233)
+                    ->setCode('12344')
+                    ->setServiceCodes([
+                        ChargeableService::CCM,
+                    ]),
+                (new PatientProblemForProcessing())
+                    ->setId(1235)
+                    ->setCode('12345')
+                    ->setServiceCodes([
+                        ChargeableService::CCM,
+                        ChargeableService::BHI,
+                    ])
+            );
 
         $fakeProcessor = new MonthlyProcessor();
 
