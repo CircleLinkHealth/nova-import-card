@@ -7,8 +7,10 @@
 namespace CircleLinkHealth\CcmBilling\Tests;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
+use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
@@ -21,6 +23,7 @@ use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePatientRepository;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
+use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\ChargeablePatientMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
@@ -158,10 +161,6 @@ class CcmBillingTest extends TestCase
         $pcm       = new PCM();
         $month     = now();
 
-        FakePatientRepository::setIsAttachedStubs(
-            new IsAttachedStub($patientId, $ccm->code(), $month, true)
-        );
-
         $stub = (new PatientMonthlyBillingStub())
             ->subscribe(AvailableServiceProcessors::push([$ccm, $pcm]))
             ->forPatient($patientId)
@@ -188,9 +187,8 @@ class CcmBillingTest extends TestCase
                         ChargeableService::PCM,
                     ])
             );
-
+        
         $fakeProcessor = new MonthlyProcessor();
-
         $fakeProcessor->process($stub);
 
         FakePatientRepository::assertChargeableSummaryCreated($patientId, $ccm->code(), $month);

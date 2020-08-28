@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\ChargeablePatientMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
 use Illuminate\Support\Collection;
@@ -16,26 +17,33 @@ use PHPUnit\Framework\Assert as PHPUnit;
 
 class Eloquent implements PatientServiceProcessorRepository
 {
+    private Collection $chargeableServiceSummaryStubs;
     private Collection $isAttachedStubs;
-
     private bool $isChargeableServiceEnabledForMonth = false;
     private Collection $isFulfilledStubs;
     private Collection $summariesCreated;
 
     public function __construct()
     {
-        $this->summariesCreated = collect();
-        $this->isAttachedStubs  = collect();
-        $this->isFulfilledStubs = collect();
+        $this->summariesCreated              = collect();
+        $this->isAttachedStubs               = collect();
+        $this->isFulfilledStubs              = collect();
+        $this->chargeableServiceSummaryStubs = collect();
     }
-
+    
+    private function wasChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month)
+    {
+        return 1 === $this->summariesCreated->where('patientId', $patientId)
+                ->where('chargeableServiceCode', $chargeableServiceCode)
+                ->where('month', $month)
+                ->count();
+    }
+    
+    
     public function assertChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month): void
     {
         PHPUnit::assertTrue(
-            1 === $this->summariesCreated->where('patientId', $patientId)
-                ->where('chargeableServiceCode', $chargeableServiceCode)
-                ->where('month', $month)
-                ->count()
+            $this->wasChargeableSummaryCreated($patientId, $chargeableServiceCode, $month)
         );
     }
 
@@ -69,11 +77,20 @@ class Eloquent implements PatientServiceProcessorRepository
 
     public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month)
     {
-        // TODO: Implement getChargeablePatientSummary() method.
+        return (bool) $this->chargeableServiceSummaryStubs
+            ->where('chargeableServiceCode', $chargeableServiceCode)
+            ->where('month', $month)
+            ->where('patientId', $patientId)
+            ->pluck('summary')
+            ->first();
     }
 
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
+        if ($this->isAttachedStubs->isEmpty()) {
+            return $this->wasChargeableSummaryCreated($patientId, $chargeableServiceCode, $month);
+        }
+
         return (bool) $this->isAttachedStubs
             ->where('chargeableServiceCode', $chargeableServiceCode)
             ->where('month', $month)
@@ -95,6 +112,14 @@ class Eloquent implements PatientServiceProcessorRepository
             ->where('patientId', $patientId)
             ->pluck('shouldBeFulfilled')
             ->first();
+    }
+
+    /**
+     * @param ChargeablePatientMonthlySummary $chargeableServiceSummaryStub
+     */
+    public function setChargeableServiceSummaryStubs(ChargeablePatientMonthlySummaryStub ...$chargeableServiceSummaryStub): void
+    {
+        $this->chargeableServiceSummaryStubs = collect($chargeableServiceSummaryStub);
     }
 
     /**

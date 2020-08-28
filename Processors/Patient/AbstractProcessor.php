@@ -83,23 +83,17 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function shouldAttach(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
+        if ($this->clashesWithigherOrderServices($patientId, $chargeableMonth)) {
+            return false;
+        }
+
+        if ($this->hasUnfulfilledPreviousService($patientId, $chargeableMonth)) {
+            return false;
+        }
+
         return collect($patientProblems)
             ->filter(
                 function (PatientProblemForProcessing $problem) use ($patientId, $chargeableMonth) {
-                    foreach ($this->clashesWith() as $clash) {
-                        if ($this->repo()->isAttached($patientId, $clash->code(), $chargeableMonth)) {
-                            return false;
-                        }
-                    }
-
-                    if (method_exists($this, 'previous')) {
-                        if ($this->previous() instanceof PatientServiceProcessor) {
-                            if ( ! $this->repo()->isFulfilled($patientId, $this->previous()->code(), $chargeableMonth)) {
-                                return false;
-                            }
-                        }
-                    }
-
                     return collect($problem->getServiceCodes())->contains($this->code());
                 }
             )->filter()->count() >= $this->minimumNumberOfProblems();
@@ -117,7 +111,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         if ( ! $summary) {
             return false;
         }
-        
+
         if ($summary->time_for_month_to_be_implemented < $this->minimumTimeInSeconds()) {
             return false;
         }
@@ -127,5 +121,33 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         }
 
         return true;
+    }
+
+    private function clashesWithigherOrderServices(int $patientId, Carbon $chargeableMonth)
+    {
+        foreach ($this->clashesWith() as $clash) {
+            if ($this->repo()->isAttached($patientId, $clash->code(), $chargeableMonth)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasUnfulfilledPreviousService(int $patientId, Carbon $chargeableMonth)
+    {
+        if ( ! method_exists($this, 'previous')) {
+            return false;
+        }
+
+        if ( ! $this->previous() instanceof PatientServiceProcessor) {
+            return false;
+        }
+
+        if ( ! $this->repo()->isFulfilled($patientId, $this->previous()->code(), $chargeableMonth)) {
+            return true;
+        }
+
+        return false;
     }
 }
