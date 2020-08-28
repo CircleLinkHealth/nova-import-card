@@ -64,6 +64,9 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
  * @method   static                                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmProblem withIcd10Codes()
  * @method   static                                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmProblem withLatestCpmInstruction()
  * @mixin \Eloquent
+ * @property ChargeableService[]|\Illuminate\Database\Eloquent\Collection $locationChargeableServices
+ * @property int|null                                                     $location_chargeable_services_count
+ * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem withChargeableServicesForLocation($locationId)
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {

@@ -86,6 +86,24 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
 
     protected $table = 'ccd_problems';
 
+    public function chargeableServiceCodesForLocation(?int $locationId = null): array
+    {
+        if ( ! $cpmProblem = $this->cpmProblem) {
+            return [];
+        }
+
+        $locationId ??= $this->patient->patientInfo->preferred_contact_location;
+
+        if (is_null($locationId)) {
+            return [];
+        }
+
+        return $cpmProblem->locationChargeableServices
+            ->where('pivot.location_id', $locationId)
+            ->pluck('code')
+            ->values();
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -131,24 +149,6 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
     public function isBehavioral(): bool
     {
         return (bool) optional($this->cpmProblem)->is_behavioral;
-    }
-    
-    public function chargeableServiceCodesForLocation(?int $locationId = null) : array
-    {
-        if (! $cpmProblem = $this->cpmProblem){
-            return [];
-        }
-        
-        $locationId ??= $this->patient->patientInfo->preferred_contact_location;
-        
-        if (is_null($locationId)){
-            return [];
-        }
-        
-        return $cpmProblem->locationChargeableServices
-            ->where('pivot.location_id', $locationId)
-            ->pluck('code')
-            ->values();
     }
 
     /**
