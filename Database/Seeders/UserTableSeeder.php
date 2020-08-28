@@ -29,6 +29,9 @@ class UserTableSeeder extends Seeder
             // create admin user
             factory(User::class, 1)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($admin) use ($practice) {
                 $admin->username = 'admin';
+                $admin->first_name = 'Admin';
+                $admin->last_name = 'User';
+                $admin->display_name = "$admin->first_name $admin->last_name";
                 $admin->auto_attach_programs = true;
                 $admin->email = 'admin@example.org';
                 $admin->attachPractice($practice->id, [Role::whereName('administrator')->value('id')]);
@@ -38,10 +41,12 @@ class UserTableSeeder extends Seeder
 
                 $this->command->info("admin user $admin->display_name seeded");
             });
-
-            //create nurse
+            
             factory(User::class, 1)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($nurse) use ($practice) {
                 $nurse->username = 'nurse';
+                $nurse->first_name = 'Care Coach';
+                $nurse->last_name = 'User';
+                $nurse->display_name = "$nurse->first_name $nurse->last_name";
                 $nurse->auto_attach_programs = true;
                 $nurse->email = 'nurse@example.org';
                 $nurse->attachPractice($practice->id, [Role::whereName('care-center')->value('id')]);
