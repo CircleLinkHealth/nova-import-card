@@ -7,14 +7,17 @@
 namespace CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Assert as PHPUnit;
 
-class Eloquent implements PatientProcessorEloquentRepository
+class Eloquent implements PatientServiceProcessorRepository
 {
     private Collection $collection;
+    private Collection $isAttachedStubs;
+
+    private bool $isChargeableServiceEnabledForMonth = false;
 
     public function __construct()
     {
@@ -24,6 +27,15 @@ class Eloquent implements PatientProcessorEloquentRepository
     public function assertChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month): void
     {
         PHPUnit::assertTrue(
+            1 === $this->collection->where('patientId', $patientId)
+                ->where('chargeableServiceCode', $chargeableServiceCode)
+                ->where('month', $month)->count()
+        );
+    }
+
+    public function assertChargeableSummaryNotCreated(int $patientId, string $chargeableServiceCode, Carbon $month): void
+    {
+        PHPUnit::assertFalse(
             1 === $this->collection->where('patientId', $patientId)
                 ->where('chargeableServiceCode', $chargeableServiceCode)
                 ->where('month', $month)->count()
@@ -46,6 +58,39 @@ class Eloquent implements PatientProcessorEloquentRepository
     public function getChargeablePatientSummaries(int $patientId, Carbon $month)
     {
         // TODO: Implement getChargeablePatientSummaries() method.
+    }
+
+    public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        return (bool) $this->isAttachedStubs
+            ->where('chargeableServiceCode', $chargeableServiceCode)
+            ->where('month', $month)
+            ->where('patientId', $patientId)
+            ->pluck('shouldBeAttached')
+            ->first();
+    }
+
+    public function isChargeableServiceEnabledForLocationForMonth(int $patientId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        return $this->isChargeableServiceEnabledForMonth;
+    }
+
+    public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        // TODO: Implement isFulfilled() method.
+    }
+
+    /**
+     * @param bool $isAttachedStubs
+     */
+    public function setIsAttachedStubs(IsAttachedStub ...$isAttachedStubs): void
+    {
+        $this->isAttachedStubs = collect($isAttachedStubs);
+    }
+
+    public function setIsChargeableServiceEnabledForMonth(bool $isChargeableServiceEnabledForMonth): void
+    {
+        $this->isChargeableServiceEnabledForMonth = $isChargeableServiceEnabledForMonth;
     }
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary

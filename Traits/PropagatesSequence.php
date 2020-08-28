@@ -7,18 +7,29 @@
 namespace CircleLinkHealth\CcmBilling\Traits;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 
 trait PropagatesSequence
 {
-    abstract public function next(): PatientChargeableServiceProcessor;
-
-    protected function attachNext(int $patientId, Carbon $chargeableMonth)
+    public function attachNext(int $patientId, Carbon $chargeableMonth)
     {
         if (method_exists($this, 'next')) {
-            $processor = $this->next();
-
-            $processor->attach($patientId, $chargeableMonth);
+            if ($this->shouldAttachNext($patientId, $chargeableMonth)) {
+                $this->next()
+                    ->attach($patientId, $chargeableMonth);
+            }
         }
+    }
+
+    abstract public function next(): PatientServiceProcessor;
+
+    protected function shouldAttachNext(int $patientId, Carbon $chargeableMonth): bool
+    {
+        if ( ! method_exists($this, 'next')) {
+            return false;
+        }
+
+        return $this->repo()
+            ->isChargeableServiceEnabledForLocationForMonth($patientId, $this->next()->code(), $chargeableMonth);
     }
 }

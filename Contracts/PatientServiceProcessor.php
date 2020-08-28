@@ -8,11 +8,13 @@ namespace CircleLinkHealth\CcmBilling\Contracts;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use Illuminate\Support\Collection;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 
-interface PatientChargeableServiceProcessor
+interface PatientServiceProcessor
 {
     public function attach(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary;
+
+    public function clashesWith(): array;
 
     public function code(): string;
 
@@ -24,13 +26,15 @@ interface PatientChargeableServiceProcessor
 
     public function minimumNumberOfCalls(): int;
 
+    public function minimumNumberOfProblems(): int;
+
     public function minimumTimeInSeconds(): int;
 
     public function processBilling(int $patientId, Carbon $chargeableMonth);
 
-    public function repo(): PatientProcessorEloquentRepository;
+    public function repo(): PatientServiceProcessorRepository;
 
-    public function shouldAttach(Collection $patientProblems, Carbon $monthYear): bool;
+    public function shouldAttach(int $patientId, Carbon $monthYear, PatientProblemForProcessing ...$patientProblems): bool;
 
     public function shouldFulfill(int $patientId, Carbon $chargeableMonth): bool;
 }

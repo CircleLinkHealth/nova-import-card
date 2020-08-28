@@ -7,12 +7,12 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Customer;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessorRepository;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
 
-class Practice implements CustomerBillingProcessor
+class Practice implements CustomerProcessor
 {
     private PracticeProcessorEloquentRepository $repo;
 
@@ -21,9 +21,9 @@ class Practice implements CustomerBillingProcessor
         $this->repo = $repo;
     }
 
-    public function fetchApprovablePatients(int $practiceId, Carbon $month, $pageSize = 30): ApprovablePatientCollection
+    public function fetchApprovablePatients(int $practiceId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection
     {
-        return new ApprovablePatientCollection($this->repo->patients($practiceId, $month, $pageSize));
+        return new ApprovablePatientCollection($this->repo->paginatePatients($practiceId, $month, $pageSize));
     }
 
     public function processServicesForAllPatients(int $practiceId, Carbon $month, bool $fulfill): void
@@ -31,7 +31,7 @@ class Practice implements CustomerBillingProcessor
         // TODO: Implement processServicesForAllPatients() method.
     }
 
-    public function repo(): CustomerBillingProcessorRepository
+    public function repo(): CustomerProcessorRepository
     {
         return $this->repo;
     }

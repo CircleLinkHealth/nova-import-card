@@ -7,13 +7,13 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Customer;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessorRepository;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientsChunk;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 
-class Location implements CustomerBillingProcessor
+class Location implements CustomerProcessor
 {
     private LocationProcessorEloquentRepository $repo;
 
@@ -22,7 +22,7 @@ class Location implements CustomerBillingProcessor
         $this->repo = $repo;
     }
 
-    public function fetchApprovablePatients(int $locationId, Carbon $month, $pageSize = 30): ApprovablePatientCollection
+    public function fetchApprovablePatients(int $locationId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection
     {
         return new ApprovablePatientCollection($this->repo->paginatePatients($locationId, $month, $pageSize));
     }
@@ -30,7 +30,7 @@ class Location implements CustomerBillingProcessor
     public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth, bool $fulfill): void
     {
         $this->repo
-            ->patients($locationId, $chargeableMonth)
+            ->patientsQuery($locationId, $chargeableMonth)
             ->chunkIntoJobs(
                 100,
                 new ProcessLocationPatientsChunk(
@@ -43,7 +43,7 @@ class Location implements CustomerBillingProcessor
             );
     }
 
-    public function repo(): CustomerBillingProcessorRepository
+    public function repo(): CustomerProcessorRepository
     {
         return $this->repo;
     }

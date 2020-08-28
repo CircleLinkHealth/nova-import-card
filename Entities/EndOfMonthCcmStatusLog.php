@@ -9,6 +9,15 @@ namespace CircleLinkHealth\CcmBilling\Entities;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog.
+ *
+ * @property User   $patient
+ * @method   static \Illuminate\Database\Eloquent\Builder|EndOfMonthCcmStatusLog newModelQuery()
+ * @method   static \Illuminate\Database\Eloquent\Builder|EndOfMonthCcmStatusLog newQuery()
+ * @method   static \Illuminate\Database\Eloquent\Builder|EndOfMonthCcmStatusLog query()
+ * @mixin \Eloquent
+ */
 class EndOfMonthCcmStatusLog extends Model
 {
     protected $dates = [
