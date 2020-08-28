@@ -73,9 +73,6 @@ class FinancialSummary extends SalesReportSection
             $this->data['historical']['Patients >20mins (some are not billed)'][$month]
                 = $billable;
 
-//            $this->data['historical']['CCM Revenue'][$month]
-//                = '~'.money_format('%.0n',$billableRounded);
-
             $this->data['historical']['CCM Profit (Approx.)'][$month]
                 = (0 != $this->clhpppm)
                 ? $this->formatDollar(round($profit, 0))

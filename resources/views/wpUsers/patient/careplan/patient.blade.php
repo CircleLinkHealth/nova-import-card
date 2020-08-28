@@ -520,6 +520,10 @@ $user_info = [];
 
                                                         let ccmStatus = document.getElementById("ccm_status");
 
+                                                        if (!ccmStatus) {
+                                                            return;
+                                                        }
+
                                                         console.log(ccmStatus);
                                                         if (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call") {
                                                             $('#withdrawn-reason').removeClass('hidden');
@@ -535,6 +539,10 @@ $user_info = [];
 
                                                         let reason = document.getElementById("withdrawn_reason");
                                                         let reasonOther = document.getElementById('withdrawn_reason_other');
+
+                                                        if (!reason || !reasonOther) {
+                                                            return;
+                                                        }
 
                                                         if (reason.value === "Other") {
                                                             $('#withdrawn-reason-other').removeClass('hidden');

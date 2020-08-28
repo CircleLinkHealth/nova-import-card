@@ -438,7 +438,13 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $wpUser = (new UserRepository())->createNewUser(new ParameterBag($request->input()));
+        $params = new ParameterBag($request->input());
+        if ( ! $params->has('roles') && $params->has('role')) {
+            $params->add([
+                'roles' => [$params->get('role')],
+            ]);
+        }
+        $wpUser = (new UserRepository())->createNewUser($params);
 
         if ($request->has('provider_id')) {
             $wpUser->setBillingProviderId($request->input('provider_id'));

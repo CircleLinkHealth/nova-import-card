@@ -8,6 +8,7 @@ namespace Tests\Unit;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
+use App\Note;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\CCD\CcdProblemService;
 use App\Traits\Tests\UserHelpers;
@@ -21,6 +22,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\TestCase;
 
@@ -93,8 +95,7 @@ class PatientAttestedConditionsTest extends TestCase
             'userId'         => $this->patient->id,
             'is_monitored'   => 1,
             'cpm_problem_id' => null,
-            //add already attached problem icd10code to create duplicate
-            'icd10' => $problem->icd10Code(),
+            'icd10'          => $problem->icd10Code(),
         ];
 
         (app(CcdProblemService::class))->addPatientCcdProblem($ccdProblem);
@@ -103,7 +104,6 @@ class PatientAttestedConditionsTest extends TestCase
             ->assertOk()
             ->getOriginalContent();
 
-        //assert that duplicate will not be fetched
         $this->assertNotEquals($responseData->count(), $this->patient->ccdProblems()->count());
     }
 
@@ -123,16 +123,12 @@ class PatientAttestedConditionsTest extends TestCase
         $this->assertNotNull($pms);
         $this->assertEquals($call->attestedProblems()->count(), 0);
 
-        //attach problems to call
         $call->attachAttestedProblems($patientProblems->pluck('id')->toArray());
 
-        //check call
         $this->assertEquals($call->attestedProblems()->count(), $patientProblems->count());
 
-        //check timestamps exist
         $this->assertNotNull($call->attestedProblems()->first()->created_at);
 
-        //assert that asserted attached to calls exist on the summary
         $this->assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
     }
 
@@ -206,10 +202,8 @@ class PatientAttestedConditionsTest extends TestCase
             ChargeableService::CCM,
         ])->pluck('id')->toArray();
 
-        //this should work even with unfulfilled services
         $pms = $this->setupPms($charggeableServiceIds, Carbon::now()->startOfMonth(), true);
 
-        //attest 2 ccm and 1 bhi condition
         $problems = $this->patient->ccdProblems()->with(['cpmProblem'])->get();
 
         $attestedProblems = $problems->where('cpmProblem.is_behavioral', true)
@@ -229,6 +223,42 @@ class PatientAttestedConditionsTest extends TestCase
         $this->assertFalse($responseData['attestationRequirements']['disabled']);
         $this->assertTrue(1 === $responseData['attestationRequirements']['bhi_problems_attested']);
         $this->assertTrue(2 === $responseData['attestationRequirements']['ccm_problems_attested']);
+    }
+
+    public function test_command_to_attest_problems_to_addendum()
+    {
+        $this->actingAs($this->nurse);
+
+        self::assertNotNull(auth()->user(), 'Logged in user needed for this test case');
+
+        $call = $this->patient->inboundCalls()->with(['note'])->first();
+        $note = $call->note;
+        $note->addendums()->create(
+            [
+                'body'           => 'test addendum body',
+                'author_user_id' => $this->nurse->id,
+            ]
+        );
+        $addendum        = $note->addendums()->first();
+        $pms             = $this->patient->patientSummaryForMonth();
+        $patientProblems = $this->patient->ccdProblems()->get();
+
+        self::assertNotNull($pms);
+        self::assertEquals($call->attestedProblems()->count(), 0);
+
+        Artisan::call('billing:attest-problems', [
+            'problemIds' => $patientProblems->pluck('id')->implode(','),
+            'noteId'     => $note->id,
+            'addendumId' => $addendum->id,
+        ]);
+
+        $callAttestedProblems = $call->attestedProblems()->get();
+
+        self::assertEquals($callAttestedProblems->count(), $patientProblems->count());
+        self::assertNotNull($callAttestedProblems->first()->created_at);
+        self::assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
+
+        self::assertTrue(DB::table('call_problems')->where('addendum_id', $addendum->id)->count() === $patientProblems->count());
     }
 
     public function test_complex_validation_rules_disabled_for_practice()
@@ -266,10 +296,8 @@ class PatientAttestedConditionsTest extends TestCase
 
         $this->assertNotNull($currentPms);
 
-        //they should not be brought because the have is_fulfilled 0
         $this->assertEquals(0, $currentPms->chargeableServices->count());
 
-        //un-fulfilled will be brought only in new relationship
         $currentChargeableServices = $currentPms->allChargeableServices;
 
         $this->assertEquals(collect($charggeableServiceIds)->count(), $currentChargeableServices->count());
@@ -303,10 +331,8 @@ class PatientAttestedConditionsTest extends TestCase
 
         $this->assertNotNull($currentPms);
 
-        //they should not be brought because the have is_fulfilled 0
         $this->assertEquals(0, $currentPms->chargeableServices->count());
 
-        //un-fulfilled will be brought only in new relationship
         $currentChargeableServices = $currentPms->allChargeableServices;
 
         $this->assertEquals(collect($charggeableServiceIds)->count(), $currentChargeableServices->count());
@@ -324,7 +350,6 @@ class PatientAttestedConditionsTest extends TestCase
             ChargeableService::CCM,
         ])->pluck('id')->toArray();
 
-        //patient already has more than 2 ccm problems on setup, attach only CCM to practice
         $this->practice->chargeableServices()->sync($charggeableServiceIds);
 
         $responseData = $this->actingAs($this->nurse)->call('GET', route('patient.note.create', ['patientId' => $this->patient->id]))
@@ -339,10 +364,8 @@ class PatientAttestedConditionsTest extends TestCase
 
         $this->assertNotNull($currentPms);
 
-        //they should not be brought because the have is_fulfilled 0
         $this->assertEquals(0, $currentPms->chargeableServices->count());
 
-        //un-fulfilled will be brought only in new relationship
         $currentChargeableServices = $currentPms->allChargeableServices;
 
         $this->assertEquals(collect($charggeableServiceIds)->count(), $currentChargeableServices->count());
@@ -366,10 +389,8 @@ class PatientAttestedConditionsTest extends TestCase
             ChargeableService::CCM,
         ])->pluck('id')->toArray();
 
-        //patient already has more than 2 ccm problems on setup, attach only CCM to practice
         $this->practice->chargeableServices()->sync($charggeableServiceIds);
 
-        //create current month summary with no codes
         $this->setupPms([]);
 
         $responseData = $this->actingAs($this->nurse)->call('GET', route('patient.note.create', ['patientId' => $this->patient->id]))
@@ -384,10 +405,8 @@ class PatientAttestedConditionsTest extends TestCase
 
         $this->assertNotNull($currentPms);
 
-        //they should not be brought because the have is_fulfilled 0
         $this->assertEquals(0, $currentPms->chargeableServices->count());
 
-        //un-fulfilled will be brought only in new relationship
         $currentChargeableServices = $currentPms->allChargeableServices;
 
         $this->assertEquals(collect($charggeableServiceIds)->count(), $currentChargeableServices->count());
@@ -395,6 +414,22 @@ class PatientAttestedConditionsTest extends TestCase
         foreach ($charggeableServiceIds as $id) {
             $this->assertTrue(1 == $currentChargeableServices->where('id', $id)->count());
         }
+    }
+
+    public function test_patient_with_attested_conditions_can_be_deleted()
+    {
+        $this->actingAs($this->nurse);
+
+        $call            = $this->patient->inboundCalls()->first();
+        $pms             = $this->patient->patientSummaryForMonth();
+        $patientProblems = $this->patient->ccdProblems()->get();
+
+        $this->assertNotNull($pms);
+        $this->assertEquals($call->attestedProblems()->count(), 0);
+
+        $call->attachAttestedProblems($patientProblems->pluck('id')->toArray());
+
+        $this->patient->forceDelete();
     }
 
     public function test_problems_are_automatically_attested_to_pms_if_they_should_bhi()
@@ -519,10 +554,20 @@ class PatientAttestedConditionsTest extends TestCase
 
         app(NurseFinderEloquentRepository::class)->assign($this->patient->id, $this->nurse->id);
 
-        //setup call
+        $note = $this->patient->notes()->create([
+            'author_id'                => $this->nurse->id,
+            'body'                     => 'test',
+            'type'                     => 'General (Clinical)',
+            'performed_at'             => Carbon::now(),
+            'logger_id'                => $this->nurse->id,
+            'status'                   => Note::STATUS_COMPLETE,
+            'successful_clinical_call' => 1,
+        ]);
+
         Call::create([
             'service' => 'phone',
             'status'  => 'scheduled',
+            'note_id' => $note->id,
 
             'scheduler' => 'core algorithm',
 

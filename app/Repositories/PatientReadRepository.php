@@ -25,15 +25,11 @@ class PatientReadRepository
         $shouldSetDefaultRows = false;
         $filtersInput         = $filters->filters();
 
-        $showPracticePatients = null;
         $showPracticePatientsInput = $filtersInput['showPracticePatients'] ?? null;
-        
-        if (auth()->user()->isProvider() && User::SCOPE_LOCATION === auth()->user()->scope) {
+        $isProvider                = auth()->user()->isProvider();
+        $showPracticePatients      = true;
+        if ($isProvider && (User::SCOPE_LOCATION === auth()->user()->scope || 'false' === $showPracticePatientsInput)) {
             $showPracticePatients = false;
-        } elseif (auth()->user()->isProvider() && 'false' === $showPracticePatientsInput) {
-            $showPracticePatients = false;
-        } else {
-            $showPracticePatients = $showPracticePatientsInput;
         }
 
         $users = User::ofType('participant')
@@ -50,14 +46,13 @@ class PatientReadRepository
                 },
                 'patientInfo.location',
                 'careTeamMembers' => function ($q) {
-                    $q->with(['user' => function ($q) {
+                    $q->whereIn(
+                        'type',
+                        [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                    )->with(['user' => function ($q) {
                         $q->without(['perms', 'roles'])
                             ->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
-                    }])->where('member_user_id', auth()->user()->id)
-                        ->whereIn(
-                            'type',
-                            [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-                        );
+                    }]);
                 },
                 'observations' => function ($q) {
                     $q->latest();

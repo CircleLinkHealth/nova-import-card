@@ -173,7 +173,14 @@ class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
 
     public static function nullEmailValues()
     {
-        return ['noemail@noemail.com', 'null', 'none', 'n/a'];
+        return [
+            'noemail@noemail.com',
+            'null',
+            'none',
+            'n/a',
+            '123@yahoo.com',
+            '1234@yahoo.com',
+        ];
     }
 
     public static function sanitizeEmail(int $id, ?string $email): ?string
