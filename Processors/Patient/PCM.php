@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use Illuminate\Support\Collection;
 
 class PCM implements PatientChargeableServiceProcessor
@@ -65,7 +66,8 @@ class PCM implements PatientChargeableServiceProcessor
         return $this->repo;
     }
     
-    public function shouldAttach(Collection $patientProblems, Carbon $monthYear): bool
+    public function shouldAttach(Carbon $monthYear, PatientProblemForProcessing ...$patientProblems): bool
+    
     {
         // TODO: Implement shouldAttach() method.
     }

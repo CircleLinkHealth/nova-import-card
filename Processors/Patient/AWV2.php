@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Support\Collection;
 
@@ -66,7 +67,7 @@ class AWV2 implements PatientChargeableServiceProcessor
         return $this->repo;
     }
     
-    public function shouldAttach(Collection $patientProblems, Carbon $monthYear): bool
+    public function shouldAttach(Carbon $monthYear, PatientProblemForProcessing ...$patientProblems): bool
     {
         // TODO: Implement shouldAttach() method.
     }
