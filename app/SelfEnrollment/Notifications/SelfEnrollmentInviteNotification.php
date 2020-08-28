@@ -159,7 +159,8 @@ class SelfEnrollmentInviteNotification extends Notification
     {
         if (in_array('mail', $this->channels)
             && App::environment(['production'])
-            && (Str::contains($notifiable->email, ['@careplanmanager.com', '@example.com', '@noEmail.com'])
+            && (
+                Str::contains($notifiable->email, ['@careplanmanager.com', '@example.com', '@noEmail.com'])
             || empty($notifiable->email)
             )) {
             unset($this->channels[array_search('mail', $this->channels)]);
