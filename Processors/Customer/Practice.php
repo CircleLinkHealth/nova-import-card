@@ -23,7 +23,7 @@ class Practice implements CustomerBillingProcessor
 
     public function fetchApprovablePatients(int $practiceId, Carbon $month, $pageSize = 30): ApprovablePatientCollection
     {
-        return new ApprovablePatientCollection($this->repo->patients($practiceId, $month, $pageSize));
+        return new ApprovablePatientCollection($this->repo->paginatePatients($practiceId, $month, $pageSize));
     }
 
     public function processServicesForAllPatients(int $practiceId, Carbon $month, bool $fulfill): void

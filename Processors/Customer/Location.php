@@ -30,7 +30,7 @@ class Location implements CustomerBillingProcessor
     public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth, bool $fulfill): void
     {
         $this->repo
-            ->patients($locationId, $chargeableMonth)
+            ->patientsQuery($locationId, $chargeableMonth)
             ->chunkIntoJobs(
                 100,
                 new ProcessLocationPatientsChunk(

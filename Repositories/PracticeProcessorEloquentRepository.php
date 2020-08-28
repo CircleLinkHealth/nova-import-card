@@ -11,6 +11,7 @@ use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class PracticeProcessorEloquentRepository implements CustomerBillingProcessorRepository
 {
@@ -19,14 +20,13 @@ class PracticeProcessorEloquentRepository implements CustomerBillingProcessorRep
 
     public function paginatePatients(int $customerModelId, Carbon $chargeableMonth, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return $this->patients($customerModelId, $chargeableMonth)
+        return $this->patientsQuery($customerModelId, $chargeableMonth)
             ->paginate($pageSize);
     }
 
-    public function patients(int $customerModelId, Carbon $monthYear): Builder
+    public function patients(int $customerModelId, Carbon $monthYear): Collection
     {
-        return $this->approvablePatientUsersQuery($monthYear)
-            ->ofPractice($customerModelId);
+        return $this->patientsQuery($customerModelId, $monthYear)->get();
     }
 
     public function patientServices(int $customerModelId, Carbon $monthYear): Builder
@@ -34,5 +34,11 @@ class PracticeProcessorEloquentRepository implements CustomerBillingProcessorRep
         //todo: fix relationship name
         return $this->approvablePatientServicesQuery($monthYear)
             ->whereHas('patient', fn ($q) => $q->ofPractice($customerModelId));
+    }
+
+    public function patientsQuery(int $customerModelId, Carbon $monthYear): Builder
+    {
+        return $this->approvablePatientUsersQuery($monthYear)
+            ->ofPractice($customerModelId);
     }
 }

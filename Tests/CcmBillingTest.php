@@ -46,7 +46,7 @@ class BillingProcessorsIntegrationTest extends TestCase
             ->once()
             ->andReturn($fakeUsers);
         $repoMock
-            ->shouldReceive('patients')
+            ->shouldReceive('paginatePatients')
             ->with($locationId, $monthYear, $pageSize)
             ->once()
             ->andReturn($paginatorMock);
@@ -76,7 +76,7 @@ class BillingProcessorsIntegrationTest extends TestCase
             ->once()
             ->andReturn($fakeUsers);
         $repoMock
-            ->shouldReceive('patients')
+            ->shouldReceive('paginatePatients')
             ->with($practiceId, $monthYear, $pageSize)
             ->once()
             ->andReturn($paginatorMock);
