@@ -104,21 +104,19 @@ class ChargeableService extends BaseModel
 
     public function processor(): PatientChargeableServiceProcessor
     {
-        $class = $this->processorClassMap()[$this->code] ?? null;
-
-        return $class ? new $class() : null;
+        return $this->processorClassMap()[$this->code];
     }
 
     public function processorClassMap(): array
     {
         return [
-            self::CCM            => CCM::class,
-            self::BHI            => BHI::class,
-            self::CCM_PLUS_40    => CCM40::class,
-            self::CCM_PLUS_60    => CCM60::class,
-            self::PCM            => PCM::class,
-            self::AWV_INITIAL    => AWV1::class,
-            self::AWV_SUBSEQUENT => AWV2::class,
+            self::CCM            => new CCM(),
+            self::BHI            => new BHI(),
+            self::CCM_PLUS_40    => new CCM40(),
+            self::CCM_PLUS_60    => new CCM60(),
+            self::PCM            => new PCM(),
+            self::AWV_INITIAL    => new AWV1(),
+            self::AWV_SUBSEQUENT => new AWV2(),
         ];
     }
 
