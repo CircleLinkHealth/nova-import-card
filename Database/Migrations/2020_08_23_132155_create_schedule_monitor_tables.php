@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -27,7 +31,6 @@ class CreateScheduleMonitorTables extends Migration
 
             $table->timestamps();
         });
-
 
         Schema::create('monitored_scheduled_task_log_items', function (Blueprint $table) {
             $table->bigIncrements('id');
