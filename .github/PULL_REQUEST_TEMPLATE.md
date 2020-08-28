@@ -1,47 +1,48 @@
-[Jira Ticket](https://circlelinkhealth.atlassian.net/browse/ROAD-)
+# Description
 
-### What is the change?
--
+This PR resolves ticket https://circlelinkhealth.atlassian.net/browse/CPM-
 
-### Why is this change necessary?
--
+**Summary**
+- Please include a summary of the feature/change/fix.
 
-### Which User Roles does this change affect?
-- [ ] Nurses (Notify Ethan well ahead of release to prepare instructions for nurses)
-- [ ] Providers (or other practice staff) (Notify Zach well ahead of release to prepare instructions for nurses)
-- [ ] CLH Admins (Notify #productchat on slack)
-- [ ] Patients
+**Motivation - Context**
+- Please also include relevant motivation and context.
 
-### Development To Do's
-- [ ] A
-- [ ] B
-- [ ] C
+**Checklist [optional - remove if not needed]**
+- [ ] Implement this
+- [ ] Modify that
+- [ ] Write tests
 
-### Dependencies
-- [ ] [Link to other PR]()
+**Dependencies**
+- List any dependencies that are required for this change (other PRs, services, integrations, module updates) 
 
-### Deployment Tips
-- [ ] env variable to update 
-- [ ] Seeder to run after deployment. 
+**Type of change**
 
-### How has this been tested?
+- [ ] Bug fix (non-breaking change which fixes an issue)
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] This change requires a documentation update
+
+# How Has This Been Tested?
+
 Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration.
-- [ ] Unit tests
-- [ ] Manually
-- [ ] Review app
-- [ ] Tester QA 
-- [ ] Production
 
-### How can other people test this?
+- [ ] Test A
+- [ ] Test B
+
+**Test Configuration**:
 - Please specify here any setup configuration needed to be able to test this PR (for code reviewer to prepare on staging/production environment).
 - The test cases for QA team should go here as well (even if QA does not read them from here).
 
+# Checklist:
 
-### After all boxes below can be checked
-### Assign @developers
-
+- [ ] I have considered whether my code should be in a separate module or not
+- [ ] If passing more than 4 value as function arguments, I have used typed value objects instead of arrays.
+- [ ] If returning more than 1 value from a function, I have used typed value objects instead of arrays or stdClass.
+- [ ] I have created FormRequest classes and performed validation in there
+- [ ] I have created constants over strings and magic numbers
+- [ ] I have 0 new comments
 - [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to any existing documentation
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] I have added relevant labels on the PR (bugfix, feature, refactoring, needsQAapproval, ReadyForProd, etc)
