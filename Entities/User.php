@@ -309,6 +309,13 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                $assigned_enrollees_count
  * @property \CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision[]|\Illuminate\Database\Eloquent\Collection $patientCcmStatusRevisions
  * @property int|null                                                                                                $patient_ccm_status_revisions_count
+ * @property string|null                                                                                             $scope
+ * @property AttestedProblem[]|EloquentCollection                                                                    $attestedProblems
+ * @property int|null                                                                                                $attested_problems_count
+ * @property ChargeablePatientMonthlySummary[]|EloquentCollection                                                    $chargeableMonthlySummaries
+ * @property int|null                                                                                                $chargeable_monthly_summaries_count
+ * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLog
+ * @property int|null                                                                                                $end_of_month_ccm_status_log_count
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {

@@ -80,6 +80,8 @@ use Laravel\Scout\Searchable;
  * @property int|null                                                                                                        $providers_count
  * @property int|null                                                                                                        $revision_history_count
  * @property int|null                                                                                                        $user_count
+ * @property ChargeableLocationMonthlySummary[]|\Illuminate\Database\Eloquent\Collection                                     $chargeableServiceSummaries
+ * @property int|null                                                                                                        $chargeable_service_summaries_count
  */
 class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -87,9 +89,6 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     use Notifiable;
     use Searchable;
     use SoftDeletes;
-
-    //Aprima's constant location id.
-    const UPG_PARENT_LOCATION_ID = 26;
 
     /**
      * Mass assignable attributes.
