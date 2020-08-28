@@ -7,12 +7,12 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
-use CircleLinkHealth\CcmBilling\Traits\PropagatesSequence;
+use CircleLinkHealth\CcmBilling\Traits\IsPartOfSequence;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class CCM40 extends AbstractProcessor
 {
-    use PropagatesSequence;
+    use IsPartOfSequence;
 
     public function code(): string
     {
@@ -37,5 +37,10 @@ class CCM40 extends AbstractProcessor
     public function next(): PatientServiceProcessor
     {
         return new CCM60();
+    }
+    
+    public function previous(): ?PatientServiceProcessor
+    {
+        return new CCM();
     }
 }

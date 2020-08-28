@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient;
+namespace CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;

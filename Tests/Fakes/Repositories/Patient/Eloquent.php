@@ -9,6 +9,8 @@ namespace CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
+use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Assert as PHPUnit;
 
@@ -18,6 +20,7 @@ class Eloquent implements PatientServiceProcessorRepository
     private Collection $isAttachedStubs;
 
     private bool $isChargeableServiceEnabledForMonth = false;
+    private Collection $isFulfilledStubs;
 
     public function __construct()
     {
@@ -77,7 +80,12 @@ class Eloquent implements PatientServiceProcessorRepository
 
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        // TODO: Implement isFulfilled() method.
+        return (bool) $this->isFulfilledStubs
+            ->where('chargeableServiceCode', $chargeableServiceCode)
+            ->where('month', $month)
+            ->where('patientId', $patientId)
+            ->pluck('shouldBeFulfilled')
+            ->first();
     }
 
     /**
@@ -91,6 +99,11 @@ class Eloquent implements PatientServiceProcessorRepository
     public function setIsChargeableServiceEnabledForMonth(bool $isChargeableServiceEnabledForMonth): void
     {
         $this->isChargeableServiceEnabledForMonth = $isChargeableServiceEnabledForMonth;
+    }
+
+    public function setIsFulfilledStubs(IsFulfilledStub ...$isFulfilledStubs): void
+    {
+        $this->isFulfilledStubs = collect($isFulfilledStubs);
     }
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary

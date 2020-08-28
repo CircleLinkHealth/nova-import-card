@@ -83,6 +83,14 @@ abstract class AbstractProcessor implements PatientServiceProcessor
                         }
                     }
 
+                    if (method_exists($this, 'previous')) {
+                        if ($this->previous() instanceof PatientServiceProcessor) {
+                            if ( ! $this->repo()->isFulfilled($patientId, $this->previous()->code(), $chargeableMonth)) {
+                                return false;
+                            }
+                        }
+                    }
+
                     return collect($problem->getServiceCodes())->contains($this->code());
                 }
             )->filter()->count() >= $this->minimumNumberOfProblems();
