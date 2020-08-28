@@ -279,7 +279,7 @@ class PatientAttestedConditionsTest extends TestCase
         $charggeableServiceIds = ChargeableService::whereIn('code', [
             ChargeableService::CCM,
             ChargeableService::BHI,
-            ChargeableService::GENERAL_CARE_MANAGEMENT,
+            ChargeableService::G0511,
         ])->pluck('id')->toArray();
 
         $previousMonthsPms = $this->setupPms($charggeableServiceIds, Carbon::now()->startOfMonth()->subMonth(3));
@@ -314,7 +314,7 @@ class PatientAttestedConditionsTest extends TestCase
         $charggeableServiceIds = ChargeableService::whereIn('code', [
             ChargeableService::CCM,
             ChargeableService::BHI,
-            ChargeableService::GENERAL_CARE_MANAGEMENT,
+            ChargeableService::G0511,
         ])->pluck('id')->toArray();
 
         $lastMonthsPms = $this->setupPms($charggeableServiceIds, Carbon::now()->startOfMonth()->subMonth());
