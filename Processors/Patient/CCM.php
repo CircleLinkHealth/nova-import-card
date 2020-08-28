@@ -1,57 +1,42 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
+use App\Constants;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
+use CircleLinkHealth\CcmBilling\Traits\PropagatesSequence;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 
-use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
-use CircleLinkHealth\Customer\Entities\User;
-
-class CCM implements PatientChargeableServiceProcessor
+class CCM extends AbstractProcessor
 {
-    /**
-     * @var User
-     */
-    private User $patient;
-    
-    public function __construct(User $patient)
+    use PropagatesSequence;
+
+    public function code(): string
     {
-        $this->patient = $patient;
+        return ChargeableService::CCM;
     }
-    
-    public function attach(Carbon $monthYear)
+
+    public function minimumNumberOfCalls(): int
     {
-        // TODO: Implement attach() method.
+        return 1;
     }
-    
-    public function fulfill(Carbon $monthYear)
+
+    public function minimumNumberOfProblems(): int
     {
-        // TODO: Implement fulfill() method.
+        return 2;
     }
-    
-    public function isAttached(Carbon $monthYear)
+
+    public function minimumTimeInSeconds(): int
     {
-        // TODO: Implement isAttached() method.
+        return Constants::TWENTY_MINUTES_IN_SECONDS;
     }
-    
-    public function isFulfilled(Carbon $monthYear)
+
+    public function next(): PatientServiceProcessor
     {
-        // TODO: Implement isFulfilled() method.
-    }
-    
-    public function processBilling(Carbon $monthYear)
-    {
-        // TODO: Implement processBilling() method.
-    }
-    
-    public function shouldAttach(Carbon $monthYear)
-    {
-        // TODO: Implement shouldAttach() method.
-    }
-    
-    public function shouldFulfill(Carbon $monthYear)
-    {
-        // TODO: Implement shouldFulfill() method.
+        return new CCM40();
     }
 }

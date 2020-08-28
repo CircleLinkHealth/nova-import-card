@@ -1,47 +1,33 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
+use App\Constants;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 
-use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
-
-class BHI implements PatientChargeableServiceProcessor
+class BHI extends AbstractProcessor
 {
-    
-    public function attach(Carbon $monthYear)
+    public function code(): string
     {
-        // TODO: Implement attach() method.
+        return ChargeableService::BHI;
     }
-    
-    public function fulfill(Carbon $monthYear)
+
+    public function minimumNumberOfCalls(): int
     {
-        // TODO: Implement fulfill() method.
+        return 1;
     }
-    
-    public function isAttached(Carbon $monthYear)
+
+    public function minimumNumberOfProblems(): int
     {
-        // TODO: Implement isAttached() method.
+        return 1;
     }
-    
-    public function isFulfilled(Carbon $monthYear)
+
+    public function minimumTimeInSeconds(): int
     {
-        // TODO: Implement isFulfilled() method.
-    }
-    
-    public function processBilling(Carbon $monthYear)
-    {
-        // TODO: Implement processBilling() method.
-    }
-    
-    public function shouldAttach(Carbon $monthYear)
-    {
-        // TODO: Implement shouldAttach() method.
-    }
-    
-    public function shouldFulfill(Carbon $monthYear)
-    {
-        // TODO: Implement shouldFulfill() method.
+        return Constants::TWENTY_MINUTES_IN_SECONDS;
     }
 }

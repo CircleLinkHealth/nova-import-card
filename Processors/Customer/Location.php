@@ -7,12 +7,13 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Customer;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessorRepository;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientsChunk;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 
-class Location implements CustomerBillingProcessor
+class Location implements CustomerProcessor
 {
     private LocationProcessorEloquentRepository $repo;
 
@@ -21,17 +22,28 @@ class Location implements CustomerBillingProcessor
         $this->repo = $repo;
     }
 
-    public function fetchApprovablePatients(int $locationId, Carbon $month, $pageSize = 30): ApprovablePatientCollection
+    public function fetchApprovablePatients(int $locationId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection
     {
-        return new ApprovablePatientCollection($this->repo->patients($locationId, $month, $pageSize));
+        return new ApprovablePatientCollection($this->repo->paginatePatients($locationId, $month, $pageSize));
     }
 
-    public function processServicesForAllPatients(int $locationId, Carbon $month): void
+    public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth, bool $fulfill): void
     {
-        // TODO: Implement processServicesForAllPatients() method.
+        $this->repo
+            ->patientsQuery($locationId, $chargeableMonth)
+            ->chunkIntoJobs(
+                100,
+                new ProcessLocationPatientsChunk(
+                    $this->repo->availableLocationServiceProcessors(
+                        $locationId,
+                        $chargeableMonth
+                    ),
+                    $chargeableMonth
+                )
+            );
     }
 
-    public function repo(): CustomerBillingProcessorRepository
+    public function repo(): CustomerProcessorRepository
     {
         return $this->repo;
     }

@@ -16,26 +16,19 @@ trait ApprovablePatientUsersQuery
     {
         return User::with([
             'endOfMonthCcmStatusLog' => function ($q) use ($monthYear) {
-                $q->createdOn($monthYear, 'month_year');
-            },
-            'patientMonthlySummaries' => function ($q) use ($monthYear) {
-                $q->createdOn($monthYear, 'month_year');
+                $q->createdOn($monthYear, 'chargeable_month');
             },
             'attestedProblems' => function ($q) use ($monthYear) {
-                $q
-                    ->with([
-                        'cpmProblem',
-                        'icd10Codes',
-                    ])
-                    ->createdOn($monthYear, 'month_year');
+                $q->createdOn($monthYear, 'charegable_month');
             },
             'billingProvider.user',
             'patientInfo',
             'ccdProblems' => function ($problem) {
-                $problem->with(['cpmProblem', 'codes', 'icd10Codes']);
+                $problem->with(['cpmProblem.locationChargeableServices', 'codes', 'icd10Codes']);
             },
             'chargeableMonthlySummary' => function ($q) use ($monthYear) {
-                $q->createdOn($monthYear, 'month_year');
+                $q->with(['chargeableService'])
+                    ->createdOn($monthYear, 'chargeable_month');
             },
         ]);
     }

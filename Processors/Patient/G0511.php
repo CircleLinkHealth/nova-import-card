@@ -8,7 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
-class PCM extends AbstractProcessor
+class G0511 extends AbstractProcessor
 {
     public function clashesWith(): array
     {
@@ -19,7 +19,7 @@ class PCM extends AbstractProcessor
 
     public function code(): string
     {
-        return ChargeableService::PCM;
+        return ChargeableService::G0511;
     }
 
     public function minimumNumberOfCalls(): int
@@ -29,7 +29,7 @@ class PCM extends AbstractProcessor
 
     public function minimumNumberOfProblems(): int
     {
-        return 1;
+        return 2;
     }
 
     public function minimumTimeInSeconds(): int

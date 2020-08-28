@@ -8,14 +8,14 @@ namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ApprovablePatientCollection extends ResourceCollection
+class ChargeableServiceForTimeTrackerCollection extends ResourceCollection
 {
     /**
      * The resource that this resource collects.
      *
      * @var string
      */
-    public $collects = ApprovablePatient::class;
+    public $collects = PatientChargeableSummary::class;
 
     /**
      * Transform the resource collection into an array.
