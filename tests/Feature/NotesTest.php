@@ -8,14 +8,10 @@ namespace Tests\Feature;
 
 use App\Http\Controllers\NotesController;
 use App\Note;
-use Illuminate\Testing\TestResponse;
 use Tests\CustomerTestCase;
-use Tests\Helpers\MakesSafeRequests;
 
 class NotesTest extends CustomerTestCase
 {
-    use MakesSafeRequests;
-
     /**
      * A basic feature test example.
      *
@@ -63,12 +59,9 @@ class NotesTest extends CustomerTestCase
         $draftNoteId = $this->createNote($patient->id);
         $this->createNote($patient->id, $draftNoteId, 'complete');
 
-        /** @var NotesController $controller */
-        $controller = app(NotesController::class);
-
-        $req = $this->safeRequest(
-            route('patient.note.store', ['patientId' => $patient->id]),
+        $resp = $this->call(
             'POST',
+            route('patient.note.store', ['patientId' => $patient->id]),
             [
                 'note_id'    => $draftNoteId,
                 'body'       => 'test-complete-edit',
@@ -76,7 +69,6 @@ class NotesTest extends CustomerTestCase
             ]
         );
 
-        $resp = TestResponse::fromBaseResponse($controller->storeDraft($req, $patient->id));
         $resp->assertOk();
         self::assertTrue(null !== $resp->json('error'));
     }
@@ -84,12 +76,10 @@ class NotesTest extends CustomerTestCase
     private function createNote($patientId, $noteId = null, $status = 'draft')
     {
         $isEditing = null !== $noteId;
-        /** @var NotesController $controller */
-        $controller = app(NotesController::class);
 
-        $req = $this->safeRequest(
-            route('draft' === $status ? 'patient.note.store.draft' : 'patient.note.store', ['patientId' => $patientId]),
+        $resp = $this->call(
             'POST',
+            route('draft' === $status ? 'patient.note.store.draft' : 'patient.note.store', ['patientId' => $patientId]),
             [
                 'status'     => $status,
                 'note_id'    => $noteId,
@@ -98,7 +88,6 @@ class NotesTest extends CustomerTestCase
             ]
         );
 
-        $resp = TestResponse::fromBaseResponse($controller->storeDraft($req, $patientId));
         $resp->assertOk();
 
         self::assertNull($resp->json('error'));

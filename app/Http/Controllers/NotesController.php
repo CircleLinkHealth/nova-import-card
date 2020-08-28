@@ -20,7 +20,7 @@ use App\Note;
 use App\Rules\PatientEmailAttachments;
 use App\Rules\PatientEmailDoesNotContainPhi;
 use App\Rules\ValidatePatientCustomEmail;
-use App\SafeRequest;
+use App\Http\Requests\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\CPM\CpmProblemService;

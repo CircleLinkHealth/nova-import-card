@@ -88,8 +88,6 @@ trait TimeHelpers
     private function createNote(User $author, $patientId, $phoneSession = false, $successfulCall = false, Carbon $startTime = null): ?Note
     {
         $this->be($author);
-        /** @var NotesController $controller */
-        $controller = app(NotesController::class);
 
         $args = [
             'body'       => 'test',
@@ -105,12 +103,11 @@ trait TimeHelpers
             $args['call_status'] = $successfulCall ? Call::REACHED : Call::NOT_REACHED;
         }
 
-        $req = $this->safeRequest(
-            route('patient.note.store', ['patientId' => $patientId]),
+        $resp = $this->call(
             'POST',
+            route('patient.note.store', ['patientId' => $patientId]),
             $args
         );
-        TestResponse::fromBaseResponse($controller->store($req, app(SchedulerService::class), $patientId));
 
         return Note::where('patient_id', '=', $patientId)
             ->orderBy('created_at', 'desc')
