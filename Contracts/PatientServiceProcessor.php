@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Contracts;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 
 interface PatientServiceProcessor
@@ -30,11 +31,11 @@ interface PatientServiceProcessor
 
     public function minimumTimeInSeconds(): int;
 
-    public function processBilling(int $patientId, Carbon $chargeableMonth);
+    public function processBilling(PatientMonthlyBillingStub $billingStub): void;
 
     public function repo(): PatientServiceProcessorRepository;
 
     public function shouldAttach(int $patientId, Carbon $monthYear, PatientProblemForProcessing ...$patientProblems): bool;
 
-    public function shouldFulfill(int $patientId, Carbon $chargeableMonth): bool;
+    public function shouldFulfill(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool;
 }

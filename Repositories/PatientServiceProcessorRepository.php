@@ -38,6 +38,24 @@ class PatientServiceProcessorRepository implements Repository
             ->get();
     }
 
+    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummary
+    {
+        return ChargeablePatientMonthlySummary::with([
+            'chargeableService' => function ($cs) {
+                $cs->select(['id', 'display_name']);
+            },
+            'timePerServiceToBeImplemented' => function ($q) use ($month) {
+                $q->where('month', $month);
+            },
+        ])
+            ->where('patient_user_id', $patientId)
+            ->where('chargeable_month', $month)
+            ->whereHas('chargeableService', function ($q) use ($chargeableServiceCode) {
+                $q->where('code', $chargeableServiceCode);
+            })
+            ->first();
+    }
+
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         return ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)

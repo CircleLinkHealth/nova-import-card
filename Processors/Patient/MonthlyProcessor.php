@@ -25,13 +25,7 @@ class MonthlyProcessor implements PatientMonthlyBillingProcessor
         $patientStub->getAvailableServiceProcessors()
             ->toCollection()
             ->each(function (PatientServiceProcessor $processor) use ($patientStub) {
-                if ($processor->shouldAttach(
-                    $patientStub->getPatientId(),
-                    $patientStub->getChargeableMonth(),
-                    ...$patientStub->getPatientProblems()
-                )) {
-                    $processor->attach($patientStub->getPatientId(), $patientStub->getChargeableMonth());
-                }
+                $processor->processBilling($patientStub);
             });
 
         return $patientStub;

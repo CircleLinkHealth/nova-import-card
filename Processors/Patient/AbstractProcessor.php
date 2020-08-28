@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 
 abstract class AbstractProcessor implements PatientServiceProcessor
@@ -48,18 +49,26 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return $this->repo()->isFulfilled($patientId, $this->code(), $chargeableMonth);
     }
 
-    public function processBilling(int $patientId, Carbon $chargeableMonth)
+    public function processBilling(PatientMonthlyBillingStub $patientStub): void
     {
-        if ( ! $this->isAttached($patientId, $chargeableMonth)) {
-            return;
+        if ( ! $this->isAttached($patientStub->getPatientId(), $patientStub->getChargeableMonth())) {
+            if ($this->shouldAttach(
+                $patientStub->getPatientId(),
+                $patientStub->getChargeableMonth(),
+                ...$patientStub->getPatientProblems()
+            )) {
+                $this->attach($patientStub->getPatientId(), $patientStub->getChargeableMonth());
+            }
         }
 
-        if ($this->isFulfilled($patientId, $chargeableMonth)) {
-            return;
-        }
-
-        if ($this->shouldFulfill($patientId, $chargeableMonth)) {
-            $this->fulfill($patientId, $chargeableMonth);
+        if ( ! $this->isFulfilled($patientStub->getPatientId(), $patientStub->getChargeableMonth())) {
+            if ($this->shouldFulfill(
+                $patientStub->getPatientId(),
+                $patientStub->getChargeableMonth(),
+                ...$patientStub->getPatientProblems()
+            )) {
+                $this->fulfill($patientStub->getPatientId(), $patientStub->getChargeableMonth());
+            }
         }
     }
 
@@ -96,8 +105,23 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             )->filter()->count() >= $this->minimumNumberOfProblems();
     }
 
-    public function shouldFulfill(int $patientId, Carbon $chargeableMonth): bool
+    public function shouldFulfill(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
-        // TODO: Implement shouldFulfill() method.
+        if ( ! $this->shouldAttach($patientId, $chargeableMonth, $patientProblems)) {
+            return false;
+        }
+
+        $summary = $this->repo()
+            ->getChargeablePatientSummary($patientId, $this->code(), $chargeableMonth);
+
+        if ($summary->time_for_month_to_be_implemented < $this->minimumTimeInSeconds()) {
+            return false;
+        }
+
+        if ($summary->calls_for_month_to_be_implemented < $this->minimumNumberOfCalls()) {
+            return false;
+        }
+
+        return true;
     }
 }
