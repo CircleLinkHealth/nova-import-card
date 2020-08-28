@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Traits;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 
 trait PropagatesSequence
 {
@@ -21,7 +21,7 @@ trait PropagatesSequence
         }
     }
 
-    abstract public function next(): PatientChargeableServiceProcessor;
+    abstract public function next(): PatientServiceProcessor;
 
     protected function shouldAttachNext(int $patientId, Carbon $chargeableMonth): bool
     {

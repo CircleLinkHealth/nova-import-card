@@ -6,11 +6,17 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class PCM extends AbstractProcessor
 {
+    public function clashesWith(): array
+    {
+        return [
+            new CCM(),
+        ];
+    }
+
     public function code(): string
     {
         return ChargeableService::PCM;
@@ -21,13 +27,13 @@ class PCM extends AbstractProcessor
         return 1;
     }
 
-    public function minimumTimeInSeconds(): int
-    {
-        return 1200;
-    }
-    
     public function minimumNumberOfProblems(): int
     {
         return 1;
+    }
+
+    public function minimumTimeInSeconds(): int
+    {
+        return 1200;
     }
 }

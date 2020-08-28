@@ -10,6 +10,26 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 
+/**
+ * CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary.
+ *
+ * @property int                                                                                         $id
+ * @property int                                                                                         $patient_user_id
+ * @property int|null                                                                                    $chargeable_service_id
+ * @property \Illuminate\Support\Carbon                                                                  $chargeable_month
+ * @property int|null                                                                                    $actor_id
+ * @property bool                                                                                        $is_fulfilled
+ * @property \Illuminate\Support\Carbon|null                                                             $created_at
+ * @property \Illuminate\Support\Carbon|null                                                             $updated_at
+ * @property ChargeableService|null                                                                      $chargeableService
+ * @property User                                                                                        $patient
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property int|null                                                                                    $revision_history_count
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary query()
+ * @mixin \Eloquent
+ */
 class ChargeablePatientMonthlySummary extends BaseModel
 {
     protected $casts = [

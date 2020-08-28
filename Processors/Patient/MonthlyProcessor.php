@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
 
@@ -24,8 +24,9 @@ class MonthlyProcessor implements PatientMonthlyBillingProcessor
     {
         $patientStub->getAvailableServiceProcessors()
             ->toCollection()
-            ->each(function (PatientChargeableServiceProcessor $processor) use ($patientStub) {
+            ->each(function (PatientServiceProcessor $processor) use ($patientStub) {
                 if ($processor->shouldAttach(
+                    $patientStub->getPatientId(),
                     $patientStub->getChargeableMonth(),
                     ...$patientStub->getPatientProblems()
                 )) {

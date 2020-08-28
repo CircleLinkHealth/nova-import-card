@@ -9,11 +9,11 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessorRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class PracticeProcessorEloquentRepository implements CustomerBillingProcessorRepository
+class PracticeProcessorEloquentRepository implements CustomerProcessorRepository
 {
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;

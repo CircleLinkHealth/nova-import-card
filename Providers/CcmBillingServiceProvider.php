@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Providers;
 
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository as PatientRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
-use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository as PatientRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository as PatientRepository;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;

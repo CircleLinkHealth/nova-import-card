@@ -9,14 +9,14 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
-use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class LocationProcessorEloquentRepository implements CustomerBillingProcessorRepository
+class LocationProcessorEloquentRepository implements CustomerProcessorRepository
 {
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
@@ -64,7 +64,7 @@ class LocationProcessorEloquentRepository implements CustomerBillingProcessorRep
             ->map([$this, 'getProcessorUsingCode']);
     }
 
-    private function getProcessorUsingCode(ChargeableLocationMonthlySummary $clms): PatientChargeableServiceProcessor
+    private function getProcessorUsingCode(ChargeableLocationMonthlySummary $clms): PatientServiceProcessor
     {
         return $clms->chargeableService->processor();
     }

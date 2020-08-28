@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use App\Constants;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class BHI extends AbstractProcessor
@@ -31,5 +30,4 @@ class BHI extends AbstractProcessor
     {
         return Constants::TWENTY_MINUTES_IN_SECONDS;
     }
-
 }

@@ -7,8 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use App\Constants;
-use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Traits\PropagatesSequence;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
@@ -36,7 +35,7 @@ class CCM extends AbstractProcessor
         return Constants::TWENTY_MINUTES_IN_SECONDS;
     }
 
-    public function next(): PatientChargeableServiceProcessor
+    public function next(): PatientServiceProcessor
     {
         return new CCM40();
     }

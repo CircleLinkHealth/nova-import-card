@@ -7,18 +7,24 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 
-abstract class AbstractProcessor implements PatientChargeableServiceProcessor
+abstract class AbstractProcessor implements PatientServiceProcessor
 {
-    private PatientProcessorEloquentRepository $repo;
+    private PatientServiceProcessorRepository $repo;
 
     public function attach(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
     {
         return $this->repo()->store($patientId, $this->code(), $chargeableMonth);
+    }
+
+    public function clashesWith(): array
+    {
+        return [
+        ];
     }
 
     public function fulfill(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
@@ -57,20 +63,29 @@ abstract class AbstractProcessor implements PatientChargeableServiceProcessor
         }
     }
 
-    public function repo(): PatientProcessorEloquentRepository
+    public function repo(): PatientServiceProcessorRepository
     {
         if ( ! isset($this->repo)) {
-            $this->repo = app(PatientProcessorEloquentRepository::class);
+            $this->repo = app(PatientServiceProcessorRepository::class);
         }
 
         return $this->repo;
     }
 
-    public function shouldAttach(Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
+    public function shouldAttach(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
-        return collect($patientProblems)->filter(
-            fn (PatientProblemForProcessing $problem) => collect($problem->getServiceCodes())->contains($this->code())
-        )->filter()->count() >= $this->minimumNumberOfProblems();
+        return collect($patientProblems)
+            ->filter(
+                function (PatientProblemForProcessing $problem) use ($patientId, $chargeableMonth) {
+                    foreach ($this->clashesWith() as $clash) {
+                        if ($this->repo()->isAttached($patientId, $clash->code(), $chargeableMonth)) {
+                            return false;
+                        }
+                    }
+
+                    return collect($problem->getServiceCodes())->contains($this->code());
+                }
+            )->filter()->count() >= $this->minimumNumberOfProblems();
     }
 
     public function shouldFulfill(int $patientId, Carbon $chargeableMonth): bool

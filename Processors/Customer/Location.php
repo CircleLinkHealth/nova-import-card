@@ -7,13 +7,13 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Customer;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerBillingProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessorRepository;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientsChunk;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 
-class Location implements CustomerBillingProcessor
+class Location implements CustomerProcessor
 {
     private LocationProcessorEloquentRepository $repo;
 
@@ -43,7 +43,7 @@ class Location implements CustomerBillingProcessor
             );
     }
 
-    public function repo(): CustomerBillingProcessorRepository
+    public function repo(): CustomerProcessorRepository
     {
         return $this->repo;
     }

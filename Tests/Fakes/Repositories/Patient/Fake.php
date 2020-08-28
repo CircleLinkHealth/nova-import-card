@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient;
 
-use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use Illuminate\Support\Facades\Facade;
 
 class Fake extends Facade
@@ -20,6 +20,6 @@ class Fake extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return PatientProcessorEloquentRepository::class;
+        return PatientServiceProcessorRepository::class;
     }
 }

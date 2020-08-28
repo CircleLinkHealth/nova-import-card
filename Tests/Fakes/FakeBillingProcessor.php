@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests\Fakes;
 
-use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 
-abstract class FakeBillingProcessor implements PatientChargeableServiceProcessor
+abstract class FakeBillingProcessor implements PatientServiceProcessor
 {
 }

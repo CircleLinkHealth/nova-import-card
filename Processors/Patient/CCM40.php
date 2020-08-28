@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
-use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Traits\PropagatesSequence;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
@@ -23,7 +23,7 @@ class CCM40 extends AbstractProcessor
     {
         return 1;
     }
-    
+
     public function minimumNumberOfProblems(): int
     {
         return 2;
@@ -34,7 +34,7 @@ class CCM40 extends AbstractProcessor
         return 2400;
     }
 
-    public function next(): PatientChargeableServiceProcessor
+    public function next(): PatientServiceProcessor
     {
         return new CCM60();
     }

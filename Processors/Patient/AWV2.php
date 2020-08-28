@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class AWV2 extends AbstractProcessor
@@ -21,13 +20,13 @@ class AWV2 extends AbstractProcessor
         // TODO: Implement minimumNumberOfCalls() method.
     }
 
-    public function minimumTimeInSeconds(): int
-    {
-        // TODO: Implement minimumTimeInSeconds() method.
-    }
-    
     public function minimumNumberOfProblems(): int
     {
         // TODO: Implement minimumNumberOfProblems() method.
+    }
+
+    public function minimumTimeInSeconds(): int
+    {
+        // TODO: Implement minimumTimeInSeconds() method.
     }
 }

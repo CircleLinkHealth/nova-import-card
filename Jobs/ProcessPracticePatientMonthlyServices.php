@@ -26,13 +26,9 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
     protected bool $fulfill;
 
     protected int $practiceId;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param int $practiceId
-     * @param Carbon $chargeableMonth
-     * @param bool $fulfill
      */
     public function __construct(int $practiceId, Carbon $chargeableMonth, bool $fulfill)
     {
