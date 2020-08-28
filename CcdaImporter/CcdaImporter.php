@@ -130,7 +130,7 @@ class CcdaImporter
         $demographics = $this->ccda->bluebuttonJson()->demographics;
 
         if ($this->isFamily($email, $demographics)) {
-            $email = "family_{$this->ccda->patient_first_name}_$email";
+            $email = self::convertToFamilyEmail($email);
         }
 
         $newPatientUser = (new UserRepository())->createNewUser(
@@ -405,18 +405,22 @@ class CcdaImporter
 
     private function isFamily(string $email, object $demographics)
     {
-        $address = $demographics->address->street[0] ?? null;
+        $phones = collect($demographics->phones)
+            ->pluck('number')
+            ->map(fn ($num) => formatPhoneNumberE164($num))
+            ->filter()
+            ->all();
 
-        if ( ! $address) {
+        if (empty($phones)) {
             return false;
         }
 
         return User::ofType(['participant', 'survey-only'])
             ->where('email', $email)
             ->where('first_name', '!=', $this->ccda->patient_fist_name)
-            ->where('address', $address)
-            ->where('city', $demographics->address->city)
-            ->where('state', $demographics->address->state)
+            ->whereHas('phoneNumbers', function ($q) use ($phones) {
+                $q->whereIn('number', $phones);
+            })
             ->exists();
     }
 
