@@ -137,6 +137,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                                 $all_chargeable_services_count
  * @property \CircleLinkHealth\Customer\Entities\CustomerNotificationContactTimePreference[]|\Illuminate\Database\Eloquent\Collection $notificationContactPreferences
  * @property int|null                                                                                                                 $notification_contact_preferences_count
+ * @property string|null                                                                                                              $default_user_scope
  */
 class Practice extends BaseModel implements HasMedia
 {
