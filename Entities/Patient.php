@@ -57,7 +57,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int                                                                                                 $preferred_calls_per_month
  * @property string|null                                                                                         $last_successful_contact_time
  * @property int|null                                                                                            $no_call_attempts_since_last_success
- * @property string|null                                                                                         $last_contact_time
  * @property string                                                                                              $daily_contact_window_start
  * @property string                                                                                              $daily_contact_window_end
  * @property int|null                                                                                            $next_call_id
@@ -214,6 +213,7 @@ class Patient extends BaseModel
         'paused_letter_printed_at',
         'consent_date',
         'gender',
+        'last_contact_time',
         'date_paused',
         'date_withdrawn',
         'withdrawn_reason',
@@ -239,7 +239,6 @@ class Patient extends BaseModel
         'preferred_calls_per_month',
         'last_successful_contact_time',
         'no_call_attempts_since_last_success',
-        'last_contact_time',
         'daily_contact_window_start',
         'daily_contact_window_end',
         'next_call_id',
@@ -451,71 +450,6 @@ class Patient extends BaseModel
     public function getLastNameAttribute()
     {
         return $this->user->getLastName();
-    }
-
-    /**
-     * Returns current nurse of patient (could be temporary or permanent.
-     *
-     * @return User|null
-     */
-    public function getNurse()
-    {
-        if ($this->relationLoaded('patientNurseAsPatient')) {
-            $this->loadMissing('patientNurseAsPatient.nurse');
-            $nursePatient = $this->patientNurseAsPatient;
-        } else {
-            $nursePatient = PatientNurse::where('patient_user_id', '=', $this->user_id)
-                ->with('nurse')
-                ->first();
-        }
-
-        /** @var PatientNurse $record */
-        $record = optional($nursePatient)->nurse;
-
-        if ( ! $record) {
-            return null;
-        }
-
-        if ( ! $record->nurse) {
-            return null;
-        }
-
-        return $record->nurse;
-    }
-
-    /**
-     * Get current nurse (could be parmanent or temporary) and upcoming (temporary).
-     */
-    public function getNurses()
-    {
-        /** @var PatientNurse $record */
-        $record = PatientNurse::where('patient_user_id', '=', $this->user_id)
-            ->with(['permanentNurse', 'temporaryNurse'])
-            ->first();
-
-        if ( ! $record) {
-            return null;
-        }
-
-        $result = [];
-        if ($record->permanentNurse) {
-            $result['permanent'] = [
-                'user' => $record->permanentNurse,
-            ];
-        }
-
-        $now = Carbon::now();
-        if ($record->temporaryNurse && $now->isBefore($record->temporary_to)) {
-            $result['temporary'] = [
-                'from' => $record->temporary_from,
-                'to'   => $record->temporary_to,
-                'user' => $record->temporaryNurse,
-            ];
-        }
-
-        return empty($result)
-            ? null
-            : $result;
     }
 
     public function getPreferences()
