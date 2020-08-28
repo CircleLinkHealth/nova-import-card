@@ -16,39 +16,43 @@ use PHPUnit\Framework\Assert as PHPUnit;
 
 class Eloquent implements PatientServiceProcessorRepository
 {
-    private Collection $collection;
     private Collection $isAttachedStubs;
 
     private bool $isChargeableServiceEnabledForMonth = false;
     private Collection $isFulfilledStubs;
+    private Collection $summariesCreated;
 
     public function __construct()
     {
-        $this->collection = collect();
+        $this->summariesCreated = collect();
+        $this->isAttachedStubs  = collect();
+        $this->isFulfilledStubs = collect();
     }
 
     public function assertChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month): void
     {
         PHPUnit::assertTrue(
-            1 === $this->collection->where('patientId', $patientId)
+            1 === $this->summariesCreated->where('patientId', $patientId)
                 ->where('chargeableServiceCode', $chargeableServiceCode)
-                ->where('month', $month)->count()
+                ->where('month', $month)
+                ->count()
         );
     }
 
     public function assertChargeableSummaryNotCreated(int $patientId, string $chargeableServiceCode, Carbon $month): void
     {
         PHPUnit::assertFalse(
-            1 === $this->collection->where('patientId', $patientId)
+            1 === $this->summariesCreated->where('patientId', $patientId)
                 ->where('chargeableServiceCode', $chargeableServiceCode)
-                ->where('month', $month)->count()
+                ->where('month', $month)
+                ->count()
         );
     }
 
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         //TODO: TEST
-        $this->collection->push([
+        $this->summariesCreated->push([
             'patientId'             => $patientId,
             'chargeableServiceCode' => $chargeableServiceCode,
             'month'                 => $month,
@@ -61,6 +65,11 @@ class Eloquent implements PatientServiceProcessorRepository
     public function getChargeablePatientSummaries(int $patientId, Carbon $month)
     {
         // TODO: Implement getChargeablePatientSummaries() method.
+    }
+
+    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month)
+    {
+        // TODO: Implement getChargeablePatientSummary() method.
     }
 
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
@@ -108,7 +117,7 @@ class Eloquent implements PatientServiceProcessorRepository
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
-        $this->collection->push([
+        $this->summariesCreated->push([
             'patientId'             => $patientId,
             'chargeableServiceCode' => $chargeableServiceCode,
             'month'                 => $month,

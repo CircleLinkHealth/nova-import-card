@@ -107,13 +107,17 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function shouldFulfill(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
-        if ( ! $this->shouldAttach($patientId, $chargeableMonth, $patientProblems)) {
+        if ( ! $this->shouldAttach($patientId, $chargeableMonth, ...$patientProblems)) {
             return false;
         }
 
         $summary = $this->repo()
             ->getChargeablePatientSummary($patientId, $this->code(), $chargeableMonth);
 
+        if ( ! $summary) {
+            return false;
+        }
+        
         if ($summary->time_for_month_to_be_implemented < $this->minimumTimeInSeconds()) {
             return false;
         }
