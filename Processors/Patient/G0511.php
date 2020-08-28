@@ -6,13 +6,14 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
-class CCM60 extends AbstractProcessor
+class G0511 extends AbstractProcessor
 {
     public function code(): string
     {
-        return ChargeableService::CCM_PLUS_60;
+        return ChargeableService::G0511;
     }
 
     public function minimumNumberOfCalls(): int
@@ -20,13 +21,13 @@ class CCM60 extends AbstractProcessor
         return 1;
     }
 
+    public function minimumTimeInSeconds(): int
+    {
+        return 1200;
+    }
+    
     public function minimumNumberOfProblems(): int
     {
         return 2;
-    }
-
-    public function minimumTimeInSeconds(): int
-    {
-        return 3600;
     }
 }

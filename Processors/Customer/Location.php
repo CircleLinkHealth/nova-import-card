@@ -22,7 +22,7 @@ class Location implements CustomerBillingProcessor
         $this->repo = $repo;
     }
 
-    public function fetchApprovablePatients(int $locationId, Carbon $month, $pageSize = 30): ApprovablePatientCollection
+    public function fetchApprovablePatients(int $locationId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection
     {
         return new ApprovablePatientCollection($this->repo->paginatePatients($locationId, $month, $pageSize));
     }

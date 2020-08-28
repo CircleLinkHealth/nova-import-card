@@ -12,7 +12,7 @@ use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 interface CustomerBillingProcessor
 {
     //For ABP
-    public function fetchApprovablePatients(int $customerModelId, Carbon $month, $pageSize = 30): ApprovablePatientCollection;
+    public function fetchApprovablePatients(int $customerModelId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection;
 
     //attach, and fulfill services whenever pertinent
     public function processServicesForAllPatients(int $customerModelId, Carbon $month, bool $fulfill): void;

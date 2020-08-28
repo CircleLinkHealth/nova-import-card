@@ -7,71 +7,27 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientChargeableServiceProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 
-class PCM implements PatientChargeableServiceProcessor
+class PCM extends AbstractProcessor
 {
-    private PatientProcessorEloquentRepository $repo;
-
-    public function attach(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
-    {
-        // TODO: Implement attach() method.
-    }
-
     public function code(): string
     {
-        // TODO: Implement code() method.
-    }
-
-    public function fulfill(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
-    {
-        // TODO: Implement fulfill() method.
-    }
-
-    public function isAttached(int $patientId, Carbon $chargeableMonth): bool
-    {
-        // TODO: Implement isAttached() method.
-    }
-
-    public function isFulfilled(int $patientId, Carbon $chargeableMonth): bool
-    {
-        // TODO: Implement isFulfilled() method.
+        return ChargeableService::PCM;
     }
 
     public function minimumNumberOfCalls(): int
     {
-        // TODO: Implement minimumNumberOfCalls() method.
+        return 1;
     }
 
     public function minimumTimeInSeconds(): int
     {
-        // TODO: Implement minimumTimeInSeconds() method.
+        return 1200;
     }
-
-    public function processBilling(int $patientId, Carbon $chargeableMonth)
+    
+    public function minimumNumberOfProblems(): int
     {
-        // TODO: Implement processBilling() method.
-    }
-
-    public function repo(): PatientProcessorEloquentRepository
-    {
-        if ( ! isset($this->repo)) {
-            $this->repo = app(PatientProcessorEloquentRepository::class);
-        }
-
-        return $this->repo;
-    }
-
-    public function shouldAttach(Carbon $monthYear, PatientProblemForProcessing ...$patientProblems): bool
-    {
-        // TODO: Implement shouldAttach() method.
-    }
-
-    public function shouldFulfill(int $patientId, Carbon $chargeableMonth): bool
-    {
-        // TODO: Implement shouldFulfill() method.
+        return 1;
     }
 }

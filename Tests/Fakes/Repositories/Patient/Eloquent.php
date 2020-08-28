@@ -15,6 +15,8 @@ use PHPUnit\Framework\Assert as PHPUnit;
 class Eloquent implements PatientProcessorEloquentRepository
 {
     private Collection $collection;
+    
+    private bool $isChargeableServiceEnabledForMonth = false;
 
     public function __construct()
     {
@@ -24,6 +26,15 @@ class Eloquent implements PatientProcessorEloquentRepository
     public function assertChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month): void
     {
         PHPUnit::assertTrue(
+            1 === $this->collection->where('patientId', $patientId)
+                ->where('chargeableServiceCode', $chargeableServiceCode)
+                ->where('month', $month)->count()
+        );
+    }
+    
+    public function assertChargeableSummaryNotCreated(int $patientId, string $chargeableServiceCode, Carbon $month): void
+    {
+        PHPUnit::assertFalse(
             1 === $this->collection->where('patientId', $patientId)
                 ->where('chargeableServiceCode', $chargeableServiceCode)
                 ->where('month', $month)->count()
@@ -57,5 +68,28 @@ class Eloquent implements PatientProcessorEloquentRepository
         ]);
 
         return new ChargeablePatientMonthlySummary();
+    }
+    
+    public function isChargeableServiceEnabledForLocationForMonth(int $patientId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        return $this->isChargeableServiceEnabledForMonth;
+    }
+    
+    /**
+     * @param bool $isChargeableServiceEnabledForMonth
+     */
+    public function setIsChargeableServiceEnabledForMonth(bool $isChargeableServiceEnabledForMonth): void
+    {
+        $this->isChargeableServiceEnabledForMonth = $isChargeableServiceEnabledForMonth;
+    }
+    
+    public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        // TODO: Implement isFulfilled() method.
+    }
+    
+    public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        // TODO: Implement isAttached() method.
     }
 }

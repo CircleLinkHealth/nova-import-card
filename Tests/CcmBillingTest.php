@@ -126,4 +126,21 @@ class BillingProcessorsIntegrationTest extends TestCase
         FakePatientRepository::assertChargeableSummaryCreated(1, $stub->getAvailableServiceProcessors()->getCcm()->code(), $startOfMonth);
         FakePatientRepository::assertChargeableSummaryCreated(1, $stub->getAvailableServiceProcessors()->getBhi()->code(), $startOfMonth);
     }
+    
+    public function test_it_only_attaches_next_service_if_it_is_enabled_for_location_for_month() {
+        $patientId = 1;
+        $month = now();
+        
+        FakePatientRepository::fake();
+        
+        $processor = new CCM();
+    
+        FakePatientRepository::setIsChargeableServiceEnabledForMonth(false);
+        $processor->attachNext($patientId, $month);
+        FakePatientRepository::assertChargeableSummaryNotCreated($patientId, $processor->next()->code(), $month);
+    
+        FakePatientRepository::setIsChargeableServiceEnabledForMonth(true);
+        $processor->attachNext($patientId, $month);
+        FakePatientRepository::assertChargeableSummaryCreated($patientId, $processor->next()->code(), $month);
+    }
 }

@@ -23,6 +23,8 @@ interface PatientChargeableServiceProcessor
     public function isFulfilled(int $patientId, Carbon $chargeableMonth): bool;
 
     public function minimumNumberOfCalls(): int;
+    
+    public function minimumNumberOfProblems(): int;
 
     public function minimumTimeInSeconds(): int;
 
