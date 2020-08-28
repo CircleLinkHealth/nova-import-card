@@ -89,6 +89,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
  * @property int|null                                                                     $actions_count
  * @method   static                                                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer whereEnrolleeId($value)
+ * @property int|null                                                                     $chargeable_service_id
+ * @property ChargeableService|null                                                       $chargeableService
  */
 class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
 {
