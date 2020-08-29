@@ -37,6 +37,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CcdaImporter
 {
+    const FAMILY_EMAIL_SUFFIX = '+family';
     /**
      * How many times to try the importing process.
      */
@@ -81,6 +82,21 @@ class CcdaImporter
         return $this->ccda;
     }
 
+    public static function convertFamilyEmailToValidEmail(string $emailAddress)
+    {
+        return preg_replace('/\+family\d*/', '', $emailAddress);
+    }
+
+    public static function convertToFamilyEmail(string $email)
+    {
+        return substr_replace(
+            $email,
+            self::FAMILY_EMAIL_SUFFIX.random_int(1000, 999999),
+            strpos($email, '@'),
+            0
+        );
+    }
+
     /**
      * Create a new CarePlan.
      *
@@ -111,11 +127,11 @@ class CcdaImporter
             $email = $newUserId.'@careplanmanager.com';
         }
 
-        if (User::ofType(['participant', 'survey-only'])->where('email', $email)->where('last_name', $this->ccda->patient_last_name)->where('first_name', '!=', $this->ccda->patient_fist_name)->exists()) {
-            $email = "family_$email";
-        }
-
         $demographics = $this->ccda->bluebuttonJson()->demographics;
+
+        if ($this->isFamily($email, $demographics)) {
+            $email = self::convertToFamilyEmail($email);
+        }
 
         $newPatientUser = (new UserRepository())->createNewUser(
             new ParameterBag(
@@ -385,6 +401,27 @@ class CcdaImporter
         ImportVitals::for($this->ccda->patient, $this->ccda);
 
         return $this;
+    }
+
+    private function isFamily(string $email, object $demographics)
+    {
+        $phones = collect($demographics->phones)
+            ->pluck('number')
+            ->map(fn ($num) => formatPhoneNumberE164($num))
+            ->filter()
+            ->all();
+
+        if (empty($phones)) {
+            return false;
+        }
+
+        return User::ofType(['participant', 'survey-only'])
+            ->where('email', $email)
+            ->where('first_name', '!=', $this->ccda->patient_fist_name)
+            ->whereHas('phoneNumbers', function ($q) use ($phones) {
+                $q->whereIn('number', $phones);
+            })
+            ->exists();
     }
 
     /**

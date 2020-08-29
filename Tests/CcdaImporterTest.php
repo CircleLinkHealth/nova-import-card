@@ -17,6 +17,7 @@ use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\ValidationException;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachLocation;
@@ -132,6 +133,18 @@ class CcdaImporterTest extends CustomerTestCase
         AttachPractice::for($this->patient(), $ccda);
 
         $this->assertTrue($this->patient()->program_id === $differentPracticeId);
+    }
+
+    public function test_it_converts_family_email_to_valid_email()
+    {
+        self::assertEquals($email = 'hello@gmail.com', CcdaImporter::convertFamilyEmailToValidEmail(
+            CcdaImporter::convertToFamilyEmail($email)
+        ));
+    }
+  
+    public function test_it_converts_to_family_email()
+    {
+        self::assertRegExp('/^hello\+family\d*@gmail.com/', CcdaImporter::convertToFamilyEmail('hello@gmail.com'));
     }
 
     public function test_it_does_not_change_billing_provider_during_reimport()
@@ -274,10 +287,6 @@ class CcdaImporterTest extends CustomerTestCase
             'number'  => '+12012819204',
         ]);
     }
-
-//    public function test_it_matches_patient_name_with_dupe_name_with_middle_initial()
-//    {
-//    }
 
     public function test_it_replaces_email_with_email_from_enrollee()
     {
