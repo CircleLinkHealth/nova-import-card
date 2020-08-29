@@ -102,7 +102,9 @@ trait TimeHelpers
             route('patient.note.store', ['patientId' => $patientId]),
             $args
         );
-
+    
+        $this->flushSession();
+        
         return Note::where('patient_id', '=', $patientId)
             ->orderBy('created_at', 'desc')
             ->first();
