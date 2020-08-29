@@ -898,7 +898,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "975a5717998811564fcdf6fd6272dabfe7a766a4"
+                "reference": "216b55a90bb8aaa8d9387dc38ad2068a9abcfe77"
             },
             "type": "laravel-module",
             "extra": {
@@ -934,7 +934,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-08-29T20:35:41+00:00"
+            "time": "2020-08-29T20:55:51+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1170,7 +1170,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "24d9ec4095c3054d567db6a8d6960a1f3cf3203d"
+                "reference": "a12de628819ba44a469f1b133134bd37f09a739e"
             },
             "type": "laravel-module",
             "extra": {
@@ -1192,7 +1192,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-29T20:35:41+00:00"
+            "time": "2020-08-29T20:55:51+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
