@@ -54,6 +54,7 @@
                 "laravel",
                 "nova"
             ],
+            "abandoned": true,
             "time": "2018-09-06T20:24:04+00:00"
         },
         {
@@ -511,16 +512,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.151.1",
+            "version": "3.151.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5b9afeff4f6234dd6182c88cd6387296743e478a"
+                "reference": "7191394eb44edee26db739207c432e408cd6a26f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5b9afeff4f6234dd6182c88cd6387296743e478a",
-                "reference": "5b9afeff4f6234dd6182c88cd6387296743e478a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7191394eb44edee26db739207c432e408cd6a26f",
+                "reference": "7191394eb44edee26db739207c432e408cd6a26f",
                 "shasum": ""
             },
             "require": {
@@ -592,7 +593,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-08-27T18:13:21+00:00"
+            "time": "2020-08-28T18:11:11+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -897,7 +898,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "7d90ce977f0b7e5b1da8164f8baf408ec3203e0d"
+                "reference": "5c1745e0366783a5afaa6a3fb0bd2b0537a206ef"
             },
             "type": "laravel-module",
             "extra": {
@@ -933,7 +934,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-08-28T07:43:02+00:00"
+            "time": "2020-08-29T19:54:34+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1169,7 +1170,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "d25498c88535d2c9a8adb28015e5558bdcddce2a"
+                "reference": "98b2aa7e7381cc2618e255675ddbe36d81fbc518"
             },
             "type": "laravel-module",
             "extra": {
@@ -1191,7 +1192,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-28T05:39:18+00:00"
+            "time": "2020-08-29T19:54:34+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1199,7 +1200,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "c4c64cef63634f8a1a29aaf47774daef19f38340"
+                "reference": "0ac30e25c5c846f34066fe64689540790d733556"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1233,7 +1234,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-28T05:37:30+00:00"
+            "time": "2020-08-29T19:54:34+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -6323,16 +6324,16 @@
         },
         {
             "name": "markbaker/matrix",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MarkBaker/PHPMatrix.git",
-                "reference": "5348c5a67e3b75cd209d70103f916a93b1f1ed21"
+                "reference": "182d44c3b2e3b063468f7481ae3ef71c69dc1409"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MarkBaker/PHPMatrix/zipball/5348c5a67e3b75cd209d70103f916a93b1f1ed21",
-                "reference": "5348c5a67e3b75cd209d70103f916a93b1f1ed21",
+                "url": "https://api.github.com/repos/MarkBaker/PHPMatrix/zipball/182d44c3b2e3b063468f7481ae3ef71c69dc1409",
+                "reference": "182d44c3b2e3b063468f7481ae3ef71c69dc1409",
                 "shasum": ""
             },
             "require": {
@@ -6343,7 +6344,7 @@
                 "phpcompatibility/php-compatibility": "dev-master",
                 "phploc/phploc": "^4",
                 "phpmd/phpmd": "dev-master",
-                "phpunit/phpunit": "^5.7",
+                "phpunit/phpunit": "^5.7|^6.0|7.0",
                 "sebastian/phpcpd": "^3.0",
                 "squizlabs/php_codesniffer": "^3.0@dev"
             },
@@ -6388,7 +6389,7 @@
                 "matrix",
                 "vector"
             ],
-            "time": "2019-10-06T11:29:25+00:00"
+            "time": "2020-08-28T19:41:55+00:00"
         },
         {
             "name": "mindscape/raygun4php",
