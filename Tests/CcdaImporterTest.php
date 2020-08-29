@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Exceptions\ValidationException;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachBillingProvider;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachDefaultPatientContactWindows;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\AttachLocation;
@@ -148,7 +149,9 @@ class CcdaImporterTest extends CustomerTestCase
 
     public function test_it_does_not_import_ccd_without_practice_id()
     {
+        $this->expectException(ValidationException::class);
         $ccda = FakeDiabetesAndEndocrineCcda::create()->import();
+
         $this->assertTrue($ccda->validation_checks->has('program_id'));
     }
 
