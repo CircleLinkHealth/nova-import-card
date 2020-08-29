@@ -28,10 +28,6 @@ class CallSchedulerTest extends CustomerTestCase
             'id'         => $patientInfo->id,
             'ccm_status' => Patient::UNREACHABLE,
         ]);
-
-        $patientInfo->fresh();
-
-        $this->assertEquals(Patient::UNREACHABLE, $patientInfo->ccm_status);
     }
 
     public function test_only_admins_can_change_nurse_patient_association()
