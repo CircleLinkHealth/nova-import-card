@@ -6,7 +6,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\NotesController;
 use App\Note;
 use Tests\CustomerTestCase;
 
@@ -21,7 +20,7 @@ class NotesTest extends CustomerTestCase
     {
         $practice = $this->practice();
         $patient  = $this->patient();
-        $nurse    = $this->createUser($practice->id, 'care-center');
+        $nurse    = $this->careCoach();
         $this->be($nurse);
 
         $this->createNote($patient->id);
@@ -31,7 +30,7 @@ class NotesTest extends CustomerTestCase
     {
         $practice = $this->practice();
         $patient  = $this->patient();
-        $nurse    = $this->createUser($practice->id, 'care-center');
+        $nurse    = $this->careCoach();
         $this->be($nurse);
 
         $draftNoteId = $this->createNote($patient->id);
@@ -42,7 +41,7 @@ class NotesTest extends CustomerTestCase
     {
         $practice = $this->practice();
         $patient  = $this->patient();
-        $nurse    = $this->createUser($practice->id, 'care-center');
+        $nurse    = $this->careCoach();
         $this->be($nurse);
 
         $draftNoteId = $this->createNote($patient->id);
@@ -53,12 +52,12 @@ class NotesTest extends CustomerTestCase
     {
         $practice = $this->practice();
         $patient  = $this->patient();
-        $nurse    = $this->createUser($practice->id, 'care-center');
+        $nurse    = $this->careCoach();
         $this->be($nurse);
 
         $draftNoteId = $this->createNote($patient->id);
         $this->createNote($patient->id, $draftNoteId, 'complete');
-
+        
         $resp = $this->call(
             'POST',
             route('patient.note.store', ['patientId' => $patient->id]),
@@ -68,18 +67,23 @@ class NotesTest extends CustomerTestCase
                 'patient_id' => $patient->id,
             ]
         );
-
-        $resp->assertOk();
-        self::assertTrue(null !== $resp->json('error'));
+        
+        $resp->assertRedirect(url('/'));
+        $this->assertEquals(
+            'Cannot edit note. Please use create addendum to make corrections.',
+            session()->get('errors')->getBag('default')->all()[0],
+            'The expected message was not foudn in the session'
+        );
     }
 
     private function createNote($patientId, $noteId = null, $status = 'draft')
     {
         $isEditing = null !== $noteId;
+        $route     = 'draft' === $status ? 'patient.note.store.draft' : 'patient.note.store';
 
         $resp = $this->call(
             'POST',
-            route('draft' === $status ? 'patient.note.store.draft' : 'patient.note.store', ['patientId' => $patientId]),
+            route($route, ['patientId' => $patientId]),
             [
                 'status'     => $status,
                 'note_id'    => $noteId,
@@ -88,8 +92,13 @@ class NotesTest extends CustomerTestCase
             ]
         );
 
+        if ('patient.note.store' === $route) {
+            $resp->assertRedirect(route('patient.note.index', ['patientId' => $patientId]));
+            return;
+        }
+    
         $resp->assertOk();
-
+        
         self::assertNull($resp->json('error'));
 
         $noteIdFromResp = $resp->json('note_id');
