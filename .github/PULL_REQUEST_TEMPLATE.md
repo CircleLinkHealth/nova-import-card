@@ -36,9 +36,15 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 
 # Checklist:
 
+- [ ] I have considered whether my code should be in a separate module or not
+- [ ] If passing more than 4 value as function arguments, I have used typed value objects instead of arrays.
+- [ ] If returning more than 1 value from a function, I have used typed value objects instead of arrays or stdClass.
+- [ ] I have created FormRequest classes and performed validation in there
+- [ ] I have created constants over strings and magic numbers
+- [ ] I have 0 new comments
 - [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
+- [ ] I have made corresponding changes to any existing documentation
 - [ ] I have added tests that prove my fix is effective or that my feature works
+- [ ] I have added relevant labels on the PR (bugfix, feature, refactoring, needsQAapproval, ReadyForProd, etc)
 - [ ] New and existing unit tests pass locally with my changes
-- [ ] Any dependent changes have been mentioned/referenced above and PRs have been created in the relevant modules/packages.
+- [ ] Any dependent changes have been mentioned/referenced above and PRs have been created in the relevant modules/packages. 
