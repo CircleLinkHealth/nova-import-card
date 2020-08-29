@@ -7,20 +7,14 @@
 namespace App\Traits\Tests;
 
 use App\Call;
-use App\Http\Controllers\NotesController;
 use App\Jobs\StoreTimeTracking;
 use App\Note;
-use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Tests\Helpers\MakesSafeRequests;
 
 trait TimeHelpers
 {
-    use MakesSafeRequests;
-
     /**
      * Add billable or not to a patient and credit nurse.
      *

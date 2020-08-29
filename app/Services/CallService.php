@@ -20,7 +20,8 @@ class CallService
      */
     public function filterCalls($dropdownStatus, $filterPriority, string $today, $nurseId)
     {
-        $calls = CallViewNurses::where('nurse_id', '=', $nurseId);
+        $calls = CallViewNurses::where('nurse_id', '=', $nurseId)
+            ->where('patient_assigned_nurse_id', '=', $nurseId);
 
         if ('completed' === $dropdownStatus && 'all' === $filterPriority) {
             $calls->whereIn('status', [Call::REACHED, Call::DONE]);

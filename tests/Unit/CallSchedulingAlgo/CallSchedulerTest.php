@@ -6,7 +6,10 @@
 
 namespace Tests\Unit\CallSchedulingAlgo;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
+use App\Call;
 use App\Http\Controllers\CallController;
+use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
@@ -35,6 +38,48 @@ class CallSchedulerTest extends CustomerTestCase
     {
         $this->assertFalse(app(CallController::class)->canChangeNursePatientRelation($this->careCoach()));
         $this->assertTrue(app(CallController::class)->canChangeNursePatientRelation($this->superadmin()));
+    }
+
+    public function test_unsuccessful_calls_in_tasks_dont_reset_count()
+    {
+        $call = Call::create(
+            [
+                'type'            => 'task',
+                'sub_type'        => SchedulerService::CALL_BACK_TYPE,
+                'service'         => 'phone',
+                'status'          => Call::SCHEDULED,
+                'attempt_note'    => 'This is a task',
+                'scheduler'       => $this->provider()->id,
+                'inbound_cpm_id'  => $this->patient()->id,
+                'outbound_cpm_id' => $this->app->make(NurseFinderEloquentRepository::class)->find($this->patient()->id),
+                'asap'            => true,
+            ]
+        );
+
+        $response = $this->actingAs($this->careCoach())
+            ->call(
+                'POST',
+                route('patient.note.store', [$this->patient()->id]),
+                [
+                    'ccm_status'      => Patient::ENROLLED,
+                    'general_comment' => 'All Good',
+                    'type'            => 'General (Clinical)',
+                    'performed_at'    => '2019-11-23T16:47',
+                    'phone'           => 'outbound',
+                    'tcm'             => 0,
+                    'summary'         => 'Test Summary',
+                    'body'            => 'Test Body hello there',
+                    'patient_id'      => $this->patient()->id,
+                    'logger_id'       => $this->careCoach()->id,
+                    'author_id'       => $this->careCoach()->id,
+                    'programId'       => $this->practice()->id,
+                    'call_status'     => Call::NOT_REACHED,
+                    'task_status'     => Call::DONE,
+                    'task_id'         => $call->id,
+                ]
+            );
+
+        $response->assertStatus(302);
     }
 
     public function tests_it_schedules_call_for_next_weekday_for_patient_without_call_windows()

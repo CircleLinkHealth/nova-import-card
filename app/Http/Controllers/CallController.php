@@ -12,8 +12,10 @@ use App\Http\Resources\Call as CallResource;
 use App\Rules\DateBeforeUsingCarbon;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -339,7 +341,7 @@ class CallController extends Controller
 
         //some cases we need to eager load patientInfo
         $isFamilyOverride = ! empty($input['family_override']);
-        $isCallBack       = ! empty($input['sub_type']) && 'Call Back' === $input['sub_type'];
+        $isCallBack       = ! empty($input['sub_type']) && SchedulerService::CALL_BACK_TYPE === $input['sub_type'];
         if ($isCallBack || ! $isFamilyOverride) {
             $patient = User::with('patientInfo')->find($input['inbound_cpm_id']);
         } else {
@@ -384,19 +386,42 @@ class CallController extends Controller
             ];
         }
 
-        $call = $this->storeNewCall($patient, $input);
+        if ($isCallBack && $patient->patientInfo->isUnreachable()) {
+            Patient::withoutEvents(function () use ($patient, $input) {
+                $patient->patientInfo->ccm_status = Patient::ENROLLED;
+                $patient->patientInfo->no_call_attempts_since_last_success = PatientWriteRepository::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS - PatientWriteRepository::MAX_CALLBACK_ATTEMPTS;
 
-        // CPM-689 Reset unsuccessful call back attempts to 0 if call back task is created
-        if ($isCallBack) {
-            $patient->patientInfo->no_call_attempts_since_last_success = 0;
-            $patient->patientInfo->save();
+                $input['outbound_cpm_id'] = $this->getNurseToAssignCallBackTo($patient, $input['outbound_cpm_id']);
+
+                $patient->patientInfo->save();
+            });
         }
+
+        $call = $this->storeNewCall($patient, $input);
 
         if ('call' === $input['type']) {
             $this->storeNewCallForFamilyMembers($patient, $input);
         }
 
         return CallResource::make($call);
+    }
+
+    private function getNurseToAssignCallBackTo(User $patient, ?int $outboundCpmId = null): ?int
+    {
+        if ( ! empty($outboundCpmId)) {
+            return $outboundCpmId;
+        }
+        if ( ! auth()->check()) {
+            return StandByNurseUser::id();
+        }
+        if ( ! auth()->user()->isCareCoach()) {
+            return StandByNurseUser::id();
+        }
+        if (auth()->id() === app(NurseFinderEloquentRepository::class)->find($patient->id)) {
+            return auth()->id();
+        }
+
+        return StandByNurseUser::id();
     }
 
     private function hasAlreadyFamilyCallAtDifferentTime(Patient $patient, $scheduledDate, $windowStart, $windowEnd)
@@ -485,7 +510,7 @@ class CallController extends Controller
         $call->note_id         = null;
         $call->is_cpm_outbound = 1;
         $call->service         = 'phone';
-        $call->status          = 'scheduled';
+        $call->status          = Call::SCHEDULED;
         $call->scheduler       = auth()->user()->id;
         $call->is_manual       = boolval($input['is_manual']) || $isFamilyOverride;
 

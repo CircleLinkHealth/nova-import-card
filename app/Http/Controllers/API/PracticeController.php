@@ -81,6 +81,7 @@ class PracticeController extends Controller
             })
             ->ofPractice($practiceId)
             ->with(['nurseInfo.states', 'roles'])
+            ->when(auth()->user()->isCareCoach(), fn ($q) => $q->where('id', auth()->id()))
             ->get([
                 'id',
                 'first_name',

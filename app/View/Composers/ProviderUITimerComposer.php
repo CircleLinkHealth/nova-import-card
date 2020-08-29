@@ -8,6 +8,7 @@ namespace App\View\Composers;
 
 use App\Constants;
 use App\Jobs\StoreTimeTracking;
+use App\Policies\CreateNoteForPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -121,6 +122,9 @@ class ProviderUITimerComposer extends ServiceProvider
                     'patientInfo.location',
                 ]);
 
+                $isAdminOrPatientsAssignedNurse = auth()->user()->isAdmin()
+                    || auth()->user()->isCareCoach() && app(CreateNoteForPatient::class)->can(auth()->id(), $patient->id);
+
                 $currentPms = $patient->patientSummaries->first();
 
                 $ccmSeconds = $currentPms->ccm_time ?? 0;
@@ -153,6 +157,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $billingDoctor = '';
                 $regularDoctor = '';
                 $patientIsBhiEligible = false;
+                $isAdminOrPatientsAssignedNurse = false;
             }
 
             $view->with(compact([
@@ -164,6 +169,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 'regularDoctor',
                 'billingDoctor',
                 'patientIsBhiEligible',
+                'isAdminOrPatientsAssignedNurse',
             ]));
         });
     }
