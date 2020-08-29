@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -175,9 +176,10 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factor
             ->first();
 
         if ( ! $practice) {
-            $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create([
-                'name'    => 'demo',
-                'is_demo' => true,
+            $practice = factory(Practice::class)->create([
+                'name'            => 'demo',
+                'is_demo'         => true,
+                'saas_account_id' => SaasAccount::whereName('CircleLink Health')->first()->id,
             ]);
         }
 
@@ -282,7 +284,7 @@ $factory->define(EligibilityBatch::class, function (Faker\Generator $faker) {
         ->where('is_demo', true)
         ->first();
     if ( ! $practice) {
-        $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create(['is_demo' => true]);
+        $practice = factory(Practice::class)->create(['is_demo' => true]);
     }
 
     return [
