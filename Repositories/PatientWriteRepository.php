@@ -112,7 +112,7 @@ class PatientWriteRepository
         if ($successfulLastCall) {
             $successful_call_increment                    = 1;
             $patient->no_call_attempts_since_last_success = 0;
-        } elseif ( ! $isCallBack) {
+        } else {
             $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
         }
 
@@ -130,7 +130,7 @@ class PatientWriteRepository
             $record->save();
         }
 
-        if ( ! $successfulLastCall && ! $isCallBack && $patient->no_call_attempts_since_last_success >= self::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS) {
+        if ( ! $successfulLastCall && $patient->no_call_attempts_since_last_success >= self::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS) {
             $patient->ccm_status                          = Patient::UNREACHABLE;
             $patient->no_call_attempts_since_last_success = 0;
         }
