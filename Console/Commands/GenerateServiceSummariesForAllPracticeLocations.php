@@ -4,26 +4,36 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CcmBilling\Console;
+namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Jobs\MigrateChargeableServicesFromChargeablesToLocationSummariesTable as Job;
+use CircleLinkHealth\CcmBilling\Jobs\GenerateServiceSummariesForAllPracticeLocations as Job;
 use Illuminate\Console\Command;
 
-class MigrateChargeableServicesFromChargeablesToLocationSummariesTable extends Command
+class GenerateServiceSummariesForAllPracticeLocations extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Billing-revamp: Get CS from chargeables for each Practice, and migrate to chargeable_location_monthly_summaries.';
+    protected $description = 'Generate CS summaries for all practice locations based on previous month.';
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'billing:migrate-all-location-services {month?}';
+    protected $signature = 'billing:generate-locations-summaries-for-month {month}';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * Execute the console command.
@@ -34,11 +44,10 @@ class MigrateChargeableServicesFromChargeablesToLocationSummariesTable extends C
     {
         /** @var Carbon */
         $month = ! empty($this->argument('month')) ? Carbon::parse($this->argument('month')) : Carbon::now()->startOfMonth();
-    
+
         if ($month->notEqualTo($month->copy()->startOfMonth())) {
             $month->startOfMonth();
         }
-
         Job::dispatch($month);
     }
 }

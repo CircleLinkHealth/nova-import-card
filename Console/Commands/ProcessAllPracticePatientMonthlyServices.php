@@ -4,26 +4,26 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CcmBilling\Console;
+namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Jobs\MigratePracticeServicesFromChargeablesToLocationSummariesTable as Job;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices as Job;
 use Illuminate\Console\Command;
 
-class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Command
+class ProcessAllPracticePatientMonthlyServices extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Billing-revamp: Get CS from chargeables for a single Practice, and migrate to chargeable_location_monthly_summaries.';
+    protected $description = 'Process all practice patients';
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'billing:migrate-practice-services {practiceId} {month?}';
+    protected $signature = 'billing:process-all-practice-patients {month?}';
 
     /**
      * Create a new command instance.
@@ -49,6 +49,6 @@ class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Com
             $month->startOfMonth();
         }
 
-        Job::dispatch($this->argument('practiceId'), $month);
+        Job::dispatch($this->argument('month'));
     }
 }

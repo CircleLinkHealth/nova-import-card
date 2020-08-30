@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CcmBilling\Console;
+namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices as Job;
@@ -23,7 +23,7 @@ class ProcessSinglePatientMonthlyServices extends Command
      *
      * @var string
      */
-    protected $name = 'billing:process-single-patient-services {patientId} {month?}';
+    protected $signature = 'billing:process-single-patient-services {patientId} {month?}';
 
     /**
      * Execute the console command.
