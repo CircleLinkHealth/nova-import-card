@@ -22,28 +22,6 @@ use Illuminate\Support\ServiceProvider;
 class CcmBillingServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = true;
-
-    /**
-     * Boot the application events.
-     */
-    public function boot()
-    {
-        $this->registerTranslations();
-        $this->registerViews();
-        $this->registerConfig();
-
-        if ($this->app->runningInConsole()) {
-            $this->registerFactories();
-            $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-        }
-    }
-
-    /**
      * Get the services provided by the provider.
      *
      * @return array
@@ -51,6 +29,13 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
     public function provides()
     {
         return [
+            MigratePracticeServicesFromChargeablesToLocationSummariesTable::class,
+            MigrateChargeableServicesFromChargeablesToLocationSummariesTable::class,
+            ProcessSinglePatientMonthlyServices::class,
+            ProcessAllPracticePatientMonthlyServices::class,
+            GenerateServiceSummariesForAllPracticeLocations::class,
+            PatientMonthlyBillingProcessor::class,
+            PatientRepositoryInterface::class,
         ];
     }
 
@@ -59,11 +44,19 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
      */
     public function register()
     {
-//        $this->app->register(RouteServiceProvider::class);
+        $this->registerTranslations();
+        $this->registerViews();
 
-        $this->app->bind(PatientMonthlyBillingProcessor::class, new MonthlyProcessor());
+        if ($this->app->runningInConsole()) {
+            $this->registerFactories();
+            $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+        }
 
-        $this->app->singleton(PatientRepositoryInterface::class, new PatientRepository());
+        //        $this->app->register(RouteServiceProvider::class);
+
+        $this->app->bind(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
+
+        $this->app->singleton(PatientRepositoryInterface::class, PatientRepository::class);
 
         $this->commands([
             MigratePracticeServicesFromChargeablesToLocationSummariesTable::class,
