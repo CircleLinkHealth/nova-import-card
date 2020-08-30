@@ -25,10 +25,10 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    protected string $bhiCode;
-    protected string $ccmCode;
+    protected string $bhiCodeId;
+    protected string $ccmCodeId;
     protected EloquentCollection $cpmProblems;
-    protected string $pcmCode;
+    protected string $pcmCodeId;
 
     protected int $practiceId;
 
@@ -72,10 +72,10 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                             $q->where('code', $problem->default_icd_10_code)
                                 ->orWhere('description', $problem->name);
                         }
-                    )->exists();
+                    )->count() > 0;
                     if ($isBhi || $isDementia || $isDementia) {
                         $toCreate->push([
-                            'chargeable_service_id' => $this->bhiCode,
+                            'chargeable_service_id' => $this->bhiCodeId,
                             'location_id'           => $location->id,
                             'cpm_problem_id'        => $problem->id,
                         ]);
@@ -83,7 +83,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
 
                     if ($isPcm) {
                         $toCreate->push([
-                            'chargeable_service_id' => $this->pcmCode,
+                            'chargeable_service_id' => $this->pcmCodeId,
                             'location_id'           => $location->id,
                             'cpm_problem_id'        => $problem->id,
                         ]);
@@ -91,7 +91,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
 
                     if ( ! $isBhi || $isDementia || $isDepression) {
                         $toCreate->push([
-                            'chargeable_service_id' => $this->ccmCode,
+                            'chargeable_service_id' => $this->ccmCodeId,
                             'location_id'           => $location->id,
                             'cpm_problem_id'        => $problem->id,
                         ]);
@@ -113,9 +113,9 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
     private function setChargeableServices()
     {
         $chargeableServices = ChargeableService::get();
-        $this->pcmCode      = $chargeableServices->where('code', ChargeableService::PCM);
-        $this->ccmCode      = $chargeableServices->where('code', ChargeableService::BHI);
-        $this->bhiCode      = $chargeableServices->where('code', ChargeableService::CCM);
+        $this->pcmCodeId    = $chargeableServices->where('code', ChargeableService::PCM)->first()->id;
+        $this->ccmCodeId    = $chargeableServices->where('code', ChargeableService::BHI)->first()->id;
+        $this->bhiCodeId    = $chargeableServices->where('code', ChargeableService::CCM)->first()->id;
     }
 
     private function setCpmProblems()

@@ -6,6 +6,11 @@
 
 namespace CircleLinkHealth\CcmBilling\Providers;
 
+use CircleLinkHealth\CcmBilling\Console\GenerateServiceSummariesForAllPracticeLocations;
+use CircleLinkHealth\CcmBilling\Console\MigrateChargeableServicesFromChargeablesToLocationSummariesTable;
+use CircleLinkHealth\CcmBilling\Console\MigratePracticeServicesFromChargeablesToLocationSummariesTable;
+use CircleLinkHealth\CcmBilling\Console\ProcessAllPracticePatientMonthlyServices;
+use CircleLinkHealth\CcmBilling\Console\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
@@ -54,11 +59,19 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
      */
     public function register()
     {
-        $this->app->register(RouteServiceProvider::class);
+//        $this->app->register(RouteServiceProvider::class);
 
         $this->app->bind(PatientMonthlyBillingProcessor::class, new MonthlyProcessor());
 
         $this->app->singleton(PatientRepositoryInterface::class, new PatientRepository());
+
+        $this->commands([
+            MigratePracticeServicesFromChargeablesToLocationSummariesTable::class,
+            MigrateChargeableServicesFromChargeablesToLocationSummariesTable::class,
+            ProcessSinglePatientMonthlyServices::class,
+            ProcessAllPracticePatientMonthlyServices::class,
+            GenerateServiceSummariesForAllPracticeLocations::class,
+        ]);
     }
 
     /**

@@ -40,11 +40,8 @@ class MigrateChargeableServicesFromChargeablesToLocationSummariesTable implement
      */
     public function handle()
     {
-        //For each Practice (pass in month and practice id then take from chargeable and create for that month)
         Practice::get()->each(function (Practice $practice) {
             MigratePracticeServicesFromChargeablesToLocationSummariesTable::dispatch($practice->id, $this->month);
         });
-
-        //make command to call for each practice individually
     }
 }
