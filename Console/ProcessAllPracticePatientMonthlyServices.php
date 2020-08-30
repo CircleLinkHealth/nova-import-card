@@ -23,7 +23,7 @@ class ProcessAllPracticePatientMonthlyServices extends Command
      *
      * @var string
      */
-    protected $name = 'billing:process-all-practice-patients {month?} {--fulfill}';
+    protected $name = 'billing:process-all-practice-patients {month?}';
 
     /**
      * Create a new command instance.
@@ -49,6 +49,6 @@ class ProcessAllPracticePatientMonthlyServices extends Command
             $month->startOfMonth();
         }
 
-        Job::dispatch($this->argument('month'), (bool) $this->option('fulfill'));
+        Job::dispatch($this->argument('month'));
     }
 }

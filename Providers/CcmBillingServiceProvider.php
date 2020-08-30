@@ -33,12 +33,12 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
      */
     public function boot()
     {
-//        $this->registerTranslations();
+        $this->registerTranslations();
         $this->registerViews();
-//        $this->registerConfig();
+        $this->registerConfig();
 
         if ($this->app->runningInConsole()) {
-//        $this->registerFactories();
+            $this->registerFactories();
             $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         }
     }

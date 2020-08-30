@@ -23,18 +23,15 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
 
     protected Carbon $chargeableMonth;
 
-    protected bool $fulfill;
-
     protected int $practiceId;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(int $practiceId, Carbon $chargeableMonth, bool $fulfill)
+    public function __construct(int $practiceId, Carbon $chargeableMonth)
     {
         $this->practiceId      = $practiceId;
         $this->chargeableMonth = $chargeableMonth;
-        $this->fulfill         = $fulfill;
     }
 
     /**
@@ -47,7 +44,7 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
         Location::where('practice_id', $this->practiceId)
             ->get()
             ->each(function (Location $location) {
-                ProcessLocationPatientMonthlyServices::dispatch($location->id, $this->chargeableMonth, $this->fulfill);
+                ProcessLocationPatientMonthlyServices::dispatch($location->id, $this->chargeableMonth);
             });
     }
 }
