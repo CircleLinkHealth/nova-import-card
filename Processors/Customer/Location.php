@@ -27,7 +27,7 @@ class Location implements CustomerProcessor
         return new ApprovablePatientCollection($this->repo->paginatePatients($locationId, $month, $pageSize));
     }
 
-    public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth, bool $fulfill): void
+    public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth): void
     {
         $this->repo
             ->patientsQuery($locationId, $chargeableMonth)

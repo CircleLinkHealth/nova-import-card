@@ -32,4 +32,10 @@ trait ApprovablePatientUsersQuery
             },
         ]);
     }
+    
+    public function approvablePatientUserQuery(int $patientId, Carbon $monthYear) : Builder
+    {
+        return $this->approvablePatientUsersQuery($monthYear)
+            ->where('id', $patientId);
+    }
 }

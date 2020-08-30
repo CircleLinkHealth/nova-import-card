@@ -22,9 +22,7 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
     use SerializesModels;
 
     protected Carbon $chargeableMonth;
-
-    protected bool $fulfill;
-
+    
     protected int $locationId;
 
     protected Location $processor;
@@ -34,11 +32,10 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(int $locationId, Carbon $chargeableMonth, bool $fulfill)
+    public function __construct(int $locationId, Carbon $chargeableMonth)
     {
         $this->locationId      = $locationId;
         $this->chargeableMonth = $chargeableMonth;
-        $this->fulfill         = $fulfill;
         $this->processor       = app(Location::class);
     }
 
@@ -49,6 +46,6 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
      */
     public function handle()
     {
-        $this->processor->processServicesForAllPatients($this->locationId, $this->chargeableMonth, $this->fulfill);
+        $this->processor->processServicesForAllPatients($this->locationId, $this->chargeableMonth);
     }
 }

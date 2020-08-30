@@ -15,7 +15,7 @@ interface CustomerProcessor
     public function fetchApprovablePatients(int $customerModelId, Carbon $month, int $pageSize = 30): ApprovablePatientCollection;
 
     //attach, and fulfill services whenever pertinent
-    public function processServicesForAllPatients(int $customerModelId, Carbon $month, bool $fulfill): void;
+    public function processServicesForAllPatients(int $customerModelId, Carbon $month): void;
 
     //any interaction we have with the DB will be through this class
     public function repo(): CustomerProcessorRepository;
