@@ -411,17 +411,14 @@ class CallController extends Controller
         if ( ! empty($outboundCpmId)) {
             return $outboundCpmId;
         }
-        if ( ! auth()->check()) {
-            return StandByNurseUser::id();
-        }
         if ( ! auth()->user()->isCareCoach()) {
-            return StandByNurseUser::id();
+            return null;
         }
         if (auth()->id() === app(NurseFinderEloquentRepository::class)->find($patient->id)) {
             return auth()->id();
         }
 
-        return StandByNurseUser::id();
+        return null;
     }
 
     private function hasAlreadyFamilyCallAtDifferentTime(Patient $patient, $scheduledDate, $windowStart, $windowEnd)
