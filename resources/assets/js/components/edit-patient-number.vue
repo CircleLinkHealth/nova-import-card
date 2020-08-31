@@ -16,7 +16,6 @@
                     </div>
 
                     <div v-if="number.number.length !== 0"
-                        @mouseover="enableUpdateButton(index)"
                         style="display: inline-flex;">
                         <div class="types">
                             <input name="type"
@@ -36,8 +35,7 @@
                                :disabled="true"/>
                     </div>
 
-                    <button v-if="showMakePrimary(index, number)"
-                            class="btn btn-success btn-sm update-primaryNumber"
+                    <button class="btn btn-success btn-sm update-primaryNumber"
                             type="button"
                             style="display: inline;"
                             @click="updatePrimaryPhone(number.phoneNumberId)"
@@ -152,7 +150,6 @@
                 newPhoneNumber:'',
                 newInputs:[],
                 phoneTypes:[],
-                markPrimaryEnabledForIndex:'',
                 makeNewNumberPrimary:false,
                 primaryNumber:'',
                 selectedNumberToCall:'',
@@ -247,13 +244,6 @@
                 this.phoneTypesFiltered = [];
                 this.phoneTypesFiltered.push(...phoneTypesFiltered);
             },
-
-            showMakePrimary(index, number){
-                return this.isIndexToUpdate(index)
-                    && number.isPrimary === false
-                    && number.type.toLowerCase() !== alternate;
-            },
-
             emitPrimaryNumber(){
                 const primaryNumber =  this.patientPhoneNumbers.filter(n=>n.isPrimary).map(function (phone) {
                     return phone.number;
@@ -286,14 +276,6 @@
                     this.loading = false;
                     this.responseErrorMessage(error.response);
                 });
-            },
-
-            isIndexToUpdate(index){
-            return index === this.markPrimaryEnabledForIndex;
-            },
-
-            enableUpdateButton(index){
-                this.markPrimaryEnabledForIndex = index;
             },
 
             resetData(){
