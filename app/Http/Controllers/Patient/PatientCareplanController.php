@@ -60,29 +60,7 @@ class PatientCareplanController extends Controller
     {
         return $this->editOrCreateDemographics($request);
     }
-
-    public function deleteAlternateContact(DeleteAlternateContactRequest $request)
-    {
-        $valuesToDelete = [
-            'agent_telephone' => null,
-        ];
-
-        if ( ! $request->input('deleteOnlyPhone')) {
-            $valuesToDelete = [
-                'agent_telephone'    => null,
-                'agent_name'         => null,
-                'agent_relationship' => null,
-                'agent_email'        => null,
-            ];
-        }
-
-        $request->get('patient')->update($valuesToDelete);
-
-        return response()->json([
-            'message' => 'Alternate Contact has been deleted',
-        ], 200);
-    }
-
+    
     public function deletePhoneNumber(DeletePatientPhoneRequest $request)
     {
         $phoneNumber = $request->get('phoneNumber');

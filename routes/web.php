@@ -762,12 +762,7 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientCareplanController@deletePhoneNumber',
             'as'   => 'patient.phone.delete',
         ])->middleware('permission:phoneNumber.create,phoneNumber.update,careplan.update');
-
-        Route::post('delete-alternate-contact', [
-            'uses' => 'Patient\PatientCareplanController@deleteAlternateContact',
-            'as'   => 'patient.alternate.contact.delete',
-        ])->middleware('permission:patient.create,patient.update,careplan.update');
-
+        
         Route::post('get-alternate-contact', [
             'uses' => 'Patient\PatientCareplanController@getPatientAlternateContact',
             'as'   => 'patient.get.alternate.contact',
