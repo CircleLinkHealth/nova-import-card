@@ -132,32 +132,6 @@ class ActivityService
         }
     }
 
-    /**
-     * Get total CCM Time for a patient for a month. If no month is given, it defaults to the current month.
-     *
-     * @param $patientId
-     *
-     * @return mixed
-     */
-    public function totalCcmTime($patientId, Carbon $monthYear = null)
-    {
-        if ( ! $monthYear) {
-            $monthYear = Carbon::now();
-        }
-
-        return $this->repo->totalCCMTime([$patientId], $monthYear)->pluck('total_time', 'patient_id');
-    }
-
-    private function getChargeServiceIdByCode(User $patient, string $code): ?int
-    {
-        return optional($patient
-            ->primaryPractice
-            ->chargeableServices
-            ->where('code', '=', $code)
-            ->first())
-            ->id;
-    }
-
     public function separateDurationForEachChargeableServiceId(User $patient, $duration, $isBehavioralActivity = false): array
     {
         if ($isBehavioralActivity) {
@@ -194,9 +168,9 @@ class ActivityService
                 $result[] = new ChargeableServiceDuration($id, $slots->after20);
             }
 
-            if ($slots->after40) {
+            if ($slots->after40 || $slots->after60) {
                 $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM_PLUS_60);
-                $result[] = new ChargeableServiceDuration($id, $slots->after40);
+                $result[] = new ChargeableServiceDuration($id, $slots->after40 + $slots->after60);
             }
 
             return $result;
@@ -208,5 +182,31 @@ class ActivityService
         }
 
         return [new ChargeableServiceDuration(null, $duration)];
+    }
+
+    /**
+     * Get total CCM Time for a patient for a month. If no month is given, it defaults to the current month.
+     *
+     * @param $patientId
+     *
+     * @return mixed
+     */
+    public function totalCcmTime($patientId, Carbon $monthYear = null)
+    {
+        if ( ! $monthYear) {
+            $monthYear = Carbon::now();
+        }
+
+        return $this->repo->totalCCMTime([$patientId], $monthYear)->pluck('total_time', 'patient_id');
+    }
+
+    private function getChargeServiceIdByCode(User $patient, string $code): ?int
+    {
+        return optional($patient
+            ->primaryPractice
+            ->chargeableServices
+            ->where('code', '=', $code)
+            ->first())
+            ->id;
     }
 }
