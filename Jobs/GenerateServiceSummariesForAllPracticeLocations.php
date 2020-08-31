@@ -22,7 +22,7 @@ class GenerateServiceSummariesForAllPracticeLocations implements ShouldQueue
     use SerializesModels;
 
     protected $month;
-    
+
     /**
      * Create a new job instance.
      *

@@ -14,7 +14,7 @@ interface PatientServiceProcessorRepository
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 
     public function getChargeablePatientSummaries(int $patientId, Carbon $month);
-    
+
     public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month);
 
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool;

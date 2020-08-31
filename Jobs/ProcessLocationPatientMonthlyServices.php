@@ -22,7 +22,7 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
     use SerializesModels;
 
     protected Carbon $chargeableMonth;
-    
+
     protected int $locationId;
 
     protected Location $processor;

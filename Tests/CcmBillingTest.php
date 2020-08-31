@@ -7,10 +7,8 @@
 namespace CircleLinkHealth\CcmBilling\Tests;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
-use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
@@ -23,7 +21,6 @@ use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePatientRepository;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
-use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\ChargeablePatientMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
@@ -35,6 +32,66 @@ use Tests\TestCase;
 
 class CcmBillingTest extends TestCase
 {
+    public function test_it_does_not_attach_next_service_in_sequence_if_previous_is_not_fulfilled()
+    {
+        FakePatientRepository::fake();
+
+        $patientId = 1;
+        $ccm       = new CCM();
+        $ccm40     = new CCM40();
+        $month     = now();
+
+        FakePatientRepository::setIsAttachedStubs(
+            new IsAttachedStub($patientId, $ccm->code(), $month, false)
+        );
+
+        FakePatientRepository::setIsFulfilledStubs(
+            new IsFulfilledStub($patientId, $ccm->code(), $month, false)
+        );
+
+        $stub = (new PatientMonthlyBillingStub())
+            ->subscribe(AvailableServiceProcessors::push([$ccm, $ccm40]))
+            ->forPatient($patientId)
+            ->forMonth($month)
+            ->withProblems(
+                (new PatientProblemForProcessing())
+                    ->setId(123)
+                    ->setCode('1234')
+                    ->setServiceCodes([
+                        ChargeableService::CCM,
+                        ChargeableService::CCM_PLUS_40,
+                    ]),
+                (new PatientProblemForProcessing())
+                    ->setId(1233)
+                    ->setCode('12344')
+                    ->setServiceCodes([
+                        ChargeableService::CCM,
+                    ]),
+                (new PatientProblemForProcessing())
+                    ->setId(1235)
+                    ->setCode('12345')
+                    ->setServiceCodes([
+                        ChargeableService::CCM,
+                        ChargeableService::CCM_PLUS_40,
+                    ])
+            );
+
+        $fakeProcessor = new MonthlyProcessor();
+
+        $fakeProcessor->process($stub);
+
+        FakePatientRepository::assertChargeableSummaryCreated($patientId, $ccm->code(), $month);
+        FakePatientRepository::assertChargeableSummaryNotCreated($patientId, $ccm40->code(), $month);
+
+        FakePatientRepository::setIsFulfilledStubs(
+            new IsFulfilledStub($patientId, $ccm->code(), $month, true)
+        );
+
+        $fakeProcessor->process($stub);
+
+        FakePatientRepository::assertChargeableSummaryCreated($patientId, $ccm40->code(), $month);
+    }
+
     public function test_it_fetches_approvable_patients_for_location()
     {
         $locationId = 5;
@@ -187,70 +244,11 @@ class CcmBillingTest extends TestCase
                         ChargeableService::PCM,
                     ])
             );
-        
+
         $fakeProcessor = new MonthlyProcessor();
         $fakeProcessor->process($stub);
 
         FakePatientRepository::assertChargeableSummaryCreated($patientId, $ccm->code(), $month);
         FakePatientRepository::assertChargeableSummaryNotCreated($patientId, $pcm->code(), $month);
-    }
-    
-    public function test_it_does_not_attach_next_service_in_sequence_if_previous_is_not_fulfilled() {
-        FakePatientRepository::fake();
-    
-        $patientId = 1;
-        $ccm       = new CCM();
-        $ccm40       = new CCM40();
-        $month     = now();
-    
-        FakePatientRepository::setIsAttachedStubs(
-            new IsAttachedStub($patientId, $ccm->code(), $month, false)
-        );
-    
-        FakePatientRepository::setIsFulfilledStubs(
-            new IsFulfilledStub($patientId, $ccm->code(), $month, false)
-        );
-        
-        $stub = (new PatientMonthlyBillingStub())
-            ->subscribe(AvailableServiceProcessors::push([$ccm, $ccm40]))
-            ->forPatient($patientId)
-            ->forMonth($month)
-            ->withProblems(
-                (new PatientProblemForProcessing())
-                    ->setId(123)
-                    ->setCode('1234')
-                    ->setServiceCodes([
-                        ChargeableService::CCM,
-                        ChargeableService::CCM_PLUS_40,
-                    ]),
-                (new PatientProblemForProcessing())
-                    ->setId(1233)
-                    ->setCode('12344')
-                    ->setServiceCodes([
-                        ChargeableService::CCM,
-                    ]),
-                (new PatientProblemForProcessing())
-                    ->setId(1235)
-                    ->setCode('12345')
-                    ->setServiceCodes([
-                        ChargeableService::CCM,
-                        ChargeableService::CCM_PLUS_40,
-                    ])
-            );
-    
-        $fakeProcessor = new MonthlyProcessor();
-    
-        $fakeProcessor->process($stub);
-    
-        FakePatientRepository::assertChargeableSummaryCreated($patientId, $ccm->code(), $month);
-        FakePatientRepository::assertChargeableSummaryNotCreated($patientId, $ccm40->code(), $month);
-    
-        FakePatientRepository::setIsFulfilledStubs(
-            new IsFulfilledStub($patientId, $ccm->code(), $month, true)
-        );
-    
-        $fakeProcessor->process($stub);
-    
-        FakePatientRepository::assertChargeableSummaryCreated($patientId, $ccm40->code(), $month);
     }
 }

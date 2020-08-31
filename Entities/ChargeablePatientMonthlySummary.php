@@ -29,6 +29,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary query()
  * @mixin \Eloquent
+ * @property int $requires_patient_consent
  */
 class ChargeablePatientMonthlySummary extends BaseModel
 {

@@ -22,7 +22,7 @@ class MigratePracticeServicesFromChargeablesToLocationSummariesTable implements 
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     protected Carbon $month;
 
     protected int $practiceId;

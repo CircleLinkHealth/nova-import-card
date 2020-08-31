@@ -12,6 +12,12 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait ApprovablePatientUsersQuery
 {
+    public function approvablePatientUserQuery(int $patientId, Carbon $monthYear): Builder
+    {
+        return $this->approvablePatientUsersQuery($monthYear)
+            ->where('id', $patientId);
+    }
+
     public function approvablePatientUsersQuery(Carbon $monthYear): Builder
     {
         return User::with([
@@ -31,11 +37,5 @@ trait ApprovablePatientUsersQuery
                     ->createdOn($monthYear, 'chargeable_month');
             },
         ]);
-    }
-    
-    public function approvablePatientUserQuery(int $patientId, Carbon $monthYear) : Builder
-    {
-        return $this->approvablePatientUsersQuery($monthYear)
-            ->where('id', $patientId);
     }
 }

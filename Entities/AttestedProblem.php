@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem newQuery()
  * @method   static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem query()
  * @mixin \Eloquent
+ * @property int|null $addendum_id
  */
 class AttestedProblem extends Pivot
 {

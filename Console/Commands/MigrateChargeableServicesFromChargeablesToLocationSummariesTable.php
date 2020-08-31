@@ -34,7 +34,7 @@ class MigrateChargeableServicesFromChargeablesToLocationSummariesTable extends C
     {
         /** @var Carbon */
         $month = ! empty($this->argument('month')) ? Carbon::parse($this->argument('month')) : Carbon::now()->startOfMonth();
-    
+
         if ($month->notEqualTo($month->copy()->startOfMonth())) {
             $month->startOfMonth();
         }

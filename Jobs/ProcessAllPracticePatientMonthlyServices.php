@@ -22,7 +22,7 @@ class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
     use SerializesModels;
 
     protected Carbon $chargeableMonth;
-    
+
     /**
      * Create a new job instance.
      *

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\CcmBilling\Events;
 
 use Illuminate\Queue\SerializesModels;
@@ -15,7 +19,6 @@ class PatientProblemsChanged
      */
     public function __construct()
     {
-        //
     }
 
     /**

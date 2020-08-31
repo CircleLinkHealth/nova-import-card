@@ -39,7 +39,7 @@ class CCM extends AbstractProcessor
     {
         return new CCM40();
     }
-    
+
     public function previous(): ?PatientServiceProcessor
     {
         return null;
