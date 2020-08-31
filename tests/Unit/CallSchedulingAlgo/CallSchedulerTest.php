@@ -20,7 +20,7 @@ class CallSchedulerTest extends CustomerTestCase
         $patientInfo = $this->patient()->patientInfo()->create(['no_call_attempts_since_last_success' => 4]);
 
         $patientSummary = $this->app->make(PatientWriteRepository::class)->updateCallLogs($patientInfo, true);
-    
+
         $this->assertDatabaseMissing('patient_info', [
             'id'         => $patientInfo->id,
             'ccm_status' => Patient::UNREACHABLE,

@@ -14,12 +14,10 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model                                               $voiceCallable
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoiceCall newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoiceCall newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\VoiceCall query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\VoiceCall newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\VoiceCall newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\VoiceCall query()
  * @mixin \Eloquent
- *
  * @property int                             $id
  * @property int|null                        $call_id
  * @property int                             $voice_callable_id

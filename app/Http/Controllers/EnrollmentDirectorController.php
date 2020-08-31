@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Artisan;
 
 class EnrollmentDirectorController extends Controller
 {
+    const DEFAULT_CALLBACK_NOTE = 'Patient requested callback.';
+
     public function addEnrolleeCustomFilter(AddEnrolleeCustomFilter $request)
     {
         $customFilter = EnrolleeCustomFilter::updateOrCreate([
@@ -51,7 +53,9 @@ class EnrollmentDirectorController extends Controller
             'status'                  => Enrollee::TO_CALL,
             'care_ambassador_user_id' => $request->input('care_ambassador_user_id'),
             'requested_callback'      => Carbon::parse($request->input('callback_date')),
-            'callback_note'           => htmlspecialchars($request->input('callback_note'), ENT_NOQUOTES),
+            'callback_note'           => ! empty($request->input('callback_note'))
+                ? htmlspecialchars($request->input('callback_note'), ENT_NOQUOTES)
+                : self::DEFAULT_CALLBACK_NOTE,
         ]);
 
         return response()->json([], 200);
