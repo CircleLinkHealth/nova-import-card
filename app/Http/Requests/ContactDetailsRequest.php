@@ -72,7 +72,7 @@ class ContactDetailsRequest extends FormRequest
                 ?? $patientUser->primaryPractice->primary_location_id
                 ?? null;
 
-            if ( ! is_null($phoneType) && $patientUser->phoneNumbers()->where('type', $phoneType)->exists()) {
+            if ( ! is_null($phoneType) && $patientUser->phoneNumbers()->where('type', $phoneType)->whereNotNull('number')->exists()) {
                 $validator->errors()->add('phoneNumber', "Phone type '$phoneType' already exists for patient");
             }
 

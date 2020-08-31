@@ -213,13 +213,13 @@ class PatientController extends Controller
         }
 
         /** @var PhoneNumber $newPhoneNumber */
-        $newPhoneNumber = $patientUser->phoneNumbers()->firstOrCreate(
+        $newPhoneNumber = $patientUser->phoneNumbers()->updateOrCreate(
             [
                 'user_id' => $userId,
-                'number'  => $phoneNumber,
                 'type'    => strtolower($phoneType),
             ],
             [
+                'number'      => $phoneNumber,
                 'is_primary'  => $request->input('makePrimary'),
                 'location_id' => $locationId,
             ]

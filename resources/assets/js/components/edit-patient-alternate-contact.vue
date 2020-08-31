@@ -17,7 +17,6 @@
             <div v-if="enableAlternateFields">
                 <input name="alternativeContactName"
                        class="form-control alternative-field"
-                       :class="{borderColor : alternateContactDetails[0].agentName.length === 0}"
                        maxlength="40"
                        minlength="3"
                        type="text"
@@ -28,7 +27,6 @@
 
                 <input name="alternativeEmail"
                        class="form-control alternative-field"
-                       :class="{borderColor : alternateContactDetails[0].agentEmail.length === 0}"
                        type="text"
                        title="Type alternate contact email"
                        placeholder="Alternate contact email"
@@ -37,7 +35,6 @@
                 <br>
                 <input name="alternativeRelationship"
                        class="form-control alternative-field"
-                       :class="{borderColor : alternateContactDetails[0].agentRelationship.length === 0}"
                        maxlength="20"
                        minlength="3"
                        type="text"
@@ -47,13 +44,11 @@
                        :disabled="loading"/>
 
                 <div class="alt-phone-number">
-                   <span class="input-group-addon plus-one"
-                         :class="{borderColor : alternateContactDetails[0].agentTelephone.number.length === 0}">
+                   <span class="input-group-addon plus-one">
                        +1
                    </span>
                     <input name="number"
                            class="form-control phone-number"
-                           :class="{borderColor : alternateContactDetails[0].agentTelephone.number.length === 0}"
                            type="tel"
                            maxlength="10"
                            placeholder="5417543120"
@@ -61,9 +56,7 @@
                            :disabled="loading"/>
                 </div>
 
-                <div v-if="!loading"
-                     class="alt-save-btn">
-                    <br>
+                <div v-if="!loading" class="alt-save-btn">
                     <button v-if="alternateSaveBtnIsVisible"
                             class="btn btn-success btn-sm save-alt-contact"
                             type="button"
@@ -414,5 +407,9 @@ export default {
     .alternate-fields{
         margin-top: 15px;
         margin-bottom: 15px;
+    }
+
+    .alt-save-btn{
+        max-width: 160px;
     }
 </style>

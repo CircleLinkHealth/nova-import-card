@@ -12,7 +12,6 @@ use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
-use App\Http\Requests\DeleteAlternateContactRequest;
 use App\Http\Requests\DeletePatientPhoneRequest;
 use App\Http\Requests\PatientPhonesRequest;
 use App\Relationships\PatientCareplanRelations;
@@ -60,7 +59,7 @@ class PatientCareplanController extends Controller
     {
         return $this->editOrCreateDemographics($request);
     }
-    
+
     public function deletePhoneNumber(DeletePatientPhoneRequest $request)
     {
         $phoneNumber = $request->get('phoneNumber');
