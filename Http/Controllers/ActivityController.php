@@ -275,6 +275,9 @@ class ActivityController extends Controller
             }
         }
 
+        $nurseId = null;
+        $patient = null;
+
         // convert minutes to seconds.
         if ($input['duration']) {
             $input['duration'] = $input['duration'] * 60;
@@ -333,16 +336,30 @@ class ActivityController extends Controller
             }
         }
 
-        $activity = Activity::create($input);
+        $activity = null;
+        if ($patient) {
+            /** @var ActivityService $activityService */
+            $activityService            = app(ActivityService::class);
+            $chargeableServicesDuration = $activityService->separateDurationForEachChargeableServiceId($patient, $input['duration'], $input['is_behavioral']);
+            foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
+                $merged = array_merge($input, [
+                    'duration'              => $chargeableServiceDuration->duration,
+                    'chargeable_service_id' => $chargeableServiceDuration->id,
+                ]);
+                $activity = Activity::create($merged);
+            }
+        } else {
+            $activity = Activity::create($input);
+        }
 
         /** @var Nurse $nurse */
         $nurse = null;
-        if ($activity->provider_id) {
-            $nurse = Nurse::whereUserId($activity->provider_id)->first();
+        if ($nurseId) {
+            $nurse = Nurse::whereUserId($nurseId)->first();
         }
 
         // store meta
-        if (array_key_exists('meta', $input)) {
+        if ($activity && array_key_exists('meta', $input)) {
             $meta = $input['meta'];
             unset($input['meta']);
             $metaArray = [];
