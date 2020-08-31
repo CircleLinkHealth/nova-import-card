@@ -368,8 +368,8 @@
             },
 
             responseErrorMessage(exception){
+                const e = exception.data;
                 if (exception.status === 422) {
-                    const e = exception.data;
                     alert(e);
                 }
 
