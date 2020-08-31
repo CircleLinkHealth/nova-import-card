@@ -60,7 +60,6 @@
                 <loader v-if="loading"></loader>
             </div>
 
-            <!--Extra inputs that are requested by user-->
             <div v-for="(input, index) in newInputs" class="extra-inputs">
                 <div style="padding-right: 14px; margin-left: -10px;">
                     <div class="numbers">
@@ -96,15 +95,6 @@
                                 :disabled="disableSaveButton">
                             {{setSaveBtnText}}
                         </button>
-
-<!--                       <div v-if="! newNumberIsAlternate && newPhoneNumber.length !== 0" -->
-<!--                            style="display: flex;">-->
-<!--                           <input id="makePrimary"-->
-<!--                                  class="make-primary"-->
-<!--                                  v-model="makeNewNumberPrimary"-->
-<!--                                  type="checkbox">-->
-<!--                           <label for="makePrimary" style="padding-left: 30px;">Make Primary</label>-->
-<!--                       </div>-->
                     </div>
                 </div>
             </div>
