@@ -11,6 +11,7 @@ use App\Traits\Tests\TimeHelpers;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
 use Tests\CustomerTestCase;
 
 class TimeTrackingAndChargeableServiceTest extends CustomerTestCase
@@ -98,6 +99,37 @@ class TimeTrackingAndChargeableServiceTest extends CustomerTestCase
         $cs = ChargeableService::firstWhere('code', '=', ChargeableService::PCM);
         self::assertEquals($cs->id, $activity->chargeable_service_id);
         self::assertEquals(15 * 60, $activity->duration);
+    }
+
+    public function test_manual_activity_has_ccm_cs()
+    {
+        $practice = $this->setupPractice(true, true);
+        $nurse    = $this->getNurse($practice->id, true);
+        $patient  = $this->setupPatient($practice);
+
+        $resp = $this->actingAs($nurse)
+            ->post(route('offline-activity-time-requests.store', ['patientId' => $patient->id]), [
+                'type'             => 'Other',
+                'comment'          => 'test',
+                'duration_minutes' => 3,
+                'patient_id'       => $patient->id,
+                'is_behavioral'    => 0,
+                'performed_at'     => now(),
+            ]);
+
+        self::assertTrue($resp->status() < 400);
+        
+        /** @var OfflineActivityTimeRequest $request */
+        $request = OfflineActivityTimeRequest::first();
+        $request->approve();
+
+        /** @var Activity $activity */
+        $activity = $patient->activities->first();
+        self::assertNotNull($activity);
+        /** @var ChargeableService $cs */
+        $cs = ChargeableService::firstWhere('code', '=', ChargeableService::CCM);
+        self::assertEquals($activity->chargeable_service_id, $cs->id);
+        self::assertEquals($activity->duration, 3 * 60);
     }
 
     private function getNurse(int $practiceId, $enableCcmPlus)

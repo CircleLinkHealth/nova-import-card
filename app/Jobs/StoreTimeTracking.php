@@ -6,10 +6,9 @@
 
 namespace App\Jobs;
 
+use App\Services\ActivityService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Nurseinvoices\TimeSplitter;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Bus\Queueable;
@@ -49,14 +48,17 @@ class StoreTimeTracking implements ShouldQueue
      */
     protected $params;
 
+    private ActivityService $activityService;
+
     private ?bool $isPatientBhi = null;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(ParameterBag $params)
+    public function __construct(ParameterBag $params, ActivityService $activityService)
     {
-        $this->params = $params;
+        $this->params          = $params;
+        $this->activityService = $activityService;
     }
 
     /**
@@ -144,16 +146,6 @@ class StoreTimeTracking implements ShouldQueue
         return $pageTimer;
     }
 
-    private function getChargeServiceIdByCode(User $patient, string $code): ?int
-    {
-        return optional($patient
-            ->primaryPractice
-            ->chargeableServices
-            ->where('code', '=', $code)
-            ->first())
-            ->id;
-    }
-
     private function getPatient($patientUserId): ?User
     {
         if (empty($patientUserId)) {
@@ -219,7 +211,7 @@ class StoreTimeTracking implements ShouldQueue
      */
     private function processBillableActivity(User $patient, PageTimer $pageTimer, $isBehavioral = false): void
     {
-        $chargeableServicesDuration = $this->separateDurationForEachChargeableServiceId($patient, $pageTimer->duration, $isBehavioral);
+        $chargeableServicesDuration = $this->activityService->separateDurationForEachChargeableServiceId($patient, $pageTimer->duration, $isBehavioral);
         foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
             $activity = Activity::create(
                 [
@@ -239,57 +231,5 @@ class StoreTimeTracking implements ShouldQueue
             ProcessMonthltyPatientTime::dispatchNow($patient->id);
             ProcessNurseMonthlyLogs::dispatchNow($activity);
         }
-    }
-
-    private function separateDurationForEachChargeableServiceId(User $patient, $duration, $isBehavioralActivity = false): array
-    {
-        if ($isBehavioralActivity) {
-            $id = $this->getChargeServiceIdByCode($patient, ChargeableService::BHI);
-
-            return [new ChargeableServiceDuration($id, $duration)];
-        }
-
-        if ($patient->isPcm()) {
-            $id = $this->getChargeServiceIdByCode($patient, ChargeableService::PCM);
-
-            return [new ChargeableServiceDuration($id, $duration)];
-        }
-
-        if ($patient->isCcm()) {
-            if ( ! $patient->isCcmPlus()) {
-                $id = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM);
-
-                return [new ChargeableServiceDuration($id, $duration)];
-            }
-
-            $currentTime = $patient->getCcmTime();
-            $splitter    = new TimeSplitter();
-            $slots       = $splitter->split($currentTime, $duration, false, false);
-
-            $result = [];
-            if ($slots->towards20) {
-                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM);
-                $result[] = new ChargeableServiceDuration($id, $slots->towards20);
-            }
-
-            if ($slots->after20) {
-                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM_PLUS_40);
-                $result[] = new ChargeableServiceDuration($id, $slots->after20);
-            }
-
-            if ($slots->after40) {
-                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM_PLUS_60);
-                $result[] = new ChargeableServiceDuration($id, $slots->after40);
-            }
-
-            return $result;
-        }
-        
-        $gcm = $this->getChargeServiceIdByCode($patient, ChargeableService::GENERAL_CARE_MANAGEMENT);
-        if ($gcm) {
-            $result[] = new ChargeableServiceDuration($gcm, $duration);
-        }
-
-        return [new ChargeableServiceDuration(null, $duration)];
     }
 }
