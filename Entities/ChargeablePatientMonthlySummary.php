@@ -34,7 +34,8 @@ use CircleLinkHealth\Customer\Entities\User;
 class ChargeablePatientMonthlySummary extends BaseModel
 {
     protected $casts = [
-        'is_fulfilled' => 'boolean',
+        'is_fulfilled'             => 'boolean',
+        'requires_patient_consent' => 'boolean',
     ];
 
     protected $dates = [
@@ -46,9 +47,9 @@ class ChargeablePatientMonthlySummary extends BaseModel
         'chargeable_month',
         'actor_id',
         'is_fulfilled',
+        'requires_patient_consent',
     ];
 
-    //todo: placeholder for now, maybe move in trait
     public function chargeableService()
     {
         return $this->hasOne(ChargeableService::class, 'chargeable_service_id');

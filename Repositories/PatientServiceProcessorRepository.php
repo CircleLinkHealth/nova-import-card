@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as Repository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\Patient as PatientModel;
 use Illuminate\Support\Facades\Cache;
@@ -38,29 +39,19 @@ class PatientServiceProcessorRepository implements Repository
             ->get();
     }
 
-    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummary
+    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView
     {
-        return ChargeablePatientMonthlySummary::with([
-            'chargeableService' => function ($cs) {
-                $cs->select(['id', 'display_name']);
-            },
-            'timePerServiceToBeImplemented' => function ($q) use ($month) {
-                $q->where('month', $month);
-            },
-        ])
-            ->where('patient_user_id', $patientId)
+        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
-            ->whereHas('chargeableService', function ($q) use ($chargeableServiceCode) {
-                $q->where('code', $chargeableServiceCode);
-            })
+            ->where('chargeable_service_code', $chargeableServiceCode)
             ->first();
     }
 
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
+        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
-            ->where('chargeable_service_id', $this->chargeableSercviceId($chargeableServiceCode))
+            ->where('chargeable_service_id', $chargeableServiceCode)
             ->exists();
     }
 
@@ -83,7 +74,7 @@ class PatientServiceProcessorRepository implements Repository
     {
         return ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
-            ->where('chargeable_service_id', $this->chargeableSercviceId($chargeableServiceCode))
+            ->where('chargeable_service_code', $chargeableServiceCode)
             ->where('is_fulfilled', true)
             ->exists();
     }
