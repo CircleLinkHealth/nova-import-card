@@ -278,7 +278,16 @@ class VariablePayCalculator
         bool $ccmPlusAlgoEnabled,
         bool $visitFeeBased
     ) {
-        $patient = User::withTrashed()->with('primaryPractice.chargeableServices')->find($patientUserId);
+        /** @var User $patient */
+        $patient = User::withTrashed()
+            ->with([
+                'primaryPractice.chargeableServices',
+                'patientSummaries' => function ($q) {
+                    $q->whereMonthYear(($this->startDate ?? now())->startOfMonth())
+                        ->orderBy('id', 'desc');
+                },
+            ])
+            ->find($patientUserId);
         if ( ! $patient) {
             throw new \Exception("Could not find user with id $patientUserId");
         }
@@ -296,7 +305,7 @@ class VariablePayCalculator
         }
 
         /** @var PatientMonthlySummary $patientSummary */
-        $patientSummary = $patient->patientSummaryForMonth($this->startDate);
+        $patientSummary = $patient->patientSummaries->first();
         if ( ! $patientSummary) {
             $month = $this->startDate->toDateString();
             throw new \Exception("Could not find patient summary for user $patientUserId and month $month");
@@ -863,83 +872,12 @@ class VariablePayCalculator
             $isBehavioral = $e['is_behavioral'];
             $duration = $e['increment'];
             $totalTimeBefore = $e['time_before'];
-            $totalTimeAfter = $totalTimeBefore + $duration;
 
             // performed_at is a new field, we revert to created_at if it is null
             $logDate = ($e['performed_at'] ?? $e['created_at'])->toDateString();
 
-            //ccm + bhi
-            $add_to_accrued_towards_20 = 0;
-            $add_to_accrued_after_20 = 0;
-            $add_to_accrued_after_40 = 0;
-            $add_to_accrued_after_60 = 0;
-
-            //pcm
-            $add_to_accrued_towards_30 = 0;
-            $add_to_accrued_after_30 = 0;
-
-            //patient was above target before storing activity
-            $was_above_20 = $totalTimeBefore >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
-            $was_above_30 = $totalTimeBefore >= self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
-            $was_above_40 = $totalTimeBefore >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
-            $was_above_60 = $totalTimeBefore >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
-
-            //patient went above target after activity
-            $is_above_20 = $totalTimeAfter >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
-            $is_above_30 = $totalTimeAfter >= self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
-            $is_above_40 = $totalTimeAfter >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
-            $is_above_60 = $totalTimeAfter >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
-
-            //ccm + bhi
-            if ($was_above_60) {
-                $add_to_accrued_after_60 = $duration;
-            } elseif ($was_above_40) {
-                if ($is_above_60) {
-                    $add_to_accrued_after_60 = $totalTimeAfter - self::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
-                    $add_to_accrued_after_40 = self::MONTHLY_TIME_TARGET_3X_IN_SECONDS - $totalTimeBefore;
-                } else {
-                    $add_to_accrued_after_40 = $duration;
-                }
-            } elseif ($was_above_20) {
-                if ($is_above_40) {
-                    $add_to_accrued_after_40 = $totalTimeAfter - self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
-                    if ($add_to_accrued_after_40 > self::MONTHLY_TIME_TARGET_IN_SECONDS) {
-                        $add_to_accrued_after_60 = $add_to_accrued_after_40 - self::MONTHLY_TIME_TARGET_IN_SECONDS;
-                        $add_to_accrued_after_40 = self::MONTHLY_TIME_TARGET_IN_SECONDS;
-                    }
-                    $add_to_accrued_after_20 = self::MONTHLY_TIME_TARGET_2X_IN_SECONDS - $totalTimeBefore;
-                } else {
-                    $add_to_accrued_after_20 = $duration;
-                }
-            } else {
-                if ($is_above_20) {
-                    $add_to_accrued_after_20 = $totalTimeAfter - self::MONTHLY_TIME_TARGET_IN_SECONDS;
-                    if ($add_to_accrued_after_20 > self::MONTHLY_TIME_TARGET_IN_SECONDS) {
-                        $add_to_accrued_after_40 = $add_to_accrued_after_20 - self::MONTHLY_TIME_TARGET_IN_SECONDS;
-                        if ($add_to_accrued_after_40 > self::MONTHLY_TIME_TARGET_IN_SECONDS) {
-                            $add_to_accrued_after_60 = $add_to_accrued_after_40 - self::MONTHLY_TIME_TARGET_IN_SECONDS;
-                            $add_to_accrued_after_40 = self::MONTHLY_TIME_TARGET_IN_SECONDS;
-                        }
-                        $add_to_accrued_after_20 = self::MONTHLY_TIME_TARGET_IN_SECONDS;
-                    }
-                    $add_to_accrued_towards_20 = self::MONTHLY_TIME_TARGET_IN_SECONDS - $totalTimeBefore;
-                } else {
-                    $add_to_accrued_towards_20 = $duration;
-                }
-            }
-
-            if ( ! $isBehavioral && $isPcm) {
-                if ($was_above_30) {
-                    $add_to_accrued_after_30 = $duration;
-                } else {
-                    if ($is_above_30) {
-                        $add_to_accrued_after_30 = $totalTimeAfter - self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
-                        $add_to_accrued_towards_30 = self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM - $totalTimeBefore;
-                    } else {
-                        $add_to_accrued_towards_30 = $duration;
-                    }
-                }
-            }
+            $splitter = new TimeSplitter();
+            $slots = $splitter->split($totalTimeBefore, $duration, $isBehavioral, $isPcm);
 
             $var = 'ccmRanges';
             if ($isBehavioral) {
@@ -950,29 +888,29 @@ class VariablePayCalculator
 
             // we can have ccm only, pcm only, bhi only
             // ccm + bhi, pcm + bhi, but we cannot have ccm + pcm
-            if (($isPcm && $isBehavioral || ! $isPcm) && $add_to_accrued_towards_20) {
+            if (($isPcm && $isBehavioral || ! $isPcm) && $slots->towards20) {
                 ${$var}[0][$nurseInfoId] = $this->getEntryForRange(
                     ${$var},
                     0,
                     $nurseInfoId,
-                    $add_to_accrued_towards_20,
+                    $slots->towards20,
                     $isSuccessfulCall,
                     $logDate
                 );
             }
 
-            if (($isPcm && $isBehavioral || ! $isPcm) && $add_to_accrued_after_20) {
+            if (($isPcm && $isBehavioral || ! $isPcm) && $slots->after20) {
                 ${$var}[1][$nurseInfoId] = $this->getEntryForRange(
                     ${$var},
                     1,
                     $nurseInfoId,
-                    $add_to_accrued_after_20,
+                    $slots->after20,
                     $isSuccessfulCall,
                     $logDate
                 );
             }
 
-            if (($isPcm && $isBehavioral || ! $isPcm) && $add_to_accrued_after_40) {
+            if (($isPcm && $isBehavioral || ! $isPcm) && $slots->after40) {
                 $index = $isBehavioral
                     ? 1
                     : 2;
@@ -980,13 +918,13 @@ class VariablePayCalculator
                     ${$var},
                     $index,
                     $nurseInfoId,
-                    $add_to_accrued_after_40,
+                    $slots->after40,
                     $isSuccessfulCall,
                     $logDate
                 );
             }
 
-            if (($isPcm && $isBehavioral || ! $isPcm) && $add_to_accrued_after_60) {
+            if (($isPcm && $isBehavioral || ! $isPcm) && $slots->after60) {
                 $index = $isBehavioral
                     ? 1
                     : 3;
@@ -994,29 +932,29 @@ class VariablePayCalculator
                     ${$var},
                     $index,
                     $nurseInfoId,
-                    $add_to_accrued_after_60,
+                    $slots->after60,
                     $isSuccessfulCall,
                     $logDate
                 );
             }
 
-            if ($isPcm && ! $isBehavioral && $add_to_accrued_towards_30) {
+            if ($isPcm && ! $isBehavioral && $slots->towards30) {
                 ${$var}[0][$nurseInfoId] = $this->getEntryForRange(
                     ${$var},
                     0,
                     $nurseInfoId,
-                    $add_to_accrued_towards_30,
+                    $slots->towards30,
                     $isSuccessfulCall,
                     $logDate
                 );
             }
 
-            if ($isPcm && ! $isBehavioral && $add_to_accrued_after_30) {
+            if ($isPcm && ! $isBehavioral && $slots->after30) {
                 ${$var}[1][$nurseInfoId] = $this->getEntryForRange(
                     ${$var},
                     1,
                     $nurseInfoId,
-                    $add_to_accrued_after_30,
+                    $slots->after30,
                     $isSuccessfulCall,
                     $logDate
                 );
