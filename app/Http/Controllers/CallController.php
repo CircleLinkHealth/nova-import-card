@@ -8,14 +8,12 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
+use App\Http\Requests\CreateNewCallRequest;
 use App\Http\Resources\Call as CallResource;
-use App\Rules\DateBeforeUsingCarbon;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,10 +31,10 @@ class CallController extends Controller
         return $user->isAdmin();
     }
 
-    public function create(Request $request)
+    public function create(CreateNewCallRequest $request)
     {
         $input = $request->all();
-        $call  = $this->createCall($input);
+        $call  = $this->createCall($request);
         if ( ! isset($call['errors'])) {
             return response()
                 ->json($call, 201);
@@ -46,14 +44,15 @@ class CallController extends Controller
             ->json($call, $call['code']);
     }
 
-    public function createMulti(Request $request)
+    public function createMulti(CreateNewCallRequest $request)
     {
-        //input should be an array of calls to be created
         $input = $request->all();
 
         $result = [];
         foreach ($input as $item) {
-            $result[] = $this->createCall($item);
+            $req = CreateNewCallRequest::createFrom($request);
+            $req->replace($item);
+            $result[] = $this->createCall($req);
         }
 
         return response()
@@ -306,53 +305,16 @@ class CallController extends Controller
      *
      * @return array|static
      */
-    private function createCall($input)
+    private function createCall(CreateNewCallRequest $request)
     {
-        //our db does not support more than 4 digits for year (?)
-        //-> so DateBeforeUsingCarbon
-        $validation = \Validator::make($input, [
-            'type'            => 'required',
-            'sub_type'        => '',
-            'inbound_cpm_id'  => 'required',
-            'outbound_cpm_id' => '',
-            'scheduled_date'  => ['required', 'after_or_equal:today', new DateBeforeUsingCarbon()],
-            'window_start'    => 'required|date_format:H:i',
-            'window_end'      => 'required|date_format:H:i',
-            'attempt_note'    => '',
-            'is_manual'       => 'required|boolean',
-            'family_override' => '',
-            'asap'            => '',
-            'is_reschedule'   => 'sometimes|boolean',
-        ]);
+        $input = $request->input();
 
-        if ($validation->fails()) {
-            return [
-                'errors' => $validation->errors()->getMessages(),
-                'code'   => 422,
-            ];
-        }
-
-        if ('task' === $input['type'] && empty($input['sub_type'])) {
-            return [
-                'errors' => ['invalid form'],
-                'code'   => 407,
-            ];
-        }
-
-        //some cases we need to eager load patientInfo
         $isFamilyOverride = ! empty($input['family_override']);
         $isCallBack       = ! empty($input['sub_type']) && SchedulerService::CALL_BACK_TYPE === $input['sub_type'];
         if ($isCallBack || ! $isFamilyOverride) {
-            $patient = User::with('patientInfo')->find($input['inbound_cpm_id']);
+            $patient = User::without(['roles', 'perms'])->with('patientInfo')->find($input['inbound_cpm_id']);
         } else {
-            $patient = User::find($input['inbound_cpm_id']);
-        }
-
-        if ( ! $patient) {
-            return [
-                'errors' => ['could not find patient'],
-                'code'   => 406,
-            ];
+            $patient = User::without(['roles', 'perms'])->find($input['inbound_cpm_id']);
         }
 
         // validate patient doesnt already have a scheduled call
@@ -386,15 +348,9 @@ class CallController extends Controller
             ];
         }
 
-        if ($isCallBack && $patient->patientInfo->isUnreachable()) {
-            Patient::withoutEvents(function () use ($patient, $input) {
-                $patient->patientInfo->ccm_status = Patient::ENROLLED;
-                $patient->patientInfo->no_call_attempts_since_last_success = PatientWriteRepository::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS - PatientWriteRepository::MAX_CALLBACK_ATTEMPTS;
-
-                $input['outbound_cpm_id'] = $this->getNurseToAssignCallBackTo($patient, $input['outbound_cpm_id']);
-
-                $patient->patientInfo->save();
-            });
+        if ($isCallBack) {
+            $input['outbound_cpm_id'] = $this->scheduler->handleSchedulingCallBack($patient, $input['outbound_cpm_id']);
+            $patient->patientInfo->save();
         }
 
         $call = $this->storeNewCall($patient, $input);
@@ -404,21 +360,6 @@ class CallController extends Controller
         }
 
         return CallResource::make($call);
-    }
-
-    private function getNurseToAssignCallBackTo(User $patient, ?int $outboundCpmId = null): ?int
-    {
-        if ( ! empty($outboundCpmId)) {
-            return $outboundCpmId;
-        }
-        if ( ! auth()->user()->isCareCoach()) {
-            return null;
-        }
-        if (auth()->id() === app(NurseFinderEloquentRepository::class)->find($patient->id)) {
-            return auth()->id();
-        }
-
-        return null;
     }
 
     private function hasAlreadyFamilyCallAtDifferentTime(Patient $patient, $scheduledDate, $windowStart, $windowEnd)
