@@ -423,11 +423,6 @@
             },
 
             deletePhone(number){
-                if (number.type.toLowerCase() === alternate){
-                     this.$refs.editPatientAlternateContact.deleteAlternateContact(true);
-                     return;
-                }
-
                 if (! confirm("Are you sure you want to delete this phone number")){
                     return;
                 }

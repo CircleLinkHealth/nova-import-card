@@ -69,15 +69,7 @@
                             type="button"
                             @click="saveNewAlternateNumberAndContactDetails"
                             :disabled="loading || disableAltSaveButton">
-                        {{altSaveBtnText}}
-                    </button>
-
-                    <button v-if="alternateClearBtnIsVisible"
-                            class="btn btn-danger btn-sm delete-alt-contact"
-                            type="button"
-                            @click="deleteAlternateContact(false)"
-                            :disabled="loading">
-                        Delete alternate contact
+                        Save alternate contact
                     </button>
                 </div>
             </div>
@@ -234,12 +226,6 @@ export default {
                 && this.initialAlternateNameSavedInDB === this.alternateContactDetails[0].agentName
                 && this.initialAlternatePhoneSavedInDB === this.alternateContactDetails[0].agentTelephone.number;
         },
-
-        altSaveBtnText(){
-            return this.initialValueIsUnchanged
-                ? 'Save alternate contact'
-                : 'Edit alternate contact'
-        },
     },
 
     methods:{
@@ -349,32 +335,6 @@ export default {
                 this.initialAlternateRelationshipSavedInDB = this.altContact.agentRelationship;
                 this.initialAlternateNameSavedInDB = this.altContact.agentName;
             }
-        },
-
-
-        deleteAlternateContact(deleteAlternatePhoneOnly){
-
-            if (! confirm("Are you sure you want to delete alternate phone?")){
-                return;
-            }
-
-            this.loading = true;
-            axios.post('/manage-patients/delete-alternate-contact', {
-                patientUserId:this.userId,
-                deleteOnlyPhone:deleteAlternatePhoneOnly
-            }).then((response => {
-                this.getAlternateContactData();
-                if (this.callEnabled){
-                    EventBus.$emit("refresh:phoneData");
-                }
-                if (response.data.hasOwnProperty('message')){
-                    console.log(response.data.message);
-                }
-                this.loading = false;
-            })).catch((error) => {
-                this.loading = false;
-                this.responseErrorMessage(error.message);
-            });
         },
 
         responseErrorMessage(exception){
