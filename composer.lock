@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73e38811edfe90f01efd5659500812e5",
+    "content-hash": "73660bfbcce5d96336608f23f186a2e9",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1618,11 +1618,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.3.2",
+            "version": "dev-ROAD-288-billing-revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "0d21b1e55714c3635b41d1d842486ea9892367ee"
+                "reference": "ed1e1f6fec50b9a6a7894954717188f5d9feb9fc"
             },
             "type": "laravel-module",
             "extra": {
@@ -1647,7 +1647,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-27T11:10:07+00:00"
+            "time": "2020-08-31T22:22:21+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
@@ -17359,6 +17359,7 @@
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/shared-models-module": 20,
+        "circlelinkhealth/sqlviews-module": 20,
         "circlelinkhealth/timetracking-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
