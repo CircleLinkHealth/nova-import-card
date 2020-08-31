@@ -17,12 +17,6 @@ class AddChargeableServiceIdForeignKeyToLvPageTimerAndLvActivitiesTable extends 
      */
     public function down()
     {
-        Schema::table('lv_page_timer', function (Blueprint $table) {
-            $table->dropForeign(['chargeable_service_id']);
-
-            $table->dropColumn('chargeable_service_id');
-        });
-
         Schema::table('lv_activities', function (Blueprint $table) {
             $table->dropForeign(['chargeable_service_id']);
 
@@ -37,15 +31,6 @@ class AddChargeableServiceIdForeignKeyToLvPageTimerAndLvActivitiesTable extends 
      */
     public function up()
     {
-        Schema::table('lv_page_timer', function (Blueprint $table) {
-            $table->unsignedInteger('chargeable_service_id')->nullable()->after('provider_id');
-
-            $table->foreign('chargeable_service_id')
-                ->references('id')
-                ->on('chargeable_services')
-                ->onDelete('set null');
-        });
-
         Schema::table('lv_activities', function (Blueprint $table) {
             $table->unsignedInteger('chargeable_service_id')->nullable()->after('comment_id');
 
