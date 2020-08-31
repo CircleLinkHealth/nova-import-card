@@ -4171,10 +4171,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     private function ccmNoOfMonitoredProblems()
     {
-        /*$collection = ($this->relationLoaded('ccdProblems') && $this->ccdProblems->relationLoaded('cpmProblem'))
-            ? $this->ccdProblems
-            : $this->ccdProblems();*/
-
         return $this->ccdProblems()
             ->where('is_monitored', 1)
             ->whereHas(
