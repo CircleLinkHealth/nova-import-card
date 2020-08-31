@@ -55,10 +55,9 @@ class StoreTimeTracking implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(ParameterBag $params, ActivityService $activityService)
+    public function __construct(ParameterBag $params)
     {
-        $this->params          = $params;
-        $this->activityService = $activityService;
+        $this->params = $params;
     }
 
     /**
@@ -66,6 +65,8 @@ class StoreTimeTracking implements ShouldQueue
      */
     public function handle()
     {
+        $this->activityService = app(ActivityService::class);
+
         /** @var User $provider */
         $provider = User::findOrFail($this->params->get('providerId', null));
 
