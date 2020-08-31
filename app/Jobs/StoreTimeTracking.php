@@ -284,6 +284,11 @@ class StoreTimeTracking implements ShouldQueue
 
             return $result;
         }
+        
+        $gcm = $this->getChargeServiceIdByCode($patient, ChargeableService::GENERAL_CARE_MANAGEMENT);
+        if ($gcm) {
+            $result[] = new ChargeableServiceDuration($gcm, $duration);
+        }
 
         return [new ChargeableServiceDuration(null, $duration)];
     }
