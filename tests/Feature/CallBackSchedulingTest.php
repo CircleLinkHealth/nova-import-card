@@ -67,6 +67,18 @@ class CallBackSchedulingTest extends CustomerTestCase
 
     public function test_as_an_admin_it_assigns_callback_to_selected_nurse()
     {
+        $params = $this->newCallbackParams($this->patient()->id, $this->careCoach()->id);
+
+        $this->assertEquals(Patient::ENROLLED, $this->patient()->patientInfo->ccm_status);
+
+        $resp = $this->actingAs($this->superadmin())
+            ->call('get', route('call.create', [$this->patient()->id]), $params);
+
+        $resp->assertStatus(201);
+
+        $params['scheduler'] = $this->superadmin()->id;
+
+        $this->assertDatabaseHas('calls', $params);
     }
 
     public function test_as_an_admin_it_leaves_callback_unassigned_when_no_nurse_selected()
