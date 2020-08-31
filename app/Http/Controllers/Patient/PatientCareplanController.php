@@ -12,6 +12,7 @@ use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
+use App\Http\Requests\DeleteAlternateContactRequest;
 use App\Http\Requests\DeletePatientPhoneRequest;
 use App\Http\Requests\PatientPhonesRequest;
 use App\Relationships\PatientCareplanRelations;
@@ -58,6 +59,32 @@ class PatientCareplanController extends Controller
     public function createPatientDemographics(Request $request)
     {
         return $this->editOrCreateDemographics($request);
+    }
+    
+    /**
+     * @param DeleteAlternateContactRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteAlternateContact(DeleteAlternateContactRequest $request)
+    {
+        $valuesToDelete = [
+            'agent_telephone' => null,
+        ];
+
+        if ( ! $request->input('deleteOnlyPhone')) {
+            $valuesToDelete = [
+                'agent_telephone'    => null,
+                'agent_name'         => null,
+                'agent_relationship' => null,
+                'agent_email'        => null,
+            ];
+        }
+
+        $request->get('patient')->update($valuesToDelete);
+
+        return response()->json([
+            'message' => 'Alternate Contact has been deleted',
+        ], 200);
     }
 
     public function deletePhoneNumber(DeletePatientPhoneRequest $request)

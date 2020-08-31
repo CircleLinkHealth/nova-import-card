@@ -222,6 +222,29 @@ export default {
     },
 
     methods:{
+        deleteAlternateContact(deleteAlternatePhoneOnly){
+            if (! confirm("Are you sure you want to delete alternate phone?")){
+                return;
+            }
+            this.loading = true;
+            axios.post('/manage-patients/delete-alternate-contact', {
+                patientUserId:this.userId,
+                deleteOnlyPhone:deleteAlternatePhoneOnly
+            }).then((response => {
+                this.getAlternateContactData();
+                if (this.callEnabled){
+                    EventBus.$emit("refresh:phoneData");
+                }
+                if (response.data.hasOwnProperty('message')){
+                    console.log(response.data.message);
+                }
+                this.loading = false;
+            })).catch((error) => {
+                this.loading = false;
+                this.responseErrorMessage(error.message);
+            });
+        },
+
         saveNewAlternateNumberAndContactDetails(){
             this.loading = true;
             const alternateNewEmail = this.alternateContactDetails[0].agentEmail;

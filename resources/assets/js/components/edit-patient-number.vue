@@ -35,7 +35,8 @@
                                :disabled="true"/>
                     </div>
 
-                    <button class="btn btn-success btn-sm update-primaryNumber"
+                    <button v-if="shouldShowMakePrimary(number)"
+                            class="btn btn-success btn-sm update-primaryNumber"
                             type="button"
                             style="display: inline;"
                             @click="updatePrimaryPhone(number.phoneNumberId)"
@@ -227,6 +228,10 @@
         },
 
         methods: {
+            shouldShowMakePrimary(number){
+                return number.type.toLowerCase() !== alternate;
+            },
+
             filterOutSavedPhoneTypes(){
                 let existingPhoneNumbersTypes = [];
                 let phoneTypesFiltered = [];
@@ -395,6 +400,11 @@
             },
 
             deletePhone(number){
+                if (number.type.toLowerCase() === alternate){
+                    this.$refs.editPatientAlternateContact.deleteAlternateContact(true);
+                    return;
+                }
+
                 if (! confirm("Are you sure you want to delete this phone number")){
                     return;
                 }
