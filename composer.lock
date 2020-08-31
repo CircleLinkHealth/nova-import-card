@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7ecffcf7764d0f85d2bd8fa748101bf3",
+    "content-hash": "f163e40eebe367b15a7d7968ffbb2311",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1116,11 +1116,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-ROAD-287_activity_chargeable_service_id",
+            "version": "v2.4.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "2bb51e5b3063c7fab4c70738e9a7e9adf38875ea"
+                "reference": "5b6d896973647013e5b9e0c8136f463422b2cf8b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1142,15 +1142,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-31T15:16:21+00:00"
+            "time": "2020-08-31T16:46:05+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-ROAD-287_activity_chargeable_service_id",
+            "version": "v3.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "fb46edd3f613538d5fdb3b80cad85ca11062adec"
+                "reference": "bd9227a1edf01e4390ebd593695a668cbcb5f543"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1184,7 +1184,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-31T12:07:39+00:00"
+            "time": "2020-08-31T16:51:46+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1408,11 +1408,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "dev-ROAD-287_activity_chargeable_service_id",
+            "version": "v1.5.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "f2f9e996d4e6ba6d46ee96a60172453f76f8c231"
+                "reference": "c64e74c9ac78b53a764172a05f3e2be8141049a9"
             },
             "type": "laravel-module",
             "extra": {
@@ -1435,7 +1435,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-31T11:57:38+00:00"
+            "time": "2020-08-31T16:52:45+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1604,11 +1604,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "dev-ROAD-287_activity_chargeable_service_id",
+            "version": "v1.2.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "a43c5d0c8d903bf6b8642009e52adece35b96a97"
+                "reference": "9113b7fac1f6fde874e39cf2cf9c84d30dedaf19"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1633,7 +1633,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-31T11:57:38+00:00"
+            "time": "2020-08-31T16:46:58+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -16521,10 +16521,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
-        "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/nurseinvoices-module": 20,
-        "circlelinkhealth/timetracking-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },
