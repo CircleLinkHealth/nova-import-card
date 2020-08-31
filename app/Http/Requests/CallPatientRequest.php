@@ -18,7 +18,7 @@ class CallPatientRequest extends FormRequest
      */
     public function authorize()
     {
-        if (App::environment(['local', 'testing'])) {
+        if (App::environment(['local', 'testing', 'heroku'])) {
             return true;
         }
 
