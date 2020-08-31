@@ -22,7 +22,7 @@ class PatientWriteRepository
     /**
      * The number of times to try calling a patient who was Unreachable, became enrolled by requesting a callback, before turning them back to unreachable.
      */
-    const MAX_CALLBACK_ATTEMPTS = 2;
+    const MAX_CALLBACK_ATTEMPTS = 3;
 
     /**
      * Set a patient's ccm_status to paused.
