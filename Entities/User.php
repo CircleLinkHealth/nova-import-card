@@ -2159,12 +2159,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function isBhi()
     {
-        //Do we wanna cache this for a minute maybe?
-//        return \Cache::remember("user:$this->id:is_bhi", 1, function (){
-        return User::isBhiChargeable()
-            ->where('id', $this->id)
-            ->exists();
-//        });
+        return \Cache::remember("user:$this->id:is_bhi", 5, function () {
+            return User::isBhiChargeable()
+                ->where('id', $this->id)
+                ->exists();
+        });
     }
 
     /**
