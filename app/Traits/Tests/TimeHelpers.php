@@ -11,6 +11,7 @@ use App\Jobs\StoreTimeTracking;
 use App\Note;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait TimeHelpers
@@ -97,14 +98,17 @@ trait TimeHelpers
             $args['call_status'] = $successfulCall ? Call::REACHED : Call::NOT_REACHED;
         }
 
+        /** @var TestResponse $resp */
         $resp = $this->call(
             'POST',
             route('patient.note.store', ['patientId' => $patientId]),
             $args
         );
-    
+
+        self::assertTrue($resp->status() < 400);
+
         $this->flushSession();
-        
+
         return Note::where('patient_id', '=', $patientId)
             ->orderBy('created_at', 'desc')
             ->first();
