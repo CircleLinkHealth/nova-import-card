@@ -185,7 +185,7 @@
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "1.7.5",
     "circlelinkhealth/cpm-migrations-module": "2.4.7",
-    "circlelinkhealth/customer-module": "3.3.1",
+    "circlelinkhealth/customer-module": "dev-ROAD-287_activity_chargeable_service_id",
     "circlelinkhealth/eligibility-module": "3.3.8",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
