@@ -41,7 +41,7 @@ class UserTableSeeder extends Seeder
 
                 $this->command->info("admin user $admin->display_name seeded");
             });
-            
+
             factory(User::class, 1)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($nurse) use ($practice) {
                 $nurse->username = 'nurse';
                 $nurse->first_name = 'Care Coach';

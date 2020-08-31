@@ -120,6 +120,20 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         'ehr_password',
     ];
 
+    public function availableServiceProcessors(?Carbon $month = null): AvailableServiceProcessors
+    {
+        $month ??= Carbon::now()->startOfMonth()->startOfDay();
+
+        return AvailableServiceProcessors::push(
+            $this->chargeableServiceSummaries
+                ->where('chargeable_month', $month)
+                ->map(function (ChargeableLocationMonthlySummary $summary) {
+                    return $summary->chargeableService->processor();
+                })
+                ->toArray()
+        );
+    }
+
     public function chargeableServiceSummaries()
     {
         return $this->hasMany(ChargeableLocationMonthlySummary::class, 'location_id');
@@ -287,19 +301,5 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     public function user()
     {
         return $this->belongsToMany(User::class);
-    }
-    
-    public function availableServiceProcessors(?Carbon $month = null) : AvailableServiceProcessors
-    {
-        $month ??= Carbon::now()->startOfMonth()->startOfDay();
-        
-        return AvailableServiceProcessors::push(
-            $this->chargeableServiceSummaries
-                ->where('chargeable_month', $month)
-                ->map(function (ChargeableLocationMonthlySummary $summary) {
-                return $summary->chargeableService->processor();
-            })
-                ->toArray()
-        );
     }
 }

@@ -139,6 +139,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\CustomerNotificationContactTimePreference[]|\Illuminate\Database\Eloquent\Collection $notificationContactPreferences
  * @property int|null                                                                                                                 $notification_contact_preferences_count
  * @property string|null                                                                                                              $default_user_scope
+ * @property \Illuminate\Database\Eloquent\Collection|PcmProblem[]                                                                    $pcmProblems
+ * @property int|null                                                                                                                 $pcm_problems_count
  */
 class Practice extends BaseModel implements HasMedia
 {
@@ -513,13 +515,14 @@ class Practice extends BaseModel implements HasMedia
         return $this->users()->ofType('participant')->whereHas('patientInfo');
     }
 
+    public function pcmProblems()
+    {
+        return $this->hasMany(PcmProblem::class, 'practice_id');
+    }
+
     public function pcp()
     {
         return $this->hasMany('App\CPRulesPCP', 'prov_id', 'id');
-    }
-    
-    public function pcmProblems(){
-        return $this->hasMany(PcmProblem::class, 'practice_id');
     }
 
     public function primaryLocation()
