@@ -149,24 +149,29 @@ class OfflineActivityTimeRequest extends Model
             Log::critical($ex);
         }
 
-        $activity = Activity::create(
-            [
-                'type'          => $this->type,
-                'duration'      => $this->duration_seconds,
-                'duration_unit' => 'seconds',
-                'patient_id'    => $this->patient_id,
-                'provider_id'   => $this->requester_id,
-                'logger_id'     => auth()->id(),
+        $activityService            = app(ActivityService::class);
+        $chargeableServicesDuration = $activityService->separateDurationForEachChargeableServiceId($this->patient, $this->duration_seconds, $this->is_behavioral);
+        foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
+            $activity = Activity::create(
+                [
+                    'type'          => $this->type,
+                    'duration'      => $chargeableServiceDuration->duration,
+                    'duration_unit' => 'seconds',
+                    'patient_id'    => $this->patient_id,
+                    'provider_id'   => $this->requester_id,
+                    'logger_id'     => auth()->id(),
 
-                'is_behavioral' => $this->is_behavioral,
-                'logged_from'   => 'manual_input',
-                'performed_at'  => $this->performed_at->toDateTimeString(),
-            ]
-        );
+                    'is_behavioral'         => $this->is_behavioral,
+                    'logged_from'           => 'manual_input',
+                    'performed_at'          => $this->performed_at->toDateTimeString(),
+                    'chargeable_service_id' => $chargeableServiceDuration->id,
+                ]
+            );
+        }
 
         $nurse = optional($this->requester)->nurseInfo;
 
-        (app(ActivityService::class))->processMonthlyActivityTime($this->patient_id, $this->performed_at);
+        $activityService->processMonthlyActivityTime($this->patient_id, $this->performed_at);
 
         if ($nurse) {
             (new AlternativeCareTimePayableCalculator($nurse))->adjustNursePayForActivity($activity);
