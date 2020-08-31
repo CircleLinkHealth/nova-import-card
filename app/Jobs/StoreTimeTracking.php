@@ -7,7 +7,9 @@
 namespace App\Jobs;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Nurseinvoices\TimeSplitter;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Bus\Queueable;
@@ -47,6 +49,8 @@ class StoreTimeTracking implements ShouldQueue
      */
     protected $params;
 
+    private ?bool $isPatientBhi = null;
+
     /**
      * Create a new job instance.
      */
@@ -61,26 +65,20 @@ class StoreTimeTracking implements ShouldQueue
     public function handle()
     {
         /** @var User $provider */
-        $provider = User::with(['nurseInfo'])
-            ->findOrFail($this->params->get('providerId', null));
+        $provider = User::findOrFail($this->params->get('providerId', null));
 
         $patientId = $this->params->get('patientId', 0);
-
-        $isPatientBhi = ! empty($patientId) && User::isBhiChargeable()
-            ->where('id', $patientId)
-            ->exists();
+        $patient   = $this->getPatient($patientId);
 
         foreach ($this->params->get('activities', []) as $activity) {
             $isBehavioral = isset($activity['is_behavioral'])
-                ? (bool) $activity['is_behavioral'] && $isPatientBhi
-                : $isPatientBhi;
+                ? (bool) $activity['is_behavioral'] && $this->isPatientBhi($patient)
+                : false;
 
             $pageTimer = $this->createPageTimer($activity);
 
             if ($this->isBillableActivity($pageTimer, $activity, $provider)) {
-                $newActivity = $this->createActivity($pageTimer, $isBehavioral);
-                ProcessMonthltyPatientTime::dispatchNow($patientId);
-                ProcessNurseMonthlyLogs::dispatchNow($newActivity);
+                $this->processBillableActivity($patient, $pageTimer, $isBehavioral);
             }
 
             if ($this->isProcessableCareAmbassadorActivity($activity, $provider)) {
@@ -101,31 +99,6 @@ class StoreTimeTracking implements ShouldQueue
             'patient:'.$this->params->get('patientId'),
             'provider:'.$this->params->get('providerId', null),
         ];
-    }
-
-    /**
-     * Create an Activity.
-     *
-     * @param bool $isBehavioral
-     *
-     * @return Activity|\Illuminate\Database\Eloquent\Model
-     */
-    private function createActivity(PageTimer $pageTimer, $isBehavioral = false)
-    {
-        return Activity::create(
-            [
-                'type'          => $pageTimer->activity_type,
-                'provider_id'   => $pageTimer->provider_id,
-                'is_behavioral' => $isBehavioral,
-                'performed_at'  => $pageTimer->start_time,
-                'duration'      => $pageTimer->billable_duration,
-                'duration_unit' => 'seconds',
-                'patient_id'    => $pageTimer->patient_id,
-                'logged_from'   => 'pagetimer',
-                'logger_id'     => $pageTimer->provider_id,
-                'page_timer_id' => $pageTimer->id,
-            ]
-        );
     }
 
     /**
@@ -171,20 +144,57 @@ class StoreTimeTracking implements ShouldQueue
         return $pageTimer;
     }
 
+    private function getChargeServiceIdByCode(User $patient, string $code): ?int
+    {
+        return optional($patient
+            ->primaryPractice
+            ->chargeableServices
+            ->where('code', '=', $code)
+            ->first())
+            ->id;
+    }
+
+    private function getPatient($patientUserId): ?User
+    {
+        if (empty($patientUserId)) {
+            return null;
+        }
+
+        return User::without(['roles', 'perms'])
+            ->with([
+                'ccdProblems.cpmProblem',
+                'primaryPractice.chargeableServices',
+                'patientSummaries' => function ($q) {
+                    $q->where('month_year', '=', now()->startOfMonth());
+                },
+            ])
+            ->find($patientUserId);
+    }
+
     /**
      * Returns true if an activity should be created, and false if it should not.
      *
      * @return bool
      */
-    private function isBillableActivity(PageTimer $pageTimer, array $activity, User $provider = null)
+    private function isBillableActivity(PageTimer $pageTimer, array $activity, User $provider)
     {
         $forceSkip = $activity['force_skip'] ?? false;
 
-        return ! ( ! $provider
-                   || ! (bool) $provider->isCCMCountable()
+        return ! ( ! (bool) $provider->isCCMCountable()
                    || 0 == $pageTimer->patient_id
                    || in_array($pageTimer->title, self::UNTRACKED_ROUTES)
                    || $forceSkip);
+    }
+
+    private function isPatientBhi(User $patient = null): bool
+    {
+        if ( ! is_null($this->isPatientBhi)) {
+            return $this->isPatientBhi;
+        }
+
+        $this->isPatientBhi = ! empty($patient) && $patient->isBhi();
+
+        return $this->isPatientBhi;
     }
 
     /**
@@ -193,10 +203,88 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @return bool
      */
-    private function isProcessableCareAmbassadorActivity(array $activity, User $provider = null)
+    private function isProcessableCareAmbassadorActivity(array $activity, User $provider)
     {
         $forceSkip = $activity['force_skip'] ?? false;
 
         return ! $forceSkip && $provider->isCareAmbassador();
+    }
+
+    /**
+     * Create an Activity.
+     *
+     * @param bool $isBehavioral
+     *
+     * @return Activity|\Illuminate\Database\Eloquent\Model
+     */
+    private function processBillableActivity(User $patient, PageTimer $pageTimer, $isBehavioral = false): void
+    {
+        $chargeableServicesDuration = $this->separateDurationForEachChargeableServiceId($patient, $pageTimer->duration, $isBehavioral);
+        foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
+            $activity = Activity::create(
+                [
+                    'type'                  => $pageTimer->activity_type,
+                    'provider_id'           => $pageTimer->provider_id,
+                    'is_behavioral'         => $isBehavioral,
+                    'performed_at'          => $pageTimer->start_time,
+                    'duration'              => $chargeableServiceDuration->duration,
+                    'duration_unit'         => 'seconds',
+                    'patient_id'            => $pageTimer->patient_id,
+                    'logged_from'           => 'pagetimer',
+                    'logger_id'             => $pageTimer->provider_id,
+                    'page_timer_id'         => $pageTimer->id,
+                    'chargeable_service_id' => $chargeableServiceDuration->id,
+                ]
+            );
+            ProcessMonthltyPatientTime::dispatchNow($patient->id);
+            ProcessNurseMonthlyLogs::dispatchNow($activity);
+        }
+    }
+
+    private function separateDurationForEachChargeableServiceId(User $patient, $duration, $isBehavioralActivity = false): array
+    {
+        if ($isBehavioralActivity) {
+            $id = $this->getChargeServiceIdByCode($patient, ChargeableService::BHI);
+
+            return [new ChargeableServiceDuration($id, $duration)];
+        }
+
+        if ($patient->isPcm()) {
+            $id = $this->getChargeServiceIdByCode($patient, ChargeableService::PCM);
+
+            return [new ChargeableServiceDuration($id, $duration)];
+        }
+
+        if ($patient->isCcm()) {
+            if ( ! $patient->isCcmPlus()) {
+                $id = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM);
+
+                return [new ChargeableServiceDuration($id, $duration)];
+            }
+
+            $currentTime = $patient->getCcmTime();
+            $splitter    = new TimeSplitter();
+            $slots       = $splitter->split($currentTime, $duration, false, false);
+
+            $result = [];
+            if ($slots->towards20) {
+                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM);
+                $result[] = new ChargeableServiceDuration($id, $slots->towards20);
+            }
+
+            if ($slots->after20) {
+                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM_PLUS_40);
+                $result[] = new ChargeableServiceDuration($id, $slots->after20);
+            }
+
+            if ($slots->after40) {
+                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM_PLUS_60);
+                $result[] = new ChargeableServiceDuration($id, $slots->after40);
+            }
+
+            return $result;
+        }
+
+        return [new ChargeableServiceDuration(null, $duration)];
     }
 }
