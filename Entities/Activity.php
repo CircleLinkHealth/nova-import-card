@@ -80,6 +80,7 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $care_rate_logs_count
  * @property int|null $meta_count
  * @property int|null $revision_history_count
+ * @property int|null $chargeable_service_id
  */
 class Activity extends BaseModel
 {
@@ -108,6 +109,7 @@ class Activity extends BaseModel
         'performed_at_gmt',
         'page_timer_id',
         'created_at',
+        'chargeable_service_id',
     ];
 
     /**
