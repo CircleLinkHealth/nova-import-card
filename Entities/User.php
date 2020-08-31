@@ -21,6 +21,7 @@ use App\Services\UserService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -883,6 +884,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function chargeableMonthlySummaries()
     {
         return $this->hasMany(ChargeablePatientMonthlySummary::class, 'patient_user_id');
+    }
+    
+    public function chargeableMonthlySummariesView()
+    {
+        return $this->hasMany(ChargeablePatientMonthlySummaryView::class, 'patient_user_id');
     }
 
     public function chargeableServices()
