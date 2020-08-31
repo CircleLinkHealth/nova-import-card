@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\SafeRequest;
+use App\Http\Requests\SafeRequest;
 use App\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
