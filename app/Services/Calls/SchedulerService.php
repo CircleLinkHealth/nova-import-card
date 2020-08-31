@@ -754,7 +754,7 @@ class SchedulerService
         if ( ! auth()->user()->isCareCoach()) {
             return null;
         }
-        if (app(CreateNoteForPatient::class)->can(auth()->id, $patient->id)) {
+        if (app(CreateNoteForPatient::class)->can(auth()->id(), $patient->id)) {
             return auth()->id();
         }
 

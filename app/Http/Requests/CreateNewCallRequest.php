@@ -32,7 +32,7 @@ class CreateNewCallRequest extends FormRequest
             return false;
         }
 
-        return app(CreateNoteForPatient::class)->can(auth()->id, $patientId);
+        return app(CreateNoteForPatient::class)->can(auth()->id(), $patientId);
     }
 
     /**
