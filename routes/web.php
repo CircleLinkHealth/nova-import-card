@@ -766,7 +766,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('get-alternate-contact', [
             'uses' => 'Patient\PatientCareplanController@getPatientAlternateContact',
             'as'   => 'patient.get.alternate.contact',
-        ])->middleware('permission:patient.create,patient.update,careplan.update');
+        ])->middleware('permission:patient.create,patient.update,careplan.update,practice.read');
 
         Route::post('get-phones', [
             'uses' => 'Patient\PatientCareplanController@getPatientPhoneNumbers',
