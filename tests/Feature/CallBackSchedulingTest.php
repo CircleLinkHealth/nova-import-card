@@ -38,6 +38,19 @@ class CallBackSchedulingTest extends CustomerTestCase
 
     public function test_as_a_nurse_it_assigns_callback_to_selected_nurse()
     {
+        app(NurseFinderEloquentRepository::class)->assign($this->patient()->id, $this->careCoach()->id);
+        $params = $this->newCallbackParams($this->patient()->id, null);
+
+        $this->assertEquals(Patient::ENROLLED, $this->patient()->patientInfo->ccm_status);
+
+        $resp = $this->actingAs($this->careCoach())
+            ->call('get', route('call.create', [$this->patient()->id]), $params);
+
+        $resp->assertStatus(201);
+
+        $params['outbound_cpm_id'] = $params['scheduler'] = $this->careCoach()->id;
+
+        $this->assertDatabaseHas('calls', $params);
     }
 
     public function test_as_a_nurse_it_switches_unreachable_patient_to_enrolled_and_assigns_callback_to_logged_in_nurse_when_no_nurse_selected()
