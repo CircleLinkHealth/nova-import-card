@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,6 +27,8 @@ class AutoAttachServicesToNewLocation implements ShouldQueue
     protected int $locationId;
 
     protected Carbon $month;
+
+    protected LocationProcessorEloquentRepository $repo;
 
     /**
      * Create a new job instance.
@@ -73,18 +76,10 @@ class AutoAttachServicesToNewLocation implements ShouldQueue
 
         $locationToCopy = $this->getLocationToCopyServicesFrom($practiceLocations);
 
-        $toCreate = $locationToCopy->chargeableServiceSummaries->map(function (ChargeableLocationMonthlySummary $summary) {
-            return [
-                'chargeable_service_id' => $summary->chargeableService->id,
-                'location_id'           => $this->locationId,
-                'chargeable_month'      => $this->month,
-            ];
+        $locationToCopy->chargeableServiceSummaries->each(function (ChargeableLocationMonthlySummary $summary) {
+            $this->repo()->store($this->locationId, $summary->chargeable_service_id, $this->month);
         });
-
-        foreach ($toCreate as $createArray) {
-            ChargeableLocationMonthlySummary::updateOrCreate($toCreate->toArray());
-        }
-
+        
         event(new LocationServicesAttached($this->locationId));
     }
 
@@ -97,5 +92,14 @@ class AutoAttachServicesToNewLocation implements ShouldQueue
         }
 
         return $locationToCopy;
+    }
+
+    private function repo(): LocationProcessorEloquentRepository
+    {
+        if (is_null($this->repo)) {
+            $this->repo = app(LocationProcessorEloquentRepository::class);
+        }
+
+        return $this->repo;
     }
 }

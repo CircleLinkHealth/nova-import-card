@@ -68,4 +68,13 @@ class LocationProcessorEloquentRepository implements CustomerProcessorRepository
     {
         return $clms->chargeableService->processor();
     }
+
+    public function store(int $locationId, int $chargeableServiceId, Carbon $month): ChargeableLocationMonthlySummary
+    {
+        return ChargeableLocationMonthlySummary::updateOrCreate([
+            'location_id'           => $locationId,
+            'chargeable_service_id' => $chargeableServiceId,
+            'chargeable_month'      => $month,
+        ]);
+    }
 }
