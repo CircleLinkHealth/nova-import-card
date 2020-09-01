@@ -24,7 +24,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Rules\PatientIsNotDuplicate;
 use CircleLinkHealth\Customer\Traits\PdfReportTrait;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
-use CircleLinkHealth\Eligibility\Rules\HasValidNbiMrn;
+use CircleLinkHealth\Eligibility\Rules\MrnWasReplacedIfPracticeImportingHooks;
 use CircleLinkHealth\SharedModels\Rules\DoesNotHaveBothTypesOfDiabetes;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -542,7 +542,7 @@ class CarePlan extends BaseModel implements PdfReport
                 'medications'     => 'required|filled',
                 'phoneNumber'     => 'required|phone:AUTO,US',
                 'dob'             => 'required|date',
-                'mrn'             => ['required', new HasValidNbiMrn($patient)],
+                'mrn'             => ['required', new MrnWasReplacedIfPracticeImportingHooks($patient)],
                 'name'            => 'required',
                 'billingProvider' => 'required|numeric',
                 'practice'        => 'required|numeric',
