@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
-use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -65,7 +65,6 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
 
         $this->setCpmProblems();
 
-        $toCreate = collect([]);
         $practice
             ->locations
             ->each(function (Location $location) use (&$toCreate, $practicePcmProblems) {
@@ -82,40 +81,29 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                         }
                     )->count() > 0;
                     if ($isBhi || $isDementia || $isDementia) {
-                        $toCreate->push([
-                            'chargeable_service_id' => $this->bhiCodeId,
-                            'location_id'           => $location->id,
-                            'cpm_problem_id'        => $problem->id,
-                        ]);
+                        $this->repo()->store($location->id, $problem->id, $this->bhiCodeId);
                     }
 
                     if ($isPcm) {
-                        $toCreate->push([
-                            'chargeable_service_id' => $this->pcmCodeId,
-                            'location_id'           => $location->id,
-                            'cpm_problem_id'        => $problem->id,
-                        ]);
+                        $this->repo()->store($location->id, $problem->id, $this->pcmCodeId);
                     }
 
+                    //todo: find out - can a problem both be pcm and ccm?
+                    // For example, for patients that have only that they can use it as PCM, however patients can have it along with others and be CCM
                     if ( ! $isBhi || $isDementia || $isDepression) {
-                        $toCreate->push([
-                            'chargeable_service_id' => $this->ccmCodeId,
-                            'location_id'           => $location->id,
-                            'cpm_problem_id'        => $problem->id,
-                        ]);
+                        $this->repo()->store($location->id, $problem->id, $this->bhiCodeId);
                     }
                 }
             });
+    }
 
-        if ($toCreate->isEmpty()) {
-            sendSlackMessage('#cpm_general_alerts', "Warning. Location CpmProblem services were not seeded for Practice: {$this->practiceId}");
-
-            return;
+    private function repo(): LocationProblemServiceRepository
+    {
+        if (is_null($this->repo())) {
+            $this->repo = app(LocationProblemServiceRepository::class);
         }
 
-        foreach ($toCreate as $createArray) {
-            LocationProblemService::updateOrCreate($createArray);
-        }
+        return $this->repo();
     }
 
     private function setChargeableServices()

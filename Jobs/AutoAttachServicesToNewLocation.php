@@ -79,7 +79,7 @@ class AutoAttachServicesToNewLocation implements ShouldQueue
         $locationToCopy->chargeableServiceSummaries->each(function (ChargeableLocationMonthlySummary $summary) {
             $this->repo()->store($this->locationId, $summary->chargeable_service_id, $this->month);
         });
-        
+
         event(new LocationServicesAttached($this->locationId));
     }
 
