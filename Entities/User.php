@@ -1216,7 +1216,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ($this->relationLoaded('patientSummaries')) {
             $pms = $this->patientSummaries->where('month_year', '=', now()->startOfMonth())->first();
             if ($pms) {
-                return $pms->bhi_time;
+                return $pms->bhi_time ?? 0;
             }
         }
 
@@ -1453,7 +1453,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ($this->relationLoaded('patientSummaries')) {
             $pms = $this->patientSummaries->where('month_year', '=', now()->startOfMonth())->first();
             if ($pms) {
-                return $pms->ccm_time;
+                return $pms->ccm_time ?? 0;
             }
         }
 
