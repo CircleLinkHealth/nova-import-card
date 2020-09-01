@@ -383,7 +383,7 @@ trait UserHelpers
             if ($isLast && $isBhi) {
                 $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
             } else {
-                $problem->cpmProblem()->associate($cpmProblems->random());
+                $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 0));
             }
             $problem->save();
         }
