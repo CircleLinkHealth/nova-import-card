@@ -41,6 +41,7 @@ use App\Listeners\UserLoggedOut;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
+use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationPatientServices;
 use CircleLinkHealth\CcmBilling\Listeners\ProcessPatientServices;
 use CircleLinkHealth\Core\Listeners\LogFailedNotification;
 use CircleLinkHealth\Core\Listeners\LogMailSmtpId;
@@ -144,7 +145,7 @@ class CpmEventServiceProvider extends ServiceProvider
             RunComposerIde::class,
         ],
         LocationServicesAttached::class => [
-            ProcessPatientServices::class,
+            ProcessLocationPatientServices::class,
         ],
         PatientProblemsChanged::class => [
             ProcessPatientServices::class,
