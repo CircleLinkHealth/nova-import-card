@@ -7,14 +7,14 @@
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Database\Seeder;
+use Tests\Helpers\Users\PracticeLocation as PracticeLocationHelpers;
 
 class UserScopeTestsSeeder extends Seeder
 {
+    use PracticeLocationHelpers;
     use UserHelpers;
     const LOCATION_1_NAME                                       = 'Liopetri';
     const LOCATION_2_NAME                                       = 'Trivilloura';
@@ -44,11 +44,11 @@ class UserScopeTestsSeeder extends Seeder
      */
     public function run()
     {
-        $practice = $this->practice();
+        $practice = $this->firstOrCreatePractice(self::PRACTICE_NAME);
 
-        $location1 = $this->createLocation($practice->id, self::LOCATION_1_NAME);
-        $location2 = $this->createLocation($practice->id, self::LOCATION_2_NAME);
-        $location3 = $this->createLocation($practice->id, self::LOCATION_3_NAME);
+        $location1 = $this->firstOrCreateLocation($practice->id, self::LOCATION_1_NAME);
+        $location2 = $this->firstOrCreateLocation($practice->id, self::LOCATION_2_NAME);
+        $location3 = $this->firstOrCreateLocation($practice->id, self::LOCATION_3_NAME);
 
         $prov1 = $this->createStaffMember(
             'provider',
@@ -123,20 +123,6 @@ class UserScopeTestsSeeder extends Seeder
         );
     }
 
-    private function createLocation(int $practiceId, string $name)
-    {
-        $location = Location::whereName($name)->first();
-
-        if ( ! is_null($location)) {
-            return $location;
-        }
-
-        return factory(Location::class)->create([
-            'name'        => $name,
-            'practice_id' => $practiceId,
-        ]);
-    }
-
     private function createPatients(Location $location, User $provider, int $count)
     {
         $patients = collect();
@@ -178,20 +164,5 @@ class UserScopeTestsSeeder extends Seeder
         $provider->locations()->sync($locations->pluck('id')->all());
 
         return $provider;
-    }
-
-    private function practice()
-    {
-        $practice = Practice::whereName(self::PRACTICE_NAME)->first();
-
-        if ( ! is_null($practice)) {
-            return $practice;
-        }
-
-        return factory(Practice::class)->create([
-            'name'            => self::PRACTICE_NAME,
-            'display_name'    => snakeToSentenceCase(self::PRACTICE_NAME),
-            'saas_account_id' => SaasAccount::whereName('CircleLink Health')->first()->id,
-        ]);
     }
 }

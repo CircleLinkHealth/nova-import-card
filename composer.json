@@ -185,7 +185,7 @@
     "circlelinkhealth/condition-code-lookup-module": "1.1.5",
     "circlelinkhealth/core-module": "1.7.5",
     "circlelinkhealth/cpm-migrations-module": "2.4.7",
-    "circlelinkhealth/customer-module": "3.3.3",
+    "circlelinkhealth/customer-module": "dev-callback_Staff",
     "circlelinkhealth/eligibility-module": "3.3.9",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
@@ -276,6 +276,7 @@
     "phpunit/phpunit": "^8.5",
     "spatie/phpunit-watcher": "^1.8",
     "squizlabs/php_codesniffer": "*",
+    "spatie/db-dumper": "^2.16",
     "symfony/css-selector": "^4.0",
     "symfony/dom-crawler": "^4.0"
   },
