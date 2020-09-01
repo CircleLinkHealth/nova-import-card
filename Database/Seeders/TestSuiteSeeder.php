@@ -7,7 +7,7 @@
 use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
-use CircleLinkHealth\CcmBilling\Database\Seeders\CpmProblemChargeableServiceLocationSeederTableSeeder;
+use CircleLinkHealth\CcmBilling\Database\Seeders\CpmProblemChargeableServiceLocationSeeder;
 
 class TestSuiteSeeder extends Seeder
 {
@@ -39,6 +39,6 @@ class TestSuiteSeeder extends Seeder
         $this->call(CareAmbassadorDefaultScriptsSeeder::class);
         $this->call(UserScopeTestsSeeder::class);
         $this->call(UserTableSeeder::class);
-        $this->call(CpmProblemChargeableServiceLocationSeederTableSeeder::class);
+        $this->call(CpmProblemChargeableServiceLocationSeeder::class);
     }
 }
