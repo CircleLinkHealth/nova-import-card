@@ -898,7 +898,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "f65085bbcbe471f74446c1e49212ab43e5b4cf25"
+                "reference": "6910f2cb7cf516f35230f1bb23b11add353ba91e"
             },
             "type": "laravel-module",
             "extra": {
@@ -936,7 +936,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-09-01T15:07:33+00:00"
+            "time": "2020-09-01T15:59:02+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1172,7 +1172,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "f237a253cb98234fe2f2467a0a055c9e3e9c339c"
+                "reference": "b6cd21c48413c3fcf6850b81597f75a9b25e5564"
             },
             "type": "laravel-module",
             "extra": {
@@ -1194,7 +1194,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-31T21:30:32+00:00"
+            "time": "2020-09-01T15:59:02+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1202,7 +1202,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f7159c282c492d302b5ceb8795fef1399a150d0e"
+                "reference": "e4dfb89a317b7ecd9388b536f3d5c4e65b320412"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1236,7 +1236,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-01T12:09:38+00:00"
+            "time": "2020-09-01T15:59:02+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
