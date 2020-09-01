@@ -64,6 +64,7 @@
                     <div class="numbers">
                         <div class="types">
                        <v-select id="numberType"
+                                 :class="{borderColor : phoneTypeIsRequired()}"
                                  v-model="newPhoneType"
                                  :options="phoneTypesFiltered">
                        </v-select>
@@ -96,6 +97,13 @@
                         </button>
                     </div>
                 </div>
+
+                <span v-if="phoneTypeIsRequired()"
+                      class="help-block"
+                      title="Missing alternate phone number type"
+                      style="color: #ff6565; font-size: 15px; cursor: pointer">
+               Please choose phone number type
+            </span>
             </div>
 
             <a v-if="allowAddingNewNumber"
@@ -191,7 +199,7 @@
 
             disableSaveButton(){
                 return this.loading
-                    || this.newPhoneType.length === 0
+                    || this.newPhoneType === null
                     || isNaN(this.newPhoneNumber.toString())
                     || this.newPhoneNumber.toString().length !== 10;
 
@@ -214,6 +222,9 @@
             },
 
             newNumberIsAlternate(){
+                if (this.newPhoneType === null){
+                    return false;
+                }
                 return this.newPhoneType.toLowerCase() === alternate;
             },
 
@@ -228,6 +239,12 @@
         },
 
         methods: {
+            phoneTypeIsRequired(){
+                if (this.newPhoneType === null){
+                    return true;
+                }
+                return this.newPhoneNumber.length === 10 && this.newPhoneType.length === 0;
+            },
             shouldShowMakePrimary(number){
                 return number.type.toLowerCase() !== alternate;
             },
@@ -445,16 +462,20 @@
 </script>
 
 <style scoped>
-.phone-numbers{
-    float: left;
-}
 
-.extra-inputs{
-    display: inline-flex;
-    padding-bottom: 10px;
-    padding-left: 10px;
-    white-space: nowrap;
-}
+    .borderColor{
+     border: #f62056 solid 1px;
+    }
+    .phone-numbers{
+      float: left;
+    }
+
+    .extra-inputs{
+        display: inline-flex;
+       padding-bottom: 10px;
+       padding-left: 10px;
+       white-space: nowrap;
+    }
     .phone-type{
         min-width: 80px;
         max-width: 80px;
