@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
+use CircleLinkHealth\Eligibility\CcdaImporter\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetUPG0506ProblemInstruction;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
@@ -28,10 +29,10 @@ class ImportingHooksTest extends CustomerTestCase
 
         $ccda     = FakeCalvaryCcda::create();
         $importer = new ImportPatientInfo($this->patient(), $ccda);
-        $this->assertTrue($importer->shouldRunHook(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, $this->practice()));
+        $this->assertTrue(FiresImportingHooks::shouldRunHook(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, $this->practice()));
 
         $oldValue = $this->patient()->patientInfo;
-        $hook     = $importer->fireImportingHook(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, $this->patient(), $ccda, $this->patient()->patientInfo);
+        $hook     = FiresImportingHooks::fireImportingHook(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, $this->patient(), $ccda, $this->patient()->patientInfo);
         $this->assertEquals($oldValue, $hook);
     }
 
@@ -48,10 +49,10 @@ class ImportingHooksTest extends CustomerTestCase
 
         $ccda     = FakeCalvaryCcda::create();
         $importer = new ImportProblems($this->patient(), $ccda);
-        $this->assertTrue($importer->shouldRunHook(ImportProblems::IMPORTING_PROBLEM_INSTRUCTIONS, $this->practice()));
+        $this->assertTrue(FiresImportingHooks::shouldRunHook(ImportProblems::IMPORTING_PROBLEM_INSTRUCTIONS, $this->practice()));
 
         $oldValue = $this->patient()->patientInfo;
-        $hook     = $importer->fireImportingHook(ImportProblems::IMPORTING_PROBLEM_INSTRUCTIONS, $this->patient(), $ccda, $this->patient()->patientInfo);
+        $hook     = FiresImportingHooks::fireImportingHook(ImportProblems::IMPORTING_PROBLEM_INSTRUCTIONS, $this->patient(), $ccda, $this->patient()->patientInfo);
         $this->assertNull($hook);
     }
 }
