@@ -96,7 +96,7 @@ class CallController extends Controller
      * set to the caller's user id.
      * If called from any other role, outbound_cpm_id must be provided.
      */
-    public function reschedule(Request $request)
+    public function reschedule(CreateNewCallRequest $request)
     {
         $input = $request->only(
             'id',
