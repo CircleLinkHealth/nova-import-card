@@ -69,7 +69,8 @@ class SuccessfulCallHandlerTest extends TestCase
      */
     public function test_patient_over_20_mins_in_first_week_call_more_than_once()
     {
-        $called  = Carbon::now()->startOfMonth()->addDay(4);
+        $called = Carbon::now()->startOfMonth()->addDay(4);
+        Carbon::setTestNow($called);
         $patient = $this->fakePatient($called);
 
         $patient->patientInfo->preferred_calls_per_month = 3;
@@ -89,7 +90,8 @@ class SuccessfulCallHandlerTest extends TestCase
      */
     public function test_patient_over_20_mins_in_fourth_week_call_more_than_once()
     {
-        $called  = Carbon::now()->endOfMonth()->subWeek()->addDays(3);
+        $called = Carbon::now()->endOfMonth()->subWeek()->addDays(3);
+        Carbon::setTestNow($called);
         $patient = $this->fakePatient($called);
 
         $patient->patientInfo->preferred_calls_per_month = 2;
@@ -108,7 +110,8 @@ class SuccessfulCallHandlerTest extends TestCase
      */
     public function test_patient_over_20_mins_in_second_week_call_once()
     {
-        $called  = Carbon::now()->startOfMonth()->addWeek()->addDay(2);
+        $called = Carbon::now()->startOfMonth()->addWeek()->addDay(2);
+        Carbon::setTestNow($called);
         $patient = $this->fakePatient($called);
 
         $patient->patientInfo->preferred_calls_per_month = 1;
@@ -126,7 +129,8 @@ class SuccessfulCallHandlerTest extends TestCase
      */
     public function test_patient_over_20_mins_in_third_week_call_once()
     {
-        $called  = Carbon::now()->endOfMonth()->subWeeks(2)->addDay(4);
+        $called = Carbon::now()->endOfMonth()->subWeeks(2)->addDay(4);
+        Carbon::setTestNow($called);
         $patient = $this->fakePatient($called);
 
         $patient->patientInfo->preferred_calls_per_month = 1;

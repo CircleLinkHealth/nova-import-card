@@ -15,11 +15,9 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Tests\CustomerTestCase;
-use Tests\Helpers\MakesSafeRequests;
 
 class CallStatusChangeTest extends CustomerTestCase
 {
-    use MakesSafeRequests;
     use PracticeHelpers;
     use TimeHelpers;
     use UserHelpers;

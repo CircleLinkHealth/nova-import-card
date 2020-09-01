@@ -7,7 +7,6 @@
 namespace App\Providers;
 
 use Anaseqal\NovaImport\NovaImport;
-use App\Nova\Dashboards\ServerInsights;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
@@ -74,6 +73,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function cards()
     {
         return [
+            new \Vink\NovaCacheCard\CacheCard(),
+            new \Kreitje\NovaHorizonStats\JobsPastHour(),
+            new \Kreitje\NovaHorizonStats\FailedJobsPastHour(),
+            new \Kreitje\NovaHorizonStats\Processes(),
+            new \Kreitje\NovaHorizonStats\Workload(),
         ];
     }
 
@@ -85,7 +89,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function dashboards()
     {
         return [
-            new ServerInsights(),
         ];
     }
 

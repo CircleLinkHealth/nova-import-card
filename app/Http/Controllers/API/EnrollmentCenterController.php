@@ -7,8 +7,8 @@
 namespace App\Http\Controllers\API;
 
 use App\CareAmbassadorLog;
+use App\Http\Requests\SafeRequest as Request;
 use App\Http\Resources\Enrollable;
-use App\SafeRequest as Request;
 use App\Services\Enrollment\EnrollableCallQueue;
 use App\Services\Enrollment\SuggestEnrollable;
 use App\Services\Enrollment\UpdateEnrollable;

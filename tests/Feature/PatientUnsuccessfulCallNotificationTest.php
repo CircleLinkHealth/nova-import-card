@@ -8,24 +8,18 @@ namespace Tests\Feature;
 
 use App\Call;
 use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
-use App\Http\Controllers\NotesController;
 use App\Notifications\PatientUnsuccessfulCallNotification;
-use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Facades\Notification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Illuminate\Testing\TestResponse;
 use Tests\Concerns\TwilioFake\Twilio;
 use Tests\CustomerTestCase;
-use Tests\Helpers\MakesSafeRequests;
 
 class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
 {
-    use MakesSafeRequests;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -128,12 +122,9 @@ class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
 
     private function createNote($patientId)
     {
-        /** @var NotesController $controller */
-        $controller = app(NotesController::class);
-
-        $req = $this->safeRequest(
-            route('patient.note.store', ['patientId' => $patientId]),
+        $resp = $this->call(
             'POST',
+            route('patient.note.store', ['patientId' => $patientId]),
             [
                 'type'        => 'CCM Welcome Call',
                 'phone'       => 1,
@@ -142,7 +133,5 @@ class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
                 'patient_id'  => $patientId,
             ]
         );
-
-        TestResponse::fromBaseResponse($controller->store($req, app(SchedulerService::class), $patientId));
     }
 }

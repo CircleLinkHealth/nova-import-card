@@ -2264,8 +2264,3 @@ Route::post('enrollee-login-viewed', [
     'uses' => 'Enrollment\SelfEnrollmentController@viewFormVisited',
     'as'   => 'enrollee.login.viewed',
 ])->middleware('guest');
-
-//Route::get('get-calendar-data', [
-//    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
-//    'as'   => 'care.center.work.schedule.getCalendarData',
-//]);
