@@ -38,6 +38,7 @@ use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\SendSelfEnrollmentReminders;
 use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
+use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use App\Notifications\NurseDailyReport;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
@@ -126,7 +127,7 @@ class Kernel extends ConsoleKernel
             ->everyFifteenMinutes()
             ->onOneServer();
 
-        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)
+        $schedule->job(RemoveScheduledCallsForUnenrolledPatients::class)
             ->everyFifteenMinutes()
             ->onOneServer();
 
