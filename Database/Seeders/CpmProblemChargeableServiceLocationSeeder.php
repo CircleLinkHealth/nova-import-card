@@ -10,7 +10,7 @@ use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFro
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Seeder;
 
-class CpmProblemChargeableServiceLocationSeederTableSeeder extends Seeder
+class CpmProblemChargeableServiceLocationSeeder extends Seeder
 {
     /**
      * Run the database seeds.

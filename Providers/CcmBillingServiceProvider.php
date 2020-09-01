@@ -13,6 +13,8 @@ use CircleLinkHealth\CcmBilling\Console\Commands\ProcessAllPracticePatientMonthl
 use CircleLinkHealth\CcmBilling\Console\Commands\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository as PatientRepository;
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -57,6 +59,7 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
         $this->app->bind(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
 
         $this->app->singleton(PatientRepositoryInterface::class, PatientRepository::class);
+        $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
 
         $this->commands([
             MigratePracticeServicesFromChargeablesToLocationSummariesTable::class,
