@@ -486,6 +486,11 @@ class Patient extends BaseModel
         return null != $this->family_id;
     }
 
+    public function isUnreachable()
+    {
+        return Patient::UNREACHABLE === $this->ccm_status;
+    }
+
     public function lastNurseThatPerformedActivity()
     {
         $id = \CircleLinkHealth\TimeTracking\Entities\Activity::where('patient_id', $this->user_id)
