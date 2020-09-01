@@ -6,9 +6,12 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Hooks;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportHook;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\NBISupplementaryDataNotFound;
 use Illuminate\Support\Facades\Notification;
@@ -23,21 +26,14 @@ class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
 
     public function run()
     {
-        if (self::NBI_PRACTICE_NAME != $this->patient->primaryPractice->name) {
-            return $this->payload;
-        }
-
         $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$this->patient->first_name}%")
             ->where('last_name', $this->patient->last_name)
             ->where('dob', $this->patient->patientInfo->birth_date)
-            ->where(
-                'practice_id',
-                Practice::whereName(self::NBI_PRACTICE_NAME)->value('id')
-            )
+            ->where('practice_id', $this->patient->program_id)
             ->first();
 
         if ( ! $dataFromPractice) {
-            sendNbiPatientMrnWarning($this->patient->id);
+            self::sendPatientNotFoundSlackAlert($this->patient->id, $this->patient->program_id);
 
             $recipients = AppConfig::pull(self::RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS, []);
 
@@ -52,5 +48,40 @@ class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
         }
 
         return $this->payload;
+    }
+
+    public static function sendPatientNotFoundSlackAlert(int $patientId, ?int $practiceId)
+    {
+        $key = "ReplaceFieldsFromSupplementaryDataPatientMRNNotFound:$patientId";
+
+        if ($practiceId) {
+            $practice = Practice::hasImportingHookEnabled(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME)
+                ->findOrFail($practiceId);
+        }
+
+        if ( ! isset($practice)) {
+            $practice = User::ofType('participant')
+                ->with('primaryPractice')
+                ->whereHas('primaryPractice', function ($q) {
+                    $q->hasImportingHookEnabled(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME);
+                })
+                ->firstOrFail()
+                ->primaryPractice;
+        }
+
+        if ( ! \Cache::has($key)) {
+            $handles           = AppConfig::pull('supplemental_patient_data_replacement_alerts_slack_watchers', '');
+            $patientUrl        = route('patient.demographics.show', ['patientId' => $patientId]);
+            $patientProfileUrl = "<$patientUrl|this patient>";
+            $novaUrl           = url('/superadmin/resources/supplemental-patient-data-resources');
+            $novaLink          = "<$novaUrl|{$practice->display_name}'s supplementary MRN list>";
+            sendSlackMessage(
+                '#customer-cpm-alerts',
+                "$handles URGENT! Could not find $patientProfileUrl in $novaLink. All {$practice->display_name} MRNs need to be replaced. Please add the correct MRN for this patient in $novaLink. The system will replace the MRN in patient's chart with the MRN you input.",
+                true
+            );
+
+            \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
+        }
     }
 }
