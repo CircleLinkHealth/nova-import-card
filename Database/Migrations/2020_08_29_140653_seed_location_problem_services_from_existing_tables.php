@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\CcmBilling\Database\Seeders\CpmProblemChargeableServiceLocationSeederTableSeeder;
+use CircleLinkHealth\CcmBilling\Database\Seeders\CpmProblemChargeableServiceLocationSeeder;
 use Illuminate\Database\Migrations\Migration;
 
 class SeedLocationProblemServicesFromExistingTables extends Migration
@@ -26,7 +26,7 @@ class SeedLocationProblemServicesFromExistingTables extends Migration
     public function up()
     {
         Artisan::call('db:seed', [
-            '--class' => CpmProblemChargeableServiceLocationSeederTableSeeder::class,
+            '--class' => CpmProblemChargeableServiceLocationSeeder::class,
         ]);
     }
 }
