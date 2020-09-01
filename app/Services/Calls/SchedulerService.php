@@ -10,6 +10,7 @@ use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Note;
+use App\Policies\CreateNoteForPatient;
 use App\Services\NoteService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
@@ -229,6 +230,23 @@ class SchedulerService
         }
 
         return $base->whereNotIn('status', [Call::REACHED, Call::NOT_REACHED])->first();
+    }
+
+    public function handleSchedulingCallBack(User &$patient, ?int $outboundCpmId): ?int
+    {
+        $isUnreachable = $patient->patientInfo->isUnreachable();
+        $attemptsLeft  = PatientWriteRepository::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS - $patient->patientInfo->no_call_attempts_since_last_success;
+
+        if ($isUnreachable || $attemptsLeft < PatientWriteRepository::MAX_CALLBACK_ATTEMPTS) {
+            Patient::withoutEvents(function () use (&$patient, $isUnreachable) {
+                if ($isUnreachable) {
+                    $patient->patientInfo->ccm_status = Patient::ENROLLED;
+                }
+                $patient->patientInfo->no_call_attempts_since_last_success = PatientWriteRepository::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS - PatientWriteRepository::MAX_CALLBACK_ATTEMPTS;
+            });
+        }
+
+        return $this->getNurseToAssignCallBackTo($patient, $outboundCpmId);
     }
 
     public function hasScheduledCall(User $patient)
@@ -726,5 +744,20 @@ class SchedulerService
             Call::REACHED == $callStatus,
             ! is_null($scheduled_call) && SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type
         );
+    }
+
+    private function getNurseToAssignCallBackTo(User $patient, ?int $outboundCpmId = null): ?int
+    {
+        if ( ! empty($outboundCpmId)) {
+            return $outboundCpmId;
+        }
+        if ( ! auth()->user()->isCareCoach()) {
+            return null;
+        }
+        if (app(CreateNoteForPatient::class)->can(auth()->id(), $patient->id)) {
+            return auth()->id();
+        }
+
+        return null;
     }
 }

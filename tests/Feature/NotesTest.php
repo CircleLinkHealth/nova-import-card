@@ -6,16 +6,11 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\NotesController;
 use App\Note;
-use Illuminate\Testing\TestResponse;
 use Tests\CustomerTestCase;
-use Tests\Helpers\MakesSafeRequests;
 
 class NotesTest extends CustomerTestCase
 {
-    use MakesSafeRequests;
-
     /**
      * A basic feature test example.
      *
@@ -25,7 +20,7 @@ class NotesTest extends CustomerTestCase
     {
         $practice = $this->practice();
         $patient  = $this->patient();
-        $nurse    = $this->createUser($practice->id, 'care-center');
+        $nurse    = $this->careCoach();
         $this->be($nurse);
 
         $this->createNote($patient->id);
@@ -35,7 +30,7 @@ class NotesTest extends CustomerTestCase
     {
         $practice = $this->practice();
         $patient  = $this->patient();
-        $nurse    = $this->createUser($practice->id, 'care-center');
+        $nurse    = $this->careCoach();
         $this->be($nurse);
 
         $draftNoteId = $this->createNote($patient->id);
@@ -46,7 +41,7 @@ class NotesTest extends CustomerTestCase
     {
         $practice = $this->practice();
         $patient  = $this->patient();
-        $nurse    = $this->createUser($practice->id, 'care-center');
+        $nurse    = $this->careCoach();
         $this->be($nurse);
 
         $draftNoteId = $this->createNote($patient->id);
@@ -57,39 +52,38 @@ class NotesTest extends CustomerTestCase
     {
         $practice = $this->practice();
         $patient  = $this->patient();
-        $nurse    = $this->createUser($practice->id, 'care-center');
+        $nurse    = $this->careCoach();
         $this->be($nurse);
 
         $draftNoteId = $this->createNote($patient->id);
         $this->createNote($patient->id, $draftNoteId, 'complete');
-
-        /** @var NotesController $controller */
-        $controller = app(NotesController::class);
-
-        $req = $this->safeRequest(
-            route('patient.note.store', ['patientId' => $patient->id]),
+        
+        $resp = $this->call(
             'POST',
+            route('patient.note.store', ['patientId' => $patient->id]),
             [
                 'note_id'    => $draftNoteId,
                 'body'       => 'test-complete-edit',
                 'patient_id' => $patient->id,
             ]
         );
-
-        $resp = TestResponse::fromBaseResponse($controller->storeDraft($req, $patient->id));
-        $resp->assertOk();
-        self::assertTrue(null !== $resp->json('error'));
+        
+        $resp->assertRedirect(url('/'));
+        $this->assertEquals(
+            'Cannot edit note. Please use create addendum to make corrections.',
+            session()->get('errors')->getBag('default')->all()[0],
+            'The expected message was not foudn in the session'
+        );
     }
 
     private function createNote($patientId, $noteId = null, $status = 'draft')
     {
         $isEditing = null !== $noteId;
-        /** @var NotesController $controller */
-        $controller = app(NotesController::class);
+        $route     = 'draft' === $status ? 'patient.note.store.draft' : 'patient.note.store';
 
-        $req = $this->safeRequest(
-            route('draft' === $status ? 'patient.note.store.draft' : 'patient.note.store', ['patientId' => $patientId]),
+        $resp = $this->call(
             'POST',
+            route($route, ['patientId' => $patientId]),
             [
                 'status'     => $status,
                 'note_id'    => $noteId,
@@ -98,9 +92,13 @@ class NotesTest extends CustomerTestCase
             ]
         );
 
-        $resp = TestResponse::fromBaseResponse($controller->storeDraft($req, $patientId));
+        if ('patient.note.store' === $route) {
+            $resp->assertRedirect(route('patient.note.index', ['patientId' => $patientId]));
+            return;
+        }
+    
         $resp->assertOk();
-
+        
         self::assertNull($resp->json('error'));
 
         $noteIdFromResp = $resp->json('note_id');

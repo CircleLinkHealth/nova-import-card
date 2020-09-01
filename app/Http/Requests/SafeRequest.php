@@ -4,17 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App;
+namespace App\Http\Requests;
 
-use Illuminate\Http\Request;
+use App\Constants;
+use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * Class SafeRequest.
- *
- * Provides methods to read sanitized input from a request.
- * Uses strip_tags().
- */
-class SafeRequest extends Request
+class SafeRequest extends FormRequest
 {
     /**
      * Get safely all of the input and files for the request.
@@ -56,6 +51,16 @@ class SafeRequest extends Request
     }
 
     /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
      * Safely (remove html tags) retrieve an input item from the request.
      *
      * @param string            $key
@@ -70,5 +75,16 @@ class SafeRequest extends Request
         return $res
             ? htmlspecialchars($res, ENT_NOQUOTES)
             : $res;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+        ];
     }
 }
