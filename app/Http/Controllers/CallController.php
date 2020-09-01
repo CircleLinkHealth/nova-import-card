@@ -35,7 +35,7 @@ class CallController extends Controller
     public function create(CreateNewCallRequest $request)
     {
         $input = $request->all();
-        $call  = $this->createCall($request);
+        $call  = $this->createCall($request->input());
         if ( ! isset($call['errors'])) {
             return response()
                 ->json($call, 201);
@@ -51,9 +51,7 @@ class CallController extends Controller
 
         $result = [];
         foreach ($input as $item) {
-            $req = CreateNewCallRequest::createFrom($request);
-            $req->replace($item);
-            $result[] = $this->createCall($req);
+            $result[] = $this->createCall($item);
         }
 
         return response()
@@ -260,6 +258,18 @@ class CallController extends Controller
         );
     }
 
+    private function alreadyHasScheduledCall(User $patient): bool
+    {
+        return $patient->inboundCalls()
+            ->where(function ($q) {
+                $q->whereNull('type')
+                    ->orWhere('type', '=', 'call');
+            })
+            ->where('status', '=', 'scheduled')
+            ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
+            ->exists();
+    }
+
     /**
      * Software-Only role cannot change clh nurse to in-house nurse
      * CPM-660.
@@ -306,43 +316,38 @@ class CallController extends Controller
      *
      * @return array|static
      */
-    private function createCall(CreateNewCallRequest $request)
+    private function createCall(array $input)
     {
-        $input = $request->input();
-
-        $isFamilyOverride = ! empty($input['family_override']);
         $isCallBack       = ! empty($input['sub_type']) && SchedulerService::CALL_BACK_TYPE === $input['sub_type'];
+        $isFamilyOverride = ! empty($input['family_override']);
+
         if ($isCallBack || ! $isFamilyOverride) {
             $patient = User::without(['roles', 'perms'])->with('patientInfo')->find($input['inbound_cpm_id']);
         } else {
             $patient = User::without(['roles', 'perms'])->find($input['inbound_cpm_id']);
         }
 
-        // validate patient doesnt already have a scheduled call
-        if ('call' === $input['type'] && $patient->inboundCalls) {
-            $scheduledCall = $patient->inboundCalls()
-                ->where(function ($q) {
-                    $q->whereNull('type')
-                        ->orWhere('type', '=', 'call');
-                })
-                ->where('status', '=', 'scheduled')
-                ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
-                ->first();
-            if ($scheduledCall) {
-                return [
-                    'errors' => ['patient already has a scheduled call'],
-                    'code'   => 406,
-                ];
-            }
+        if ( ! $patient) {
+            return [
+                'errors' => ['could not find patient'],
+                'code'   => 406,
+            ];
+        }
+
+        if ('call' === $input['type'] && $this->alreadyHasScheduledCall($patient)) {
+            return [
+                'errors' => ['patient already has a scheduled call'],
+                'code'   => 406,
+            ];
         }
 
         if ( ! $isFamilyOverride
-             && $this->hasAlreadyFamilyCallAtDifferentTime(
-                 $patient->patientInfo,
-                 $input['scheduled_date'],
-                 $input['window_start'],
-                 $input['window_end']
-             )) {
+            && $this->hasAlreadyFamilyCallAtDifferentTime(
+                $patient->patientInfo,
+                $input['scheduled_date'],
+                $input['window_start'],
+                $input['window_end']
+            )) {
             return [
                 'errors' => ['patient belongs to family and the family has a call at different time'],
                 'code'   => 418,

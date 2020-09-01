@@ -214,6 +214,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/setasign/fpdi-fpdf" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/shipping-docker/vessel" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sparclex/nova-import-card" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/db-dumper" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/image" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/image-optimizer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/laravel-medialibrary" />
