@@ -17,10 +17,22 @@ class CreateNoteForPatient
         $this->repo = $repo;
     }
 
+    public static function cacheKey(int $nurseUserId, int $patientId)
+    {
+        return "nurse_patient_association_{$nurseUserId}_{$patientId}";
+    }
+
+    public static function cacheTags(int $patientId)
+    {
+        return [
+            "nurse_patient_associations_for_patient_$patientId"
+        ];
+    }
+
     public function can(int $nurseUserId, int $patientId)
     {
-        return \Cache::remember("nurse_patient_association_{$nurseUserId}_$patientId", 2, function () use ($patientId, $nurseUserId) {
-            return optional($this->repo->find($patientId))->id === $nurseUserId;
+        return \Cache::tags(self::cacheTags($patientId))->remember(self::cacheKey($nurseUserId, $patientId), 2, function () use ($patientId, $nurseUserId) {
+            return optional($this->repo->assignedNurse($patientId))->nurse_user_id === $nurseUserId;
         });
     }
 }
