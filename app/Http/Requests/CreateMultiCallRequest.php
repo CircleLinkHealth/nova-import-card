@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CreateMultiCallRequest extends FormRequest
 {
-    use Traits\ValidatesNewCall;
     /**
      * Determine if the user is authorized to make this request.
      *
