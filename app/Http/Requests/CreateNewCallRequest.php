@@ -6,12 +6,14 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Traits\ValidatesNewCall;
 use App\Policies\CreateNoteForPatient;
 use App\Rules\DateBeforeUsingCarbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateNewCallRequest extends FormRequest
 {
+    use ValidatesNewCall;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -42,25 +44,6 @@ class CreateNewCallRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = [
-            'type'            => 'required',
-            'sub_type'        => 'required_if:type,task',
-            'inbound_cpm_id'  => 'required|exists:users,id',
-            'outbound_cpm_id' => '',
-            'scheduled_date'  => ['required', 'after_or_equal:today', new DateBeforeUsingCarbon()],
-            'window_start'    => 'required|date_format:H:i',
-            'window_end'      => 'required|date_format:H:i',
-            'attempt_note'    => '',
-            'is_manual'       => 'required|boolean',
-            'family_override' => '',
-            'asap'            => '',
-            'is_reschedule'   => 'sometimes|boolean',
-        ];
-
-        if (collect($this->input())->reject(fn ($item) => is_array($item))->isEmpty()) {
-            return collect($rules)->transform(fn ($val, $key) => $key = "*.$key")->all();
-        }
-
-        return $rules;
+        return $this->newCallValidationRules();
     }
 }

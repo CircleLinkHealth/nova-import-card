@@ -17,6 +17,20 @@ class CallBackSchedulingTest extends CustomerTestCase
 {
     public function test_an_admin_can_store_multiple_calls()
     {
+        $call1 = $this->newCallbackParams($this->patient()->id, null);
+        $this->resetPatient();
+        $call2 = $this->newCallbackParams($this->patient()->id, null);
+
+        $resp = $this->actingAs($this->superadmin())
+            ->call('post', route('api.callcreate-multi'), [$call1, $call2]);
+
+        $resp->assertStatus(201);
+
+        $call1['scheduler'] = $this->superadmin()->id;
+        $call2['scheduler'] = $this->superadmin()->id;
+
+        $this->assertDatabaseHas('calls', $call1);
+        $this->assertDatabaseHas('calls', $call2);
     }
 
     public function test_as_a_nurse_it_assigns_callback_for_enrolled_patient_to_logged_in_nurse_when_no_nurse_selected()

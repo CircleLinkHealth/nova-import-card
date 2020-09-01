@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
+use App\Http\Requests\CreateMultiCallRequest;
 use App\Http\Requests\CreateNewCallRequest;
 use App\Http\Resources\Call as CallResource;
 use App\Services\Calls\SchedulerService;
@@ -44,7 +45,7 @@ class CallController extends Controller
             ->json($call, $call['code']);
     }
 
-    public function createMulti(CreateNewCallRequest $request)
+    public function createMulti(CreateMultiCallRequest $request)
     {
         $input = $request->all();
 
