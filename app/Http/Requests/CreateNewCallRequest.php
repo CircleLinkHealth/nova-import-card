@@ -47,6 +47,6 @@ class CreateNewCallRequest extends FormRequest
      */
     public function rules()
     {
-        return $this->newCallValidationRules();
+        return [];
     }
 }

@@ -11,6 +11,7 @@ use App\Call;
 use App\Http\Requests\CreateMultiCallRequest;
 use App\Http\Requests\CreateNewCallRequest;
 use App\Http\Resources\Call as CallResource;
+use App\Rules\DateBeforeUsingCarbon;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -318,6 +319,35 @@ class CallController extends Controller
      */
     private function createCall(array $input)
     {
+        $validation = \Validator::make($input, [
+            'type'            => 'required',
+            'sub_type'        => '',
+            'inbound_cpm_id'  => 'required',
+            'outbound_cpm_id' => '',
+            'scheduled_date'  => ['required', 'after_or_equal:today', new DateBeforeUsingCarbon()],
+            'window_start'    => 'required|date_format:H:i',
+            'window_end'      => 'required|date_format:H:i',
+            'attempt_note'    => '',
+            'is_manual'       => 'required|boolean',
+            'family_override' => '',
+            'asap'            => '',
+            'is_reschedule'   => 'sometimes|boolean',
+        ]);
+    
+        if ($validation->fails()) {
+            return [
+                'errors' => $validation->errors()->getMessages(),
+                'code'   => 422,
+            ];
+        }
+    
+        if ('task' === $input['type'] && empty($input['sub_type'])) {
+            return [
+                'errors' => ['invalid form'],
+                'code'   => 407,
+            ];
+        }
+        
         $isCallBack       = ! empty($input['sub_type']) && SchedulerService::CALL_BACK_TYPE === $input['sub_type'];
         $isFamilyOverride = ! empty($input['family_override']);
 

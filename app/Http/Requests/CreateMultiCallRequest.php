@@ -24,8 +24,6 @@ class CreateMultiCallRequest extends FormRequest
      */
     public function rules()
     {
-        return collect($this->newCallValidationRules())
-            ->transform(fn ($val, $key) => $key = "*.$key")
-            ->all();
+        return [];
     }
 }
