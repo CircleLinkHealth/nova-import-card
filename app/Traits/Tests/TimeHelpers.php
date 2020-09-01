@@ -7,20 +7,15 @@
 namespace App\Traits\Tests;
 
 use App\Call;
-use App\Http\Controllers\NotesController;
 use App\Jobs\StoreTimeTracking;
 use App\Note;
-use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Tests\Helpers\MakesSafeRequests;
 
 trait TimeHelpers
 {
-    use MakesSafeRequests;
-
     /**
      * Add billable or not to a patient and credit nurse.
      *
@@ -88,8 +83,6 @@ trait TimeHelpers
     private function createNote(User $author, $patientId, $phoneSession = false, $successfulCall = false, Carbon $startTime = null): ?Note
     {
         $this->be($author);
-        /** @var NotesController $controller */
-        $controller = app(NotesController::class);
 
         $args = [
             'body'       => 'test',
@@ -105,12 +98,16 @@ trait TimeHelpers
             $args['call_status'] = $successfulCall ? Call::REACHED : Call::NOT_REACHED;
         }
 
-        $req = $this->safeRequest(
-            route('patient.note.store', ['patientId' => $patientId]),
+        /** @var TestResponse $resp */
+        $resp = $this->call(
             'POST',
+            route('patient.note.store', ['patientId' => $patientId]),
             $args
         );
-        TestResponse::fromBaseResponse($controller->store($req, app(SchedulerService::class), $patientId));
+
+        self::assertTrue($resp->status() < 400);
+
+        $this->flushSession();
 
         return Note::where('patient_id', '=', $patientId)
             ->orderBy('created_at', 'desc')

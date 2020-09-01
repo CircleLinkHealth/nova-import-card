@@ -131,15 +131,17 @@
                         </li>
                     @endif
                     <li>
-                        <patient-next-call
-                                :patient-id="{{json_encode($patient->id, JSON_HEX_QUOT)}}"
-                                :patient-preferences="{{json_encode($patient->patientInfo()->exists() ? $patient->patientInfo->getPreferences() : new stdClass,JSON_HEX_QUOT)}}"
-                                :is-care-center="{{json_encode(Auth::user()->isCareCoach()), JSON_HEX_QUOT}}">
-                        </patient-next-call>
-                        <attest-call-conditions-modal
-                                patient-id="{{$patient->id}}"
-                                @if(isset($attestationRequirements)) :attestation-requirements="{{json_encode($attestationRequirements)}}" @endif
-                        ></attest-call-conditions-modal>
+                        @if($isAdminOrPatientsAssignedNurse)
+                            <patient-next-call
+                                    :patient-id="{{json_encode($patient->id, JSON_HEX_QUOT)}}"
+                                    :patient-preferences="{{json_encode($patient->patientInfo ? $patient->patientInfo->getPreferences() : new stdClass,JSON_HEX_QUOT)}}"
+                                    :is-care-center="{{json_encode(Auth::user()->isCareCoach()), JSON_HEX_QUOT}}">
+                            </patient-next-call>
+                            <attest-call-conditions-modal
+                                    patient-id="{{$patient->id}}"
+                                    @if(isset($attestationRequirements)) :attestation-requirements="{{json_encode($attestationRequirements)}}" @endif
+                            ></attest-call-conditions-modal>
+                        @endif
                     </li>
                 </ul>
                 <?php

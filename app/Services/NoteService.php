@@ -13,7 +13,7 @@ use App\Note;
 use App\Notifications\SendPatientEmail;
 use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\NoteRepository;
-use App\SafeRequest;
+use App\Http\Requests\SafeRequest;
 use App\View\MetaTag;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;

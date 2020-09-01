@@ -12,6 +12,7 @@ use App\Traits\Tests\TimeHelpers;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Tests\TestCase;
@@ -2287,7 +2288,9 @@ class NursePaymentAlgoTest extends TestCase
         $practice1       = $this->setupPractice(true, false);
         $practice2       = $this->setupPractice(true, true);
         //$this->provider  = $this->createUser($practice1->id);
-        $nurse    = $this->getNurse($practice1->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse = $this->getNurse($practice1->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse->attachRoleForPractice(Role::byName('care-center'), $practice2->id);
+        $nurse->load('practices');
         $patient1 = $this->setupPatient($practice1);
         $patient2 = $this->setupPatient($practice2);
 

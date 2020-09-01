@@ -6,11 +6,15 @@
 
 namespace App\Services;
 
+use App\Jobs\ChargeableServiceDuration;
 use App\Repositories\CallRepository;
 use App\Repositories\Eloquent\ActivityRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Nurseinvoices\TimeSplitter;
 
 class ActivityService
 {
@@ -128,6 +132,58 @@ class ActivityService
         }
     }
 
+    public function separateDurationForEachChargeableServiceId(User $patient, $duration, $isBehavioralActivity = false): array
+    {
+        if ($isBehavioralActivity) {
+            $id = $this->getChargeServiceIdByCode($patient, ChargeableService::BHI);
+
+            return [new ChargeableServiceDuration($id, $duration)];
+        }
+
+        if ($patient->isPcm()) {
+            $id = $this->getChargeServiceIdByCode($patient, ChargeableService::PCM);
+
+            return [new ChargeableServiceDuration($id, $duration)];
+        }
+
+        if ($patient->isCcm()) {
+            if ( ! $patient->isCcmPlus()) {
+                $id = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM);
+
+                return [new ChargeableServiceDuration($id, $duration)];
+            }
+
+            $currentTime = $patient->getCcmTime();
+            $splitter    = new TimeSplitter();
+            $slots       = $splitter->split($currentTime, $duration, false, false);
+
+            $result = [];
+            if ($slots->towards20) {
+                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM);
+                $result[] = new ChargeableServiceDuration($id, $slots->towards20);
+            }
+
+            if ($slots->after20) {
+                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM_PLUS_40);
+                $result[] = new ChargeableServiceDuration($id, $slots->after20);
+            }
+
+            if ($slots->after40 || $slots->after60) {
+                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM_PLUS_60);
+                $result[] = new ChargeableServiceDuration($id, $slots->after40 + $slots->after60);
+            }
+
+            return $result;
+        }
+
+        $gcm = $this->getChargeServiceIdByCode($patient, ChargeableService::GENERAL_CARE_MANAGEMENT);
+        if ($gcm) {
+            $result[] = new ChargeableServiceDuration($gcm, $duration);
+        }
+
+        return [new ChargeableServiceDuration(null, $duration)];
+    }
+
     /**
      * Get total CCM Time for a patient for a month. If no month is given, it defaults to the current month.
      *
@@ -142,5 +198,15 @@ class ActivityService
         }
 
         return $this->repo->totalCCMTime([$patientId], $monthYear)->pluck('total_time', 'patient_id');
+    }
+
+    private function getChargeServiceIdByCode(User $patient, string $code): ?int
+    {
+        return optional($patient
+            ->primaryPractice
+            ->chargeableServices
+            ->where('code', '=', $code)
+            ->first())
+            ->id;
     }
 }
