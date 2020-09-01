@@ -14,14 +14,14 @@ class IsFulfilledStub implements Arrayable
     public string $chargeableServiceCode;
     public Carbon $month;
     public int $patientId;
-    public bool $shouldBeFulfilled;
+    public bool $showAsFulfilled;
 
-    public function __construct(int $patientId, string $chargeableServiceCode, Carbon $month, bool $shouldBeFulfilled)
+    public function __construct(int $patientId, string $chargeableServiceCode, Carbon $month, bool $showAsFulfilled)
     {
         $this->patientId             = $patientId;
         $this->chargeableServiceCode = $chargeableServiceCode;
         $this->month                 = $month;
-        $this->shouldBeFulfilled     = $shouldBeFulfilled;
+        $this->showAsFulfilled       = $showAsFulfilled;
     }
 
     /**
@@ -35,7 +35,7 @@ class IsFulfilledStub implements Arrayable
             'chargeableServiceCode' => $this->chargeableServiceCode,
             'month'                 => $this->month,
             'patientId'             => $this->patientId,
-            'shouldBeFulfilled'     => $this->shouldBeFulfilled,
+            'showAsFulfilled'       => $this->showAsFulfilled,
         ];
     }
 }
