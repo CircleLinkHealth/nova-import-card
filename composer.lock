@@ -898,7 +898,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "640d938e7b042777a91aec9fb15de175121d8fa5"
+                "reference": "f65085bbcbe471f74446c1e49212ab43e5b4cf25"
             },
             "type": "laravel-module",
             "extra": {
@@ -936,7 +936,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-09-01T12:12:51+00:00"
+            "time": "2020-09-01T15:07:33+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -4721,16 +4721,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.26.1",
+            "version": "v7.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "fad3e5f03b9ae89853c8a0925231d2b3ce07a9c3"
+                "reference": "17777a92da9b3cf0026f26462d289d596420e6d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/fad3e5f03b9ae89853c8a0925231d2b3ce07a9c3",
-                "reference": "fad3e5f03b9ae89853c8a0925231d2b3ce07a9c3",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/17777a92da9b3cf0026f26462d289d596420e6d0",
+                "reference": "17777a92da9b3cf0026f26462d289d596420e6d0",
                 "shasum": ""
             },
             "require": {
@@ -4875,7 +4875,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-08-27T14:22:46+00:00"
+            "time": "2020-09-01T13:41:48+00:00"
         },
         {
             "name": "laravel/helpers",
