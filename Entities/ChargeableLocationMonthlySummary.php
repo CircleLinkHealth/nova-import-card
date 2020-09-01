@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Entities;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 
 /**
  * CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary.
@@ -32,6 +33,8 @@ use CircleLinkHealth\Customer\Entities\Location;
  */
 class ChargeableLocationMonthlySummary extends BaseModel
 {
+    use DateScopesTrait;
+    
     protected $casts = [
         'is_locked' => 'boolean',
     ];

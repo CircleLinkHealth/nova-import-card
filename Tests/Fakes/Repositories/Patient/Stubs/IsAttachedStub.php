@@ -14,14 +14,14 @@ class IsAttachedStub implements Arrayable
     public string $chargeableServiceCode;
     public Carbon $month;
     public int $patientId;
-    public bool $shouldBeAttached;
+    public bool $showAsAttached;
 
-    public function __construct(int $patientId, string $chargeableServiceCode, Carbon $month, bool $shouldBeAttached)
+    public function __construct(int $patientId, string $chargeableServiceCode, Carbon $month, bool $showAsAttached)
     {
         $this->patientId             = $patientId;
         $this->chargeableServiceCode = $chargeableServiceCode;
         $this->month                 = $month;
-        $this->shouldBeAttached      = $shouldBeAttached;
+        $this->showAsAttached        = $showAsAttached;
     }
 
     /**
@@ -35,7 +35,7 @@ class IsAttachedStub implements Arrayable
             'chargeableServiceCode' => $this->chargeableServiceCode,
             'month'                 => $this->month,
             'patientId'             => $this->patientId,
-            'shouldBeAttached'      => $this->shouldBeAttached,
+            'showAsAttached'        => $this->showAsAttached,
         ];
     }
 }

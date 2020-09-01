@@ -18,6 +18,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements ShouldQueue
 {
@@ -25,10 +26,10 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    protected string $bhiCodeId;
-    protected string $ccmCodeId;
+    protected ?string $bhiCodeId;
+    protected ?string $ccmCodeId;
     protected EloquentCollection $cpmProblems;
-    protected string $pcmCodeId;
+    protected ?string $pcmCodeId;
 
     protected int $practiceId;
 
@@ -55,6 +56,13 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
 
         $practicePcmProblems = $practice->pcmProblems;
         $this->setChargeableServices();
+
+        if (is_null($this->ccmCodeId) && is_null($this->bhiCodeId) && is_null($this->pcmCodeId)) {
+            Log::error('Practice/Location Cpm Problem Chargeable Services seeding aborted - no Chargeable Services found.');
+
+            return;
+        }
+
         $this->setCpmProblems();
 
         $toCreate = collect([]);
@@ -113,9 +121,13 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
     private function setChargeableServices()
     {
         $chargeableServices = ChargeableService::get();
-        $this->pcmCodeId    = $chargeableServices->where('code', ChargeableService::PCM)->first()->id;
-        $this->ccmCodeId    = $chargeableServices->where('code', ChargeableService::BHI)->first()->id;
-        $this->bhiCodeId    = $chargeableServices->where('code', ChargeableService::CCM)->first()->id;
+        if ($chargeableServices->isEmpty()) {
+            return;
+        }
+       
+        $this->pcmCodeId = optional($chargeableServices->where('code', ChargeableService::PCM)->first())->id;
+        $this->ccmCodeId = optional($chargeableServices->where('code', ChargeableService::BHI)->first())->id;
+        $this->bhiCodeId = optional($chargeableServices->where('code', ChargeableService::CCM)->first())->id;
     }
 
     private function setCpmProblems()

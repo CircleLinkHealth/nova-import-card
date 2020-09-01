@@ -12,13 +12,16 @@ class LocationServicesAttached
 {
     use SerializesModels;
 
+    protected int $locationId;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(int $locationId)
     {
+        $this->locationId = $locationId;
     }
 
     /**
@@ -29,5 +32,10 @@ class LocationServicesAttached
     public function broadcastOn()
     {
         return [];
+    }
+
+    public function getLocationId(): int
+    {
+        return $this->locationId;
     }
 }

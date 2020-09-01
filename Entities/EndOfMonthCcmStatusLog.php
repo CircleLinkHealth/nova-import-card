@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Entities;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -20,6 +21,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class EndOfMonthCcmStatusLog extends Model
 {
+    use DateScopesTrait;
+    
     protected $dates = [
         'chargeable_month',
     ];

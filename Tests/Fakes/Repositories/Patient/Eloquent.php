@@ -86,7 +86,7 @@ class Eloquent implements PatientServiceProcessorRepository
             ->where('chargeableServiceCode', $chargeableServiceCode)
             ->where('month', $month)
             ->where('patientId', $patientId)
-            ->pluck('shouldBeAttached')
+            ->pluck('showAsAttached')
             ->first();
     }
 

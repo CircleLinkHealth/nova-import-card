@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
+use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
 use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -58,8 +59,14 @@ class AutoAttachServicesToNewLocation implements ShouldQueue
 
         $practiceLocations = $location->practice->locations;
 
-        if (1 === $practiceLocations->count()) {
-            sendSlackMessage('#channel-to-decide', 'Please head to page {url} and assign chargeable services to practice or location.');
+        if ($practiceLocations->isEmpty()) {
+            $url = route('provider.dashboard.manage.chargeable-services', [
+                'practiceSlug' => $location->practice->name,
+            ]);
+            $link = "<$url|Corresponding Practice's Chargeable Service management page>";
+            //todo:decide channel
+            sendSlackMessage('#channel-to-decide', "Auto attachment of Chargeable Services for new Location with ID:$this->locationId failed.
+            Please head to $link and assign chargeable services to practice or location.");
 
             return;
         }
@@ -75,6 +82,8 @@ class AutoAttachServicesToNewLocation implements ShouldQueue
         });
 
         ChargeableLocationMonthlySummary::insert($toCreate->toArray());
+
+        event(new LocationServicesAttached($this->locationId));
     }
 
     private function getLocationToCopyServicesFrom($practiceLocations): Location

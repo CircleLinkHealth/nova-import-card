@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Entities;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 
 /**
  * CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary.
@@ -33,6 +34,8 @@ use CircleLinkHealth\Customer\Entities\User;
  */
 class ChargeablePatientMonthlySummary extends BaseModel
 {
+    use DateScopesTrait;
+    
     protected $casts = [
         'is_fulfilled'             => 'boolean',
         'requires_patient_consent' => 'boolean',
