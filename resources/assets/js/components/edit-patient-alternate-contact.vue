@@ -55,22 +55,28 @@
                            v-model="alternateContactDetails[0].agentTelephone.number"
                            :disabled="loading"/>
                 </div>
-
-                <div v-if="!loading" class="alt-save-btn">
-                    <button v-if="alternateSaveBtnIsVisible"
-                            class="btn btn-success btn-sm save-alt-contact"
-                            type="button"
-                            @click="saveNewAlternateNumberAndContactDetails"
-                            :disabled="loading || disableAltSaveButton">
-                        Save alternate contact
-                    </button>
-                </div>
             </div>
 
+            <div v-if="!loading" class="alt-btns">
+                <br>
+                <button v-if="alternateSaveBtnIsVisible"
+                        class="btn btn-success btn-sm save-alt-contact"
+                        type="button"
+                        @click="saveNewAlternateNumberAndContactDetails"
+                        :disabled="loading || disableAltSaveButton">
+                    Save alternate contact
+                </button>
+
+                <button v-if="alternateClearBtnIsVisible"
+                        class="btn btn-danger btn-sm delete-alt-contact"
+                        type="button"
+                        @click="deleteAlternateContact(false)"
+                        :disabled="loading || ! alternateClearBtnIsVisible">
+                    Clear alternate contact
+                </button>
+            </div>
         </div>
     </div>
-
-
 </template>
 
 <script>
@@ -136,9 +142,23 @@ export default {
         },
 
         alternateClearBtnIsVisible(){
-            return ! this.callEnabled
-                && ! this.initialValueIsUnchanged
-                && this.alternateSaveBtnIsVisible;
+            if (! this.alternateEmailHasNotChanged && this.initialAlternateEmailSavedInDB.length !== 0){
+                return true;
+            }
+
+            if (! this.alternateNameHasNotChanged && this.initialAlternateNameSavedInDB.length !== 0){
+                return true;
+            }
+
+            if (! this.alternatePhoneHasNotChanged && this.initialAlternatePhoneSavedInDB.length !== 0){
+                return true;
+            }
+
+            if (! this.alternateRelationshipHasNotChanged && this.initialAlternateRelationshipSavedInDB.length !== 0){
+                return true;
+            }
+
+            return false;
         },
 
         shouldDisplayHelpText(){
@@ -179,7 +199,7 @@ export default {
         },
 
         alternateSaveBtnIsVisible(){
-            if (! this.initialValueIsUnchanged){
+            if (! this.initialValuesAreUnchanged){
                 return true;
             }
 
@@ -204,7 +224,7 @@ export default {
                 return true;
             }
 
-            return this.initialValueIsUnchanged;
+            return this.initialValuesAreUnchanged;
         },
 
         isValidEmail(){
@@ -213,11 +233,27 @@ export default {
                 && pattern.test(this.alternateContactDetails[0].agentEmail);
         },
 
-        initialValueIsUnchanged(){
-            return this.initialAlternateRelationshipSavedInDB === this.alternateContactDetails[0].agentRelationship
-                && this.initialAlternateEmailSavedInDB === this.alternateContactDetails[0].agentEmail
-                && this.initialAlternateNameSavedInDB === this.alternateContactDetails[0].agentName
-                && this.initialAlternatePhoneSavedInDB === this.alternateContactDetails[0].agentTelephone.number;
+        alternateEmailHasNotChanged(){
+            return this.initialAlternateEmailSavedInDB === this.alternateContactDetails[0].agentEmail;
+        },
+
+        alternateNameHasNotChanged(){
+            return this.initialAlternateNameSavedInDB === this.alternateContactDetails[0].agentName;
+        },
+
+        alternatePhoneHasNotChanged(){
+            return this.initialAlternatePhoneSavedInDB === this.alternateContactDetails[0].agentTelephone.number;
+        },
+
+        alternateRelationshipHasNotChanged(){
+          return this.initialAlternateRelationshipSavedInDB === this.alternateContactDetails[0].agentRelationship;
+        },
+
+        initialValuesAreUnchanged(){
+            return this.alternateRelationshipHasNotChanged
+                && this.alternateEmailHasNotChanged
+                && this.alternateNameHasNotChanged
+                && this.alternatePhoneHasNotChanged;
         },
     },
 
@@ -432,7 +468,8 @@ export default {
         margin-bottom: 15px;
     }
 
-    .alt-save-btn{
-        max-width: 160px;
+    .alt-btns{
+        max-width: 310px;
+        min-width: 310px;
     }
 </style>
