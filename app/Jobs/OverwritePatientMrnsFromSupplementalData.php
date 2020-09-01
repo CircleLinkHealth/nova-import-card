@@ -23,7 +23,7 @@ class OverwritePatientMrnsFromSupplementalData implements ShouldQueue
     use Queueable;
     use SerializesModels;
     const CUTOFF_DATE = '2019-07-17 00:00:00';
-    
+
     /**
      * Execute the job.
      *
@@ -52,8 +52,9 @@ class OverwritePatientMrnsFromSupplementalData implements ShouldQueue
             ->where('last_name', $patientInfo->user->last_name)
             ->where('dob', $patientInfo->birth_date)
             ->where('practice_id', $patientInfo->user->program_id)
-            ->whereHas('practice', function ($q) {
-                $q->hasImportingHookEnabled(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME);
+            ->whereHas('practice', function ($q) use ($patientInfo) {
+                $q->hasImportingHookEnabled(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME)
+                    ->where('id', $patientInfo->user->program_id);
             })
             ->first();
 
