@@ -8,7 +8,6 @@ namespace Tests\Unit;
 
 use App\Call;
 use App\Http\Controllers\NotesController;
-use App\Services\Calls\SchedulerService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -18,13 +17,11 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\Helpers\MakesSafeRequests;
 use Tests\TestCase;
 
 class PatientWithdrawnTest extends TestCase
 {
     use CarePlanHelpers;
-    use MakesSafeRequests;
     use UserHelpers;
 
     protected $admin;
@@ -230,17 +227,11 @@ class PatientWithdrawnTest extends TestCase
 
     private function makeCallToNotesController($status)
     {
-        //still not able to make a request to a controller that uses Safe Request with $this->call
-        //This is a workaround
-        $request = $this->safeRequest(
-            route('patient.note.store', ['patientId' => $this->patient->id]),
+        $response = $this->call(
             'POST',
+            route('patient.note.store', ['patientId' => $this->patient->id]),
             $this->getStoreCallInput($status)
         );
-
-        $controller = app(NotesController::class);
-
-        $controller->store($request, app(SchedulerService::class), $this->patient->id);
 
         $this->patient->load('patientInfo');
     }

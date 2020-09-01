@@ -8,6 +8,7 @@ namespace Tests\Unit\CallSchedulingAlgo;
 
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
+use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
@@ -36,7 +37,7 @@ class SuccessfulCallHandlerTest extends TestCase
         $patient = $this->createUser($this->practice->id, 'participant');
 
         $patient->patientSummaries()->updateOrCreate([
-            'month_year' => $called->startOfMonth(),
+            'month_year' => $called->copy()->startOfMonth(),
         ], [
             'bhi_time'               => 0,
             'ccm_time'               => 1300,
@@ -46,8 +47,14 @@ class SuccessfulCallHandlerTest extends TestCase
         ]);
 
         $patient->inboundCalls()->create([
-            'status'          => 'scheduled',
-            'called_date'     => $called->toDateString(),
+            'status'          => Call::REACHED,
+            'called_date'     => $called->copy()->subDay()->toDateTimeString(),
+            'outbound_cpm_id' => $this->nurse->id,
+        ]);
+
+        $patient->inboundCalls()->create([
+            'status'          => Call::REACHED,
+            'called_date'     => $called->toDateTimeString(),
             'outbound_cpm_id' => $this->nurse->id,
         ]);
 
@@ -62,7 +69,8 @@ class SuccessfulCallHandlerTest extends TestCase
      */
     public function test_patient_over_20_mins_in_first_week_call_more_than_once()
     {
-        $called  = Carbon::now()->startOfMonth()->addDay(4);
+        $called = Carbon::now()->startOfMonth()->addDay(4);
+        Carbon::setTestNow($called);
         $patient = $this->fakePatient($called);
 
         $patient->patientInfo->preferred_calls_per_month = 3;
@@ -82,8 +90,12 @@ class SuccessfulCallHandlerTest extends TestCase
      */
     public function test_patient_over_20_mins_in_fourth_week_call_more_than_once()
     {
-        $called  = Carbon::now()->endOfMonth()->subWeek()->addDays(3);
+        $called = Carbon::now()->endOfMonth()->subWeek()->addDays(3);
+        Carbon::setTestNow($called);
         $patient = $this->fakePatient($called);
+
+        $patient->patientInfo->preferred_calls_per_month = 2;
+        $patient->patientInfo->save();
 
         $prediction = (new Suggestor())->handle($patient, new SuccessfulCall());
 
@@ -98,7 +110,8 @@ class SuccessfulCallHandlerTest extends TestCase
      */
     public function test_patient_over_20_mins_in_second_week_call_once()
     {
-        $called  = Carbon::now()->startOfMonth()->addWeek()->addDay(2);
+        $called = Carbon::now()->startOfMonth()->addWeek()->addDay(2);
+        Carbon::setTestNow($called);
         $patient = $this->fakePatient($called);
 
         $patient->patientInfo->preferred_calls_per_month = 1;
@@ -116,15 +129,17 @@ class SuccessfulCallHandlerTest extends TestCase
      */
     public function test_patient_over_20_mins_in_third_week_call_once()
     {
-        $called  = Carbon::now()->endOfMonth()->subWeeks(2)->addDay(4);
+        $called = Carbon::now()->endOfMonth()->subWeeks(2)->addDay(4);
+        Carbon::setTestNow($called);
         $patient = $this->fakePatient($called);
 
         $patient->patientInfo->preferred_calls_per_month = 1;
+        $patient->patientInfo->save();
 
         $prediction = (new Suggestor())->handle($patient, new SuccessfulCall());
 
         $this->assertNotEmpty($prediction);
 
-        $this->assertTrue($prediction->date > $called->copy()->endOfMonth()->toDateString() && $prediction->date <= $called->copy()->addMonth()->endOfMonth()->subWeek(2)->toDateString());
+        $this->assertTrue($prediction->date > $called->copy()->endOfMonth()->toDateString() && $prediction->date <= $called->copy()->addMonth()->endOfMonth()->subWeek(1)->toDateString());
     }
 }

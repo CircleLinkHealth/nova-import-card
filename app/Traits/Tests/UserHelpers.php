@@ -20,6 +20,7 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
@@ -358,7 +359,14 @@ trait UserHelpers
         //$pcmOnly means one ccm condition only
         if ($pcmOnly) {
             $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test'.Str::random(5)],
+                ['name' => 'test'.Str::random(5), 'code' => 'pcm_test'],
+            ]);
+            $patient->ccdProblems()->first()->codes()->create([
+                'code' => 'pcm_test',
+            ]);
+            PcmProblem::create([
+                'practice_id' => $practice->id,
+                'code'        => 'pcm_test',
             ]);
         } else {
             $ccdProblems = $patient->ccdProblems()->createMany([
@@ -375,7 +383,7 @@ trait UserHelpers
             if ($isLast && $isBhi) {
                 $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
             } else {
-                $problem->cpmProblem()->associate($cpmProblems->random());
+                $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 0));
             }
             $problem->save();
         }
