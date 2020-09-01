@@ -46,7 +46,7 @@ class PatientObserver
                     Patient::UNREACHABLE,
                 ]
             )) {
-                RemoveScheduledCallsForUnenrolledPatients::dispatchNow($patient->user_id);
+                RemoveScheduledCallsForUnenrolledPatients::dispatchNow([$patient->user_id]);
             }
 
             $this->assignToStandByNurseIfChangedToEnrolled($patient);
