@@ -29,7 +29,7 @@ class CreateNewCallRequest extends FormRequest
         if ( ! auth()->user()->isCareCoach()) {
             return false;
         }
-        if ( ! $patientId = $this->input('inbound_cpm_id')) {
+        if ( ! $patientId = collect($this->input())->pluck('inbound_cpm_id')->first()) {
             return false;
         }
 
