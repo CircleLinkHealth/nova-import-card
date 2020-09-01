@@ -20,9 +20,7 @@ class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
 {
     const IMPORTING_LISTENER_NAME = 'import_from_supplemental_patient_data';
 
-    const NBI_PRACTICE_NAME = 'bethcare-newark-beth-israel';
-
-    const RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS = 'receives_nbi_exceptions_notifications';
+    const RECEIVES_SUPPL_DATA_EXCEPTIONS_NOTIFICATIONS = 'receives_supplementary_data_exceptions_notifications';
 
     public function run()
     {
@@ -30,12 +28,17 @@ class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
             ->where('last_name', $this->patient->last_name)
             ->where('dob', $this->patient->patientInfo->birth_date)
             ->where('practice_id', $this->patient->program_id)
+            ->whereHas('practice', function ($q) {
+                $q->hasImportingHookEnabled(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME)
+                    ->where('id', $this->patient->program_id)
+                ;
+            })
             ->first();
 
         if ( ! $dataFromPractice) {
             self::sendPatientNotFoundSlackAlert($this->patient->id, $this->patient->program_id);
 
-            $recipients = AppConfig::pull(self::RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS, []);
+            $recipients = AppConfig::pull(self::RECEIVES_SUPPL_DATA_EXCEPTIONS_NOTIFICATIONS, []);
 
             foreach ($recipients as $recipient) {
                 Notification::route('mail', $recipient)
