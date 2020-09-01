@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "603b3031cca2fab73a3d2e908ff7b965",
+    "content-hash": "49f90e296f6c5ea839a856e92b33b49b",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -512,16 +512,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.151.3",
+            "version": "3.151.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "6deca431ad8d061face518bdde2072445385f45a"
+                "reference": "08d8e5540bdef23127fec4787270d9d12ccc8117"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6deca431ad8d061face518bdde2072445385f45a",
-                "reference": "6deca431ad8d061face518bdde2072445385f45a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/08d8e5540bdef23127fec4787270d9d12ccc8117",
+                "reference": "08d8e5540bdef23127fec4787270d9d12ccc8117",
                 "shasum": ""
             },
             "require": {
@@ -593,7 +593,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-08-31T18:25:57+00:00"
+            "time": "2020-09-01T18:17:03+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1128,11 +1128,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.4.7",
+            "version": "v2.4.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "5b6d896973647013e5b9e0c8136f463422b2cf8b"
+                "reference": "af88dd404ddb72cfc7b653dea79fa6640dd33ff4"
             },
             "type": "laravel-module",
             "extra": {
@@ -1154,15 +1154,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-31T16:46:05+00:00"
+            "time": "2020-09-01T23:47:15+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.3.5",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "9f0e87a718bc025438e50e5cce57193e67f4cdf4"
+                "reference": "54cf89c8ea428b167fe4375df70e0b6e442eb13f"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1196,15 +1196,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-01T06:05:06+00:00"
+            "time": "2020-09-01T23:43:43+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.3.9",
+            "version": "v3.4.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "71b53831e333abf3d9be88f8301cdc5e736be224"
+                "reference": "e3f05026954e4a5379c569ad7d1066a7c5be3210"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1229,7 +1229,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-29T04:12:54+00:00"
+            "time": "2020-09-01T23:45:03+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1556,11 +1556,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.7.5",
+            "version": "v1.7.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "2c071cd7cfda945f252f7b89d2bb59781cfd84d1"
+                "reference": "bf7a399630781f77f7522beb0d82ba732a528fb3"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1574,7 +1574,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-14T18:15:51+00:00"
+            "time": "2020-09-01T23:46:29+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -4728,16 +4728,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.26.1",
+            "version": "v7.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "fad3e5f03b9ae89853c8a0925231d2b3ce07a9c3"
+                "reference": "17777a92da9b3cf0026f26462d289d596420e6d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/fad3e5f03b9ae89853c8a0925231d2b3ce07a9c3",
-                "reference": "fad3e5f03b9ae89853c8a0925231d2b3ce07a9c3",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/17777a92da9b3cf0026f26462d289d596420e6d0",
+                "reference": "17777a92da9b3cf0026f26462d289d596420e6d0",
                 "shasum": ""
             },
             "require": {
@@ -4882,7 +4882,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-08-27T14:22:46+00:00"
+            "time": "2020-09-01T13:41:48+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -4939,16 +4939,16 @@
         },
         {
             "name": "laravel/horizon",
-            "version": "v4.3.3",
+            "version": "v4.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/horizon.git",
-                "reference": "0172084dd26f93fc3521b9118f4e3a330a36eda8"
+                "reference": "ffce0a8f69c19bdd63a22d972e605388903d70b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/horizon/zipball/0172084dd26f93fc3521b9118f4e3a330a36eda8",
-                "reference": "0172084dd26f93fc3521b9118f4e3a330a36eda8",
+                "url": "https://api.github.com/repos/laravel/horizon/zipball/ffce0a8f69c19bdd63a22d972e605388903d70b4",
+                "reference": "ffce0a8f69c19bdd63a22d972e605388903d70b4",
                 "shasum": ""
             },
             "require": {
@@ -5008,7 +5008,7 @@
                 "laravel",
                 "queue"
             ],
-            "time": "2020-05-26T18:27:29+00:00"
+            "time": "2020-09-01T16:09:46+00:00"
         },
         {
             "name": "laravel/nova",
