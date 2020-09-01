@@ -6,6 +6,7 @@
 
 use App\Constants;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Database\Seeder;
 use Illuminate\Validation\ValidationException;
 use Tests\Helpers\Users\PracticeLocation as PracticeLocationHelpers;
@@ -20,10 +21,10 @@ class NekatostrasClinicSeeder extends Seeder
 
     public function run()
     {
-        $practice = $this->firstOrCreatePractice(self::NEKATOSTRAS_PRACTICE);
-        $location = $this->firstOrCreateLocation($practice->id, self::IATRO_SOPHIE_LOCATION);
-
         try {
+            $practice = $this->firstOrCreatePractice(self::NEKATOSTRAS_PRACTICE);
+            $location = $this->firstOrCreateLocation($practice->id, self::IATRO_SOPHIE_LOCATION);
+
             foreach (array_merge(Constants::PRACTICE_STAFF_ROLE_NAMES, [
                 'care-center-external',
                 'care-ambassador',
@@ -41,6 +42,10 @@ class NekatostrasClinicSeeder extends Seeder
                 $u->program_id           = $practice->id;
                 $u->save();
                 $u->locations()->sync([$location->id]);
+
+                if ('provider' === $roleName) {
+                    $this->createPatients($location, $u, 10);
+                }
             }
         } catch (ValidationException $e) {
             dd($e->validator->errors()->all());
