@@ -113,9 +113,9 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
             return;
         }
 
-        $this->pcmCodeId = optional($chargeableServices->where('code', ChargeableService::PCM)->first())->id;
-        $this->ccmCodeId = optional($chargeableServices->where('code', ChargeableService::BHI)->first())->id;
-        $this->bhiCodeId = optional($chargeableServices->where('code', ChargeableService::CCM)->first())->id;
+        $this->pcmCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::PCM))->id;
+        $this->ccmCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::BHI))->id;
+        $this->bhiCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::CCM))->id;
     }
 
     private function setCpmProblems()
