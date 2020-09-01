@@ -81,7 +81,9 @@ class AutoAttachServicesToNewLocation implements ShouldQueue
             ];
         });
 
-        ChargeableLocationMonthlySummary::insert($toCreate->toArray());
+        foreach ($toCreate as $createArray) {
+            ChargeableLocationMonthlySummary::updateOrCreate($toCreate->toArray());
+        }
 
         event(new LocationServicesAttached($this->locationId));
     }

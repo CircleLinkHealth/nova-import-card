@@ -113,9 +113,9 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
             return;
         }
 
-        LocationProblemService::insert(
-            $toCreate->toArray()
-        );
+        foreach ($toCreate as $createArray) {
+            LocationProblemService::updateOrCreate($createArray);
+        }
     }
 
     private function setChargeableServices()
@@ -124,7 +124,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
         if ($chargeableServices->isEmpty()) {
             return;
         }
-       
+
         $this->pcmCodeId = optional($chargeableServices->where('code', ChargeableService::PCM)->first())->id;
         $this->ccmCodeId = optional($chargeableServices->where('code', ChargeableService::BHI)->first())->id;
         $this->bhiCodeId = optional($chargeableServices->where('code', ChargeableService::CCM)->first())->id;
