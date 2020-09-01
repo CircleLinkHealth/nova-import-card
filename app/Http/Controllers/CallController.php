@@ -8,7 +8,6 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
-use App\Http\Requests\CreateMultiCallRequest;
 use App\Http\Requests\CreateNewCallRequest;
 use App\Http\Resources\Call as CallResource;
 use App\Rules\DateBeforeUsingCarbon;
@@ -46,7 +45,7 @@ class CallController extends Controller
             ->json($call, $call['code']);
     }
 
-    public function createMulti(CreateMultiCallRequest $request)
+    public function createMulti(CreateNewCallRequest $request)
     {
         $input = $request->all();
 
@@ -96,7 +95,7 @@ class CallController extends Controller
      * set to the caller's user id.
      * If called from any other role, outbound_cpm_id must be provided.
      */
-    public function reschedule(Request $request)
+    public function reschedule(CreateNewCallRequest $request)
     {
         $input = $request->only(
             'id',
@@ -333,21 +332,21 @@ class CallController extends Controller
             'asap'            => '',
             'is_reschedule'   => 'sometimes|boolean',
         ]);
-    
+
         if ($validation->fails()) {
             return [
                 'errors' => $validation->errors()->getMessages(),
                 'code'   => 422,
             ];
         }
-    
+
         if ('task' === $input['type'] && empty($input['sub_type'])) {
             return [
                 'errors' => ['invalid form'],
                 'code'   => 407,
             ];
         }
-        
+
         $isCallBack       = ! empty($input['sub_type']) && SchedulerService::CALL_BACK_TYPE === $input['sub_type'];
         $isFamilyOverride = ! empty($input['family_override']);
 

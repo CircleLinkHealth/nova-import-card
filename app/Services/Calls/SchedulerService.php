@@ -346,7 +346,7 @@ class SchedulerService
                     Patient::WITHDRAWN_1ST_CALL,
                     Patient::WITHDRAWN,
                     Patient::PAUSED,
-                    // Patient::UNREACHABLE, //ROAD-322 allow scheduling to unreachable
+                    Patient::UNREACHABLE,
                 ]
             )->when(
                 ! empty($patientUserIds),
