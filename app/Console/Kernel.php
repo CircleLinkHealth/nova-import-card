@@ -25,14 +25,12 @@ use App\Console\Commands\FaxAuditReportsAtPracticePreferredDayTime;
 use App\Console\Commands\FixToledoMakeSureProviderMatchesPracticePull;
 use App\Console\Commands\GenerateReportForScheduledPAM;
 use App\Console\Commands\NursesPerformanceDailyReport;
-use App\Console\Commands\OverwriteNBIImportedData;
-use App\Console\Commands\OverwriteNBIPatientMRN;
+use App\Console\Commands\OverwritePatientMrnsFromSupplementalData;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
 use App\Console\Commands\QueueSendApprovedCareplanSlackNotification;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveDuplicateScheduledCalls;
-use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
@@ -134,11 +132,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('horizon:snapshot')
             ->everyThirtyMinutes();
 
-        $schedule->command(OverwriteNBIPatientMRN::class)
+        $schedule->command(OverwritePatientMrnsFromSupplementalData::class)
             ->everyThirtyMinutes();
-
-        $schedule->command(OverwriteNBIImportedData::class)
-            ->hourly();
 
         $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
             ->hourly()

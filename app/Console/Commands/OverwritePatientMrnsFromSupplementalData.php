@@ -9,10 +9,11 @@ namespace App\Console\Commands;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use Illuminate\Console\Command;
 
-class OverwriteNBIPatientMRN extends Command
+class OverwritePatientMrnsFromSupplementalData extends Command
 {
     const CUTOFF_DATE = '2019-07-17 00:00:00';
     /**
@@ -35,10 +36,13 @@ class OverwriteNBIPatientMRN extends Command
      */
     public function handle()
     {
-        $result = Patient::with('user')->whereHas('user', function ($q) {
-            $q->ofType('participant')->whereHas('practices', function ($q) {
-                $q->where('practices.name', ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME);
-            });
+        $result = Patient::with(
+            'user'
+        )->whereHas('user', function ($q) {
+            $q->ofType('participant')
+                ->whereHas('practices', function ($q) {
+                    $q->hasImportingHookEnabled(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME);
+                });
         })->whereNotIn('mrn_number', function ($q) {
             $q->select('mrn')->from((new SupplementalPatientData())->getTable());
         })->where('created_at', '>', self::CUTOFF_DATE)->get()
@@ -61,7 +65,10 @@ class OverwriteNBIPatientMRN extends Command
         $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$patientInfo->user->first_name}%")
             ->where('last_name', $patientInfo->user->last_name)
             ->where('dob', $patientInfo->birth_date)
-            ->where('practice_id', Practice::whereName(ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME)->value('id'))
+            ->where('practice_id', $patientInfo->user->program_id)
+            ->whereHas('practice', function ($q) {
+                $q->hasImportingHookEnabled(ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO, ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME);
+            })
             ->first();
 
         if (optional($dataFromPractice)->mrn) {
@@ -70,8 +77,8 @@ class OverwriteNBIPatientMRN extends Command
 
             return true;
         }
-
-        sendNbiPatientMrnWarning($patientInfo->user_id);
+    
+        ReplaceFieldsFromSupplementaryData::sendPatientNotFoundSlackAlert($patientInfo->user_id, $patientInfo->user->program_id);
 
         return false;
     }
