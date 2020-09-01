@@ -157,9 +157,6 @@ class StoreTimeTracking implements ShouldQueue
             ->with([
                 'ccdProblems.cpmProblem',
                 'primaryPractice.chargeableServices',
-                'patientSummaries' => function ($q) {
-                    $q->where('month_year', '=', now()->startOfMonth());
-                },
             ])
             ->find($patientUserId);
     }
