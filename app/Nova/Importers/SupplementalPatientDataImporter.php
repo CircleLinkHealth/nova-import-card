@@ -11,6 +11,7 @@ use App\Nova\Actions\ReimportCcda;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
@@ -179,7 +180,7 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
         )->id;
 
         $args['billing_provider_user_id'] = optional(
-            Ccda::searchBillingProvider($args['provider'], $args['practice_id'])
+            CcdaImporterWrapper::searchBillingProvider($args['provider'], $args['practice_id'])
         )->id;
 
         if ( ! empty($args['mrn']) && ! empty($args['first_name']) && ! empty($args['last_name'])) {
