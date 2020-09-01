@@ -25,7 +25,6 @@ use App\Console\Commands\FaxAuditReportsAtPracticePreferredDayTime;
 use App\Console\Commands\FixToledoMakeSureProviderMatchesPracticePull;
 use App\Console\Commands\GenerateReportForScheduledPAM;
 use App\Console\Commands\NursesPerformanceDailyReport;
-use App\Console\Commands\OverwritePatientMrnsFromSupplementalData;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
 use App\Console\Commands\QueueSendApprovedCareplanSlackNotification;
@@ -36,6 +35,7 @@ use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\SendSelfEnrollmentReminders;
 use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
+use App\Jobs\OverwritePatientMrnsFromSupplementalData;
 use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use App\Notifications\NurseDailyReport;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
@@ -132,7 +132,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('horizon:snapshot')
             ->everyThirtyMinutes();
 
-        $schedule->command(OverwritePatientMrnsFromSupplementalData::class)
+        $schedule->job(OverwritePatientMrnsFromSupplementalData::class)
             ->everyThirtyMinutes();
 
         $schedule->command(CheckVoiceCalls::class, [now()->subHour()])
