@@ -32,6 +32,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
     protected ?string $pcmCodeId;
 
     protected int $practiceId;
+    protected LocationProblemServiceRepository $repo;
 
     /**
      * Create a new job instance.
@@ -99,11 +100,11 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
 
     private function repo(): LocationProblemServiceRepository
     {
-        if (is_null($this->repo())) {
+        if ( ! isset($this->repo)) {
             $this->repo = app(LocationProblemServiceRepository::class);
         }
 
-        return $this->repo();
+        return $this->repo;
     }
 
     private function setChargeableServices()

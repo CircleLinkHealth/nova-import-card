@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
-use App\Http\Resources\ChargeableService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as Repository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\Patient as PatientModel;
 use Illuminate\Support\Facades\Cache;
@@ -51,7 +51,7 @@ class PatientServiceProcessorRepository implements Repository
     {
         return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
-            ->where('chargeable_service_id', $chargeableServiceCode)
+            ->where('chargeable_service_code', $chargeableServiceCode)
             ->exists();
     }
 
