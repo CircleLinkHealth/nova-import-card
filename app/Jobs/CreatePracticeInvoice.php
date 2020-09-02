@@ -43,7 +43,7 @@ class CreatePracticeInvoice implements ShouldQueue
      *
      * @var int
      */
-    public $timeout = 300;
+    public $timeout = 900;
 
     /**
      * Create a new job instance.
@@ -66,6 +66,9 @@ class CreatePracticeInvoice implements ShouldQueue
      */
     public function handle(PracticeReportsService $practiceReportsService)
     {
+        ini_set('max_input_time', 900);
+        ini_set('max_execution_time', 900);
+    
         $invoices = [];
 
         $user = User::findOrFail($this->requestedByUserId);
