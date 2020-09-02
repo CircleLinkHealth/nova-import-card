@@ -9,8 +9,10 @@ namespace CircleLinkHealth\CcmBilling\Tests\Database;
 use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Tests\CustomerTestCase;
 
@@ -147,5 +149,18 @@ class PatientTest extends CustomerTestCase
     
     public function test_patient_can_have_end_of_month_ccm_status_log(){
     
+        EndOfMonthCcmStatusLog::create([
+            'patient_user_id' => $this->patient()->id,
+            'chargeable_month' => $month = Carbon::now()->startOfMonth(),
+            'closed_ccm_status' => $ccmStatus = Patient::WITHDRAWN_1ST_CALL
+        ]);
+        
+        self::assertTrue(
+            $this->patient()
+                ->endOfMonthCcmStatusLog()
+                ->createdOn($month, 'chargeable_month')
+                ->where('closed_ccm_status', $ccmStatus)
+                ->exists()
+        );
     }
 }

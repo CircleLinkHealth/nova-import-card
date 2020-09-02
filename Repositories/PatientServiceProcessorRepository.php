@@ -39,6 +39,7 @@ class PatientServiceProcessorRepository implements Repository
 
     public function getChargeablePatientSummaries(int $patientId, Carbon $month)
     {
+        //todo: use view
         return ChargeablePatientMonthlySummary::with(['chargeableService' => function ($cs) {
             $cs->select(['id', 'display_name']);
         }])
