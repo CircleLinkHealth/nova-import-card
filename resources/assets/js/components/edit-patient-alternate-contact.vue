@@ -55,26 +55,28 @@
                            v-model="alternateContactDetails[0].agentTelephone.number"
                            :disabled="loading"/>
                 </div>
+
+                <div v-if="!loading" class="alt-btns">
+                    <br>
+                    <button v-if="alternateSaveBtnIsVisible"
+                            class="btn btn-success btn-sm save-alt-contact"
+                            type="button"
+                            @click="saveNewAlternateNumberAndContactDetails"
+                            :disabled="loading || disableAltSaveButton">
+                        Save alternate contact
+                    </button>
+
+                    <button v-if="alternateClearBtnIsVisible"
+                            class="btn btn-danger btn-sm delete-alt-contact"
+                            type="button"
+                            @click="deleteAlternateContact(false)"
+                            :disabled="loading || ! alternateClearBtnIsVisible">
+                        Clear alternate contact
+                    </button>
+                </div>
             </div>
 
-            <div v-if="!loading" class="alt-btns">
-                <br>
-                <button v-if="alternateSaveBtnIsVisible"
-                        class="btn btn-success btn-sm save-alt-contact"
-                        type="button"
-                        @click="saveNewAlternateNumberAndContactDetails"
-                        :disabled="loading || disableAltSaveButton">
-                    Save alternate contact
-                </button>
 
-                <button v-if="alternateClearBtnIsVisible"
-                        class="btn btn-danger btn-sm delete-alt-contact"
-                        type="button"
-                        @click="deleteAlternateContact(false)"
-                        :disabled="loading || ! alternateClearBtnIsVisible">
-                    Clear alternate contact
-                </button>
-            </div>
         </div>
     </div>
 </template>
