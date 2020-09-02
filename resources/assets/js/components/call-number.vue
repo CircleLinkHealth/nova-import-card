@@ -37,6 +37,117 @@
                                          :call-enabled=true>
                     </edit-patient-number>
 
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="col-xs-9 no-padding">
+<!--                                <select2 class="form-control" v-model="dropdownNumber"-->
+<!--                                         :settings="{minimumResultsForSearch: -1}"-->
+<!--                                         :disabled="onPhone[selectedPatientNumber]">-->
+<!--                                    <option v-for="(number, key) in patientNumbers" :key="key" :value="number">{{number}}-->
+<!--                                    </option>-->
+<!--                                    <option value="patientUnlisted">Other</option>-->
+<!--                                </select2>-->
+                            </div>
+                            <div class="col-xs-3 no-padding" style="padding-left: 2px; padding-right: 2px"> <!--v-if="dropdownNumber !== 'patientUnlisted'"-->
+<!--                                <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"-->
+<!--                                        :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"-->
+<!--                                        :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">-->
+<!--                                    <i class="fa fa-fw fa-phone"-->
+<!--                                       :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>-->
+<!--                                </button>-->
+<!--                                <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"-->
+<!--                                        @click="toggleMuteMessage(selectedPatientNumber)">-->
+<!--                                    <i class="fa fa-fw"-->
+<!--                                       :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>-->
+<!--                                </button>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 5px">
+                        <div class="col-xs-12">
+                            <label>Please input a 10 digit US Phone Number</label>
+                            <div class="col-xs-9 no-padding">
+                                <div class="input-group">
+                                    <span class="input-group-addon">+1</span>
+
+                                    <template v-if="debug">
+                                        <input name="patient-unlisted-number"
+                                               class="form-control" type="tel"
+                                               title="10-digit US Phone Number" placeholder="1234567890"
+                                               v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
+                                    </template>
+                                    <template v-else>
+                                        <input name="patient-unlisted-number"
+                                               maxlength="10" minlength="10"
+                                               class="form-control" type="tel"
+                                               title="10-digit US Phone Number" placeholder="1234567890"
+                                               v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
+                                <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
+                                        :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
+                                        :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
+                                    <i class="fa fa-fw fa-phone"
+                                       :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
+                                </button>
+                                <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
+                                        @click="toggleMuteMessage(selectedPatientNumber)">
+                                    <i class="fa fa-fw"
+                                       :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br/>
+
+                    <div class="row" style="margin-top: 5px" v-if="allowConference" v-show="isCurrentlyOnPhone">
+
+                        <div class="col-xs-12">
+                            <loader v-if="waitingForConference"></loader>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <label>Add number to call</label>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <div class="col-xs-9 no-padding">
+                                <div class="input-group">
+                                    <span class="input-group-addon">+1</span>
+
+                                    <template v-if="debug">
+                                        <input name="other-number"
+                                               class="form-control" type="tel"
+                                               title="10-digit US Phone Number" placeholder="1234567890"
+                                               v-model="otherUnlistedNumber"
+                                               :disabled="!ready || onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
+                                    </template>
+                                    <template v-else>
+                                        <input name="other-number"
+                                               maxlength="10" minlength="10"
+                                               class="form-control" type="tel"
+                                               title="10-digit US Phone Number" placeholder="1234567890"
+                                               v-model="otherUnlistedNumber"
+                                               :disabled="!ready || onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
+                                    </template>
+
+                                </div>
+                            </div>
+                            <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
+                                <button class="btn btn-circle" @click="toggleOtherCallMessage(otherUnlistedNumber)"
+                                        :disabled="invalidOtherUnlistedNumber || (!onPhone[otherUnlistedNumber] && isCurrentlyOnConference) || closeCountdown > 0"
+                                        :class="onPhone[otherUnlistedNumber] ? 'btn-danger': 'btn-success'">
+                                    <i class="fa fa-fw fa-phone"
+                                       :class="onPhone[otherUnlistedNumber] ? 'fa-close': 'fa-phone'"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row" style="padding-top: 25px;">
@@ -173,9 +284,37 @@
                 radioSelectedNumber: '',
                 callSids: {},
                 saving:false,
+                patientUnlistedNumber: '',
+                otherUnlistedNumber:'',
             }
         },
         computed: {
+            invalidPatientUnlistedNumber() {
+                if (this.debug) {
+                    return false;
+                }
+                if (this.patientUnlistedNumber.length !== 0) {
+                    return isNaN(this.patientUnlistedNumber.toString()) || this.patientUnlistedNumber.toString().length !== 10;
+                }
+                return false;
+            },
+
+            invalidOtherUnlistedNumber() {
+                if (this.debug) {
+                    return false;
+                }
+                return isNaN(this.otherUnlistedNumber.toString()) || this.otherUnlistedNumber.toString().length !== 10;
+            },
+
+            selectedPatientNumber() {
+                //@todo: Use only patientNumberToCall() and merge functionalities
+                if (this.patientUnlistedNumber.length !== 0) {
+                    return this.patientUnlistedNumber;
+                } else {
+                    return this.patientNumberToCall;
+                }
+            },
+
             isCurrentlyOnPhone() {
                 return Object.values(this.onPhone).some(x => x);
             },
@@ -224,6 +363,19 @@
                 this.muted[number] = value;
                 if (this.device && this.device.activeConnection()) {
                     this.device.activeConnection().mute(value);
+                }
+            },
+
+            togglePatientCallMessage: function (number, isDebug) {
+                const isUnlisted = this.patientUnlistedNumber.length !== 0;
+                let makeTheCall = true;
+
+                if (!this.onPhone[number] && isUnlisted && !confirm('This is a new number. Please confirm this is a patient-related call.')) {
+                    makeTheCall = false;
+                }
+
+                if (makeTheCall) {
+                    this.toggleCallMessage(number, isUnlisted, true, isDebug);
                 }
             },
 
