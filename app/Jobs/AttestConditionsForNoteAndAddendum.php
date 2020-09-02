@@ -21,7 +21,7 @@ class AttestConditionsForNoteAndAddendum implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    protected int $addendumId;
+    protected ?int $addendumId;
 
     protected int $noteId;
 
@@ -32,7 +32,7 @@ class AttestConditionsForNoteAndAddendum implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(string $problemIds, int $noteId, int $addendumId)
+    public function __construct(string $problemIds, int $noteId, ?int $addendumId = null)
     {
         $this->problemIds = explode(',', $problemIds);
         $this->noteId     = $noteId;
@@ -60,12 +60,6 @@ class AttestConditionsForNoteAndAddendum implements ShouldQueue
 
         if ( ! $call = $note->call) {
             Log::error("Attest conditions for note and addendum: Call not found for note with (ID) $this->noteId");
-
-            return;
-        }
-
-        if ( ! $this->addendumId) {
-            Log::error("Attest conditions for note and addendum: Addendum not found for (ID) $this->addendumId");
 
             return;
         }
