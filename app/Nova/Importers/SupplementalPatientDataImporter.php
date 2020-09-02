@@ -17,6 +17,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -27,7 +28,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Row;
 
-class SupplementalPatientDataImporter implements ToCollection, WithChunkReading, WithValidation, WithHeadingRow
+class SupplementalPatientDataImporter implements ToCollection, WithChunkReading, WithValidation, WithHeadingRow, ShouldQueue
 {
     use Importable;
 
