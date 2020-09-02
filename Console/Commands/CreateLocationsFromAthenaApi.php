@@ -63,7 +63,7 @@ class CreateLocationsFromAthenaApi extends Command
         ]);
 
         if ($location->wasRecentlyCreated) {
-            $handles = AppConfig::pull('nbi_rwjbarnabas_mrn_slack_watchers', '');
+            $handles = AppConfig::pull('supplemental_patient_data_replacement_alerts_slack_watchers', '');
 
             sendSlackMessage(
                 '#customersuccess',
