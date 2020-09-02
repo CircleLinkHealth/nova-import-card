@@ -12,5 +12,6 @@ class PracticeTest extends CustomerTestCase
 {
     public function test_practice_has_historic_chargeable_services_through_locations()
     {
+        //
     }
 }

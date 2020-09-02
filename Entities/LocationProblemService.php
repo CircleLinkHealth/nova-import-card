@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\CcmBilling\Entities;
 
+use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
@@ -31,4 +33,19 @@ class LocationProblemService extends Pivot
     ];
 
     protected $table = 'location_problem_services';
+
+    public function chargeableService()
+    {
+        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
+    }
+
+    public function cpmProblem()
+    {
+        return $this->belongsTo(CpmProblem::class, 'cpm_problem_id');
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(LocationProblemService::class, 'location_id');
+    }
 }

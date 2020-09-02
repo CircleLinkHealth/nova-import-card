@@ -33,7 +33,8 @@ class LocationTest extends CustomerTestCase
             )
         );
         self::assertTrue(is_a($summary, ChargeableLocationMonthlySummary::class));
-        //todo: add bool method
+        
+        //todo: add bool method to repository
         self::assertTrue(
             $this->repo->servicesForMonth($locationId, $month)
                 ->whereHas('chargeableService', function ($cs) use ($ccmCode) {
