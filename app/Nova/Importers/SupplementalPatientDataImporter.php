@@ -15,6 +15,7 @@ use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Row;
 
 class SupplementalPatientDataImporter implements WithChunkReading, WithHeadingRow, ShouldQueue, OnEachRow
 {
@@ -78,8 +79,9 @@ class SupplementalPatientDataImporter implements WithChunkReading, WithHeadingRo
         ];
     }
 
-    public function onRow($row)
+    public function onRow(Row $rowObj)
     {
+        $row  = $rowObj->toArray();
         $args = [
             'dob' => optional(
                 ImportPatientInfo::parseDOBDate($this->nullOrValue($row['dob']))
