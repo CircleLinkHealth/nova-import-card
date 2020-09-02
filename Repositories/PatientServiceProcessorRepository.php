@@ -18,20 +18,12 @@ use Illuminate\Support\Facades\Cache;
 
 class PatientServiceProcessorRepository implements Repository
 {
-    public function chargeableSercviceId(string $code): int
-    {
-        return Cache::remember("name:chargeable_service_$code", 2, function () use ($code) {
-            return ChargeableService::where('code', $code)
-                ->value('id');
-        });
-    }
-
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         return ChargeablePatientMonthlySummary::updateOrCreate([
             'patient_user_id'       => $patientId,
             'chargeable_month'      => $month,
-            'chargeable_service_id' => $this->chargeableSercviceId($chargeableServiceCode),
+            'chargeable_service_id' => ChargeableService::getChargeableServiceIdUsingCode($chargeableServiceCode),
         ], [
             'is_fulfilled' => true,
         ]);
@@ -102,7 +94,7 @@ class PatientServiceProcessorRepository implements Repository
         return ChargeablePatientMonthlySummary::updateOrCreate([
             'patient_user_id'       => $patientId,
             'chargeable_month'      => $month,
-            'chargeable_service_id' => $this->chargeableSercviceId($chargeableServiceCode),
+            'chargeable_service_id' => ChargeableService::getChargeableServiceIdUsingCode($chargeableServiceCode),
         ], [
             'requires_patient_consent' => false,
         ]);
@@ -114,7 +106,7 @@ class PatientServiceProcessorRepository implements Repository
             [
                 'patient_user_id'       => $patientId,
                 'chargeable_month'      => $month,
-                'chargeable_service_id' => $this->chargeableSercviceId($chargeableServiceCode),
+                'chargeable_service_id' => ChargeableService::getChargeableServiceIdUsingCode($chargeableServiceCode),
             ],
             [
                 'requires_patient_consent' => $requiresPatientConsent,

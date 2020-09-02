@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -54,27 +55,27 @@ class LocationProcessorEloquentRepository implements CustomerProcessorRepository
             $cs->select('code');
         }])
             ->where('location_id', $locationId)
-            ->createdOn($chargeableMonth, 'chargeable_month')
-            ->get();
+            ->createdOn($chargeableMonth, 'chargeable_month');
+    }
+
+    public function store(int $locationId, string $chargeableServiceCode, Carbon $month): ChargeableLocationMonthlySummary
+    {
+        return ChargeableLocationMonthlySummary::updateOrCreate([
+            'location_id'           => $locationId,
+            'chargeable_service_id' => ChargeableService::getChargeableServiceIdUsingCode($chargeableServiceCode),
+            'chargeable_month'      => $month,
+        ]);
     }
 
     private function getProcessorsFromLocationServiceCodes(int $locationId, Carbon $chargeableMonth): array
     {
         return $this->servicesForMonth($locationId, $chargeableMonth)
+            ->get()
             ->map([$this, 'getProcessorUsingCode']);
     }
 
     private function getProcessorUsingCode(ChargeableLocationMonthlySummary $clms): PatientServiceProcessor
     {
         return $clms->chargeableService->processor();
-    }
-
-    public function store(int $locationId, int $chargeableServiceId, Carbon $month): ChargeableLocationMonthlySummary
-    {
-        return ChargeableLocationMonthlySummary::updateOrCreate([
-            'location_id'           => $locationId,
-            'chargeable_service_id' => $chargeableServiceId,
-            'chargeable_month'      => $month,
-        ]);
     }
 }

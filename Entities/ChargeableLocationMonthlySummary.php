@@ -53,7 +53,7 @@ class ChargeableLocationMonthlySummary extends BaseModel
     //todo: placeholder for now, maybe move in trait
     public function chargeableService()
     {
-        return $this->hasOne(ChargeableService::class, 'chargeable_service_id');
+        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
     }
 
     public function getServiceCode()

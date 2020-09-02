@@ -43,7 +43,7 @@ class PatientTest extends CustomerTestCase
     public function test_patient_chargeable_summary_relationships()
     {
         $this->patient()->chargeableMonthlySummaries()->create([
-            'chargeable_service_id' => $ccmCodeId = $this->repo->chargeableSercviceId($ccmCode = ChargeableService::CCM),
+            'chargeable_service_id' => $ccmCodeId = ChargeableService::getChargeableServiceIdUsingCode($ccmCode = ChargeableService::CCM),
             'chargeable_month'      => $month = Carbon::now()->startOfMonth(),
         ]);
 
@@ -94,7 +94,7 @@ class PatientTest extends CustomerTestCase
                 'duration'              => $duration1 = 50,
                 'patient_id'            => $patientId,
                 'provider_id'           => $careCoachId,
-                'chargeable_service_id' => $ccmCodeId = $this->repo->chargeableSercviceId($ccmCode),
+                'chargeable_service_id' => $ccmCodeId = ChargeableService::getChargeableServiceIdUsingCode($ccmCode),
                 'performed_at'          => Carbon::now()->startOfMonth()->addDay(7),
             ],
             [
