@@ -25,13 +25,37 @@ class PatientTest extends CustomerTestCase
 
     public function test_patient_can_have_summaries_for_each_service_for_each_month()
     {
-        $patient = $this->patient();
-
-        $summary = $this->repo->store($patient->id, $ccmCode = ChargeableService::CCM, $month = Carbon::now()->startOfMonth());
-
-        self::assertNotNull($summary);
+        self::assertNotNull(
+            $summary = $this->repo->store(
+                $patientId = $this->patient()->id,
+                $ccmCode = ChargeableService::CCM,
+                $month = Carbon::now()->startOfMonth()
+            )
+        );
         self::assertTrue(is_a($summary, ChargeablePatientMonthlySummary::class));
-        self::assertTrue($this->repo->isAttached($patient->id, $ccmCode, $month));
+        self::assertTrue($this->repo->isAttached($patientId, $ccmCode, $month));
+    }
+
+    public function test_patient_chargeable_summary_relationships()
+    {
+        $this->patient()->chargeableMonthlySummaries()->create([
+            'chargeable_service_id' => $ccmCodeId = $this->repo->chargeableSercviceId($ccmCode = ChargeableService::CCM),
+            'chargeable_month'      => $month = Carbon::now()->startOfMonth(),
+        ]);
+
+        self::assertNotNull(
+            $this->patient()->chargeableMonthlySummaries()
+                ->where('chargeable_service_id', $ccmCodeId)
+                ->where('chargeable_month', $month)
+                ->first()
+        );
+
+        self::assertNotNull(
+            $this->patient()->chargeableMonthlySummariesView()
+                ->where('chargeable_service_code', $ccmCode)
+                ->where('chargeable_month', $month)
+                ->first()
+        );
     }
 
     public function test_patient_summary_sql_view_has_correct_auxiliary_metrics()

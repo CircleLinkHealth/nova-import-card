@@ -88,7 +88,7 @@ class PatientServiceProcessorRepository implements Repository
         ]);
     }
 
-    private function chargeableSercviceId(string $code): int
+    public function chargeableSercviceId(string $code): int
     {
         return Cache::remember("name:chargeable_service_$code", 2, function () use ($code) {
             return ChargeableService::where('code', $code)
