@@ -83,7 +83,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function shouldAttach(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
-        if ($this->clashesWithigherOrderServices($patientId, $chargeableMonth)) {
+        if ($this->clashesWithHigherOrderServices($patientId, $chargeableMonth)) {
             return false;
         }
 
@@ -112,18 +112,18 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        if ($summary->time_for_month_to_be_implemented < $this->minimumTimeInSeconds()) {
+        if ($summary->total_time < $this->minimumTimeInSeconds()) {
             return false;
         }
 
-        if ($summary->calls_for_month_to_be_implemented < $this->minimumNumberOfCalls()) {
+        if ($summary->no_of_successful_calls < $this->minimumNumberOfCalls()) {
             return false;
         }
 
         return true;
     }
 
-    private function clashesWithigherOrderServices(int $patientId, Carbon $chargeableMonth)
+    private function clashesWithHigherOrderServices(int $patientId, Carbon $chargeableMonth)
     {
         foreach ($this->clashesWith() as $clash) {
             if ($this->repo()->isAttached($patientId, $clash->code(), $chargeableMonth)) {
