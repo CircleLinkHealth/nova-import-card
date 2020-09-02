@@ -87,6 +87,15 @@ class PatientServiceProcessorRepository implements Repository
             ->exists();
     }
 
+    public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
+            ->where('chargeable_month', $month)
+            ->where('chargeable_service_code', $chargeableServiceCode)
+            ->where('requires_patient_consent', true)
+            ->exists();
+    }
+
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month)
     {
         return ChargeablePatientMonthlySummary::updateOrCreate([
@@ -96,15 +105,6 @@ class PatientServiceProcessorRepository implements Repository
         ], [
             'requires_patient_consent' => false,
         ]);
-    }
-    
-    public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month) : bool
-    {
-        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
-            ->where('chargeable_month', $month)
-            ->where('chargeable_service_code', $chargeableServiceCode)
-            ->where('requires_patient_consent', true)
-            ->exists();
     }
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary
