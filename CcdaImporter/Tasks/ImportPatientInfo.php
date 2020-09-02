@@ -9,15 +9,13 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
-use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
+use CircleLinkHealth\Eligibility\CcdaImporter\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Support\Str;
 
 class ImportPatientInfo extends BaseCcdaImportTask
 {
-    use FiresImportingHooks;
-
     const HOOK_IMPORTED_PATIENT_INFO = 'IMPORTED_PATIENTINFO';
 
     const HOOK_IMPORTING_PATIENT_INFO = 'IMPORTING_PATIENTINFO';
@@ -150,7 +148,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
             $agentDetails
         );
 
-        $hook = $this->fireImportingHook(self::HOOK_IMPORTING_PATIENT_INFO, $this->patient, $this->ccda, $args);
+        $hook = FiresImportingHooks::fireImportingHook(self::HOOK_IMPORTING_PATIENT_INFO, $this->patient, $this->ccda, $args);
 
         if (is_array($hook)) {
             $args = $hook;
@@ -241,7 +239,7 @@ class ImportPatientInfo extends BaseCcdaImportTask
             $patientInfo->save();
         }
 
-        $this->fireImportingHook(self::HOOK_IMPORTED_PATIENT_INFO, $this->patient, $this->ccda, $patientInfo);
+        FiresImportingHooks::fireImportingHook(self::HOOK_IMPORTED_PATIENT_INFO, $this->patient, $this->ccda, $patientInfo);
     }
 
     /**
