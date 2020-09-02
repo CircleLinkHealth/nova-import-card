@@ -6,26 +6,23 @@
 
 namespace App\Nova;
 
-use App\Nova\Importers\SupplementalPatientDataImporter;
-use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
-use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
+use App\Nova\Actions\ImportSupplementalPatientData;
+use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData as Model;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Text;
 
-class SupplementalPatientDataResource extends Resource
+class SupplementalPatientData extends Resource
 {
     public static $group = \App\Constants::NOVA_GROUP_ENROLLMENT;
-
-    public static $importer = SupplementalPatientDataImporter::class;
 
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = SupplementalPatientData::class;
+    public static $model = Model::class;
 
     /**
      * The columns that should be searched.
@@ -60,7 +57,9 @@ class SupplementalPatientDataResource extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new ImportSupplementalPatientData(),
+        ];
     }
 
     /**
@@ -71,7 +70,6 @@ class SupplementalPatientDataResource extends Resource
     public function cards(Request $request)
     {
         return [
-            ClhImportCardExtended::forUser(auth()->user(), self::class),
         ];
     }
 
