@@ -98,10 +98,7 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
             return [];
         }
 
-        return $cpmProblem->locationChargeableServices
-            ->where('pivot.location_id', $locationId)
-            ->pluck('code')
-            ->values();
+        return $cpmProblem->getChargeableServiceCodesForLocation($locationId);
     }
 
     /**
