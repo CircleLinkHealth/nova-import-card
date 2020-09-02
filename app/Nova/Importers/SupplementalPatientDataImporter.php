@@ -18,17 +18,14 @@ use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
-use Maatwebsite\Excel\Row;
 
-class SupplementalPatientDataImporter implements ToCollection, WithChunkReading, WithValidation, WithHeadingRow, ShouldQueue
+class SupplementalPatientDataImporter implements ToModel, WithChunkReading, WithValidation, WithHeadingRow, ShouldQueue
 {
     use Importable;
 
@@ -52,47 +49,14 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
         return 200;
     }
 
-    public function collection(Collection $rows)
-    {
-        $dobs = collect([]);
-
-        //DB transaction will revert once an exception is thrown.
-        DB::transaction(
-            function () use ($rows, &$dobs) {
-                foreach ($rows as $row) {
-                    $row = $row->toArray();
-
-                    //accept null dobs
-                    if ($row['dob']) {
-                        $date = $this->validateDob($row['dob']);
-
-                        if ( ! $date) {
-                            throw new \Exception("Invalid date {$row['dob']}");
-                        }
-
-                        $dobs->push(['dateString' => $date->toDateString()]);
-
-                        if (10 === $dobs->count()) {
-                            //check if Carbon is parsing dates all as the same date
-                            if (10 === $dobs->where('dateString', $date->toDateString())->count()) {
-                                throw new \Exception('Something went wrong while parsing patient dates of birth.');
-                            }
-                            //reset collection
-                            $dobs = collect([]);
-                        }
-
-                        $row['dob'] = $date;
-                    }
-
-                    $this->persistRow($row);
-                }
-            }
-        );
-    }
-
     public function getPractice(): Practice
     {
         return $this->resource->fields->getFieldValue('practice');
+    }
+
+    public function model(array $row)
+    {
+        $this->persistRow($row);
     }
 
     /**
@@ -123,11 +87,6 @@ class SupplementalPatientDataImporter implements ToCollection, WithChunkReading,
             '#N/A',
             '-',
         ];
-    }
-
-    public function onRow(Row $row)
-    {
-        $this->persistRow($row->toArray());
     }
 
     public function rules(): array
