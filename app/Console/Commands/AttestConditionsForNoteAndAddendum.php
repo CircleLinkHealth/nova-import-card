@@ -22,7 +22,7 @@ class AttestConditionsForNoteAndAddendum extends Command
      *
      * @var string
      */
-    protected $signature = 'billing:attest-problems {problemIds} {noteId} {addendumId}';
+    protected $signature = 'billing:attest-problems {problemIds} {noteId} {addendumId?}';
 
     /**
      * Create a new command instance.
@@ -44,7 +44,7 @@ class AttestConditionsForNoteAndAddendum extends Command
         Job::dispatch(
             (string) $this->argument('problemIds'),
             (int) $this->argument('noteId'),
-            (int) $this->argument('addendumId')
+            $this->argument('addendumId') ?? null
         );
     }
 }
