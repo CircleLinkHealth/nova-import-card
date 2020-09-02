@@ -26,11 +26,6 @@ class SelfEnrollmentManualInviteCommand extends Command
      */
     protected $signature = 'self-enrollment:invite {enrolleeId}';
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
         $enrollee          = Enrollee::with('user.enrollee')->has('user')->whereNotNull('practice_id')->findOrFail($this->argument('enrolleeId'));
@@ -39,6 +34,7 @@ class SelfEnrollmentManualInviteCommand extends Command
             $enrollee->practice_id,
             $manualInviteBatch
         );
+
         SendInvitation::dispatch($enrollee->user, $invitationBatch->id);
     }
 }

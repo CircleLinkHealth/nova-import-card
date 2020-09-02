@@ -177,7 +177,7 @@
                             Care plan is in draft mode. QA the care plan first.
                         </span>
                         <span v-if="hasPatientInNotInAcceptableCcmStatus">
-                            Patient's CCM status is withdrawn or paused.
+                            Patient's CCM status is one of withdrawn, paused or unreachable.
                         </span>
                         <span v-if="hasNonMatchingPatientNurseLanguage">
                             Care Coach does not speak patient's preferred contact language.
@@ -467,8 +467,7 @@
                 return patient.status === 'draft';
             },
             isPatientInNotInAcceptableCcmStatus(patient) {
-                // ROAD-322 allow scheduling to unreachable
-                return ['withdrawn', 'paused'/*, 'unreachable'*/].indexOf(patient.ccm_status) > -1;
+                return ['withdrawn', 'paused', 'unreachable'].indexOf(patient.ccm_status) > -1;
             },
             changeNurse(actionIndex, nurse) {
                 if (nurse) {
@@ -694,7 +693,7 @@
                 const ccmStatusNotAcceptable = patients.filter(x => this.isPatientInNotInAcceptableCcmStatus(x));
                 if (ccmStatusNotAcceptable.length) {
                     Event.$emit('notifications-add-action-modal:create', {
-                        text: `Action not allowed: This patients' [${draftPatients.map(x => x.name || x.full_name).join(', ')}] CCM status is withdrawn or paused`,
+                        text: `Action not allowed: This patients' [${draftPatients.map(x => x.name || x.full_name).join(', ')}] CCM status is one of withdrawn, paused or unreachable`,
                         type: 'warning'
                     });
                     return;

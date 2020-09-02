@@ -93,7 +93,7 @@ trait EnrollableNotificationContent
             'billingProvider',
             'patientInfo',
             'primaryPractice' => function ($q) {
-                return $q->select(['id', 'display_name']);
+                return $q->select(['id', 'display_name', 'is_demo']);
             },
         ]);
 
