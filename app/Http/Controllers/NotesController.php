@@ -349,12 +349,12 @@ class NotesController extends Controller
 
     public function listing(NotesReport $request)
     {
-        if ( ! should_show_notes_report()) {
-            return redirect()->back();
-        }
-
         /** @var User $session_user */
         $session_user = auth()->user();
+        
+        if ( ! should_show_notes_report($session_user->program_id)) {
+            return redirect()->back();
+        }
 
         if ($request->has('getNotesFor')) {
             $providers = $this->getProviders($request->getNotesFor);
