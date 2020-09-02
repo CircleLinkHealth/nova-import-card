@@ -6,10 +6,12 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
+use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Tests\CustomerTestCase;
 
 class PatientTest extends CustomerTestCase
@@ -60,10 +62,58 @@ class PatientTest extends CustomerTestCase
 
     public function test_patient_summary_sql_view_has_correct_auxiliary_metrics()
     {
-        //do not process
-        //attach
-        //create activities
-        //create calls
-        //assert view has the correct data
+        self::assertNotNull(
+            $summary = $this->repo->store(
+                $patientId = $this->patient()->id,
+                $ccmCode = ChargeableService::CCM,
+                $month = Carbon::now()->startOfMonth()
+            )
+        );
+
+        Call::insert([
+            [
+                'inbound_cpm_id'  => $patientId,
+                'outbound_cpm_id' => $careCoachId = $this->careCoach()->id,
+                'type'            => 'call',
+                'status'          => Call::REACHED,
+                'called_date'     => Carbon::now()->startOfMonth()->addDay(10),
+            ],
+            [
+                'inbound_cpm_id'  => $patientId,
+                'outbound_cpm_id' => $careCoachId,
+                'type'            => 'call',
+                'status'          => Call::NOT_REACHED,
+                'called_date'     => Carbon::now()->startOfMonth()->addDay(5),
+            ],
+        ]);
+
+        Activity::insert([
+            [
+                'duration'              => $duration1 = 50,
+                'patient_id'            => $patientId,
+                'provider_id'           => $careCoachId,
+                'chargeable_service_id' => $ccmCodeId = $this->repo->chargeableSercviceId($ccmCode),
+                'performed_at'          => Carbon::now()->startOfMonth()->addDay(7),
+            ],
+            [
+                'duration'              => $duration2 = 100,
+                'patient_id'            => $patientId,
+                'provider_id'           => $careCoachId,
+                'chargeable_service_id' => $ccmCodeId,
+                'performed_at'          => Carbon::now()->startOfMonth()->addDay(14),
+            ],
+        ]);
+
+        self::assertNotNull(
+            $viewSummary = $this->patient()->chargeableMonthlySummariesView()
+                ->where('chargeable_service_code', $ccmCode)
+                ->where('chargeable_month', $month)
+                ->first()
+        );
+
+        self::assertEquals($viewSummary->no_of_calls, 2);
+        self::assertEquals($viewSummary->no_of_successful_calls, 1);
+
+        self::assertEquals($viewSummary->total_time, $duration1 + $duration2);
     }
 }
