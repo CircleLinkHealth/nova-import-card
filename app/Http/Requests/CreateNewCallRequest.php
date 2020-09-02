@@ -6,7 +6,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\Traits\ValidatesNewCall;
 use App\Policies\CreateNoteForPatient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Http\FormRequest;
@@ -30,7 +29,9 @@ class CreateNewCallRequest extends FormRequest
             return false;
         }
         if ( ! $patientId = collect($this->input())->pluck('inbound_cpm_id')->first()) {
-            return false;
+            if ( ! $patientId = $this->input('inbound_cpm_id')) {
+                return false;
+            }
         }
 
         return app(CreateNoteForPatient::class)->can(auth()->id(), $patientId);
