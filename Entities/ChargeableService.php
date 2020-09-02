@@ -15,6 +15,7 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM60;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * CircleLinkHealth\Customer\Entities\ChargeableService.
@@ -160,5 +161,13 @@ class ChargeableService extends BaseModel
     public function scopeSoftwareOnly($query)
     {
         return $query->where('code', self::SOFTWARE_ONLY);
+    }
+    
+    public static function getChargeableServiceIdUsingCode(string $code): int
+    {
+        return Cache::remember("name:chargeable_service_$code", 2, function () use ($code) {
+            return ChargeableService::where('code', $code)
+                ->value('id');
+        });
     }
 }
