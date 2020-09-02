@@ -20,7 +20,7 @@
                         <div class="types">
                             <input name="type"
                                    class="form-control phone-type"
-                                   :class="{'bgColor' : numberIsPrimary(number)}"
+                                   :class="{bgColor : numberIsPrimary(number)}"
                                    type="text"
                                    :value="number.type"
                                    :disabled="true"/>
@@ -29,7 +29,7 @@
                         <span class="input-group-addon plus-one">+1</span>
                         <input name="number"
                                class="form-control phone-number"
-                               :class="{'bgColor' : numberIsPrimary(number)}"
+                               :class="{bgColor : numberIsPrimary(number)}"
                                type="tel"
                                :value="number.number"
                                :disabled="true"/>
