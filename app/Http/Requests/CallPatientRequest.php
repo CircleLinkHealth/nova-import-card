@@ -18,7 +18,7 @@ class CallPatientRequest extends FormRequest
      */
     public function authorize()
     {
-        if (App::environment(['local', 'review'])) {
+        if (App::environment('local')) {
             return true;
         }
 
