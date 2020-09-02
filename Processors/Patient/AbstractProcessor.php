@@ -112,6 +112,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
+        if ($summary->requires_patient_consent) {
+            return false;
+        }
+
         if ($summary->total_time < $this->minimumTimeInSeconds()) {
             return false;
         }
