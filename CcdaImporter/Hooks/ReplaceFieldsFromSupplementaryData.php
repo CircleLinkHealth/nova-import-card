@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Notification;
 
 class ReplaceFieldsFromSupplementaryData extends BaseCcdaImportHook
 {
-    const CUSTOMER_CPM_ALERTS_SLACK_CHANNEL_KEY = '#customer-cpm-alerts';
+    const CUSTOMER_CPM_ALERTS_SLACK_CHANNEL_KEY = 'customer_cpm_alerts_slack_channel';
     const IMPORTING_LISTENER_NAME               = 'import_from_supplemental_patient_data';
 
     const RECEIVES_SUPPL_DATA_EXCEPTIONS_NOTIFICATIONS = 'receives_supplementary_data_exceptions_notifications';
