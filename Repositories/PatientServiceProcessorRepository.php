@@ -18,6 +18,14 @@ use Illuminate\Support\Facades\Cache;
 
 class PatientServiceProcessorRepository implements Repository
 {
+    public function chargeableSercviceId(string $code): int
+    {
+        return Cache::remember("name:chargeable_service_$code", 2, function () use ($code) {
+            return ChargeableService::where('code', $code)
+                ->value('id');
+        });
+    }
+
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         return ChargeablePatientMonthlySummary::updateOrCreate([
@@ -72,27 +80,44 @@ class PatientServiceProcessorRepository implements Repository
 
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return ChargeablePatientMonthlySummary::where('patient_user_id', $patientId)
+        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
             ->where('chargeable_service_code', $chargeableServiceCode)
             ->where('is_fulfilled', true)
             ->exists();
     }
 
-    public function store(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
+    public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month)
     {
-        return ChargeablePatientMonthlySummary::firstOrCreate([
+        return ChargeablePatientMonthlySummary::updateOrCreate([
             'patient_user_id'       => $patientId,
             'chargeable_month'      => $month,
             'chargeable_service_id' => $this->chargeableSercviceId($chargeableServiceCode),
+        ], [
+            'requires_patient_consent' => false,
         ]);
     }
-
-    public function chargeableSercviceId(string $code): int
+    
+    public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month) : bool
     {
-        return Cache::remember("name:chargeable_service_$code", 2, function () use ($code) {
-            return ChargeableService::where('code', $code)
-                ->value('id');
-        });
+        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
+            ->where('chargeable_month', $month)
+            ->where('chargeable_service_code', $chargeableServiceCode)
+            ->where('requires_patient_consent', true)
+            ->exists();
+    }
+
+    public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary
+    {
+        return ChargeablePatientMonthlySummary::updateOrCreate(
+            [
+                'patient_user_id'       => $patientId,
+                'chargeable_month'      => $month,
+                'chargeable_service_id' => $this->chargeableSercviceId($chargeableServiceCode),
+            ],
+            [
+                'requires_patient_consent' => $requiresPatientConsent,
+            ]
+        );
     }
 }
