@@ -11,7 +11,6 @@ use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\RouteServiceProvider as EligibilityRouteServiceProvider;
 use CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider;
-use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use Illuminate\Support\Arr;
 
@@ -221,7 +220,6 @@ return [
         PrimaryNavComposer::class,
 
         NurseInvoicesServiceProvider::class,
-        NurseInvoicesDeferredBindingsServiceProvider::class,
         EligibilityServiceProvider::class,
         EligibilityRouteServiceProvider::class,
         CardServiceProvider::class,
