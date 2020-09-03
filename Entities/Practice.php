@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Customer\Traits\HasNotificationContactPreferences;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
+use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -175,6 +176,7 @@ class Practice extends BaseModel implements HasMedia
         'send_alerts',
         'outgoing_phone_number',
         'term_days',
+        'default_user_scope',
     ];
 
     public function careAmbassadorLogs()
@@ -578,6 +580,11 @@ class Practice extends BaseModel implements HasMedia
                 },
             ]
         );
+    }
+    
+    public function scopeHasImportingHookEnabled($builder, string $hook, string $listener)
+    {
+        return $builder->where("importing_hooks->{$hook}->listener", $listener);
     }
 
     public function scopeOpsDashboardQuery($query, Carbon $startOfMonth)

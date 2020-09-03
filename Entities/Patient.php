@@ -487,6 +487,11 @@ class Patient extends BaseModel
         return null != $this->family_id;
     }
 
+    public function isUnreachable()
+    {
+        return Patient::UNREACHABLE === $this->ccm_status;
+    }
+
     public function lastNurseThatPerformedActivity()
     {
         $id = \CircleLinkHealth\TimeTracking\Entities\Activity::where('patient_id', $this->user_id)
@@ -682,6 +687,21 @@ class Patient extends BaseModel
     public function scopeHasFamily($query)
     {
         return $query->whereNotNull('family_id');
+    }
+
+    /**
+     * Scope a query to intersect locations with the given user.
+     *
+     * @param $query
+     * @param $user
+     */
+    public function scopeIntersectLocationsWith(
+        $query,
+        $user
+    ) {
+        return $query->when(User::SCOPE_LOCATION === $user->scope, function ($q) use ($user) {
+            $q->whereIn('preferred_contact_location', $user->viewableLocationIds());
+        });
     }
 
     public function setAddressAttribute($value)

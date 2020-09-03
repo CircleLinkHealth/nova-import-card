@@ -18,7 +18,11 @@ class PatientWriteRepository
     /**
      * Mark the patient as Unreachable after this number of consecutive unsuccessful call attempts.
      */
-    const MARK_UNREACHABLE_AFTER_N_UNSUCCESSFUL_ATTEMPTS = 5;
+    const MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS = 5;
+    /**
+     * The number of times to try calling a patient who was Unreachable, became enrolled by requesting a callback, before turning them back to unreachable.
+     */
+    const MAX_CALLBACK_ATTEMPTS = 3;
 
     /**
      * Set a patient's ccm_status to paused.
@@ -98,23 +102,20 @@ class PatientWriteRepository
         if ( ! $forDate) {
             $forDate = Carbon::now();
         }
-        // get record for month
+
         $day_start = $forDate->firstOfMonth()->format('Y-m-d');
         $record    = PatientMonthlySummary::where('patient_id', $patient->user_id)
             ->where('month_year', $day_start)
             ->first();
 
-        // set increment var
         $successful_call_increment = 0;
         if ($successfulLastCall) {
-            $successful_call_increment = 1;
-            // reset call attempts back to 0
+            $successful_call_increment                    = 1;
             $patient->no_call_attempts_since_last_success = 0;
-        } elseif ( ! $isCallBack) {
+        } else {
             $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
         }
 
-        // Determine whether to add to record or not
         if ( ! $record) {
             $record                         = new PatientMonthlySummary();
             $record->patient_id             = $patient->user_id;
@@ -129,8 +130,9 @@ class PatientWriteRepository
             $record->save();
         }
 
-        if ( ! $successfulLastCall && ! $isCallBack && $patient->no_call_attempts_since_last_success >= self::MARK_UNREACHABLE_AFTER_N_UNSUCCESSFUL_ATTEMPTS) {
-            $patient->ccm_status = Patient::UNREACHABLE;
+        if ( ! $successfulLastCall && $patient->no_call_attempts_since_last_success >= self::MARK_UNREACHABLE_AFTER_FAILED_ATTEMPTS) {
+            $patient->ccm_status                          = Patient::UNREACHABLE;
+            $patient->no_call_attempts_since_last_success = 0;
         }
 
         if ($patient->isDirty()) {
