@@ -26,12 +26,12 @@ if ( ! function_exists('should_show_notes_report')) {
      *
      * @return bool
      */
-    function should_show_notes_report()
+    function should_show_notes_report(int $practiceId)
     {
         if ( ! isProductionEnv()) {
             return true;
         }
-        if (auth()->check() && 232 == auth()->user()->program_id) {
+        if (232 == $practiceId) {
             return false;
         }
 

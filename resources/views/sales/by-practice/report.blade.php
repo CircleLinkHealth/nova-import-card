@@ -71,7 +71,7 @@ $practiceSection   = \App\Reports\Sales\Practice\Sections\PracticeDemographics::
                 note(s) to you.
             </p>
 
-            @if($data['isEmail'])
+            @if($data['isEmail'] && should_show_notes_report($data['practice_id']))
             <p style="font-size: 16px">
                 You can see a list of forwarded notes <a href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
                 including <b>{{$data[$rangeSection]['no_of_forwarded_emergency_notes']}}</b> notification(s) indicating
