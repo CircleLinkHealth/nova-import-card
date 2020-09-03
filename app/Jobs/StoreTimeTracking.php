@@ -80,7 +80,7 @@ class StoreTimeTracking implements ShouldQueue
 
             $pageTimer = $this->createPageTimer($activity);
 
-            if ($this->isBillableActivity($pageTimer, $activity, $provider)) {
+            if ($this->isBillableActivity($pageTimer, $activity, $provider) && ! is_null($patient)) {
                 $this->processBillableActivity($patient, $pageTimer, $isBehavioral);
             }
 
