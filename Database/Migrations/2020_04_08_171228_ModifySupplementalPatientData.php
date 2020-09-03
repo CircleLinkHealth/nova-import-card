@@ -38,16 +38,6 @@ class ModifySupplementalPatientData extends Migration
             $table->string('location')->nullable()->after('provider');
         });
 
-        if ('cpm_production' === config('database.connections.mysql.database')) {
-            SupplementalPatientData::where('id', '>', 0)->update([
-                'practice_id' => Practice::whereName(ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME)->value('id'),
-            ]);
-        } elseif (SupplementalPatientData::where('id', '>', 0)->exists()) {
-            SupplementalPatientData::where('id', '>', 0)->update([
-                'practice_id' => Practice::where('is_demo', true)->firstOrFail() ?? null,
-            ]);
-        }
-
         Schema::table('supplemental_patient_data', function (Blueprint $table) {
             $table->foreign('billing_provider_user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
             $table->foreign('location_id')->references('id')->on('locations')->onUpdate('CASCADE')->onDelete('CASCADE');
