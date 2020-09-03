@@ -17,7 +17,9 @@ class RenewLocationSummaries
 
     public static function execute(int $locationId, Carbon $renewForMonth)
     {
-        //todo:fillout
+        $self = new static();
+
+        $self->renew($self->repo()->pastLocationSummaries($locationId, $renewForMonth), $renewForMonth);
     }
 
     public static function fromSummariesCollection(Collection $pastSummaries, Carbon $renewForMonth)

@@ -29,13 +29,29 @@ class Eloquent implements LocationProcessorRepository
     public function assertChargeableSummaryNotCreated(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): void
     {
         PHPUnit::assertFalse(
-            ! $this->wasChargeableSummaryCreated($locationId, $chargeableServiceId, $month, $amount)
+            $this->wasChargeableSummaryCreated($locationId, $chargeableServiceId, $month, $amount)
         );
+    }
+
+    public function hasServicesForMonth(int $locationId, Carbon $month): bool
+    {
+        return $this->summaries
+            ->where('location_id', $locationId)
+            ->where('chargeable_month', $month)
+            ->isNotEmpty();
     }
 
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         // TODO: Implement paginatePatients() method.
+    }
+
+    public function pastMonthSummaries(int $locationId, Carbon $month): EloquentCollection
+    {
+        return $this->toEloquentCollection(
+            $this->summaries->where('location_id', $locationId)
+                ->where('chargeable_month', '<', $month)
+        );
     }
 
     public function patients(int $customerModelId, Carbon $monthYear): EloquentCollection
@@ -61,36 +77,34 @@ class Eloquent implements LocationProcessorRepository
     public function store(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary
     {
         $this->summaries->push(
-            $stub = new ChargeableLocationMonthlySummaryStub(
-                $locationId,
-                $chargeableServiceId,
-                $month,
-                $amount
-            )
+            $stub = (new ChargeableLocationMonthlySummaryStub())
+                ->setLocationId($locationId)
+                ->setChargeableServiceId($chargeableServiceId)
+                ->setChargeableMonth($month)
+                ->setAmount($amount)
         );
 
         return $stub->toModel();
     }
 
-    private function wasChargeableSummaryCreated(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null)
+    private function toEloquentCollection(Collection $collection): EloquentCollection
+    {
+        return new EloquentCollection(
+            $collection->map(function (ChargeableLocationMonthlySummaryStub $stub) {
+                return $stub->toModel();
+            })
+        );
+    }
+
+    private function wasChargeableSummaryCreated(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): bool
     {
         return 1 === $this->summaries->where('location_id', $locationId)
             ->where('chargeable_service_id', $chargeableServiceId)
             ->where('chargeable_month', $month)
-//            ->when( ! is_null($amount), function ($s) use ($amount) {
-//                $s->where('amount', $amount);
-//            })
+            ->when( ! is_null($amount), function ($collection) use ($amount) {
+                return $collection->where('amount', $amount);
+            })
+            ->unique()
             ->count();
-    }
-    
-    public function hasServicesForMonth(int $locationId, Carbon $month) : bool
-    {
-        return $this->summaries->where('location_id', $locationId)->where('chargeable_month', $month)->count() > 0;
-    }
-    
-    public function pastMonthSummaries(int $locationId, Carbon $month){
-        return new EloquentCollection($this->summaries->where('location_id', $locationId)->where('chargeable_month', '<', $month)->map(function ($stub){
-            return $stub->toModel();
-        }));
     }
 }
