@@ -185,7 +185,7 @@
     "circlelinkhealth/condition-code-lookup-module": "dev-make-deferrable",
     "circlelinkhealth/core-module": "dev-make-deferrable",
     "circlelinkhealth/cpm-migrations-module": "dev-make-deferrable",
-    "circlelinkhealth/customer-module": "3.3.6",
+    "circlelinkhealth/customer-module": "dev-make-deferrable",
     "circlelinkhealth/eligibility-module": "dev-make-deferrable",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
