@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca6afca607e17c1ea6a0592aff500e7c",
+    "content-hash": "535c2f21dc3ad367b1248c9569b9b0ec",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1162,7 +1162,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "5583637f1d3b97909520e43f323fc70753aa4bf5"
+                "reference": "99d68705187faa56c0375705de7369a152a8bf25"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1196,7 +1196,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-03T03:57:17+00:00"
+            "time": "2020-09-03T04:09:36+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1415,18 +1415,17 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.6.0",
+            "version": "dev-make-deferrable",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "6b0e559d0e054c782de35b80aa8cd95304434653"
+                "reference": "080e4dd00040736ecbcb63ef74f4839f092fbc41"
             },
             "type": "laravel-module",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesServiceProvider",
-                        "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesDeferredBindingsServiceProvider"
+                        "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesServiceProvider"
                     ],
                     "aliases": []
                 }
@@ -1442,7 +1441,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-31T18:48:04+00:00"
+            "time": "2020-09-03T04:09:36+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1476,11 +1475,11 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "v1.1",
+            "version": "dev-make-deferrable",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "3aa02384331ebf0ae819d0522c0e6fecf3104980"
+                "reference": "b9068c481be88391ef39ffc856a5297372fb1b7b"
             },
             "require": {
                 "mindscape/raygun4php": "1.*"
@@ -1505,7 +1504,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-06-15T06:47:02+00:00"
+            "time": "2020-09-03T04:12:15+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -17635,7 +17634,9 @@
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/patientapi-module": 20,
+        "circlelinkhealth/raygun-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },
