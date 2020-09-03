@@ -24,7 +24,7 @@
                     <p class="text">Add Offline Activity</p>
                 </div>
 
-                <div v-if="theCurrentUser.role.name === 'care-center'" class="mini-action-button">
+                <div v-if="isCareCoach" class="mini-action-button">
                     <a :href="createOfflineActivityTimeRequestUrl">
                         <i class="icon material-icons">local_hospital</i>
                     </a>
@@ -64,8 +64,7 @@
 
 <script>
     import {mapGetters, mapActions} from 'vuex'
-    import {getCurrentUser, setOpenModal} from "../store/actions";
-    import {currentUser} from '../store/getters';
+    import {setOpenModal} from "../store/actions";
 
     export default {
         data() {
@@ -83,17 +82,13 @@
             canAddOfflineActivity: {
                 type: Boolean,
                 required: true
-            }
+            },
+            isCareCoach: {
+                type: Boolean,
+                required: true
+            },
         },
-        computed: Object.assign(
-            mapGetters({
-                theCurrentUser: 'currentUser'
-            })
-        ),
 
-        created() {
-            this.getCurrentUser()
-        },
         mounted() {
             if (window['patientPractice']) {
                 this.hasPractice = true;
@@ -103,7 +98,7 @@
             }
         },
         methods: Object.assign(
-            mapActions(['setOpenModal', 'getCurrentUser']),
+            mapActions(['setOpenModal']),
             {
                 createCarePerson() {
                     this.setOpenModal({

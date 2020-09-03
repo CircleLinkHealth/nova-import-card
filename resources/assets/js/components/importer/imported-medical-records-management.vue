@@ -138,8 +138,7 @@
     import ErrorModalButton from '../../admin/billing/comps/error-modal-button'
     import NotificationComponent from '../notifications'
     import VueCache from '../../util/vue-cache'
-    import {mapActions, mapGetters} from 'vuex'
-    import {getCurrentUser} from "../../store/actions";
+    import {mapGetters} from 'vuex'
     import {currentUser} from '../../store/getters';
     import VueSelect from "vue-select";
     import GetsNurses from '../../mixins/gets-nurses'
@@ -199,7 +198,6 @@
             }
         ),
         methods: Object.assign(
-            mapActions(['getCurrentUser']),
             {
                 rootUrl,
                 getRowErrors(id) {
@@ -601,9 +599,6 @@
                     return rootUrl('manage-patients/'+patientId+'/view-careplan')
                 }
             }),
-        created() {
-            this.getCurrentUser();
-        },
         mounted() {
             this.getPractices();
             this.getRecords();
