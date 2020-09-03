@@ -289,9 +289,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
      */
     public function nurseHolidaysWithCompanyHolidays($startDate, $endDate)
     {
-        //         A date might be a day of the final few of previous month OR might be the 1st of the selected month.
         $startCarbon = Carbon::parse($startDate);
-        //         A date might be a day of the final few of next month OR might be the 1st of the selected month.
         $endCarbon = Carbon::parse($endDate);
 
         $companyHolidays = CompanyHoliday::where('holiday_date', '>=', $startCarbon)
@@ -308,11 +306,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         $nurseHolidays = $this->holidays->where('date', '>=', $startCarbon->copy()->startOfDay())
             ->where('date', '<=', $endCarbon->copy()->endOfDay());
 
-        if ($companyHolidays->isEmpty()) {
-            return $nurseHolidays;
-        }
-
-        return $companyHolidays->merge($nurseHolidays->toArray())->unique();
+        return $companyHolidays->merge($nurseHolidays)->unique();
     }
 
     public function states()
