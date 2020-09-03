@@ -372,8 +372,7 @@
     "laravel": {
       "dont-discover": [
         "laravel/dusk",
-        "barryvdh/laravel-snappy",
-        "aacotroneo/laravel-saml2"
+        "barryvdh/laravel-snappy"
       ]
     }
   },
