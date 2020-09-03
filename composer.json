@@ -11,8 +11,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesServiceProvider",
-                "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesDeferredBindingsServiceProvider"
+                "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesServiceProvider"
             ],
             "aliases": {
                 
