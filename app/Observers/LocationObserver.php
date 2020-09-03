@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use CircleLinkHealth\CcmBilling\Jobs\AutoAttachServicesToNewLocation;
+use CircleLinkHealth\CcmBilling\Jobs\GenerateLocationSummaries;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 
@@ -17,6 +17,6 @@ class LocationObserver
      */
     public function created(Location $location)
     {
-        AutoAttachServicesToNewLocation::dispatch($location->id);
+        GenerateLocationSummaries::dispatch($location->id);
     }
 }
