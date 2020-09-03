@@ -56,7 +56,8 @@ class ReviewAppSeedDb extends Command
         $this->output->note("Checking if should run seeder on db [$dbName]");
 
         try {
-            $dbTableExists = User::where('username', 'admin')->exists() && User::where('username', 'nurse')->exists();
+            $dbTableExists = User::where('username', 'administrator')->exists()
+                && User::where('username', 'care-center')->exists();
         } catch (\Exception $exception) {
             $dbTableExists = false;
         }
