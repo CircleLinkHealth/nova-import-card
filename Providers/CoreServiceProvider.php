@@ -17,39 +17,39 @@ use CircleLinkHealth\Core\Console\Commands\ReviewAppSeedDb;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Console\Commands\StoreJiraTicketsDeployed;
 use CircleLinkHealth\Core\Console\Commands\StoreRelease;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
-class CoreServiceProvider extends ServiceProvider
+class CoreServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
-     * Boot the application events.
-     */
-    public function boot()
+    public function provides()
     {
-//        $this->registerTranslations();
-
-        $this->registerViews();
-        $this->registerConfig();
-
-        if ($this->app->runningInConsole()) {
-            $this->registerFactories();
-            $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-        }
+        return [
+            CreateMySqlDB::class,
+            CreatePostgreSQLDB::class,
+            HerokuOnRelease::class,
+            PostDeploymentTasks::class,
+            ReviewAppCreateDb::class,
+            ReviewAppPreDestroy::class,
+            ReviewAppSeedDb::class,
+            RunScheduler::class,
+            StoreJiraTicketsDeployed::class,
+            StoreRelease::class,
+            CreateAndSeedTestSuiteDB::class,
+        ];
     }
-
+    
     /**
      * Register the service provider.
      */
     public function register()
     {
+        $this->registerViews();
+        $this->registerConfig();
+        $this->registerFactories();
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+        
         $arr = [
             CreateMySqlDB::class,
             CreatePostgreSQLDB::class,

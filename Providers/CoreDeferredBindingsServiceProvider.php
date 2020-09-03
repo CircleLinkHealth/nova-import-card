@@ -10,21 +10,15 @@ use CircleLinkHealth\Core\Entities\DatabaseNotification as CircleLinkDatabaseNot
 use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel as CircleLinkDatabaseChannel;
 use CircleLinkHealth\Core\Traits\HasDatabaseNotifications as CircleLinkHasDatabaseNotifications;
 use CircleLinkHealth\Core\Traits\Notifiable as CircleLinkNotifiable;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Notifications\Channels\DatabaseChannel as LaravelDatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification as LaravelDatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications as LaravelHasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable as LaravelNotifiable;
 use Illuminate\Support\ServiceProvider;
 
-class CoreDeferredBindingsServiceProvider extends ServiceProvider
+class CoreDeferredBindingsServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = true;
-
     /**
      * Get the services provided by the provider.
      *
@@ -41,7 +35,6 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider
             CircleLinkHasDatabaseNotifications::class,
             CircleLinkNotifiable::class,
             CircleLinkDatabaseNotification::class,
-            \Illuminate\Notifications\Channels\DatabaseChannel::class,
         ];
     }
 
