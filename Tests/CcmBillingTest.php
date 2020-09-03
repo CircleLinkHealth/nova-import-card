@@ -91,6 +91,4 @@ class CcmBillingTest extends TestCase
         $this->assertTrue($response instanceof ApprovablePatientCollection);
         $this->assertTrue($response->collection->count() === $fakeUsers->count());
     }
-
-    
 }

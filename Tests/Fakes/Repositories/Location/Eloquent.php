@@ -7,11 +7,11 @@
 namespace CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class Eloquent implements CustomerProcessorRepository
+class Eloquent implements LocationProcessorRepository
 {
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {

@@ -20,7 +20,7 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Tests\TestCase;
 
-class ChargeablePatientMonthlySummaryProcessingTest extends TestCase
+class PatientSummaryProcessingTest extends TestCase
 {
     public function test_it_does_not_attach_next_service_in_sequence_if_previous_is_not_fulfilled()
     {

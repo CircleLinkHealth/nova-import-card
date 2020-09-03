@@ -9,11 +9,11 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class PracticeProcessorEloquentRepository implements CustomerProcessorRepository
+class PracticeProcessorEloquentRepository implements PracticeProcessorRepository
 {
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
@@ -40,5 +40,10 @@ class PracticeProcessorEloquentRepository implements CustomerProcessorRepository
     {
         return $this->approvablePatientUsersQuery($monthYear)
             ->ofPractice($customerModelId);
+    }
+
+    public function practiceWithLocationsWithSummaries(int $practiceId, ?Carbon $month = null): Builder
+    {
+        //todo: add query traits for practice
     }
 }

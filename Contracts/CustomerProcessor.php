@@ -18,5 +18,5 @@ interface CustomerProcessor
     public function processServicesForAllPatients(int $customerModelId, Carbon $month): void;
 
     //any interaction we have with the DB will be through this class
-    public function repo(): CustomerProcessorRepository;
+    public function repo();
 }

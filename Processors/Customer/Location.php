@@ -8,16 +8,17 @@ namespace CircleLinkHealth\CcmBilling\Processors\Customer;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
+use CircleLinkHealth\CcmBilling\Domain\Customer\AutoAttachServicesToNewLocation;
+use CircleLinkHealth\CcmBilling\Domain\Customer\RenewLocationSummaries;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientsChunk;
-use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 
 class Location implements CustomerProcessor
 {
-    private LocationProcessorEloquentRepository $repo;
+    private LocationProcessorRepository $repo;
 
-    public function __construct(LocationProcessorEloquentRepository $repo)
+    public function __construct(LocationProcessorRepository $repo)
     {
         $this->repo = $repo;
     }
@@ -43,7 +44,24 @@ class Location implements CustomerProcessor
             );
     }
 
-    public function repo(): CustomerProcessorRepository
+    public function processServicesForLocation(int $locationId, Carbon $month)
+    {
+        if ($this->repo()->hasServicesForMonth($locationId, $month)) {
+            return;
+        }
+
+        $pastMonthSummaries = $this->repo()->pastMonthSummaries($locationId, $month);
+
+        if ($pastMonthSummaries->isEmpty()) {
+            AutoAttachServicesToNewLocation::execute($locationId, $month);
+
+            return;
+        }
+
+        RenewLocationSummaries::fromSummariesCollection($pastMonthSummaries, $month);
+    }
+
+    public function repo(): LocationProcessorRepository
     {
         return $this->repo;
     }

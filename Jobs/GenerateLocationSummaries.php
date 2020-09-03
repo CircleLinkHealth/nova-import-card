@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
+use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -43,20 +43,6 @@ class GenerateLocationSummaries implements ShouldQueue
      */
     public function handle()
     {
-        ChargeableLocationMonthlySummary::where('location_id', $this->locationId)
-            ->where('chargeable_month', $this->monthYear->copy()->subMonth(1))
-            ->get()
-            ->each(function (ChargeableLocationMonthlySummary $clms) {
-                ChargeableLocationMonthlySummary::updateOrCreate(
-                    [
-                        'location_id'           => $this->locationId,
-                        'chargeable_service_id' => $clms->chargeable_service_id,
-                        'chargeable_month'      => $this->monthYear,
-                    ],
-                    [
-                        'amount' => $clms->amount,
-                    ]
-                );
-            });
+        app(Location::class)->processServicesForLocation($this->locationId, $this->monthYear);
     }
 }
