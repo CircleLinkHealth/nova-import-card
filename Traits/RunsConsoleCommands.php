@@ -18,6 +18,7 @@ trait RunsConsoleCommands
     public function runCpmCommand(array $command, bool $echoOutput = true, int $timeoutSeconds = null)
     {
         $process = new Process($command);
+        $process->setTimeout(120);
 
         echo PHP_EOL.'Running command:';
 
