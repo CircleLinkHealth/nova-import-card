@@ -1455,7 +1455,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\ApiPatient\\Providers\\ApiPatientServiceProvider"
+                        "CircleLinkHealth\\ApiPatient\\Providers\\RouteServiceProvider"
                     ],
                     "aliases": []
                 }
