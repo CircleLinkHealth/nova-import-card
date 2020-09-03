@@ -20,25 +20,23 @@ use Michalisantoniou6\Cerberus\CerberusRole;
  * @property \Carbon\Carbon                                                                            $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Permission[]|\Illuminate\Database\Eloquent\Collection $perms
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection       $users
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDisplayName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereUpdatedAt($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereCreatedAt($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereDescription($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereDisplayName($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereId($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereName($value)
+ * @method   static                                                                                    \Illuminate\Database\Eloquent\Builder|\App\Role whereUpdatedAt($value)
  * @mixin \Eloquent
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role query()
- *
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newModelQuery()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newQuery()
+ * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role query()
  * @property int|null $perms_count
  * @property int|null $users_count
  */
 class Role extends CerberusRole
 {
     use Searchable;
+    const ALL_CPM_ROLES_CACHE_KEY = 'all_cpm_roles';
 
     const CCM_TIME_ROLES = [
         'care-center',
@@ -52,7 +50,7 @@ class Role extends CerberusRole
      *
      * @var int
      */
-    private const CACHE_ROLES_MINUTES = 3;
+    private const CACHE_ROLES_MINUTES = 2;
 
     protected $fillable = [
         'name',
@@ -66,6 +64,17 @@ class Role extends CerberusRole
     protected $table = 'lv_roles';
 
     protected $with = ['perms'];
+
+    public static function allRoles()
+    {
+        return \Cache::remember(
+            self::ALL_CPM_ROLES_CACHE_KEY,
+            Role::CACHE_ROLES_MINUTES,
+            function () {
+                return Role::all();
+            }
+        );
+    }
 
     public static function byName(string $name)
     {
@@ -81,13 +90,7 @@ class Role extends CerberusRole
      */
     public static function getIdsFromNames(array $roleNames = [])
     {
-        return \Cache::remember(
-            'all_cpm_roles',
-            Role::CACHE_ROLES_MINUTES,
-            function () {
-                return Role::all();
-            }
-        )
+        return self::allRoles()
             ->whereIn('name', $roleNames)
             ->pluck('id')
             ->all();
