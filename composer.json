@@ -184,7 +184,7 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "dev-make-deferrable",
     "circlelinkhealth/core-module": "dev-make-deferrable",
-    "circlelinkhealth/cpm-migrations-module": "dev-make-deferrable",
+    "circlelinkhealth/cpm-migrations-module": "dev-make-deferrable-2",
     "circlelinkhealth/customer-module": "dev-make-deferrable",
     "circlelinkhealth/eligibility-module": "dev-make-deferrable",
     "circlelinkhealth/enrollment-invites": "*",
