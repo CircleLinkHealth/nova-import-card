@@ -1614,7 +1614,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "b046abe80dfda0f351eec701ab06e15755cb4c90"
+                "reference": "1d3bfe643dcc442f001322c54e07f7045f904d75"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1623,7 +1623,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\TimeTracking\\Providers\\TimeTrackingServiceProvider"
+                        "CircleLinkHealth\\TimeTracking\\Providers\\RouteServiceProvider"
                     ],
                     "aliases": []
                 }
@@ -1639,7 +1639,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T03:36:21+00:00"
+            "time": "2020-09-04T04:18:28+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
