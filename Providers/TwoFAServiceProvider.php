@@ -6,34 +6,12 @@
 
 namespace CircleLinkHealth\TwoFA\Providers;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
-class TwoFAServiceProvider extends ServiceProvider
+class TwoFAServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
-     * Boot the application events.
-     */
-    public function boot()
-    {
-        if ($this->app->runningInConsole()) {
-            $this->registerConfig();
-            $this->registerFactories();
-            $this->registerVueComponents();
-            $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-        }
-
-        $this->registerTranslations();
-        $this->registerViews();
-    }
-
     /**
      * Get the services provided by the provider.
      *
@@ -49,6 +27,15 @@ class TwoFAServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerConfig();
+        $this->registerFactories();
+        $this->registerVueComponents();
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+    
+    
+        $this->registerTranslations();
+        $this->registerViews();
+        
         $this->app->register(RouteServiceProvider::class);
     }
 

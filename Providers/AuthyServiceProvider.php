@@ -10,12 +10,11 @@ use Authy\AuthyApi;
 use CircleLinkHealth\TwoFA\Contracts\AuthyApiable;
 use CircleLinkHealth\TwoFA\Decorators\AuthyResponseLogger;
 use GuzzleHttp\Client;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class AuthyServiceProvider extends ServiceProvider
+class AuthyServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    protected $defer = true;
-
     public function provides()
     {
         return [
