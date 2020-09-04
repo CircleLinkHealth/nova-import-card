@@ -10,8 +10,9 @@ use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
+use Illuminate\Support\Facades\Log;
 
 class PostmarkCallbackMailService
 {
@@ -28,14 +29,17 @@ class PostmarkCallbackMailService
                 'body' => 'This is a sexy text body',
             ]
         );
-        
     }
 
     public function getCallbackMailData()
     {
         $practice = Practice::whereName('demo-clinic')->firstOrFail();
-        $role     = Role::whereName('participant')->firstOrFail();
-        $patient  = $this->createUser($practice->id, $role->name, Patient::TO_ENROLL);
+
+        //        This is Temporary
+        $patient = User::with('enrollee')->whereHas('enrollee', function ($enrollee) {
+            $enrollee->where('status', '=', Patient::ENROLLED);
+        })->firstOrFail();
+        
 
         return json_encode(
             [
@@ -53,8 +57,25 @@ class PostmarkCallbackMailService
         );
     }
 
-    public function parse(int $postmarkRecordId)
+    /**
+     * @return array|void
+     */
+    public function parseEmail(int $postmarkRecordId)
     {
-        return $postmarkRecordId;
+        $postmarkRecord = PostmarkInboundMail::where('id', $postmarkRecordId)->first();
+        if ( ! $postmarkRecord) {
+            Log::critical("Record with id:$postmarkRecordId does not exist in postmark_inbound_mail");
+            sendSlackMessage('#carecoach_ops_alerts', "Could not locate inbound mail with id:[$postmarkRecordId] in postmark_inbound_mail");
+
+            return;
+        }
+
+        $callbackData = json_decode($postmarkRecord->data);
+
+        return [
+            'patientPhone' => $callbackData->Phone,
+            'callerId'     => $callbackData->Phone.' '.'Get Caller id',
+            'patientName'  => $callbackData->Ptn,
+        ];
     }
 }

@@ -67,7 +67,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         }
 
         if (self::FROM_CALLBACK_EMAIL === $email) {
-//           (new PostmarkCallbackMailService())->parse($recordId);
+            (new PostmarkCallbackMailService())->parseEmail($recordId);
         }
 
         /** @var User $user */
