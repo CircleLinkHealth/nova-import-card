@@ -24,9 +24,11 @@ class FabComposer extends ServiceProvider
             }
 
             $canAddOfflineActivity = $sessionUser->hasPermission('offlineActivity.create');
+            $isCareCoach = $sessionUser->isCareCoach();
 
             $view->with(compact([
                 'canAddOfflineActivity',
+                'isCareCoach',
             ]));
         });
     }

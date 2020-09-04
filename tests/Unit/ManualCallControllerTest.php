@@ -62,6 +62,7 @@ class ManualCallControllerTest extends CustomerTestCase
         return factory(User::class)->make([
             'id'           => 123456789,
             'display_name' => 'Soulla Masoulla',
+            'program_id' => 8
         ]);
     }
 
@@ -69,6 +70,7 @@ class ManualCallControllerTest extends CustomerTestCase
     {
         return factory(User::class)->make([
             'id' => rand(1, 9999999),
+            'program_id' => 8
         ]);
     }
 
