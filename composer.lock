@@ -1132,7 +1132,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "500ed5dd6863743e22501b773b7e201512b75919"
+                "reference": "054db9b888cdd8bbe8e7d2aa93efdce11e68ae0a"
             },
             "type": "laravel-module",
             "extra": {
@@ -1154,7 +1154,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-03T03:35:22+00:00"
+            "time": "2020-09-04T03:36:20+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1614,7 +1614,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "cfb0fafea144bc68cf946d5f0ec89674c8792037"
+                "reference": "b046abe80dfda0f351eec701ab06e15755cb4c90"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1639,7 +1639,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T03:07:52+00:00"
+            "time": "2020-09-04T03:36:21+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
