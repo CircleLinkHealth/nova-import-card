@@ -31,13 +31,6 @@ use Illuminate\Support\ServiceProvider;
 class EligibilityServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
-     * Boot the application events.
-     */
-    public function boot()
-    {
-    }
-
-    /**
      * Get the services provided by the provider.
      *
      * @return array
