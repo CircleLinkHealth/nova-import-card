@@ -11,7 +11,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\TimeTracking\\Providers\\TimeTrackingServiceProvider"
+                "CircleLinkHealth\\TimeTracking\\Providers\\RouteServiceProvider"
             ],
             "aliases": {
                 
