@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Stubs\ChargeableLocationMonthlySummaryStub;
+use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -18,6 +19,8 @@ use PHPUnit\Framework\Assert as PHPUnit;
 class Eloquent implements LocationProcessorRepository
 {
     protected Collection $summaries;
+    
+    protected Collection $locationAvailableServiceProcessors;
 
     public function assertChargeableSummaryCreated(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): void
     {
@@ -66,7 +69,7 @@ class Eloquent implements LocationProcessorRepository
 
     public function patientsQuery(int $customerModelId, Carbon $monthYear): Builder
     {
-        // TODO: Implement patientsQuery() method.
+        return app(Builder::class);
     }
 
     public function setChargeableLocationMonthlySummaryStubs(ChargeableLocationMonthlySummaryStub ...$chargeableLocationMonthlySummaryStubs)
@@ -107,4 +110,33 @@ class Eloquent implements LocationProcessorRepository
             ->unique()
             ->count();
     }
+    
+    public function setLocationProcessors(int $locationId, Carbon $month, AvailableServiceProcessors $availableServiceProcessors)
+    {
+        $toPush = [
+            'location_id' => $locationId,
+            'available_service_processors' => $availableServiceProcessors,
+            'chargeable_month' => $month
+        ];
+        
+        if (! isset($this->locationAvailableServiceProcessors)){
+            $this->locationAvailableServiceProcessors = collect([$toPush]);
+        }
+        
+        $this->locationAvailableServiceProcessors->push($toPush);
+    }
+    
+    public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth) : AvailableServiceProcessors
+    {
+        if (! isset($this->locationAvailableServiceProcessors)){
+            return new AvailableServiceProcessors();
+        }
+        $locationProcessorsForMonth = $this->locationAvailableServiceProcessors
+            ->where('location_id', $locationId)
+            ->where('chargeable_month', $chargeableMonth)
+            ->first();
+        
+        return $locationProcessorsForMonth['available_service_processors'] ?? new AvailableServiceProcessors();
+    }
+    
 }

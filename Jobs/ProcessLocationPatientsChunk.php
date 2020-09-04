@@ -30,6 +30,10 @@ class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
 
     protected Carbon $chargeableMonth;
 
+    protected int $limit;
+
+    protected int $offset;
+
     /**
      * Create a new job instance.
      */
@@ -37,6 +41,20 @@ class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
     {
         $this->availableServiceProcessors = $availableServiceProcessors;
         $this->chargeableMonth            = $chargeableMonth;
+    }
+
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+    
+    public function getChargeableMonth(){
+        return $this->chargeableMonth;
     }
 
     /**
@@ -47,15 +65,15 @@ class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
     public function handle()
     {
         $this->builder->get()->each(function (User $patient) {
-            ProcessPatientMonthlyServices::dispatch($patient, $this->availableServiceProcessors);
+            ProcessPatientMonthlyServices::dispatch($patient, $this->availableServiceProcessors, $this->getChargeableMonth());
         });
     }
 
     public function setBuilder(int $offset, int $limit, Builder $builder): self
     {
         $this->builder = $builder
-            ->offset($offset)
-            ->limit($limit);
+            ->offset($this->offset = $offset)
+            ->limit($this->limit = $limit);
 
         return $this;
     }

@@ -9,7 +9,6 @@ namespace CircleLinkHealth\CcmBilling\Processors\Customer;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
-use CircleLinkHealth\CcmBilling\Domain\Customer\AutoAttachServicesToNewLocation;
 use CircleLinkHealth\CcmBilling\Domain\Customer\RenewLocationSummaries;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientsChunk;
@@ -53,7 +52,7 @@ class Location implements CustomerProcessor
         $pastMonthSummaries = $this->repo()->pastMonthSummaries($locationId, $month);
 
         if ($pastMonthSummaries->isEmpty()) {
-            sendSlackMessage('#channel-to-decide', "New Location with ID:$locationId failed.
+            sendSlackMessage('#cpm_general_alerts', "New Location with ID:$locationId failed.
             Please head to Location Chargeable Service management and assign chargeable services this location.");
 
             return;
