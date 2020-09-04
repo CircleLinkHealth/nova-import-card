@@ -34,7 +34,7 @@
         }
     </style>
     @stack('styles')
-    @include('cpm-module-raygun::partials.real-user-monitoring')
+    @include('modules.raygun.partials.real-user-monitoring')
     @include('partials.new-relic-tracking')
 </head>
 <body>

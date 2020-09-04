@@ -15,13 +15,6 @@ use Illuminate\Support\ServiceProvider;
 
 class DirectMailServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Bootstrap the application services.
-     */
-    public function boot()
-    {
-    }
-
     public function provides()
     {
         return [DirectMail::class];

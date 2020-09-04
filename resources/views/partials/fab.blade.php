@@ -15,7 +15,7 @@
 <meta name="providers-search-route" content="{{ route('providers.search') }}">
 
 <div id="v-fab">
-    <fab :can-add-offline-activity="@json($canAddOfflineActivity)" ref="fabComponent"></fab>
+    <fab :can-add-offline-activity="@json($canAddOfflineActivity)" :is-care-coach="@json($isCareCoach)" ref="fabComponent"></fab>
 </div>
 
 @push('scripts')
