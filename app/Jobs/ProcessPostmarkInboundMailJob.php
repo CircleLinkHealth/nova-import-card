@@ -10,6 +10,7 @@ use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\PostmarkInboundMail;
 use App\Services\Calls\SchedulerService;
+use App\Services\Postmark\PostmarkCallbackMailService;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
@@ -25,6 +26,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    const FROM_CALLBACK_EMAIL = 'message.dispatch@callcenterusa.net';
 
     /**
      * @var bool|null
@@ -59,6 +61,15 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
 
         // 1. read source email, find patient
         $email = $this->input['From'];
+
+        if ( ! $email) {
+            Log::error("Empty Postmark notification field:'From'. Record id $recordId");
+        }
+
+        if (self::FROM_CALLBACK_EMAIL === $email) {
+//           (new PostmarkCallbackMailService())->parse($recordId);
+        }
+
         /** @var User $user */
         $user = User::whereEmail($email)
             ->with([
