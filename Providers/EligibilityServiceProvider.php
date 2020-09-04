@@ -24,22 +24,44 @@ use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Console\ResetAthenaEligibilityBatch;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
-class EligibilityServiceProvider extends ServiceProvider
+class EligibilityServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
+     * Get the services provided by the provider.
      *
-     * @var bool
+     * @return array
      */
-    protected $defer = false;
+    public function provides()
+    {
+        return [
+            'athena.api',
+            AthenaApiImplementation::class,
+            AthenaApiConnection::class,
+            AutoPullEnrolleesFromAthena::class,
+            CreatePCMListForCommonWealth::class,
+            DetermineTargetPatientEligibility::class,
+            FixBatch235::class,
+            GetAppointmentsForTomorrowFromAthena::class,
+            GetCcds::class,
+            GetPatientIdFromAppointments::class,
+            GetPatientIdFromLastYearAppointments::class,
+            PostPatientCarePlanAsAppointmentNote::class,
+            ReimportPatientMedicalRecord::class,
+            ResetAthenaEligibilityBatch::class,
+            UpdatePracticeAppointments::class,
+            Make65PlusPatientsEligible::class,
+            ProcessNextEligibilityBatchChunk::class,
+        ];
+    }
 
     /**
-     * Boot the application events.
+     * Register the service provider.
      */
-    public function boot()
+    public function register()
     {
         $this->registerTranslations();
         $this->registerConfig();
@@ -62,27 +84,7 @@ class EligibilityServiceProvider extends ServiceProvider
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,
         ]);
-    }
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            'athena.api',
-            AthenaApiImplementation::class,
-            AthenaApiConnection::class,
-        ];
-    }
-
-    /**
-     * Register the service provider.
-     */
-    public function register()
-    {
         $this->app->register(RouteServiceProvider::class);
 
         $this->app->singleton(AthenaApiImplementation::class, function () {
