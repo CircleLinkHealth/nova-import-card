@@ -117,11 +117,9 @@ class LocationSummaryProcessingTest extends TestCase
 
         $builderMock = Mockery::mock(Builder::class);
 
-        $chunkSizeUsedByProcessor = 100;
-
         $builderMock
             ->shouldReceive('count')
-            ->andReturn($chunkSizeUsedByProcessor * $jobsExpectedToDispatch = 10);
+            ->andReturn($chunkSizeUsedByProcessor = 100 * $jobsExpectedToDispatch = 10);
 
         $builderMock->shouldReceive('offset')
             ->andReturnSelf();
@@ -136,7 +134,19 @@ class LocationSummaryProcessingTest extends TestCase
         app(Location::class)->processServicesForAllPatients($locationId, $startOfMonth);
 
         Bus::assertDispatched(function (ProcessLocationPatientsChunk $job) use ($startOfMonth) {
-            return $job->getChargeableMonth()->equalTo($startOfMonth);
+            $availableProcessors = $job->getAvailableServiceProcessors();
+
+            return $job->getChargeableMonth()->equalTo($startOfMonth)
+                && ! is_null($bhiProcessor = $availableProcessors->getBhi())
+                && is_a($bhiProcessor, BHI::class)
+                && ! is_null($ccmProcessor = $availableProcessors->getCcm())
+                && is_a($ccmProcessor, CCM::class)
+                && ! is_null($pcmProcessor = $availableProcessors->getPcm())
+                && is_a($pcmProcessor, PCM::class)
+                && is_null($availableProcessors->getAwv1())
+                && is_null($availableProcessors->getAwv2())
+                && is_null($availableProcessors->getCcm40())
+                && is_null($availableProcessors->getCcm60());
         });
 
         Bus::assertDispatchedTimes(ProcessLocationPatientsChunk::class, $jobsExpectedToDispatch);
