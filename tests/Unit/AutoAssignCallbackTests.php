@@ -4,13 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
-use Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 
-class AutoAssignCallbackTest extends TestCase
+class AutoAssignCallbackTests extends TestCase
 {
-//        CASES to trigger. Depending on each will be calculated if callback should be created or left to CA's to decide:
+    //        CASES to trigger. Depending on each will be calculated if callback should be created or left to CA's to decide:
 
 //        1. Queued for Enrollment.
 //        2. Non-enrolled Patient Status.
