@@ -86,9 +86,7 @@ class PostmarkCallbackMailService
 //           - these patients should be left to be manually handled by Ops.
 
         return [
-            'patientPhone' => $callbackData->Phone,
-            'callerId'     => $callbackData->Phone.' '.'Get Caller id',
-            'patientName'  => $callbackData->Ptn,
+        
         ];
     }
 }
