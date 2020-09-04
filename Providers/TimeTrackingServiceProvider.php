@@ -31,7 +31,6 @@ class TimeTrackingServiceProvider extends ServiceProvider implements DeferrableP
         $this->registerConfig();
         $this->registerViews();
         $this->registerFactories();
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         
         $this->app->register(RouteServiceProvider::class);
     }
