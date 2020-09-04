@@ -13,6 +13,7 @@ use CircleLinkHealth\Raygun\PsrLogger\MultiLogger as BaseMultiLogger;
 use CircleLinkHealth\Raygun\PsrLogger\RaygunLogger;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Logging\Log;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Log\LogManager;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
@@ -21,26 +22,8 @@ use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Raygun4php\RaygunClient;
 
-class RaygunServiceProvider extends ServiceProvider
+class RaygunServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
-     * Boot the application events.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->registerConfig();
-        $this->registerViews();
-    }
-
     /**
      * Checks whether the given function name is available.
      *
@@ -62,7 +45,12 @@ class RaygunServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [];
+        return [
+            'raygun',
+            'raygun.logger',
+            'raygun.multi',
+            'Raygun',
+        ];
     }
 
     /**
@@ -73,6 +61,7 @@ class RaygunServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerConfig();
+        $this->registerViews();
 
         if (true === Config::get('cpm-module-raygun.enable_crash_reporting')) {
             $this->app->singleton(
