@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "302151bcf2b572bbc4fb6ab4fcc69468",
+    "content-hash": "31be77f53b7864eae8ddac4be3189686",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -512,16 +512,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.151.6",
+            "version": "3.152.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b34231eb116dd7dada37f6d30d88343a992c9c3e"
+                "reference": "c5b43109dc0ecf77c4a18a8504ca3023f705b306"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b34231eb116dd7dada37f6d30d88343a992c9c3e",
-                "reference": "b34231eb116dd7dada37f6d30d88343a992c9c3e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c5b43109dc0ecf77c4a18a8504ca3023f705b306",
+                "reference": "c5b43109dc0ecf77c4a18a8504ca3023f705b306",
                 "shasum": ""
             },
             "require": {
@@ -593,7 +593,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-09-03T18:17:59+00:00"
+            "time": "2020-09-04T18:16:32+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1643,11 +1643,11 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "v1.2.1",
+            "version": "v1.2.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "8afaf85dde54408458f99e9ec4f4cf80d6fc0969"
+                "reference": "0a76dcd482d9b5dc9277a46113fec7eeefa4b7d4"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1674,7 +1674,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:02:16+00:00"
+            "time": "2020-09-04T20:08:19+00:00"
         },
         {
             "name": "clue/stream-filter",
