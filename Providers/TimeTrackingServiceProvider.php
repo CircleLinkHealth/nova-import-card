@@ -6,30 +6,12 @@
 
 namespace CircleLinkHealth\TimeTracking\Providers;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
-class TimeTrackingServiceProvider extends ServiceProvider
+class TimeTrackingServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
-     * Boot the application events.
-     */
-    public function boot()
-    {
-        $this->registerTranslations();
-        $this->registerConfig();
-        $this->registerViews();
-        $this->registerFactories();
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-    }
-
     /**
      * Get the services provided by the provider.
      *
@@ -45,6 +27,12 @@ class TimeTrackingServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerTranslations();
+        $this->registerConfig();
+        $this->registerViews();
+        $this->registerFactories();
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+        
         $this->app->register(RouteServiceProvider::class);
     }
 
