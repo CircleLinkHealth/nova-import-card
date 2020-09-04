@@ -189,13 +189,16 @@ class OfflineActivityTimeRequest extends Model
 
     public function getStatusCssClass()
     {
-        switch ($this->is_approved) {
-            case null:
-                return 'warning';
-            case 1:
-                return 'success';
-            case 0:
-                return 'danger';
+        if (is_null($this->is_approved)) {
+            return 'warning';
+        }
+
+        if (true === (bool) $this->is_approved) {
+            return 'success';
+        }
+
+        if (false === (bool) $this->is_approved) {
+            return 'danger';
         }
     }
 
@@ -217,13 +220,16 @@ class OfflineActivityTimeRequest extends Model
 
     public function status()
     {
-        switch ($this->is_approved) {
-            case null:
-                return 'PENDING';
-            case 1:
-                return 'APPROVED';
-            case 0:
-                return 'REJECTED';
+        if (is_null($this->is_approved)) {
+            return 'PENDING';
+        }
+
+        if (true === (bool) $this->is_approved) {
+            return 'APPROVED';
+        }
+
+        if (false === (bool) $this->is_approved) {
+            return 'REJECTED';
         }
     }
 }
