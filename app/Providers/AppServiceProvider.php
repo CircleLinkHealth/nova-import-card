@@ -116,8 +116,7 @@ class AppServiceProvider extends ServiceProvider
                 $offset = 0;
 
                 while ($offset < $count) {
-                    $job->setBuilder($offset, $limit, $this)
-                        ->dispatch();
+                    dispatch($job->setBuilder($offset, $limit, $this));
                     $offset = $offset + $limit;
                 }
             }
