@@ -6,7 +6,6 @@
 
 namespace App\Observers;
 
-use CircleLinkHealth\CcmBilling\Jobs\GenerateLocationSummaries;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 
@@ -17,6 +16,8 @@ class LocationObserver
      */
     public function created(Location $location)
     {
-        GenerateLocationSummaries::dispatch($location->id);
+        //todo: finialize decision
+        sendSlackMessage('#channel-to-decide', "New Location with ID:$location->id failed.
+            Please head to Location Chargeable Service management and assign chargeable services this location.");
     }
 }
