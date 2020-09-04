@@ -126,6 +126,7 @@ class LocationSummaryProcessingTest extends TestCase
         Bus::assertDispatched(function (ProcessLocationPatientsChunk $job) use ($startOfMonth) {
             return $job->getChargeableMonth()->equalTo($startOfMonth);
         });
-        //assert times
+        
+        Bus::assertDispatchedTimes(ProcessLocationPatientsChunk::class, 10);
     }
 }

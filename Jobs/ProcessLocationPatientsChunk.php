@@ -77,4 +77,8 @@ class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
 
         return $this;
     }
+    
+    public function getAvailableServiceProcessors(){
+        return $this->availableServiceProcessors;
+    }
 }
