@@ -18,9 +18,10 @@ use PHPUnit\Framework\Assert as PHPUnit;
 
 class Eloquent implements LocationProcessorRepository
 {
-    protected Collection $summaries;
-    
+    protected Builder $builder;
+
     protected Collection $locationAvailableServiceProcessors;
+    protected Collection $summaries;
 
     public function assertChargeableSummaryCreated(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): void
     {
@@ -34,6 +35,19 @@ class Eloquent implements LocationProcessorRepository
         PHPUnit::assertFalse(
             $this->wasChargeableSummaryCreated($locationId, $chargeableServiceId, $month, $amount)
         );
+    }
+
+    public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth): AvailableServiceProcessors
+    {
+        if ( ! isset($this->locationAvailableServiceProcessors)) {
+            return new AvailableServiceProcessors();
+        }
+        $locationProcessorsForMonth = $this->locationAvailableServiceProcessors
+            ->where('location_id', $locationId)
+            ->where('chargeable_month', $chargeableMonth)
+            ->first();
+
+        return $locationProcessorsForMonth['available_service_processors'] ?? new AvailableServiceProcessors();
     }
 
     public function hasServicesForMonth(int $locationId, Carbon $month): bool
@@ -69,12 +83,32 @@ class Eloquent implements LocationProcessorRepository
 
     public function patientsQuery(int $customerModelId, Carbon $monthYear): Builder
     {
-        return app(Builder::class);
+        return $this->builder;
+    }
+
+    public function setBuilder(Builder $builder)
+    {
+        $this->builder = $builder;
     }
 
     public function setChargeableLocationMonthlySummaryStubs(ChargeableLocationMonthlySummaryStub ...$chargeableLocationMonthlySummaryStubs)
     {
         $this->summaries = collect($chargeableLocationMonthlySummaryStubs);
+    }
+
+    public function setLocationProcessors(int $locationId, Carbon $month, AvailableServiceProcessors $availableServiceProcessors)
+    {
+        $toPush = [
+            'location_id'                  => $locationId,
+            'available_service_processors' => $availableServiceProcessors,
+            'chargeable_month'             => $month,
+        ];
+
+        if ( ! isset($this->locationAvailableServiceProcessors)) {
+            $this->locationAvailableServiceProcessors = collect([$toPush]);
+        }
+
+        $this->locationAvailableServiceProcessors->push($toPush);
     }
 
     public function store(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary
@@ -110,33 +144,4 @@ class Eloquent implements LocationProcessorRepository
             ->unique()
             ->count();
     }
-    
-    public function setLocationProcessors(int $locationId, Carbon $month, AvailableServiceProcessors $availableServiceProcessors)
-    {
-        $toPush = [
-            'location_id' => $locationId,
-            'available_service_processors' => $availableServiceProcessors,
-            'chargeable_month' => $month
-        ];
-        
-        if (! isset($this->locationAvailableServiceProcessors)){
-            $this->locationAvailableServiceProcessors = collect([$toPush]);
-        }
-        
-        $this->locationAvailableServiceProcessors->push($toPush);
-    }
-    
-    public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth) : AvailableServiceProcessors
-    {
-        if (! isset($this->locationAvailableServiceProcessors)){
-            return new AvailableServiceProcessors();
-        }
-        $locationProcessorsForMonth = $this->locationAvailableServiceProcessors
-            ->where('location_id', $locationId)
-            ->where('chargeable_month', $chargeableMonth)
-            ->first();
-        
-        return $locationProcessorsForMonth['available_service_processors'] ?? new AvailableServiceProcessors();
-    }
-    
 }

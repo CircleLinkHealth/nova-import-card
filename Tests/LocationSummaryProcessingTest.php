@@ -117,16 +117,28 @@ class LocationSummaryProcessingTest extends TestCase
 
         $builderMock = Mockery::mock(Builder::class);
 
+        $chunkSizeUsedByProcessor = 100;
+
         $builderMock
             ->shouldReceive('count')
-            ->andReturn(1000);
+            ->andReturn($chunkSizeUsedByProcessor * $jobsExpectedToDispatch = 10);
+
+        $builderMock->shouldReceive('offset')
+            ->andReturnSelf();
+
+        $builderMock->shouldReceive('limit')
+            ->andReturnSelf();
+
+        $builderMock->makePartial();
+
+        FakeLocationRepository::setBuilder($builderMock);
 
         app(Location::class)->processServicesForAllPatients($locationId, $startOfMonth);
 
         Bus::assertDispatched(function (ProcessLocationPatientsChunk $job) use ($startOfMonth) {
             return $job->getChargeableMonth()->equalTo($startOfMonth);
         });
-        
-        Bus::assertDispatchedTimes(ProcessLocationPatientsChunk::class, 10);
+
+        Bus::assertDispatchedTimes(ProcessLocationPatientsChunk::class, $jobsExpectedToDispatch);
     }
 }
