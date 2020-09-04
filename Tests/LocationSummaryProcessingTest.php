@@ -115,15 +115,14 @@ class LocationSummaryProcessingTest extends TestCase
             )
         );
 
-        
         $builderMock = Mockery::mock(Builder::class);
 
         $builderMock
             ->shouldReceive('count')
             ->andReturn(1000);
-        
+
         app(Location::class)->processServicesForAllPatients($locationId, $startOfMonth);
-        
+
         Bus::assertDispatched(function (ProcessLocationPatientsChunk $job) use ($startOfMonth) {
             return $job->getChargeableMonth()->equalTo($startOfMonth);
         });
