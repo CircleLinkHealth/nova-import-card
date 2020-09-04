@@ -39,7 +39,6 @@ class PostmarkCallbackMailService
         $patient = User::with('enrollee')->whereHas('enrollee', function ($enrollee) {
             $enrollee->where('status', '=', Patient::ENROLLED);
         })->firstOrFail();
-        
 
         return json_encode(
             [
@@ -58,7 +57,7 @@ class PostmarkCallbackMailService
     }
 
     /**
-     * @return array|void
+     * @return array|\Collection|\Illuminate\Support\Collection|void
      */
     public function parseEmail(int $postmarkRecordId)
     {
@@ -71,6 +70,20 @@ class PostmarkCallbackMailService
         }
 
         $callbackData = json_decode($postmarkRecord->data);
+
+//        1. Calculate if should create callback or leave it to CA's to decide
+//        2. Return $user
+
+//        CASES:
+//        1. Queued for Enrollment.
+//        2. Non-enrolled Patient Status.
+//        3. Patient wants to Cancel/Withdraw.
+//        3a. Postmark notification has extra "Cancel/Withdraw Reason" field.
+//        3b. If "Cancel/Withdraw Reason" exists, or if the {Msg} section contains any of the following text strings:
+//           Cancel,
+//           CX,
+//           Withdraw
+//           - these patients should be left to be manually handled by Ops.
 
         return [
             'patientPhone' => $callbackData->Phone,

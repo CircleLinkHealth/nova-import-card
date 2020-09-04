@@ -67,7 +67,10 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         }
 
         if (self::FROM_CALLBACK_EMAIL === $email) {
-            (new PostmarkCallbackMailService())->parseEmail($recordId);
+            $callbackMailData = (new PostmarkCallbackMailService())->parseEmail($recordId);
+
+//            1. Refactor "scheduleAsapCallbackTask" to accept sub_type param.
+//            2. Call "scheduleAsapCallbackTask($callbackSubType)"
         }
 
         /** @var User $user */
