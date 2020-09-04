@@ -30,10 +30,10 @@ class LocationSummaryProcessingTest extends TestCase
     {
         Bus::fake();
 
-        event(new LocationServicesAttached(1));
+        event(new LocationServicesAttached($locationId = 1));
 
-        Bus::assertDispatched(function (ProcessLocationPatientMonthlyServices $job) {
-            return 1 === $job->getLocationId() && $job->getChargeableMonth()->equalTo(Carbon::now()->startOfMonth()->startOfDay());
+        Bus::assertDispatched(function (ProcessLocationPatientMonthlyServices $job) use ($locationId) {
+            return $locationId === $job->getLocationId() && $job->getChargeableMonth()->equalTo(Carbon::now()->startOfMonth()->startOfDay());
         });
     }
 
