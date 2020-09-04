@@ -53,7 +53,8 @@ class Location implements CustomerProcessor
         $pastMonthSummaries = $this->repo()->pastMonthSummaries($locationId, $month);
 
         if ($pastMonthSummaries->isEmpty()) {
-            AutoAttachServicesToNewLocation::execute($locationId, $month);
+            sendSlackMessage('#channel-to-decide', "New Location with ID:$locationId failed.
+            Please head to Location Chargeable Service management and assign chargeable services this location.");
 
             return;
         }

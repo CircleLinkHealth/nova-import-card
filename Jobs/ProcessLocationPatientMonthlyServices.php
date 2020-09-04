@@ -46,6 +46,16 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
      */
     public function handle()
     {
-        $this->processor->processServicesForAllPatients($this->locationId, $this->chargeableMonth);
+        $this->processor->processServicesForAllPatients($this->getLocationId(), $this->getChargeableMonth());
+    }
+    
+    public function getLocationId() : int
+    {
+        return $this->locationId;
+    }
+    
+    public function getChargeableMonth() : Carbon
+    {
+        return $this->chargeableMonth;
     }
 }

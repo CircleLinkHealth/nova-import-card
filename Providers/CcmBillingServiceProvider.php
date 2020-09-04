@@ -11,11 +11,13 @@ use CircleLinkHealth\CcmBilling\Console\Commands\MigrateChargeableServicesFromCh
 use CircleLinkHealth\CcmBilling\Console\Commands\MigratePracticeServicesFromChargeablesToLocationSummariesTable;
 use CircleLinkHealth\CcmBilling\Console\Commands\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Console\Commands\ProcessSinglePatientMonthlyServices;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository as PatientRepository;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
@@ -60,6 +62,7 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
 
         $this->app->singleton(PatientRepositoryInterface::class, PatientRepository::class);
         $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
+        $this->app->singleton(LocationProcessorRepository::class, LocationProcessorEloquentRepository::class);
 
         $this->commands([
             MigratePracticeServicesFromChargeablesToLocationSummariesTable::class,

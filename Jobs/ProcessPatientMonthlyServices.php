@@ -40,7 +40,6 @@ class ProcessPatientMonthlyServices implements ShouldQueue
      */
     public function __construct(User $patient, AvailableServiceProcessors $availableServiceProcessors, Carbon $chargeableMonth)
     {
-        //todo: add bool var fulfill
         $this->patient                    = $patient;
         $this->availableServiceProcessors = $availableServiceProcessors;
         $this->chargeableMonth            = $chargeableMonth;
@@ -58,7 +57,7 @@ class ProcessPatientMonthlyServices implements ShouldQueue
             ->subscribe($this->availableServiceProcessors)
             ->forPatient($this->patient->id)
             ->forMonth($this->chargeableMonth)
-            ->withProblems($this->patient->patientProblemsForBillingProcessing());
+            ->withProblems($this->patient->patientProblemsForBillingProcessing()->toArray());
 
         $this->processor->process($stub);
     }
