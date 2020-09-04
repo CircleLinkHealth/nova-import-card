@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "535c2f21dc3ad367b1248c9569b9b0ec",
+    "content-hash": "6a6f3057548e53d1abea78b14d37ef37",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1577,11 +1577,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.3.3",
+            "version": "dev-make-deferrable",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "746806df39721fa16d610e94a5e29463c7c5b081"
+                "reference": "d01fc52247395988d02725e6e467036e6a237914"
             },
             "type": "laravel-module",
             "extra": {
@@ -1606,15 +1606,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-29T02:17:42+00:00"
+            "time": "2020-09-04T03:07:53+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.2.8",
+            "version": "dev-make-deferrable",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "7af669c818cc1721058e55ab4f76bad61e573a04"
+                "reference": "cfb0fafea144bc68cf946d5f0ec89674c8792037"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1639,15 +1639,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-31T17:40:14+00:00"
+            "time": "2020-09-04T03:07:52+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "v1.2.0",
+            "version": "dev-make-deferrable",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "1da6705cc3cc452c68b1beccf7850db22f4a9aba"
+                "reference": "4cc5da0907efe7d4a5e397071d7103c0f484a4ee"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1674,7 +1674,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-04-27T09:25:18+00:00"
+            "time": "2020-09-04T03:09:47+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -17638,6 +17638,9 @@
         "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/patientapi-module": 20,
         "circlelinkhealth/raygun-module": 20,
+        "circlelinkhealth/sqlviews-module": 20,
+        "circlelinkhealth/timetracking-module": 20,
+        "circlelinkhealth/twofa-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },
