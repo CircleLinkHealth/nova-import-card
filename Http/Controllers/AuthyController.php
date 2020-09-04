@@ -137,7 +137,7 @@ class AuthyController extends Controller
 
     public function showVerificationTokenForm()
     {
-        return view('twofa::authy', [
+        return view('modules.twofa.authy', [
             'authyUser'  => auth()->user()->authyUser,
             'redirectTo' => app('session.store')->get(AuthyMiddleware::SESSION_REDIRECT_KEY, '/'),
         ]);
