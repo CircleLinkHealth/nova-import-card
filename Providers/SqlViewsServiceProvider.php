@@ -8,27 +8,11 @@ namespace CircleLinkHealth\SqlViews\Providers;
 
 use CircleLinkHealth\SqlViews\Console\Commands\CreateSqlView;
 use CircleLinkHealth\SqlViews\Console\Commands\MigrateSqlViews;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class SqlViewsServiceProvider extends ServiceProvider
+class SqlViewsServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = true;
-
-    /**
-     * Boot the application events.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->registerConfig();
-    }
-
     /**
      * Get the services provided by the provider.
      *
@@ -49,14 +33,14 @@ class SqlViewsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands(
-                [
-                    CreateSqlView::class,
-                    MigrateSqlViews::class,
-                ]
-            );
-        }
+        $this->registerConfig();
+
+        $this->commands(
+            [
+                CreateSqlView::class,
+                MigrateSqlViews::class,
+            ]
+        );
     }
 
     /**
