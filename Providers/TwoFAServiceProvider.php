@@ -16,10 +16,9 @@ class TwoFAServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerConfig();
-        $this->registerFactories();
         $this->registerVueComponents();
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-        
+
         $this->registerViews();
 
         $this->app->register(RouteServiceProvider::class);
