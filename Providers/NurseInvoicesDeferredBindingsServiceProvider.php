@@ -11,17 +11,11 @@ use CircleLinkHealth\NurseInvoices\Console\Commands\ManualInvoiceDownloadCommand
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider
+class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = true;
-
     /**
      * Get the services provided by the provider.
      *
@@ -30,11 +24,7 @@ class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            GenerateMonthlyInvoicesForNonDemoNurses::class,
-            SendMonthlyNurseInvoiceFAN::class,
-            SendMonthlyNurseInvoiceLAN::class,
-            SendResolveInvoiceDisputeReminder::class,
-            ManualInvoiceDownloadCommand::class,
+        
         ];
     }
 
@@ -43,22 +33,6 @@ class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands(
-                [
-                    GenerateMonthlyInvoicesForNonDemoNurses::class,
-                    SendMonthlyNurseInvoiceFAN::class,
-                    SendMonthlyNurseInvoiceLAN::class,
-                    SendResolveInvoiceDisputeReminder::class,
-                    ManualInvoiceDownloadCommand::class,
-                ]
-            );
-        } else {
-            $this->commands(
-                [
-                    GenerateMonthlyInvoicesForNonDemoNurses::class,
-                ]
-            );
-        }
+    
     }
 }
