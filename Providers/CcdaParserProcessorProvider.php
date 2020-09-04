@@ -7,30 +7,11 @@
 namespace CircleLinkHealth\CcdaParserProcessorPhp\Providers;
 
 use CircleLinkHealth\CcdaParserProcessorPhp\Console\Commands\CcdaParse;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class CcdaParserProcessorProvider extends ServiceProvider
+class CcdaParserProcessorProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = true;
-
-    /**
-     * Boot the application events.
-     */
-    public function boot()
-    {
-        $this->registerConfig();
-        $this->commands(
-            [
-                CcdaParse::class,
-            ]
-        );
-    }
-
     /**
      * Get the services provided by the provider.
      *
@@ -40,7 +21,6 @@ class CcdaParserProcessorProvider extends ServiceProvider
     {
         return [
             CcdaParse::class,
-            'ccd:parse',
         ];
     }
 
@@ -49,6 +29,12 @@ class CcdaParserProcessorProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerConfig();
+        $this->commands(
+            [
+                CcdaParse::class,
+            ]
+        );
     }
 
     /**
