@@ -11,6 +11,7 @@
   "extra": {
     "laravel": {
       "providers": [
+        "CircleLinkHealth\\Eligibility\\Providers\\EligibilityDeferrableServiceProvider",
         "CircleLinkHealth\\Eligibility\\Providers\\EligibilityServiceProvider"
       ],
       "aliases": {
