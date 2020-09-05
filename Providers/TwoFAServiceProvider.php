@@ -35,20 +35,6 @@ class TwoFAServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register translations.
-     */
-    public function registerTranslations()
-    {
-        $langPath = resource_path('lang/modules/twofa');
-
-        if (is_dir($langPath)) {
-            $this->loadTranslationsFrom($langPath, 'twofa');
-        } else {
-            $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'twofa');
-        }
-    }
-
-    /**
      * Register views.
      */
     public function registerViews()
