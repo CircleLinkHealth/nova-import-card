@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "31be77f53b7864eae8ddac4be3189686",
+    "content-hash": "eb985c6b142db33a622e52cf1774e8f0",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1200,11 +1200,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.4.3",
+            "version": "v3.4.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4208b244582f09260b1ac64040864a89a2f0973f"
+                "reference": "4196c49450c65039eb91d6f6c077c383af07b7c8"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1213,6 +1213,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
+                        "CircleLinkHealth\\Eligibility\\Providers\\EligibilityDeferrableServiceProvider",
                         "CircleLinkHealth\\Eligibility\\Providers\\EligibilityServiceProvider"
                     ],
                     "aliases": []
@@ -1229,7 +1230,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:03:24+00:00"
+            "time": "2020-09-05T15:59:35+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -2815,16 +2816,16 @@
         },
         {
             "name": "fico7489/laravel-pivot",
-            "version": "3.0.4",
+            "version": "3.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fico7489/laravel-pivot.git",
-                "reference": "b3072e5fbb158b808dbd73f67ff8e439f258c48e"
+                "reference": "acd3833ff08a204c76c56ca3fa5b506038496580"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/b3072e5fbb158b808dbd73f67ff8e439f258c48e",
-                "reference": "b3072e5fbb158b808dbd73f67ff8e439f258c48e",
+                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/acd3833ff08a204c76c56ca3fa5b506038496580",
+                "reference": "acd3833ff08a204c76c56ca3fa5b506038496580",
                 "shasum": ""
             },
             "require": {
@@ -2861,7 +2862,7 @@
                 "laravel pivot events",
                 "laravel sync events"
             ],
-            "time": "2020-03-26T17:52:24+00:00"
+            "time": "2020-09-05T14:19:59+00:00"
         },
         {
             "name": "fideloper/proxy",
@@ -13065,16 +13066,16 @@
         },
         {
             "name": "wildbit/swiftmailer-postmark",
-            "version": "3.1.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wildbit/swiftmailer-postmark.git",
-                "reference": "f3932a6eedf04e7f43f8005ff43e103258ed1661"
+                "reference": "bb3a4bfa754ddf2a49bb93f13bf24a848c4359e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wildbit/swiftmailer-postmark/zipball/f3932a6eedf04e7f43f8005ff43e103258ed1661",
-                "reference": "f3932a6eedf04e7f43f8005ff43e103258ed1661",
+                "url": "https://api.github.com/repos/wildbit/swiftmailer-postmark/zipball/bb3a4bfa754ddf2a49bb93f13bf24a848c4359e4",
+                "reference": "bb3a4bfa754ddf2a49bb93f13bf24a848c4359e4",
                 "shasum": ""
             },
             "require": {
@@ -13101,7 +13102,7 @@
                 }
             ],
             "description": "A Swiftmailer Transport for Postmark.",
-            "time": "2019-07-07T18:41:29+00:00"
+            "time": "2020-09-05T12:09:29+00:00"
         },
         {
             "name": "willdurand/email-reply-parser",
