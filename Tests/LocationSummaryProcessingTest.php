@@ -15,7 +15,6 @@ use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
-use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Fake as FakeLocationRepository;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Stubs\ChargeableLocationMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
@@ -27,6 +26,62 @@ use Tests\TestCase;
 
 class LocationSummaryProcessingTest extends TestCase
 {
+    public function test_chunk_job_dispatches_job_to_process_patient_summaries()
+    {
+        Bus::fake(ProcessPatientMonthlyServices::class);
+        Bus::partialMock();
+
+        $fakePatients = factory(User::class, 5)->make();
+
+        $builderMock = Mockery::mock(Builder::class);
+
+        $builderMock
+            ->shouldReceive('count')
+            ->andReturn($chunkSizeUsedByProcessor = 100 * $jobsExpectedToDispatch = 10);
+
+        $builderMock->shouldReceive('offset')
+            ->andReturnSelf();
+
+        $builderMock->shouldReceive('limit')
+            ->andReturnSelf();
+
+        $builderMock->shouldReceive('get')
+            ->andReturn($fakePatients);
+
+        $builderMock->makePartial();
+
+        $chunkJob = new ProcessLocationPatientsChunk(
+            AvailableServiceProcessors::push(
+                [
+                    new CCM(),
+                    new BHI(),
+                    new PCM(),
+                ]
+            ),
+            $startOfMonth = Carbon::now()->startOfMonth()->startOfDay()
+        );
+
+        $chunkJob->setBuilder(0, 100, $builderMock);
+
+        $chunkJob->handle();
+
+        Bus::assertDispatched(function (ProcessPatientMonthlyServices $job) use ($startOfMonth) {
+            $availableProcessors = $job->getAvailableServiceProcessors();
+
+            return $job->getChargeableMonth()->equalTo($startOfMonth)
+                && ! is_null($bhiProcessor = $availableProcessors->getBhi())
+                && is_a($bhiProcessor, BHI::class)
+                && ! is_null($ccmProcessor = $availableProcessors->getCcm())
+                && is_a($ccmProcessor, CCM::class)
+                && ! is_null($pcmProcessor = $availableProcessors->getPcm())
+                && is_a($pcmProcessor, PCM::class)
+                && is_null($availableProcessors->getAwv1())
+                && is_null($availableProcessors->getAwv2())
+                && is_null($availableProcessors->getCcm40())
+                && is_null($availableProcessors->getCcm60());
+        });
+    }
+
     public function test_event_dispatches_job_to_process_location_patient_summaries()
     {
         Bus::fake();
@@ -34,33 +89,10 @@ class LocationSummaryProcessingTest extends TestCase
         event(new LocationServicesAttached($locationId = 1));
 
         Bus::assertDispatched(function (ProcessLocationPatientMonthlyServices $job) use ($locationId) {
-            return $locationId === $job->getLocationId() && $job->getChargeableMonth()->equalTo(Carbon::now()->startOfMonth()->startOfDay());
+            return $locationId === $job->getLocationId()
+                && $job->getChargeableMonth()->equalTo(Carbon::now()->startOfMonth()->startOfDay())
+                && is_a($job->getProcessor(), Location::class);
         });
-    }
-
-    public function test_it_processes_patient_summaries_on_location_summary_changes()
-    {
-        //fake location available processors
-        //fake patient stubs
-        //write mockery test for this?
-
-//        $monthYear = Carbon::now()->startOfMonth();
-//
-//
-//
-//        $repoMock    = Mockery::mock(LocationProcessorEloquentRepository::class);
-//        $builderMock = Mockery::mock(Builder::class);
-//
-//
-//
-//        //check event is dispatched - no
-//        //MOCK USER->GET PROBLEM CODES and return collection with CS codes.
-//
-//        //assert location job dispatch at event
-//        //assert chunk job dispatched from initial job
-//        //assert patient Jobs dispatched
-//        //maybe different test for each one
-//
     }
 
     public function test_it_renews_summaries_for_location_at_the_start_of_month()
@@ -151,60 +183,5 @@ class LocationSummaryProcessingTest extends TestCase
         });
 
         Bus::assertDispatchedTimes(ProcessLocationPatientsChunk::class, $jobsExpectedToDispatch);
-    }
-    
-    public function test_it_dispatches_job_to_process_patient_summaries(){
-        Bus::fake(ProcessPatientMonthlyServices::class);
-        Bus::partialMock();
-        
-        $fakePatients = factory(User::class, 5)->make();
-        
-        $builderMock = Mockery::mock(Builder::class);
-    
-        $builderMock
-            ->shouldReceive('count')
-            ->andReturn($chunkSizeUsedByProcessor = 100 * $jobsExpectedToDispatch = 10);
-    
-        $builderMock->shouldReceive('offset')
-            ->andReturnSelf();
-    
-        $builderMock->shouldReceive('limit')
-            ->andReturnSelf();
-    
-        $builderMock->shouldReceive('get')
-            ->andReturn($fakePatients);
-    
-        $builderMock->makePartial();
-        
-        $chunkJob = new ProcessLocationPatientsChunk(
-            AvailableServiceProcessors::push(
-            [
-                new CCM(),
-                new BHI(),
-                new PCM(),
-            ]
-        ),
-            $startOfMonth = Carbon::now()->startOfMonth()->startOfDay()
-        );
-        
-        $chunkJob->setBuilder(0, $chunkSize = 100, $builderMock);
-        
-        $chunkJob->handle();
-    
-        Bus::assertDispatched(function (ProcessPatientMonthlyServices $job) use ($startOfMonth) {
-            $availableProcessors = $job->getAvailableServiceProcessors();
-        
-            return $job->getChargeableMonth()->equalTo($startOfMonth)
-                && ! is_null($bhiProcessor = $availableProcessors->getBhi())
-                && is_a($bhiProcessor, BHI::class)
-                && ! is_null($ccmProcessor = $availableProcessors->getCcm())
-                && is_a($ccmProcessor, CCM::class)
-                && ! is_null($pcmProcessor = $availableProcessors->getPcm())
-                && is_a($pcmProcessor, PCM::class)
-                && is_null($availableProcessors->getAwv1())
-                && is_null($availableProcessors->getAwv2())
-                && is_null($availableProcessors->getCcm40())
-                && is_null($availableProcessors->getCcm60());
-        });
     }
 }

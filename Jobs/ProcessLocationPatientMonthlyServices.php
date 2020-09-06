@@ -46,7 +46,7 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
      */
     public function handle()
     {
-        $this->processor->processServicesForAllPatients($this->getLocationId(), $this->getChargeableMonth());
+        $this->getProcessor()->processServicesForAllPatients($this->getLocationId(), $this->getChargeableMonth());
     }
     
     public function getLocationId() : int
@@ -57,5 +57,10 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
     public function getChargeableMonth() : Carbon
     {
         return $this->chargeableMonth;
+    }
+    
+    public function getProcessor() : Location
+    {
+        return $this->processor;
     }
 }
