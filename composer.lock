@@ -898,7 +898,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "7d309a9a335e41b9ea3cba4b65139338e044b6b3"
+                "reference": "5c0ef831be68773be05b115130794380374d3358"
             },
             "type": "laravel-module",
             "extra": {
@@ -936,7 +936,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-09-04T22:44:00+00:00"
+            "time": "2020-09-06T11:45:18+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -2822,16 +2822,16 @@
         },
         {
             "name": "fico7489/laravel-pivot",
-            "version": "3.0.4",
+            "version": "3.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fico7489/laravel-pivot.git",
-                "reference": "b3072e5fbb158b808dbd73f67ff8e439f258c48e"
+                "reference": "acd3833ff08a204c76c56ca3fa5b506038496580"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/b3072e5fbb158b808dbd73f67ff8e439f258c48e",
-                "reference": "b3072e5fbb158b808dbd73f67ff8e439f258c48e",
+                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/acd3833ff08a204c76c56ca3fa5b506038496580",
+                "reference": "acd3833ff08a204c76c56ca3fa5b506038496580",
                 "shasum": ""
             },
             "require": {
@@ -2868,7 +2868,7 @@
                 "laravel pivot events",
                 "laravel sync events"
             ],
-            "time": "2020-03-26T17:52:24+00:00"
+            "time": "2020-09-05T14:19:59+00:00"
         },
         {
             "name": "fideloper/proxy",
@@ -12897,16 +12897,16 @@
         },
         {
             "name": "wildbit/swiftmailer-postmark",
-            "version": "3.1.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wildbit/swiftmailer-postmark.git",
-                "reference": "f3932a6eedf04e7f43f8005ff43e103258ed1661"
+                "reference": "bb3a4bfa754ddf2a49bb93f13bf24a848c4359e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wildbit/swiftmailer-postmark/zipball/f3932a6eedf04e7f43f8005ff43e103258ed1661",
-                "reference": "f3932a6eedf04e7f43f8005ff43e103258ed1661",
+                "url": "https://api.github.com/repos/wildbit/swiftmailer-postmark/zipball/bb3a4bfa754ddf2a49bb93f13bf24a848c4359e4",
+                "reference": "bb3a4bfa754ddf2a49bb93f13bf24a848c4359e4",
                 "shasum": ""
             },
             "require": {
@@ -12933,7 +12933,7 @@
                 }
             ],
             "description": "A Swiftmailer Transport for Postmark.",
-            "time": "2019-07-07T18:41:29+00:00"
+            "time": "2020-09-05T12:09:29+00:00"
         },
         {
             "name": "willdurand/email-reply-parser",
