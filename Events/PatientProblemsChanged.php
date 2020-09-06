@@ -6,19 +6,23 @@
 
 namespace CircleLinkHealth\CcmBilling\Events;
 
+use App\Contracts\PatientEvent;
 use Illuminate\Queue\SerializesModels;
 
-class PatientProblemsChanged
+class PatientProblemsChanged implements PatientEvent
 {
     use SerializesModels;
+
+    protected int $patientUserId;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(int $patientUserId)
     {
+        $this->patientUserId = $patientUserId;
     }
 
     /**
@@ -29,5 +33,10 @@ class PatientProblemsChanged
     public function broadcastOn()
     {
         return [];
+    }
+
+    public function getPatientId(): int
+    {
+        return $this->patientUserId;
     }
 }

@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Listeners;
 
+use App\Contracts\PatientEvent;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 
 class ProcessPatientServices
@@ -25,7 +26,7 @@ class ProcessPatientServices
      * @param  object $event
      * @return void
      */
-    public function handle($event)
+    public function handle(PatientEvent $event)
     {
         ProcessSinglePatientMonthlyServices::dispatch($event->getPatientId());
     }
