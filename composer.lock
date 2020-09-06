@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "302151bcf2b572bbc4fb6ab4fcc69468",
+    "content-hash": "eb985c6b142db33a622e52cf1774e8f0",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1200,11 +1200,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.4.3",
+            "version": "v3.4.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4208b244582f09260b1ac64040864a89a2f0973f"
+                "reference": "4196c49450c65039eb91d6f6c077c383af07b7c8"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1213,6 +1213,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
+                        "CircleLinkHealth\\Eligibility\\Providers\\EligibilityDeferrableServiceProvider",
                         "CircleLinkHealth\\Eligibility\\Providers\\EligibilityServiceProvider"
                     ],
                     "aliases": []
@@ -1229,7 +1230,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:03:24+00:00"
+            "time": "2020-09-05T15:59:35+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1643,11 +1644,11 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "v1.2.1",
+            "version": "v1.2.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "8afaf85dde54408458f99e9ec4f4cf80d6fc0969"
+                "reference": "0a76dcd482d9b5dc9277a46113fec7eeefa4b7d4"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1674,7 +1675,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:02:16+00:00"
+            "time": "2020-09-04T20:08:19+00:00"
         },
         {
             "name": "clue/stream-filter",
