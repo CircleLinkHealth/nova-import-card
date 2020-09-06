@@ -45,10 +45,10 @@ class ProcessSinglePatientMonthlyServices implements ShouldQueue
     public function handle()
     {
         $patient = $this
-            ->approvablePatientUserQuery($this->patientId, $this->month)
+            ->approvablePatientUserQuery($this->getPatientId(), $this->getMonth())
             ->with(['patientInfo.location.chargeableMonthlySummaries' => function ($summary) {
                 $summary->with(['chargeableService'])
-                    ->createdOn($this->month, 'chargeable_month');
+                    ->createdOn($this->getMonth(), 'chargeable_month');
             }])
             ->first();
 
@@ -57,5 +57,14 @@ class ProcessSinglePatientMonthlyServices implements ShouldQueue
             $patient->patientInfo->location->availableServiceProcessors($this->month),
             $this->month
         );
+    }
+    
+    public function getPatientId():int{
+        return $this->patientId;
+    }
+    
+    public function getMonth(): Carbon
+    {
+        return $this->month;
     }
 }

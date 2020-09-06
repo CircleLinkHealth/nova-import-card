@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Tests;
 
 use App\Events\PatientUserCreated;
+use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
@@ -195,11 +196,20 @@ class PatientSummaryProcessingTest extends TestCase
     {
     }
 
+    public function test_job_to_process_patient_summaries_can_happen_once_every_five_minutes()
+    {
+    }
+
     public function test_listerner_dispatches_jobs_to_process_when_it_should()
     {
         Bus::fake();
 
         event(new PatientUserCreated($user = factory(User::class)->make(['id' => $patientId = 1])));
+
+        Bus::assertDispatched(function (ProcessSinglePatientMonthlyServices $job) use ($patientId) {
+            return $job->getPatientId() === $patientId
+                && $job->getMonth()->equalTo(Carbon::now()->startOfMonth()->startOfDay());
+        });
 
         Bus::assertDispatchedTimes(ProcessSinglePatientMonthlyServices::class, 1);
 
@@ -207,10 +217,11 @@ class PatientSummaryProcessingTest extends TestCase
 
         event(new PatientProblemsChanged($patientId));
 
+        Bus::assertDispatched(function (ProcessSinglePatientMonthlyServices $job) use ($patientId) {
+            return $job->getPatientId() === $patientId
+                && $job->getMonth()->equalTo(Carbon::now()->startOfMonth()->startOfDay());
+        });
+
         Bus::assertDispatchedTimes(ProcessSinglePatientMonthlyServices::class, 1);
-    }
-    
-    public function test_job_to_process_patient_summaries_can_happen_once_every_five_minutes(){
-    
     }
 }
