@@ -54,11 +54,21 @@ class ProcessPatientMonthlyServices implements ShouldQueue
     public function handle()
     {
         $stub = (new PatientMonthlyBillingStub())
-            ->subscribe($this->availableServiceProcessors)
+            ->subscribe($this->getAvailableServiceProcessors())
             ->forPatient($this->patient->id)
-            ->forMonth($this->chargeableMonth)
+            ->forMonth($this->getChargeableMonth())
             ->withProblems($this->patient->patientProblemsForBillingProcessing()->toArray());
 
         $this->processor->process($stub);
+    }
+    
+    public function getChargeableMonth() : Carbon
+    {
+        return $this->chargeableMonth;
+    }
+    
+    public function getAvailableServiceProcessors() : AvailableServiceProcessors
+    {
+        return $this->availableServiceProcessors;
     }
 }

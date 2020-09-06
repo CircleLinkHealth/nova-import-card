@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientsChunk;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessPatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
@@ -150,5 +151,60 @@ class LocationSummaryProcessingTest extends TestCase
         });
 
         Bus::assertDispatchedTimes(ProcessLocationPatientsChunk::class, $jobsExpectedToDispatch);
+    }
+    
+    public function test_it_dispatches_job_to_process_patient_summaries(){
+        Bus::fake(ProcessPatientMonthlyServices::class);
+        Bus::partialMock();
+        
+        $fakePatients = factory(User::class, 5)->make();
+        
+        $builderMock = Mockery::mock(Builder::class);
+    
+        $builderMock
+            ->shouldReceive('count')
+            ->andReturn($chunkSizeUsedByProcessor = 100 * $jobsExpectedToDispatch = 10);
+    
+        $builderMock->shouldReceive('offset')
+            ->andReturnSelf();
+    
+        $builderMock->shouldReceive('limit')
+            ->andReturnSelf();
+    
+        $builderMock->shouldReceive('get')
+            ->andReturn($fakePatients);
+    
+        $builderMock->makePartial();
+        
+        $chunkJob = new ProcessLocationPatientsChunk(
+            AvailableServiceProcessors::push(
+            [
+                new CCM(),
+                new BHI(),
+                new PCM(),
+            ]
+        ),
+            $startOfMonth = Carbon::now()->startOfMonth()->startOfDay()
+        );
+        
+        $chunkJob->setBuilder(0, $chunkSize = 100, $builderMock);
+        
+        $chunkJob->handle();
+    
+        Bus::assertDispatched(function (ProcessPatientMonthlyServices $job) use ($startOfMonth) {
+            $availableProcessors = $job->getAvailableServiceProcessors();
+        
+            return $job->getChargeableMonth()->equalTo($startOfMonth)
+                && ! is_null($bhiProcessor = $availableProcessors->getBhi())
+                && is_a($bhiProcessor, BHI::class)
+                && ! is_null($ccmProcessor = $availableProcessors->getCcm())
+                && is_a($ccmProcessor, CCM::class)
+                && ! is_null($pcmProcessor = $availableProcessors->getPcm())
+                && is_a($pcmProcessor, PCM::class)
+                && is_null($availableProcessors->getAwv1())
+                && is_null($availableProcessors->getAwv2())
+                && is_null($availableProcessors->getCcm40())
+                && is_null($availableProcessors->getCcm60());
+        });
     }
 }
