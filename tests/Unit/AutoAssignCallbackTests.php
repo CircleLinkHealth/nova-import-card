@@ -35,7 +35,7 @@ class AutoAssignCallbackTests extends TestCase
 //                'active'          => true,
 //            ]
 //        );
-        $patient = $this->createUser($practice->id, 'participant', Patient::ENROLLED);
+//        $patient = $this->createUser($practice->id, 'participant', Patient::ENROLLED);
 
         $this->sendPostmarkNotification();
         assert(true);
