@@ -8,7 +8,6 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
-use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
@@ -47,6 +46,21 @@ class ProcessPatientMonthlyServices implements ShouldQueue
         $this->processor                  = new MonthlyProcessor();
     }
 
+    public function getAvailableServiceProcessors(): AvailableServiceProcessors
+    {
+        return $this->availableServiceProcessors;
+    }
+
+    public function getChargeableMonth(): Carbon
+    {
+        return $this->chargeableMonth;
+    }
+
+    public function getProcessor(): MonthlyProcessor
+    {
+        return $this->processor;
+    }
+
     /**
      * Execute the job.
      *
@@ -61,20 +75,5 @@ class ProcessPatientMonthlyServices implements ShouldQueue
             ->withProblems($this->patient->patientProblemsForBillingProcessing()->toArray());
 
         $this->processor->process($stub);
-    }
-    
-    public function getChargeableMonth() : Carbon
-    {
-        return $this->chargeableMonth;
-    }
-    
-    public function getAvailableServiceProcessors() : AvailableServiceProcessors
-    {
-        return $this->availableServiceProcessors;
-    }
-    
-    public function getProcessor() : Location
-    {
-        return $this->processor;
     }
 }

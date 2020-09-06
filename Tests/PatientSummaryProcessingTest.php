@@ -6,6 +6,9 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests;
 
+use App\Events\PatientUserCreated;
+use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
@@ -18,6 +21,8 @@ use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
 class PatientSummaryProcessingTest extends TestCase
@@ -188,5 +193,24 @@ class PatientSummaryProcessingTest extends TestCase
 
     public function test_it_sets_requires_patient_consent_when_it_should()
     {
+    }
+
+    public function test_listerner_dispatches_jobs_to_process_when_it_should()
+    {
+        Bus::fake();
+
+        event(new PatientUserCreated($user = factory(User::class)->make(['id' => $patientId = 1])));
+
+        Bus::assertDispatchedTimes(ProcessSinglePatientMonthlyServices::class, 1);
+
+        Bus::fake();
+
+        event(new PatientProblemsChanged($patientId));
+
+        Bus::assertDispatchedTimes(ProcessSinglePatientMonthlyServices::class, 1);
+    }
+    
+    public function test_job_to_process_patient_summaries_can_happen_once_every_five_minutes(){
+    
     }
 }
