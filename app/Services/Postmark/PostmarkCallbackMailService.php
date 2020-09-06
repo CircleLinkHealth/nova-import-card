@@ -34,7 +34,7 @@ class PostmarkCallbackMailService
     {
         /** @var User $postmarkInboundPatients */
         $postmarkInboundPatients = User::ofType('participant')
-            ->with('patientInfo', 'enrollee', 'phoneNumbers')
+            ->with('patientInfo', 'enrollee', 'phoneNumbers') //Get only what you need from each relationship mate.
             ->where(function ($query) use ($inboundPostmarkData) {
                 $query->whereHas('phoneNumbers', function ($phoneNumber) use ($inboundPostmarkData) {
                     $phoneNumber->where('number', $inboundPostmarkData['Phone']);
