@@ -65,18 +65,12 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         if ( ! $email) {
             Log::error("Empty Postmark notification field:'From'. Record id $recordId");
         }
-
+        
         if (self::FROM_CALLBACK_EMAIL === $email) {
-            $callbackMailData = (new PostmarkCallbackMailService())->parseEmail($recordId);
             try {
-//                /** @var SchedulerService $service */
-//                $service = app(SchedulerService::class);
-//                $task    = $service->scheduleAsapCallbackTask($user,
-//                    $this->filterEmailBody($this->input['TextBody']),
-//                    'postmark_inbound_mail',
-//                    null,
-//                    SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS
-//                );
+                $postmarkMarkService = (new PostmarkCallbackMailService());
+                $callbackData        = $postmarkMarkService->parsedEmail($recordId);
+                $postmarkMarkService->decideAction(json_decode(json_encode($callbackData), true));
             } catch (\Exception $e) {
                 sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
 

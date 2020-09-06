@@ -9,15 +9,14 @@ namespace App\Services\Postmark;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\Traits\UserHelpers;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class PostmarkCallbackMailService
 {
-    use UserHelpers;
-
+    // Temporary function. Helping development.
     public function createCallbackNotification()
     {
         PostmarkInboundMail::firstOrCreate(
@@ -31,6 +30,36 @@ class PostmarkCallbackMailService
         );
     }
 
+    public function decideAction(array $inboundPostmarkData)
+    {
+        /** @var User $postmarkInboundPatients */
+        $postmarkInboundPatients = User::ofType('participant')
+            ->with('patientInfo', 'enrollee', 'phoneNumbers')
+            ->where(function ($query) use ($inboundPostmarkData) {
+                $query->whereHas('phoneNumbers', function ($phoneNumber) use ($inboundPostmarkData) {
+                    $phoneNumber->where('number', $inboundPostmarkData['Phone']);
+                });
+            });
+
+        if (1 === $postmarkInboundPatients->count()) {
+            $this->managePostmarkInboundNotification($postmarkInboundPatients->first(), $inboundPostmarkData);
+        }
+
+        if ($postmarkInboundPatients->count() > 1) {
+//            Check by name ...
+            $users = $postmarkInboundPatients->get();
+            foreach ($users as $user) {
+                //        - If two patients with same phone -> Match by name and Clr Id
+                //        - If name is SELF match by FROM / Caller id...
+            }
+        }
+
+//        2. Return $user,textBody,phoneNumber
+
+        return [
+        ];
+    }
+
     public function getCallbackMailData()
     {
         //        This is Temporary
@@ -40,11 +69,12 @@ class PostmarkCallbackMailService
 
         return json_encode(
             [
-                'For'      => 'GROUP DISTRIBUTION',
-                'From'     => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
-                'Phone'    => $patient->phoneNumbers->first()->number,
-                'Ptn'      => $patient->display_name,
-                'Msg'      => 'voice',
+                'For'   => 'GROUP DISTRIBUTION',
+                'From'  => 'Ethan Roney',
+                'Phone' => $patient->phoneNumbers->first()->number,
+                'Ptn'   => $patient->display_name,
+                //                'Cancel/Withdraw Reason' => "| PTN EXPIRED  |",
+                'Msg'      => '| REQUEST TO BE REMOVED OFF ALL LISTS  |',
                 'Primary'  => $patient->getBillingProviderName() ?: 'Salah',
                 'Msg ID'   => 'Not relevant',
                 'IS Rec #' => 'Not relevant',
@@ -57,7 +87,7 @@ class PostmarkCallbackMailService
     /**
      * @return array|\Collection|\Illuminate\Support\Collection|void
      */
-    public function parseEmail(int $postmarkRecordId)
+    public function parsedEmail(int $postmarkRecordId)
     {
         $postmarkRecord = PostmarkInboundMail::where('id', $postmarkRecordId)->first();
         if ( ! $postmarkRecord) {
@@ -66,43 +96,41 @@ class PostmarkCallbackMailService
 
             return;
         }
-        $callbackData = json_decode($postmarkRecord->data);
-//        1. Calculate if should create callback or leave it to CA's to decide
 
-//        - Match by Phone
-        $countPostmarkInbound = User::ofType('participant')
-            ->with('patientInfo', 'enrollee', 'phoneNumbers')
-            ->where(function ($query) use ($callbackData) {
-                $query->whereHas('phoneNumbers', function ($phoneNumber) use ($callbackData) {
-                    $phoneNumber->where('number', $callbackData->Phone);
-                });
-            });
+        return json_decode($postmarkRecord->data);
+    }
 
-        if ($countPostmarkInbound->count() > 1) {
-//            Check by name ...
-            $users = $countPostmarkInbound->get();
-            foreach ($users as $user) {
-                //        - If two patients with same phone -> Match by name and Clr Id
-                //        - If name is SELF match by FROM / Caller id...
-            }
-            
+    private function isPatientEnrolled(User $patientUser)
+    {
+        return Patient::ENROLLED === $patientUser->enrollee->status
+            && Patient::ENROLLED === $patientUser->patientInfo->ccm_status;
+    }
+
+    private function isQueuedForEnrollmentAndUnassigned(User $patientUser)
+    {
+        if ( ! $patientUser->enrollee->exists()) {
+            return false;
         }
 
+        return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
+            && is_null($patientUser->enrollee->care_ambassador_user_id);
+    }
 
-//        2. Return $user,textBody,phoneNumber
+    private function managePostmarkInboundNotification(User $patientUser, array $inboundPostmarkData)
+    {
+        if ($this->isPatientEnrolled($patientUser)) {
+            //             Create callback.
+        }
 
-//        CASES:
-//        1. Queued for Enrollment.
-//        2. Non-enrolled Patient Status.
-//        3. Patient wants to Cancel/Withdraw.
-//        3a. Postmark notification has extra "Cancel/Withdraw Reason" field.
-//        3b. If "Cancel/Withdraw Reason" exists, or if the {Msg} section contains any of the following text strings:
-//           Cancel,
-//           CX,
-//           Withdraw
-//           - these patients should be left to be manually handled by Ops.
+        if ($this->isQueuedForEnrollmentAndUnassigned($patientUser)
+            || isset($inboundPostmarkData['Cancel/Withdraw Reason'])
+            || $this->requestsCancellation($inboundPostmarkData['Msg'])) {
+            //             Assign to CA's.
+        }
+    }
 
-        return [
-        ];
+    private function requestsCancellation($message)
+    {
+        return Str::contains(Str::of($message)->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
     }
 }
