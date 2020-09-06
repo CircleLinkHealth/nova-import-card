@@ -69,6 +69,7 @@ class LocationSummaryProcessingTest extends TestCase
             $availableProcessors = $job->getAvailableServiceProcessors();
 
             return $job->getChargeableMonth()->equalTo($startOfMonth)
+                && is_a($job->getProcessor(), Location::class)
                 && ! is_null($bhiProcessor = $availableProcessors->getBhi())
                 && is_a($bhiProcessor, BHI::class)
                 && ! is_null($ccmProcessor = $availableProcessors->getCcm())

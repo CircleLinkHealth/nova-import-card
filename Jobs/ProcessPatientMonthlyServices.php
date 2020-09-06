@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
@@ -70,5 +71,10 @@ class ProcessPatientMonthlyServices implements ShouldQueue
     public function getAvailableServiceProcessors() : AvailableServiceProcessors
     {
         return $this->availableServiceProcessors;
+    }
+    
+    public function getProcessor() : Location
+    {
+        return $this->processor;
     }
 }
