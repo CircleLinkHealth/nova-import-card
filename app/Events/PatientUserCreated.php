@@ -6,13 +6,14 @@
 
 namespace App\Events;
 
+use App\Contracts\PatientEvent;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PatientUserCreated
+class PatientUserCreated implements PatientEvent
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -38,6 +39,11 @@ class PatientUserCreated
     public function broadcastOn()
     {
         return new PrivateChannel('channel-name');
+    }
+
+    public function getPatientId(): int
+    {
+        return $this->user->id;
     }
 
     public function getUser()
