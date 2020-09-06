@@ -55,7 +55,7 @@ class SendTestEmailToSendGrid extends Command
             //        Why send a notification at this point. Postmark email limit locally is 100. Will do in future.
             //        @todo:Do the future
             try {
-                (new PostmarkCallbackMailService())->createCallbackNotification();
+                (new PostmarkCallbackMailService())->createCallbackNotification(); // Rename this after future.
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
             }

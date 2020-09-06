@@ -33,8 +33,6 @@ class PostmarkCallbackMailService
 
     public function getCallbackMailData()
     {
-        $practice = Practice::whereName('demo-clinic')->firstOrFail();
-
         //        This is Temporary
         $patient = User::with('enrollee')->whereHas('enrollee', function ($enrollee) {
             $enrollee->where('status', '=', Patient::ENROLLED);
@@ -45,7 +43,7 @@ class PostmarkCallbackMailService
                 'For'      => 'GROUP DISTRIBUTION',
                 'From'     => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
                 'Phone'    => $patient->phoneNumbers->first()->number,
-                'Ptn'      => 'SELF',
+                'Ptn'      => $patient->display_name,
                 'Msg'      => 'voice',
                 'Primary'  => $patient->getBillingProviderName() ?: 'Salah',
                 'Msg ID'   => 'Not relevant',
@@ -68,11 +66,30 @@ class PostmarkCallbackMailService
 
             return;
         }
-
         $callbackData = json_decode($postmarkRecord->data);
-
 //        1. Calculate if should create callback or leave it to CA's to decide
-//        2. Return $user
+
+//        - Match by Phone
+        $countPostmarkInbound = User::ofType('participant')
+            ->with('patientInfo', 'enrollee', 'phoneNumbers')
+            ->where(function ($query) use ($callbackData) {
+                $query->whereHas('phoneNumbers', function ($phoneNumber) use ($callbackData) {
+                    $phoneNumber->where('number', $callbackData->Phone);
+                });
+            });
+
+        if ($countPostmarkInbound->count() > 1) {
+//            Check by name ...
+            $users = $countPostmarkInbound->get();
+            foreach ($users as $user) {
+                //        - If two patients with same phone -> Match by name and Clr Id
+                //        - If name is SELF match by FROM / Caller id...
+            }
+            
+        }
+
+
+//        2. Return $user,textBody,phoneNumber
 
 //        CASES:
 //        1. Queued for Enrollment.
@@ -86,7 +103,6 @@ class PostmarkCallbackMailService
 //           - these patients should be left to be manually handled by Ops.
 
         return [
-        
         ];
     }
 }

@@ -68,9 +68,20 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
 
         if (self::FROM_CALLBACK_EMAIL === $email) {
             $callbackMailData = (new PostmarkCallbackMailService())->parseEmail($recordId);
+            try {
+//                /** @var SchedulerService $service */
+//                $service = app(SchedulerService::class);
+//                $task    = $service->scheduleAsapCallbackTask($user,
+//                    $this->filterEmailBody($this->input['TextBody']),
+//                    'postmark_inbound_mail',
+//                    null,
+//                    SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS
+//                );
+            } catch (\Exception $e) {
+                sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
 
-//            1. Refactor "scheduleAsapCallbackTask" to accept sub_type param.
-//            2. Call "scheduleAsapCallbackTask($callbackSubType)"
+                return;
+            }
         }
 
         /** @var User $user */
@@ -105,7 +116,13 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
             // 3. create call for nurse with ASAP flag
             /** @var SchedulerService $service */
             $service = app(SchedulerService::class);
-            $task    = $service->scheduleAsapCallbackTask($user, $this->filterEmailBody($this->input['TextBody']), 'postmark_inbound_mail');
+            $task    = $service->scheduleAsapCallbackTask(
+                $user,
+                $this->filterEmailBody($this->input['TextBody']),
+                'postmark_inbound_mail',
+                null,
+                SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS
+            );
         } catch (\Exception $e) {
             sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
 

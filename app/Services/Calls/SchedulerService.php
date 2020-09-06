@@ -379,12 +379,12 @@ class SchedulerService
      *
      * @throws \Exception
      */
-    public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null): Call
+    public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null, string $taskSubType): Call
     {
         // check if there is already a task scheduled
         /** @var Call $existing */
         $existing = Call::where('type', '=', SchedulerService::TASK_TYPE)
-            ->where('sub_type', '=', SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS)
+            ->where('sub_type', '=', $taskSubType)
             ->where('status', '=', Call::SCHEDULED)
             ->where('inbound_cpm_id', '=', $patient->id)
             ->first();
@@ -411,7 +411,7 @@ class SchedulerService
         return Call::create(
             [
                 'type'                  => SchedulerService::TASK_TYPE,
-                'sub_type'              => SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS,
+                'sub_type'              => $taskSubType,
                 'status'                => Call::SCHEDULED,
                 'attempt_note'          => "Email/SMS Response at $nowString: $taskNote",
                 'scheduler'             => $scheduler,
