@@ -10,7 +10,6 @@ use App\Call;
 use App\Http\Controllers\NotesController;
 use App\Note;
 use App\Notifications\NotifyPatientCarePlanApproved;
-use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -18,13 +17,10 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Testing\TestResponse;
 use Tests\CustomerTestCase;
-use Tests\Helpers\MakesSafeRequests;
 
 class PatientLoginTest extends CustomerTestCase
 {
-    use MakesSafeRequests;
     /**
      * @var User
      */
@@ -203,9 +199,9 @@ class PatientLoginTest extends CustomerTestCase
         /** @var NotesController $controller */
         $controller = app(NotesController::class);
 
-        $req = $this->safeRequest(
-            route('patient.note.store', ['patientId' => $patientId]),
+        $resp = $this->call(
             'POST',
+            route('patient.note.store', ['patientId' => $patientId]),
             [
                 'status'      => 'complete',
                 'type'        => 'CCM Welcome Call',
@@ -217,7 +213,6 @@ class PatientLoginTest extends CustomerTestCase
             ]
         );
 
-        $resp = TestResponse::fromBaseResponse($controller->store($req, app(SchedulerService::class), $patientId));
         self::assertNull($resp->exception);
 
         /** @var Note $note */

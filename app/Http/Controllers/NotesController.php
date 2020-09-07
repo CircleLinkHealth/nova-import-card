@@ -15,12 +15,12 @@ use App\Events\NoteFinalSaved;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Http\Requests\CreateNoteRequest;
 use App\Http\Requests\NotesReport;
+use App\Http\Requests\SafeRequest;
 use App\Jobs\SendSingleNotification;
 use App\Note;
 use App\Rules\PatientEmailAttachments;
 use App\Rules\PatientEmailDoesNotContainPhi;
 use App\Rules\ValidatePatientCustomEmail;
-use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\CPM\CpmProblemService;
@@ -349,12 +349,12 @@ class NotesController extends Controller
 
     public function listing(NotesReport $request)
     {
-        if ( ! should_show_notes_report()) {
-            return redirect()->back();
-        }
-
         /** @var User $session_user */
         $session_user = auth()->user();
+
+        if ( ! should_show_notes_report($session_user->program_id)) {
+            return redirect()->back();
+        }
 
         if ($request->has('getNotesFor')) {
             $providers = $this->getProviders($request->getNotesFor);
@@ -677,7 +677,7 @@ class NotesController extends Controller
             $call        = Call::find($task_id);
             if ($call) {
                 if (Call::DONE === $task_status) {
-                    if ('Call Back' === $call->sub_type) {
+                    if (SchedulerService::CALL_BACK_TYPE === $call->sub_type) {
                         if ( ! isset($input['call_status'])) {
                             return redirect()
                                 ->back()
@@ -685,13 +685,10 @@ class NotesController extends Controller
                                 ->withInput();
                         }
 
-                        //'reached' | 'not-reached'
-                        $callStatus = $input['call_status'];
-                        $schedulerService->updateOrCreateCallWithNote($note, $call, $callStatus, $attestedProblems);
+                        $schedulerService->updateOrCreateCallWithNote($note, $call, $input['call_status'], $attestedProblems);
 
-                        //Updates when the patient was successfully contacted last
-                        //use $note->created_at, in case we are editing a note
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
+
                         $this->patientRepo->updateCallLogs(
                             $patient->patientInfo,
                             Call::REACHED === $call->status,
@@ -711,9 +708,9 @@ class NotesController extends Controller
             }
         } else {
             if (Auth::user()->isCareCoach()) {
-                $is_withdrawn = in_array($info->ccm_status, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]);
+                $should_skip_schedule_next_call_page = in_array($info->ccm_status, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL, Patient::UNREACHABLE]);
 
-                if ( ! $is_phone_session && $is_withdrawn) {
+                if ( ! $is_phone_session && $should_skip_schedule_next_call_page) {
                     return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
                         'messages',
                         [
@@ -740,7 +737,7 @@ class NotesController extends Controller
 
                     $info->save();
 
-                    if ($is_withdrawn || $is_saas) {
+                    if ($should_skip_schedule_next_call_page || $is_saas) {
                         return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
                             'messages',
                             ['Successfully Created Note']

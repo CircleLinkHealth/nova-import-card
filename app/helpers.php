@@ -26,12 +26,12 @@ if ( ! function_exists('should_show_notes_report')) {
      *
      * @return bool
      */
-    function should_show_notes_report()
+    function should_show_notes_report(int $practiceId)
     {
         if ( ! isProductionEnv()) {
             return true;
         }
-        if (auth()->check() && 232 == auth()->user()->program_id) {
+        if (232 == $practiceId) {
             return false;
         }
 
@@ -1609,31 +1609,6 @@ if ( ! function_exists('minutesToHhMm')) {
         }
 
         return sprintf('%02d:%02d', $h, $i);
-    }
-}
-
-if ( ! function_exists('sendNbiPatientMrnWarning')) {
-    /**
-     * @param $patientId
-     */
-    function sendNbiPatientMrnWarning($patientId)
-    {
-        $key = "NBIPatientMRNNotFound:$patientId";
-
-        if ( ! \Cache::has($key)) {
-            $handles           = AppConfig::pull('nbi_rwjbarnabas_mrn_slack_watchers', '');
-            $patientUrl        = route('patient.demographics.show', ['patientId' => $patientId]);
-            $patientProfileUrl = "<$patientUrl|this patient>";
-            $novaUrl           = url('/superadmin/resources/supplemental-patient-data-resources');
-            $novaLink          = "<$novaUrl|NBI's supplementary MRN list>";
-            sendSlackMessage(
-                '#nbi_rwjbarnabas',
-                "$handles URGENT! Could not find $patientProfileUrl in $novaLink. All NBI MRNs need to be replaced. Please add the correct MRN for this patient in $novaLink. The system will replace the MRN in patient's chart with the MRN you input.",
-                true
-            );
-
-            \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
-        }
     }
 }
 if ( ! function_exists('sendPatientAttestationValidationFailedWarning')) {

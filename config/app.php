@@ -8,10 +8,9 @@ use App\Providers\CpmArtisanServiceProvider;
 use App\Providers\PrimaryNavComposer;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
+use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
-use CircleLinkHealth\Eligibility\Providers\RouteServiceProvider as EligibilityRouteServiceProvider;
 use CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider;
-use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use Illuminate\Support\Arr;
 
@@ -212,8 +211,6 @@ return [
         App\Providers\TwilioClientServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
 
-        CircleLinkHealth\ApiPatient\Providers\ApiPatientServiceProvider::class,
-
         App\View\Composers\ProviderUITimerComposer::class,
         App\View\Composers\FabComposer::class,
         App\View\Composers\SAAS\Admin\ManageInternalUser::class,
@@ -221,9 +218,8 @@ return [
         PrimaryNavComposer::class,
 
         NurseInvoicesServiceProvider::class,
-        NurseInvoicesDeferredBindingsServiceProvider::class,
+        EligibilityDeferrableServiceProvider::class,
         EligibilityServiceProvider::class,
-        EligibilityRouteServiceProvider::class,
         CardServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,

@@ -264,7 +264,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                         <a href="{{ route('patients.careplan.printlist') }}">Care Plan Print List</a>
                                     </li>
                                 @endif
-                                @if(should_show_notes_report())
+                                @if(auth()->check() && should_show_notes_report(auth()->user()->program_id))
                                     <li>
                                         <a href="{{ route('patient.note.listing') }}">Notes Report</a>
                                     </li>

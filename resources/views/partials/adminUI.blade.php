@@ -61,7 +61,7 @@
     @stack('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css"
           integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous"/>
-    @include('cpm-module-raygun::partials.real-user-monitoring')
+    @include('modules.raygun.partials.real-user-monitoring')
     @include('partials.new-relic-tracking')
 </head>
 <body>

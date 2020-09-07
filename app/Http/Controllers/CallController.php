@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
+use App\Http\Requests\CreateNewCallRequest;
 use App\Http\Resources\Call as CallResource;
 use App\Rules\DateBeforeUsingCarbon;
 use App\Services\Calls\SchedulerService;
@@ -31,10 +32,10 @@ class CallController extends Controller
         return $user->isAdmin();
     }
 
-    public function create(Request $request)
+    public function create(CreateNewCallRequest $request)
     {
         $input = $request->all();
-        $call  = $this->createCall($input);
+        $call  = $this->createCall($request->input());
         if ( ! isset($call['errors'])) {
             return response()
                 ->json($call, 201);
@@ -44,9 +45,8 @@ class CallController extends Controller
             ->json($call, $call['code']);
     }
 
-    public function createMulti(Request $request)
+    public function createMulti(CreateNewCallRequest $request)
     {
-        //input should be an array of calls to be created
         $input = $request->all();
 
         $result = [];
@@ -95,7 +95,7 @@ class CallController extends Controller
      * set to the caller's user id.
      * If called from any other role, outbound_cpm_id must be provided.
      */
-    public function reschedule(Request $request)
+    public function reschedule(CreateNewCallRequest $request)
     {
         $input = $request->only(
             'id',
@@ -258,6 +258,18 @@ class CallController extends Controller
         );
     }
 
+    private function alreadyHasScheduledCall(User $patient): bool
+    {
+        return $patient->inboundCalls()
+            ->where(function ($q) {
+                $q->whereNull('type')
+                    ->orWhere('type', '=', 'call');
+            })
+            ->where('status', '=', 'scheduled')
+            ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
+            ->exists();
+    }
+
     /**
      * Software-Only role cannot change clh nurse to in-house nurse
      * CPM-660.
@@ -304,10 +316,8 @@ class CallController extends Controller
      *
      * @return array|static
      */
-    private function createCall($input)
+    private function createCall(array $input)
     {
-        //our db does not support more than 4 digits for year (?)
-        //-> so DateBeforeUsingCarbon
         $validation = \Validator::make($input, [
             'type'            => 'required',
             'sub_type'        => '',
@@ -337,13 +347,13 @@ class CallController extends Controller
             ];
         }
 
-        //some cases we need to eager load patientInfo
+        $isCallBack       = ! empty($input['sub_type']) && SchedulerService::CALL_BACK_TYPE === $input['sub_type'];
         $isFamilyOverride = ! empty($input['family_override']);
-        $isCallBack       = ! empty($input['sub_type']) && 'Call Back' === $input['sub_type'];
+
         if ($isCallBack || ! $isFamilyOverride) {
-            $patient = User::with('patientInfo')->find($input['inbound_cpm_id']);
+            $patient = User::without(['roles', 'perms'])->with('patientInfo')->find($input['inbound_cpm_id']);
         } else {
-            $patient = User::find($input['inbound_cpm_id']);
+            $patient = User::without(['roles', 'perms'])->find($input['inbound_cpm_id']);
         }
 
         if ( ! $patient) {
@@ -353,44 +363,32 @@ class CallController extends Controller
             ];
         }
 
-        // validate patient doesnt already have a scheduled call
-        if ('call' === $input['type'] && $patient->inboundCalls) {
-            $scheduledCall = $patient->inboundCalls()
-                ->where(function ($q) {
-                    $q->whereNull('type')
-                        ->orWhere('type', '=', 'call');
-                })
-                ->where('status', '=', 'scheduled')
-                ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
-                ->first();
-            if ($scheduledCall) {
-                return [
-                    'errors' => ['patient already has a scheduled call'],
-                    'code'   => 406,
-                ];
-            }
+        if ('call' === $input['type'] && $this->alreadyHasScheduledCall($patient)) {
+            return [
+                'errors' => ['patient already has a scheduled call'],
+                'code'   => 406,
+            ];
         }
 
         if ( ! $isFamilyOverride
-             && $this->hasAlreadyFamilyCallAtDifferentTime(
-                 $patient->patientInfo,
-                 $input['scheduled_date'],
-                 $input['window_start'],
-                 $input['window_end']
-             )) {
+            && $this->hasAlreadyFamilyCallAtDifferentTime(
+                $patient->patientInfo,
+                $input['scheduled_date'],
+                $input['window_start'],
+                $input['window_end']
+            )) {
             return [
                 'errors' => ['patient belongs to family and the family has a call at different time'],
                 'code'   => 418,
             ];
         }
 
-        $call = $this->storeNewCall($patient, $input);
-
-        // CPM-689 Reset unsuccessful call back attempts to 0 if call back task is created
         if ($isCallBack) {
-            $patient->patientInfo->no_call_attempts_since_last_success = 0;
+            $input['outbound_cpm_id'] = $this->scheduler->handleSchedulingCallBack($patient, $input['outbound_cpm_id']);
             $patient->patientInfo->save();
         }
+
+        $call = $this->storeNewCall($patient, $input);
 
         if ('call' === $input['type']) {
             $this->storeNewCallForFamilyMembers($patient, $input);
@@ -485,7 +483,7 @@ class CallController extends Controller
         $call->note_id         = null;
         $call->is_cpm_outbound = 1;
         $call->service         = 'phone';
-        $call->status          = 'scheduled';
+        $call->status          = Call::SCHEDULED;
         $call->scheduler       = auth()->user()->id;
         $call->is_manual       = boolval($input['is_manual']) || $isFamilyOverride;
 

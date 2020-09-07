@@ -6,12 +6,14 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\GenerateNurseInvoice;
 use Circlelinkhealth\InvoicesDownload\InvoicesDownload;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Nova;
 use NovaButton\Button;
 use Titasgailius\SearchRelations\SearchesRelations;
 
@@ -66,7 +68,9 @@ class NurseInvoice extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            (new GenerateNurseInvoice())->canRun(fn () => true)->canSee(fn () => true),
+        ];
     }
 
     /**
@@ -124,9 +128,11 @@ class NurseInvoice extends Resource
                 ->hideWhenCreating()
                 ->readonly(true),
 
-            Date::make('month_year')->sortable(),
+            Date::make('Month', 'month_year')->sortable(),
 
             Button::make('View Invoice')->link(route('nurseinvoices.admin.show', [$this->nurse->user_id, $this->id]), '_blank')->style('primary'),
+
+            Button::make('View Breakdown')->link($this->getInvoiceBreakdownUrl(), '_blank')->style('info-link'),
 
             ID::make()->sortable(),
         ];
@@ -155,5 +161,13 @@ class NurseInvoice extends Resource
     public function lenses(Request $request)
     {
         return [];
+    }
+
+    private function getInvoiceBreakdownUrl()
+    {
+        $novaPath  = Nova::path();
+        $invoiceId = $this->resource->id;
+
+        return "$novaPath/resources/nurse-invoice-breakdown/$invoiceId";
     }
 }

@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
+use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use App\Listeners\AssignPatientToStandByNurse;
 use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Services\Calls\SchedulerService;
@@ -14,7 +14,6 @@ use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\Patient;
-use Illuminate\Support\Facades\Artisan;
 
 class PatientObserver
 {
@@ -47,11 +46,7 @@ class PatientObserver
                     Patient::UNREACHABLE,
                 ]
             )) {
-                Artisan::queue(
-//                    Do we want to run this if survey-only? I dont see any reason
-                    RemoveScheduledCallsForWithdrawnAndPausedPatients::class,
-                    ['patientUserIds' => [$patient->user_id]]
-                );
+                RemoveScheduledCallsForUnenrolledPatients::dispatch([$patient->user_id]);
             }
 
             $this->assignToStandByNurseIfChangedToEnrolled($patient);

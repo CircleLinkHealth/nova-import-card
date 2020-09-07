@@ -7,8 +7,8 @@
 namespace App\Http\Controllers\API;
 
 use App\CareAmbassadorLog;
+use App\Http\Requests\SafeRequest as Request;
 use App\Http\Resources\Enrollable;
-use App\SafeRequest as Request;
 use App\Services\Enrollment\EnrollableCallQueue;
 use App\Services\Enrollment\SuggestEnrollable;
 use App\Services\Enrollment\UpdateEnrollable;
@@ -26,7 +26,6 @@ class EnrollmentCenterController extends ApiController
 
         $enrollable = UpdateEnrollable::update($request->input('enrollable_id'), collect($request->allSafe()));
 
-        //update report for care ambassador:
         $report              = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
         $report->no_enrolled = $report->no_enrolled + 1;
         $report->total_calls = $report->total_calls + 1;

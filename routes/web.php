@@ -14,12 +14,6 @@ Route::post('webhooks/on-sent-fax', [
     'as'   => 'webhook.on-fax-sent',
 ]);
 
-Route::group(['middleware' => ['auth']], function () {
-    Route::get('profiles', 'API\ProfileController@index')->middleware(
-        ['permission:user.read,role.read']
-    );
-});
-
 Route::get('hirefire/{token}/info', 'HireFireController@getQueueSize');
 
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
@@ -418,8 +412,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'practice.patients.without-inbound-calls',
             ])->middleware('permission:patient.read');
         });
-
-        Route::get('profile', 'API\ProfileController@index')->middleware('permission:user.read,role.read');
 
         Route::get('nurses', 'API\NurseController@index')->middleware('permission:nurse.read');
 
@@ -2264,8 +2256,3 @@ Route::post('enrollee-login-viewed', [
     'uses' => 'Enrollment\SelfEnrollmentController@viewFormVisited',
     'as'   => 'enrollee.login.viewed',
 ])->middleware('guest');
-
-//Route::get('get-calendar-data', [
-//    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
-//    'as'   => 'care.center.work.schedule.getCalendarData',
-//]);
