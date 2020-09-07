@@ -63,11 +63,9 @@ class PostmarkCallbackMailService
 
         return json_decode($postmarkRecord->data);
     }
-    
+
     /**
-     * @param Builder $patientsMatchedByPhone
-     * @param array $inboundPostmarkData
-     * @return \Collection|Builder|Model|Collection|object|string|void|null
+     * @return Builder|\Collection|Collection|Model|object|string|void|null
      */
     private function filterPostmarkInboundPatientsByName(Builder $patientsMatchedByPhone, array $inboundPostmarkData)
     {
@@ -81,6 +79,7 @@ class PostmarkCallbackMailService
             $recId = $inboundPostmarkData['id'];
             Log::critical("Cannot match postmark inbound data with our records for record_id $recId");
             sendSlackMessage('#carecoach_ops_alerts', "Could not match inbound mail with a patient from our records:[$recId] in postmark_inbound_mail");
+
             return;
         }
 
@@ -90,21 +89,6 @@ class PostmarkCallbackMailService
         }
 
         return 'n/a';
-    }
-
-    /**
-     * @param $patientUser
-     * @return bool
-     */
-    private function patientIsCallbackEligible($patientUser, array $inboundPostmarkData)
-    {
-        if ( ! $this->isPatientEnrolled($patientUser)
-            || $this->isQueuedForEnrollmentAndUnassigned($patientUser)
-            || $this->requestsCancellation($inboundPostmarkData)) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -140,10 +124,8 @@ class PostmarkCallbackMailService
         return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
             && is_null($patientUser->enrollee->care_ambassador_user_id);
     }
-    
+
     /**
-     * @param Builder $patientsMatchedByPhone
-     * @param array $inboundPostmarkData
      * @return Builder|Model|object|string|void|null
      */
     private function matchByCallerField(Builder $patientsMatchedByPhone, array $inboundPostmarkData)
@@ -190,6 +172,21 @@ class PostmarkCallbackMailService
     private function parsePostmarkInboundField(string $string)
     {
         return preg_split('/(?=[A-Z])/', preg_replace('/[^a-zA-Z]+/', '', $string));
+    }
+
+    /**
+     * @param $patientUser
+     * @return bool
+     */
+    private function patientIsCallbackEligible($patientUser, array $inboundPostmarkData)
+    {
+        if ( ! $this->isPatientEnrolled($patientUser)
+            || $this->isQueuedForEnrollmentAndUnassigned($patientUser)
+            || $this->requestsCancellation($inboundPostmarkData)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

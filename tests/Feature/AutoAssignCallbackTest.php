@@ -45,7 +45,18 @@ class AutoAssignCallbackTest extends TestCase
     public function test_it_creates_callback_if_notification_is_from_callcenterusa()
     {
         $this->setUpTest(Patient::ENROLLED);
-        assert(true);
+
+        $this->assertDatabaseHas('postmark_inbound_mail', [
+            'id' => $this->postmarkRecord->id,
+        ]);
+    
+        $postmarkDataToCompare = $this->getCallbackMailData($this->patient, false);
+        $postmarkData          = collect(json_decode($this->postmarkRecord->data))->toArray();
+        
+        assert($postmarkDataToCompare['Msg'] === $postmarkData['Msg']);
+        assert($postmarkDataToCompare['Clr ID'] === $postmarkData['Clr ID']);
+        assert($postmarkDataToCompare['Ptn'] === $postmarkData['Ptn']);
+        assert($postmarkDataToCompare['Phone'] === $postmarkData['Phone']);
     }
 
     public function test_it_does_not_create_callback_if_patient_is_auto_enroll_but_has_unassigned_care_ambassador()

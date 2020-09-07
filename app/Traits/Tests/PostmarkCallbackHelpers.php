@@ -38,9 +38,7 @@ trait PostmarkCallbackHelpers
             $inboundPostmarkData['Msg']                    = 'Im so happy yohhoo.';
         }
 
-        $x = $inboundPostmarkData;
-
-        return json_encode($x);
+        return $inboundPostmarkData;
     }
 
     private function createEnrolledEnrollee(User $patient, int $careAmbassadorId, string $status)
@@ -60,15 +58,10 @@ trait PostmarkCallbackHelpers
         return $this->createUser($practice->id, 'participant', $status);
     }
 
-    private function setUpPostmarkRecord(User $patient, bool $requestsToWithdraw)
+    private function sendNotification(User $patient, bool $requestsToWithdraw)
     {
-        return  PostmarkInboundMail::create(
-            [
-                'from' => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
-                'data' => $this->getCallbackMailData($patient, $requestsToWithdraw),
-                'body' => 'This is a sexy text body',
-            ]
-        );
+        return '';
+        //        Fake a notification here.
     }
 
     private function setUpTest(string $status, bool $requestToWithdraw = false)
@@ -77,7 +70,7 @@ trait PostmarkCallbackHelpers
         $this->careAmbassador  = $this->createUser($this->practice->id, 'care-ambassador');
         $this->patient         = $this->createEnrolledUser($this->practice, $status);
         $this->patientEnrollee = $this->createEnrolledEnrollee($this->patient, $this->careAmbassador->id, $status);
-        $this->postmarkRecord  = $this->setUpPostmarkRecord($this->patient, $requestToWithdraw);
+        $this->postmarkRecord  = $this->sendNotification($this->patient, $requestToWithdraw);
         $r                     = $this->patient;
         $x                     = 1;
     }
