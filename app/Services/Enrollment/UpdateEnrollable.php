@@ -23,10 +23,6 @@ class UpdateEnrollable extends EnrollableService
 
     public static function update(int $enrollableId, Collection $data)
     {
-        if ( ! $data->has('enrollable_id')) {
-            throw new \Exception('Enrollable ID missing.');
-        }
-
         return (new static($enrollableId, $data))->updateEnrollable($data);
     }
 
