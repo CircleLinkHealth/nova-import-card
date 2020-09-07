@@ -118,7 +118,7 @@ class TimeTrackingAndChargeableServiceTest extends CustomerTestCase
             ]);
 
         self::assertTrue($resp->status() < 400);
-        
+
         /** @var OfflineActivityTimeRequest $request */
         $request = OfflineActivityTimeRequest::first();
         $request->approve();

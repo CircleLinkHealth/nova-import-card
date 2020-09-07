@@ -24,11 +24,9 @@ class RemoveScheduledCallsForUnenrolledPatients implements ShouldQueue
      * @var int[]
      */
     public array $patientUserIds;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param array $patientUserIds
      */
     public function __construct(array $patientUserIds = [])
     {
