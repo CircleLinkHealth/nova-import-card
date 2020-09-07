@@ -12,49 +12,40 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class PostmarkCallbackMailService
 {
-    // Temporary function. Helping development.
-    public function createCallbackNotification()
+    /**
+     * @return array|Builder|\Collection|Collection|Model|object|void|null
+     */
+    public function getMatchedPatient(array $inboundPostmarkData, int $recId)
     {
-        PostmarkInboundMail::firstOrCreate(
-            [
-                'from' => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
-            ],
-            [
-                'data' => $this->getCallbackMailData(),
-                'body' => 'This is a sexy text body',
-            ]
-        );
-    }
+        /** @var Builder $postmarkInboundPatientsMatched */
+        $postmarkInboundPatientsMatched = $this->getPostmarkInboundPatientsByPhone($inboundPostmarkData);
 
-    public function getCallbackMailData()
-    {
-        //        This is Temporary
-        $patient = User::with('enrollee')->whereHas('enrollee', function ($enrollee) {
-            $enrollee->where('status', '=', Patient::ENROLLED);
-        })->firstOrFail();
+        $patientMatch = collect([]);
+$x = $postmarkInboundPatientsMatched->get();
+        if (1 === $postmarkInboundPatientsMatched->count()) {
+            $patientMatch = $this->createCallbackIfEligible($postmarkInboundPatientsMatched->first(), $inboundPostmarkData);
+        }
 
-        $phone = $patient->phoneNumbers->first()->number;
+        if ($postmarkInboundPatientsMatched->count() > 1) {
+            $patientMatch = $this->filterPostmarkInboundPatientsByName($postmarkInboundPatientsMatched, $inboundPostmarkData);
+        }
 
-        return json_encode(
-            [
-                'For'   => 'GROUP DISTRIBUTION',
-                'From'  => 'Ethan Roney',
-                'Phone' => $phone,
-                'Ptn'   => $patient->display_name,
-                //                'Cancel/Withdraw Reason' => "| PTN EXPIRED  |",
-                'Msg'      => '| REQUEST TO BE REMOVED OFF ALL LISTS  |',
-                'Primary'  => $patient->getBillingProviderName() ?: 'Salah',
-                'Msg ID'   => 'Not relevant',
-                'IS Rec #' => 'Not relevant',
-                'Clr ID'   => "$phone $patient->display_name",
-                'Taken'    => 'Not relevant',
-            ]
-        );
+        if ( ! $patientMatch) {
+            Log::warning("Could not find a patient match for record_id:[$recId] in postmark_inbound_mail");
+            return;
+        }
+
+        return [
+            'patient'     => $patientMatch,
+            'phoneNumber' => $inboundPostmarkData['Phone'],
+        ];
     }
 
     /**
@@ -73,49 +64,33 @@ class PostmarkCallbackMailService
         return json_decode($postmarkRecord->data);
     }
 
-    public function shouldCreateCallBack(array $inboundPostmarkData)
-    {
-        /** @var Builder $postmarkInboundPatientsMatched */
-        $postmarkInboundPatientsMatched = $this->getPostmarkInboundPatientsByPhone($inboundPostmarkData);
-
-        if (1 === $postmarkInboundPatientsMatched->count()) {
-            $this->createCallbackIfEligible($postmarkInboundPatientsMatched->first(), $inboundPostmarkData);
-        }
-
-        if ($postmarkInboundPatientsMatched->count() > 1) {
-            $this->filterPostmarkInboundPatientsByName($postmarkInboundPatientsMatched, $inboundPostmarkData);
-        }
-
-//        2. Return $user,textBody,phoneNumber
-
-        return [
-        ];
-    }
-
+    /**
+     * @param $patientUser
+     * @return Collection
+     */
     private function createCallbackIfEligible($patientUser, array $inboundPostmarkData)
     {
         if ( ! $this->isPatientEnrolled($patientUser)
             || $this->isQueuedForEnrollmentAndUnassigned($patientUser)
             || $this->requestsCancellation($inboundPostmarkData)) {
-            //             Assign to CA's.
+            return Collection::make();
         }
 
-        //         Create Callback
+        return $patientUser;
     }
 
     private function filterPostmarkInboundPatientsByName(Builder $patientsMatchedByPhone, array $inboundPostmarkData)
     {
         if ('SELF' === $inboundPostmarkData['Ptn']) {
-            $this->matchByCallerIdAndFromField($patientsMatchedByPhone, $inboundPostmarkData);
+            return $this->matchByCallerField($patientsMatchedByPhone, $inboundPostmarkData);
         }
 
-        //        - Match by name and Clr Id ALSO***
         $usersMatchWithInboundName = $patientsMatchedByPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
 
         if (0 === $usersMatchWithInboundName->count()) {
             $recId = $inboundPostmarkData['id'];
             Log::critical("Cannot match postmark inbound data with our records for record_id $recId");
-            sendSlackMessage('#carecoach_ops_alerts', "Could not matach inbound mail with a patient from our records:[$recId] in postmark_inbound_mail");
+            sendSlackMessage('#carecoach_ops_alerts', "Could not match inbound mail with a patient from our records:[$recId] in postmark_inbound_mail");
 
             return;
         }
@@ -123,6 +98,8 @@ class PostmarkCallbackMailService
         if (1 === $usersMatchWithInboundName->count()) {
             return $usersMatchWithInboundName->first();
         }
+
+        return collect([]);
     }
 
     private function getPostmarkInboundPatientsByPhone(array $inboundPostmarkData)
@@ -150,19 +127,52 @@ class PostmarkCallbackMailService
             && is_null($patientUser->enrollee->care_ambassador_user_id);
     }
 
-    private function matchByCallerIdAndFromField(Builder $patientsMatchedByPhone, array $inboundPostmarkData)
+    private function matchByCallerField(Builder $patientsMatchedByPhone, array $inboundPostmarkData)
     {
-        /** @var User $x */
-        $x = $patientsMatchedByPhone->get();
-//        1. Check if User name is equal to Clr name - NOT Strict comparison
-//        2. Check by phone of CLrId
-//        3. Check by name compared to FROM field (this might be a relative) - - NOT Strict comparison
-    
+//        $callerFieldPhone = $this->parsePhoneFromCallerField($inboundPostmarkData['Clr ID']);
+        $firstName = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID'])['firstName'];
+        $lastName  = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID'])['lastName'];
+
+        $patientsMatchedByCallerFieldName = $patientsMatchedByPhone
+            ->where('first_name', '=', $firstName)
+            ->where('last_name', '=', $lastName);
+
+        if (0 === $patientsMatchedByCallerFieldName->count()) {
+            $recId = $inboundPostmarkData['id'];
+            Log::critical("Couldn't match patient for record_id:$recId in postmark_inbound_mail");
+            sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient match for record_id:[$recId] in postmark_inbound_mail");
+
+            return;
+        }
+
+        if (1 === $patientsMatchedByCallerFieldName->count()) {
+            return $patientsMatchedByCallerFieldName->first();
+        }
+
+        return collect([]);
     }
 
-    private function parsePhoneFromClrId(string $clrId)
+    /**
+     * @return string[]
+     */
+    private function parseNameFromCallerField(string $callerField)
     {
-        return intval(preg_replace('/[^0-9]+/', '', $clrId), 10);
+        $patientNameArray = $this->parsePostmarkInboundField($callerField);
+
+        return [
+            'firstName' => isset($patientNameArray[1]) ? $patientNameArray[1] : '',
+            'lastName'  => isset($patientNameArray[2]) ? $patientNameArray[2] : '',
+        ];
+    }
+
+    private function parsePhoneFromCallerField(string $callerField)
+    {
+        return intval(preg_replace('/[^0-9]+/', '', $callerField), 10);
+    }
+
+    private function parsePostmarkInboundField(string $string)
+    {
+        return preg_split('/(?=[A-Z])/', preg_replace('/[^a-zA-Z]+/', '', $string));
     }
 
     private function requestsCancellation($postmarkData)

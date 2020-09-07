@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Notifications\PostmarkTestCallbackNotification;
 use App\Notifications\SendGridTestNotification;
 use App\Services\Postmark\PostmarkCallbackMailService;
 use CircleLinkHealth\Core\Facades\Notification;
@@ -50,12 +51,11 @@ class SendTestEmailToSendGrid extends Command
         $this->isCallbackMail = (bool) $this->option('callback-mail');
 
         if ($this->isCallbackMail) {
-            //        $anonymous = $this->sendTo();
-            //        $anonymous->notifyNow(new PostmarkTestCallbackNotification());
-            //        Why send a notification at this point. Postmark email limit locally is 100. Will do in future.
-            //        @todo:Do the future
+            
             try {
-                (new PostmarkCallbackMailService())->createCallbackNotification(); // Rename this after future.
+//                (new PostmarkCallbackMailService())->createCallbackNotification(); // Rename this after future.
+                $anonymous = $this->sendToAnonymous();
+                $anonymous->notifyNow(new PostmarkTestCallbackNotification());
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
             }
@@ -72,7 +72,7 @@ class SendTestEmailToSendGrid extends Command
 
     private function sendTestNotification()
     {
-        $anonymous = $this->sendTo();
+        $anonymous = $this->sendToAnonymous();
         $anonymous->notifyNow(new SendGridTestNotification());
         $this->info('Done');
     }
@@ -80,7 +80,7 @@ class SendTestEmailToSendGrid extends Command
     /**
      * @return \Illuminate\Notifications\AnonymousNotifiable
      */
-    private function sendTo()
+    private function sendToAnonymous()
     {
         return Notification::route('mail', $this->email);
     }
