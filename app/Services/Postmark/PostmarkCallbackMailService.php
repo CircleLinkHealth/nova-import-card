@@ -6,7 +6,6 @@
 
 namespace App\Services\Postmark;
 
-use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -28,7 +27,6 @@ class PostmarkCallbackMailService
         $postmarkInboundPatientsMatched = $this->getPostmarkInboundPatientsByPhone($inboundPostmarkData);
 
         $patientMatch = collect([]);
-$x = $postmarkInboundPatientsMatched->get();
         if (1 === $postmarkInboundPatientsMatched->count()) {
             $patientMatch = $this->createCallbackIfEligible($postmarkInboundPatientsMatched->first(), $inboundPostmarkData);
         }
@@ -39,6 +37,7 @@ $x = $postmarkInboundPatientsMatched->get();
 
         if ( ! $patientMatch) {
             Log::warning("Could not find a patient match for record_id:[$recId] in postmark_inbound_mail");
+
             return;
         }
 

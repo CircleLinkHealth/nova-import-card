@@ -51,9 +51,7 @@ class SendTestEmailToSendGrid extends Command
         $this->isCallbackMail = (bool) $this->option('callback-mail');
 
         if ($this->isCallbackMail) {
-            
             try {
-//                (new PostmarkCallbackMailService())->createCallbackNotification(); // Rename this after future.
                 $anonymous = $this->sendToAnonymous();
                 $anonymous->notifyNow(new PostmarkTestCallbackNotification());
             } catch (\Exception $e) {

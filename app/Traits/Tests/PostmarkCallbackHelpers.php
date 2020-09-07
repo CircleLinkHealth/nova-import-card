@@ -8,6 +8,7 @@ namespace App\Traits\Tests;
 
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
@@ -15,24 +16,10 @@ trait PostmarkCallbackHelpers
 {
     public function getCallbackMailData(User $patient, bool $requestsToWithdraw)
     {
-        $phone                  = $patient->phoneNumbers->first()->number;
-        $name                   = $patient->display_name;
-        $requestsToWithdrawText = '';
-        
-        if ($requestsToWithdraw) {
-            $requestsToWithdrawText = 'I want to Cancel';
-        }
-        
-        return json_encode(
-            array_merge($this->constantFields($patient, $phone, $name), [
-                'Cancel/Withdraw Reason' => $requestsToWithdrawText,
-            ])
-        );
-    }
-    
-    private function constantFields(User $patient, $phone, string $name)
-    {
-        return [
+        $phone = $patient->phoneNumbers->first()->number;
+        $name  = $patient->display_name;
+
+        $inboundPostmarkData = [
             'For'      => 'GROUP DISTRIBUTION',
             'From'     => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
             'Phone'    => $phone,
@@ -44,8 +31,18 @@ trait PostmarkCallbackHelpers
             'Clr ID'   => "$phone $patient->display_name",
             'Taken'    => 'Not relevant',
         ];
+
+        if ($requestsToWithdraw) {
+            $requestsToWithdrawText                        = 'I want to Cancel';
+            $inboundPostmarkData['Cancel/Withdraw Reason'] = $requestsToWithdrawText;
+            $inboundPostmarkData['Msg']                    = 'Im so happy yohhoo.';
+        }
+
+        $x = $inboundPostmarkData;
+
+        return json_encode($x);
     }
-    
+
     private function createEnrolledEnrollee(User $patient, int $careAmbassadorId, string $status)
     {
         return Enrollee::firstOrCreate([
@@ -55,31 +52,33 @@ trait PostmarkCallbackHelpers
             'care_ambassador_user_id' => $careAmbassadorId,
         ]);
     }
-    
+
     private function createEnrolledUser(\CircleLinkHealth\Customer\Entities\Practice $practice, string $status)
     {
+        $status = Patient::TO_ENROLL;
+
         return $this->createUser($practice->id, 'participant', $status);
     }
-    
-    private function setUpPostmarkRecord(User $patient, bool $requestsToWithdraw = false)
+
+    private function setUpPostmarkRecord(User $patient, bool $requestsToWithdraw)
     {
-        return  PostmarkInboundMail::firstOrCreate(
+        return  PostmarkInboundMail::create(
             [
                 'from' => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
-            ],
-            [
                 'data' => $this->getCallbackMailData($patient, $requestsToWithdraw),
                 'body' => 'This is a sexy text body',
             ]
         );
     }
-    
-    private function setUpTest(string $status)
+
+    private function setUpTest(string $status, bool $requestToWithdraw = false)
     {
         $this->practice        = $this->setupPractice();
         $this->careAmbassador  = $this->createUser($this->practice->id, 'care-ambassador');
         $this->patient         = $this->createEnrolledUser($this->practice, $status);
         $this->patientEnrollee = $this->createEnrolledEnrollee($this->patient, $this->careAmbassador->id, $status);
-        $this->postmarkRecord  = $this->setUpPostmarkRecord($this->patient);
+        $this->postmarkRecord  = $this->setUpPostmarkRecord($this->patient, $requestToWithdraw);
+        $r                     = $this->patient;
+        $x                     = 1;
     }
 }
