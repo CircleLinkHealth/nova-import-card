@@ -1,4 +1,3 @@
-import userProfile from "../api/user-profile";
 import careTeam from "../api/care-team";
 import practiceLocationsApi from "../api/practice-location";
 import practiceStaffApi from "../api/practice-staff";
@@ -23,16 +22,6 @@ export const clearOpenModal = ({commit}) => {
 
 export const setOpenModal = ({commit}, openModal) => {
     commit('SET_OPEN_MODAL', openModal);
-}
-
-export const getCurrentUser = ({commit}) => {
-    userProfile.getCurrentUser(user => {
-        if (!user) {
-            commit('LOGOUT_USER');
-            return
-        }
-        commit('LOGIN_USER', user);
-    })
 }
 
 export const getPatientCareTeam = ({commit}, patientId) => {

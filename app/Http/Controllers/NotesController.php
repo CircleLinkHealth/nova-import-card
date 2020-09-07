@@ -349,12 +349,12 @@ class NotesController extends Controller
 
     public function listing(NotesReport $request)
     {
-        if ( ! should_show_notes_report()) {
-            return redirect()->back();
-        }
-
         /** @var User $session_user */
         $session_user = auth()->user();
+
+        if ( ! should_show_notes_report($session_user->program_id)) {
+            return redirect()->back();
+        }
 
         if ($request->has('getNotesFor')) {
             $providers = $this->getProviders($request->getNotesFor);
@@ -708,9 +708,9 @@ class NotesController extends Controller
             }
         } else {
             if (Auth::user()->isCareCoach()) {
-                $is_withdrawn = in_array($info->ccm_status, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]);
+                $should_skip_schedule_next_call_page = in_array($info->ccm_status, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL, Patient::UNREACHABLE]);
 
-                if ( ! $is_phone_session && $is_withdrawn) {
+                if ( ! $is_phone_session && $should_skip_schedule_next_call_page) {
                     return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
                         'messages',
                         [
@@ -737,7 +737,7 @@ class NotesController extends Controller
 
                     $info->save();
 
-                    if ($is_withdrawn || $is_saas) {
+                    if ($should_skip_schedule_next_call_page || $is_saas) {
                         return redirect()->route('patient.note.index', ['patientId' => $patientId])->with(
                             'messages',
                             ['Successfully Created Note']

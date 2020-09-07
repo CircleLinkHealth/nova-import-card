@@ -8,6 +8,9 @@ namespace App\Reports\Sales;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 
 abstract class SalesReport
 {
@@ -39,6 +42,8 @@ abstract class SalesReport
             ))->render();
         }
 
+        $this->data['practice_id'] = $this->getPracticeId();
+
         return $this->data;
     }
 
@@ -61,5 +66,22 @@ abstract class SalesReport
         $this->data();
 
         return view($name, ['data' => $this->data]);
+    }
+
+    private function getPracticeId()
+    {
+        if ($this->for instanceof User) {
+            return $this->for->program_id;
+        }
+
+        if ($this->for instanceof Practice) {
+            return $this->for->id;
+        }
+
+        if ($this->for instanceof Location) {
+            return $this->for->practice_id;
+        }
+
+        return null;
     }
 }

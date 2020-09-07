@@ -111,6 +111,7 @@ class CareAmbassadorKPIs
             DB::raw('lv_page_timer.provider_id as ca_user_id'),
             'enrollee_id',
             DB::raw('enrollees.status as enrollee_status'),
+            DB::raw('enrollees.care_ambassador_user_id as last_assigned_care_ambassador_user_id'),
             'start_time',
             'end_time',
             DB::raw('SUM(duration) as total_time')
@@ -176,13 +177,15 @@ class CareAmbassadorKPIs
 
     private function setTotalCalled()
     {
-        $this->totalCalled = $this->enrolleesAssigned->whereIn('enrollee_status', [
-            Enrollee::CONSENTED,
-            Enrollee::ENROLLED,
-            Enrollee::UNREACHABLE,
-            Enrollee::REJECTED,
-            Enrollee::SOFT_REJECTED,
-        ])->count();
+        $this->totalCalled = $this->enrolleesAssigned
+            ->where('last_assigned_care_ambassador_user_id', $this->careAmbassadorUser->id)
+            ->whereIn('enrollee_status', [
+                Enrollee::CONSENTED,
+                Enrollee::ENROLLED,
+                Enrollee::UNREACHABLE,
+                Enrollee::REJECTED,
+                Enrollee::SOFT_REJECTED,
+            ])->count();
 
         return $this;
     }
@@ -190,6 +193,7 @@ class CareAmbassadorKPIs
     private function setTotalEnrolled()
     {
         $this->totalEnrolled = $this->enrolleesAssigned
+            ->where('last_assigned_care_ambassador_user_id', $this->careAmbassadorUser->id)
             ->whereIn('enrollee_status', [Enrollee::CONSENTED, Enrollee::ENROLLED])
             ->count();
 
@@ -224,8 +228,7 @@ class CareAmbassadorKPIs
             'conversion'          => $this->conversion,
             'hourly_rate'         => $this->hourlyRate,
             'per_cost'            => $this->perCost,
-            //for test - to check match with Practice KPIs
-            'total_cost' => $this->hourlyRateIsSet() ? $this->hourlyRate * ($this->totalSeconds / 3600) : 0,
+            'total_cost'          => $this->hourlyRateIsSet() ? $this->hourlyRate * ($this->totalSeconds / 3600) : 0,
         ];
     }
 }
