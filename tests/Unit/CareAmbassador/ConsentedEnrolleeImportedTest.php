@@ -79,6 +79,8 @@ class ConsentedEnrolleeImportedTest extends TestCase
 
     public function test_enrollee_is_imported_according_to_user_role()
     {
+        auth()->login($this->careAmbassadorUser);
+
         Bus::fake();
 
         $participantUser = $this->createUser($this->practice->id, 'participant');
