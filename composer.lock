@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eb985c6b142db33a622e52cf1774e8f0",
+    "content-hash": "f472d22702b7acd353c24ea5a6fec9a2",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -795,12 +795,6 @@
                 "currency",
                 "money"
             ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/brick/money",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-31T14:17:02+00:00"
         },
         {
@@ -897,6 +891,52 @@
             ],
             "description": "PHP wrapper for bluebutton nodejs",
             "time": "2020-09-04T15:10:07+00:00"
+        },
+        {
+            "name": "circlelinkhealth/ccm-billing-module",
+            "version": "dev-ROAD-288-billing-new-schema-models",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
+                "reference": "8a0a4d068682e59c7a311e49efef626b960bcdc9"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\CcmBilling\\Providers\\CcmBillingServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CcmBilling\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Antonis Antoniou",
+                    "email": "antonis@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Constantinos Kakoushias",
+                    "email": "constantinos@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@cirlelinkhealth.com",
+                    "role": "Lead Developer"
+                }
+            ],
+            "time": "2020-09-06T18:25:31+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1128,11 +1168,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.4.9",
+            "version": "dev-billing-shenanigans",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "b6e48014f52c11f88c5029249734a37bf562462b"
+                "reference": "a6cddabb2234318056beea593af831af3c6f2f97"
             },
             "type": "laravel-module",
             "extra": {
@@ -1154,15 +1194,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:04:39+00:00"
+            "time": "2020-09-02T15:47:07+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.3.8",
+            "version": "dev-ROAD-288-billing-new-schema-models",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "6021272e763e4a178a9b75245b540d4e64bd75cf"
+                "reference": "3a5f9ff9aefdcafdb5035fa5b0f87c71f8ce12d7"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1196,15 +1236,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T14:56:31+00:00"
+            "time": "2020-09-02T16:27:01+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.4.4",
+            "version": "dev-billing_revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4196c49450c65039eb91d6f6c077c383af07b7c8"
+                "reference": "0a18e20f442df110da2a836e2f27eeb40490925f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1230,7 +1270,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-05T15:59:35+00:00"
+            "time": "2020-09-07T19:22:19+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1556,11 +1596,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.7.6",
+            "version": "dev-ROAD-288-billing-revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "bf7a399630781f77f7522beb0d82ba732a528fb3"
+                "reference": "1755454fbe1bd19e285ce58b7c6eb30494cfe6e1"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1574,15 +1614,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-01T23:46:29+00:00"
+            "time": "2020-09-02T13:21:03+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.3.4",
+            "version": "dev-ROAD-288-billing-revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "4a16d296f22aa46d0f09ebd79aa0e4a186bab4f3"
+                "reference": "ed1e1f6fec50b9a6a7894954717188f5d9feb9fc"
             },
             "type": "laravel-module",
             "extra": {
@@ -1607,15 +1647,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:01:11+00:00"
+            "time": "2020-08-31T22:22:21+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.2.9",
+            "version": "dev-ROAD-288-billing-new-schema-models",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "3360f7bc546100a3130e38063abf8cd75a12bc0f"
+                "reference": "5b42a945b894f17a1d448437cd285adde9115340"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1624,7 +1664,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\TimeTracking\\Providers\\RouteServiceProvider"
+                        "CircleLinkHealth\\TimeTracking\\Providers\\TimeTrackingServiceProvider"
                     ],
                     "aliases": []
                 }
@@ -1640,7 +1680,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:05:31+00:00"
+            "time": "2020-08-28T05:40:33+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -1842,12 +1882,6 @@
                 }
             ],
             "description": "The laravel charting package",
-            "funding": [
-                {
-                    "url": "https://www.patreon.com/ErikCampobadal",
-                    "type": "patreon"
-                }
-            ],
             "time": "2020-03-03T23:16:14+00:00"
         },
         {
@@ -2569,20 +2603,6 @@
                 "uppercase",
                 "words"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finflector",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-29T15:13:26+00:00"
         },
         {
@@ -2645,20 +2665,6 @@
                 "parser",
                 "php"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Flexer",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-25T17:44:05+00:00"
         },
         {
@@ -2717,16 +2723,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.19",
+            "version": "2.1.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "840d5603eb84cc81a6a0382adac3293e57c1c64c"
+                "reference": "f46887bc48db66c7f38f668eb7d6ae54583617ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/840d5603eb84cc81a6a0382adac3293e57c1c64c",
-                "reference": "840d5603eb84cc81a6a0382adac3293e57c1c64c",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/f46887bc48db66c7f38f668eb7d6ae54583617ff",
+                "reference": "f46887bc48db66c7f38f668eb7d6ae54583617ff",
                 "shasum": ""
             },
             "require": {
@@ -2771,7 +2777,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2020-08-08T21:28:19+00:00"
+            "time": "2020-09-06T13:44:32+00:00"
         },
         {
             "name": "epartment/nova-dependency-container",
@@ -2816,16 +2822,16 @@
         },
         {
             "name": "fico7489/laravel-pivot",
-            "version": "3.0.5",
+            "version": "3.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fico7489/laravel-pivot.git",
-                "reference": "acd3833ff08a204c76c56ca3fa5b506038496580"
+                "reference": "6f70f67c7ad343fdeb02823909d74f675e7cfe4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/acd3833ff08a204c76c56ca3fa5b506038496580",
-                "reference": "acd3833ff08a204c76c56ca3fa5b506038496580",
+                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/6f70f67c7ad343fdeb02823909d74f675e7cfe4b",
+                "reference": "6f70f67c7ad343fdeb02823909d74f675e7cfe4b",
                 "shasum": ""
             },
             "require": {
@@ -2862,7 +2868,7 @@
                 "laravel pivot events",
                 "laravel sync events"
             ],
-            "time": "2020-09-05T14:19:59+00:00"
+            "time": "2020-09-06T12:35:29+00:00"
         },
         {
             "name": "fideloper/proxy",
@@ -3080,12 +3086,6 @@
                 "crossdomain",
                 "laravel"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/barryvdh",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-28T08:47:37+00:00"
         },
         {
@@ -3190,12 +3190,6 @@
                 }
             ],
             "description": "Keeping Your Laravel Forms Awake",
-            "funding": [
-                {
-                    "url": "https://github.com/mikebronner",
-                    "type": "github"
-                }
-            ],
             "time": "2020-03-11T16:58:37+00:00"
         },
         {
@@ -3379,16 +3373,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.144",
+            "version": "v0.145",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "74c5fc850d9ce441c6b3e52af11b986cd11d379a"
+                "reference": "96de5dabadb693f161a31a1a1e018882fa05816e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/74c5fc850d9ce441c6b3e52af11b986cd11d379a",
-                "reference": "74c5fc850d9ce441c6b3e52af11b986cd11d379a",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/96de5dabadb693f161a31a1a1e018882fa05816e",
+                "reference": "96de5dabadb693f161a31a1a1e018882fa05816e",
                 "shasum": ""
             },
             "require": {
@@ -3412,7 +3406,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-08-30T00:24:57+00:00"
+            "time": "2020-09-05T00:24:41+00:00"
         },
         {
             "name": "google/auth",
@@ -4050,16 +4044,6 @@
                 "user agent",
                 "useragent"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/jenssegers",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/jenssegers/agent",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-06-13T08:05:20+00:00"
         },
         {
@@ -4219,6 +4203,12 @@
                 "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
                 "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/laravel-module-installer/zipball/5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "shasum": ""
+            },
             "require": {
                 "composer-plugin-api": "^1.1",
                 "php": "^5.4|7.*"
@@ -4240,6 +4230,9 @@
             "license": [
                 "MIT"
             ],
+            "support": {
+                "source": "https://github.com/CircleLinkHealth/laravel-module-installer/tree/v0.1.5"
+            },
             "time": "2020-01-16T16:56:46+00:00"
         },
         {
@@ -4392,20 +4385,20 @@
         },
         {
             "name": "lab404/laravel-impersonate",
-            "version": "1.7.0",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/404labfr/laravel-impersonate.git",
-                "reference": "c565330d11a0c5bf0279fdbaa6e75c45a3cfe21a"
+                "reference": "1d1f8e6d8778f451554a49f332f63ce29507d278"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/404labfr/laravel-impersonate/zipball/c565330d11a0c5bf0279fdbaa6e75c45a3cfe21a",
-                "reference": "c565330d11a0c5bf0279fdbaa6e75c45a3cfe21a",
+                "url": "https://api.github.com/repos/404labfr/laravel-impersonate/zipball/1d1f8e6d8778f451554a49f332f63ce29507d278",
+                "reference": "1d1f8e6d8778f451554a49f332f63ce29507d278",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": "^6.0 | ^7.0",
+                "laravel/framework": "^6.0 | ^7.0 | ^8.0",
                 "php": ">=7.2"
             },
             "require-dev": {
@@ -4437,8 +4430,8 @@
             ],
             "authors": [
                 {
-                    "name": "404lab",
-                    "email": "web@404lab.fr"
+                    "name": "Marceau Casals",
+                    "email": "marceau@casals.fr"
                 }
             ],
             "description": "Laravel Impersonate is a plugin that allows to you to authenticate as your users.",
@@ -4453,7 +4446,7 @@
                 "plugin",
                 "user"
             ],
-            "time": "2020-06-15T12:14:38+00:00"
+            "time": "2020-09-07T16:04:37+00:00"
         },
         {
             "name": "laminas/laminas-diactoros",
@@ -4606,20 +4599,20 @@
         },
         {
             "name": "laracasts/utilities",
-            "version": "3.1",
+            "version": "3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laracasts/PHP-Vars-To-Js-Transformer.git",
-                "reference": "7c5eb11221de608eef8c70c2d3540c8cd80466e3"
+                "reference": "26b1712166a366e3f8a1fd1452d0c3b76cad612a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laracasts/PHP-Vars-To-Js-Transformer/zipball/7c5eb11221de608eef8c70c2d3540c8cd80466e3",
-                "reference": "7c5eb11221de608eef8c70c2d3540c8cd80466e3",
+                "url": "https://api.github.com/repos/laracasts/PHP-Vars-To-Js-Transformer/zipball/26b1712166a366e3f8a1fd1452d0c3b76cad612a",
+                "reference": "26b1712166a366e3f8a1fd1452d0c3b76cad612a",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "^5.0|^6.0|^7.0",
+                "illuminate/support": "^5.0|^6.0|^7.0|^8.0",
                 "php": ">=5.5.0|>=7.2.5"
             },
             "require-dev": {
@@ -4659,7 +4652,7 @@
                 "javascript",
                 "laravel"
             ],
-            "time": "2020-03-03T16:07:08+00:00"
+            "time": "2020-09-07T13:29:37+00:00"
         },
         {
             "name": "laravel-notification-channels/twilio",
@@ -6053,49 +6046,6 @@
             "time": "2020-07-01T11:33:50+00:00"
         },
         {
-            "name": "lorisleiva/cron-translator",
-            "version": "v0.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/lorisleiva/cron-translator.git",
-                "reference": "784a6f6255a4b5f45da5d89dc6ec631a14d7b011"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/lorisleiva/cron-translator/zipball/784a6f6255a4b5f45da5d89dc6ec631a14d7b011",
-                "reference": "784a6f6255a4b5f45da5d89dc6ec631a14d7b011",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Lorisleiva\\CronTranslator\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Loris LEIVA",
-                    "email": "loris.leiva@gmail.com",
-                    "homepage": "https://lorisleiva.com"
-                }
-            ],
-            "description": "Makes CRON expressions human-readable",
-            "homepage": "https://github.com/lorisleiva/cron-translator",
-            "keywords": [
-                "cron",
-                "expression",
-                "human"
-            ],
-            "time": "2020-03-01T14:44:47+00:00"
-        },
-        {
             "name": "maatwebsite/excel",
             "version": "3.1.19",
             "source": {
@@ -6159,16 +6109,6 @@
                 "laravel",
                 "php",
                 "phpspreadsheet"
-            ],
-            "funding": [
-                {
-                    "url": "https://laravel-excel.com/commercial-support",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/patrickbrouwers",
-                    "type": "github"
-                }
             ],
             "time": "2020-02-28T15:47:45+00:00"
         },
@@ -7149,16 +7089,16 @@
         },
         {
             "name": "opis/closure",
-            "version": "3.5.6",
+            "version": "3.5.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opis/closure.git",
-                "reference": "e8d34df855b0a0549a300cb8cb4db472556e8aa9"
+                "reference": "4531e53afe2fc660403e76fb7644e95998bff7bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opis/closure/zipball/e8d34df855b0a0549a300cb8cb4db472556e8aa9",
-                "reference": "e8d34df855b0a0549a300cb8cb4db472556e8aa9",
+                "url": "https://api.github.com/repos/opis/closure/zipball/4531e53afe2fc660403e76fb7644e95998bff7bf",
+                "reference": "4531e53afe2fc660403e76fb7644e95998bff7bf",
                 "shasum": ""
             },
             "require": {
@@ -7206,7 +7146,7 @@
                 "serialization",
                 "serialize"
             ],
-            "time": "2020-08-11T08:46:50+00:00"
+            "time": "2020-09-06T17:02:15+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -9080,27 +9020,27 @@
         },
         {
             "name": "sentry/sentry-laravel",
-            "version": "1.8.0",
+            "version": "1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-laravel.git",
-                "reference": "912731d2b704fb6a97cef89c7a8b5c367cbf6088"
+                "reference": "8567e70d03081cbc04e35eb3fa7389d06816196e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/912731d2b704fb6a97cef89c7a8b5c367cbf6088",
-                "reference": "912731d2b704fb6a97cef89c7a8b5c367cbf6088",
+                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/8567e70d03081cbc04e35eb3fa7389d06816196e",
+                "reference": "8567e70d03081cbc04e35eb3fa7389d06816196e",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "5.0 - 5.8 | ^6.0 | ^7.0",
+                "illuminate/support": "5.0 - 5.8 | ^6.0 | ^7.0 | ^8.0",
                 "php": "^7.1",
                 "sentry/sdk": "^2.1"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "2.14.*",
-                "laravel/framework": "^6.0",
-                "orchestra/testbench": "^3.9",
+                "friendsofphp/php-cs-fixer": "2.16.*",
+                "laravel/framework": "^7.0",
+                "orchestra/testbench": "^5.0",
                 "phpunit/phpunit": "^8.0"
             },
             "type": "library",
@@ -9155,7 +9095,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2020-06-02T12:39:20+00:00"
+            "time": "2020-09-07T07:16:41+00:00"
         },
         {
             "name": "setasign/fpdf",
@@ -9585,12 +9525,6 @@
                 "media",
                 "spatie"
             ],
-            "funding": [
-                {
-                    "url": "https://spatie.be/open-source/support-us",
-                    "type": "custom"
-                }
-            ],
             "time": "2020-03-09T16:43:55+00:00"
         },
         {
@@ -9641,84 +9575,7 @@
                 "laravel-rate-limited-job-middleware",
                 "spatie"
             ],
-            "funding": [
-                {
-                    "url": "https://www.patreon.com/spatie",
-                    "type": "patreon"
-                }
-            ],
             "time": "2020-05-29T15:32:18+00:00"
-        },
-        {
-            "name": "spatie/laravel-schedule-monitor",
-            "version": "1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/laravel-schedule-monitor.git",
-                "reference": "f6d6675bccdebb86efabb6e3562507fc1196537a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-schedule-monitor/zipball/f6d6675bccdebb86efabb6e3562507fc1196537a",
-                "reference": "f6d6675bccdebb86efabb6e3562507fc1196537a",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/bus": "^7.19",
-                "lorisleiva/cron-translator": "^0.1.1",
-                "php": "^7.4"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.16",
-                "ohdearapp/ohdear-php-sdk": "^3.0",
-                "orchestra/testbench": "^5.0",
-                "phpunit/phpunit": "^9.0",
-                "psalm/plugin-laravel": "^1.2",
-                "spatie/phpunit-snapshot-assertions": "^4.2",
-                "spatie/test-time": "^1.2",
-                "vimeo/psalm": "^3.11"
-            },
-            "suggest": {
-                "ohdearapp/ohdear-php-sdk": "Needed to sync your schedule with Oh Dear"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Spatie\\ScheduleMonitor\\ScheduleMonitorServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\ScheduleMonitor\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Monitor scheduled tasks in a Laravel app",
-            "homepage": "https://github.com/spatie/laravel-schedule-monitor",
-            "keywords": [
-                "laravel-schedule-monitor",
-                "spatie"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-07-14T12:18:30+00:00"
         },
         {
             "name": "spatie/laravel-slack-slash-command",
@@ -9832,12 +9689,6 @@
             "keywords": [
                 "laravel-view-models",
                 "spatie"
-            ],
-            "funding": [
-                {
-                    "url": "https://spatie.be/open-source/support-us",
-                    "type": "custom"
-                }
             ],
             "time": "2020-03-03T09:10:18+00:00"
         },
@@ -9994,12 +9845,6 @@
             "keywords": [
                 "pdf-to-text",
                 "spatie"
-            ],
-            "funding": [
-                {
-                    "url": "https://spatie.be/open-source/support-us",
-                    "type": "custom"
-                }
             ],
             "time": "2020-03-11T17:11:25+00:00"
         },
@@ -12158,20 +12003,6 @@
                 "psr-17",
                 "psr-7"
             ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-06-25T08:21:47+00:00"
         },
         {
@@ -13221,51 +13052,42 @@
                 "jquery",
                 "laravel"
             ],
-            "funding": [
-                {
-                    "url": "https://www.paypal.me/yajra",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/yajra",
-                    "type": "patreon"
-                }
-            ],
             "time": "2020-06-17T03:08:37+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "barryvdh/laravel-debugbar",
-            "version": "v3.4.2",
+            "version": "v3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-debugbar.git",
-                "reference": "91ee8b3acf0d72a4937f4855bd245acbda9910ac"
+                "reference": "1180dca59006aa4e58fed9057322c3861b3d1c23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/91ee8b3acf0d72a4937f4855bd245acbda9910ac",
-                "reference": "91ee8b3acf0d72a4937f4855bd245acbda9910ac",
+                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/1180dca59006aa4e58fed9057322c3861b3d1c23",
+                "reference": "1180dca59006aa4e58fed9057322c3861b3d1c23",
                 "shasum": ""
             },
             "require": {
-                "illuminate/routing": "^5.5|^6|^7",
-                "illuminate/session": "^5.5|^6|^7",
-                "illuminate/support": "^5.5|^6|^7",
+                "illuminate/routing": "^6|^7|^8",
+                "illuminate/session": "^6|^7|^8",
+                "illuminate/support": "^6|^7|^8",
                 "maximebf/debugbar": "^1.16.3",
-                "php": ">=7.0",
-                "symfony/debug": "^3|^4|^5",
-                "symfony/finder": "^3|^4|^5"
+                "php": ">=7.2",
+                "symfony/debug": "^4.3|^5",
+                "symfony/finder": "^4.3|^5"
             },
             "require-dev": {
-                "orchestra/testbench": "^3.5|^4.0|^5.0",
-                "phpunit/phpunit": "^6.0|^7.0|^8.5|^9.0"
+                "orchestra/testbench-dusk": "^4|^5|^6",
+                "phpunit/phpunit": "^8.5|^9.0",
+                "squizlabs/php_codesniffer": "^3.5"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.2-dev"
+                    "dev-master": "3.5-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -13308,46 +13130,47 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-08-30T07:08:17+00:00"
+            "time": "2020-08-30T07:03:31+00:00"
         },
         {
             "name": "barryvdh/laravel-ide-helper",
-            "version": "v2.8.0",
+            "version": "v2.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-ide-helper.git",
-                "reference": "ba95d18ef55c91295250ae8b7bfa73d8fb866b9b"
+                "reference": "affa55122f83575888d4ebf1728992686e8223de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/ba95d18ef55c91295250ae8b7bfa73d8fb866b9b",
-                "reference": "ba95d18ef55c91295250ae8b7bfa73d8fb866b9b",
+                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/affa55122f83575888d4ebf1728992686e8223de",
+                "reference": "affa55122f83575888d4ebf1728992686e8223de",
                 "shasum": ""
             },
             "require": {
                 "barryvdh/reflection-docblock": "^2.0.6",
                 "composer/composer": "^1.6 || ^2.0@dev",
                 "doctrine/dbal": "~2.3",
-                "illuminate/console": "^5.5 || ^6 || ^7",
-                "illuminate/filesystem": "^5.5 || ^6 || ^7",
-                "illuminate/support": "^5.5 || ^6 || ^7",
+                "ext-json": "*",
+                "illuminate/console": "^6 || ^7 || ^8",
+                "illuminate/filesystem": "^6 || ^7 || ^8",
+                "illuminate/support": "^6 || ^7 || ^8",
                 "php": ">=7.2",
                 "phpdocumentor/type-resolver": "^1.1.0"
             },
             "require-dev": {
-                "illuminate/config": "^5.5 || ^6 || ^7",
-                "illuminate/view": "^5.5 || ^6 || ^7",
+                "friendsofphp/php-cs-fixer": "^2",
+                "illuminate/config": "^6 || ^7 || ^8",
+                "illuminate/view": "^6 || ^7 || ^8",
                 "mockery/mockery": "^1.3",
-                "orchestra/testbench": "^3.5 || ^4 || ^5",
-                "phpro/grumphp": "^0.19.0",
+                "orchestra/testbench": "^4 || ^5 || ^6",
+                "phpunit/phpunit": "^8.5 || ^9",
                 "spatie/phpunit-snapshot-assertions": "^1.4 || ^2.2 || ^3",
-                "squizlabs/php_codesniffer": "^3.5",
                 "vimeo/psalm": "^3.12"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.7-dev"
+                    "dev-master": "2.8-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -13388,7 +13211,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-08-10T08:22:48+00:00"
+            "time": "2020-09-07T07:36:37+00:00"
         },
         {
             "name": "barryvdh/reflection-docblock",
@@ -14090,20 +13913,6 @@
                 "constructor",
                 "instantiate"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finstantiator",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-05-29T17:27:14+00:00"
         },
         {
@@ -14698,12 +14507,6 @@
                 "notification",
                 "windows"
             ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/jolicode/jolinotif",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-06-17T08:25:38+00:00"
         },
         {
@@ -15151,34 +14954,20 @@
                 "php",
                 "symfony"
             ],
-            "funding": [
-                {
-                    "url": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66BYDWAT92N6L",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/nunomaduro",
-                    "type": "github"
-                },
-                {
-                    "url": "https://www.patreon.com/nunomaduro",
-                    "type": "patreon"
-                }
-            ],
             "time": "2020-04-04T19:56:08+00:00"
         },
         {
             "name": "nwidart/laravel-modules",
-            "version": "7.2.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "8980876d63096951e067bcaf8649d591d4c7f0da"
+                "reference": "9eb65787a3a143146dad2e430848702491170660"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/8980876d63096951e067bcaf8649d591d4c7f0da",
-                "reference": "8980876d63096951e067bcaf8649d591d4c7f0da",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/9eb65787a3a143146dad2e430848702491170660",
+                "reference": "9eb65787a3a143146dad2e430848702491170660",
                 "shasum": ""
             },
             "require": {
@@ -15242,7 +15031,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-07-30T17:10:13+00:00"
+            "time": "2020-07-31T14:26:15+00:00"
         },
         {
             "name": "orangehill/iseed",
@@ -16119,16 +15908,6 @@
                 "phpunit",
                 "testing",
                 "xunit"
-            ],
-            "funding": [
-                {
-                    "url": "https://phpunit.de/donate.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                }
             ],
             "time": "2020-06-22T07:06:58+00:00"
         },
@@ -17630,7 +17409,15 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/ccm-billing-module": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
+        "circlelinkhealth/sqlviews-module": 20,
+        "circlelinkhealth/timetracking-module": 20,
         "heroku/heroku-buildpack-php": 20,
+        "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
     },
     "prefer-stable": true,
