@@ -351,7 +351,7 @@ class NotesController extends Controller
     {
         /** @var User $session_user */
         $session_user = auth()->user();
-        
+
         if ( ! should_show_notes_report($session_user->program_id)) {
             return redirect()->back();
         }
