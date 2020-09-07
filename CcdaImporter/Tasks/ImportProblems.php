@@ -12,7 +12,7 @@ use App\Importer\Section\Validators\ValidStatus;
 use CircleLinkHealth\ConditionCodeLookup\Console\Commands\LookupCondition;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetProblemInstruction;
-use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
+use CircleLinkHealth\Eligibility\CcdaImporter\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesProblemInfo;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
@@ -24,7 +24,7 @@ use Illuminate\Support\Str;
 class ImportProblems extends BaseCcdaImportTask
 {
     use ConsolidatesProblemInfo;
-    use FiresImportingHooks;
+    
     const IMPORTING_PROBLEM_INSTRUCTIONS = 'IMPORTING_PROBLEM_INSTRUCTIONS';
     /**
      * @var Collection
@@ -183,7 +183,7 @@ class ImportProblems extends BaseCcdaImportTask
 
     private function getInstruction($newProblem)
     {
-        $instructions = $this->fireImportingHook(
+        $instructions = FiresImportingHooks::fireImportingHook(
             self::IMPORTING_PROBLEM_INSTRUCTIONS,
             $this->patient,
             $this->ccda,

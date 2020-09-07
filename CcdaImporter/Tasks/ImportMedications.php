@@ -9,7 +9,7 @@ namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 use App\MedicationGroupsMap;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
-use CircleLinkHealth\Eligibility\CcdaImporter\Traits\FiresImportingHooks;
+use CircleLinkHealth\Eligibility\CcdaImporter\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesMedicationInfo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -17,12 +17,11 @@ use Illuminate\Support\Facades\DB;
 class ImportMedications extends BaseCcdaImportTask
 {
     use ConsolidatesMedicationInfo;
-    use FiresImportingHooks;
     const HOOK_IMPORTING_MEDICATIONS = 'IMPORTING_MEDICATIONS';
 
     protected function import()
     {
-        $this->fireImportingHook(self::HOOK_IMPORTING_MEDICATIONS, $this->patient, $this->ccda, []);
+        FiresImportingHooks::fireImportingHook(self::HOOK_IMPORTING_MEDICATIONS, $this->patient, $this->ccda, []);
 
         $this->patient->loadMissing('ccdMedications');
         $this->patient->loadMissing('cpmMedicationGroups');

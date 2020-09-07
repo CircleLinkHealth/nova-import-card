@@ -7,11 +7,13 @@
 namespace CircleLinkHealth\Eligibility\Rules;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\FiresImportingHooks;
 use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
+use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\SupplementalPatientData;
 use Illuminate\Contracts\Validation\Rule;
 
-class HasValidNbiMrn implements Rule
+class MrnWasReplacedIfPracticeImportingHooks implements Rule
 {
     /**
      * @var User
@@ -48,14 +50,20 @@ class HasValidNbiMrn implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (ReplaceFieldsFromSupplementaryData::NBI_PRACTICE_NAME !== $this->patientUser->primaryPractice->name) {
+        if ( ! FiresImportingHooks::hasListener(
+            ImportPatientInfo::HOOK_IMPORTING_PATIENT_INFO,
+            ReplaceFieldsFromSupplementaryData::IMPORTING_LISTENER_NAME,
+            $this->patientUser->primaryPractice
+        )) {
             return true;
         }
+
         $dataFromPractice = SupplementalPatientData::where('first_name', 'like', "{$this->patientUser->first_name}%")
             ->where('last_name', $this->patientUser->last_name)
             ->where('practice_id', $this->patientUser->primaryPractice->id)
             ->where('dob', $this->patientUser->getBirthDate())
             ->first();
+
         if ( ! $dataFromPractice) {
             return false;
         }
