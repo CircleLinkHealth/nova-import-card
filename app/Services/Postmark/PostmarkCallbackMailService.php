@@ -26,9 +26,10 @@ class PostmarkCallbackMailService
         /** @var Builder $postmarkInboundPatientsMatched */
         $postmarkInboundPatientsMatched = $this->getPostmarkInboundPatientsByPhone($inboundPostmarkData);
 
-        $patientMatch = collect([]);
+        $patientMatch = 'n/a';
         if (1 === $postmarkInboundPatientsMatched->count()) {
-            $patientMatch = $this->createCallbackIfEligible($postmarkInboundPatientsMatched->first(), $inboundPostmarkData);
+            $patientMatch = $this->patientIsCallbackEligible($postmarkInboundPatientsMatched->first(), $inboundPostmarkData)
+            ? $postmarkInboundPatientsMatched->first() : 'n/a';
         }
 
         if ($postmarkInboundPatientsMatched->count() > 1) {
@@ -62,22 +63,12 @@ class PostmarkCallbackMailService
 
         return json_decode($postmarkRecord->data);
     }
-
+    
     /**
-     * @param $patientUser
-     * @return Collection
+     * @param Builder $patientsMatchedByPhone
+     * @param array $inboundPostmarkData
+     * @return \Collection|Builder|Model|Collection|object|string|void|null
      */
-    private function createCallbackIfEligible($patientUser, array $inboundPostmarkData)
-    {
-        if ( ! $this->isPatientEnrolled($patientUser)
-            || $this->isQueuedForEnrollmentAndUnassigned($patientUser)
-            || $this->requestsCancellation($inboundPostmarkData)) {
-            return Collection::make();
-        }
-
-        return $patientUser;
-    }
-
     private function filterPostmarkInboundPatientsByName(Builder $patientsMatchedByPhone, array $inboundPostmarkData)
     {
         if ('SELF' === $inboundPostmarkData['Ptn']) {
@@ -90,17 +81,35 @@ class PostmarkCallbackMailService
             $recId = $inboundPostmarkData['id'];
             Log::critical("Cannot match postmark inbound data with our records for record_id $recId");
             sendSlackMessage('#carecoach_ops_alerts', "Could not match inbound mail with a patient from our records:[$recId] in postmark_inbound_mail");
-
             return;
         }
 
-        if (1 === $usersMatchWithInboundName->count()) {
+        if (1 === $usersMatchWithInboundName->count()
+            && $this->patientIsCallbackEligible($usersMatchWithInboundName->first(), $inboundPostmarkData)) {
             return $usersMatchWithInboundName->first();
         }
 
-        return collect([]);
+        return 'n/a';
     }
 
+    /**
+     * @param $patientUser
+     * @return bool
+     */
+    private function patientIsCallbackEligible($patientUser, array $inboundPostmarkData)
+    {
+        if ( ! $this->isPatientEnrolled($patientUser)
+            || $this->isQueuedForEnrollmentAndUnassigned($patientUser)
+            || $this->requestsCancellation($inboundPostmarkData)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return Builder|User
+     */
     private function getPostmarkInboundPatientsByPhone(array $inboundPostmarkData)
     {
         return User::ofType('participant')
@@ -110,12 +119,18 @@ class PostmarkCallbackMailService
             });
     }
 
+    /**
+     * @return bool
+     */
     private function isPatientEnrolled(User $patientUser)
     {
         return Patient::ENROLLED === $patientUser->enrollee->status
             && Patient::ENROLLED === $patientUser->patientInfo->ccm_status;
     }
 
+    /**
+     * @return bool
+     */
     private function isQueuedForEnrollmentAndUnassigned(User $patientUser)
     {
         if ( ! $patientUser->enrollee->exists()) {
@@ -125,10 +140,14 @@ class PostmarkCallbackMailService
         return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
             && is_null($patientUser->enrollee->care_ambassador_user_id);
     }
-
+    
+    /**
+     * @param Builder $patientsMatchedByPhone
+     * @param array $inboundPostmarkData
+     * @return Builder|Model|object|string|void|null
+     */
     private function matchByCallerField(Builder $patientsMatchedByPhone, array $inboundPostmarkData)
     {
-//        $callerFieldPhone = $this->parsePhoneFromCallerField($inboundPostmarkData['Clr ID']);
         $firstName = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID'])['firstName'];
         $lastName  = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID'])['lastName'];
 
@@ -144,11 +163,12 @@ class PostmarkCallbackMailService
             return;
         }
 
-        if (1 === $patientsMatchedByCallerFieldName->count()) {
+        if (1 === $patientsMatchedByCallerFieldName->count()
+            && $this->patientIsCallbackEligible($patientsMatchedByCallerFieldName->first(), $inboundPostmarkData)) {
             return $patientsMatchedByCallerFieldName->first();
         }
 
-        return collect([]);
+        return 'n/a';
     }
 
     /**
@@ -164,16 +184,18 @@ class PostmarkCallbackMailService
         ];
     }
 
-    private function parsePhoneFromCallerField(string $callerField)
-    {
-        return intval(preg_replace('/[^0-9]+/', '', $callerField), 10);
-    }
-
+    /**
+     * @return array|false|string[]
+     */
     private function parsePostmarkInboundField(string $string)
     {
         return preg_split('/(?=[A-Z])/', preg_replace('/[^a-zA-Z]+/', '', $string));
     }
 
+    /**
+     * @param $postmarkData
+     * @return bool
+     */
     private function requestsCancellation($postmarkData)
     {
         return isset($postmarkData['Cancel/Withdraw Reason'])
