@@ -69,11 +69,10 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         if (self::FROM_CALLBACK_EMAIL === $email) {
             try {
                 $postmarkMarkService = (new PostmarkCallbackMailService());
-                $callbackData        = $postmarkMarkService->parsedEmail($recordId);
-                $postmarkMarkService->decideAction(json_decode(json_encode($callbackData), true));
+                $callbackData        = $postmarkMarkService->parsedEmailData($recordId);
+                $postmarkMarkService->shouldCreateCallBack(json_decode(json_encode($callbackData), true));
             } catch (\Exception $e) {
                 sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
-
                 return;
             }
         }

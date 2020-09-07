@@ -2816,16 +2816,16 @@
         },
         {
             "name": "fico7489/laravel-pivot",
-            "version": "3.0.5",
+            "version": "3.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fico7489/laravel-pivot.git",
-                "reference": "acd3833ff08a204c76c56ca3fa5b506038496580"
+                "reference": "6f70f67c7ad343fdeb02823909d74f675e7cfe4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/acd3833ff08a204c76c56ca3fa5b506038496580",
-                "reference": "acd3833ff08a204c76c56ca3fa5b506038496580",
+                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/6f70f67c7ad343fdeb02823909d74f675e7cfe4b",
+                "reference": "6f70f67c7ad343fdeb02823909d74f675e7cfe4b",
                 "shasum": ""
             },
             "require": {
@@ -2862,7 +2862,7 @@
                 "laravel pivot events",
                 "laravel sync events"
             ],
-            "time": "2020-09-05T14:19:59+00:00"
+            "time": "2020-09-06T12:35:29+00:00"
         },
         {
             "name": "fideloper/proxy",
