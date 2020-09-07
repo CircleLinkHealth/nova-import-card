@@ -14,6 +14,11 @@ abstract class NekatostrasClinicTestCase extends TestCase
 {
     private Practice $practice;
 
+    protected function administrator()
+    {
+        return $this->queryUserOfType('administrator');
+    }
+
     protected function careCoach()
     {
         return $this->queryUserOfType('care-center');
@@ -49,10 +54,5 @@ abstract class NekatostrasClinicTestCase extends TestCase
     protected function randomPatients(int $count)
     {
         return $this->queryUserOfType('participant')->take($count)->get()->all();
-    }
-
-    protected function administrator()
-    {
-        return $this->queryUserOfType('administrator');
     }
 }

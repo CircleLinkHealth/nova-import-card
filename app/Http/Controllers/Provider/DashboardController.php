@@ -7,10 +7,10 @@
 namespace App\Http\Controllers\Provider;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SafeRequest;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
 use App\PracticeEnrollmentTips;
-use App\Http\Requests\SafeRequest;
 use App\Services\OnboardingService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Invite;

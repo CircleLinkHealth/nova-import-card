@@ -10,6 +10,8 @@ use App\Traits\Tests\CareAmbassadorHelpers;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
+use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
 class ConsentedEnrolleeImportedTest extends TestCase
@@ -73,5 +75,32 @@ class ConsentedEnrolleeImportedTest extends TestCase
         $patientContactWindow = PatientContactWindow::wherePatientInfoId($enrollee->user->patientInfo->id)->first();
         $this->assertTrue('09:00:00' === $patientContactWindow->window_time_start);
         $this->assertTrue('18:00:00' === $patientContactWindow->window_time_end);
+    }
+
+    public function test_enrollee_is_imported_according_to_user_role()
+    {
+        auth()->login($this->careAmbassadorUser);
+
+        Bus::fake();
+
+        $participantUser = $this->createUser($this->practice->id, 'participant');
+
+        $participantEnrollee = factory(Enrollee::class)->create([
+            'user_id' => $participantUser->id,
+        ]);
+
+        $this->performActionOnEnrollee($participantEnrollee, Enrollee::CONSENTED);
+
+        Bus::assertNotDispatched(ImportConsentedEnrollees::class);
+
+        $surveyOnlyUser = $this->createUser($this->practice->id, 'survey-only');
+
+        $surveyOnlyEnrollee = factory(Enrollee::class)->create([
+            'user_id' => $surveyOnlyUser->id,
+        ]);
+
+        $this->performActionOnEnrollee($surveyOnlyEnrollee, Enrollee::CONSENTED);
+
+        Bus::assertDispatched(ImportConsentedEnrollees::class);
     }
 }
