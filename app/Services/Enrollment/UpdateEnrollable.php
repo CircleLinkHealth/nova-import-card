@@ -144,8 +144,7 @@ class UpdateEnrollable extends EnrollableService
         $status = $this->data->get('status');
 
         if ( ! $status) {
-            //Log Error?
-            return false;
+            throw new \Exception('Patient update action has not been specified.');
         }
 
         if (Enrollee::CONSENTED === $status) {
