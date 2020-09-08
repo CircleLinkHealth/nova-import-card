@@ -40,6 +40,7 @@ use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
+use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
 use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationPatientServices;
 use CircleLinkHealth\CcmBilling\Listeners\ProcessPatientServices;
@@ -149,6 +150,9 @@ class CpmEventServiceProvider extends ServiceProvider
             ProcessLocationPatientServices::class,
         ],
         PatientProblemsChanged::class => [
+            ProcessPatientServices::class,
+        ],
+        PatientActivityCreated::class => [
             ProcessPatientServices::class,
         ],
     ];
