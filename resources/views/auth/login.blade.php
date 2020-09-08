@@ -7,6 +7,8 @@
               autocomplete="off">
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
+            @samlidp
+
             <div class="col-lg-12 col-sm-10">
                 <p>
                     <label class="col-md-12 control-label" for="email">Email or Username</label>
