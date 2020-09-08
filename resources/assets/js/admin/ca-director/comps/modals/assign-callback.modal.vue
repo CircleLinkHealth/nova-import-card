@@ -255,6 +255,16 @@
                     return;
                 }
 
+                if (!this.callback_note) {
+                    Event.$emit('notifications-assign-callback-modal:create', {
+                        noTimeout: true,
+                        text: 'Please select a leave a note for the Care Ambassador',
+                        type: 'error'
+                    });
+                    this.loading = false;
+                    return;
+                }
+
                 this.axios.post(rootUrl('/admin/ca-director/assign-callback'), {
                     care_ambassador_user_id: this.selectedAmbassador.value,
                     enrollee_id: this.selected.id,
