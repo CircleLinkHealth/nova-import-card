@@ -68,7 +68,7 @@ class CreatePracticeInvoice implements ShouldQueue
     {
         ini_set('max_input_time', 900);
         ini_set('max_execution_time', 900);
-    
+
         $invoices = [];
 
         $user = User::findOrFail($this->requestedByUserId);

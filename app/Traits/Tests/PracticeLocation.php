@@ -15,6 +15,29 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 
 trait PracticeLocation
 {
+    private function createPatients(Location $location, User $provider, int $count)
+    {
+        $patients = collect();
+
+        for ($i = 1; $i <= $count; ++$i) {
+            $patients->push($patient = $this->createUser($location->practice_id, 'participant'));
+            $patient->locations()->sync([$location->id]);
+
+            CarePlan::where('user_id', $patient->id)
+                ->update([
+                    'status' => CarePlan::RN_APPROVED,
+                ]);
+
+            $patient->setBillingProviderId($provider->id);
+        }
+
+        Patient::whereIn('user_id', $patients->pluck('id')->all())->update([
+            'preferred_contact_location' => $location->id,
+        ]);
+
+        return $patients;
+    }
+
     private function firstOrCreateLocation(int $practiceId, string $name)
     {
         $location = Location::whereName($name)->first();
@@ -42,28 +65,5 @@ trait PracticeLocation
             'display_name'    => snakeToSentenceCase($practiceName),
             'saas_account_id' => SaasAccount::whereName('CircleLink Health')->first()->id,
         ]);
-    }
-    
-    private function createPatients(Location $location, User $provider, int $count)
-    {
-        $patients = collect();
-        
-        for ($i = 1; $i <= $count; ++$i) {
-            $patients->push($patient = $this->createUser($location->practice_id, 'participant'));
-            $patient->locations()->sync([$location->id]);
-            
-            CarePlan::where('user_id', $patient->id)
-                ->update([
-                    'status' => CarePlan::RN_APPROVED,
-                ]);
-            
-            $patient->setBillingProviderId($provider->id);
-        }
-        
-        Patient::whereIn('user_id', $patients->pluck('id')->all())->update([
-            'preferred_contact_location' => $location->id,
-        ]);
-        
-        return $patients;
     }
 }
