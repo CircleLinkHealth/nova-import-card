@@ -238,7 +238,7 @@
                 if (!this.selected) {
                     Event.$emit('notifications-assign-callback-modal:create', {
                         noTimeout: true,
-                        text: 'Please select a Enrollee to proceed',
+                        text: 'Please select a Patient to proceed',
                         type: 'error'
                     });
                     this.loading = false;
@@ -258,7 +258,7 @@
                 if (!this.callback_note) {
                     Event.$emit('notifications-assign-callback-modal:create', {
                         noTimeout: true,
-                        text: 'Please select a leave a note for the Care Ambassador',
+                        text: 'Please leave a note for the Care Ambassador',
                         type: 'error'
                     });
                     this.loading = false;
