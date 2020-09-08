@@ -35,12 +35,12 @@
                                :disabled="true"/>
                     </div>
 
-                    <button v-if="shouldShowMakePrimary(number)"
+                    <button v-if="!loading"
                             class="btn btn-success btn-sm update-primaryNumber"
                             type="button"
                             style="display: inline;"
                             @click="updatePrimaryPhone(number.phoneNumberId)"
-                            :disabled="number.isPrimary">
+                            :disabled="number.isPrimary || ! shouldShowMakePrimary(number)">
                         Make primary
                     </button>
 
@@ -467,7 +467,7 @@
      border: #f62056 solid 1px;
     }
     .phone-numbers{
-      float: left;
+        float: left;
     }
 
     .extra-inputs{
@@ -477,8 +477,8 @@
        white-space: nowrap;
     }
     .phone-type{
-        min-width: 80px;
-        max-width: 80px;
+        min-width: 100px;
+        max-width: 100px;
         text-align: center;
         background-color: transparent;
     }
@@ -534,7 +534,7 @@
     }
     .types{
         padding-right: 6px;
-        /*padding-left: 10px;*/
+        padding-left: 10px;
     }
     .phone-number{
         background-color: transparent;

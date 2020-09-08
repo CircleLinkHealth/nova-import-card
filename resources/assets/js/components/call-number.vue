@@ -39,8 +39,12 @@
 
                     <div class="row" style="margin-top: 5px">
                         <div class="col-xs-12">
-                            <label>Please input a 10 digit US Phone Number</label>
-                            <div class="col-xs-9 no-padding">
+                            <div class="col-xs-12">
+                                <label style="margin-left: -13px;">
+                                    Call Other Phone Number
+                                </label>
+                            </div>
+                            <div class="col-xs-9 no-padding" style="max-width: 500px;">
                                 <div class="input-group">
                                     <span class="input-group-addon">+1</span>
 
@@ -60,7 +64,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
+                            <div class="col-xs-3 no-padding" style="padding-left: 37px;">
                                 <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
                                         :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
                                         :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
