@@ -37,33 +37,6 @@
                                          :call-enabled=true>
                     </edit-patient-number>
 
-
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="col-xs-9 no-padding">
-<!--                                <select2 class="form-control" v-model="dropdownNumber"-->
-<!--                                         :settings="{minimumResultsForSearch: -1}"-->
-<!--                                         :disabled="onPhone[selectedPatientNumber]">-->
-<!--                                    <option v-for="(number, key) in patientNumbers" :key="key" :value="number">{{number}}-->
-<!--                                    </option>-->
-<!--                                    <option value="patientUnlisted">Other</option>-->
-<!--                                </select2>-->
-                            </div>
-                            <div class="col-xs-3 no-padding" style="padding-left: 2px; padding-right: 2px"> <!--v-if="dropdownNumber !== 'patientUnlisted'"-->
-<!--                                <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"-->
-<!--                                        :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"-->
-<!--                                        :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">-->
-<!--                                    <i class="fa fa-fw fa-phone"-->
-<!--                                       :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>-->
-<!--                                </button>-->
-<!--                                <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"-->
-<!--                                        @click="toggleMuteMessage(selectedPatientNumber)">-->
-<!--                                    <i class="fa fa-fw"-->
-<!--                                       :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>-->
-<!--                                </button>-->
-                            </div>
-                        </div>
-                    </div>
                     <div class="row" style="margin-top: 5px">
                         <div class="col-xs-12">
                             <label>Please input a 10 digit US Phone Number</label>

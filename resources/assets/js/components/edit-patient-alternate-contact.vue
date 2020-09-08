@@ -71,7 +71,7 @@
                             type="button"
                             @click="deleteAlternateContact(false)"
                             :disabled="loading || ! alternateClearBtnIsVisible">
-                        Clear alternate contact
+                        Delete alternate contact
                     </button>
                 </div>
             </div>
