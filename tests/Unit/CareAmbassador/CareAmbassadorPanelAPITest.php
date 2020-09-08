@@ -6,7 +6,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\EnrollmentDirectorController;
 use App\Services\Enrollment\EnrollableCallQueue;
 use App\Traits\Tests\CareAmbassadorHelpers;
 use Carbon\Carbon;
@@ -96,21 +95,5 @@ class CareAmbassadorPanelAPITest extends TestCase
             ->getOriginalContent();
 
         $this->assertTrue(collect($data)->contains('id', $this->enrollee->id));
-    }
-
-    public function test_default_callback_note_when_admin_assigns_callback()
-    {
-        $testNote = '';
-
-        $this->actingAs($this->admin)->post(route('ca-director.assign-callback', [
-            'care_ambassador_user_id' => $this->careAmbassadorUser->id,
-            'enrollee_id'             => $this->enrollee->id,
-            'callback_date'           => Carbon::now()->toDateString(),
-            'callback_note'           => $testNote,
-        ]))->assertOk();
-
-        $this->enrollee = $this->enrollee->fresh();
-
-        $this->assertEquals($this->enrollee->callback_note, EnrollmentDirectorController::DEFAULT_CALLBACK_NOTE);
     }
 }
