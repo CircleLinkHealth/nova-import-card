@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
 use App\Traits\Tests\PostmarkCallbackHelpers;
 use App\Traits\Tests\PracticeHelpers;
@@ -13,6 +14,8 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Illuminate\Support\Facades\Mail;
+use Notification;
 use Tests\TestCase;
 
 class AutoAssignCallbackTest extends TestCase
@@ -42,27 +45,41 @@ class AutoAssignCallbackTest extends TestCase
      */
     private $practice;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+//        Notification::fake();
+//        Mail::fake();
+
+        $this->practice       = $this->setupPractice();
+        $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
+    }
+
     public function test_it_creates_callback_if_notification_is_from_callcenterusa()
     {
-        $this->setUpTest(Patient::ENROLLED);
-        assert(true);
+        $this->createPatientData(Patient::ENROLLED);
+
+        ProcessPostmarkInboundMailJob::dispatchNow(
+            collect(json_decode($this->postmarkRecord->data))->toArray(),
+            $this->postmarkRecord->id
+        );
     }
 
     public function test_it_does_not_create_callback_if_patient_is_auto_enroll_but_has_unassigned_care_ambassador()
     {
-        $this->setUpTest(Enrollee::QUEUE_AUTO_ENROLLMENT);
+        $this->createPatientData(Enrollee::QUEUE_AUTO_ENROLLMENT);
         assert(true);
     }
 
     public function test_it_does_not_create_callback_if_patient_is_not_enrolled()
     {
-        $this->setUpTest(Patient::PAUSED);
+        $this->createPatientData(Patient::PAUSED);
         assert(true);
     }
 
     public function test_it_does_not_create_callback_if_patient_requested_to_withdraw()
     {
-        $this->setUpTest(Patient::PAUSED, true);
+        $this->createPatientData(Patient::ENROLLED, true);
         assert(true);
     }
 }

@@ -41,7 +41,7 @@ trait PostmarkCallbackHelpers
         return $inboundPostmarkData;
     }
 
-    private function createEnrolledEnrollee(User $patient, int $careAmbassadorId, string $status)
+    private function createEnrolleeWithStatus(User $patient, int $careAmbassadorId, string $status)
     {
         return Enrollee::firstOrCreate([
             'user_id'                 => $patient->id,
@@ -51,35 +51,26 @@ trait PostmarkCallbackHelpers
         ]);
     }
 
-    private function createEnrolledUser(\CircleLinkHealth\Customer\Entities\Practice $practice, string $status)
+    private function createPatientData(string $status, bool $requestToWithdraw = false)
     {
-        $status = Patient::TO_ENROLL;
+        $this->patient         = $this->createUserWithPatientCcmStatus($this->practice, $status);
+        $this->patientEnrollee = $this->createEnrolleeWithStatus($this->patient, $this->careAmbassador->id, $status);
+        $this->postmarkRecord  = $this->createPostmarkCallbackNotification($this->patient, $requestToWithdraw);
+    }
 
+    private function createPostmarkCallbackNotification(User $patient, bool $requestToWithdraw)
+    {
+        return  PostmarkInboundMail::create(
+            [
+                'from' => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
+                'data' => json_encode($this->getCallbackMailData($patient, $requestToWithdraw)),
+                'body' => 'This is it',
+            ]
+        );
+    }
+
+    private function createUserWithPatientCcmStatus(\CircleLinkHealth\Customer\Entities\Practice $practice, string $status)
+    {
         return $this->createUser($practice->id, 'participant', $status);
-    }
-
-    private function sendPostmarkNotification(User $patient, bool $requestsToWithdraw)
-    {
-//        return  PostmarkInboundMail::create(
-//            [
-//                'from' => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
-//                'data' => json_encode($this->getCallbackMailData($patient, $requestsToWithdraw)),
-//                'body' => 'This is a sexy text body',
-//            ]
-//        );
-
-//        Fake a notification here.
-//        The fetch and return it from DB.
-
-        return 'lokos';
-    }
-
-    private function setUpTest(string $status, bool $requestToWithdraw = false)
-    {
-        $this->practice        = $this->setupPractice();
-        $this->careAmbassador  = $this->createUser($this->practice->id, 'care-ambassador');
-        $this->patient         = $this->createEnrolledUser($this->practice, $status);
-        $this->patientEnrollee = $this->createEnrolledEnrollee($this->patient, $this->careAmbassador->id, $status);
-        $this->postmarkRecord  = $this->sendPostmarkNotification($this->patient, $requestToWithdraw);
     }
 }

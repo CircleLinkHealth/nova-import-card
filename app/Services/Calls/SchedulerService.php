@@ -371,12 +371,15 @@ class SchedulerService
             ->where('status', '=', 'scheduled')
             ->delete();
     }
-
+    
     /**
+     * @param User $patient
      * @param $taskNote
      * @param $scheduler
      * @param null $phoneNumber
      *
+     * @param string $taskSubType
+     * @return Call
      * @throws \Exception
      */
     public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null, string $taskSubType): Call

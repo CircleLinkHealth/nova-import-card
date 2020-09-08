@@ -42,14 +42,11 @@ class PostmarkCallbackMailService
             return;
         }
 
-        return [
-            'patient'     => $patientMatch,
-            'phoneNumber' => $inboundPostmarkData['Phone'],
-        ];
+        return  $patientMatch;
     }
 
     /**
-     * @return mixed|void
+     * @return array|void
      */
     public function parsedEmailData(int $postmarkRecordId)
     {
@@ -61,7 +58,7 @@ class PostmarkCallbackMailService
             return;
         }
 
-        return json_decode($postmarkRecord->data);
+        return collect(json_decode($postmarkRecord->data))->toArray();
     }
 
     /**
