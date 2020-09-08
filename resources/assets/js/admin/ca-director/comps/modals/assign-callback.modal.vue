@@ -107,7 +107,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-12 padding-top-10">
                             <notifications ref="notificationsComponent" name="assign-callback-modal"></notifications>
                         </div>
                     </div>
@@ -330,5 +330,9 @@
 
     .modal-container {
         overflow-y: inherit !important;
+    }
+
+    .padding-top-10 {
+        padding-top: 10px;
     }
 </style>
