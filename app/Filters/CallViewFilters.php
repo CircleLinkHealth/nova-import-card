@@ -23,8 +23,12 @@ class CallViewFilters extends QueryFilters
         parent::__construct($request);
     }
 
-    public function billing_provider($billingProvider)
+    public function billing_provider($billingProvider = null)
     {
+        if ( ! $billingProvider) {
+            return $this->builder;
+        }
+
         return $this->builder->where('billing_provider', 'like', '%'.$billingProvider.'%');
     }
 
@@ -43,33 +47,57 @@ class CallViewFilters extends QueryFilters
         return ['software_only_user' => ! auth()->user()->isAdmin()];
     }
 
-    public function last_call($lastCall)
+    public function last_call($lastCall = null)
     {
+        if ( ! $lastCall) {
+            return $this->builder;
+        }
+
         return $this->builder->where('last_call', 'like', '%'.$lastCall.'%');
     }
 
-    public function nurse($nurse)
+    public function nurse($nurse = null)
     {
+        if ( ! $nurse) {
+            return $this->builder;
+        }
+
         return $this->builder->where('nurse', 'like', '%'.$nurse.'%');
     }
 
-    public function patient($name)
+    public function patient($name = null)
     {
+        if ( ! $name) {
+            return $this->builder;
+        }
+
         return $this->builder->where('patient', 'like', '%'.$name.'%');
     }
 
-    public function patient_id($id)
+    public function patient_id($id = null)
     {
+        if ( ! $id) {
+            return $this->builder;
+        }
+
         return $this->builder->where('patient_id', '=', $id);
     }
 
-    public function practice($practice)
+    public function practice($practice = null)
     {
+        if ( ! $practice) {
+            return $this->builder;
+        }
+
         return $this->builder->where('practice', 'like', '%'.$practice.'%');
     }
 
-    public function preferred_contact_language($value)
+    public function preferred_contact_language($value = null)
     {
+        if ( ! $value) {
+            return $this->builder;
+        }
+
         return $this->builder->where('preferred_contact_language', '=', $value);
     }
 
@@ -78,12 +106,16 @@ class CallViewFilters extends QueryFilters
         return $this->builder->where('status', '=', 'scheduled');
     }
 
-    public function scheduled_date($date)
+    public function scheduled_date($date = null)
     {
+        if ( ! $date) {
+            return $this->builder;
+        }
+
         return $this->builder->where('scheduled_date', 'like', '%'.$date.'%');
     }
 
-    public function software_only_user($value)
+    public function software_only_user($value = null)
     {
         if ( ! $value) {
             return $this->builder;
@@ -152,13 +184,21 @@ class CallViewFilters extends QueryFilters
         return $this->builder->orderBy('state', $term);
     }
 
-    public function state($state)
+    public function state($state = null)
     {
+        if ( ! $state) {
+            return $this->builder;
+        }
+
         return $this->builder->where('state', 'like', '%'.$state.'%');
     }
 
-    public function type($type)
+    public function type($type = null)
     {
+        if ( ! $type) {
+            return $this->builder;
+        }
+
         return $this->builder->where('type', 'like', '%'.$type.'%');
     }
 

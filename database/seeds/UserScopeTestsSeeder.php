@@ -4,13 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Traits\Tests\PracticeLocation as PracticeLocationHelpers;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Database\Seeder;
-use Tests\Helpers\Users\PracticeLocation as PracticeLocationHelpers;
 
 class UserScopeTestsSeeder extends Seeder
 {

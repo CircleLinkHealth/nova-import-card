@@ -25,7 +25,7 @@ class CreateNoteForPatient
     public static function cacheTags(int $patientId)
     {
         return [
-            "nurse_patient_associations_for_patient_$patientId"
+            "nurse_patient_associations_for_patient_$patientId",
         ];
     }
 

@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\GenerateNurseInvoice;
 use Circlelinkhealth\InvoicesDownload\InvoicesDownload;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
@@ -67,7 +68,9 @@ class NurseInvoice extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            (new GenerateNurseInvoice())->canRun(fn () => true)->canSee(fn () => true),
+        ];
     }
 
     /**
