@@ -91,13 +91,11 @@ $hasAwv              = in_array('awv', $patientListDropdown);
 
         @if($showPatientsPendingApprovalBox)
             <div class="container-fluid">
-                @if($seesAutoApprovalButton)
                     <div class="row">
                         <div class="col-lg-11">
-                            {{link_to_action('Patient\PatientController@autoQAApprove', 'Auto QA', ['userId' => auth()->id()], ['class' => 'btn btn-success pull-right'])}}
+                            {{link_to_action('\App\Http\Controllers\Patient\PatientController@autoQAApprove', 'Auto QA', ['userId' => auth()->id()], ['class' => 'btn btn-success pull-right'])}}
                         </div>
                     </div>
-                @endif
 
                 @include('partials.provider.patients-pending-approval')
             </div>
