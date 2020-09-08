@@ -6,27 +6,11 @@
 
 namespace CircleLinkHealth\CpmMigrations\Providers;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class CpmMigrationsServiceProvider extends ServiceProvider
+class CpmMigrationsServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
-     * Boot the application events.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-    }
-
     /**
      * Get the services provided by the provider.
      *
@@ -36,7 +20,7 @@ class CpmMigrationsServiceProvider extends ServiceProvider
     {
         return [];
     }
-
+    
     /**
      * Register the service provider.
      *
@@ -44,5 +28,6 @@ class CpmMigrationsServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
     }
 }
