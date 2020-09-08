@@ -38,7 +38,8 @@ class CallsViewNurses extends BaseSqlView
             u8.billing_provider,
             c.attempt_note,
             u2.general_comment,
-            u2.ccm_status
+            u2.ccm_status,
+            patients_nurses.nurse_user_id as patient_assigned_nurse_id
         FROM
             calls c
             join (select u.id as patient_id, u.display_name as patient, u.timezone from users u where u.deleted_at is null) as u1 on c.inbound_cpm_id = u1.patient_id
@@ -47,7 +48,7 @@ class CallsViewNurses extends BaseSqlView
 						from patient_info pi
 						left join patient_contact_window pcw on pi.id = pcw.patient_info_id
 						where pi.ccm_status in ('enrolled', 'paused')
-						group by pi.user_id) as u2 on c.inbound_cpm_id = u2.patient_id
+						group by pi.user_id, pi.ccm_status, pi.general_comment) as u2 on c.inbound_cpm_id = u2.patient_id
 
             left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, pms.no_of_calls from patient_monthly_summaries pms where month_year = DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) u5 on c.inbound_cpm_id = u5.patient_id
 
@@ -55,6 +56,9 @@ class CallsViewNurses extends BaseSqlView
 			
             left join (select pbp.user_id as patient_id, u.display_name as billing_provider from users u join (select pctm.user_id, pctm.member_user_id from users u
                                                                                                                 left join patient_care_team_members pctm on u.id = pctm.user_id where pctm.type = 'billing_provider') pbp on pbp.member_user_id = u.id) u8 on c.inbound_cpm_id = u8.patient_id
+                                                                                                         
+            left join patients_nurses on c.inbound_cpm_id = patients_nurses.patient_user_id
+
         WHERE
             # calls need to be scheduled and in the future
             (c.type = 'call' and c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')))
@@ -62,7 +66,6 @@ class CallsViewNurses extends BaseSqlView
             # tasks can be in the past
             c.type != 'call'
       ");
-
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
         // because we store scheduled_date in New York time (EST), but we the timezone in database can be anything (UTC or local)
 
