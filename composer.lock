@@ -512,16 +512,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.152.0",
+            "version": "3.152.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c5b43109dc0ecf77c4a18a8504ca3023f705b306"
+                "reference": "65e10d45a3ecfdc112b7efe9f839343179a86879"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c5b43109dc0ecf77c4a18a8504ca3023f705b306",
-                "reference": "c5b43109dc0ecf77c4a18a8504ca3023f705b306",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/65e10d45a3ecfdc112b7efe9f839343179a86879",
+                "reference": "65e10d45a3ecfdc112b7efe9f839343179a86879",
                 "shasum": ""
             },
             "require": {
@@ -593,7 +593,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-09-04T18:16:32+00:00"
+            "time": "2020-09-08T18:13:04+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1178,7 +1178,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "a6cddabb2234318056beea593af831af3c6f2f97"
+                "reference": "129a742ee23e3563fa40a905490a3f25ac895c3a"
             },
             "type": "laravel-module",
             "extra": {
@@ -1200,7 +1200,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-02T15:47:07+00:00"
+            "time": "2020-09-08T19:04:59+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1208,7 +1208,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "3a5f9ff9aefdcafdb5035fa5b0f87c71f8ce12d7"
+                "reference": "d039a1b4a71f47ed7a4fd6fa36a034c2a4883919"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1242,7 +1242,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-02T16:27:01+00:00"
+            "time": "2020-09-08T19:06:54+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1606,7 +1606,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "1755454fbe1bd19e285ce58b7c6eb30494cfe6e1"
+                "reference": "04378b6fd6287b538dc5be901cf1b4a1524d267d"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1620,7 +1620,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-02T13:21:03+00:00"
+            "time": "2020-09-08T19:07:36+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1628,7 +1628,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "ed1e1f6fec50b9a6a7894954717188f5d9feb9fc"
+                "reference": "421d0917aaccbf339c306ef6d814ee109113fbc9"
             },
             "type": "laravel-module",
             "extra": {
@@ -1653,7 +1653,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-31T22:22:21+00:00"
+            "time": "2020-09-08T19:07:55+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
@@ -1661,7 +1661,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "5b42a945b894f17a1d448437cd285adde9115340"
+                "reference": "f92f87e1d1b03dc71d70b6c5f370f23e926e513c"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1670,7 +1670,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\TimeTracking\\Providers\\TimeTrackingServiceProvider"
+                        "CircleLinkHealth\\TimeTracking\\Providers\\RouteServiceProvider"
                     ],
                     "aliases": []
                 }
@@ -1686,7 +1686,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-08-28T05:40:33+00:00"
+            "time": "2020-09-08T19:09:11+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -8016,22 +8016,22 @@
         },
         {
             "name": "propaganistas/laravel-phone",
-            "version": "4.2.4",
+            "version": "4.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Propaganistas/Laravel-Phone.git",
-                "reference": "e207b24c3d51623aaceda784c6ba0a7b9d9de2f9"
+                "reference": "090a5617cfd5a565df359d3b8bd680b0f87ad99e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Propaganistas/Laravel-Phone/zipball/e207b24c3d51623aaceda784c6ba0a7b9d9de2f9",
-                "reference": "e207b24c3d51623aaceda784c6ba0a7b9d9de2f9",
+                "url": "https://api.github.com/repos/Propaganistas/Laravel-Phone/zipball/090a5617cfd5a565df359d3b8bd680b0f87ad99e",
+                "reference": "090a5617cfd5a565df359d3b8bd680b0f87ad99e",
                 "shasum": ""
             },
             "require": {
                 "giggsey/libphonenumber-for-php": "^7.0|^8.0",
-                "illuminate/support": "^6.0|^7.0",
-                "illuminate/validation": "^6.0|^7.0",
+                "illuminate/support": "^6.0|^7.0|^8.0",
+                "illuminate/validation": "^6.0|^7.0|^8.0",
                 "league/iso3166": "^2.0",
                 "php": ">=7.1"
             },
@@ -8073,7 +8073,7 @@
                 "phone",
                 "validation"
             ],
-            "time": "2020-06-22T06:43:41+00:00"
+            "time": "2020-09-08T18:43:48+00:00"
         },
         {
             "name": "psr/cache",
@@ -9535,25 +9535,25 @@
         },
         {
             "name": "spatie/laravel-rate-limited-job-middleware",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-rate-limited-job-middleware.git",
-                "reference": "8c882dbbe78064d21597a6d15e23b9a470f71a77"
+                "reference": "0310489f108b7f805776239d0b330209a444996c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-rate-limited-job-middleware/zipball/8c882dbbe78064d21597a6d15e23b9a470f71a77",
-                "reference": "8c882dbbe78064d21597a6d15e23b9a470f71a77",
+                "url": "https://api.github.com/repos/spatie/laravel-rate-limited-job-middleware/zipball/0310489f108b7f805776239d0b330209a444996c",
+                "reference": "0310489f108b7f805776239d0b330209a444996c",
                 "shasum": ""
             },
             "require": {
-                "illuminate/redis": "^6.0|^7.0",
+                "illuminate/redis": "^6.0|^7.0|^8.0",
                 "php": "^7.3"
             },
             "require-dev": {
                 "mockery/mockery": "1.3.1",
-                "orchestra/testbench": "^4.0|^5.0",
+                "orchestra/testbench": "^4.0|^5.0|^6.0",
                 "phpunit/phpunit": "^8.2|^9.0",
                 "symfony/var-dumper": "^4.3|^5.0"
             },
@@ -9581,7 +9581,13 @@
                 "laravel-rate-limited-job-middleware",
                 "spatie"
             ],
-            "time": "2020-05-29T15:32:18+00:00"
+            "funding": [
+                {
+                    "url": "https://www.patreon.com/spatie",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2020-09-08T17:25:19+00:00"
         },
         {
             "name": "spatie/laravel-slack-slash-command",
