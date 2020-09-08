@@ -97,13 +97,6 @@
                         </button>
                     </div>
                 </div>
-
-                <span v-if="phoneTypeIsRequired()"
-                      class="help-block"
-                      title="Missing alternate phone number type"
-                      style="color: #ff6565; font-size: 15px; cursor: pointer">
-               Please choose phone number type
-            </span>
             </div>
 
             <a v-if="allowAddingNewNumber"
@@ -120,6 +113,15 @@
                 </edit-patient-alternate-contact>
             </div>
         </div>
+
+        <div v-if="phoneTypeIsRequired()">
+                    <span class="help-block"
+                          title="Missing alternate phone number type"
+                          style="color: #ff6565; font-size: 15px; cursor: pointer">
+               Please choose phone number type
+            </span>
+        </div>
+
     </div>
 
 </template>
@@ -477,8 +479,8 @@
        white-space: nowrap;
     }
     .phone-type{
-        min-width: 100px;
-        max-width: 100px;
+        min-width:  90px;
+        max-width:  90px;
         text-align: center;
         background-color: transparent;
     }
@@ -538,8 +540,8 @@
     }
     .phone-number{
         background-color: transparent;
-        max-width: 140px;
-        min-width: 140px;
+        max-width: 110px;
+        min-width: 110px;
     }
 
     .update-primaryNumber{
@@ -557,5 +559,4 @@
         margin-top: 30px;
         margin-bottom: -15px;
     }
-
 </style>
