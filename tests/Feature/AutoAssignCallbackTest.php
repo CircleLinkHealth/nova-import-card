@@ -8,6 +8,7 @@ namespace Tests\Feature;
 
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
+use App\Services\Calls\SchedulerService;
 use App\Traits\Tests\PostmarkCallbackHelpers;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\UserHelpers;
@@ -55,7 +56,7 @@ class AutoAssignCallbackTest extends TestCase
         $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
     }
 
-    public function test_it_creates_callback_if_notification_is_from_callcenterusa()
+    public function test_creates_callback_task_if_notification_is_from_callcenterusa()
     {
         $this->createPatientData(Patient::ENROLLED);
 
@@ -63,9 +64,15 @@ class AutoAssignCallbackTest extends TestCase
             collect(json_decode($this->postmarkRecord->data))->toArray(),
             $this->postmarkRecord->id
         );
+
+//        Also Create a nurse to assign the patient to.
+        $this->assertDatabaseHas('calls', [
+            'inbound_cpm_id' => $this->patient->id,
+            'sub_type'       => SchedulerService::CALL_BACK_TYPE,
+        ]);
     }
 
-    public function test_it_does_not_create_callback_if_patient_is_auto_enroll_but_has_unassigned_care_ambassador()
+    public function test_does_not_create_callback_if_patient_is_auto_enroll_and_has_unassigned_care_ambassador()
     {
         $this->createPatientData(Enrollee::QUEUE_AUTO_ENROLLMENT);
         assert(true);
@@ -74,7 +81,12 @@ class AutoAssignCallbackTest extends TestCase
     public function test_it_does_not_create_callback_if_patient_is_not_enrolled()
     {
         $this->createPatientData(Patient::PAUSED);
-        assert(true);
+        ProcessPostmarkInboundMailJob::dispatchNow(
+            collect(json_decode($this->postmarkRecord->data))->toArray(),
+            $this->postmarkRecord->id
+        );
+        
+//         Fix the n/a's first
     }
 
     public function test_it_does_not_create_callback_if_patient_requested_to_withdraw()
