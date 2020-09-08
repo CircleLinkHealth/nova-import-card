@@ -188,7 +188,7 @@ class ItemizedBillablePatientsReport
             ->has('billingProvider.user')
             ->has('patientInfo.location')
             ->chunkById(
-                100,
+                500,
                 function ($summaries) use (&$data) {
                     $summaries->each(
                         function (User $patientUser) use (&$data) {

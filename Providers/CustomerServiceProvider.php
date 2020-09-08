@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyInstanceStatusTable;
 use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
 use CircleLinkHealth\SqlViews\Providers\SqlViewsServiceProvider;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
@@ -18,19 +19,29 @@ use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 
-class CustomerServiceProvider extends ServiceProvider
+class CustomerServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
+     * Get the services provided by the provider.
      *
-     * @var bool
+     * @return array
      */
-    protected $defer = false;
+    public function provides()
+    {
+        return [
+            CreateRolesPermissionsMigration::class,
+            CreateOrReplacePatientAWVSurveyInstanceStatusTable::class,
+            CreateLocationsFromAthenaApi::class,
+            HasDatabaseNotifications::class,
+            Notifiable::class,
+            DatabaseNotification::class,
+        ];
+    }
 
     /**
-     * Boot the application events.
+     * Register the service provider.
      */
-    public function boot()
+    public function register()
     {
         $this->registerTranslations();
         $this->registerConfig();
@@ -44,23 +55,7 @@ class CustomerServiceProvider extends ServiceProvider
                 \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
             ]);
         }
-    }
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [];
-    }
-
-    /**
-     * Register the service provider.
-     */
-    public function register()
-    {
         $this->app->register(RouteServiceProvider::class);
         $this->app->bind(DatabaseNotification::class, \CircleLinkHealth\Core\Entities\DatabaseNotification::class);
         $this->app->bind(
