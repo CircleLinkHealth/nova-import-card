@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
+use App\Contracts\HasUniqueIdentifierForDebounce;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
 use Illuminate\Bus\Queueable;
@@ -14,7 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessSinglePatientMonthlyServices implements ShouldQueue
+class ProcessSinglePatientMonthlyServices implements ShouldQueue, HasUniqueIdentifierForDebounce
 {
     use ApprovablePatientUsersQuery;
     use Dispatchable;
@@ -57,6 +58,11 @@ class ProcessSinglePatientMonthlyServices implements ShouldQueue
             $patient->patientInfo->location->availableServiceProcessors($this->month),
             $this->month
         );
+    }
+    
+    public function getUniqueIdentifier(): string
+    {
+        return (string)$this->getPatientId().$this->getMonth()->toDateString();
     }
     
     public function getPatientId():int{

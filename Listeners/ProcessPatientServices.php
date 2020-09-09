@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Listeners;
 
+use App\Constants;
 use App\Contracts\PatientEvent;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
@@ -29,6 +30,12 @@ class ProcessPatientServices
      */
     public function handle(PatientEvent $event)
     {
-        ProcessSinglePatientMonthlyServices::dispatch($event->getPatientId(), Carbon::now()->startOfMonth()->startOfDay());
+        debounce(
+            new ProcessSinglePatientMonthlyServices(
+                $event->getPatientId(),
+                Carbon::now()->startOfMonth()->startOfDay()
+            ),
+            Constants::FIVE_MINUTES_IN_SECONDS
+        );
     }
 }
