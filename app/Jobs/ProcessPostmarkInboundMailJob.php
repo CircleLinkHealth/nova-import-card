@@ -51,9 +51,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     }
 
     /**
-     * Execute the job.
-     *
-     * @return void
+     * @return string|void
      */
     public function handle()
     {
@@ -72,7 +70,6 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                 $postmarkMarkService  = (new PostmarkCallbackMailService());
                 $postmarkCallbackData = $postmarkMarkService->parsedEmailData($recordId);
                 /** @var array $matchedResultsWithDB */
-//                $matchedResultsWithDB = $postmarkMarkService->getMatchedPatients($postmarkCallbackData, $recordId);
                 $matchedResultsWithDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
                     ->getMatchedPatients();
 
@@ -80,7 +77,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                     /** @var SchedulerService $service */
                     $service = app(SchedulerService::class);
                     $service->scheduleAsapCallbackTask(
-                        $matchedResultsWithDB['patient'],
+                        $matchedResultsWithDB['matchResult'],
                         $postmarkCallbackData['Msg'],
                         'postmark_inbound_mail',
                         null,
@@ -89,8 +86,9 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
 
                     return;
                 }
+
+                return 'Prepae a list for Ops & Send Live Notification also';
                 
-                return 'Assign to Ops & Send Live Notification also';
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
                 sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");

@@ -38,7 +38,7 @@ class PostmarkInboundCallbackMatchResults extends Controller
 
         if ($this->singleMatch($postmarkInboundPatientsMatched)) {
             return [
-                'patient'        => $postmarkInboundPatientsMatched->first(),
+                'matchResult'    => $postmarkInboundPatientsMatched->first(),
                 'createCallback' => $this->patientIsCallbackEligible(
                     $postmarkInboundPatientsMatched->first(),
                     $this->postmarkCallbackData
@@ -60,22 +60,21 @@ class PostmarkInboundCallbackMatchResults extends Controller
     private function filterPostmarkInboundPatientsByName(Builder $patientsMatchedByPhone, array $inboundPostmarkData)
     {
         if ('SELF' === $inboundPostmarkData['Ptn']) {
-            return $this->matchByCallerField($patientsMatchedByPhone, $inboundPostmarkData);
+            return $this->matchByCallerField($patientsMatchedByPhone, $inboundPostmarkData, $this->recordId);
         }
 
         $patientsMatchWithInboundName = $patientsMatchedByPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
 
         if (0 === $patientsMatchWithInboundName->count()) {
-            $recId = $inboundPostmarkData['id'];
-            Log::critical("Cannot match postmark inbound data with our records for record_id $recId");
-            sendSlackMessage('#carecoach_ops_alerts', "Could not match inbound mail with a patient from our records:[$recId] in postmark_inbound_mail");
+            Log::critical("Cannot match postmark inbound data with our records for record_id $this->recordId");
+            sendSlackMessage('#carecoach_ops_alerts', "Could not match inbound mail with a patient from our records:[$this->recordId] in postmark_inbound_mail");
 
             return;
         }
 
         if ($this->singleMatch($patientsMatchWithInboundName)) {
             return [
-                'patient'        => $patientsMatchWithInboundName->first(),
+                'matchResult'    => $patientsMatchWithInboundName->first(),
                 'createCallback' => $this->patientIsCallbackEligible(
                     $patientsMatchWithInboundName->first(),
                     $inboundPostmarkData
@@ -84,7 +83,7 @@ class PostmarkInboundCallbackMatchResults extends Controller
         }
 
         return [
-            'patient'        => $patientsMatchWithInboundName->get(),
+            'matchResult'    => $patientsMatchWithInboundName->get(),
             'createCallback' => false,
         ];
     }
@@ -126,26 +125,25 @@ class PostmarkInboundCallbackMatchResults extends Controller
     /**
      * @return array
      */
-    private function matchByCallerField(Builder $patientsMatchedByPhone, array $inboundPostmarkData)
+    private function matchByCallerField(Builder $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId)
     {
         $firstName = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID'])['firstName'];
         $lastName  = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID'])['lastName'];
-
+        
         $patientsMatchedByCallerFieldName = $patientsMatchedByPhone
             ->where('first_name', '=', $firstName)
             ->where('last_name', '=', $lastName);
 
         if (0 === $patientsMatchedByCallerFieldName->count()) {
-            $recId = $inboundPostmarkData['id'];
-            Log::critical("Couldn't match patient for record_id:$recId in postmark_inbound_mail");
-            sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient match for record_id:[$recId] in postmark_inbound_mail");
+            Log::critical("Couldn't match patient for record_id:$recordId in postmark_inbound_mail");
+            sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient match for record_id:[$recordId] in postmark_inbound_mail");
 
             return;
         }
 
         if ($this->singleMatch($patientsMatchedByCallerFieldName)) {
             return [
-                'patient'        => $patientsMatchedByCallerFieldName->first(),
+                'matchResult'    => $patientsMatchedByCallerFieldName->first(),
                 'createCallback' => $this->patientIsCallbackEligible(
                     $patientsMatchedByCallerFieldName->first(),
                     $inboundPostmarkData
@@ -154,7 +152,7 @@ class PostmarkInboundCallbackMatchResults extends Controller
         }
 
         return [
-            'patient'        => $patientsMatchedByCallerFieldName->get(),
+            'matchResult'    => $patientsMatchedByCallerFieldName->get(),
             'createCallback' => false,
         ];
     }
