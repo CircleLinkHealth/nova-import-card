@@ -6,11 +6,10 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests;
 
-use App\Constants;
 use App\Events\PatientUserCreated;
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
+use CircleLinkHealth\CcmBilling\Events\PatientSuccessfulCallCreated;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
@@ -26,7 +25,6 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class PatientSummaryProcessingTest extends TestCase
@@ -220,6 +218,17 @@ class PatientSummaryProcessingTest extends TestCase
         Bus::fake();
 
         event(new PatientProblemsChanged($patientId));
+
+        Bus::assertDispatched(function (ProcessSinglePatientMonthlyServices $job) use ($patientId) {
+            return $job->getPatientId() === $patientId
+                && $job->getMonth()->equalTo(Carbon::now()->startOfMonth()->startOfDay());
+        });
+
+        Bus::assertDispatchedTimes(ProcessSinglePatientMonthlyServices::class, 1);
+
+        Bus::fake();
+
+        event(new PatientSuccessfulCallCreated($patientId));
 
         Bus::assertDispatched(function (ProcessSinglePatientMonthlyServices $job) use ($patientId) {
             return $job->getPatientId() === $patientId
