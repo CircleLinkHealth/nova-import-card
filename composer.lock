@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f472d22702b7acd353c24ea5a6fec9a2",
+    "content-hash": "84a959caa857715db824bdff7afbcce3",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -6639,6 +6639,66 @@
             ],
             "abandoned": "brick/math",
             "time": "2017-02-16T16:54:46+00:00"
+        },
+        {
+            "name": "mpbarlow/laravel-queue-debouncer",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mpbarlow/laravel-queue-debouncer.git",
+                "reference": "cf16a46c50ba91b80d3e826cd7df2d945319c3a6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mpbarlow/laravel-queue-debouncer/zipball/cf16a46c50ba91b80d3e826cd7df2d945319c3a6",
+                "reference": "cf16a46c50ba91b80d3e826cd7df2d945319c3a6",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^6.0|^7.0",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^4.0|^5.0",
+                "phpunit/phpunit": "^8.0|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Mpbarlow\\LaravelQueueDebouncer\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "Debouncer": "Mpbarlow\\LaravelQueueDebouncer\\Facade\\Debouncer"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Mpbarlow\\LaravelQueueDebouncer\\": "src/"
+                },
+                "files": [
+                    "src/Support/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Barlow",
+                    "email": "mattpeterbarlow@gmail.com"
+                }
+            ],
+            "description": "A wrapper job for debouncing other queue jobs.",
+            "keywords": [
+                "debounce",
+                "job",
+                "laravel",
+                "queue"
+            ],
+            "time": "2020-03-11T23:50:05+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",

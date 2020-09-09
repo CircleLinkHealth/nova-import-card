@@ -30,8 +30,9 @@ class Constants
         Constants::ICD10_NAME  => 2,
         Constants::SNOMED_NAME => 3,
     ];
-    const ICD10      = ProblemCodeSystem::ICD10;
-    const ICD10_NAME = ProblemCodeSystem::ICD10_NAME;
+    const FIVE_MINUTES_IN_SECONDS = 300;
+    const ICD10                   = ProblemCodeSystem::ICD10;
+    const ICD10_NAME              = ProblemCodeSystem::ICD10_NAME;
 
     /**
      * Problem Codes.
