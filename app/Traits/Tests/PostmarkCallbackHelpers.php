@@ -8,7 +8,6 @@ namespace App\Traits\Tests;
 
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
@@ -16,19 +15,20 @@ trait PostmarkCallbackHelpers
 {
     public function getCallbackMailData(User $patient, bool $requestsToWithdraw)
     {
-        $phone = $patient->phoneNumbers->first()->number;
-        $name  = $patient->display_name;
-
+        $this->phone = $patient->phoneNumbers->first();
+        $number = $this->phone->number;
+        $name        = $patient->display_name;
+        
         $inboundPostmarkData = [
             'For'      => 'GROUP DISTRIBUTION',
             'From'     => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
-            'Phone'    => $phone,
+            'Phone'    => $number,
             'Ptn'      => $name,
             'Msg'      => '| REQUEST TO BE REMOVED OFF ALL LISTS  |',
             'Primary'  => $patient->getBillingProviderName() ?: 'Salah',
             'Msg ID'   => 'Not relevant',
             'IS Rec #' => 'Not relevant',
-            'Clr ID'   => "$phone $patient->display_name",
+            'Clr ID'   => "$number $patient->display_name",
             'Taken'    => 'Not relevant',
         ];
 

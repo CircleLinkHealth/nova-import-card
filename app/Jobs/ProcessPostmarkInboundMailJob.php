@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Http\Controllers\Postmark\PostmarkInboundCallbackMatchResults;
 use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\PostmarkInboundMail;
@@ -70,29 +71,32 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
             try {
                 $postmarkMarkService  = (new PostmarkCallbackMailService());
                 $postmarkCallbackData = $postmarkMarkService->parsedEmailData($recordId);
-                /** @var User $matchedPatient */
-                $matchedPatient = $postmarkMarkService->getMatchedPatient($postmarkCallbackData, $recordId);
-                /** @var SchedulerService $service */
-                $service = app(SchedulerService::class);
-                $task    = $service->scheduleAsapCallbackTask(
-                    $matchedPatient,
-                    $postmarkCallbackData['Msg'],
-                    'postmark_inbound_mail',
-                    null,
-                    SchedulerService::CALL_BACK_TYPE
-                );
+                /** @var array $matchedResultsWithDB */
+//                $matchedResultsWithDB = $postmarkMarkService->getMatchedPatients($postmarkCallbackData, $recordId);
+                $matchedResultsWithDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
+                    ->getMatchedPatients();
 
-                return;
-//                    Send Live Notification
+                if ($postmarkMarkService->shouldCreateCallBackFromPostmarkInbound($matchedResultsWithDB)) {
+                    /** @var SchedulerService $service */
+                    $service = app(SchedulerService::class);
+                    $service->scheduleAsapCallbackTask(
+                        $matchedResultsWithDB['patient'],
+                        $postmarkCallbackData['Msg'],
+                        'postmark_inbound_mail',
+                        null,
+                        SchedulerService::CALL_BACK_TYPE
+                    );
+
+                    return;
+                }
+                
+                return 'Assign to Ops & Send Live Notification also';
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
                 sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
-//                Assign to CA's
 
                 return;
             }
-
-            return;
         }
 
         /** @var User $user */
