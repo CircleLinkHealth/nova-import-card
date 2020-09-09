@@ -8,7 +8,6 @@ namespace App\Console\Commands;
 
 use App\Notifications\PostmarkTestCallbackNotification;
 use App\Notifications\SendGridTestNotification;
-use App\Services\Postmark\PostmarkCallbackMailService;
 use CircleLinkHealth\Core\Facades\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Console\Command;

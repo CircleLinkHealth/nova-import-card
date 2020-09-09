@@ -13,12 +13,12 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 trait PostmarkCallbackHelpers
 {
-    public function getCallbackMailData(User $patient, bool $requestsToWithdraw)
+    public function getCallbackMailData(User $patient, bool $requestsToWithdraw, bool $nameIsSelf = false)
     {
         $this->phone = $patient->phoneNumbers->first();
-        $number = $this->phone->number;
-        $name        = $patient->display_name;
-        
+        $number      = $this->phone->number;
+        $name        = $nameIsSelf ? 'SELF' : $patient->display_name;
+
         $inboundPostmarkData = [
             'For'      => 'GROUP DISTRIBUTION',
             'From'     => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
@@ -50,20 +50,25 @@ trait PostmarkCallbackHelpers
             'care_ambassador_user_id' => $careAmbassadorId,
         ]);
     }
-
-    private function createPatientData(string $status, bool $requestToWithdraw = false)
+    
+    /**
+     * @param string $status
+     * @param bool $requestToWithdraw
+     * @param bool $nameIsSelf
+     */
+    private function createPatientData(string $status, bool $requestToWithdraw = false, bool $nameIsSelf = false)
     {
         $this->patient         = $this->createUserWithPatientCcmStatus($this->practice, $status);
         $this->patientEnrollee = $this->createEnrolleeWithStatus($this->patient, $this->careAmbassador->id, $status);
-        $this->postmarkRecord  = $this->createPostmarkCallbackNotification($this->patient, $requestToWithdraw);
+        $this->postmarkRecord  = $this->createPostmarkCallbackNotification($this->patient, $requestToWithdraw, $nameIsSelf);
     }
 
-    private function createPostmarkCallbackNotification(User $patient, bool $requestToWithdraw)
+    private function createPostmarkCallbackNotification(User $patient, bool $requestToWithdraw, bool $nameIsSelf)
     {
         return  PostmarkInboundMail::create(
             [
                 'from' => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
-                'data' => json_encode($this->getCallbackMailData($patient, $requestToWithdraw)),
+                'data' => json_encode($this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf)),
                 'body' => 'This is it',
             ]
         );
