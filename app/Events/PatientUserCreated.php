@@ -6,7 +6,7 @@
 
 namespace App\Events;
 
-use App\Contracts\PatientEvent;
+use CircleLinkHealth\CcmBilling\Contracts\PatientEvent;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -41,6 +41,11 @@ class PatientUserCreated implements PatientEvent
         return new PrivateChannel('channel-name');
     }
 
+    public function debounceDuration(): int
+    {
+        return 0;
+    }
+
     public function getPatientId(): int
     {
         return $this->user->id;
@@ -49,5 +54,10 @@ class PatientUserCreated implements PatientEvent
     public function getUser()
     {
         return $this->user;
+    }
+
+    public function shouldDebounce(): bool
+    {
+        return false;
     }
 }
