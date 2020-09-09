@@ -555,6 +555,18 @@ class ReportsController extends Controller
                             ->where('total_time', '<', 1200);
                     }
                 )
+                ->when(
+                    auth()->user()->isProvider() && User::SCOPE_LOCATION === auth()->user()->scope,
+                    function ($query) {
+                        $query->whereHas('careTeamMembers', function ($subQuery) {
+                            $subQuery->where('member_user_id', auth()->id())
+                                ->whereIn(
+                                    'type',
+                                    [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                                );
+                        });
+                    }
+                )
                 ->get();
         } else {
             $patients = collect();
