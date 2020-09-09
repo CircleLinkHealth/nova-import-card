@@ -87,7 +87,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                     return;
                 }
 
-                return 'Prepae a list for Ops & Send Live Notification also';
+                return 'Prepare a list for Ops & Send Live Notification also';
                 
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
