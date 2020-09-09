@@ -29,8 +29,9 @@ class GetUnder20MinutesReport extends FormRequest
     public function rules()
     {
         return [
-            'selectYear'  => 'sometimes|filled|integer|min:2000|max:2100',
-            'selectMonth' => 'sometimes|filled|integer|min:1|max:12',
+            'selectYear'     => 'sometimes|filled|integer|min:2000|max:2100',
+            'selectMonth'    => 'sometimes|filled|integer|min:1|max:12',
+            'selectPractice' => 'sometimes|integer',
         ];
     }
 }
