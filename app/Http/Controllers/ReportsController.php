@@ -29,6 +29,38 @@ use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
 {
+    const CAREPLAN_ACTIVITIES = [
+        'Edit/Modify Care Plan',
+        'Initial Care Plan Setup',
+        'Care Plan View/Print',
+        'Patient History Review',
+        'Patient Item Detail Review',
+        'Review Care Plan (offline)',
+    ];
+    const OTHER_ACTIVITIES = [
+        'other',
+        'Medication Reconciliation',
+    ];
+    const PROGRESS_ACTIVITIES = [
+        'Review Patient Progress (offline)',
+        'Progress Report Review/Print',
+    ];
+    const REVIEW_ACTIVITIES = [
+        'Patient Alerts Review',
+        'Patient Overview Review',
+        'Biometrics Data Review',
+        'Lifestyle Data Review',
+        'Symptoms Data Review',
+        'Assessments Scores Review',
+        'Medications Data Review',
+        'Input Observation',
+    ];
+    const TCM_ACTIVITIES = [
+        'Test (Scheduling, Communications, etc)',
+        'Transitional Care Management Activities',
+        'Call to Other Care Team Member',
+        'Appointments',
+    ];
     private $assessmentService;
     private $formatter;
     private $patientReadRepository;
@@ -51,68 +83,23 @@ class ReportsController extends Controller
     }
 
     public function billing(
-        Request $request,
-        $patientId = false
+        Request $request
     ) {
-        $input = $request->all();
-
-        if (isset($input['selectMonth'])) {
-            $time                = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
-            $start               = $time->startOfMonth()->format('Y-m-d');
-            $end                 = $time->endOfMonth()->format('Y-m-d');
-            $month_selected_text = $time->format('F');
-            $month_selected      = $time->format('m');
-            $year_selected       = $time->format('Y');
-        } else {
-            $time                = Carbon::now();
-            $start               = Carbon::now()->startOfMonth()->format('Y-m-d');
-            $end                 = Carbon::now()->endOfMonth()->format('Y-m-d');
-            $month_selected_text = $time->format('F');
-            $month_selected      = $time->format('m');
-            $year_selected       = $time->format('Y');
-        }
+        $input               = $request->all();
+        $time                = isset($input['selectMonth']) ? Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15) : now();
+        $month_selected      = $time->format('m');
+        $month_selected_text = $time->format('F');
+        $year_selected       = $time->format('Y');
+        $start               = $time->startOfMonth()->toDateString();
+        $end                 = $time->endOfMonth()->toDateString();
 
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
             ->with('primaryPractice')
             ->get();
 
-        $u20_patients      = [];
-        $billable_patients = [];
+        $u20_patients = [];
 
-        // ROLLUP CATEGORIES
-        $CarePlan = [
-            'Edit/Modify Care Plan',
-            'Initial Care Plan Setup',
-            'Care Plan View/Print',
-            'Patient History Review',
-            'Patient Item Detail Review',
-            'Review Care Plan (offline)',
-        ];
-        $Progress = [
-            'Review Patient Progress (offline)',
-            'Progress Report Review/Print',
-        ];
-        $RPM = [
-            'Patient Alerts Review',
-            'Patient Overview Review',
-            'Biometrics Data Review',
-            'Lifestyle Data Review',
-            'Symptoms Data Review',
-            'Assessments Scores Review',
-            'Medications Data Review',
-            'Input Observation',
-        ];
-        $TCM = [
-            'Test (Scheduling, Communications, etc)',
-            'Transitional Care Management Activities',
-            'Call to Other Care Team Member',
-            'Appointments',
-        ];
-        $Other = [
-            'other',
-            'Medication Reconciliation',
-        ];
         $act_count = 0;
 
         foreach ($patients as $patient) {
@@ -154,16 +141,16 @@ class ReportsController extends Controller
                 ->get();
 
             foreach ($acts as $activity) {
-                if (in_array($activity->type, $CarePlan)) {
+                if (in_array($activity->type, self::CAREPLAN_ACTIVITIES)) {
                     $u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
                 } else {
-                    if (in_array($activity->type, $Progress)) {
+                    if (in_array($activity->type, self::PROGRESS_ACTIVITIES)) {
                         $u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
                     } else {
-                        if (in_array($activity->type, $RPM)) {
+                        if (in_array($activity->type, self::REVIEW_ACTIVITIES)) {
                             $u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
                         } else {
-                            if (in_array($activity->type, $TCM)) {
+                            if (in_array($activity->type, self::TCM_ACTIVITIES)) {
                                 $u20_patients[$act_count]['colsum_tcc'] += intval($activity->duration);
                             } else {
                                 $u20_patients[$act_count]['colsum_other'] += intval($activity->duration);
@@ -183,25 +170,6 @@ class ReportsController extends Controller
 
         $reportData = 'data:'.json_encode(array_values($u20_patients)).'';
 
-        $years = [];
-        for ($i = 0; $i < 3; ++$i) {
-            $years[] = Carbon::now()->subYear($i)->year;
-        }
-
-        $months = [
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec',
-        ];
         $act_data = true;
         if (null == $u20_patients) {
             $act_data = false;
@@ -209,11 +177,11 @@ class ReportsController extends Controller
 
         $data = [
             'activity_json'       => $reportData,
-            'years'               => array_reverse($years),
+            'years'               => array_reverse($this->getYearsList()),
             'month_selected'      => $month_selected,
             'year_selected'       => $year_selected,
             'month_selected_text' => $month_selected_text,
-            'months'              => $months,
+            'months'              => $this->getMonthsList(),
             'data'                => $act_data,
         ];
 
@@ -533,119 +501,81 @@ class ReportsController extends Controller
     }
 
     public function u20(
-        GetUnder20MinutesReport $request,
-        $patientId = false
+        GetUnder20MinutesReport $request
     ) {
-        $input = $request->all();
+        $input               = $request->all();
+        $time                = isset($input['selectMonth']) ? Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15) : now();
+        $month_selected      = $time->format('m');
+        $month_selected_text = $time->format('F');
+        $year_selected       = $time->format('Y');
+        $start               = $time->startOfMonth()->toDateString();
+        $end                 = $time->endOfMonth()->toDateString();
 
-        if (isset($input['selectMonth'])) {
-            $time                = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
-            $month_selected      = $time->format('m');
-            $month_selected_text = $time->format('F');
-            $year_selected       = $time->format('Y');
-            $start               = $time->startOfMonth()->toDateString();
-            $end                 = $time->endOfMonth()->toDateString();
+        if (isset($input['selectPractice'])) {
+            $practiceId = $input['selectPractice'];
+            $patients   = User::ofType('participant')
+                ->with(
+                    [
+                        'primaryPractice' => function ($q) use ($practiceId) {
+                            $q->where('id', '=', $practiceId);
+                        },
+                        'patientInfo',
+                        'activities' => function ($q) use ($start, $end) {
+                            $q->select(
+                                DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration')
+                            )
+                                ->whereBetween(
+                                    'performed_at',
+                                    [
+                                        $start,
+                                        $end,
+                                    ]
+                                )
+                                ->groupBy(DB::raw('provider_id, DATE(performed_at),type,lv_activities.id'))
+                                ->orderBy('performed_at', 'desc');
+                        },
+                        'careTeamMembers' => function ($q) {
+                            $q->with(['user' => function ($q) {
+                                $q->without(['perms', 'roles'])
+                                    ->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
+                            }])->where('member_user_id', auth()->user()->id)
+                                ->whereIn(
+                                    'type',
+                                    [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                                );
+                        },
+                    ]
+                )
+                ->whereHas('primaryPractice')
+                ->whereHas('patientInfo')
+                ->whereHas(
+                    'patientSummaries',
+                    function ($q) use ($time) {
+                        $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
+                            ->where('total_time', '<', 1200);
+                    }
+                )
+                ->when(
+                    auth()->user()->isProvider() && User::SCOPE_LOCATION === auth()->user()->scope,
+                    function ($query) {
+                        $query->whereHas('careTeamMembers', function ($subQuery) {
+                            $subQuery->where('member_user_id', auth()->id())
+                                ->whereIn(
+                                    'type',
+                                    [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                                );
+                        });
+                    }
+                )
+                ->get();
         } else {
-            $time                = Carbon::now();
-            $month_selected      = $time->format('m');
-            $year_selected       = $time->format('Y');
-            $month_selected_text = $time->format('F');
-            $start               = Carbon::now()->startOfMonth()->toDateString();
-            $end                 = Carbon::now()->endOfMonth()->toDateString();
+            $patients = collect();
         }
 
-        $patients = User::intersectPracticesWith(auth()->user())
-            ->ofType('participant')
-            ->with(
-                [
-                    'primaryPractice',
-                    'patientInfo',
-                    'activities' => function ($q) use ($start, $end) {
-                        $q->select(
-                            DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration')
-                        )
-                            ->whereBetween(
-                                'performed_at',
-                                [
-                                    $start,
-                                    $end,
-                                ]
-                            )
-                            ->groupBy(DB::raw('provider_id, DATE(performed_at),type,lv_activities.id'))
-                            ->orderBy('performed_at', 'desc');
-                    },
-                    'careTeamMembers' => function ($q) {
-                        $q->with(['user' => function ($q) {
-                            $q->without(['perms', 'roles'])
-                                ->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
-                        }])->where('member_user_id', auth()->user()->id)
-                            ->whereIn(
-                                'type',
-                                [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-                            );
-                    },
-                ]
-            )
-            ->has('primaryPractice')
-            ->whereHas('patientInfo', function ($q) {
-                $q->intersectLocationsWith(auth()->user());
-            })
-            ->when(
-                auth()->user()->isProvider() && User::SCOPE_LOCATION === auth()->user()->scope,
-                function ($query) {
-                    $query->whereHas('careTeamMembers', function ($subQuery) {
-                        $subQuery->where('member_user_id', auth()->id())
-                            ->whereIn(
-                                'type',
-                                [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-                            );
-                    });
-                }
-            )
-            ->whereHas(
-                'patientSummaries',
-                function ($q) use ($time) {
-                    $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
-                        ->where('total_time', '<', 1200);
-                }
-            )
-            ->get();
+        $practices        = auth()->user()->practices(true)->select(['id', 'display_name'])->get();
+        $practiceSelected = $input['selectPractice'] ?? null;
 
         $u20_patients = [];
-
-        // ROLLUP CATEGORIES
-        $CarePlan = [
-            'Edit/Modify Care Plan',
-            'Initial Care Plan Setup',
-            'Care Plan View/Print',
-            'Patient History Review',
-            'Patient Item Detail Review',
-            'Review Care Plan (offline)',
-        ];
-        $Progress = [
-            'Review Patient Progress (offline)',
-            'Progress Report Review/Print',
-        ];
-        $RPM = [
-            'Patient Alerts Review',
-            'Patient Overview Review',
-            'Biometrics Data Review',
-            'Lifestyle Data Review',
-            'Symptoms Data Review',
-            'Assessments Scores Review',
-            'Medications Data Review',
-            'Input Observation',
-        ];
-        $TCM = [
-            'Test (Scheduling, Communications, etc)',
-            'Transitional Care Management Activities',
-            'Call to Other Care Team Member',
-            'Appointments',
-        ];
-        $Other = [
-            'other',
-            'Medication Reconciliation',
-        ];
 
         $patient_counter = 0;
         foreach ($patients as $patient) {
@@ -670,16 +600,16 @@ class ReportsController extends Controller
             $acts                                                  = $patient->activities;
 
             foreach ($acts as $activity) {
-                if (in_array($activity->type, $CarePlan)) {
+                if (in_array($activity->type, self::CAREPLAN_ACTIVITIES)) {
                     $u20_patients[$patient_counter]['colsum_careplan'] += intval($activity->duration);
                 } else {
-                    if (in_array($activity->type, $Progress)) {
+                    if (in_array($activity->type, self::PROGRESS_ACTIVITIES)) {
                         $u20_patients[$patient_counter]['colsum_progress'] += intval($activity->duration);
                     } else {
-                        if (in_array($activity->type, $RPM)) {
+                        if (in_array($activity->type, self::REVIEW_ACTIVITIES)) {
                             $u20_patients[$patient_counter]['colsum_rpm'] += intval($activity->duration);
                         } else {
-                            if (in_array($activity->type, $TCM)) {
+                            if (in_array($activity->type, self::TCM_ACTIVITIES)) {
                                 $u20_patients[$patient_counter]['colsum_tcc'] += intval($activity->duration);
                             } else {
                                 $u20_patients[$patient_counter]['colsum_other'] += intval($activity->duration);
@@ -698,25 +628,6 @@ class ReportsController extends Controller
         }
         $reportData = 'data:'.json_encode(array_values($u20_patients)).'';
 
-        $years = [];
-        for ($i = 0; $i < 3; ++$i) {
-            $years[] = Carbon::now()->subYear($i)->year;
-        }
-
-        $months = [
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec',
-        ];
         $act_data = true;
         if (null == $u20_patients) {
             $act_data = false;
@@ -724,11 +635,13 @@ class ReportsController extends Controller
 
         $data = [
             'activity_json'       => $reportData,
-            'years'               => array_reverse($years),
+            'years'               => array_reverse($this->getYearsList()),
+            'practices'           => $practices,
+            'practice_selected'   => $practiceSelected,
             'month_selected'      => $month_selected,
             'month_selected_text' => $month_selected_text,
             'year_selected'       => $year_selected,
-            'months'              => $months,
+            'months'              => $this->getMonthsList(),
             'data'                => $act_data,
         ];
 
@@ -849,5 +762,33 @@ class ReportsController extends Controller
             'wpUsers.patient.careplan.print',
             $args
         );
+    }
+
+    private function getMonthsList()
+    {
+        return [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec',
+        ];
+    }
+
+    private function getYearsList(int $howFarBack = 3)
+    {
+        $years = [];
+        for ($i = 0; $i < $howFarBack; ++$i) {
+            $years[] = Carbon::now()->subYear($i)->year;
+        }
+
+        return $years;
     }
 }

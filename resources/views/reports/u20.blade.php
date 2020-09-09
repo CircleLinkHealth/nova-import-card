@@ -17,7 +17,6 @@
                     </div>
                     <div class="form-group  pull-right" style="margin-top:10px;">
                         <i class="icon icon--date-time hidden-xs"></i>
-
                         <div class="inline-block">
                             <label for="selectMonth" class="sr-only">Select Month:</label>
                             <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="200px"
@@ -28,19 +27,31 @@
                                 @endfor
 
                             </select>
-
-                            <div class="inline-block">
-                                <label for="selectYear" class="sr-only">Select Year:</label>
-                                <select name="selectYear" id="selectYear" class="selectpicker" data-width="100px"
-                                        data-size="10" style="display: none;">
-                                    @foreach($years as $year)
-                                        <option value="{{$year}}" @if($year_selected == $year) {{'selected'}} @endif>{{$year}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <button type="submit" value="Search" name="find" id="find" class="btn btn-primary">Go
-                            </button>
                         </div>
+
+                        <div class="inline-block">
+                            <label for="selectYear" class="sr-only">Select Year:</label>
+                            <select name="selectYear" id="selectYear" class="selectpicker" data-width="100px"
+                                    data-size="10" style="display: none;">
+                                @foreach($years as $year)
+                                    <option value="{{$year}}" @if($year_selected == $year) {{'selected'}} @endif>{{$year}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="inline-block">
+                            <label for="selectPractice" class="sr-only">Select Practice:</label>
+                            <select name="selectPractice" id="selectPractice" class="selectpicker" data-width="200px"
+                                    data-size="10" style="display: none;">
+                                <option value="">Select Practice</option>
+                                @foreach($practices as $practice)
+                                    <option value="{{$practice->id}}" @if($practice_selected == $practice->id) {{'selected'}} @endif>{{$practice->display_name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <button type="submit" value="Search" name="find" id="find" class="btn btn-primary">Go
+                        </button>
                     </div>
                     {!! Form::close() !!}
                 </div>
@@ -404,7 +415,8 @@
                         @endpush
 
                     @else
-                        <div style="text-align:center;margin:50px;">There are no patients under 20 minutes this month.
+                        <div style="text-align:center;margin:50px;">
+                            {{empty(request('selectPractice', '')) ? 'Please select practice and month/year' : 'There are no patients under 20 minutes this month.'}}
                         </div>
                     @endif
 
