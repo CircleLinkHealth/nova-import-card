@@ -6,8 +6,10 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests;
 
+use App\Constants;
 use App\Events\PatientUserCreated;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
@@ -24,6 +26,7 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class PatientSummaryProcessingTest extends TestCase
@@ -198,6 +201,7 @@ class PatientSummaryProcessingTest extends TestCase
 
     public function test_job_to_process_patient_summaries_can_happen_once_every_five_minutes()
     {
+        //todo: implemented debouncing using https://github.com/mpbarlow/laravel-queue-debouncer . Found it a bit hard to write unit test for.
     }
 
     public function test_listerner_dispatches_jobs_to_process_when_it_should()
