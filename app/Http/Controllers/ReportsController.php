@@ -514,11 +514,10 @@ class ReportsController extends Controller
         if (isset($input['selectPractice'])) {
             $practiceId = $input['selectPractice'];
             $patients   = User::ofType('participant')
+                ->ofPractice($practiceId)
                 ->with(
                     [
-                        'primaryPractice' => function ($q) use ($practiceId) {
-                            $q->where('id', '=', $practiceId);
-                        },
+                        'primaryPractice',
                         'patientInfo',
                         'activities' => function ($q) use ($start, $end) {
                             $q->select(
