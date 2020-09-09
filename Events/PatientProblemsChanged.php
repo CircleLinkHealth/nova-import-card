@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Events;
 
-use App\Contracts\PatientEvent;
+use CircleLinkHealth\CcmBilling\Contracts\PatientEvent;
 use Illuminate\Queue\SerializesModels;
 
 class PatientProblemsChanged implements PatientEvent
@@ -38,5 +38,15 @@ class PatientProblemsChanged implements PatientEvent
     public function getPatientId(): int
     {
         return $this->patientUserId;
+    }
+    
+    public function shouldDebounce(): bool
+    {
+        return false;
+    }
+    
+    public function debounceDuration(): int
+    {
+        return 0;
     }
 }

@@ -6,7 +6,8 @@
 
 namespace CircleLinkHealth\CcmBilling\Events;
 
-use App\Contracts\PatientEvent;
+use App\Constants;
+use CircleLinkHealth\CcmBilling\Contracts\PatientEvent;
 use Illuminate\Queue\SerializesModels;
 
 class PatientActivityCreated implements PatientEvent
@@ -35,8 +36,18 @@ class PatientActivityCreated implements PatientEvent
         return [];
     }
 
+    public function debounceDuration(): int
+    {
+        return Constants::FIVE_MINUTES_IN_SECONDS;
+    }
+
     public function getPatientId(): int
     {
         return $this->patientUserId;
+    }
+
+    public function shouldDebounce(): bool
+    {
+        return true;
     }
 }

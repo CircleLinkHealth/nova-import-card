@@ -6,36 +6,25 @@
 
 namespace CircleLinkHealth\CcmBilling\Listeners;
 
-use App\Constants;
-use App\Contracts\PatientEvent;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientEvent;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 
 class ProcessPatientServices
 {
     /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Handle the event.
      *
-     * @param  object $event
+     * @param PatientEvent $event
      * @return void
      */
     public function handle(PatientEvent $event)
     {
-        debounce(
-            new ProcessSinglePatientMonthlyServices(
-                $event->getPatientId(),
-                Carbon::now()->startOfMonth()->startOfDay()
-            ),
-            Constants::FIVE_MINUTES_IN_SECONDS
+        $job = new ProcessSinglePatientMonthlyServices(
+            $event->getPatientId(),
+            Carbon::now()->startOfMonth()->startOfDay()
         );
+
+        $event->shouldDebounce() ? debounce($job, $event->debounceDuration()) : dispatch($job);
     }
 }
