@@ -554,62 +554,57 @@ class ReportsController extends Controller
             $end                 = Carbon::now()->endOfMonth()->toDateString();
         }
 
-        $patients = User::intersectPracticesWith(auth()->user())
-            ->ofType('participant')
-            ->with(
-                [
-                    'primaryPractice',
-                    'patientInfo',
-                    'activities' => function ($q) use ($start, $end) {
-                        $q->select(
-                            DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration')
-                        )
-                            ->whereBetween(
-                                'performed_at',
-                                [
-                                    $start,
-                                    $end,
-                                ]
+        if (isset($input['selectPractice'])) {
+            $practiceId = $input['selectPractice'];
+            $patients   = User::ofType('participant')
+                ->with(
+                    [
+                        'primaryPractice' => function ($q) use ($practiceId) {
+                            $q->where('id', '=', $practiceId);
+                        },
+                        'patientInfo',
+                        'activities' => function ($q) use ($start, $end) {
+                            $q->select(
+                                DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration')
                             )
-                            ->groupBy(DB::raw('provider_id, DATE(performed_at),type,lv_activities.id'))
-                            ->orderBy('performed_at', 'desc');
-                    },
-                    'careTeamMembers' => function ($q) {
-                        $q->with(['user' => function ($q) {
-                            $q->without(['perms', 'roles'])
-                                ->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
-                        }])->where('member_user_id', auth()->user()->id)
-                            ->whereIn(
-                                'type',
-                                [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-                            );
-                    },
-                ]
-            )
-            ->has('primaryPractice')
-            ->whereHas('patientInfo', function ($q) {
-                $q->intersectLocationsWith(auth()->user());
-            })
-            ->when(
-                auth()->user()->isProvider() && User::SCOPE_LOCATION === auth()->user()->scope,
-                function ($query) {
-                    $query->whereHas('careTeamMembers', function ($subQuery) {
-                        $subQuery->where('member_user_id', auth()->id())
-                            ->whereIn(
-                                'type',
-                                [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-                            );
-                    });
-                }
-            )
-            ->whereHas(
-                'patientSummaries',
-                function ($q) use ($time) {
-                    $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
-                        ->where('total_time', '<', 1200);
-                }
-            )
-            ->get();
+                                ->whereBetween(
+                                    'performed_at',
+                                    [
+                                        $start,
+                                        $end,
+                                    ]
+                                )
+                                ->groupBy(DB::raw('provider_id, DATE(performed_at),type,lv_activities.id'))
+                                ->orderBy('performed_at', 'desc');
+                        },
+                        'careTeamMembers' => function ($q) {
+                            $q->with(['user' => function ($q) {
+                                $q->without(['perms', 'roles'])
+                                    ->select(['id', 'first_name', 'last_name', 'suffix', 'display_name']);
+                            }])->where('member_user_id', auth()->user()->id)
+                                ->whereIn(
+                                    'type',
+                                    [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                                );
+                        },
+                    ]
+                )
+                ->whereHas('primaryPractice')
+                ->whereHas('patientInfo')
+                ->whereHas(
+                    'patientSummaries',
+                    function ($q) use ($time) {
+                        $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
+                            ->where('total_time', '<', 1200);
+                    }
+                )
+                ->get();
+        } else {
+            $patients = collect();
+        }
+
+        $practices        = auth()->user()->practices(true)->select(['id', 'display_name'])->get();
+        $practiceSelected = $input['selectPractice'] ?? null;
 
         $u20_patients = [];
 
@@ -725,6 +720,8 @@ class ReportsController extends Controller
         $data = [
             'activity_json'       => $reportData,
             'years'               => array_reverse($years),
+            'practices'           => $practices,
+            'practice_selected'   => $practiceSelected,
             'month_selected'      => $month_selected,
             'month_selected_text' => $month_selected_text,
             'year_selected'       => $year_selected,
