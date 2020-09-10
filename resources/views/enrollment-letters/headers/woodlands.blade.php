@@ -14,9 +14,17 @@
             @endif
         </div>
     </div>
+
+    <div class="letter-head">
+        Dear {{$userEnrollee->first_name}} {{$userEnrollee->last_name}},
+    </div>
 </div>
 
 <style>
+    .letter-head{
+        padding-bottom: unset;
+    }
+
     .header{
         padding-right: 700px;
         font-size: 23px;

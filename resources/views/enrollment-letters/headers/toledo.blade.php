@@ -17,6 +17,9 @@
             @include('enrollment-letters.practiceLogo')
         </div>
     </div>
+    <div class="letter-head">
+        Dear {{$userEnrollee->first_name}},
+    </div>
 </div>
 
 <style>
