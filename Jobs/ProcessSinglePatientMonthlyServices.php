@@ -8,8 +8,6 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use App\Contracts\HasUniqueIdentifierForDebounce;
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
@@ -18,7 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessSinglePatientMonthlyServices implements ShouldQueue, HasUniqueIdentifierForDebounce
+class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessingJob implements ShouldQueue, HasUniqueIdentifierForDebounce
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -28,15 +26,12 @@ class ProcessSinglePatientMonthlyServices implements ShouldQueue, HasUniqueIdent
     protected Carbon $month;
 
     protected int $patientId;
-
-    protected PatientMonthlyBillingProcessor $processor;
-
-    protected PatientProcessorEloquentRepository $repo;
-
+    
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param int $patientId
+     * @param Carbon $month
      */
     public function __construct(int $patientId, Carbon $month)
     {
@@ -78,23 +73,5 @@ class ProcessSinglePatientMonthlyServices implements ShouldQueue, HasUniqueIdent
                 ->forMonth($this->getMonth())
                 ->withProblems($patient->patientProblemsForBillingProcessing()->toArray())
         );
-    }
-
-    public function processor(): PatientMonthlyBillingProcessor
-    {
-        if ( ! isset($this->processor)) {
-            $this->processor = app(PatientMonthlyBillingProcessor::class);
-        }
-
-        return $this->processor;
-    }
-
-    public function repo(): PatientProcessorEloquentRepository
-    {
-        if ( ! isset($this->repo)) {
-            $this->repo = app(PatientProcessorEloquentRepository::class);
-        }
-
-        return $this->repo;
     }
 }
