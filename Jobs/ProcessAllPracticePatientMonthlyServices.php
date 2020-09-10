@@ -21,16 +21,19 @@ class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    protected Carbon $chargeableMonth;
+    protected Carbon $month;
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
-    public function __construct(Carbon $chargeableMonth)
+    public function __construct(Carbon $month)
     {
-        $this->chargeableMonth = $chargeableMonth;
+        $this->month = $month;
+    }
+
+    public function getMonth(): Carbon
+    {
+        return $this->month;
     }
 
     /**
@@ -43,7 +46,7 @@ class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
         Practice::activeBillable()
             ->chunk(10, function ($practices) {
                 foreach ($practices as $practice) {
-                    ProcessPracticePatientMonthlyServices::dispatch($practice->id, $this->chargeableMonth);
+                    ProcessPracticePatientMonthlyServices::dispatch($practice->id, $this->getMonth());
                 }
             });
     }

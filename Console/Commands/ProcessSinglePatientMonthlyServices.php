@@ -6,11 +6,9 @@
 
 namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
-use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices as Job;
-use Illuminate\Console\Command;
 
-class ProcessSinglePatientMonthlyServices extends Command
+class ProcessSinglePatientMonthlyServices extends CommandForSpecificMonth
 {
     /**
      * The console command description.
@@ -32,13 +30,6 @@ class ProcessSinglePatientMonthlyServices extends Command
      */
     public function handle()
     {
-        /** @var Carbon */
-        $month = ! empty($this->argument('month')) ? Carbon::parse($this->argument('month')) : Carbon::now()->startOfMonth();
-
-        if ($month->notEqualTo($month->copy()->startOfMonth())) {
-            $month->startOfMonth();
-        }
-
-        Job::dispatch($this->argument('patientId'), $month);
+        Job::dispatch($this->argument('patientId'), $this->month());
     }
 }

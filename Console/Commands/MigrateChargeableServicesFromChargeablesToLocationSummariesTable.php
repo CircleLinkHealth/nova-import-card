@@ -6,11 +6,9 @@
 
 namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
-use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\MigrateChargeableServicesFromChargeablesToLocationSummariesTable as Job;
-use Illuminate\Console\Command;
 
-class MigrateChargeableServicesFromChargeablesToLocationSummariesTable extends Command
+class MigrateChargeableServicesFromChargeablesToLocationSummariesTable extends CommandForSpecificMonth
 {
     /**
      * The console command description.
@@ -32,13 +30,6 @@ class MigrateChargeableServicesFromChargeablesToLocationSummariesTable extends C
      */
     public function handle()
     {
-        /** @var Carbon */
-        $month = ! empty($this->argument('month')) ? Carbon::parse($this->argument('month')) : Carbon::now()->startOfMonth();
-
-        if ($month->notEqualTo($month->copy()->startOfMonth())) {
-            $month->startOfMonth();
-        }
-
-        Job::dispatch($month);
+        Job::dispatch($this->month());
     }
 }
