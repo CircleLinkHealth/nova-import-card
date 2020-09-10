@@ -52,7 +52,7 @@ class Location implements CustomerProcessor
         $pastMonthSummaries = $this->repo()->pastMonthSummaries($locationId, $month);
 
         if ($pastMonthSummaries->isEmpty()) {
-            sendSlackMessage('#cpm_general_alerts', "New Location with ID:$locationId failed.
+            sendSlackMessage('#cpm_general_alerts', "Processing summaries for Location with ID:$locationId failed - no past summaries exist.
             Please head to Location Chargeable Service management and assign chargeable services this location.");
 
             return;

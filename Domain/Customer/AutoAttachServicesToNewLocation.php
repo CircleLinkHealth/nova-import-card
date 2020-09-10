@@ -8,17 +8,18 @@ namespace CircleLinkHealth\CcmBilling\Domain\Customer;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
-use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
 use CircleLinkHealth\Customer\Entities\Location;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class AutoAttachServicesToNewLocation
 {
+    //todo: probably deprecate the file after we see we indeed prefer manual assignment of Location CS on location creation
     protected int $locationId;
-    protected LocationProcessorRepository $locationRepo;
     protected Carbon $month;
-    protected PracticeProcessorRepository $practiceRepo;
 
     public function __construct(int $locationId, Carbon $month)
     {
@@ -28,7 +29,7 @@ class AutoAttachServicesToNewLocation
 
     public function attach()
     {
-        $location = $this->locationRepo()->locationWithPracticeLocationsWithSummaries($this->locationId, $this->month);
+        $location = $this->locationWithPracticeLocationsWithSummaries($this->locationId, $this->month);
 
         $practice          = $location->practice;
         $practiceLocations = $practice->locations;
@@ -56,8 +57,33 @@ class AutoAttachServicesToNewLocation
 
     public static function execute(int $locationId, Carbon $month)
     {
-        //todo: file in progress, subject to change after dev or business side input
         (new static($locationId, $month))->attach();
+    }
+
+    /**
+     * @return Builder|Builder[]|Collection|Model
+     */
+    public function locationWithPracticeLocationsWithSummaries(int $locationId, ?Carbon $month = null)
+    {
+        //todo: add trait query
+        return Location::with([
+            'practice.locations' => function ($location) use ($month) {
+                //todo: add scope
+                $location->with([
+                    'chargeableServiceSummaries' => function ($summary) use ($month) {
+                        $summary->with(['chargeableService'])
+                            ->when( ! is_null($month), function ($q) use ($month) {
+                                $q->createdOn($month, 'chargeable_month');
+                            });
+                    },
+                ])
+                    ->when( ! is_null($month), function ($q) use ($month) {
+                        $q->whereHas('chargeableServiceSummaries', function ($summary) {
+                            $summary->createdOn($this->month, 'chargeable_month');
+                        });
+                    });
+            }, ])
+            ->find($locationId);
     }
 
     private function getLocationToCopyServicesFrom($practiceLocations): Location
@@ -69,23 +95,5 @@ class AutoAttachServicesToNewLocation
         }
 
         return $locationToCopy;
-    }
-
-    private function locationRepo(): LocationProcessorRepository
-    {
-        if (is_null($this->locationRepo)) {
-            $this->locationRepo = app(LocationProcessorRepository::class);
-        }
-
-        return $this->locationRepo;
-    }
-
-    private function practiceRepo(): PracticeProcessorRepository
-    {
-        if (is_null($this->practiceRepo)) {
-            $this->practiceRepo = app(PracticeProcessorRepository::class);
-        }
-
-        return $this->practiceRepo;
     }
 }

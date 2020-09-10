@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Entities;
 
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -34,7 +35,7 @@ use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 class ChargeableLocationMonthlySummary extends BaseModel
 {
     use DateScopesTrait;
-    
+
     protected $casts = [
         'is_locked' => 'boolean',
     ];
@@ -50,15 +51,19 @@ class ChargeableLocationMonthlySummary extends BaseModel
         'is_locked',
     ];
 
-    //todo: placeholder for now, maybe move in trait
     public function chargeableService()
     {
         return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
     }
 
-    public function getServiceCode()
+    public function getServiceCode(): ?string
     {
         return optional($this->chargeableService)->code;
+    }
+
+    public function getServiceProcessor(): PatientServiceProcessor
+    {
+        return $this->chargeableService->processor();
     }
 
     public function location()

@@ -11,6 +11,7 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Stubs\ChargeableLocationMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -111,12 +112,12 @@ class Eloquent implements LocationProcessorRepository
         $this->locationAvailableServiceProcessors->push($toPush);
     }
 
-    public function store(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary
+    public function store(int $locationId, string $chargeableServiceCode, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary
     {
         $this->summaries->push(
             $stub = (new ChargeableLocationMonthlySummaryStub())
                 ->setLocationId($locationId)
-                ->setChargeableServiceId($chargeableServiceId)
+                ->setChargeableServiceId(ChargeableService::getChargeableServiceIdUsingCode($chargeableServiceCode))
                 ->setChargeableMonth($month)
                 ->setAmount($amount)
         );

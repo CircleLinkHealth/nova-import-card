@@ -9,8 +9,8 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
+use CircleLinkHealth\CcmBilling\Builders\LocationServicesQuery;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
-use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -24,10 +24,11 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
 {
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
+    use LocationServicesQuery;
 
     public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth): AvailableServiceProcessors
     {
-        return AvailableServiceProcessors::push($this->getProcessorsFromLocationServiceCodes($locationId, $chargeableMonth));
+        return AvailableServiceProcessors::push($this->locationServiceProcessors($locationId, $chargeableMonth));
     }
 
     public function paginatePatients(int $locationId, Carbon $chargeableMonth, int $pageSize): LengthAwarePaginator
@@ -43,23 +44,13 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
     public function patientServices(int $locationId, Carbon $monthYear): Builder
     {
         return $this->approvablePatientServicesQuery($monthYear)
-            ->whereHas('patient.patientInfo', fn ($q) => $q->where('preferred_contact_location', $locationId));
+            ->whereHas('patient.patientInfo', fn ($info) => $info->where('preferred_contact_location', $locationId));
     }
 
     public function patientsQuery(int $locationId, Carbon $monthYear): Builder
     {
         return $this->approvablePatientUsersQuery($monthYear)
-            ->whereHas('patientInfo', fn ($q) => $q->where('preferred_contact_location', $locationId));
-    }
-
-    public function servicesForMonth($locationId, Carbon $chargeableMonth): Builder
-    {
-        //todo: add query traits for location
-        return ChargeableLocationMonthlySummary::with(['chargeableService' => function ($cs) {
-            $cs->select('code');
-        }])
-            ->where('location_id', $locationId)
-            ->createdOn($chargeableMonth, 'chargeable_month');
+            ->whereHas('patientInfo', fn ($info) => $info->where('preferred_contact_location', $locationId));
     }
 
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
@@ -76,44 +67,10 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
         );
     }
 
-    private function getProcessorsFromLocationServiceCodes(int $locationId, Carbon $chargeableMonth): array
+    private function locationServiceProcessors(int $locationId, Carbon $chargeableMonth): array
     {
         return $this->servicesForMonth($locationId, $chargeableMonth)
             ->get()
-            ->map([$this, 'getProcessorUsingCode']);
+            ->map(fn (ChargeableLocationMonthlySummary $summary) => $summary->getServiceProcessor());
     }
-
-    private function getProcessorUsingCode(ChargeableLocationMonthlySummary $clms): PatientServiceProcessor
-    {
-        return $clms->chargeableService->processor();
-    }
-    
-    /**
-     * @param int $locationId
-     * @param Carbon|null $month
-     * @return Builder|Builder[]|Collection|Model
-     */
-    public function locationWithPracticeLocationsWithSummaries(int $locationId, ?Carbon $month = null)
-    {
-        //todo: add trait query
-        return Location::with([
-            'practice.locations' => function ($location) use ($month) {
-            //todo: add scope
-                $location->with([
-                    'chargeableServiceSummaries' => function ($summary) use ($month) {
-                        $summary->with(['chargeableService'])
-                                ->when(! is_null($month), function($q) use ($month){
-                                     $q->createdOn($month, 'chargeable_month');
-                                });
-                            }
-                            ])
-                ->when(! is_null($month), function($q) use ($month){
-                    $q->whereHas('chargeableServiceSummaries', function ($summary) {
-                        $summary->createdOn($this->month, 'chargeable_month');
-                    });
-                });
-        }])
-            ->find($locationId);
-    }
-    
 }
