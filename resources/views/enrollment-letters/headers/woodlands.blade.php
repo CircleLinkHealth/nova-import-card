@@ -1,9 +1,9 @@
 <div class="flow-text" style="max-height: 590px; overflow-y: scroll;">
     <div style="display: inline-flex">
         <div class="header">
-            {{$signatoryNameForHeader}}
-            <br>
-            {{$practiceDisplayName}}
+            <div class="logo" style="text-align: left; opacity: 90%;">
+                @include('enrollment-letters.practiceLogo')
+            </div>
             @if($extraAddressValuesExists)
                 <br>
                 {{$extraAddressValues[0]['address_line_1']}}
@@ -12,9 +12,6 @@
                 {{$extraAddressValues[0]['state']}}
                 {{$extraAddressValues[0]['postal_code']}}
             @endif
-        </div>
-        <div class="logo" style="text-align: right; opacity: 90%;">
-            @include('enrollment-letters.practiceLogo')
         </div>
     </div>
 </div>
