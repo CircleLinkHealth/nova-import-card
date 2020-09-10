@@ -27,18 +27,21 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
     use SerializesModels;
 
     /**
-     * @var array
+     * @var bool|null
      */
-    private $input;
+    private $dbRecordId;
+
+    private array $input;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(array $input)
+    public function __construct(array $input, int $dbRecordId = null)
     {
-        $this->input = $input;
+        $this->input      = $input;
+        $this->dbRecordId = $dbRecordId;
     }
 
     /**
@@ -49,13 +52,12 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
     public function handle()
     {
         // 0. store request data in twilio_inbound_sms
-        $recordId = $this->storeRawLogs();
+        $recordId = $this->dbRecordId ?: $this->storeRawLogs();
 
         // 1. read source number, find patient
         $fromNumber          = $this->input['From'];
         $fromNumberFormatted = formatPhoneNumber($fromNumber);
-        /** @var User $user */
-        $user = User::whereHas('phoneNumbers', function ($q) use ($fromNumber, $fromNumberFormatted) {
+        $users               = User::whereHas('phoneNumbers', function ($q) use ($fromNumber, $fromNumberFormatted) {
             $q->whereIn('number', [$fromNumber, $fromNumberFormatted]);
         })
             ->with([
@@ -63,23 +65,30 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
                     $q->select(['id', 'display_name']);
                 },
             ])
-            ->first();
+            ->get();
 
-        if ( ! $user) {
+        if ($users->isEmpty()) {
             sendSlackMessage('#carecoach_ops_alerts', "Could not find patient from inbound sms. See database record id[$recordId]");
 
             return;
         }
 
         // 2. check that we have sent an unsuccessful call notification to this patient in the last 2 weeks
-        $hasNotification = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
+        $notification = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
             ->whereIn('notifiable_type', [User::class, \App\User::class])
-            ->where('notifiable_id', '=', $user->id)
+            ->whereIn('notifiable_id', $users->map(fn ($user) => $user->id)->toArray())
             ->where('created_at', '>=', now()->subDays(14))
-            ->exists();
+            ->first();
 
-        if ( ! $hasNotification) {
+        if ( ! $notification) {
             sendSlackMessage('#carecoach_ops_alerts', "Could not find unsuccessful call notification from inbound sms. See database record id[$recordId]");
+
+            return;
+        }
+
+        $user = $users->where('id', '=', $notification->notifiable_id)->first();
+        if ( ! $user) {
+            sendSlackMessage('#carecoach_ops_alerts', "Could not find unsuccessful call notification from inbound sms [2]. See database record id[$recordId]");
 
             return;
         }
