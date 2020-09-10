@@ -321,6 +321,9 @@
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <path value="$PROJECT_DIR$/vendor/lorisleiva/cron-translator" />
       <path value="$PROJECT_DIR$/vendor/spatie/db-dumper" />
+      <path value="$PROJECT_DIR$/vendor/forlabs/lightsaml" />
+      <path value="$PROJECT_DIR$/vendor/codegreencreative/laravel-samlidp" />
+      <path value="$PROJECT_DIR$/vendor/robrichards/xmlseclibs" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
