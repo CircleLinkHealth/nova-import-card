@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f5e3baab9103e53dd5ee1f19865d614c",
+    "content-hash": "a18c650927d1051e4bc4164d8bd57e65",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1549,11 +1549,11 @@
         },
         {
             "name": "circlelinkhealth/saml-module",
-            "version": "dev-master",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-module.git",
-                "reference": "6b88c392ea231548aa92163ed62e162e42ff46f5"
+                "reference": "0661292f3c8b2a93345b8f806d23d675445fe30f"
             },
             "require": {
                 "codegreencreative/laravel-samlidp": "^3.0"
@@ -1582,7 +1582,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-08T13:33:03+00:00"
+            "time": "2020-09-10T15:01:53+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -16760,7 +16760,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/saml-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },
