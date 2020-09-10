@@ -47,7 +47,7 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
 <p>In a few days, you'll get a call from one of our care coordinators from $practiceNumber. They'll be happy to answer your questions, and help you get started if you decide to join during that call.</p>
 <p>I look forward to having you join this program to continue keeping you healthy between office visits.</p>
 <p>Sincerely,</p>
-<p>$customerSignaturePic<br />$signatoryName<br/></p>";
+<p>$customerSignaturePic<br/>$signatoryName<br/></p>";
     
         EnrollmentInvitationLetter::updateOrCreate(
             [
