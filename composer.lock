@@ -904,7 +904,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "da04ea3b711ad822aaba1fdaa79cafd2b129e573"
+                "reference": "5bbf0ecd49f08b78a627f93a88bd6315b2098ed8"
             },
             "type": "laravel-module",
             "extra": {
@@ -942,7 +942,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-09-09T23:08:06+00:00"
+            "time": "2020-09-10T13:27:20+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1208,7 +1208,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d039a1b4a71f47ed7a4fd6fa36a034c2a4883919"
+                "reference": "8a6c277a94efbb8e9c5ffa4502e86941ea2aeb1f"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1242,7 +1242,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-08T19:06:54+00:00"
+            "time": "2020-09-10T13:27:21+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -6895,16 +6895,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.39.1",
+            "version": "2.39.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "7af467873250583cc967a59ee9df29fabab193c1"
+                "reference": "326efde1bc09077a26cb77f6e2e32e13f06c27f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/7af467873250583cc967a59ee9df29fabab193c1",
-                "reference": "7af467873250583cc967a59ee9df29fabab193c1",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/326efde1bc09077a26cb77f6e2e32e13f06c27f2",
+                "reference": "326efde1bc09077a26cb77f6e2e32e13f06c27f2",
                 "shasum": ""
             },
             "require": {
@@ -6980,7 +6980,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-09-04T13:11:37+00:00"
+            "time": "2020-09-10T12:16:42+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -12980,20 +12980,20 @@
         },
         {
             "name": "wildbit/swiftmailer-postmark",
-            "version": "3.2.0",
+            "version": "3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wildbit/swiftmailer-postmark.git",
-                "reference": "bb3a4bfa754ddf2a49bb93f13bf24a848c4359e4"
+                "reference": "44ccab7834de8b220d292647ecb2cb683f9962ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wildbit/swiftmailer-postmark/zipball/bb3a4bfa754ddf2a49bb93f13bf24a848c4359e4",
-                "reference": "bb3a4bfa754ddf2a49bb93f13bf24a848c4359e4",
+                "url": "https://api.github.com/repos/wildbit/swiftmailer-postmark/zipball/44ccab7834de8b220d292647ecb2cb683f9962ee",
+                "reference": "44ccab7834de8b220d292647ecb2cb683f9962ee",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": "^6.0.0",
+                "guzzlehttp/guzzle": "^6.0|^7.0",
                 "swiftmailer/swiftmailer": "^6.0.0"
             },
             "require-dev": {
@@ -13016,7 +13016,7 @@
                 }
             ],
             "description": "A Swiftmailer Transport for Postmark.",
-            "time": "2020-09-05T12:09:29+00:00"
+            "time": "2020-09-10T10:54:20+00:00"
         },
         {
             "name": "willdurand/email-reply-parser",
@@ -15069,12 +15069,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "9eb65787a3a143146dad2e430848702491170660"
+                "reference": "5194d3c1941518f6131238745aff916453afc727"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/9eb65787a3a143146dad2e430848702491170660",
-                "reference": "9eb65787a3a143146dad2e430848702491170660",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/5194d3c1941518f6131238745aff916453afc727",
+                "reference": "5194d3c1941518f6131238745aff916453afc727",
                 "shasum": ""
             },
             "require": {
@@ -15138,7 +15138,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-07-31T14:26:15+00:00"
+            "time": "2020-09-10T08:40:16+00:00"
         },
         {
             "name": "orangehill/iseed",
@@ -15146,21 +15146,21 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/orangehill/iseed.git",
-                "reference": "454d4aa0eacedf02d7bcbb2633e363170d3db49b"
+                "reference": "03c73d3f829a74065e14a757f0d749ad4928a15f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orangehill/iseed/zipball/454d4aa0eacedf02d7bcbb2633e363170d3db49b",
-                "reference": "454d4aa0eacedf02d7bcbb2633e363170d3db49b",
+                "url": "https://api.github.com/repos/orangehill/iseed/zipball/03c73d3f829a74065e14a757f0d749ad4928a15f",
+                "reference": "03c73d3f829a74065e14a757f0d749ad4928a15f",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
+                "illuminate/support": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0|^8.0",
                 "php": "^7.2"
             },
             "require-dev": {
-                "illuminate/filesystem": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
-                "laravel/framework": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
+                "illuminate/filesystem": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0|^8.0",
+                "laravel/framework": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0|^8.0",
                 "mockery/mockery": "^1.0.0",
                 "phpunit/phpunit": "^8.0"
             },
@@ -15197,7 +15197,7 @@
                 "laravel",
                 "seed"
             ],
-            "time": "2020-03-06T08:28:39+00:00"
+            "time": "2020-09-10T06:25:21+00:00"
         },
         {
             "name": "phar-io/manifest",
