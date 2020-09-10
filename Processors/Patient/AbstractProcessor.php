@@ -19,7 +19,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function attach(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
     {
-        return $this->repo()->store($patientId, $this->code(), $chargeableMonth);
+        return $this->repo()->store($patientId, $this->code(), $chargeableMonth, $this->requiresPatientConsent($patientId));
     }
 
     public function clashesWith(): array
@@ -81,6 +81,8 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return $this->repo;
     }
 
+    abstract public function requiresPatientConsent(int $patientId): bool;
+
     public function shouldAttach(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
         if ($this->clashesWithHigherOrderServices($patientId, $chargeableMonth)) {
@@ -127,7 +129,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return true;
     }
 
-    private function clashesWithHigherOrderServices(int $patientId, Carbon $chargeableMonth)
+    private function clashesWithHigherOrderServices(int $patientId, Carbon $chargeableMonth): bool
     {
         foreach ($this->clashesWith() as $clash) {
             if ($this->repo()->isAttached($patientId, $clash->code(), $chargeableMonth)) {
@@ -138,7 +140,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return false;
     }
 
-    private function hasUnfulfilledPreviousService(int $patientId, Carbon $chargeableMonth)
+    private function hasUnfulfilledPreviousService(int $patientId, Carbon $chargeableMonth): bool
     {
         if ( ! method_exists($this, 'previous')) {
             return false;

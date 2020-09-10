@@ -43,4 +43,9 @@ class CCM60 extends AbstractProcessor
     {
         return new CCM40();
     }
+    
+    public function requiresPatientConsent(int $patientId): bool
+    {
+        return false;
+    }
 }

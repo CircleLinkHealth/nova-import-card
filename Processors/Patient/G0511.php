@@ -36,4 +36,9 @@ class G0511 extends AbstractProcessor
     {
         return 1200;
     }
+    
+    public function requiresPatientConsent(int $patientId): bool
+    {
+        return false;
+    }
 }
