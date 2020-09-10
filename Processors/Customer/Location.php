@@ -29,7 +29,7 @@ class Location implements CustomerProcessor
 
     public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth): void
     {
-        $this->repo
+        $this->repo()
             ->patientsQuery($locationId, $chargeableMonth)
             ->chunkIntoJobs(
                 100,
