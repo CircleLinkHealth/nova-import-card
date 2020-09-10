@@ -22,7 +22,10 @@ use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfill
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
+use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
@@ -87,10 +90,6 @@ class PatientSummaryProcessingTest extends TestCase
         $fakeProcessor->process($stub);
 
         FakePatientRepository::assertChargeableSummaryCreated($patientId, $ccm40->code(), $month);
-    }
-
-    public function test_it_does_not_fulfill_if_service_requires_patient_consent()
-    {
     }
 
     public function test_it_only_attaches_next_service_if_it_is_enabled_for_location_for_month()
@@ -193,8 +192,37 @@ class PatientSummaryProcessingTest extends TestCase
         FakePatientRepository::assertChargeableSummaryNotCreated($patientId, $pcm->code(), $month);
     }
 
-    public function test_it_sets_requires_patient_consent_when_it_should()
+    public function test_it_sets_requires_patient_consent_when_it_should_and_stops_fulfilling()
     {
+        $practice = factory(Practice::class)->create();
+        $patient  = factory(User::class)->create([
+            'program_id' => $practice->id,
+        ]);
+
+        AppConfig::updateOrCreate([
+            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
+            'config_value' => $practice->name,
+        ]);
+
+        $month = now();
+        FakePatientRepository::fake();
+
+        $processor = new BHI();
+
+        $summary = $processor->attach($patient->id, $month);
+
+        self::assertTrue($summary->requires_patient_consent);
+
+        self::assertFalse($processor->shouldFulfill(
+            $patient->id,
+            $month,
+            (new PatientProblemForProcessing())
+                ->setId(123)
+                ->setCode('1234')
+                ->setServiceCodes([
+                    ChargeableService::BHI,
+                ]),
+        ));
     }
 
     public function test_job_to_process_patient_summaries_can_happen_once_every_five_minutes()

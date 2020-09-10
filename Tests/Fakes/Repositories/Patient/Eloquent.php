@@ -131,15 +131,16 @@ class Eloquent implements PatientServiceProcessorRepository
         $this->isFulfilledStubs = collect($isFulfilledStubs);
     }
 
-    public function store(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
+    public function store(int $patientId, string $chargeableServiceCode, Carbon $month, $requiresPatientConsent = false): ChargeablePatientMonthlySummary
     {
-        $this->summariesCreated->push([
-            'patientId'             => $patientId,
-            'chargeableServiceCode' => $chargeableServiceCode,
-            'month'                 => $month,
+        $this->summariesCreated->push($array = [
+            'patientId'                => $patientId,
+            'chargeableServiceCode'    => $chargeableServiceCode,
+            'month'                    => $month,
+            'requires_patient_consent' => $requiresPatientConsent,
         ]);
 
-        return new ChargeablePatientMonthlySummary();
+        return new ChargeablePatientMonthlySummary($array);
     }
 
     private function wasChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month)
