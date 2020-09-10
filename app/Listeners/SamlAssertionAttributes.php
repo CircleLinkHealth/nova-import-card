@@ -6,6 +6,7 @@
 
 namespace App\Listeners;
 
+use CodeGreenCreative\SamlIdp\Events\Assertion;
 use LightSaml\ClaimTypes;
 use LightSaml\Model\Assertion\Attribute;
 
@@ -26,7 +27,7 @@ class SamlAssertionAttributes
      * @param  object $event
      * @return void
      */
-    public function handle($event)
+    public function handle(Assertion $event)
     {
         $event->attribute_statement
             ->addAttribute(new Attribute(ClaimTypes::PPID, auth()->user()->id))
