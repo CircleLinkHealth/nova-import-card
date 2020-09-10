@@ -31,10 +31,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
      */
     private $dbRecordId;
 
-    /**
-     * @var array
-     */
-    private $input;
+    private array $input;
 
     /**
      * Create a new job instance.
