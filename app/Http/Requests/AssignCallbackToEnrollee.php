@@ -32,7 +32,7 @@ class AssignCallbackToEnrollee extends FormRequest
             'care_ambassador_user_id' => 'required|exists:users,id',
             'enrollee_id'             => 'required|exists:enrollees,id',
             'callback_date'           => ['required', new DateEqualOrAfterUsingCarbon()],
-            'callback_note'           => 'sometimes',
+            'callback_note'           => 'required',
         ];
     }
 }
