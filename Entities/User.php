@@ -4239,6 +4239,28 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
     }
 
+    public function scopeHasBhiConsent($builder){
+        return $builder->where(
+            function ($q) {
+                $q->where(function ($q) {
+                    $q->notOfPracticeRequiringSpecialBhiConsent()
+                        ->whereHas(
+                            'patientInfo',
+                            function ($q) {
+                                $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
+                            }
+                        );
+                })->orWhere(function ($q) {
+                    $q->whereHas(
+                        'notes',
+                        function ($q) {
+                            $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
+                        }
+                    );
+                });
+            }
+        );
+    }
     private function isCypriotNumber(\Propaganistas\LaravelPhone\PhoneNumber $phoneNumber)
     {
         try {
