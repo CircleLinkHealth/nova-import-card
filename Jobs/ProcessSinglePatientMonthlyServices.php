@@ -8,7 +8,10 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use App\Contracts\HasUniqueIdentifierForDebounce;
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
+use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -17,7 +20,6 @@ use Illuminate\Queue\SerializesModels;
 
 class ProcessSinglePatientMonthlyServices implements ShouldQueue, HasUniqueIdentifierForDebounce
 {
-    use ApprovablePatientUsersQuery;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
@@ -26,6 +28,10 @@ class ProcessSinglePatientMonthlyServices implements ShouldQueue, HasUniqueIdent
     protected Carbon $month;
 
     protected int $patientId;
+
+    protected PatientMonthlyBillingProcessor $processor;
+
+    protected PatientProcessorEloquentRepository $repo;
 
     /**
      * Create a new job instance.
@@ -38,6 +44,21 @@ class ProcessSinglePatientMonthlyServices implements ShouldQueue, HasUniqueIdent
         $this->month     = $month;
     }
 
+    public function getMonth(): Carbon
+    {
+        return $this->month;
+    }
+
+    public function getPatientId(): int
+    {
+        return $this->patientId;
+    }
+
+    public function getUniqueIdentifier(): string
+    {
+        return (string) $this->getPatientId().$this->getMonth()->toDateString();
+    }
+
     /**
      * Execute the job.
      *
@@ -45,32 +66,35 @@ class ProcessSinglePatientMonthlyServices implements ShouldQueue, HasUniqueIdent
      */
     public function handle()
     {
-        $patient = $this
-            ->approvablePatientUserQuery($this->getPatientId(), $this->getMonth())
-            ->with(['patientInfo.location.chargeableMonthlySummaries' => function ($summary) {
-                $summary->with(['chargeableService'])
-                    ->createdOn($this->getMonth(), 'chargeable_month');
-            }])
+        /** @var User */
+        $patient = $this->repo()
+            ->patientWithBillingDataForMonth($this->getPatientId(), $this->getMonth())
             ->first();
 
-        ProcessPatientMonthlyServices::dispatch(
-            $patient,
-            $patient->patientInfo->location->availableServiceProcessors($this->month),
-            $this->month
+        $this->processor()->process(
+            (new PatientMonthlyBillingDTO())
+                ->subscribe($patient->patientInfo->location->availableServiceProcessors($this->getMonth()))
+                ->forPatient($patient->id)
+                ->forMonth($this->getMonth())
+                ->withProblems($patient->patientProblemsForBillingProcessing()->toArray())
         );
     }
-    
-    public function getUniqueIdentifier(): string
+
+    public function processor(): PatientMonthlyBillingProcessor
     {
-        return (string)$this->getPatientId().$this->getMonth()->toDateString();
+        if ( ! isset($this->processor)) {
+            $this->processor = app(PatientMonthlyBillingProcessor::class);
+        }
+
+        return $this->processor;
     }
-    
-    public function getPatientId():int{
-        return $this->patientId;
-    }
-    
-    public function getMonth(): Carbon
+
+    public function repo(): PatientProcessorEloquentRepository
     {
-        return $this->month;
+        if ( ! isset($this->repo)) {
+            $this->repo = app(PatientProcessorEloquentRepository::class);
+        }
+
+        return $this->repo;
     }
 }

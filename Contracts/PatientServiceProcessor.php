@@ -8,7 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Contracts;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 
 interface PatientServiceProcessor
@@ -31,7 +31,7 @@ interface PatientServiceProcessor
 
     public function minimumTimeInSeconds(): int;
 
-    public function processBilling(PatientMonthlyBillingStub $billingStub): void;
+    public function processBilling(PatientMonthlyBillingDTO $billingStub): void;
 
     public function repo(): PatientServiceProcessorRepository;
 

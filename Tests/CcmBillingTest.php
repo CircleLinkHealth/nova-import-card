@@ -22,7 +22,7 @@ use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePat
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;

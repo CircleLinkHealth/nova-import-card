@@ -8,10 +8,8 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
-use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -25,40 +23,27 @@ class ProcessPatientMonthlyServices implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    protected AvailableServiceProcessors $availableServiceProcessors;
-
-    protected Carbon $chargeableMonth;
-
-    protected User $patient;
+    protected PatientMonthlyBillingDTO $patient;
 
     protected PatientMonthlyBillingProcessor $processor;
-
+    
     /**
      * Create a new job instance.
-     *
-     * @return void
+     * @param PatientMonthlyBillingDTO $patient
      */
-    public function __construct(User $patient, AvailableServiceProcessors $availableServiceProcessors, Carbon $chargeableMonth)
+    public function __construct(PatientMonthlyBillingDTO $patient)
     {
-        $this->patient                    = $patient;
-        $this->availableServiceProcessors = $availableServiceProcessors;
-        $this->chargeableMonth            = $chargeableMonth;
-        $this->processor                  = new MonthlyProcessor();
+        $this->patient = $patient;
     }
 
     public function getAvailableServiceProcessors(): AvailableServiceProcessors
     {
-        return $this->availableServiceProcessors;
+        return $this->patient->getAvailableServiceProcessors();
     }
 
     public function getChargeableMonth(): Carbon
     {
-        return $this->chargeableMonth;
-    }
-
-    public function getProcessor(): MonthlyProcessor
-    {
-        return $this->processor;
+        return $this->patient->getChargeableMonth();
     }
 
     /**
@@ -68,12 +53,15 @@ class ProcessPatientMonthlyServices implements ShouldQueue
      */
     public function handle()
     {
-        $stub = (new PatientMonthlyBillingStub())
-            ->subscribe($this->getAvailableServiceProcessors())
-            ->forPatient($this->patient->id)
-            ->forMonth($this->getChargeableMonth())
-            ->withProblems($this->patient->patientProblemsForBillingProcessing()->toArray());
+        $this->processor()->process($this->patient);
+    }
 
-        $this->processor->process($stub);
+    public function processor(): PatientMonthlyBillingProcessor
+    {
+        if ( ! isset($this->processor)) {
+            $this->processor = app(PatientMonthlyBillingProcessor::class);
+        }
+
+        return $this->processor;
     }
 }

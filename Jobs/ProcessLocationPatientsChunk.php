@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use App\Contracts\ChunksEloquentBuilder;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -43,6 +44,16 @@ class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
         $this->chargeableMonth            = $chargeableMonth;
     }
 
+    public function getAvailableServiceProcessors()
+    {
+        return $this->availableServiceProcessors;
+    }
+
+    public function getChargeableMonth()
+    {
+        return $this->chargeableMonth;
+    }
+
     public function getLimit()
     {
         return $this->limit;
@@ -51,10 +62,6 @@ class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
     public function getOffset()
     {
         return $this->offset;
-    }
-    
-    public function getChargeableMonth(){
-        return $this->chargeableMonth;
     }
 
     /**
@@ -65,7 +72,13 @@ class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
     public function handle()
     {
         $this->builder->get()->each(function (User $patient) {
-            ProcessPatientMonthlyServices::dispatch($patient, $this->availableServiceProcessors, $this->getChargeableMonth());
+            ProcessPatientMonthlyServices::dispatch(
+                (new PatientMonthlyBillingDTO())
+                    ->subscribe($this->getAvailableServiceProcessors())
+                    ->forPatient($patient->id)
+                    ->forMonth($this->getChargeableMonth())
+                    ->withProblems($patient->patientProblemsForBillingProcessing()->toArray())
+            );
         });
     }
 
@@ -76,9 +89,5 @@ class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
             ->limit($this->limit = $limit);
 
         return $this;
-    }
-    
-    public function getAvailableServiceProcessors(){
-        return $this->availableServiceProcessors;
     }
 }

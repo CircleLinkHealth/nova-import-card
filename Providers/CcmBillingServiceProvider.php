@@ -11,14 +11,15 @@ use CircleLinkHealth\CcmBilling\Console\Commands\MigrateChargeableServicesFromCh
 use CircleLinkHealth\CcmBilling\Console\Commands\MigratePracticeServicesFromChargeablesToLocationSummariesTable;
 use CircleLinkHealth\CcmBilling\Console\Commands\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Console\Commands\ProcessSinglePatientMonthlyServices;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientRepositoryInterface;
-use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
-use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository as PatientProcessorEloquentRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
-use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository as PatientRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
@@ -60,9 +61,10 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
 
         $this->app->bind(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
 
-        $this->app->singleton(PatientRepositoryInterface::class, PatientRepository::class);
+        $this->app->singleton(PatientServiceRepositoryInterface::class, PatientServiceRepository::class);
         $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
         $this->app->singleton(LocationProcessorRepository::class, LocationProcessorEloquentRepository::class);
+        $this->app->singleton(PatientProcessorEloquentRepositoryInterface::class, PatientProcessorEloquentRepository::class);
 
         $this->commands([
             MigratePracticeServicesFromChargeablesToLocationSummariesTable::class,

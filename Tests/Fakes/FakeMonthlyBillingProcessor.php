@@ -10,19 +10,19 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 
 class FakeMonthlyBillingProcessor implements PatientMonthlyBillingProcessor
 {
     public PatientChargeableSummaryCollection $getServicesForTimeTrackerValue;
-    public PatientMonthlyBillingStub $processReturnValue;
+    public PatientMonthlyBillingDTO $processReturnValue;
 
     public function getServicesForTimeTracker(int $patientId, Carbon $month): PatientChargeableSummaryCollection
     {
         return $this->getServicesForTimeTrackerValue;
     }
 
-    public function process(PatientMonthlyBillingStub $patientStub): PatientMonthlyBillingStub
+    public function process(PatientMonthlyBillingDTO $patientStub): PatientMonthlyBillingDTO
     {
         $patientStub->getAvailableServiceProcessors()
             ->toCollection()

@@ -20,7 +20,7 @@ use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePat
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingStub;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
@@ -49,7 +49,7 @@ class PatientSummaryProcessingTest extends TestCase
             new IsFulfilledStub($patientId, $ccm->code(), $month, false)
         );
 
-        $stub = (new PatientMonthlyBillingStub())
+        $stub = (new PatientMonthlyBillingDTO())
             ->subscribe(AvailableServiceProcessors::push([$ccm, $ccm40]))
             ->forPatient($patientId)
             ->forMonth($month)
@@ -114,7 +114,7 @@ class PatientSummaryProcessingTest extends TestCase
     {
         FakePatientRepository::fake();
 
-        $stub = (new PatientMonthlyBillingStub())
+        $stub = (new PatientMonthlyBillingDTO())
             ->subscribe(AvailableServiceProcessors::push([new CCM(), new BHI()]))
             ->forPatient(1)
             ->forMonth($startOfMonth = Carbon::now()->startOfMonth()->startOfDay())
@@ -158,7 +158,7 @@ class PatientSummaryProcessingTest extends TestCase
         $pcm       = new PCM();
         $month     = now();
 
-        $stub = (new PatientMonthlyBillingStub())
+        $stub = (new PatientMonthlyBillingDTO())
             ->subscribe(AvailableServiceProcessors::push([$ccm, $pcm]))
             ->forPatient($patientId)
             ->forMonth($month)

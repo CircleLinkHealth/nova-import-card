@@ -8,7 +8,7 @@ namespace CircleLinkHealth\CcmBilling\ValueObjects;
 
 use Carbon\Carbon;
 
-class PatientMonthlyBillingStub
+class PatientMonthlyBillingDTO
 {
     protected AvailableServiceProcessors $availableServiceProcessors;
 
