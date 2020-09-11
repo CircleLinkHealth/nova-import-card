@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Entities\TwilioInboundSmsRequest;
 use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\Services\Calls\SchedulerService;
@@ -31,14 +32,14 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
      */
     private $dbRecordId;
 
-    private array $input;
+    private TwilioInboundSmsRequest $input;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(array $input, int $dbRecordId = null)
+    public function __construct(TwilioInboundSmsRequest $input, int $dbRecordId = null)
     {
         $this->input      = $input;
         $this->dbRecordId = $dbRecordId;
@@ -55,7 +56,7 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
         $recordId = $this->dbRecordId ?: $this->storeRawLogs();
 
         // 1. read source number, find patient
-        $fromNumber          = $this->input['From'];
+        $fromNumber          = $this->input->From;
         $fromNumberFormatted = formatPhoneNumber($fromNumber);
         $users               = User::whereHas('phoneNumbers', function ($q) use ($fromNumber, $fromNumberFormatted) {
             $q->whereIn('number', [$fromNumber, $fromNumberFormatted]);
@@ -78,6 +79,7 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
             ->whereIn('notifiable_type', [User::class, \App\User::class])
             ->whereIn('notifiable_id', $users->map(fn ($user) => $user->id)->toArray())
             ->where('created_at', '>=', now()->subDays(14))
+            ->orderByDesc('created_at')
             ->first();
 
         if ( ! $notification) {
@@ -86,21 +88,20 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
             return;
         }
 
-        $user = $users->where('id', '=', $notification->notifiable_id)->first();
-        if ( ! $user) {
-            sendSlackMessage('#carecoach_ops_alerts', "Could not find unsuccessful call notification from inbound sms [2]. See database record id[$recordId]");
+        try {
+            $user = $users->where('id', '=', $notification->notifiable_id)->first();
+
+            // 3. create call for nurse with ASAP flag
+            /** @var SchedulerService $service */
+            $service = app(SchedulerService::class);
+            $task    = $service->scheduleAsapCallbackTaskFromSms($user, $this->input->From, $this->input->Body, 'twilio_inbound_sms');
+        } catch (\Exception $e) {
+            sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
 
             return;
         }
 
-        try {
-            // 3. create call for nurse with ASAP flag
-            /** @var SchedulerService $service */
-            $service = app(SchedulerService::class);
-            $task    = $service->scheduleAsapCallbackTaskFromSms($user, $this->input['From'], $this->input['Body'], 'twilio_inbound_sms');
-        } catch (\Exception $e) {
-            sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
-
+        if ($this->dbRecordId) {
             return;
         }
 
@@ -111,7 +112,7 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
             ->first();
 
         // 4. reply to patient
-        $user->notify(new PatientUnsuccessfulCallReplyNotification($careCoach->first_name, $user->primaryPractice->display_name, ['twilio']));
+        $user->notify(new PatientUnsuccessfulCallReplyNotification(optional($careCoach)->first_name, $user->primaryPractice->display_name, ['twilio']));
     }
 
     private function storeRawLogs(): ?int

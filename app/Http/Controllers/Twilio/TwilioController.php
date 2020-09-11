@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Twilio;
 
+use App\Entities\TwilioInboundSmsRequest;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessTwilioInboundSmsJob;
 use CircleLinkHealth\Core\Jobs\ProcessTwilioSmsStatusCallbackJob;
@@ -23,7 +24,7 @@ class TwilioController extends Controller
      */
     public function smsInbound(Request $request)
     {
-        ProcessTwilioInboundSmsJob::dispatch($request->all());
+        ProcessTwilioInboundSmsJob::dispatch(new TwilioInboundSmsRequest($request->all()));
 
         return $this->responseWithXmlType(response(''));
     }
