@@ -75,48 +75,44 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         }
 
         // 2. check that we have sent an unsuccessful call notification to this patient in the last 2 weeks
-        $notifications = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
+        $notification = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
             ->whereIn('notifiable_type', [User::class, \App\User::class])
             ->whereIn('notifiable_id', $users->map(fn ($user) => $user->id)->toArray())
             ->where('created_at', '>=', now()->subDays(14))
-            ->get();
+            ->orderByDesc('created_at')
+            ->first();
 
-        if ($notifications->isEmpty()) {
+        if ( ! $notification) {
             sendSlackMessage('#carecoach_ops_alerts', "Could not find unsuccessful call notification from inbound mail. See database record id[$recordId]");
 
             return;
         }
 
-        $hasSentReplyWithNurseId = null;
-        $notifications->each(function ($notification) use ($users, $recordId, &$hasSentReplyWithNurseId) {
+        try {
             $user = $users->where('id', '=', $notification->notifiable_id)->first();
 
-            try {
-                // 3. create call for nurse with ASAP flag
-                /** @var SchedulerService $service */
-                $service = app(SchedulerService::class);
-                $task = $service->scheduleAsapCallbackTask($user, $this->filterEmailBody($this->input->TextBody), 'postmark_inbound_mail');
-            } catch (\Exception $e) {
-                sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
+            // 3. create call for nurse with ASAP flag
+            /** @var SchedulerService $service */
+            $service = app(SchedulerService::class);
+            $task    = $service->scheduleAsapCallbackTask($user, $this->filterEmailBody($this->input->TextBody), 'postmark_inbound_mail');
+        } catch (\Exception $e) {
+            sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
 
-                return;
-            }
+            return;
+        }
 
-            if ($this->dbRecordId || $task->outbound_cpm_id === $hasSentReplyWithNurseId) {
-                return;
-            }
+        if ($this->dbRecordId) {
+            return;
+        }
 
-            $hasSentReplyWithNurseId = $task->outbound_cpm_id;
+        /** @var User $careCoach */
+        $careCoach = User::without(['roles', 'perms'])
+            ->where('id', '=', $task->outbound_cpm_id)
+            ->select(['id', 'first_name'])
+            ->first();
 
-            /** @var User $careCoach */
-            $careCoach = User::without(['roles', 'perms'])
-                ->where('id', '=', $task->outbound_cpm_id)
-                ->select(['id', 'first_name'])
-                ->first();
-
-            // 4. reply to patient
-            $user->notify(new PatientUnsuccessfulCallReplyNotification(optional($careCoach)->first_name, $user->primaryPractice->display_name, ['mail']));
-        });
+        // 4. reply to patient
+        $user->notify(new PatientUnsuccessfulCallReplyNotification(optional($careCoach)->first_name, $user->primaryPractice->display_name, ['mail']));
     }
 
     private function filterEmailBody($emailBody): string

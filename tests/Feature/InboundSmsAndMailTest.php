@@ -131,7 +131,7 @@ class InboundSmsAndMailTest extends CustomerTestCase
         Notification::assertSentTo($patient, PatientUnsuccessfulCallReplyNotification::class);
     }
 
-    public function test_should_create_two_asap_tasks_from_phone_that_belongs_to_two_patients()
+    public function test_should_create_one_asap_task_from_phone_that_belongs_to_two_patients()
     {
         /** @var Collection $patients */
         $aPatient = $this->createUsersOfType('participant', 1);
@@ -150,16 +150,12 @@ class InboundSmsAndMailTest extends CustomerTestCase
             ->where('type', '=', SchedulerService::TASK_TYPE)
             ->where('sub_type', '=', SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS)
             ->get();
-        self::assertEquals(2, $calls->count());
-        self::assertEquals(2, $calls->filter(fn ($c) => 1 === $c->asap)->count());
+        self::assertEquals(1, $calls->count());
+        self::assertTrue(1 === $calls->first()->asap);
         self::assertStringContainsString('test', $calls->first()->attempt_note);
-        self::assertStringContainsString('test', $calls->last()->attempt_note);
 
-        $hasSent = Notification::hasSent($aPatient, PatientUnsuccessfulCallReplyNotification::class);
-        if ( ! $hasSent) {
-            $hasSent = Notification::hasSent($bPatient, PatientUnsuccessfulCallReplyNotification::class);
-        }
-        self::assertTrue($hasSent);
+        Notification::assertSentTo($aPatient, PatientUnsuccessfulCallReplyNotification::class);
+        Notification::assertNotSentTo($bPatient, PatientUnsuccessfulCallReplyNotification::class);
     }
 
     public function test_should_not_create_more_than_one_asap_task_with_multiple_sms()
