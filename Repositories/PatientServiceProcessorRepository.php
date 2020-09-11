@@ -15,12 +15,11 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\Patient as PatientModel;
-use Illuminate\Support\Facades\Cache;
 
 class PatientServiceProcessorRepository implements Repository
 {
     use ApprovablePatientServicesQuery;
-    
+
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         return ChargeablePatientMonthlySummary::updateOrCreate([
@@ -92,7 +91,7 @@ class PatientServiceProcessorRepository implements Repository
             ->exists();
     }
 
-    public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month)
+    public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month) : ChargeablePatientMonthlySummary
     {
         return ChargeablePatientMonthlySummary::updateOrCreate([
             'patient_user_id'       => $patientId,

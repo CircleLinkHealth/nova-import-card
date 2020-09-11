@@ -23,5 +23,7 @@ interface PatientServiceProcessorRepository
 
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
 
+    public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
+
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary;
 }
