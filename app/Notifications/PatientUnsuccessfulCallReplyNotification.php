@@ -14,15 +14,12 @@ use NotificationChannels\Twilio\TwilioSmsMessage;
 class PatientUnsuccessfulCallReplyNotification extends Notification
 {
     use Queueable;
-
-    /** @var array */
-    private $channels;
-
-    /** @var string */
-    private $forwardedToNurseName;
-
-    /** @var string */
-    private $practiceName;
+    
+    private array $channels;
+    
+    private ?string $forwardedToNurseName;
+    
+    private ?string $practiceName;
 
     /**
      * Create a new notification instance.
@@ -32,7 +29,7 @@ class PatientUnsuccessfulCallReplyNotification extends Notification
      *
      * @return void
      */
-    public function __construct($forwardedToNurseName, $practiceName, array $channels = [])
+    public function __construct(?string $forwardedToNurseName, ?string $practiceName, array $channels = [])
     {
         $this->channels             = $channels;
         $this->forwardedToNurseName = $forwardedToNurseName;
@@ -92,6 +89,9 @@ class PatientUnsuccessfulCallReplyNotification extends Notification
 
     private function getMessage(): string
     {
+        if (isEmpty($this->forwardedToNurseName)) {
+            return "Perfect! We've forwarded your message to your care coach. Thank you and have a great day :)";
+        }
         return "Perfect! We've forwarded your message to Nurse $this->forwardedToNurseName. Thank you and have a great day :)";
     }
 }
