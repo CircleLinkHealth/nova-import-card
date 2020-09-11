@@ -93,7 +93,7 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
                 ],
                 [
                     'active'                => 1,
-                    'display_name'          => ucfirst(str_replace('-', ' ', 'woodlands-internists-pa')),
+                    'display_name'          => ucfirst(str_replace('-', ' ', 'woodlands-internists')),
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,
