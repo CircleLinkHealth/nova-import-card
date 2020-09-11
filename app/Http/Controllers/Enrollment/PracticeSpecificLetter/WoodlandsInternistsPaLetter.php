@@ -20,16 +20,23 @@ class WoodlandsInternistsPaLetter extends EnrollmentLetterDefaultConfigs impleme
     public $extraAddressValuesExists;
     public $practice;
     public $userEnrollee;
-
+    public bool $disableButtons;
+    
     /**
      * WoodlandsInternistsPaLetter constructor.
+     * @param bool $hideButtons
+     * @param array $baseLetter
+     * @param Practice $practice
+     * @param User $userEnrollee
+     * @param bool $disableButtons
      */
-    public function __construct(bool $hideButtons, array $baseLetter, Practice $practice, User $userEnrollee)
+    public function __construct(bool $hideButtons, array $baseLetter, Practice $practice, User $userEnrollee, bool $disableButtons = false)
     {
         $this->constructorDefaultArguments($hideButtons, $baseLetter, $practice, $userEnrollee);
         //        Extra for this practice.
         $this->extraAddressValues;
         $this->extraAddressValuesExists;
+        $this->disableButtons = $disableButtons;
     }
 
     public function getBaseViewConfigs(): array
@@ -39,10 +46,12 @@ class WoodlandsInternistsPaLetter extends EnrollmentLetterDefaultConfigs impleme
 
     public function letterBladeView()
     {
-        $baseLetterConfigs = $this->getBaseViewConfigs();
-        $className         = $baseLetterConfigs['className'];
+        $baseLetterConfigs                  = $this->getBaseViewConfigs();
+        $className                          = $baseLetterConfigs['className'];
+        $letterViewParams                   = LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs);
+        $letterViewParams['disableButtons'] = $this->disableButtons;
 
-        return view("enrollment-letters.$className", LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs));
+        return view("enrollment-letters.$className", $letterViewParams);
     }
 
     public function letterSpecificView()
