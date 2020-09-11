@@ -14,6 +14,7 @@ use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -35,14 +36,7 @@ class InboundSmsAndMailTest extends CustomerTestCase
         app(NurseFinderEloquentRepository::class)->assign($patient->id, $nurse->id);
 
         //need to have an entry in db to actually handle inbound sms/mail
-        DatabaseNotification::create([
-            'id'              => Str::random(36),
-            'type'            => PatientUnsuccessfulCallNotification::class,
-            'notifiable_id'   => $patient->id,
-            'notifiable_type' => get_class($patient),
-            'created_at'      => now(),
-            'updated_at'      => now(),
-        ]);
+        $this->addDbEntryForNotification($patient);
     }
 
     public function test_should_create_asap_call_to_nurse()
@@ -137,6 +131,37 @@ class InboundSmsAndMailTest extends CustomerTestCase
         Notification::assertSentTo($patient, PatientUnsuccessfulCallReplyNotification::class);
     }
 
+    public function test_should_create_two_asap_tasks_from_phone_that_belongs_to_two_patients()
+    {
+        /** @var Collection $patients */
+        $aPatient = $this->createUsersOfType('participant', 1);
+        $bPatient = $this->patient();
+        PhoneNumber::whereIn('user_id', [$aPatient->id, $bPatient->id])
+            ->update(['number' => $bPatient->getPhoneNumberForSms()]);
+
+        $this->addDbEntryForNotification($aPatient);
+        app(NurseFinderEloquentRepository::class)->assign($aPatient->id, $this->careCoach()->id);
+
+        $data     = $this->getSmsRequestData($bPatient->getPhoneNumberForSms(), 'test');
+        $response = $this->post(route('twilio.sms.inbound'), $data);
+        $response->assertStatus(200);
+
+        $calls = Call::whereIn('inbound_cpm_id', [$aPatient->id, $bPatient->id])
+            ->where('type', '=', SchedulerService::TASK_TYPE)
+            ->where('sub_type', '=', SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS)
+            ->get();
+        self::assertEquals(2, $calls->count());
+        self::assertEquals(2, $calls->filter(fn ($c) => 1 === $c->asap)->count());
+        self::assertStringContainsString('test', $calls->first()->attempt_note);
+        self::assertStringContainsString('test', $calls->last()->attempt_note);
+
+        $hasSent = Notification::hasSent($aPatient, PatientUnsuccessfulCallReplyNotification::class);
+        if ( ! $hasSent) {
+            $hasSent = Notification::hasSent($bPatient, PatientUnsuccessfulCallReplyNotification::class);
+        }
+        self::assertTrue($hasSent);
+    }
+
     public function test_should_not_create_more_than_one_asap_task_with_multiple_sms()
     {
         $patient  = $this->patient();
@@ -158,6 +183,18 @@ class InboundSmsAndMailTest extends CustomerTestCase
         self::assertStringContainsString("test\ntest2", $call->attempt_note);
 
         Notification::assertSentTo($patient, PatientUnsuccessfulCallReplyNotification::class);
+    }
+
+    private function addDbEntryForNotification(User $patient)
+    {
+        DatabaseNotification::create([
+            'id'              => Str::random(36),
+            'type'            => PatientUnsuccessfulCallNotification::class,
+            'notifiable_id'   => $patient->id,
+            'notifiable_type' => get_class($patient),
+            'created_at'      => now(),
+            'updated_at'      => now(),
+        ]);
     }
 
     private function getMailRequestData(string $fromEmail, string $body)
