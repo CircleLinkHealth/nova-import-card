@@ -33,10 +33,14 @@ class PostmarkCallbackMailService
     public function saveUnresolvedInboundCallback($matchResult, int $recordId)
     {
         $matchSuggestions = $this->getPatientMatchSuggestion($matchResult);
-        UnresolvedInboundCallback::create([
+        $callback         = UnresolvedInboundCallback::create([
             'postmark_rec_id' => $recordId,
             'suggestions'     => json_encode($matchSuggestions),
         ]);
+        
+        if ( ! $callback) {
+            Log::critical("Callback for $recordId was not successful");
+        }
     }
 
     public function shouldCreateCallBackFromPostmarkInbound(array $matchedPatients)

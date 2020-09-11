@@ -93,12 +93,11 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                 }
 
                 $postmarkMarkService->saveUnresolvedInboundCallback($matchedResultsFromDB['matchResult'], $recordId);
-
-                return 'Prepare a list for Ops';
+                sendSlackMessage('#carecoach_ops_alerts', "Unresolved Inbound Callback Request: postmark_inbound_mail:[$recordId]");
+                return;
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
                 sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
-
                 return;
             }
         }
