@@ -15,6 +15,10 @@
         </div>
     </div>
 
+    <div class="letter-sent">
+        {{$dateLetterSent}}
+    </div>
+
     <div class="letter-head">
         Dear {{$userEnrollee->first_name}} {{$userEnrollee->last_name}},
     </div>
@@ -23,6 +27,10 @@
 <style>
     .letter-head{
         padding-bottom: unset;
+    }
+
+    .letter-sent{
+        margin-top: -27px;
     }
 
     .header{

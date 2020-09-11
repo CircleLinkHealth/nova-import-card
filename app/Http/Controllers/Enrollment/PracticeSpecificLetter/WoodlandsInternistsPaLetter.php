@@ -15,20 +15,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class WoodlandsInternistsPaLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
 {
+    public bool $disableButtons;
     public $enrollee;
     public $extraAddressValues;
     public $extraAddressValuesExists;
     public $practice;
     public $userEnrollee;
-    public bool $disableButtons;
-    
+
     /**
      * WoodlandsInternistsPaLetter constructor.
-     * @param bool $hideButtons
-     * @param array $baseLetter
-     * @param Practice $practice
-     * @param User $userEnrollee
-     * @param bool $disableButtons
      */
     public function __construct(bool $hideButtons, array $baseLetter, Practice $practice, User $userEnrollee, bool $disableButtons = false)
     {

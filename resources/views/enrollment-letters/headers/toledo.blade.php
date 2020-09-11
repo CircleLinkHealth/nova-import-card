@@ -17,6 +17,11 @@
             @include('enrollment-letters.practiceLogo')
         </div>
     </div>
+
+    <div class="letter-sent">
+        {{$dateLetterSent}}
+    </div>
+
     <div class="letter-head">
         Dear {{$userEnrollee->first_name}},
     </div>
@@ -26,6 +31,10 @@
     .header{
         padding-right: 700px;
         font-size: 23px;
+    }
+
+    .letter-sent {
+        margin-top: -22px;
     }
 
     @media (max-width: 490px) {
