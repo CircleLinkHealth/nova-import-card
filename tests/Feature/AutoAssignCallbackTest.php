@@ -143,8 +143,7 @@ class AutoAssignCallbackTest extends TestCase
 
         $patient2         = $this->patient;
         $patientEnrollee2 = $this->patientEnrollee;
-        $postmarkRecord2  = $this->postmarkRecord;
-        $phone2           = $this->phone;
+
 
         $patient2->phoneNumbers
             ->first()
@@ -153,11 +152,10 @@ class AutoAssignCallbackTest extends TestCase
                     'number' => $phone1->number,
                 ]
             );
-
-        $patient2->phoneNumbers->fresh();
-        $patient1->display_name = $patient2->display_name;
-        $patient1->save();
-        $patient1->fresh();
+        
+        $patient2->display_name = $patient1->display_name;
+        $patient2->save();
+        $patient2->fresh();
 
         $this->assertDatabaseHas('users', [
             'id' => $patient1->id,
@@ -178,10 +176,7 @@ class AutoAssignCallbackTest extends TestCase
         $this->assertDatabaseHas('postmark_inbound_mail', [
             'id' => $postmarkRecord1->id,
         ]);
-
-        $this->assertDatabaseHas('postmark_inbound_mail', [
-            'id' => $postmarkRecord2->id,
-        ]);
+        
 
         assert($patient1->display_name === $patient2->display_name);
 

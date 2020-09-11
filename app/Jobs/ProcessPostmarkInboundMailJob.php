@@ -70,6 +70,13 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                 $matchedResultsFromDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
                     ->getMatchedPatients();
 
+                if (empty($matchedResultsFromDB)) {
+                    Log::warning("Could not find a patient match for record_id:[$recordId] in postmark_inbound_mail");
+                    sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient match for record_id:[$recordId] in postmark_inbound_mail");
+
+                    return;
+                }
+
                 if ($postmarkMarkService->shouldCreateCallBackFromPostmarkInbound($matchedResultsFromDB)) {
                     /** @var SchedulerService $service */
                     $service = app(SchedulerService::class);
@@ -84,7 +91,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                     //@todo: Send Live Notification. It should be done by Call observer already. Check!
                     return;
                 }
-                
+
                 $postmarkMarkService->saveUnresolvedInboundCallback($matchedResultsFromDB['matchResult'], $recordId);
 
                 return 'Prepare a list for Ops';

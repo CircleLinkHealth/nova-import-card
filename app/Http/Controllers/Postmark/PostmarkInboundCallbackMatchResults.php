@@ -154,7 +154,6 @@ class PostmarkInboundCallbackMatchResults extends Controller
         return [
             'matchResult'    => $patientsMatchedByCallerFieldName->get(),
             'createCallback' => false,
-            
         ];
     }
 
