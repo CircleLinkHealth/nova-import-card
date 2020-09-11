@@ -144,7 +144,6 @@ class AutoAssignCallbackTest extends TestCase
         $patient2         = $this->patient;
         $patientEnrollee2 = $this->patientEnrollee;
 
-
         $patient2->phoneNumbers
             ->first()
             ->update(
@@ -152,7 +151,7 @@ class AutoAssignCallbackTest extends TestCase
                     'number' => $phone1->number,
                 ]
             );
-        
+
         $patient2->display_name = $patient1->display_name;
         $patient2->save();
         $patient2->fresh();
@@ -176,11 +175,15 @@ class AutoAssignCallbackTest extends TestCase
         $this->assertDatabaseHas('postmark_inbound_mail', [
             'id' => $postmarkRecord1->id,
         ]);
-        
 
         assert($patient1->display_name === $patient2->display_name);
 
         $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
+
+        $this->assertDatabaseHas('unresolved_postmark_inbound_callbacks', [
+            'postmark_rec_id' => $postmarkRecord1->id,
+//            'suggestions'     => json_encode([intval($patient1->id), intval($patient2->id)]),
+        ]);
 
         $this->assertMissingCallBack($patient1->id);
 

@@ -27,6 +27,11 @@ use Illuminate\Database\Eloquent\Model;
 class UnresolvedInboundCallback extends Model
 {
     protected $table = 'unresolved_postmark_inbound_callbacks';
+    
+    protected $fillable = [
+        'postmark_rec_id',
+        'suggestions',
+    ];
 
     public function inboundPostmark()
     {
