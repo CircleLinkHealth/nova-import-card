@@ -65,7 +65,7 @@ class WoodlandsInternistsPaLetter extends EnrollmentLetterDefaultConfigs impleme
 
     public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
     {
-        return "<img src='$practiceLetter->customer_signature_src'  alt='$practice->dipslay_name' style='max-width: 100%;'/>";
+        return "<img src='$practiceLetter->customer_signature_src'  alt='$practice->dipslay_name' style='width: 300px;'/>";
     }
 
     /**
