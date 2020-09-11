@@ -141,7 +141,7 @@ class CcdaImporterTest extends CustomerTestCase
             CcdaImporter::convertToFamilyEmail($email)
         ));
     }
-  
+
     public function test_it_converts_to_family_email()
     {
         self::assertRegExp('/^hello\+family\d*@gmail.com/', CcdaImporter::convertToFamilyEmail('hello@gmail.com'));
