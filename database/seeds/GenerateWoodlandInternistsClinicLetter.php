@@ -11,6 +11,7 @@ use Illuminate\Database\Seeder;
 class GenerateWoodlandInternistsClinicLetter extends Seeder
 {
     const UI_REQUESTS = 'ui_requests';
+
     /**
      * Run the database seeds.
      *
@@ -22,11 +23,9 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
         $signatoryName        = EnrollmentInvitationLetter::SIGNATORY_NAME;
         $practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
-    
+
         $woodlandsPractice = $this->getPractice();
-    
-    
-    
+
         $bodyPageOne = "
 
 <p>$practiceName has invested in a new Personalized Care Program to help patients get care at home, which is especially important given current events, and I'm inviting you to join.</p>
@@ -48,14 +47,14 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
 <p>I look forward to having you join this program to continue keeping you healthy between office visits.</p>
 <p>Sincerely,</p>
 <p>$customerSignaturePic<br/>$signatoryName<br/></p>";
-    
+
         EnrollmentInvitationLetter::updateOrCreate(
             [
                 'practice_id' => $woodlandsPractice->id,
             ],
             [
-                'practice_logo_src'      => 'img/logos/Woodlands/woodlands_logo.png',
-                'customer_signature_src' => 'img/signatures/woodlands-clinic/woodlands_signature.png',
+                'practice_logo_src'      => '/img/logos/Woodlands/woodlands_logo.png',
+                'customer_signature_src' => '/img/signatures/woodlands-clinic/woodlands_signature.png',
                 'letter'                 => json_encode(
                     [
                         'page_1' => [
@@ -64,7 +63,7 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
                         ],
                     ]
                 ),
-            
+
                 self::UI_REQUESTS => json_encode([
                     'logo_position'        => 'text-align:left',
                     'extra_address_header' => [
@@ -78,8 +77,6 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
                 ]),
             ]
         );
-        
-        
     }
 
     private function getPractice()
