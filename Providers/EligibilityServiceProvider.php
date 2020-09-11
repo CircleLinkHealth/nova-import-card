@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Providers;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
 class EligibilityServiceProvider extends ServiceProvider
