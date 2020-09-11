@@ -512,16 +512,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.154.0",
+            "version": "3.154.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "370d1a58004fbeb3896ec48489677e90e653b12f"
+                "reference": "5651d8a92164d98869b70a15e4c06ce4c14c7c28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/370d1a58004fbeb3896ec48489677e90e653b12f",
-                "reference": "370d1a58004fbeb3896ec48489677e90e653b12f",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5651d8a92164d98869b70a15e4c06ce4c14c7c28",
+                "reference": "5651d8a92164d98869b70a15e4c06ce4c14c7c28",
                 "shasum": ""
             },
             "require": {
@@ -593,7 +593,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-09-10T18:12:09+00:00"
+            "time": "2020-09-11T18:12:41+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -904,7 +904,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "d8eb06a529e43cefb0e9e41a80aef1ba61428d32"
+                "reference": "6f82b19d7d9c23ffcd34d6ade8bf24625bfc3626"
             },
             "type": "laravel-module",
             "extra": {
@@ -942,7 +942,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-09-10T23:31:51+00:00"
+            "time": "2020-09-11T21:46:36+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1951,16 +1951,16 @@
         },
         {
             "name": "danielme85/laravel-log-to-db",
-            "version": "v2.4.0",
+            "version": "v2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danielme85/laravel-log-to-db.git",
-                "reference": "0e8ad2a7bcb6bb0127ee66b219bd800cc2fd89f9"
+                "reference": "e4def4bfba5e2910cd470334d32699d186fe89cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danielme85/laravel-log-to-db/zipball/0e8ad2a7bcb6bb0127ee66b219bd800cc2fd89f9",
-                "reference": "0e8ad2a7bcb6bb0127ee66b219bd800cc2fd89f9",
+                "url": "https://api.github.com/repos/danielme85/laravel-log-to-db/zipball/e4def4bfba5e2910cd470334d32699d186fe89cb",
+                "reference": "e4def4bfba5e2910cd470334d32699d186fe89cb",
                 "shasum": ""
             },
             "require": {
@@ -2009,7 +2009,7 @@
                 "mysql",
                 "sql"
             ],
-            "time": "2020-07-10T04:59:30+00:00"
+            "time": "2020-09-03T03:08:51+00:00"
         },
         {
             "name": "darkghosthunter/laraload",
@@ -4064,21 +4064,21 @@
         },
         {
             "name": "jenssegers/model",
-            "version": "v1.3.0",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jenssegers/model.git",
-                "reference": "3a70a5b155a690d0dc3a063e1878d4fd7b0b5b6d"
+                "reference": "546aa41336495ca3e4afd3cd155d454d1c831384"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jenssegers/model/zipball/3a70a5b155a690d0dc3a063e1878d4fd7b0b5b6d",
-                "reference": "3a70a5b155a690d0dc3a063e1878d4fd7b0b5b6d",
+                "url": "https://api.github.com/repos/jenssegers/model/zipball/546aa41336495ca3e4afd3cd155d454d1c831384",
+                "reference": "546aa41336495ca3e4afd3cd155d454d1c831384",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "^5.0|^6.0|^7.0",
-                "illuminate/support": "^4.0|^5.0|^6.0|^7.0"
+                "illuminate/contracts": "^5.0|^6.0|^7.0|^8.0",
+                "illuminate/support": "^4.0|^5.0|^6.0|^7.0|^8.0"
             },
             "require-dev": {
                 "php-coveralls/php-coveralls": "*",
@@ -4107,7 +4107,7 @@
                 "laravel",
                 "model"
             ],
-            "time": "2020-03-05T17:17:42+00:00"
+            "time": "2020-09-11T11:05:47+00:00"
         },
         {
             "name": "jeremykenedy/slack",
@@ -5297,27 +5297,27 @@
         },
         {
             "name": "laravel/ui",
-            "version": "v2.3.0",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/ui.git",
-                "reference": "2ccaa3b821ea8ac7e05393b946d0578bdb46099b"
+                "reference": "f5398544a9cd4804a42d09ce51735e37cd51ea2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/ui/zipball/2ccaa3b821ea8ac7e05393b946d0578bdb46099b",
-                "reference": "2ccaa3b821ea8ac7e05393b946d0578bdb46099b",
+                "url": "https://api.github.com/repos/laravel/ui/zipball/f5398544a9cd4804a42d09ce51735e37cd51ea2d",
+                "reference": "f5398544a9cd4804a42d09ce51735e37cd51ea2d",
                 "shasum": ""
             },
             "require": {
-                "illuminate/console": "^7.0|^8.0",
-                "illuminate/filesystem": "^7.0|^8.0",
-                "illuminate/support": "^7.0|^8.0",
+                "illuminate/console": "^7.0",
+                "illuminate/filesystem": "^7.0",
+                "illuminate/support": "^7.0",
                 "php": "^7.2.5"
             },
             "require-dev": {
                 "mockery/mockery": "^1.0",
-                "phpunit/phpunit": "^8.0|^9.0"
+                "phpunit/phpunit": "^8.0"
             },
             "type": "library",
             "extra": {
@@ -5348,7 +5348,7 @@
                 "laravel",
                 "ui"
             ],
-            "time": "2020-09-09T12:07:59+00:00"
+            "time": "2020-09-11T15:31:52+00:00"
         },
         {
             "name": "laravelcollective/html",
