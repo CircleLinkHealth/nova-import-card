@@ -27,12 +27,22 @@ class UnresolvedPostmarkInboundCallbacks extends Migration
     {
         Schema::create('unresolved_postmark_inbound_callbacks', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('postmark_rec_id');
-            $table->unsignedInteger('call_id'); // Do i need calls to know communicate with this?
+            $table->unsignedBigInteger('postmark_rec_id');
+            $table->unsignedBigInteger('call_id');
             $table->json('suggestions');
             $table->boolean('resolved_manually');
             $table->string('issue_type')->nullable();
             $table->timestamps();
+
+            $table->foreign('postmark_rec_id')
+                ->references('id')
+                ->on('postmark_inbound_mail')
+                ->onUpdate('cascade');
+
+            $table->foreign('call_id')
+                ->references('id')
+                ->on('calls')
+                ->onUpdate('cascade');
         });
     }
 }
