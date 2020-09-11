@@ -30,8 +30,6 @@ class UnresolvedPostmarkInboundCallbacks extends Migration
             $table->increments('id');
             $table->unsignedBigInteger('postmark_rec_id');
             $table->json('suggestions');
-            $table->boolean('resolved_manually');
-            $table->string('issue_type')->nullable();
             $table->timestamps();
 
             $table->foreign('postmark_rec_id')
