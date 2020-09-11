@@ -89,7 +89,7 @@ class PatientUnsuccessfulCallReplyNotification extends Notification
 
     private function getMessage(): string
     {
-        if (isEmpty($this->forwardedToNurseName)) {
+        if (empty($this->forwardedToNurseName)) {
             return "Perfect! We've forwarded your message to your care coach. Thank you and have a great day :)";
         }
         return "Perfect! We've forwarded your message to Nurse $this->forwardedToNurseName. Thank you and have a great day :)";
