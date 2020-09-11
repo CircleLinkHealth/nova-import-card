@@ -156,6 +156,7 @@ class AutoAssignCallbackTest extends TestCase
 
         $patient2->phoneNumbers->fresh();
         $patient1->display_name = $patient2->display_name;
+        $patient1->save();
         $patient1->fresh();
 
         $this->assertDatabaseHas('users', [
