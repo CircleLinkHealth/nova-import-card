@@ -13,6 +13,8 @@ use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Facades\Notification;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tests\Concerns\TwilioFake\Twilio;
@@ -43,11 +45,6 @@ class InboundSmsAndMailTest extends CustomerTestCase
         ]);
     }
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function test_should_create_asap_call_to_nurse()
     {
         $patient  = $this->patient();
@@ -67,11 +64,65 @@ class InboundSmsAndMailTest extends CustomerTestCase
         Notification::assertSentTo($patient, PatientUnsuccessfulCallReplyNotification::class);
     }
 
+    public function test_should_create_asap_call_to_nurse_from_email_that_belongs_to_two_patients()
+    {
+        /** @var Collection $patients */
+        $aPatient        = $this->createUsersOfType('participant', 1);
+        $aPatient->email = 'test_should_create_asap_call_to_nurse_from_email_that_belongs_to_two_patients@example.org';
+        $aPatient->save();
+        $bPatient        = $this->patient();
+        $bPatient->email = 'test_should_create_asap_call_to_nurse_from_email_that_belongs_to_two_patients+family@example.org';
+        $bPatient->save();
+
+        $patients = collect([$aPatient, $bPatient]);
+        $patient  = $patients->last();
+
+        $data     = $this->getMailRequestData($patient->email, 'test');
+        $response = $this->post(route('postmark.inbound'), $data);
+        $response->assertStatus(200);
+
+        /** @var Call $call */
+        $call = Call::whereInboundCpmId($patient->id)
+            ->where('type', '=', SchedulerService::TASK_TYPE)
+            ->where('sub_type', '=', SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS)
+            ->first();
+        self::assertNotNull($call);
+        self::assertEquals(1, $call->asap);
+        self::assertStringContainsString('test', $call->attempt_note);
+
+        Notification::assertSentTo($patient, PatientUnsuccessfulCallReplyNotification::class);
+    }
+
     public function test_should_create_asap_call_to_nurse_from_inbound_mail()
     {
         $patient  = $this->patient();
         $data     = $this->getMailRequestData($patient->email, 'test');
         $response = $this->post(route('postmark.inbound'), $data);
+        $response->assertStatus(200);
+
+        /** @var Call $call */
+        $call = Call::whereInboundCpmId($patient->id)
+            ->where('type', '=', SchedulerService::TASK_TYPE)
+            ->where('sub_type', '=', SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS)
+            ->first();
+        self::assertNotNull($call);
+        self::assertEquals(1, $call->asap);
+        self::assertStringContainsString('test', $call->attempt_note);
+
+        Notification::assertSentTo($patient, PatientUnsuccessfulCallReplyNotification::class);
+    }
+
+    public function test_should_create_asap_call_to_nurse_from_phone_that_belongs_to_two_patients()
+    {
+        /** @var Collection $patients */
+        $patients = collect([$this->createUsersOfType('participant', 1), $this->patient()]);
+        PhoneNumber::whereIn('user_id', $patients->map(fn ($p) => $p->id))
+            ->update(['number' => $patients->last()->getPhoneNumberForSms()]);
+
+        $patient = $patients->last();
+
+        $data     = $this->getSmsRequestData($patient->getPhoneNumberForSms(), 'test');
+        $response = $this->post(route('twilio.sms.inbound'), $data);
         $response->assertStatus(200);
 
         /** @var Call $call */
