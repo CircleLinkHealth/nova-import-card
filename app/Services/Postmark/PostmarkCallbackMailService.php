@@ -7,10 +7,8 @@
 namespace App\Services\Postmark;
 
 use App\PostmarkInboundMail;
-use CircleLinkHealth\Customer\Entities\Patient;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
+use App\UnresolvedInboundCallback;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
 
 class PostmarkCallbackMailService
@@ -31,8 +29,27 @@ class PostmarkCallbackMailService
         return collect(json_decode($postmarkRecord->data))->toArray();
     }
 
+    public function saveUnresolvedInboundCallback(User $matchResult, int $recordId)
+    {
+        $matchSuggestions = $this->getMatchSuggestions($matchResult);
+        UnresolvedInboundCallback::create([
+            'postmark_rec_id' => $recordId,
+            'suggestions'     => json_encode($matchSuggestions),
+        ]);
+    }
+
     public function shouldCreateCallBackFromPostmarkInbound(array $matchedPatients)
     {
         return $matchedPatients['createCallback'];
+    }
+
+    private function getMatchSuggestions(User $matchResult)
+    {
+        $suggestions = [];
+        if (true) {
+            $suggestions = $matchResult;
+        }
+
+        return $suggestions;
     }
 }

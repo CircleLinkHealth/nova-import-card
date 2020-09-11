@@ -129,7 +129,7 @@ class PostmarkInboundCallbackMatchResults extends Controller
     {
         $firstName = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID'])['firstName'];
         $lastName  = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID'])['lastName'];
-        
+
         $patientsMatchedByCallerFieldName = $patientsMatchedByPhone
             ->where('first_name', '=', $firstName)
             ->where('last_name', '=', $lastName);
@@ -154,6 +154,7 @@ class PostmarkInboundCallbackMatchResults extends Controller
         return [
             'matchResult'    => $patientsMatchedByCallerFieldName->get(),
             'createCallback' => false,
+            
         ];
     }
 

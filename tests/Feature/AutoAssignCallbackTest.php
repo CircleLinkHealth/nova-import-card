@@ -155,7 +155,8 @@ class AutoAssignCallbackTest extends TestCase
             );
 
         $patient2->phoneNumbers->fresh();
-        $phone2 = $phone1;
+        $patient1->display_name = $patient2->display_name;
+        $patient1->fresh();
 
         $this->assertDatabaseHas('users', [
             'id' => $patient1->id,
@@ -181,7 +182,7 @@ class AutoAssignCallbackTest extends TestCase
             'id' => $postmarkRecord2->id,
         ]);
 
-        assert($patient1->phoneNumbers->first()->number === $patient2->phoneNumbers->first()->number);
+        assert($patient1->display_name === $patient2->display_name);
 
         $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
 

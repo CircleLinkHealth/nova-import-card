@@ -66,26 +66,28 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
             try {
                 $postmarkMarkService  = (new PostmarkCallbackMailService());
                 $postmarkCallbackData = $postmarkMarkService->parsedEmailData($recordId);
-                /** @var array $matchedResultsWithDB */
-                $matchedResultsWithDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
+                /** @var array $matchedResultsFromDB */
+                $matchedResultsFromDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
                     ->getMatchedPatients();
 
-                if ($postmarkMarkService->shouldCreateCallBackFromPostmarkInbound($matchedResultsWithDB)) {
+                if ($postmarkMarkService->shouldCreateCallBackFromPostmarkInbound($matchedResultsFromDB)) {
                     /** @var SchedulerService $service */
                     $service = app(SchedulerService::class);
                     $service->scheduleAsapCallbackTask(
-                        $matchedResultsWithDB['matchResult'],
+                        $matchedResultsFromDB['matchResult'],
                         $postmarkCallbackData['Msg'],
                         'postmark_inbound_mail',
                         null,
                         SchedulerService::CALL_BACK_TYPE
                     );
 
+                    //@todo: Send Live Notification. It should be done by Call observer already. Check!
                     return;
                 }
-
-                return 'Prepare a list for Ops & Send Live Notification also';
                 
+                $postmarkMarkService->saveUnresolvedInboundCallback($matchedResultsFromDB['matchResult'], $recordId);
+
+                return 'Prepare a list for Ops';
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
                 sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");

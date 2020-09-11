@@ -50,12 +50,7 @@ trait PostmarkCallbackHelpers
             'care_ambassador_user_id' => $careAmbassadorId,
         ]);
     }
-    
-    /**
-     * @param string $status
-     * @param bool $requestToWithdraw
-     * @param bool $nameIsSelf
-     */
+
     private function createPatientData(string $status, bool $requestToWithdraw = false, bool $nameIsSelf = false)
     {
         $this->patient         = $this->createUserWithPatientCcmStatus($this->practice, $status);
