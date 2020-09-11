@@ -38,9 +38,9 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
 
 <p>Here's how it works:</p>
 
-<li>You'll get monthly calls from a Registered Nurse Care Coach to help you manage your health conditions, so you can stay as active and healthy as you can be.</li>
-<li>By staying healthy in between office visits, you'll be less likely to need extra/expensive medical care, including visits to the ER or the hospital, which helps reduce your medical bills.</li>
-<li>You can avoid being on hold when you need something: your nurse can help with prescription refills, appointment scheduling, transportation assistance, and any general questions.</li>
+<li>You'll get monthly calls from a Registered Nurse Care Coach to help you manage your health conditions, so you can stay as active and healthy as you can be.</li><br>
+<li>By staying healthy in between office visits, you'll be less likely to need extra/expensive medical care, including visits to the ER or the hospital, which helps reduce your medical bills.</li><br>
+<li>You can avoid being on hold when you need something: your nurse can help with prescription refills, appointment scheduling, transportation assistance, and any general questions.</li><br>
 <li>You can disenroll at any time. This is a voluntary program meant to provide assistance and benefits outside of our physical office.</li>
 
 <p>What's the Cost?</p>
@@ -57,8 +57,8 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
                 'practice_id' => $woodlandsPractice->id,
             ],
             [
-                'practice_logo_src'      => 'img/logos/Woodlands/woodlands_logo.png',
-                'customer_signature_src' => 'img/signatures/woodlands-clinic/woodlands_signature.png',
+                'practice_logo_src'      => '/img/logos/Woodlands/woodlands_logo.png',
+                'customer_signature_src' => '/img/signatures/woodlands-clinic/woodlands_signature.png',
                 'letter'                 => json_encode(
                     [
                         'page_1' => [
