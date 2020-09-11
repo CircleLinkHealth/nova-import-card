@@ -97,7 +97,7 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,
-                    'outgoing_phone_number' => 2025550196,
+                    'outgoing_phone_number' => 9362720989,
                 ]
             );
         }
