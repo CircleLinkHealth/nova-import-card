@@ -59,8 +59,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         // 1. read source email, find patient
         $email      = $this->removeAliasFromEmail($this->input->From);
         $emailParts = $this->splitEmail($email);
-        /** @var User $user */
-        $users = User::where('email', 'REGEXP', '^'.$emailParts->username.'[+|@]')
+        $users      = User::where('email', 'REGEXP', '^'.$emailParts->username.'[+|@]')
             ->where('email', 'REGEXP', $emailParts->domain.'$')
             ->with([
                 'primaryPractice' => function ($q) {
