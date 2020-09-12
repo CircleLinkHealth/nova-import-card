@@ -14,11 +14,11 @@ use NotificationChannels\Twilio\TwilioSmsMessage;
 class PatientUnsuccessfulCallReplyNotification extends Notification
 {
     use Queueable;
-    
+
     private array $channels;
-    
+
     private ?string $forwardedToNurseName;
-    
+
     private ?string $practiceName;
 
     /**
@@ -92,6 +92,7 @@ class PatientUnsuccessfulCallReplyNotification extends Notification
         if (empty($this->forwardedToNurseName)) {
             return "Perfect! We've forwarded your message to your care coach. Thank you and have a great day :)";
         }
+
         return "Perfect! We've forwarded your message to Nurse $this->forwardedToNurseName. Thank you and have a great day :)";
     }
 }
