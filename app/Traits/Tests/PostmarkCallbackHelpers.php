@@ -21,7 +21,7 @@ trait PostmarkCallbackHelpers
 
         $inboundPostmarkData = [
             'For'      => 'GROUP DISTRIBUTION',
-            'From'     => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
+            'From'     => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL_USERNAME,
             'Phone'    => $number,
             'Ptn'      => $name,
             'Msg'      => '| REQUEST TO BE REMOVED OFF ALL LISTS  |',
@@ -62,7 +62,7 @@ trait PostmarkCallbackHelpers
     {
         return  PostmarkInboundMail::create(
             [
-                'from' => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL,
+                'from' => ProcessPostmarkInboundMailJob::FROM_CALLBACK_FULL_EMAIL,
                 'data' => json_encode($this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf)),
                 'body' => 'This is it',
             ]

@@ -7,9 +7,6 @@
 namespace App\Services\Postmark;
 
 use App\PostmarkInboundMail;
-use App\UnresolvedInboundCallback;
-use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 class PostmarkCallbackMailService
