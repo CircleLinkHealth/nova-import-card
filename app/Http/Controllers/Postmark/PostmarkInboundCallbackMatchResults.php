@@ -7,27 +7,26 @@
 namespace App\Http\Controllers\Postmark;
 
 use App\Http\Controllers\Controller;
-use CircleLinkHealth\Customer\Entities\Patient;
+use App\Services\Postmark\PostmarkCallbackMailService;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class PostmarkInboundCallbackMatchResults extends Controller
 {
     private array $postmarkCallbackData;
+
+    private PostmarkCallbackMailService $postmarkCallbackService;
     private int $recordId;
-    
+
     /**
      * PostmarkInboundCallbackMatchResults constructor.
-     * @param array $postmarkCallbackData
-     * @param int $recordId
      */
-    public function __construct(array $postmarkCallbackData, int $recordId)
+    public function __construct(array $postmarkCallbackData, int $recordId, PostmarkCallbackMailService $postmarkCallbackService)
     {
-        $this->postmarkCallbackData = $postmarkCallbackData;
-        $this->recordId             = $recordId;
+        $this->postmarkCallbackData    = $postmarkCallbackData;
+        $this->recordId                = $recordId;
+        $this->postmarkCallbackService = $postmarkCallbackService;
     }
 
     /**
@@ -67,7 +66,7 @@ class PostmarkInboundCallbackMatchResults extends Controller
 
         $patientsMatchWithInboundName = $patientsMatchedByPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
 
-        if (0 === $patientsMatchWithInboundName->count()) {
+        if ($patientsMatchWithInboundName->get()->isEmpty()) {
             Log::critical("Cannot match postmark inbound data with our records for record_id $this->recordId");
             sendSlackMessage('#carecoach_ops_alerts', "Could not match inbound mail with a patient from our records:[$this->recordId] in postmark_inbound_mail");
 
@@ -101,28 +100,6 @@ class PostmarkInboundCallbackMatchResults extends Controller
                 $phoneNumber->where('number', $inboundPostmarkData['Phone']);
             });
     }
-
-//    /**
-//     * @return bool
-//     */
-//    private function isPatientEnrolled(User $patientUser)
-//    {
-//        return Patient::ENROLLED === $patientUser->enrollee->status
-//            && Patient::ENROLLED === $patientUser->patientInfo->ccm_status;
-//    }
-
-//    /**
-//     * @return bool
-//     */
-//    private function isQueuedForEnrollmentAndUnassigned(User $patientUser)
-//    {
-//        if ( ! $patientUser->enrollee->exists()) {
-//            return false;
-//        }
-//
-//        return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
-//            && is_null($patientUser->enrollee->care_ambassador_user_id);
-//    }
 
     /**
      * @return array
@@ -186,24 +163,8 @@ class PostmarkInboundCallbackMatchResults extends Controller
      */
     private function patientIsCallbackEligible($patientUser, array $inboundPostmarkData)
     {
-        if ( ! $this->isPatientEnrolled($patientUser)
-            || $this->isQueuedForEnrollmentAndUnassigned($patientUser)
-            || $this->requestsCancellation($inboundPostmarkData)) {
-            return false;
-        }
-
-        return true;
+        return $this->postmarkCallbackService->isCallbackEligible($inboundPostmarkData, $patientUser);
     }
-
-//    /**
-//     * @param $postmarkData
-//     * @return bool
-//     */
-//    private function requestsCancellation($postmarkData)
-//    {
-//        return isset($postmarkData['Cancel/Withdraw Reason'])
-//            || Str::contains(Str::of($postmarkData['Msg'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
-//    }
 
     private function singleMatch(Builder $postmarkInboundPatientsMatched)
     {

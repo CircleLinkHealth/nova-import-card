@@ -16,6 +16,29 @@ use Illuminate\Support\Str;
 class PostmarkCallbackMailService
 {
     /**
+     * @param User $patientUser
+     * @return bool
+     */
+    public function isPatientEnrolled(User $patientUser)
+    {
+        return Patient::ENROLLED === $patientUser->enrollee->status
+            && Patient::ENROLLED === $patientUser->patientInfo->ccm_status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isQueuedForEnrollmentAndUnassigned(User $patientUser)
+    {
+        if ( ! $patientUser->enrollee->exists()) {
+            return false;
+        }
+
+        return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
+            && is_null($patientUser->enrollee->care_ambassador_user_id);
+    }
+
+    /**
      * @return array|void
      */
     public function postmarkInboundData(int $postmarkRecordId)
@@ -30,16 +53,7 @@ class PostmarkCallbackMailService
 
         return collect(json_decode($postmarkRecord->data))->toArray();
     }
-    
-    /**
-     * @param array $matchedPatients
-     * @return mixed
-     */
-    public function shouldCreateCallBackFromPostmarkInbound(array $matchedPatients)
-    {
-        return $matchedPatients['createCallback'];
-    }
-    
+
     /**
      * @param $postmarkData
      * @return bool
@@ -49,29 +63,28 @@ class PostmarkCallbackMailService
         return isset($postmarkData['Cancel/Withdraw Reason'])
             || Str::contains(Str::of($postmarkData['Msg'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
     }
+
+    /**
+     * @return mixed
+     */
+    public function shouldCreateCallBackFromPostmarkInbound(array $matchedPatients)
+    {
+        return $matchedPatients['createCallback'];
+    }
     
     /**
+     * @param array $inboundPostmarkData
      * @param User $patientUser
      * @return bool
      */
-    public function isQueuedForEnrollmentAndUnassigned(User $patientUser)
+    public function isCallbackEligible(array $inboundPostmarkData, User $patientUser)
     {
-        if ( ! $patientUser->enrollee->exists()) {
+        if ( ! $this->isPatientEnrolled($patientUser)
+            || $this->isQueuedForEnrollmentAndUnassigned($patientUser)
+            || $this->requestsCancellation($inboundPostmarkData)) {
             return false;
         }
-        
-        return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
-            && is_null($patientUser->enrollee->care_ambassador_user_id);
-    }
     
-    /**
-     * @param User $patientUser
-     * @return bool
-     */
-    public function isPatientEnrolled(User $patientUser)
-    {
-        return Patient::ENROLLED === $patientUser->enrollee->status
-            && Patient::ENROLLED === $patientUser->patientInfo->ccm_status;
+        return true;
     }
-    
 }

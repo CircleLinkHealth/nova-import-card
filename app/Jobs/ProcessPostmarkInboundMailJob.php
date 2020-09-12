@@ -75,7 +75,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                 $postmarkMarkService  = (new PostmarkCallbackMailService());
                 $postmarkCallbackData = $postmarkMarkService->postmarkInboundData($recordId);
                 /** @var array $matchedResultsFromDB */
-                $matchedResultsFromDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
+                $matchedResultsFromDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId, $postmarkMarkService))
                     ->getMatchedPatients();
 
                 if (empty($matchedResultsFromDB)) {
