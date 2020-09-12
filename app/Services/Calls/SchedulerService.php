@@ -29,7 +29,8 @@ class SchedulerService
     const PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE = 'Provider Request For Care Plan Approval';
     const SCHEDULE_NEXT_CALL_PER_PATIENT_SMS          = 'Schedule Next Call per patient\'s SMS';
     const TASK_TYPE                                   = 'task';
-
+    const NURSE_NOT_FOUND = 'could not find nurse for patient';
+    
     /**
      * @var NoteService
      */
@@ -406,7 +407,8 @@ class SchedulerService
         );
 
         if ( ! $nurseId = app(NurseFinderEloquentRepository::class)->find($patient->id) ?? StandByNurseUser::id()) {
-            throw new \Exception("could not find nurse for patient[$patient->id]");
+            $message = self::NURSE_NOT_FOUND;
+            throw new \Exception("$message [$patient->id]");
         }
 
         $nowString = now()->toDateTimeString();

@@ -22,6 +22,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ProcessPostmarkInboundMailJob implements ShouldQueue
 {
@@ -98,8 +99,13 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                     //@todo: Send Live Notification. It should be done by Call observer already. Check!
                     return;
                 }
+
                 return;
             } catch (\Exception $e) {
+                if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {
+                    //                Assign to CA's ???
+                    return;
+                }
                 Log::error($e->getMessage());
                 sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
 
