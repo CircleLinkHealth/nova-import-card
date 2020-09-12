@@ -321,6 +321,10 @@
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <path value="$PROJECT_DIR$/vendor/lorisleiva/cron-translator" />
       <path value="$PROJECT_DIR$/vendor/spatie/db-dumper" />
+      <path value="$PROJECT_DIR$/vendor/laravel/vapor-core" />
+      <path value="$PROJECT_DIR$/vendor/laravel/vapor-ui" />
+      <path value="$PROJECT_DIR$/vendor/hollodotme/fast-cgi-client" />
+      <path value="$PROJECT_DIR$/vendor/riverline/multipart-parser" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

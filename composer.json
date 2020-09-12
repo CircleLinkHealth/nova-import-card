@@ -228,6 +228,8 @@
     "laravel/scout": "^8.0",
     "laravel/tinker": "^2.0",
     "laravel/ui": "^2.0",
+    "laravel/vapor-core": "^2.9",
+    "laravel/vapor-ui": "^0.0.5",
     "laravelcollective/html": "^6.1",
     "league/flysystem-aws-s3-v3": "^1.0",
     "maatwebsite/excel": "^3.1.19",
@@ -320,7 +322,8 @@
     ],
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-      "@php artisan nova:publish"
+      "@php artisan nova:publish",
+      "@php artisan vapor-ui:publish --ansi"
     ],
     "unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",

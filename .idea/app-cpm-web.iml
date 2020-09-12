@@ -80,6 +80,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/hamcrest/hamcrest-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/hashids/hashids" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/heroku/heroku-buildpack-php" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/hollodotme/fast-cgi-client" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/http-interop/http-factory-guzzle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/hubertnnn/laravel-nova-field-dynamic-select" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/intervention/image" />
@@ -111,6 +112,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/scout" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/tinker" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/ui" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/vapor-core" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/vapor-ui" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravelcollective/html" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/lcobucci/jwt" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/commonmark" />
@@ -192,6 +195,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/react/event-loop" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/react/stream" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/riimu/kit-phpencoder" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/riverline/multipart-parser" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/scrivo/highlight.php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/code-unit-reverse-lookup" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/comparator" />

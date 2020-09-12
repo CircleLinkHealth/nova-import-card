@@ -1,0 +1,37 @@
+id: 13482
+name: app-cpm-web
+environments:
+    production:
+        memory: 1024
+        cli-memory: 512
+        runtime: php-7.4
+        build:
+            - 'composer install --no-dev'
+            - 'php artisan event:cache'
+            - 'npm run prod && rm -rf node_modules'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
+            - 'php artisan config:cache'
+            - 'php artisan view:cache'
+            - 'php artisan route:cache'
+            - 'php artisan horizon:terminate'
+            - 'php artisan queue:restart'
+            - 'php artisan schedule-monitor:sync'
+    staging:
+        memory: 1024
+        cli-memory: 512
+        runtime: php-7.4
+        build:
+            - 'composer install --no-dev'
+            - 'php artisan event:cache'
+            - 'npm run dev && rm -rf node_modules'
+        deploy:
+            - 'php artisan migrate --force'
+            - 'php artisan migrate:views'
+            - 'php artisan config:cache'
+            - 'php artisan view:cache'
+            - 'php artisan route:cache'
+            - 'php artisan horizon:terminate'
+            - 'php artisan queue:restart'
+            - 'php artisan schedule-monitor:sync'

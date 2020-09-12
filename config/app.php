@@ -192,6 +192,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         \App\Providers\RouteServiceProvider::class,
+        App\Providers\VaporUiServiceProvider::class,
         \App\Providers\AuthServiceProvider::class,
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,
