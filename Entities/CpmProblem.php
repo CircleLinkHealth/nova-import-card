@@ -140,6 +140,15 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
             ->withTimestamps();
     }
 
+    public function getChargeableServiceCodesForLocation(int $locationId): array
+    {
+        return $this->locationChargeableServices
+            ->where('pivot.location_id', $locationId)
+            ->pluck('code')
+            ->values()
+            ->toArray();
+    }
+
     public function instructable()
     {
         return $this->hasOne(CpmInstructable::class, 'instructable_id');
@@ -166,14 +175,6 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
             ->withPivot(['location_id']);
     }
 
-    public function getChargeableServiceCodesForLocation(int $locationId) : array
-    {
-        return $this->locationChargeableServices
-            ->where('pivot.location_id', $locationId)
-            ->pluck('code')
-            ->values()
-            ->toArray();
-    }
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
