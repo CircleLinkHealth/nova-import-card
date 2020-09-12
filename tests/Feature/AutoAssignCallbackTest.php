@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use App\Entities\PostmarkInboundMailRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
 use App\Services\Calls\SchedulerService;
@@ -91,7 +92,7 @@ class AutoAssignCallbackTest extends TestCase
         $patient2->save();
         $patient2->fresh();
 
-        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
+        $this->dispatchPostmarkInboundMail(new PostmarkInboundMailRequest(collect(json_decode($postmarkRecord1->data))->toArray()), $postmarkRecord1->id);
         $this->assertMissingCallBack($patient1->id);
         $this->assertMissingCallBack($patient2->id);
     }
@@ -106,7 +107,7 @@ class AutoAssignCallbackTest extends TestCase
             ]
         );
 
-        $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
+        $this->dispatchPostmarkInboundMail(new PostmarkInboundMailRequest(collect(json_decode($this->postmarkRecord->data))->toArray()), $this->postmarkRecord->id);
 
         $this->assertMissingCallBack($this->patient->id);
 
@@ -116,7 +117,7 @@ class AutoAssignCallbackTest extends TestCase
     public function test_it_will_assign_to_ops_if_patient_is_not_enrolled()
     {
         $this->createPatientData(Patient::PAUSED);
-        $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
+        $this->dispatchPostmarkInboundMail(new PostmarkInboundMailRequest(collect(json_decode($this->postmarkRecord->data))->toArray()), $this->postmarkRecord->id);
 
         $this->assertMissingCallBack($this->patient->id);
         //        @todo:test_it_will_assign_to_ops
@@ -125,7 +126,7 @@ class AutoAssignCallbackTest extends TestCase
     public function test_it_will_assign_to_ops_if_patient_requested_to_withdraw()
     {
         $this->createPatientData(Patient::ENROLLED, true);
-        $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
+        $this->dispatchPostmarkInboundMail(new PostmarkInboundMailRequest(collect(json_decode($this->postmarkRecord->data))->toArray()), $this->postmarkRecord->id);
         $this->assertMissingCallBack($this->patient->id);
         //        @todo:test_it_will_assign_to_ops
     }
@@ -177,8 +178,8 @@ class AutoAssignCallbackTest extends TestCase
         ]);
 
         assert($patient1->display_name === $patient2->display_name);
-
-        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
+    
+        $this->dispatchPostmarkInboundMail(new PostmarkInboundMailRequest(collect(json_decode($postmarkRecord1->data))->toArray()), $postmarkRecord1->id);
 
         $this->assertDatabaseHas('unresolved_postmark_inbound_callbacks', [
             'postmark_rec_id' => $postmarkRecord1->id,
@@ -199,7 +200,7 @@ class AutoAssignCallbackTest extends TestCase
         $this->createPatientData(Enrollee::ENROLLED);
         $patient2 = $this->patient;
 
-        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
+        $this->dispatchPostmarkInboundMail(new PostmarkInboundMailRequest(collect(json_decode($postmarkRecord1->data))->toArray()), $postmarkRecord1->id);
         $this->assertCallbackExists($patient1->id);
         $this->assertMissingCallBack($patient2->id);
     }
@@ -223,8 +224,8 @@ class AutoAssignCallbackTest extends TestCase
 
         $patient2->phoneNumbers->fresh();
         $phone2 = $phone1;
-
-        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
+    
+        $this->dispatchPostmarkInboundMail(new PostmarkInboundMailRequest(collect(json_decode($postmarkRecord1->data))->toArray()), $postmarkRecord1->id);
         $this->assertCallbackExists($patient1->id);
     }
 
@@ -244,7 +245,7 @@ class AutoAssignCallbackTest extends TestCase
         ]);
     }
 
-    private function dispatchPostmarkInboundMail(array $recordData, int $recordId)
+    private function dispatchPostmarkInboundMail(PostmarkInboundMailRequest $recordData, int $recordId)
     {
         ProcessPostmarkInboundMailJob::dispatchNow(
             $recordData,

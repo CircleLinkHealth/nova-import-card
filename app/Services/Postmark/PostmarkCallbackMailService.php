@@ -30,39 +30,8 @@ class PostmarkCallbackMailService
         return collect(json_decode($postmarkRecord->data))->toArray();
     }
 
-    public function saveUnresolvedInboundCallback($matchResult, int $recordId)
-    {
-        $matchSuggestions = $this->getPatientMatchSuggestion($matchResult);
-        $callback         = UnresolvedInboundCallback::create([
-            'postmark_rec_id' => $recordId,
-            'suggestions'     => json_encode($matchSuggestions),
-        ]);
-        
-        if ( ! $callback) {
-            Log::critical("Callback for $recordId was not successful");
-        }
-    }
-
     public function shouldCreateCallBackFromPostmarkInbound(array $matchedPatients)
     {
         return $matchedPatients['createCallback'];
-    }
-
-    /**
-     * @param $patientMatchResult
-     * @return array|Collection
-     */
-    private function getPatientMatchSuggestion($patientMatchResult)
-    {
-        $suggestions = [];
-        if ($patientMatchResult instanceof Collection) {
-            $suggestions = $patientMatchResult->pluck('id');
-        }
-
-        if ($patientMatchResult instanceof User) {
-            $suggestions = $patientMatchResult->id;
-        }
-
-        return $suggestions;
     }
 }

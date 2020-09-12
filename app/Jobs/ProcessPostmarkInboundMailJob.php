@@ -6,9 +6,9 @@
 
 namespace App\Jobs;
 
-use App\Http\Controllers\Postmark\PostmarkInboundCallbackMatchResults;
 use App\Entities\EmailAddressParts;
 use App\Entities\PostmarkInboundMailRequest;
+use App\Http\Controllers\Postmark\PostmarkInboundCallbackMatchResults;
 use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\PostmarkInboundMail;
@@ -98,13 +98,11 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                     //@todo: Send Live Notification. It should be done by Call observer already. Check!
                     return;
                 }
-
-                $postmarkMarkService->saveUnresolvedInboundCallback($matchedResultsFromDB['matchResult'], $recordId);
-                sendSlackMessage('#carecoach_ops_alerts', "Unresolved Inbound Callback Request: postmark_inbound_mail:[$recordId]");
                 return;
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
                 sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
+
                 return;
             }
         }
