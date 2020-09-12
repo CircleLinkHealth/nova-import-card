@@ -1,5 +1,6 @@
 id: 13482
 name: app-cpm-web
+separate-vendor: true
 environments:
     production:
         memory: 1024
@@ -8,7 +9,7 @@ environments:
         build:
             - 'composer install --no-dev'
             - 'php artisan event:cache'
-            - 'npm run prod && rm -rf node_modules'
+            - 'npm install && npm run prod && rm -rf node_modules'
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
@@ -25,7 +26,7 @@ environments:
         build:
             - 'composer install --no-dev'
             - 'php artisan event:cache'
-            - 'npm run dev && rm -rf node_modules'
+            - 'npm install && npm run dev && rm -rf node_modules'
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
