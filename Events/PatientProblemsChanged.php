@@ -35,18 +35,18 @@ class PatientProblemsChanged implements PatientEvent
         return [];
     }
 
+    public function debounceDuration(): int
+    {
+        return 0;
+    }
+
     public function getPatientId(): int
     {
         return $this->patientUserId;
     }
-    
+
     public function shouldDebounce(): bool
     {
         return false;
-    }
-    
-    public function debounceDuration(): int
-    {
-        return 0;
     }
 }

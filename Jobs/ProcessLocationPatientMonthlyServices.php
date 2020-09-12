@@ -39,6 +39,21 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
         $this->processor       = app(Location::class);
     }
 
+    public function getChargeableMonth(): Carbon
+    {
+        return $this->chargeableMonth;
+    }
+
+    public function getLocationId(): int
+    {
+        return $this->locationId;
+    }
+
+    public function getProcessor(): Location
+    {
+        return $this->processor;
+    }
+
     /**
      * Execute the job.
      *
@@ -47,20 +62,5 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
     public function handle()
     {
         $this->getProcessor()->processServicesForAllPatients($this->getLocationId(), $this->getChargeableMonth());
-    }
-    
-    public function getLocationId() : int
-    {
-        return $this->locationId;
-    }
-    
-    public function getChargeableMonth() : Carbon
-    {
-        return $this->chargeableMonth;
-    }
-    
-    public function getProcessor() : Location
-    {
-        return $this->processor;
     }
 }

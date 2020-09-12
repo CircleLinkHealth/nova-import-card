@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
-use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as Repository;
+use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
 
 class LocationProblemServiceRepository implements Repository
 {

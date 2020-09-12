@@ -91,7 +91,7 @@ class PatientServiceProcessorRepository implements Repository
             ->exists();
     }
 
-    public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month) : ChargeablePatientMonthlySummary
+    public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         return ChargeablePatientMonthlySummary::updateOrCreate([
             'patient_user_id'       => $patientId,

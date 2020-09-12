@@ -6,25 +6,12 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests;
 
-use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatient;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Practice;
-use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
-use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
-use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
-use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
-use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PracticeProcessorEloquentRepository;
-use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Fake as FakePatientRepository;
-use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
-use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
-use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Mockery;

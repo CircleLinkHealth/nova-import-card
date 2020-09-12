@@ -19,5 +19,7 @@ class CommandForSpecificMonth extends Command
         if ($month->notEqualTo($month->copy()->startOfMonth())) {
             $month->startOfMonth();
         }
+
+        return $month;
     }
 }

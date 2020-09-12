@@ -23,6 +23,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|LocationProblemService newQuery()
  * @method   static                          \Illuminate\Database\Eloquent\Builder|LocationProblemService query()
  * @mixin \Eloquent
+ * @property ChargeableService      $chargeableService
+ * @property CpmProblem             $cpmProblem
+ * @property LocationProblemService $location
  */
 class LocationProblemService extends Pivot
 {

@@ -15,7 +15,6 @@ class ProcessPatientServices
     /**
      * Handle the event.
      *
-     * @param PatientEvent $event
      * @return void
      */
     public function handle(PatientEvent $event)

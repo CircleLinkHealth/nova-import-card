@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Customer;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
 use CircleLinkHealth\Customer\Entities\Location;

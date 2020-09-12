@@ -12,6 +12,7 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\ChargeablePatientMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Assert as PHPUnit;
 
@@ -52,9 +53,9 @@ class Eloquent implements PatientServiceProcessorRepository
     {
         //TODO: TEST
         $this->summariesCreated->push([
-            'patientId'             => $patientId,
-            'chargeableServiceCode' => $chargeableServiceCode,
-            'month'                 => $month,
+            'patient_id'            => $patientId,
+            'chargeable_service_id' => $chargeableServiceCode,
+            'chargeable_month'      => $month,
             'is_fulfilled'          => true,
         ]);
 
@@ -131,16 +132,60 @@ class Eloquent implements PatientServiceProcessorRepository
         $this->isFulfilledStubs = collect($isFulfilledStubs);
     }
 
+    public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
+    {
+        $array               = [];
+        $chargeableServiceId = $this->chargeableServiceCodeIds()[$chargeableServiceCode];
+        //todo: untangify
+        if (
+            $this->summariesCreated->where('patient_id', $patientId)
+                ->where('chargeable_service_id', $chargeableServiceId)
+                ->where('month', $month)
+                ->where('requires_patient_consent', true)
+                ->isNotEmpty()
+        ) {
+            $this->summariesCreated->map(function ($summary) use ($patientId, $chargeableServiceId, $month, &$array) {
+                if ($summary['patient_id'] === $patientId && $summary['chargeable_service_id'] === $this->chargeableServiceCodeIds()[$chargeableServiceId] && $month->equalTo($summary['month'])) {
+                    $array = $summary['requires_patient_consent'] = false;
+                }
+
+                return $summary;
+            });
+        } else {
+            $this->summariesCreated->push($array = [
+                'patient_id'               => $patientId,
+                'chargeable_service_id'    => $chargeableServiceId,
+                'month'                    => $month,
+                'requires_patient_consent' => false,
+            ]);
+        }
+
+        return new ChargeablePatientMonthlySummary($array);
+    }
+
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, $requiresPatientConsent = false): ChargeablePatientMonthlySummary
     {
         $this->summariesCreated->push($array = [
-            'patientId'                => $patientId,
-            'chargeableServiceCode'    => $chargeableServiceCode,
-            'month'                    => $month,
+            'patient_id'               => $patientId,
+            'chargeable_service_id'    => $this->chargeableServiceCodeIds()[$chargeableServiceCode],
+            'chargeable_month'         => $month,
             'requires_patient_consent' => $requiresPatientConsent,
         ]);
 
         return new ChargeablePatientMonthlySummary($array);
+    }
+
+    private function chargeableServiceCodeIds(): array
+    {
+        return [
+            ChargeableService::CCM            => 1,
+            ChargeableService::BHI            => 2,
+            ChargeableService::CCM_PLUS_40    => 3,
+            ChargeableService::CCM_PLUS_60    => 4,
+            ChargeableService::PCM            => 5,
+            ChargeableService::AWV_INITIAL    => 6,
+            ChargeableService::AWV_SUBSEQUENT => 7,
+        ];
     }
 
     private function wasChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month)

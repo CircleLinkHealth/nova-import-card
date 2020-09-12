@@ -26,12 +26,9 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
     protected Carbon $month;
 
     protected int $patientId;
-    
+
     /**
      * Create a new job instance.
-     *
-     * @param int $patientId
-     * @param Carbon $month
      */
     public function __construct(int $patientId, Carbon $month)
     {

@@ -14,11 +14,9 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class LocationProcessorEloquentRepository implements LocationProcessorRepository
 {

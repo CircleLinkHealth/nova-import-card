@@ -8,7 +8,6 @@ namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use App\Constants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 
 class BHI extends AbstractProcessor

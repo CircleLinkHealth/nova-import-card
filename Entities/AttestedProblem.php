@@ -33,6 +33,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem query()
  * @mixin \Eloquent
  * @property int|null $addendum_id
+ * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdThisMonth($field = 'created_at')
+ * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdToday($field = 'created_at')
+ * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdYesterday($field = 'created_at')
  */
 class AttestedProblem extends Pivot
 {

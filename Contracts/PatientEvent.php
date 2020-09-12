@@ -8,9 +8,9 @@ namespace CircleLinkHealth\CcmBilling\Contracts;
 
 interface PatientEvent
 {
-    public function getPatientId(): int;
-    
-    public function shouldDebounce(): bool;
-    
     public function debounceDuration(): int;
+
+    public function getPatientId(): int;
+
+    public function shouldDebounce(): bool;
 }

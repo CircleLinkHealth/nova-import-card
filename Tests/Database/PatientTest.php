@@ -27,6 +27,53 @@ class PatientTest extends CustomerTestCase
         $this->repo = new PatientServiceProcessorRepository();
     }
 
+    public function test_patient_can_have_bhi_summary_that_needs_consent()
+    {
+        self::assertNotNull(
+            $summary = $this->repo->store(
+                $patientId = $this->patient()->id,
+                $ccmCode = ChargeableService::CCM,
+                $month = Carbon::now()->startOfMonth(),
+                true
+            )
+        );
+        self::assertTrue(is_a($summary, ChargeablePatientMonthlySummary::class));
+        self::assertTrue($this->repo->requiresPatientConsent($patientId, $ccmCode, $month));
+
+        $this->repo->setPatientConsented($patientId, $ccmCode, $month);
+        self::assertFalse($this->repo->requiresPatientConsent($patientId, $ccmCode, $month));
+    }
+
+    public function test_patient_can_have_end_of_month_ccm_status_log()
+    {
+        EndOfMonthCcmStatusLog::create([
+            'patient_user_id'   => $this->patient()->id,
+            'chargeable_month'  => $month = Carbon::now()->startOfMonth(),
+            'closed_ccm_status' => $ccmStatus = Patient::WITHDRAWN_1ST_CALL,
+        ]);
+
+        self::assertTrue(
+            $this->patient()
+                ->endOfMonthCcmStatusLog()
+                ->createdOn($month, 'chargeable_month')
+                ->where('closed_ccm_status', $ccmStatus)
+                ->exists()
+        );
+    }
+
+    public function test_patient_can_have_fulfilled_chargeable_monthly_summaries_attached()
+    {
+        self::assertNotNull(
+            $summary = $this->repo->fulfill(
+                $patientId = $this->patient()->id,
+                $ccmCode = ChargeableService::CCM,
+                $month = Carbon::now()->startOfMonth()
+            )
+        );
+        self::assertTrue(is_a($summary, ChargeablePatientMonthlySummary::class));
+        self::assertTrue($this->repo->isFulfilled($patientId, $ccmCode, $month));
+    }
+
     public function test_patient_can_have_summaries_for_each_service_for_each_month()
     {
         self::assertNotNull(
@@ -117,50 +164,5 @@ class PatientTest extends CustomerTestCase
         self::assertEquals($viewSummary->no_of_successful_calls, 1);
 
         self::assertEquals($viewSummary->total_time, $duration1 + $duration2);
-    }
-    
-    public function test_patient_can_have_fulfilled_chargeable_monthly_summaries_attached(){
-        self::assertNotNull(
-            $summary = $this->repo->fulfill(
-                $patientId = $this->patient()->id,
-                $ccmCode = ChargeableService::CCM,
-                $month = Carbon::now()->startOfMonth()
-            )
-        );
-        self::assertTrue(is_a($summary, ChargeablePatientMonthlySummary::class));
-        self::assertTrue($this->repo->isFulfilled($patientId, $ccmCode, $month));
-    }
-    
-    public function test_patient_can_have_bhi_summary_that_needs_consent(){
-        self::assertNotNull(
-            $summary = $this->repo->store(
-                $patientId = $this->patient()->id,
-                $ccmCode = ChargeableService::CCM,
-                $month = Carbon::now()->startOfMonth(),
-                true
-            )
-        );
-        self::assertTrue(is_a($summary, ChargeablePatientMonthlySummary::class));
-        self::assertTrue($this->repo->requiresPatientConsent($patientId, $ccmCode, $month));
-    
-        $this->repo->setPatientConsented($patientId, $ccmCode, $month);
-        self::assertFalse($this->repo->requiresPatientConsent($patientId, $ccmCode, $month));
-    }
-    
-    public function test_patient_can_have_end_of_month_ccm_status_log(){
-    
-        EndOfMonthCcmStatusLog::create([
-            'patient_user_id' => $this->patient()->id,
-            'chargeable_month' => $month = Carbon::now()->startOfMonth(),
-            'closed_ccm_status' => $ccmStatus = Patient::WITHDRAWN_1ST_CALL
-        ]);
-        
-        self::assertTrue(
-            $this->patient()
-                ->endOfMonthCcmStatusLog()
-                ->createdOn($month, 'chargeable_month')
-                ->where('closed_ccm_status', $ccmStatus)
-                ->exists()
-        );
     }
 }
