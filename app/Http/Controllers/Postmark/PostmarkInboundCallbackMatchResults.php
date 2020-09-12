@@ -18,9 +18,11 @@ class PostmarkInboundCallbackMatchResults extends Controller
 {
     private array $postmarkCallbackData;
     private int $recordId;
-
+    
     /**
      * PostmarkInboundCallbackMatchResults constructor.
+     * @param array $postmarkCallbackData
+     * @param int $recordId
      */
     public function __construct(array $postmarkCallbackData, int $recordId)
     {
@@ -100,27 +102,27 @@ class PostmarkInboundCallbackMatchResults extends Controller
             });
     }
 
-    /**
-     * @return bool
-     */
-    private function isPatientEnrolled(User $patientUser)
-    {
-        return Patient::ENROLLED === $patientUser->enrollee->status
-            && Patient::ENROLLED === $patientUser->patientInfo->ccm_status;
-    }
+//    /**
+//     * @return bool
+//     */
+//    private function isPatientEnrolled(User $patientUser)
+//    {
+//        return Patient::ENROLLED === $patientUser->enrollee->status
+//            && Patient::ENROLLED === $patientUser->patientInfo->ccm_status;
+//    }
 
-    /**
-     * @return bool
-     */
-    private function isQueuedForEnrollmentAndUnassigned(User $patientUser)
-    {
-        if ( ! $patientUser->enrollee->exists()) {
-            return false;
-        }
-
-        return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
-            && is_null($patientUser->enrollee->care_ambassador_user_id);
-    }
+//    /**
+//     * @return bool
+//     */
+//    private function isQueuedForEnrollmentAndUnassigned(User $patientUser)
+//    {
+//        if ( ! $patientUser->enrollee->exists()) {
+//            return false;
+//        }
+//
+//        return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
+//            && is_null($patientUser->enrollee->care_ambassador_user_id);
+//    }
 
     /**
      * @return array
@@ -193,15 +195,15 @@ class PostmarkInboundCallbackMatchResults extends Controller
         return true;
     }
 
-    /**
-     * @param $postmarkData
-     * @return bool
-     */
-    private function requestsCancellation($postmarkData)
-    {
-        return isset($postmarkData['Cancel/Withdraw Reason'])
-            || Str::contains(Str::of($postmarkData['Msg'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
-    }
+//    /**
+//     * @param $postmarkData
+//     * @return bool
+//     */
+//    private function requestsCancellation($postmarkData)
+//    {
+//        return isset($postmarkData['Cancel/Withdraw Reason'])
+//            || Str::contains(Str::of($postmarkData['Msg'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
+//    }
 
     private function singleMatch(Builder $postmarkInboundPatientsMatched)
     {

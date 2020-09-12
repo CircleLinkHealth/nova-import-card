@@ -7,7 +7,11 @@
 namespace App\Services\Postmark;
 
 use App\PostmarkInboundMail;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class PostmarkCallbackMailService
 {
@@ -26,9 +30,48 @@ class PostmarkCallbackMailService
 
         return collect(json_decode($postmarkRecord->data))->toArray();
     }
-
+    
+    /**
+     * @param array $matchedPatients
+     * @return mixed
+     */
     public function shouldCreateCallBackFromPostmarkInbound(array $matchedPatients)
     {
         return $matchedPatients['createCallback'];
     }
+    
+    /**
+     * @param $postmarkData
+     * @return bool
+     */
+    public function requestsCancellation($postmarkData)
+    {
+        return isset($postmarkData['Cancel/Withdraw Reason'])
+            || Str::contains(Str::of($postmarkData['Msg'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
+    }
+    
+    /**
+     * @param User $patientUser
+     * @return bool
+     */
+    public function isQueuedForEnrollmentAndUnassigned(User $patientUser)
+    {
+        if ( ! $patientUser->enrollee->exists()) {
+            return false;
+        }
+        
+        return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
+            && is_null($patientUser->enrollee->care_ambassador_user_id);
+    }
+    
+    /**
+     * @param User $patientUser
+     * @return bool
+     */
+    public function isPatientEnrolled(User $patientUser)
+    {
+        return Patient::ENROLLED === $patientUser->enrollee->status
+            && Patient::ENROLLED === $patientUser->patientInfo->ccm_status;
+    }
+    
 }

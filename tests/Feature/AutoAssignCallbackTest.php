@@ -230,7 +230,7 @@ class AutoAssignCallbackTest extends TestCase
         assert($patient1->display_name === $patient2->display_name);
 
         $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
-        
+
         $this->assertMissingCallBack($patient1->id);
 
         $this->assertMissingCallBack($patient2->id);
