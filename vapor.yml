@@ -26,7 +26,6 @@ environments:
         build:
             - 'composer install --no-dev'
             - 'php artisan event:cache'
-            - 'npm install && npm run dev && rm -rf node_modules'
         deploy:
             - 'php artisan migrate --force'
             - 'php artisan migrate:views'
