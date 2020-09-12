@@ -92,6 +92,14 @@ class ChargeableService extends BaseModel
         return self::whereIn('code', self::DEFAULT_CHARGEABLE_SERVICE_CODES)->get();
     }
 
+    public static function getChargeableServiceIdUsingCode(string $code): int
+    {
+        return Cache::remember("name:chargeable_service_$code", 2, function () use ($code) {
+            return ChargeableService::where('code', $code)
+                ->value('id');
+        });
+    }
+
     public function patientSummaries()
     {
         return $this->morphedByMany(PatientMonthlySummary::class, 'chargeable')
@@ -161,13 +169,5 @@ class ChargeableService extends BaseModel
     public function scopeSoftwareOnly($query)
     {
         return $query->where('code', self::SOFTWARE_ONLY);
-    }
-    
-    public static function getChargeableServiceIdUsingCode(string $code): int
-    {
-        return Cache::remember("name:chargeable_service_$code", 2, function () use ($code) {
-            return ChargeableService::where('code', $code)
-                ->value('id');
-        });
     }
 }

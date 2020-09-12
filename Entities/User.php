@@ -317,6 +317,9 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                $chargeable_monthly_summaries_count
  * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLog
  * @property int|null                                                                                                $end_of_month_ccm_status_log_count
+ * @property ChargeablePatientMonthlySummaryView[]|EloquentCollection                                                $chargeableMonthlySummariesView
+ * @property int|null                                                                                                $chargeable_monthly_summaries_view_count
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User hasBhiConsent()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -885,7 +888,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->hasMany(ChargeablePatientMonthlySummary::class, 'patient_user_id');
     }
-    
+
     public function chargeableMonthlySummariesView()
     {
         return $this->hasMany(ChargeablePatientMonthlySummaryView::class, 'patient_user_id');
@@ -2883,6 +2886,30 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
+    public function scopeHasBhiConsent($builder)
+    {
+        return $builder->where(
+            function ($q) {
+                $q->where(function ($q) {
+                    $q->notOfPracticeRequiringSpecialBhiConsent()
+                        ->whereHas(
+                            'patientInfo',
+                            function ($q) {
+                                $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
+                            }
+                        );
+                })->orWhere(function ($q) {
+                    $q->whereHas(
+                        'notes',
+                        function ($q) {
+                            $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
+                        }
+                    );
+                });
+            }
+        );
+    }
+
     public function scopeHasBillingProvider(
         $query,
         $billing_provider_id
@@ -4239,28 +4266,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
     }
 
-    public function scopeHasBhiConsent($builder){
-        return $builder->where(
-            function ($q) {
-                $q->where(function ($q) {
-                    $q->notOfPracticeRequiringSpecialBhiConsent()
-                        ->whereHas(
-                            'patientInfo',
-                            function ($q) {
-                                $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
-                            }
-                        );
-                })->orWhere(function ($q) {
-                    $q->whereHas(
-                        'notes',
-                        function ($q) {
-                            $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
-                        }
-                    );
-                });
-            }
-        );
-    }
     private function isCypriotNumber(\Propaganistas\LaravelPhone\PhoneNumber $phoneNumber)
     {
         try {

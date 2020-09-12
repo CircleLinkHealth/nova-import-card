@@ -147,6 +147,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision[]|\Illuminate\Database\Eloquent\Collection         $patientCcmStatusRevisions
  * @property int|null                                                                                                        $patient_ccm_status_revisions_count
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Patient intersectLocationsWith($user)
+ * @property string|null                                                                                                     $last_contact_time
  */
 class Patient extends BaseModel
 {
