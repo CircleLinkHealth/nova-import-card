@@ -17,7 +17,7 @@ class PostmarkCallbackMailService
     /**
      * @return array|void
      */
-    public function parsedEmailData(int $postmarkRecordId)
+    public function postmarkInboundData(int $postmarkRecordId)
     {
         $postmarkRecord = PostmarkInboundMail::where('id', $postmarkRecordId)->first();
         if ( ! $postmarkRecord) {

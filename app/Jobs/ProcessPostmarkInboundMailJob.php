@@ -73,7 +73,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         if (self::FROM_CALLBACK_EMAIL === $emailParts->username) {
             try {
                 $postmarkMarkService  = (new PostmarkCallbackMailService());
-                $postmarkCallbackData = $postmarkMarkService->parsedEmailData($recordId);
+                $postmarkCallbackData = $postmarkMarkService->postmarkInboundData($recordId);
                 /** @var array $matchedResultsFromDB */
                 $matchedResultsFromDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
                     ->getMatchedPatients();
