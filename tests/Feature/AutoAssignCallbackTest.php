@@ -16,6 +16,7 @@ use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Tests\TestCase;
@@ -67,7 +68,58 @@ class AutoAssignCallbackTest extends TestCase
         );
     }
 
-    public function test_it_assign_to_ops_if_name_is_self_and_multiple_match_is_not_resolved()
+    public function test_it_will_create_callback_if_multiple_match_is_resolved()
+    {
+        $this->createPatientData(Enrollee::ENROLLED);
+        $patient1        = $this->patient;
+        $postmarkRecord1 = $this->postmarkRecord;
+
+        $this->createPatientData(Enrollee::ENROLLED);
+        $patient2 = $this->patient;
+
+        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
+        $this->assertCallbackExists($patient1->id);
+        $this->assertMissingCallBack($patient2->id);
+    }
+
+    public function test_it_will_create_callback_when_name_is_self_and_resolved_to_single_match()
+    {
+        $standByNurse = $this->createUser(Practice::firstOrFail()->id, 'care-center');
+
+        AppConfig::create(
+            [
+                'config_key'   => StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY,
+                'config_value' => $standByNurse->id,
+            ]
+        );
+
+        $this->assertDatabaseHas('app_config', [
+            'config_key'   => StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY,
+            'config_value' => $standByNurse->id,
+        ]);
+
+        $this->createPatientData(Enrollee::ENROLLED, false, true);
+        $patient1        = $this->patient;
+        $postmarkRecord1 = $this->postmarkRecord;
+        $phone1          = $this->phone;
+
+        $this->createPatientData(Enrollee::ENROLLED);
+        $patient2 = $this->patient;
+        $patient2->phoneNumbers
+            ->first()
+            ->update(
+                [
+                    'number' => $phone1->number,
+                ]
+            );
+
+        $patient2->phoneNumbers->fresh();
+
+        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
+        $this->assertCallbackExists($patient1->id);
+    }
+
+    public function test_it_will_not_create_callback_if_name_is_self_and_multiple_match_is_not_resolved()
     {
         $this->createPatientData(Enrollee::ENROLLED, '', true);
 
@@ -97,7 +149,7 @@ class AutoAssignCallbackTest extends TestCase
         $this->assertMissingCallBack($patient2->id);
     }
 
-    public function test_it_will_assign_to_ops_if_patient_is_auto_enroll_and_has_unassigned_care_ambassador()
+    public function test_it_will_not_create_callback_if_patient_is_auto_enroll_and_has_unassigned_care_ambassador()
     {
         $this->createPatientData(Enrollee::QUEUE_AUTO_ENROLLMENT);
 
@@ -114,16 +166,14 @@ class AutoAssignCallbackTest extends TestCase
 //        @todo:test_it_will_assign_to_ops
     }
 
-    public function test_it_will_assign_to_ops_if_patient_is_not_enrolled()
+    public function test_it_will_not_create_callback_if_patient_is_not_enrolled()
     {
         $this->createPatientData(Patient::PAUSED);
         $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
-
         $this->assertMissingCallBack($this->patient->id);
-        //        @todo:test_it_will_assign_to_ops
     }
 
-    public function test_it_will_assign_to_ops_if_patient_requested_to_withdraw()
+    public function test_it_will_not_create_callback_if_patient_requested_to_withdraw()
     {
         $this->createPatientData(Patient::ENROLLED, true);
         $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
@@ -131,7 +181,7 @@ class AutoAssignCallbackTest extends TestCase
         //        @todo:test_it_will_assign_to_ops
     }
 
-    public function test_it_will_assign_to_ops_if_unresolved_multi_match_patients()
+    public function test_it_will_not_create_callback_if_unresolved_multi_match_patients()
     {
         $this->createPatientData(Enrollee::ENROLLED);
 
@@ -180,53 +230,10 @@ class AutoAssignCallbackTest extends TestCase
         assert($patient1->display_name === $patient2->display_name);
 
         $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
-
-        $this->assertDatabaseHas('unresolved_postmark_inbound_callbacks', [
-            'postmark_rec_id' => $postmarkRecord1->id,
-            //            'suggestions'     => json_encode([intval($patient1->id), intval($patient2->id)]),
-        ]);
-
+        
         $this->assertMissingCallBack($patient1->id);
 
         $this->assertMissingCallBack($patient2->id);
-    }
-
-    public function test_it_will_create_callback_if_multiple_match_is_resolved()
-    {
-        $this->createPatientData(Enrollee::ENROLLED);
-        $patient1        = $this->patient;
-        $postmarkRecord1 = $this->postmarkRecord;
-
-        $this->createPatientData(Enrollee::ENROLLED);
-        $patient2 = $this->patient;
-
-        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
-        $this->assertCallbackExists($patient1->id);
-        $this->assertMissingCallBack($patient2->id);
-    }
-
-    public function test_it_will_create_callback_when_name_is_self_and_resolved_to_single_match()
-    {
-        $this->createPatientData(Enrollee::ENROLLED, false, true);
-        $patient1        = $this->patient;
-        $postmarkRecord1 = $this->postmarkRecord;
-        $phone1          = $this->phone;
-
-        $this->createPatientData(Enrollee::ENROLLED);
-        $patient2 = $this->patient;
-        $patient2->phoneNumbers
-            ->first()
-            ->update(
-                [
-                    'number' => $phone1->number,
-                ]
-            );
-
-        $patient2->phoneNumbers->fresh();
-        $phone2 = $phone1;
-
-        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
-        $this->assertCallbackExists($patient1->id);
     }
 
     private function assertCallbackExists(int $patientId)

@@ -30,7 +30,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    const FROM_CALLBACK_EMAIL = 'message.dispatch@callcenterusa.net';
+    const FROM_CALLBACK_EMAIL = 'callcenterusa.net';
 
     public int $tries = 1;
 
@@ -70,7 +70,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
             Log::error("Empty Postmark notification field:'From'. Record id $recordId");
         }
 
-        if (self::FROM_CALLBACK_EMAIL === $email) {
+        if (self::FROM_CALLBACK_EMAIL === $emailParts->username) {
             try {
                 $postmarkMarkService  = (new PostmarkCallbackMailService());
                 $postmarkCallbackData = $postmarkMarkService->parsedEmailData($recordId);
