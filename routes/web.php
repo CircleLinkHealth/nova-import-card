@@ -1112,7 +1112,6 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix' => 'admin',
     ], function () {
-        
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
             Route::get('', [
                 'uses' => 'OfflineActivityTimeRequestController@adminIndex',
