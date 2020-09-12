@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Providers;
 
+use CircleLinkHealth\CcmBilling\Console\Commands\GenerateEndOfMonthCcmStatusLogs;
 use CircleLinkHealth\CcmBilling\Console\Commands\GenerateServiceSummariesForAllPracticeLocations;
 use CircleLinkHealth\CcmBilling\Console\Commands\MigrateChargeableServicesFromChargeablesToLocationSummariesTable;
 use CircleLinkHealth\CcmBilling\Console\Commands\MigratePracticeServicesFromChargeablesToLocationSummariesTable;
@@ -41,7 +42,8 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
             ProcessAllPracticePatientMonthlyServices::class,
             GenerateServiceSummariesForAllPracticeLocations::class,
             PatientMonthlyBillingProcessor::class,
-            PatientRepositoryInterface::class,
+            GenerateEndOfMonthCcmStatusLogs::class,
+            PatientServiceProcessorRepository::class,
         ];
     }
 
