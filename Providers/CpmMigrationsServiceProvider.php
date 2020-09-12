@@ -20,7 +20,7 @@ class CpmMigrationsServiceProvider extends ServiceProvider implements Deferrable
     {
         return [];
     }
-    
+
     /**
      * Register the service provider.
      *

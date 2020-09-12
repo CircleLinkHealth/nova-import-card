@@ -31,7 +31,7 @@ class FixEndOfMonthCcmStatusLogsTypo extends Migration
     public function up()
     {
         $currentTableName = 'end_of_month_ccm_status_log';
-        
+
         if (Schema::hasTable($currentTableName)) {
             Schema::rename($currentTableName, $currentTableName.'s');
         }
