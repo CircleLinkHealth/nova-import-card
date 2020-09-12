@@ -6,22 +6,22 @@
 
 namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
-use CircleLinkHealth\CcmBilling\Jobs\MigratePracticeServicesFromChargeablesToLocationSummariesTable as Job;
+use CircleLinkHealth\CcmBilling\Jobs\GenerateEndOfMonthCcmStatusLogs as Job;
 
-class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends CommandForSpecificMonth
+class GenerateEndOfMonthCcmStatusLogs extends CommandForSpecificMonth
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Billing Revamp: Get CS from chargeables for a single Practice, and migrate to chargeable_location_monthly_summaries.';
+    protected $description = 'Billing-revamp: Get CS from chargeables for a single Practice, and migrate to chargeable_location_monthly_summaries.';
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $signature = 'billing:migrate-practice-services {practiceId} {month?}';
+    protected $signature = 'billing:end-of-month-ccm-status-logs {month?}';
 
     /**
      * Create a new command instance.
@@ -40,6 +40,6 @@ class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Com
      */
     public function handle()
     {
-        Job::dispatch($this->argument('practiceId'), $this->month());
+        Job::dispatch($this->month());
     }
 }

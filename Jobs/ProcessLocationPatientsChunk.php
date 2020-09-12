@@ -6,19 +6,17 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
-use App\Contracts\ChunksEloquentBuilder;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
+class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -27,13 +25,7 @@ class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
 
     protected AvailableServiceProcessors $availableServiceProcessors;
 
-    protected Builder $builder;
-
     protected Carbon $chargeableMonth;
-
-    protected int $limit;
-
-    protected int $offset;
 
     /**
      * Create a new job instance.
@@ -54,16 +46,6 @@ class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
         return $this->chargeableMonth;
     }
 
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
     /**
      * Execute the job.
      *
@@ -80,14 +62,5 @@ class ProcessLocationPatientsChunk implements ChunksEloquentBuilder, ShouldQueue
                     ->withProblems($patient->patientProblemsForBillingProcessing()->toArray())
             );
         });
-    }
-
-    public function setBuilder(int $offset, int $limit, Builder $builder): self
-    {
-        $this->builder = $builder
-            ->offset($this->offset = $offset)
-            ->limit($this->limit = $limit);
-
-        return $this;
     }
 }

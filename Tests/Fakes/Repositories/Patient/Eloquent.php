@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\ChargeablePatientMonthlySummaryStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
@@ -67,14 +68,13 @@ class Eloquent implements PatientServiceProcessorRepository
         // TODO: Implement getChargeablePatientSummaries() method.
     }
 
-    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month)
+    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView
     {
-        return (bool) $this->chargeableServiceSummaryStubs
-            ->where('chargeableServiceCode', $chargeableServiceCode)
-            ->where('month', $month)
-            ->where('patientId', $patientId)
-            ->pluck('summary')
-            ->first();
+        return new ChargeablePatientMonthlySummaryView($this->summariesCreated
+            ->where('chargeable_service_id', $this->chargeableServiceCodeIds()[$chargeableServiceCode])
+            ->where('chargeable_month', $month)
+            ->where('patient_id', $patientId)
+            ->first());
     }
 
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool

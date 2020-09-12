@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Contracts;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 
 interface PatientServiceProcessorRepository
 {
@@ -15,7 +16,7 @@ interface PatientServiceProcessorRepository
 
     public function getChargeablePatientSummaries(int $patientId, Carbon $month);
 
-    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month);
+    public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView;
 
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
 
