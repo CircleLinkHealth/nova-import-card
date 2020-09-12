@@ -11,8 +11,8 @@ use App\Importer\Section\Validators\NameNotNull;
 use App\Importer\Section\Validators\ValidStatus;
 use CircleLinkHealth\ConditionCodeLookup\Console\Commands\LookupCondition;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
-use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetProblemInstruction;
 use CircleLinkHealth\Eligibility\CcdaImporter\FiresImportingHooks;
+use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\GetProblemInstruction;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesProblemInfo;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
@@ -24,7 +24,7 @@ use Illuminate\Support\Str;
 class ImportProblems extends BaseCcdaImportTask
 {
     use ConsolidatesProblemInfo;
-    
+
     const IMPORTING_PROBLEM_INSTRUCTIONS = 'IMPORTING_PROBLEM_INSTRUCTIONS';
     /**
      * @var Collection

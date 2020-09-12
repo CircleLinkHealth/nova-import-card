@@ -25,7 +25,6 @@ use CircleLinkHealth\Eligibility\Console\ResetAthenaEligibilityBatch;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use Illuminate\Contracts\Support\DeferrableProvider;
-use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
 class EligibilityDeferrableServiceProvider extends ServiceProvider implements DeferrableProvider
