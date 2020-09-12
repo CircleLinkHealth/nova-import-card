@@ -18,6 +18,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Number;
 
 class ModifyTimeTracker extends Action implements ShouldQueue
@@ -35,6 +36,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
     {
         return [
             Number::make('Enter new duration (seconds)', 'duration'),
+            Boolean::make('Force', 'allow_accrued_towards'),
         ];
     }
 
@@ -78,7 +80,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             }
 
             try {
-                $this->modifyRecords($timeRecord, $duration);
+                $this->modifyRecords($timeRecord, $duration, $fields->get('allow_accrued_towards', false));
             } catch (Exception $e) {
                 $this->markAsFailed($timeRecord, $e->getMessage());
 
@@ -92,7 +94,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
     /**
      * @throws Exception
      */
-    private function modifyRecords(PageTimer $timeRecord, int $duration)
+    private function modifyRecords(PageTimer $timeRecord, int $duration, bool $allowAccruedTowards = false)
     {
         $entriesToSave = collect();
 
@@ -108,13 +110,20 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             $entriesToSave->push($timeRecord->activity);
 
             /** @var NurseCareRateLog $careRateLog */
-            $careRateLog = NurseCareRateLog::whereActivityId($timeRecord->activity->id)
-                ->where('ccm_type', '=', 'accrued_after_ccm')
-                ->first();
+            $careRateLogQuery = NurseCareRateLog::whereActivityId($timeRecord->activity->id);
+            if ( ! $allowAccruedTowards) {
+                $careRateLogQuery->where('ccm_type', '=', 'accrued_after_ccm');
+            }
+
+            $careRateLog = $careRateLogQuery->first();
 
             //some more validation here, simply because the current implementation supports simple use cases
             if ( ! $careRateLog) {
-                throw new Exception('Cannot modify activity. Please choose a different one. [no accrued_after_ccm]');
+                $msg = 'Cannot modify activity. Please choose a different one.';
+                if ( ! $allowAccruedTowards) {
+                    $msg .= ' [no accrued_after_ccm]';
+                }
+                throw new Exception($msg);
             }
 
             if ($duration > $careRateLog->increment) {
@@ -131,8 +140,9 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         if ($hasBillableActivity) {
             //adjust nurse care rate logs
             \Artisan::call('nursecareratelogs:remove-time', [
-                'fromId'      => $careRateLog->id,
-                'newDuration' => $duration,
+                'fromId'              => $careRateLog->id,
+                'newDuration'         => $duration,
+                'allowAccruedTowards' => $allowAccruedTowards,
             ]);
 
             //if this was a billable activity, we have to

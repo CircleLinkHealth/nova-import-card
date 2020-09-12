@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\Patient;
 
-use App\Console\Commands\AutoApproveValidCarePlansAs;
 use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
@@ -19,7 +18,6 @@ use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
@@ -37,19 +35,6 @@ class PatientController extends Controller
     {
         $this->formatter           = $formatter;
         $this->fullCalendarService = $fullCalendarService;
-    }
-
-    public function autoQAApprove($userId)
-    {
-        if (SeesAutoQAButton::userId($userId)) {
-            Artisan::queue(AutoApproveValidCarePlansAs::class, [
-                'userId'                         => $userId,
-                '--reimport:clear'               => true,
-                '--reimport:without-transaction' => true,
-            ]);
-        }
-
-        return 'Cpm will QA valid CarePlans in your queue on your behalf. Give it ~5 minutes and refresh your homepage. Any patients still showing on the table need human QA.';
     }
 
     public function createCBTTestPatient(Request $request)

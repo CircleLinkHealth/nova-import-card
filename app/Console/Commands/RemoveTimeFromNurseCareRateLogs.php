@@ -23,7 +23,7 @@ class RemoveTimeFromNurseCareRateLogs extends Command
      *
      * @var string
      */
-    protected $signature = 'nursecareratelogs:remove-time {fromId} {newDuration}';
+    protected $signature = 'nursecareratelogs:remove-time {fromId} {newDuration} {allowAccruedTowards}';
 
     /**
      * Create a new command instance.
@@ -42,10 +42,11 @@ class RemoveTimeFromNurseCareRateLogs extends Command
      */
     public function handle()
     {
-        $idStr       = $this->argument('fromId');
-        $id          = intval($idStr);
-        $durationStr = $this->argument('newDuration');
-        $duration    = intval($durationStr);
+        $idStr               = $this->argument('fromId');
+        $id                  = intval($idStr);
+        $durationStr         = $this->argument('newDuration');
+        $duration            = intval($durationStr);
+        $allowAccruedTowards = boolval($this->argument('allowAccruedTowards'));
 
         if ( ! $id || ! $duration) {
             $this->error("Invalid arguments: $idStr, $durationStr");
@@ -53,18 +54,20 @@ class RemoveTimeFromNurseCareRateLogs extends Command
             return;
         }
 
-        //find nurse care rate logs and adjust
-        //nurse_care_rate_logs table
-
         /** @var NurseCareRateLog $careRateLog */
-        $careRateLog = NurseCareRateLog::whereId($id)
-            ->where('ccm_type', '=', 'accrued_after_ccm')
-            ->first();
+        $careRateLogQuery = NurseCareRateLog::whereId($id);
+        if ( ! $allowAccruedTowards) {
+            $careRateLogQuery->where('ccm_type', '=', 'accrued_after_ccm');
+        }
+
+        $careRateLog = $careRateLogQuery->first();
 
         if ( ! $careRateLog) {
-            $this->error('Cannot modify activity. Please choose a different one. [no accrued_after_ccm]');
-
-            return;
+            $msg = 'Cannot modify activity. Please choose a different one.';
+            if ( ! $allowAccruedTowards) {
+                $msg .= ' [no accrued_after_ccm]';
+            }
+            $this->error($msg);
         }
 
         if ($careRateLog->increment < $duration) {
