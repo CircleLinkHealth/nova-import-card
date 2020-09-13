@@ -48,14 +48,15 @@ class UnresolvedPostmarkCallbackTest extends Command
         $postmarkCallbackService = (new PostmarkCallbackMailService());
         $startDate               = now()->startOfDay()->startOfMonth();
         $endDate                 = $startDate->copy()->endOfDay()->endOfMonth();
-
+    
+        $matchedResultsFromDB = [];
         PostmarkInboundMail::whereBetween('created_at', [$startDate, $endDate])
             ->where('from', ProcessPostmarkInboundMailJob::FROM_CALLBACK_FULL_EMAIL)
-            ->chunk(50, function ($records) use ($postmarkCallbackService) {
+            ->chunk(50, function ($records) use (&$matchedResultsFromDB, $postmarkCallbackService) {
                 foreach ($records as $record) {
                     $postmarkMarkService = (new PostmarkCallbackMailService());
                     $postmarkCallbackData = $postmarkMarkService->postmarkInboundData($record->id);
-                    $matchedResultsFromDB = (new PostmarkInboundCallbackMatchResults(
+                    $matchedResultsFromDB[] = (new PostmarkInboundCallbackMatchResults(
                         $postmarkCallbackData,
                         $record->id,
                         $postmarkCallbackService
@@ -63,26 +64,26 @@ class UnresolvedPostmarkCallbackTest extends Command
                     )
                         ->getMatchedPatients();
 
-                    if ($matchedResultsFromDB['matchResult']->isEmpty()){
-//                        Return json response.
-                        return;
-                    }
-                    
-                    if ($matchedResultsFromDB['matchResult'] instanceof Collection) {
-                        foreach ($matchedResultsFromDB['matchResult'] as $userPatient) {
-                            //                    If patient is Not enrolled.
-                            if ( ! $postmarkCallbackService->isPatientEnrolled($userPatient)) {
-                            }
-                            //                    Queue auto enrolment but un assigned CA.
-                            if ($postmarkCallbackService->isQueuedForEnrollmentAndUnassigned($userPatient)) {
-                            }
-                            //                    Patient wants to withdraw.
-                            if ($postmarkCallbackService->requestsCancellation($userPatient)) {
-                            }
-                        }
-                        $x = 1;
-                    }
-                    
+//                    if ($matchedResultsFromDB['matchResult']->isEmpty()) {
+////                        Return json response.
+//                        return;
+//                    }
+//
+//                    if ($matchedResultsFromDB['matchResult'] instanceof Collection) {
+//                        foreach ($matchedResultsFromDB['matchResult'] as $userPatient) {
+//                            //                    If patient is Not enrolled.
+//                            if ( ! $postmarkCallbackService->isPatientEnrolled($userPatient)) {
+//                            }
+//                            //                    Queue auto enrolment but un assigned CA.
+//                            if ($postmarkCallbackService->isQueuedForEnrollmentAndUnassigned($userPatient)) {
+//                            }
+//                            //                    Patient wants to withdraw.
+//                            if ($postmarkCallbackService->requestsCancellation($userPatient)) {
+//                            }
+//                        }
+//                    }
+//
+//                    // ELSE
                 }
             });
 
