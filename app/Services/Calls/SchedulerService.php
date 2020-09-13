@@ -26,11 +26,11 @@ class SchedulerService
 {
     const CALL_BACK_TYPE                              = 'Call Back';
     const CALL_TYPE                                   = 'call';
+    const NURSE_NOT_FOUND                             = 'could not find nurse for patient';
     const PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE = 'Provider Request For Care Plan Approval';
     const SCHEDULE_NEXT_CALL_PER_PATIENT_SMS          = 'Schedule Next Call per patient\'s SMS';
     const TASK_TYPE                                   = 'task';
-    const NURSE_NOT_FOUND = 'could not find nurse for patient';
-    
+
     /**
      * @var NoteService
      */
@@ -372,15 +372,12 @@ class SchedulerService
             ->where('status', '=', 'scheduled')
             ->delete();
     }
-    
+
     /**
-     * @param User $patient
      * @param $taskNote
      * @param $scheduler
      * @param null $phoneNumber
      *
-     * @param string $taskSubType
-     * @return Call
      * @throws \Exception
      */
     public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null, string $taskSubType): Call
