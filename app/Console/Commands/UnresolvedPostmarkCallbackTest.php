@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Postmark\PostmarkInboundCallbackMatchResults;
+use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
 use App\Services\Postmark\PostmarkCallbackMailService;
@@ -48,10 +48,10 @@ class UnresolvedPostmarkCallbackTest extends Command
         $postmarkCallbackService = (new PostmarkCallbackMailService());
         $startDate               = now()->startOfDay()->startOfMonth();
         $endDate                 = $startDate->copy()->endOfDay()->endOfMonth();
-    
+
         $matchedResultsFromDB = [];
         PostmarkInboundMail::whereBetween('created_at', [$startDate, $endDate])
-            ->where('from', ProcessPostmarkInboundMailJob::FROM_CALLBACK_FULL_EMAIL)
+            ->where('from', ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL_USERNAME)
             ->chunk(50, function ($records) use (&$matchedResultsFromDB, $postmarkCallbackService) {
                 foreach ($records as $record) {
                     $postmarkMarkService = (new PostmarkCallbackMailService());

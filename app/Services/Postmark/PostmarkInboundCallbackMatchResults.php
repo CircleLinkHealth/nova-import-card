@@ -4,29 +4,34 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Http\Controllers\Postmark;
+namespace App\Services\Postmark;
 
-use App\Http\Controllers\Controller;
-use App\Services\Postmark\PostmarkCallbackMailService;
+use App\ValueObjects\PostmarkCallback\MatchedData;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
-class PostmarkInboundCallbackMatchResults extends Controller
+class PostmarkInboundCallbackMatchResults
 {
+    /**
+     * @var false
+     */
+    private bool $isQueuedAndUnassigned;
+    private bool $patientIsEnrolled;
     private array $postmarkCallbackData;
-
-    private PostmarkCallbackMailService $postmarkCallbackService;
     private int $recordId;
+    private bool $requestedToWithdraw;
 
     /**
      * PostmarkInboundCallbackMatchResults constructor.
      */
-    public function __construct(array $postmarkCallbackData, int $recordId, PostmarkCallbackMailService $postmarkCallbackService)
+    public function __construct(array $postmarkCallbackData, int $recordId)
     {
-        $this->postmarkCallbackData    = $postmarkCallbackData;
-        $this->recordId                = $recordId;
-        $this->postmarkCallbackService = $postmarkCallbackService;
+        $this->postmarkCallbackData = $postmarkCallbackData;
+        $this->recordId             = $recordId;
     }
 
     /**
@@ -38,13 +43,15 @@ class PostmarkInboundCallbackMatchResults extends Controller
         $postmarkInboundPatientsMatched = $this->getPostmarkInboundPatientsByPhone($this->postmarkCallbackData);
 
         if ($this->singleMatch($postmarkInboundPatientsMatched)) {
-            return [
-                'matchResult'    => $postmarkInboundPatientsMatched->first(),
-                'createCallback' => $this->patientIsCallbackEligible(
+            return (new MatchedData(
+                $postmarkInboundPatientsMatched->first(),
+                $this->patientIsCallbackEligible(
                     $postmarkInboundPatientsMatched->first(),
                     $this->postmarkCallbackData
                 ),
-            ];
+                $this->noCallbackReasoning()
+            ))
+                ->getArray();
         }
 
         if ($postmarkInboundPatientsMatched->count() > 1) {
@@ -53,6 +60,52 @@ class PostmarkInboundCallbackMatchResults extends Controller
 
         Log::warning("Could not find a patient match for record_id:[$this->recordId] in postmark_inbound_mail");
         sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient match for record_id:[$this->recordId] in postmark_inbound_mail");
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCallbackEligible(array $inboundPostmarkData, User $patientUser)
+    {
+        if ( ! $this->isPatientEnrolled($patientUser)
+            || $this->isQueuedForEnrollmentAndUnassigned($patientUser)
+            || $this->requestsCancellation($inboundPostmarkData)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPatientEnrolled(User $patientUser)
+    {
+        return $this->patientIsEnrolled = Patient::ENROLLED === $patientUser->enrollee->status
+            && Patient::ENROLLED                            === $patientUser->patientInfo->ccm_status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isQueuedForEnrollmentAndUnassigned(User $patientUser)
+    {
+        if ( ! $patientUser->enrollee->exists()) {
+            return $this->isQueuedAndUnassigned = false;
+        }
+
+        return $this->isQueuedAndUnassigned = Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
+            && is_null($patientUser->enrollee->care_ambassador_user_id);
+    }
+
+    /**
+     * @param $postmarkData
+     * @return bool
+     */
+    public function requestsCancellation($postmarkData)
+    {
+        return $this->requestedToWithdraw = isset($postmarkData['Cancel/Withdraw Reason'])
+            || Str::contains(Str::of($postmarkData['Msg'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
     }
 
     /**
@@ -68,27 +121,31 @@ class PostmarkInboundCallbackMatchResults extends Controller
 
         if ($patientsMatchWithInboundName->isEmpty()) {
             Log::info("Postmark inbound callback with record id:$this->recordId was matched with phone but failed to match with user name");
-//            sendSlackMessage('#carecoach_ops_alerts', "Could not match inbound mail with a patient from our records:[$this->recordId] in postmark_inbound_mail");
-            return [
-                'matchResult'    => $patientsMatchedByPhone->get(),
-                'createCallback' => false,
-            ];
+
+            return (new MatchedData(
+                $patientsMatchedByPhone->get(),
+                false
+            ))
+                ->getArray();
         }
 
         if (1 === $patientsMatchWithInboundName->count()) {
-            return [
-                'matchResult'    => $patientsMatchWithInboundName->first(),
-                'createCallback' => $this->patientIsCallbackEligible(
+            return (new MatchedData(
+                $patientsMatchWithInboundName->first(),
+                $this->patientIsCallbackEligible(
                     $patientsMatchWithInboundName->first(),
-                    $inboundPostmarkData
+                    $this->postmarkCallbackData
                 ),
-            ];
+                $this->noCallbackReasoning()
+            ))
+                ->getArray();
         }
 
-        return [
-            'matchResult'    => $patientsMatchWithInboundName->get(),
-            'createCallback' => false,
-        ];
+        return (new MatchedData(
+            $patientsMatchWithInboundName->get(),
+            false,
+        ))
+            ->getArray();
     }
 
     /**
@@ -123,19 +180,50 @@ class PostmarkInboundCallbackMatchResults extends Controller
         }
 
         if ($this->singleMatch($patientsMatchedByCallerFieldName)) {
-            return [
-                'matchResult'    => $patientsMatchedByCallerFieldName->first(),
-                'createCallback' => $this->patientIsCallbackEligible(
+            return (new MatchedData(
+                $patientsMatchedByCallerFieldName->first(),
+                $this->patientIsCallbackEligible(
                     $patientsMatchedByCallerFieldName->first(),
-                    $inboundPostmarkData
+                    $this->postmarkCallbackData
                 ),
-            ];
+                $this->noCallbackReasoning()
+            ))
+                ->getArray();
         }
 
-        return [
-            'matchResult'    => $patientsMatchedByCallerFieldName->get(),
-            'createCallback' => false,
-        ];
+        return (new MatchedData(
+            $patientsMatchedByCallerFieldName->get(),
+            false,
+            ["No Name Match"]
+        ))
+            ->getArray();
+    }
+
+    private function noCallbackReasoning()
+    {
+        $reasons = collect([]);
+
+        if ( ! isset($this->patientIsEnrolled)
+            || ! isset($this->isQueuedAndUnassigned)
+            || ! isset($this->requestedToWithdraw)) {
+            Log::error('Properties not defined');
+
+            return;
+        }
+
+        if ( ! $this->patientIsEnrolled) {
+            $reasons->push('Not Enrolled');
+        }
+
+        if ($this->isQueuedAndUnassigned) {
+            $reasons->push('Enrolment Queued - CA unassigned');
+        }
+
+        if ($this->requestedToWithdraw) {
+            $reasons->push('Requests Withdraw');
+        }
+
+        return $reasons->toArray();
     }
 
     /**
@@ -165,7 +253,7 @@ class PostmarkInboundCallbackMatchResults extends Controller
      */
     private function patientIsCallbackEligible($patientUser, array $inboundPostmarkData)
     {
-        return $this->postmarkCallbackService->isCallbackEligible($inboundPostmarkData, $patientUser);
+        return $this->isCallbackEligible($inboundPostmarkData, $patientUser);
     }
 
     private function singleMatch(Builder $postmarkInboundPatientsMatched)

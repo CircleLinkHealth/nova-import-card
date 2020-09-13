@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Entities\PostmarkInboundMailRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
 use Illuminate\Console\Command;
@@ -43,10 +44,12 @@ class ProcessPostmarkInboundMailCommand extends Command
     public function handle()
     {
         $item = PostmarkInboundMail::findOrFail($this->argument('recordId'));
-        ProcessPostmarkInboundMailJob::dispatch([
-            'From'     => $item->from,
-            'TextBody' => $item->body,
-        ], $item->id);
+        ProcessPostmarkInboundMailJob::dispatch(new PostmarkInboundMailRequest(
+            [
+                'From'     => $item->from,
+                'TextBody' => $item->body,
+            ]
+        ), $item->id);
 
         return 0;
     }

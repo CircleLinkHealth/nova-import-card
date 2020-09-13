@@ -51,14 +51,14 @@ class SeedInboundPostmarkCallbacks extends Seeder
     public function run()
     {
         $n = 1;
-        $this->createUsersOfTypeEnrolled($n, 5);
+//        $this->createUsersOfTypeEnrolled($n, 5);
         $this->createUsersOfTypeNotEnrolled($n, 3);
-        $this->createUsersOfTypeQueuedForEnrolmentButNotCAassigned($n, 7);
-        $this->createUsersOfTypeNameIsSelf($n, 3);
-        $this->createUsersOfTypeRequestedToWithdraw($n, 4);
-        $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf($n, 6);
-        $this->createUsersOfTypeResolvableMultiMatches($n, 2);
-        $this->createUsersOfTypeNotResolvableMultiMatches($n, 2);
+//        $this->createUsersOfTypeQueuedForEnrolmentButNotCAassigned($n, 7);
+//        $this->createUsersOfTypeNameIsSelf($n, 3);
+//        $this->createUsersOfTypeRequestedToWithdraw($n, 4);
+//        $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf($n, 6);
+//        $this->createUsersOfTypeResolvableMultiMatches($n, 2);
+//        $this->createUsersOfTypeNotResolvableMultiMatches($n, 2);
     }
 
     private function createUsersOfTypeEnrolled(int $n, int $limit)
