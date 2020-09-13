@@ -7,9 +7,14 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
+use CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision;
 
 class LogPatientCcmStatusForEndOfMonth
 {
+    const HOUR_WINDOW_FOR_CURRENT_CCM_STATUS_UPDATE_ON_NEW_MONTH = 6;
+    const HOUR_WINDOW_FOR_LAST_HOURS_OF_MONTH                    = 2;
+
     protected string $ccmStatus;
     protected Carbon $month;
     protected int $patientUserId;
@@ -26,11 +31,74 @@ class LogPatientCcmStatusForEndOfMonth
         (new static($patientUserId, $ccmStatus, $month))->log();
     }
 
-    public function log()
+    public function log(): void
     {
-        //allow saving the status at the last day of month (same as month taken)
-        //or within the first 4 hours of the new month
-        //disregard future dates
-        //for past dates, attempt to get ccm status from revision tables.
+        if ($this->shouldLogCurrentStatus()) {
+            $this->logStatus($this->ccmStatus);
+
+            return;
+        }
+
+        $this->logStatus($this->getStatusUsingRevisions());
+    }
+
+    private function getStatusUsingRevisions(): string
+    {
+        $revisions = PatientCcmStatusRevision::whereBetween('created_at', [
+            $this->month->copy()->endOfMonth()->endOfDay(),
+            Carbon::now(),
+        ])
+            ->where('action', '=', PatientCcmStatusRevision::ACTION_UPDATE)
+            ->where('patient_user_id', '=', $this->patientUserId)
+            ->orderBy('created_at')
+            ->get();
+
+        if ($revisions->isEmpty()) {
+            return $this->ccmStatus;
+        }
+
+        return $revisions->first()->old_value;
+    }
+
+    private function logStatus(string $ccmStatus): void
+    {
+        EndOfMonthCcmStatusLog::updateOrCreate(
+            [
+                'patient_user_id'  => $this->patientUserId,
+                'chargeable_month' => $this->month->copy()->startOfMonth(),
+            ],
+            [
+                'closed_ccm_status' => $ccmStatus,
+            ]
+        );
+    }
+
+    private function nowIsEndOfInputtedMonth(): bool
+    {
+        $endOfMonthEndOfDay            = $this->month->copy()->endOfMonth()->endOfDay();
+        $startPointForLastHoursOfMonth = $endOfMonthEndOfDay->subHours(self::HOUR_WINDOW_FOR_LAST_HOURS_OF_MONTH);
+
+        return $startPointForLastHoursOfMonth->hoursUntil($endOfMonthEndOfDay)->contains(Carbon::now());
+    }
+
+    private function nowIsWithinEndOfInputtedMonthAndAcceptableWindow(): bool
+    {
+        $endOfMonthEndOfDay               = $this->month->copy()->endOfMonth()->endOfDay();
+        $endPointForFirstHoursOfNextMonth = $endOfMonthEndOfDay->copy()->addHours(self::HOUR_WINDOW_FOR_CURRENT_CCM_STATUS_UPDATE_ON_NEW_MONTH);
+
+        return $endOfMonthEndOfDay->hoursUntil($endPointForFirstHoursOfNextMonth)->contains(Carbon::now());
+    }
+
+    private function shouldLogCurrentStatus(): bool
+    {
+        if ($this->nowIsEndOfInputtedMonth()) {
+            return true;
+        }
+
+        if ($this->nowIsWithinEndOfInputtedMonthAndAcceptableWindow()) {
+            return true;
+        }
+
+        return false;
     }
 }
