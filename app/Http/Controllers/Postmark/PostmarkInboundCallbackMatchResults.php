@@ -64,16 +64,18 @@ class PostmarkInboundCallbackMatchResults extends Controller
             return $this->matchByCallerField($patientsMatchedByPhone, $inboundPostmarkData, $this->recordId);
         }
 
-        $patientsMatchWithInboundName = $patientsMatchedByPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
+        $patientsMatchWithInboundName = $patientsMatchedByPhone->get()->where('display_name', '=', $inboundPostmarkData['Ptn']);
 
-        if ($patientsMatchWithInboundName->get()->isEmpty()) {
-            Log::critical("Cannot match postmark inbound data with our records for record_id $this->recordId");
-            sendSlackMessage('#carecoach_ops_alerts', "Could not match inbound mail with a patient from our records:[$this->recordId] in postmark_inbound_mail");
-
-            return;
+        if ($patientsMatchWithInboundName->isEmpty()) {
+            Log::info("Postmark inbound callback with record id:$this->recordId was matched with phone but failed to match with user name");
+//            sendSlackMessage('#carecoach_ops_alerts', "Could not match inbound mail with a patient from our records:[$this->recordId] in postmark_inbound_mail");
+            return [
+                'matchResult'    => $patientsMatchedByPhone->get(),
+                'createCallback' => false,
+            ];
         }
 
-        if ($this->singleMatch($patientsMatchWithInboundName)) {
+        if (1 === $patientsMatchWithInboundName->count()) {
             return [
                 'matchResult'    => $patientsMatchWithInboundName->first(),
                 'createCallback' => $this->patientIsCallbackEligible(
