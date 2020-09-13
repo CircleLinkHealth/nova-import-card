@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Entities;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Illuminate\Database\Eloquent\Model;
@@ -46,5 +47,10 @@ class EndOfMonthCcmStatusLog extends Model
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_user_id');
+    }
+    
+    public static function logsExistForMonth(Carbon $month){
+        return self::where('chargeable_month', $month->copy()->startOfMonth())
+            ->exists();
     }
 }

@@ -7,21 +7,19 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
+use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GenerateLocationSummaries implements ShouldQueue
+class CheckPatientEndOfMonthCcmStatusLogsExistForMonth implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
-    protected int $locationId;
 
     protected Carbon $month;
 
@@ -30,15 +28,9 @@ class GenerateLocationSummaries implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(int $locationId, Carbon $month)
+    public function __construct(Carbon $month)
     {
-        $this->locationId = $locationId;
-        $this->month      = $month;
-    }
-
-    public function getLocationId(): int
-    {
-        return $this->locationId;
+        $this->month = $month;
     }
 
     public function getMonth(): Carbon
@@ -53,6 +45,10 @@ class GenerateLocationSummaries implements ShouldQueue
      */
     public function handle()
     {
-        app(Location::class)->processServicesForLocation($this->getLocationId(), $this->getMonth());
+        if ( ! EndOfMonthCcmStatusLog::logsExistForMonth($this->getMonth())) {
+            $readableMonth = $this->getMonth()->format('M, Y');
+            sendSlackMessage('#cpm_general_alerts', "End of month Ccm status logs do not exist for $readableMonth. Re-attempting log creation.");
+            GenerateEndOfMonthCcmStatusLogs::dispatch($this->getMonth());
+        }
     }
 }
