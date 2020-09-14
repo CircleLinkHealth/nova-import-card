@@ -14,7 +14,7 @@ trait LocationServicesQuery
 {
     public function servicesForMonth($locationId, Carbon $chargeableMonth): Builder
     {
-        return ChargeableLocationMonthlySummary::with(['chargeableService' => fn ($cs) => $cs->select('code')])
+        return ChargeableLocationMonthlySummary::with(['chargeableService'])
             ->where('location_id', $locationId)
             ->createdOn($chargeableMonth, 'chargeable_month');
     }
