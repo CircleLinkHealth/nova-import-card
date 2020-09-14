@@ -12,19 +12,18 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class PostmarkInboundCallbackMatchResults
 {
-    /**
-     * @var false
-     */
-    private bool $isQueuedAndUnassigned;
-    private bool $patientIsEnrolled;
+    const NOT_ENROLLED          = 'not_enrolled';
+    const QUEUED_AND_UNASSIGNED = 'queue_auto_enrollment_and_unassigned';
+    const WITHDRAW_REQUEST      = 'withdraw_request';
+
     private array $postmarkCallbackData;
     private int $recordId;
-    private bool $requestedToWithdraw;
 
     /**
      * PostmarkInboundCallbackMatchResults constructor.
@@ -50,7 +49,7 @@ class PostmarkInboundCallbackMatchResults
                     $postmarkInboundPatientsMatched->first(),
                     $this->postmarkCallbackData
                 ),
-                $this->noCallbackReasoning()
+                $this->noCallbackReasoning($postmarkInboundPatientsMatched->first())
             ))
                 ->getArray();
         }
@@ -82,10 +81,8 @@ class PostmarkInboundCallbackMatchResults
      */
     public function isPatientEnrolled(User $patientUser)
     {
-        $this->patientIsEnrolled = Patient::ENROLLED === $patientUser->enrollee->status
-            && Patient::ENROLLED                     === $patientUser->patientInfo->ccm_status;
-
-        return $this->patientIsEnrolled;
+        return  Patient::ENROLLED === $patientUser->enrollee->status
+            && Patient::ENROLLED  === $patientUser->patientInfo->ccm_status;
     }
 
     /**
@@ -94,25 +91,21 @@ class PostmarkInboundCallbackMatchResults
     public function isQueuedForEnrollmentAndUnassigned(User $patientUser)
     {
         if ( ! $patientUser->enrollee->exists()) {
-            $this->isQueuedAndUnassigned = false;
+            return false;
         }
 
-        $this->isQueuedAndUnassigned = Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
+        return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
             && is_null($patientUser->enrollee->care_ambassador_user_id);
-
-        return $this->isQueuedAndUnassigned;
     }
 
     /**
      * @param $postmarkData
      * @return bool
      */
-    public function requestsCancellation($postmarkData)
+    public function requestsCancellation(array $postmarkData)
     {
-        $this->requestedToWithdraw = isset($postmarkData['Cancel/Withdraw Reason'])
+        return isset($postmarkData['Cancel/Withdraw Reason'])
             || Str::contains(Str::of($postmarkData['Msg'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
-
-        return $this->requestedToWithdraw;
     }
 
     /**
@@ -143,7 +136,7 @@ class PostmarkInboundCallbackMatchResults
                     $patientsMatchWithInboundName->first(),
                     $this->postmarkCallbackData
                 ),
-                $this->noCallbackReasoning()
+                $this->noCallbackReasoning($patientsMatchWithInboundName->first())
             ))
                 ->getArray();
         }
@@ -151,7 +144,7 @@ class PostmarkInboundCallbackMatchResults
         return (new MatchedData(
             $patientsMatchWithInboundName,
             false,
-            ['unmatched']
+            'unmatched'
         ))
             ->getArray();
     }
@@ -194,7 +187,7 @@ class PostmarkInboundCallbackMatchResults
                     $patientsMatchedByCallerFieldName->first(),
                     $this->postmarkCallbackData
                 ),
-                $this->noCallbackReasoning()
+                $this->noCallbackReasoning($patientsMatchedByCallerFieldName->first())
             ))
                 ->getArray();
         }
@@ -202,34 +195,28 @@ class PostmarkInboundCallbackMatchResults
         return (new MatchedData(
             $patientsMatchedByCallerFieldName,
             false,
-            ['no_name_match']
+            'no_name_match'
         ))
             ->getArray();
     }
 
-    private function noCallbackReasoning()
+    private function noCallbackReasoning(Model $patientUser)
     {
-        $reasons = collect([]);
-
-        if ( ! isset($this->patientIsEnrolled)
-            || ! isset($this->isQueuedAndUnassigned)
-            || ! isset($this->requestedToWithdraw)) {
-            return $reasons->toArray();
+        $reason = collect();
+        /** @var User $patientUser */
+        if ( ! $this->isPatientEnrolled($patientUser)) {
+            $reason->push(self::NOT_ENROLLED);
         }
 
-        if ( ! $this->patientIsEnrolled) {
-            $reasons->push('not_enrolled');
+        if ($this->isQueuedForEnrollmentAndUnassigned($patientUser)) {
+            $reason->push(self::QUEUED_AND_UNASSIGNED);
         }
 
-        if ($this->isQueuedAndUnassigned) {
-            $reasons->push('queue_auto_enrollment_and_unassigned');
+        if ($this->requestsCancellation($this->postmarkCallbackData)) {
+            $reason->push(self::WITHDRAW_REQUEST);
         }
 
-        if ($this->requestedToWithdraw) {
-            $reasons->push('withdraw_request');
-        }
-
-        return $reasons->toArray();
+        return $reason;
     }
 
     /**

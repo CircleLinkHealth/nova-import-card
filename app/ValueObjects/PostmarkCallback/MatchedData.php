@@ -9,14 +9,14 @@ namespace App\ValueObjects\PostmarkCallback;
 class MatchedData
 {
     private $matchedData;
-    private array $reasoning;
+    private string $reasoning;
     private bool $shouldCreateCallback;
 
     /**
      * MatchedData constructor.
      * @param $matchedData
      */
-    public function __construct($matchedData, bool $shouldCreateCallback, array $reasoning = [])
+    public function __construct($matchedData, bool $shouldCreateCallback, string $reasoning = '')
     {
         $this->matchedData          = $matchedData;
         $this->shouldCreateCallback = $shouldCreateCallback;

@@ -40,10 +40,21 @@ class ManageUnresolvedPostmarkCallback
         }
 
         if ($this->matchedWithUniqueUser()) {
-            $suggestions->push(...$this->matchedData['matchUsersResult']->id);
+            $suggestions->push($this->matchedData['matchUsersResult']->id);
         }
 
         return $suggestions;
+    }
+
+    public function getUserIdIfMatched()
+    {
+//        if ($this->isMultiMatch){
+//            return null;
+//        }
+
+        if ($this->isUniqueMatch) {
+            return isset($this->matchedData['matchUsersResult']->id) ?? $this->matchedData['matchUsersResult']->id;
+        }
     }
 
     public function handleUnresolved()
@@ -61,9 +72,9 @@ class ManageUnresolvedPostmarkCallback
                     'postmark_id' => $this->recordId,
                 ],
                 [
-                    'user_id'     => $this->getUserIdIfMatched(),
-                    'reasoning'   => json_encode($this->matchedData['reasoning']),
-                    'suggestions' => json_encode($suggestedUsersIds),
+                    'user_id'           => $this->getUserIdIfMatched(),
+                    'unresolved_reason' => json_encode($this->matchedData['reasoning']),
+                    'suggestions'       => json_encode($suggestedUsersIds),
                 ]
             );
         } catch (\Exception $exception) {
@@ -72,17 +83,6 @@ class ManageUnresolvedPostmarkCallback
             sendSlackMessage('#carecoach_ops_alerts', "Attempt to mark inbound callback request $this->recordId as unresolved has failed.");
 
             return;
-        }
-    }
-
-    private function getUserIdIfMatched()
-    {
-//        if ($this->isMultiMatch){
-//            return null;
-//        }
-
-        if ($this->isUniqueMatch) {
-            return isset($this->matchedData['matchUsersResult']->id) ?? $this->matchedData['matchUsersResult']->id;
         }
     }
 

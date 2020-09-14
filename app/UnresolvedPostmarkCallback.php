@@ -23,10 +23,18 @@ use Illuminate\Database\Eloquent\Model;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|UnresolvedPostmarkCallback newQuery()
  * @method   static                          \Illuminate\Database\Eloquent\Builder|UnresolvedPostmarkCallback query()
  * @mixin \Eloquent
- * @property mixed $unresolved_reasons
+ * @property mixed      $unresolved_reasons
+ * @property mixed|null $unresolved_reason
  */
 class UnresolvedPostmarkCallback extends Model
 {
+    protected $fillable = [
+        'postmark_id',
+        'user_id',
+        'unresolved_reason',
+        'suggestions',
+    ];
+
     public function inboundPostmark()
     {
         return $this->belongsTo(PostmarkInboundMail::class, 'postmark_id');
