@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Entities;
 
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -49,6 +50,6 @@ class LocationProblemService extends Pivot
 
     public function location()
     {
-        return $this->belongsTo(LocationProblemService::class, 'location_id');
+        return $this->belongsTo(Location::class, 'location_id');
     }
 }

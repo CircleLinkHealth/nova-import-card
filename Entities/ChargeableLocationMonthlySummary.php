@@ -31,11 +31,12 @@ use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary query()
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdThisMonth($field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdToday($field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdYesterday($field = 'created_at')
+ * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdThisMonth($field = 'created_at')
+ * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdToday($field = 'created_at')
+ * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdYesterday($field = 'created_at')
+ * @property string|null $status
  */
 class ChargeableLocationMonthlySummary extends BaseModel
 {

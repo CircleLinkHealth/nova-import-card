@@ -44,13 +44,14 @@ class EndOfMonthCcmStatusLog extends Model
         'closed_ccm_status',
     ];
 
+    public static function logsExistForMonth(Carbon $month)
+    {
+        return self::where('chargeable_month', $month->copy()->startOfMonth())
+            ->exists();
+    }
+
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_user_id');
-    }
-    
-    public static function logsExistForMonth(Carbon $month){
-        return self::where('chargeable_month', $month->copy()->startOfMonth())
-            ->exists();
     }
 }

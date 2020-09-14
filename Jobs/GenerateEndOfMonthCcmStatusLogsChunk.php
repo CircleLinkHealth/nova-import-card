@@ -8,7 +8,6 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
-use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

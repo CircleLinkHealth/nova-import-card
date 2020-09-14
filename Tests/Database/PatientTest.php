@@ -189,7 +189,7 @@ class PatientTest extends CustomerTestCase
         $locationRepo = new LocationProcessorEloquentRepository();
 
         $patient = $this->patient();
-        
+
         foreach ([
             ChargeableService::CCM,
             ChargeableService::BHI,
@@ -201,7 +201,7 @@ class PatientTest extends CustomerTestCase
 
         //attach patient problems
         //problems should have CS now right?
-      
+
         //assert summaries don't exist
 
         //run job
