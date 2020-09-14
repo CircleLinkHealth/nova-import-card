@@ -280,7 +280,7 @@ class AutoAssignCallbackTest extends TestCase
             ->firstOrFail();
         $unresolvedPostmarkRecordArray = collect(json_decode($unresolvedPostmarkRecord->unresolved_reason))->toArray();
 
-        self::assertTrue(in_array($reason, json_decode($unresolvedPostmarkRecordArray[0])));
+        self::assertTrue(in_array($reason, $unresolvedPostmarkRecordArray));
     }
 
     private function dispatchPostmarkInboundMail(array $recordData, int $recordId)

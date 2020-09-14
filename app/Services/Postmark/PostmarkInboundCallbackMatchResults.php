@@ -216,7 +216,9 @@ class PostmarkInboundCallbackMatchResults
             $reason->push(self::WITHDRAW_REQUEST);
         }
 
-        return $reason;
+        $result =  $reason->toArray();
+        
+        return is_string($result) ? [$result] : $result;
     }
 
     /**
