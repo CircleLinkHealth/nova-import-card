@@ -13,7 +13,7 @@ class MatchedData
     private bool $shouldCreateCallback;
 
     /**
-     * MatchedDataResult constructor.
+     * MatchedData constructor.
      * @param $matchedData
      */
     public function __construct($matchedData, bool $shouldCreateCallback, array $reasoning = [])
@@ -26,9 +26,9 @@ class MatchedData
     public function getArray()
     {
         return [
-            'matchResult'    => $this->matchedData,
-            'createCallback' => $this->shouldCreateCallback,
-            'reasoning'      => json_encode($this->reasoning),
+            'matchUsersResult' => $this->matchedData,
+            'createCallback'   => $this->shouldCreateCallback,
+            'reasoning'        => $this->reasoning,
         ];
     }
 }
