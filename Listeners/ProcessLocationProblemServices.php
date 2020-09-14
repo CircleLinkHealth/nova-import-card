@@ -6,11 +6,9 @@
 
 namespace CircleLinkHealth\CcmBilling\Listeners;
 
-use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
-use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientMonthlyServices;
 
-class ProcessLocationPatientServices
+class ProcessLocationProblemServices
 {
     /**
      * Create the event listener.
@@ -29,6 +27,6 @@ class ProcessLocationPatientServices
      */
     public function handle(LocationServicesAttached $event)
     {
-        ProcessLocationPatientMonthlyServices::dispatch($event->getLocationId(), Carbon::now()->startOfMonth()->startOfDay());
+        //dispatch job
     }
 }

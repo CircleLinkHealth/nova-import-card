@@ -265,4 +265,13 @@ class PatientSummaryProcessingTest extends TestCase
 
         Bus::assertDispatchedTimes(ProcessSinglePatientMonthlyServices::class, 1);
     }
+    
+    public function test_job_to_log_ccm_status_will_be_dispatched_if_logs_dont_exist(){
+    
+    }
+    
+    public function test_job_to_create_summaries_will_be_dispatched_for_practice_if_summaries_dont_exist()
+    {
+    
+    }
 }

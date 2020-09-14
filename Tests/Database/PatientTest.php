@@ -8,10 +8,13 @@ namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
 use App\Call;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Tests\CustomerTestCase;
@@ -25,6 +28,20 @@ class PatientTest extends CustomerTestCase
         parent::setUp();
 
         $this->repo = new PatientServiceProcessorRepository();
+    }
+
+    //can I test cron scheduler?
+    public function test_it_creates_ccm_status_logs_at_the_end_of_month()
+    {
+        $ccmStatusLogQuery = EndOfMonthCcmStatusLog::where('patient_user_id', $patientId = $this->patient()->id)
+            ->where('closed_ccm_status', $ccmStatus = $this->patient()->getCcmStatus())
+            ->createdOn($startOfCurrentMonth = Carbon::now()->startOfMonth(), 'chargeable_month');
+
+        self::assertFalse($ccmStatusLogQuery->exists());
+
+        LogPatientCcmStatusForEndOfMonth::create($patientId, $ccmStatus, $startOfCurrentMonth);
+
+        self::assertTrue($ccmStatusLogQuery->exists());
     }
 
     public function test_patient_can_have_bhi_summary_that_needs_consent()
@@ -165,8 +182,31 @@ class PatientTest extends CustomerTestCase
 
         self::assertEquals($viewSummary->total_time, $duration1 + $duration2);
     }
-    
-    //test service class creates logs
-    
-    //test service class creates logs for past month(date is passed from trigger - difficult to test)
+
+    public function test_process_single_patient_services_job_attaches_services()
+    {
+        //attach patient location summaries
+        $locationRepo = new LocationProcessorEloquentRepository();
+
+        $patient = $this->patient();
+        
+        foreach ([
+            ChargeableService::CCM,
+            ChargeableService::BHI,
+            ChargeableService::CCM_PLUS_40,
+            ChargeableService::CCM_PLUS_60,
+        ] as $code) {
+            $locationRepo->store($patient->getPreferredContactLocation(), $code, Carbon::now()->startOfMonth());
+        }
+
+        //attach patient problems
+        //problems should have CS now right?
+      
+        //assert summaries don't exist
+
+        //run job
+
+        //assert expected summaries exist
+        //assert no un expected summaries exist
+    }
 }

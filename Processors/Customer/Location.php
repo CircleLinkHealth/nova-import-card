@@ -29,6 +29,8 @@ class Location implements CustomerProcessor
 
     public function processServicesForAllPatients(int $locationId, Carbon $chargeableMonth): void
     {
+        //todo: check for location processors, if none exist send slack message and abort
+        
         $this->repo()
             ->patientsQuery($locationId, $chargeableMonth)
             ->chunkIntoJobs(
