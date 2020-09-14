@@ -11,4 +11,19 @@
         <br>
         {{$practiceDisplayName}}
     </div>
+
+    <div class="letter-sent">
+        {{$dateLetterSent}}
+    </div>
+
+    <div class="letter-head">
+        Dear {{$userEnrollee->first_name}},
+    </div>
 </div>
+
+<style>
+    .letter-sent {
+        margin-top: -20px;
+    }
+
+</style>
