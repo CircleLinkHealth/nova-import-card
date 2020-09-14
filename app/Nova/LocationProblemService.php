@@ -69,11 +69,6 @@ class LocationProblemService extends Resource
             BelongsTo::make('location', 'location', Location::class),
             BelongsTo::make('cpmProblem', 'cpmProblem', CpmProblem::class),
             BelongsTo::make('chargeableService', 'chargeableService', ChargeableService::class),
-            //location name
-
-            //Cpm Problem name
-
-            //Chargeable Service Code
         ];
     }
 
