@@ -75,7 +75,7 @@ class ChargeableService extends BaseModel
         self::CCM,
         'CPT 99487',
         'CPT 99489',
-        'G0511',
+        self::G0511,
     ];
     const G0511         = 'G0511';
     const PCM           = 'G2065';

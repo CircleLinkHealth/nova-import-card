@@ -31,7 +31,7 @@ class PatientCcmStatusRevision extends Model
 {
     const ACTION_INSERT = 'insert';
     const ACTION_UPDATE = 'update';
-    
+
     protected $fillable = [];
 
     protected $table = 'patient_ccm_status_revisions';
