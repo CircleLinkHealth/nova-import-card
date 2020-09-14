@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Entities\TwilioInboundSmsRequest;
 use App\Jobs\ProcessTwilioInboundSmsJob;
 use App\TwilioInboundSms;
 use Illuminate\Console\Command;
@@ -43,10 +44,10 @@ class ProcessTwilioInboundSmsCommand extends Command
     public function handle()
     {
         $item = TwilioInboundSms::findOrFail($this->argument('recordId'));
-        ProcessTwilioInboundSmsJob::dispatch([
+        ProcessTwilioInboundSmsJob::dispatch(new TwilioInboundSmsRequest([
             'From' => $item->from,
             'Body' => $item->body,
-        ], $item->id);
+        ]), $item->id);
 
         return 0;
     }
