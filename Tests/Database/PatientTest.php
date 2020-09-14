@@ -168,5 +168,5 @@ class PatientTest extends CustomerTestCase
     
     //test service class creates logs
     
-    //test service class creates logs for past month
+    //test service class creates logs for past month(date is passed from trigger - difficult to test)
 }
