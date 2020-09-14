@@ -321,6 +321,8 @@
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <path value="$PROJECT_DIR$/vendor/lorisleiva/cron-translator" />
       <path value="$PROJECT_DIR$/vendor/spatie/db-dumper" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

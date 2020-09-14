@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eb985c6b142db33a622e52cf1774e8f0",
+    "content-hash": "44020b7264c115fa898227277df8294d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1128,11 +1128,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.4.9",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "b6e48014f52c11f88c5029249734a37bf562462b"
+                "reference": "987704bfcd842cb1ca52b66704545a14b6deeec2"
             },
             "type": "laravel-module",
             "extra": {
@@ -1154,7 +1154,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:04:39+00:00"
+            "time": "2020-09-14T18:36:40+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1200,11 +1200,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.4.4",
+            "version": "v3.4.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4196c49450c65039eb91d6f6c077c383af07b7c8"
+                "reference": "030bf0a1e72bb1f65dd6b0384d6af89b1cbd23d0"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1230,7 +1230,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-05T15:59:35+00:00"
+            "time": "2020-09-14T18:37:41+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -5009,17 +5009,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.9.2",
+            "version": "v3.9.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "512af9cfca0c50b9c391492b1a327d9944b35f12"
+                "reference": "beeebbec81a79c90b37783f2e44ccdbc0cc3a631"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-512af9cfca0c50b9c391492b1a327d9944b35f12-zip-48aed5.zip",
-                "reference": "512af9cfca0c50b9c391492b1a327d9944b35f12",
-                "shasum": "d21807b526e66f1fa79756ede57c73e45fc636c5"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-beeebbec81a79c90b37783f2e44ccdbc0cc3a631-zip-348430.zip",
+                "reference": "beeebbec81a79c90b37783f2e44ccdbc0cc3a631",
+                "shasum": "1caa0a67d21a8002d300714571944c54edcabd88"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5080,7 +5080,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-09-09T15:34:29+00:00"
+            "time": "2020-09-14T18:10:40+00:00"
         },
         {
             "name": "laravel/passport",
@@ -14722,16 +14722,16 @@
         },
         {
             "name": "jkocik/laravel-profiler",
-            "version": "1.3.1",
+            "version": "1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jkocik/laravel-profiler.git",
-                "reference": "89347e640895fdac7c27e0921b2002305f6e1abc"
+                "reference": "dc5a102204d5cff7a2fb1e613b2df3f64e8be155"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jkocik/laravel-profiler/zipball/89347e640895fdac7c27e0921b2002305f6e1abc",
-                "reference": "89347e640895fdac7c27e0921b2002305f6e1abc",
+                "url": "https://api.github.com/repos/jkocik/laravel-profiler/zipball/dc5a102204d5cff7a2fb1e613b2df3f64e8be155",
+                "reference": "dc5a102204d5cff7a2fb1e613b2df3f64e8be155",
                 "shasum": ""
             },
             "require": {
@@ -14780,7 +14780,7 @@
                 "laravel",
                 "profiler"
             ],
-            "time": "2020-06-05T02:17:39+00:00"
+            "time": "2020-09-14T02:25:47+00:00"
         },
         {
             "name": "jolicode/jolinotif",
