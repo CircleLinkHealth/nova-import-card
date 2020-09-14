@@ -8,7 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
 use CircleLinkHealth\CcmBilling\Jobs\CheckPatientEndOfMonthCcmStatusLogsExistForMonth as Job;
 
-class CheckPatientEndOfMonthCcmStatusLogsExistForMonth extends CommandForSpecificMonth
+class CheckPatientEndOfMonthCcmStatusLogsExist extends CommandForSpecificMonth
 {
     /**
      * The console command description.

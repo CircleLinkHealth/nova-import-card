@@ -14,7 +14,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
+class CheckPatientSummariesHaveBeenCreated implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -25,6 +25,8 @@ class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
 
     /**
      * Create a new job instance.
+     *
+     * @return void
      */
     public function __construct(Carbon $month)
     {
@@ -44,6 +46,6 @@ class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
     public function handle()
     {
         Practice::get()
-            ->each(fn (Practice $p) => ProcessPracticePatientMonthlyServices::dispatch($p->id, $this->getMonth()));
+            ->each(fn (Practice $p) => CheckPatientSummariesHaveBeenCreatedForPractice::dispatch($p->id, $this->getMonth()));
     }
 }

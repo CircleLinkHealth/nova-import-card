@@ -29,11 +29,10 @@ class PracticeProcessorEloquentRepository implements PracticeProcessorRepository
         return $this->patientsQuery($customerModelId, $monthYear)->get();
     }
 
-    public function patientServices(int $customerModelId, Carbon $monthYear): Builder
+    public function patientServices(int $practiceId, Carbon $monthYear): Builder
     {
-        //todo: fix relationship name
         return $this->approvablePatientServicesQuery($monthYear)
-            ->whereHas('patient', fn ($q) => $q->ofPractice($customerModelId));
+            ->whereHas('patient', fn ($q) => $q->ofPractice($practiceId));
     }
 
     public function patientsQuery(int $customerModelId, Carbon $monthYear): Builder
@@ -44,6 +43,6 @@ class PracticeProcessorEloquentRepository implements PracticeProcessorRepository
 
     public function practiceWithLocationsWithSummaries(int $practiceId, ?Carbon $month = null): Builder
     {
-        //todo: add query traits for practice
+        //todo: to deprecate - was initially added for auto-assign CS to newly created Location which is an idea we're probably scrapping
     }
 }
