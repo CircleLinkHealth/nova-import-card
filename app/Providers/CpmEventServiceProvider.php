@@ -44,6 +44,7 @@ use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
 use CircleLinkHealth\CcmBilling\Events\PatientSuccessfulCallCreated;
 use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationPatientServices;
+use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationProblemServices;
 use CircleLinkHealth\CcmBilling\Listeners\ProcessPatientServices;
 use CircleLinkHealth\Core\Listeners\LogFailedNotification;
 use CircleLinkHealth\Core\Listeners\LogMailSmtpId;
@@ -149,6 +150,7 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         LocationServicesAttached::class => [
             ProcessLocationPatientServices::class,
+            ProcessLocationProblemServices::class,
         ],
         PatientProblemsChanged::class => [
             ProcessPatientServices::class,
