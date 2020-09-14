@@ -17,12 +17,12 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         CREATE VIEW {$this->getViewName()}
         AS
         SELECT
-            //
+        upc.postmark_id
+        
         FROM
-            //
+            unresolved_postmark_callbacks upc
 
-        WHERE
-            //
+    
       ");
     }
 
