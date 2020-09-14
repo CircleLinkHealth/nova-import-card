@@ -1,0 +1,39 @@
+{
+    "name": "circlelinkhealth/saml-sp-module",
+    "type": "laravel-module",
+    "description": "",
+    "authors": [
+        {
+            "name": "Pangratios Cosma",
+            "email": "pangratios@circlelinkhealth.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CircleLinkHealth\\SamlSp\\Providers\\SamlSpServiceProvider"
+            ],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "classmap": [
+            "Database/Seeders",
+            "Database/Factories"
+        ],
+        "psr-4": {
+            "CircleLinkHealth\\Saml\\": ""
+        }
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/saml-sp-module.git"
+        }
+    ],
+    "require": {
+        "aacotroneo/laravel-saml2": "^2.1"
+    }
+}
