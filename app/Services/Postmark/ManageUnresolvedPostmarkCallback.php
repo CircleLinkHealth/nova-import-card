@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 
 class ManageUnresolvedPostmarkCallback
 {
+    private bool $isMultiMatch;
+    private bool $isUniqueMatch;
     private $matchedData;
     private int $recordId;
 
@@ -27,19 +29,18 @@ class ManageUnresolvedPostmarkCallback
     }
 
     /**
-     * @param $matchedData
      * @return \Collection|\Illuminate\Support\Collection
      */
-    public function getSuggestedPatientUsers()
+    public function getSuggestedPatientUserIds()
     {
         $suggestions = collect();
 
-        if ($this->matchedData instanceof Collection) {
-            $suggestions->push($this->matchedData->pluck('id'));
+        if ($this->matchedWithMultipleUsers()) {
+            $suggestions->push(...$this->matchedData['matchUsersResult']->pluck('id'));
         }
 
-        if ($this->matchedData instanceof User) {
-            $suggestions->push($this->matchedData->id);
+        if ($this->matchedWithUniqueUser()) {
+            $suggestions->push(...$this->matchedData['matchUsersResult']->id);
         }
 
         return $suggestions;
@@ -47,11 +48,12 @@ class ManageUnresolvedPostmarkCallback
 
     public function handleUnresolved()
     {
-        $suggestedPatientUsers = $this->getSuggestedPatientUsers();
-        $this->saveAsUnresolved($suggestedPatientUsers);
+        $suggestedPatientUsersIds = $this->getSuggestedPatientUserIds();
+
+        $this->saveAsUnresolved($suggestedPatientUsersIds->toArray());
     }
 
-    public function saveAsUnresolved(\Illuminate\Support\Collection $suggestions)
+    public function saveAsUnresolved(array $suggestedUsersIds)
     {
         try {
             UnresolvedPostmarkCallback::firstOrCreate(
@@ -59,8 +61,9 @@ class ManageUnresolvedPostmarkCallback
                     'postmark_id' => $this->recordId,
                 ],
                 [
-                    'user_id'     => '',
-                    'suggestions' => json_encode($suggestions),
+                    'user_id'     => $this->getUserIdIfMatched(),
+                    'reasoning'   => json_encode($this->matchedData['reasoning']),
+                    'suggestions' => json_encode($suggestedUsersIds),
                 ]
             );
         } catch (\Exception $exception) {
@@ -70,5 +73,26 @@ class ManageUnresolvedPostmarkCallback
 
             return;
         }
+    }
+
+    private function getUserIdIfMatched()
+    {
+//        if ($this->isMultiMatch){
+//            return null;
+//        }
+
+        if ($this->isUniqueMatch) {
+            return isset($this->matchedData['matchUsersResult']->id) ?? $this->matchedData['matchUsersResult']->id;
+        }
+    }
+
+    private function matchedWithMultipleUsers()
+    {
+        return $this->isMultiMatch = $this->matchedData['matchUsersResult'] instanceof Collection;
+    }
+
+    private function matchedWithUniqueUser()
+    {
+        return $this->isUniqueMatch = $this->matchedData['matchUsersResult'] instanceof User;
     }
 }

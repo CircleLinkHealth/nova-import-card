@@ -7,7 +7,6 @@
 namespace App\Services\Postmark;
 
 use App\PostmarkInboundMail;
-use App\UnresolvedPostmarkCallback;
 use Illuminate\Support\Facades\Log;
 
 class PostmarkCallbackMailService
@@ -27,7 +26,7 @@ class PostmarkCallbackMailService
 
         return collect(json_decode($postmarkRecord->data))->toArray();
     }
-    
+
     /**
      * @return mixed
      */

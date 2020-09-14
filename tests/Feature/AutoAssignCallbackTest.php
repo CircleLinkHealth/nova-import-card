@@ -68,7 +68,7 @@ class AutoAssignCallbackTest extends TestCase
         );
     }
 
-    public function test_it_will_create_callback_if_multiple_match_is_resolved()
+    public function test_it_will_create_callback_if_multiple_match_is_resolved_to_single_match()
     {
         $this->createPatientData(Enrollee::ENROLLED);
         $patient1        = $this->patient;
@@ -82,21 +82,21 @@ class AutoAssignCallbackTest extends TestCase
         $this->assertMissingCallBack($patient2->id);
     }
 
-    public function test_it_will_create_callback_when_name_is_self_and_resolved_to_single_match()
+    public function test_a_multiple_match_resolved_to_single_match_with_name_self_will_create_callback()
     {
         $standByNurse = $this->createUser(Practice::firstOrFail()->id, 'care-center');
 
-        AppConfig::create(
-            [
-                'config_key'   => StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY,
-                'config_value' => $standByNurse->id,
-            ]
-        );
-
-        $this->assertDatabaseHas('app_config', [
-            'config_key'   => StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY,
-            'config_value' => $standByNurse->id,
-        ]);
+//        AppConfig::create(
+//            [
+//                'config_key'   => StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY,
+//                'config_value' => $standByNurse->id,
+//            ]
+//        );
+//
+//        $this->assertDatabaseHas('app_config', [
+//            'config_key'   => StandByNurseUser::STAND_BY_NURSE_USER_ID_NOVA_KEY,
+//            'config_value' => $standByNurse->id,
+//        ]);
 
         $this->createPatientData(Enrollee::ENROLLED, false, true);
         $patient1        = $this->patient;

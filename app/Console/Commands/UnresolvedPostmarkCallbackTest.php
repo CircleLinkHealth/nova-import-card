@@ -6,10 +6,10 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
 use App\Services\Postmark\PostmarkCallbackMailService;
+use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 

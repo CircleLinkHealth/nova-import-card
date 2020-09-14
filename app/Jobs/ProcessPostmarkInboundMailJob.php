@@ -90,7 +90,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                     /** @var SchedulerService $service */
                     $service = app(SchedulerService::class);
                     $service->scheduleAsapCallbackTask(
-                        $matchedResultsFromDB['matchResult'],
+                        $matchedResultsFromDB['matchUsersResult'],
                         $postmarkCallbackData['Msg'],
                         'postmark_inbound_mail',
                         null,
@@ -100,8 +100,9 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                     //@todo: Send Live Notification. It should be done by Call observer already. Check!
                     return;
                 }
-                
-                (new ManageUnresolvedPostmarkCallback($matchedResultsFromDB['matchResult'], $recordId))->handleUnresolved();
+
+                (new ManageUnresolvedPostmarkCallback($matchedResultsFromDB, $recordId))->handleUnresolved();
+
                 return;
             } catch (\Exception $e) {
                 if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {
