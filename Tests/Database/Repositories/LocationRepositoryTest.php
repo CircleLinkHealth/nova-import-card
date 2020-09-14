@@ -7,15 +7,16 @@
 namespace CircleLinkHealth\CcmBilling\Tests\Database\Repositories;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
-use Tests\TestCase;
+use Tests\CustomerTestCase;
 
-class LocationRepositoryTest extends TestCase
+class LocationRepositoryTest extends CustomerTestCase
 {
     protected Location $location;
     protected LocationProcessorEloquentRepository $repo;
@@ -56,20 +57,33 @@ class LocationRepositoryTest extends TestCase
 
     public function test_it_fetches_location_patient_services_for_month()
     {
-        //simply create patient services
-        //fetch
+        $patients     = $this->patient($numberOfPatients = 5);
+        $startOfMonth = Carbon::now()->startOfMonth();
+        self::assertTrue(is_array($patients));
+
+        $locationId = null;
+        foreach ($patients as $patient) {
+            $locationId = $locationId ?? $patient->getPreferredContactLocation();
+            ChargeablePatientMonthlySummary::insert([
+                [
+                    'patient_user_id'       => $patient->id,
+                    'chargeable_service_id' => 1,
+                    'chargeable_month'      => $startOfMonth,
+                ],
+                [
+                    'patient_user_id'       => $patient->id,
+                    'chargeable_service_id' => 2,
+                    'chargeable_month'      => $startOfMonth,
+                ],
+            ]);
+        }
+
+        self::assertTrue($this->repo->patientServices($locationId, $startOfMonth)->count() === $numberOfPatients * 2);
     }
 
     public function test_it_fetches_location_patients_with_billing_relationships_loaded()
     {
         //create location patients with relevant data
-        //fetch them assert you got what you gave, dave
-    }
-
-    public function test_it_stores_location_monthly_summaries()
-    {
-        //store a summary
-        //assert it is returned
-        //query for it and assert you get it
+        //fetch them and assert you got what you gave, dave
     }
 }

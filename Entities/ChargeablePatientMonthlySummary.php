@@ -60,7 +60,7 @@ class ChargeablePatientMonthlySummary extends BaseModel
 
     public function chargeableService()
     {
-        return $this->hasOne(ChargeableService::class, 'chargeable_service_id');
+        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
     }
 
     public function patient()
