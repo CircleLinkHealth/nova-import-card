@@ -6,6 +6,9 @@
 
 namespace CircleLinkHealth\SamlSp\Providers;
 
+use Aacotroneo\Saml2\Events\Saml2LoginEvent;
+use CircleLinkHealth\SamlSp\Console\RegisterSamlUserMapping;
+use CircleLinkHealth\SamlSp\Listeners\SamlLoginEventListener;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +27,7 @@ class SamlSpServiceProvider extends ServiceProvider
         $this->registerViews();
         $this->registerConfig();
         $this->registerFactories();
+        $this->registerListeners();
     }
 
     /**
@@ -31,6 +35,10 @@ class SamlSpServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->register(RouteServiceProvider::class);
+        $this->commands([
+            RegisterSamlUserMapping::class,
+        ]);
     }
 
     /**
@@ -103,5 +111,10 @@ class SamlSpServiceProvider extends ServiceProvider
                 require $path
             ));
         }
+    }
+
+    private function registerListeners()
+    {
+        $this->app['events']->listen(Saml2LoginEvent::class, SamlLoginEventListener::class);
     }
 }
