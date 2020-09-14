@@ -19,11 +19,11 @@ class AddChargeableServiceIdForeignKeyToLvPageTimerAndLvActivitiesTable extends 
     {
         Schema::table('lv_activities', function (Blueprint $table) {
             $table->dropForeign(['chargeable_service_id']);
-            
+
             $table->dropColumn('chargeable_service_id');
         });
     }
-    
+
     /**
      * Run the migrations.
      *
@@ -33,7 +33,7 @@ class AddChargeableServiceIdForeignKeyToLvPageTimerAndLvActivitiesTable extends 
     {
         Schema::table('lv_activities', function (Blueprint $table) {
             $table->unsignedInteger('chargeable_service_id')->nullable()->after('comment_id');
-            
+
             $table->foreign('chargeable_service_id')
                 ->references('id')
                 ->on('chargeable_services')
