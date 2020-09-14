@@ -25,6 +25,7 @@ use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -196,9 +197,14 @@ trait UserHelpers
     public function setupUser($practiceId, $roles, $roleName, $ccmStatus = 'enrolled')
     {
         $faker = Factory::create();
-
+        
+        $lastNameString = "$faker->lastName Role:$roleName";
+        if (App::environment('testing')){
+            $lastNameString = $faker->lastName;
+        }
+        
         $firstName = $faker->firstName;
-        $lastName  = "$faker->lastName Role:$roleName";
+        $lastName  = $lastNameString;
         $email     = now()->timestamp.$faker->email;
         $workPhone = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
 

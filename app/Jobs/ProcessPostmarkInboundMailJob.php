@@ -6,10 +6,15 @@
 
 namespace App\Jobs;
 
+use App\Entities\EmailAddressParts;
+use App\Entities\PostmarkInboundMailRequest;
 use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\PostmarkInboundMail;
 use App\Services\Calls\SchedulerService;
+use App\Services\Postmark\ManageUnresolvedPostmarkCallback;
+use App\Services\Postmark\PostmarkCallbackMailService;
+use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
@@ -18,6 +23,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ProcessPostmarkInboundMailJob implements ShouldQueue
 {
@@ -26,28 +32,29 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    const FROM_CALLBACK_EMAIL_USERNAME = 'callcenterusa.net';
+    const FROM_CALLBACK_FULL_EMAIL     = 'message.dispatch@callcenterusa.net';
+
+    public int $tries = 1;
+
     /**
      * @var bool|null
      */
     private $dbRecordId;
 
-    private array $input;
+    private PostmarkInboundMailRequest $input;
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
-    public function __construct(array $input, int $dbRecordId = null)
+    public function __construct(PostmarkInboundMailRequest $input, int $dbRecordId = null)
     {
         $this->input      = $input;
         $this->dbRecordId = $dbRecordId;
     }
 
     /**
-     * Execute the job.
-     *
-     * @return void
+     * @return string|void
      */
     public function handle()
     {
@@ -55,7 +62,60 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         $recordId = $this->dbRecordId ?: $this->storeRawLogs();
 
         // 1. read source email, find patient
-        $email = $this->input['From'];
+        $email      = $this->removeAliasFromEmail($this->input->From);
+        $emailParts = $this->splitEmail($email);
+        $users      = User::where('email', 'REGEXP', '^'.$emailParts->username.'[+|@]')
+            ->where('email', 'REGEXP', $emailParts->domain.'$');
+
+        if ( ! $email) {
+            Log::error("Empty Postmark notification field:'From'. Record id $recordId");
+        }
+
+        if (self::FROM_CALLBACK_EMAIL_USERNAME === $emailParts->username) {
+            try {
+                $postmarkCallbackService = (new PostmarkCallbackMailService());
+                $postmarkCallbackData    = $postmarkCallbackService->postmarkInboundData($recordId);
+                /** @var array $matchedResultsFromDB */
+                $matchedResultsFromDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
+                    ->getMatchedPatients();
+
+                if (empty($matchedResultsFromDB)) {
+                    Log::warning("Could not find a patient match for record_id:[$recordId] in postmark_inbound_mail");
+                    sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient match for record_id:[$recordId] in postmark_inbound_mail");
+
+                    return;
+                }
+
+                if ($postmarkCallbackService->shouldCreateCallBackFromPostmarkInbound($matchedResultsFromDB)) {
+                    /** @var SchedulerService $service */
+                    $service = app(SchedulerService::class);
+                    $service->scheduleAsapCallbackTask(
+                        $matchedResultsFromDB['matchUsersResult'],
+                        $postmarkCallbackData['Msg'],
+                        'postmark_inbound_mail',
+                        null,
+                        SchedulerService::CALL_BACK_TYPE
+                    );
+
+                    //@todo: Send Live Notification. It should be done by Call observer already. Check!
+                    return;
+                }
+
+                (new ManageUnresolvedPostmarkCallback($matchedResultsFromDB, $recordId))->handleUnresolved();
+
+                return;
+            } catch (\Exception $e) {
+                if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {
+                    //                Assign to CA's ???
+                    return;
+                }
+                Log::error($e->getMessage());
+                sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
+
+                return;
+            }
+        }
+
         /** @var User $user */
         $user = User::whereEmail($email)
             ->with([
@@ -63,39 +123,47 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                     $q->select(['id', 'display_name']);
                 },
             ])
-            ->first();
+            ->get();
 
-        if ( ! $user) {
+        if ($users->isEmpty()) {
             sendSlackMessage('#carecoach_ops_alerts', "Could not find patient from inbound mail. See database record id[$recordId]");
 
             return;
         }
 
         // 2. check that we have sent an unsuccessful call notification to this patient in the last 2 weeks
-        $hasNotification = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
+        $notification = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
             ->whereIn('notifiable_type', [User::class, \App\User::class])
-            ->where('notifiable_id', '=', $user->id)
+            ->whereIn('notifiable_id', $users->map(fn ($user) => $user->id)->toArray())
             ->where('created_at', '>=', now()->subDays(14))
-            ->exists();
+            ->orderByDesc('created_at')
+            ->first();
 
-        if ( ! $hasNotification) {
+        if ( ! $notification) {
             sendSlackMessage('#carecoach_ops_alerts', "Could not find unsuccessful call notification from inbound mail. See database record id[$recordId]");
 
             return;
         }
 
         try {
+            $user = $users->where('id', '=', $notification->notifiable_id)->first();
+
             // 3. create call for nurse with ASAP flag
             /** @var SchedulerService $service */
             $service = app(SchedulerService::class);
-            $task    = $service->scheduleAsapCallbackTask($user, $this->filterEmailBody($this->input['TextBody']), 'postmark_inbound_mail');
+            $task    = $service->scheduleAsapCallbackTask(
+                $user,
+                $this->filterEmailBody($this->input->TextBody),
+                'postmark_inbound_mail',
+                null,
+                SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS
+            );
         } catch (\Exception $e) {
             sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
 
             return;
         }
 
-        //if we already have a db record, we don't have to send a reply again
         if ($this->dbRecordId) {
             return;
         }
@@ -107,7 +175,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
             ->first();
 
         // 4. reply to patient
-        $user->notify(new PatientUnsuccessfulCallReplyNotification($careCoach->first_name, $user->primaryPractice->display_name, ['mail']));
+        $user->notify(new PatientUnsuccessfulCallReplyNotification(optional($careCoach)->first_name, $user->primaryPractice->display_name, ['mail']));
     }
 
     private function filterEmailBody($emailBody): string
@@ -122,6 +190,18 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         }
 
         return $text;
+    }
+
+    private function removeAliasFromEmail(string $email)
+    {
+        return preg_replace('/(\+[^\@]+)/', '', $email);
+    }
+
+    private function splitEmail(string $email)
+    {
+        $parts = explode('@', $email);
+
+        return new EmailAddressParts($parts[0] ?? '', $parts[1] ?? '');
     }
 
     private function storeRawLogs(): ?int

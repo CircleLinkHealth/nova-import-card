@@ -26,6 +26,7 @@ class SchedulerService
 {
     const CALL_BACK_TYPE                              = 'Call Back';
     const CALL_TYPE                                   = 'call';
+    const NURSE_NOT_FOUND                             = 'could not find nurse for patient';
     const PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE = 'Provider Request For Care Plan Approval';
     const SCHEDULE_NEXT_CALL_PER_PATIENT_SMS          = 'Schedule Next Call per patient\'s SMS';
     const TASK_TYPE                                   = 'task';
@@ -379,12 +380,12 @@ class SchedulerService
      *
      * @throws \Exception
      */
-    public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null): Call
+    public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null, string $taskSubType): Call
     {
         // check if there is already a task scheduled
         /** @var Call $existing */
         $existing = Call::where('type', '=', SchedulerService::TASK_TYPE)
-            ->where('sub_type', '=', SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS)
+            ->where('sub_type', '=', $taskSubType)
             ->where('status', '=', Call::SCHEDULED)
             ->where('inbound_cpm_id', '=', $patient->id)
             ->first();
@@ -403,7 +404,8 @@ class SchedulerService
         );
 
         if ( ! $nurseId = app(NurseFinderEloquentRepository::class)->find($patient->id) ?? StandByNurseUser::id()) {
-            throw new \Exception("could not find nurse for patient[$patient->id]");
+            $message = self::NURSE_NOT_FOUND;
+            throw new \Exception("$message [$patient->id]");
         }
 
         $nowString = now()->toDateTimeString();
@@ -411,7 +413,7 @@ class SchedulerService
         return Call::create(
             [
                 'type'                  => SchedulerService::TASK_TYPE,
-                'sub_type'              => SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS,
+                'sub_type'              => $taskSubType,
                 'status'                => Call::SCHEDULED,
                 'attempt_note'          => "Email/SMS Response at $nowString: $taskNote",
                 'scheduler'             => $scheduler,

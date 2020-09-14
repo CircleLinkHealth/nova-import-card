@@ -6,12 +6,15 @@
 
 namespace App\Console\Commands;
 
+use App\Notifications\PostmarkTestCallbackNotification;
 use App\Notifications\SendGridTestNotification;
 use CircleLinkHealth\Core\Facades\Notification;
+use Illuminate\Bus\Queueable;
 use Illuminate\Console\Command;
 
 class SendTestEmailToSendGrid extends Command
 {
+    use Queueable;
     /**
      * The console command description.
      *
@@ -23,7 +26,13 @@ class SendTestEmailToSendGrid extends Command
      *
      * @var string
      */
-    protected $signature = 'send:test-email {email}';
+    protected $signature = 'send:test-email {email?} {--callback-mail}';
+    /**
+     * @var array|string|null
+     */
+    private $email;
+
+    private bool $isCallbackMail;
 
     /**
      * Create a new command instance.
@@ -35,16 +44,41 @@ class SendTestEmailToSendGrid extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
     public function handle()
     {
-        $email     = $this->argument('email');
-        $anonymous = Notification::route('mail', $email);
+        $this->email          = $this->argument('email') ?: null;
+        $this->isCallbackMail = (bool) $this->option('callback-mail');
+
+        if ($this->isCallbackMail) {
+            try {
+                $anonymous = $this->sendToAnonymous();
+                $anonymous->notifyNow(new PostmarkTestCallbackNotification());
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
+            }
+
+            return $this->info('Done');
+        }
+
+        if ( ! is_null($this->email)) {
+            return $this->sendTestNotification();
+        }
+
+        $this->error('Missing email argument');
+    }
+
+    private function sendTestNotification()
+    {
+        $anonymous = $this->sendToAnonymous();
         $anonymous->notifyNow(new SendGridTestNotification());
         $this->info('Done');
+    }
+
+    /**
+     * @return \Illuminate\Notifications\AnonymousNotifiable
+     */
+    private function sendToAnonymous()
+    {
+        return Notification::route('mail', $this->email);
     }
 }

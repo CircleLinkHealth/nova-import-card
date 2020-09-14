@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eb985c6b142db33a622e52cf1774e8f0",
+    "content-hash": "296cba2345a839c759a2cdcfdff758e4",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -512,16 +512,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.154.1",
+            "version": "3.154.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5651d8a92164d98869b70a15e4c06ce4c14c7c28"
+                "reference": "57be3873ea9a32ccd8467c38d325544c2c064f69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5651d8a92164d98869b70a15e4c06ce4c14c7c28",
-                "reference": "5651d8a92164d98869b70a15e4c06ce4c14c7c28",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/57be3873ea9a32ccd8467c38d325544c2c064f69",
+                "reference": "57be3873ea9a32ccd8467c38d325544c2c064f69",
                 "shasum": ""
             },
             "require": {
@@ -593,7 +593,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-09-11T18:12:41+00:00"
+            "time": "2020-09-14T19:50:15+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1128,11 +1128,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.4.9",
+            "version": "dev-road_322_migrations",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "b6e48014f52c11f88c5029249734a37bf562462b"
+                "reference": "2afabc4c2d865dfa0831ac065c49fc550a7bc66b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1154,7 +1154,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:04:39+00:00"
+            "time": "2020-09-14T14:39:47+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1200,11 +1200,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.4.4",
+            "version": "v3.4.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4196c49450c65039eb91d6f6c077c383af07b7c8"
+                "reference": "030bf0a1e72bb1f65dd6b0384d6af89b1cbd23d0"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1230,7 +1230,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-05T15:59:35+00:00"
+            "time": "2020-09-14T18:37:41+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1578,11 +1578,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.3.4",
+            "version": "dev-road_333_sql",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "4a16d296f22aa46d0f09ebd79aa0e4a186bab4f3"
+                "reference": "327545c5d18b0dc2b2c2620b2816c68e016f09a2"
             },
             "type": "laravel-module",
             "extra": {
@@ -1607,7 +1607,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:01:11+00:00"
+            "time": "2020-09-14T19:54:18+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
@@ -5009,17 +5009,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.9.3",
+            "version": "v3.9.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "6df10ff9280069dd62d88b87f7328438ef8ddb7c"
+                "reference": "beeebbec81a79c90b37783f2e44ccdbc0cc3a631"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-6df10ff9280069dd62d88b87f7328438ef8ddb7c-zip-7e75e3.zip",
-                "reference": "6df10ff9280069dd62d88b87f7328438ef8ddb7c",
-                "shasum": "3c27698c985933e2d627e0861e5052089a977a21"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-beeebbec81a79c90b37783f2e44ccdbc0cc3a631-zip-348430.zip",
+                "reference": "beeebbec81a79c90b37783f2e44ccdbc0cc3a631",
+                "shasum": "1caa0a67d21a8002d300714571944c54edcabd88"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5080,7 +5080,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-09-14T17:57:59+00:00"
+            "time": "2020-09-14T18:10:40+00:00"
         },
         {
             "name": "laravel/passport",
@@ -17769,6 +17769,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/sqlviews-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },
