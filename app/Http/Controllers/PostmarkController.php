@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Entities\PostmarkInboundMailRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use CircleLinkHealth\Core\Jobs\ProcessPostmarkMailStatusCallbackJob;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class PostmarkController extends Controller
      */
     public function inbound(Request $request)
     {
-        ProcessPostmarkInboundMailJob::dispatch($request->all());
+        ProcessPostmarkInboundMailJob::dispatch(new PostmarkInboundMailRequest($request->all()));
 
         return response()->json([]);
     }

@@ -6,25 +6,25 @@
 
 namespace App\Console\Commands;
 
-use App\Entities\PostmarkInboundMailRequest;
-use App\Jobs\ProcessPostmarkInboundMailJob;
-use App\PostmarkInboundMail;
+use App\Entities\TwilioInboundSmsRequest;
+use App\Jobs\ProcessTwilioInboundSmsJob;
+use App\TwilioInboundSms;
 use Illuminate\Console\Command;
 
-class ProcessPostmarkInboundMailCommand extends Command
+class ProcessTwilioInboundSmsCommand extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Process inbound mail again';
+    protected $description = 'Process inbound sms again';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'process:postmark-inbound-mail {recordId}';
+    protected $signature = 'process:twilio-inbound-sms {recordId}';
 
     /**
      * Create a new command instance.
@@ -43,10 +43,10 @@ class ProcessPostmarkInboundMailCommand extends Command
      */
     public function handle()
     {
-        $item = PostmarkInboundMail::findOrFail($this->argument('recordId'));
-        ProcessPostmarkInboundMailJob::dispatch(new PostmarkInboundMailRequest([
-            'From'     => $item->from,
-            'TextBody' => $item->body,
+        $item = TwilioInboundSms::findOrFail($this->argument('recordId'));
+        ProcessTwilioInboundSmsJob::dispatch(new TwilioInboundSmsRequest([
+            'From' => $item->from,
+            'Body' => $item->body,
         ]), $item->id);
 
         return 0;
