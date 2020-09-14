@@ -1,4 +1,5 @@
 {
+    "name": "awv",
     "private": true,
     "scripts": {
         "build-awv": "composer install && php artisan migrate && php artisan migrate:views && npm install",
