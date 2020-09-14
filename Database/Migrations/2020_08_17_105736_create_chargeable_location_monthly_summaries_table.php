@@ -32,7 +32,7 @@ class CreateChargeableLocationMonthlySummariesTable extends Migration
             $table->unsignedInteger('location_id');
             $table->unsignedInteger('chargeable_service_id')->nullable();
             $table->date('chargeable_month');
-            $table->decimal('amount')->default(0);
+            $table->decimal('amount')->nullable();
             $table->boolean('is_locked')->default(0);
             $table->timestamps();
 
