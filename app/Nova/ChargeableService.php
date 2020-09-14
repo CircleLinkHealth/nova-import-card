@@ -34,7 +34,7 @@ class ChargeableService extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'display_name';
 
     /**
      * Get the actions available for the resource.
