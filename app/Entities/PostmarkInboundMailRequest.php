@@ -13,7 +13,7 @@ class PostmarkInboundMailRequest
     public ?array $BccFull;
     public ?string $Cc;
     public ?array $CcFull;
-    public string $From;
+    public ?string $From;
     public ?array $FromFull;
     public ?string $FromName;
     public ?array $Headers;
@@ -26,7 +26,7 @@ class PostmarkInboundMailRequest
     public ?string $StrippedTextReply;
     public ?string $Subject;
     public ?string $Tag;
-    public string $TextBody;
+    public ?string $TextBody;
     public ?string  $To;
     public ?array $ToFull;
 
