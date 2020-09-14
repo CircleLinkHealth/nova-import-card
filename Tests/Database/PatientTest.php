@@ -165,4 +165,8 @@ class PatientTest extends CustomerTestCase
 
         self::assertEquals($viewSummary->total_time, $duration1 + $duration2);
     }
+    
+    //test service class creates logs
+    
+    //test service class creates logs for past month
 }
