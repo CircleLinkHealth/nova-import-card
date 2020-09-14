@@ -25,14 +25,14 @@ trait ApprovablePatientUsersQuery
                 $q->createdOn($monthYear, 'chargeable_month');
             },
             'attestedProblems' => function ($q) use ($monthYear) {
-                $q->createdOn($monthYear, 'charegable_month');
+                $q->createdOn($monthYear, 'chargeable_month');
             },
             'billingProvider.user',
             'patientInfo',
             'ccdProblems' => function ($problem) {
                 $problem->with(['cpmProblem.locationChargeableServices', 'codes', 'icd10Codes']);
             },
-            'chargeableMonthlySummary' => function ($q) use ($monthYear) {
+            'chargeableMonthlySummaries' => function ($q) use ($monthYear) {
                 $q->with(['chargeableService'])
                     ->createdOn($monthYear, 'chargeable_month');
             },

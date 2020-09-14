@@ -19,9 +19,9 @@ class PatientProcessorEloquentRepository implements Repository
     {
         return $this
             ->approvablePatientUserQuery($patientId, $month)
-            ->with(['patientInfo.location.chargeableMonthlySummaries' => function ($summary) {
+            ->with(['patientInfo.location.chargeableServiceSummaries' => function ($summary) use ($month) {
                 $summary->with(['chargeableService'])
-                    ->createdOn($this->getMonth(), 'chargeable_month');
+                    ->createdOn($month, 'chargeable_month');
             }]);
     }
 }

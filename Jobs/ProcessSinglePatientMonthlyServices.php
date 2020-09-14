@@ -58,17 +58,18 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
      */
     public function handle()
     {
+        dd('test');
         /** @var User */
         $patient = $this->repo()
             ->patientWithBillingDataForMonth($this->getPatientId(), $this->getMonth())
             ->first();
-
+        
         $this->processor()->process(
             (new PatientMonthlyBillingDTO())
                 ->subscribe($patient->patientInfo->location->availableServiceProcessors($this->getMonth()))
                 ->forPatient($patient->id)
                 ->forMonth($this->getMonth())
-                ->withProblems($patient->patientProblemsForBillingProcessing()->toArray())
+                ->withProblems(...$patient->patientProblemsForBillingProcessing()->toArray())
         );
     }
 }

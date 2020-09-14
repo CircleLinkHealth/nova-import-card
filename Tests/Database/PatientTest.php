@@ -11,11 +11,15 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
+use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Tests\CustomerTestCase;
 
@@ -185,8 +189,10 @@ class PatientTest extends CustomerTestCase
 
     public function test_process_single_patient_services_job_attaches_services()
     {
-        //attach patient location summaries
-        $locationRepo = new LocationProcessorEloquentRepository();
+        //todo: change test once we have decided how to go about adding locations to new service
+        $locationRepo               = new LocationProcessorEloquentRepository();
+        $locationProblemServiceRepo = new LocationProblemServiceRepository();
+        $patientRepo                = new PatientProcessorEloquentRepository();
 
         $patient = $this->patient();
 
@@ -196,17 +202,56 @@ class PatientTest extends CustomerTestCase
             ChargeableService::CCM_PLUS_40,
             ChargeableService::CCM_PLUS_60,
         ] as $code) {
-            $locationRepo->store($patient->getPreferredContactLocation(), $code, Carbon::now()->startOfMonth());
+            $locationRepo->store($locationId = $patient->getPreferredContactLocation(), $code, $startOfMonth = Carbon::now()->startOfMonth());
         }
 
-        //attach patient problems
-        //problems should have CS now right?
+        $cpmProblems = CpmProblem::take(5)->get()->values()->toArray();
 
-        //assert summaries don't exist
+        for ($i = 4; $i > 0; --$i) {
+            try {
+                $code = $i > 2 ? ChargeableService::BHI : ChargeableService::CCM;
+                $locationProblemServiceRepo->store($locationId, $problemId = $cpmProblems[$i]['id'], ChargeableService::getChargeableServiceIdUsingCode($code));
+                $patient->ccdProblems()->create([
+                    'cpm_problem_id' => $problemId,
+                    'name'           => str_random(8),
+                ]);
+            } catch (\Throwable $exception) {
+                dd(['i' => $i]);
+            }
+        }
 
-        //run job
+        self::assertFalse(ChargeablePatientMonthlySummary::where('patient_user_id', $patient->id)
+            ->createdOn($startOfMonth, 'chargeable_month')
+            ->exists());
 
-        //assert expected summaries exist
-        //assert no un expected summaries exist
+        $patient = $patientRepo->patientWithBillingDataForMonth($patient->id, $startOfMonth)
+            ->first();
+
+        (new MonthlyProcessor())->process(
+            (new PatientMonthlyBillingDTO())
+                ->subscribe($patient->patientInfo->location->availableServiceProcessors($startOfMonth))
+                ->forPatient($patient->id)
+                ->forMonth($startOfMonth)
+                ->withProblems(...$patient->patientProblemsForBillingProcessing()->toArray())
+        );
+
+        self::assertTrue(
+            ChargeablePatientMonthlySummary::where('patient_user_id', $patient->id)
+                ->createdOn($startOfMonth, 'chargeable_month')
+                ->where(
+                    'chargeable_service_id',
+                    ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::CCM)
+                )
+                ->exists()
+        );
+        self::assertTrue(
+            ChargeablePatientMonthlySummary::where('patient_user_id', $patient->id)
+                ->createdOn($startOfMonth, 'chargeable_month')
+                ->where(
+                    'chargeable_service_id',
+                    ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI)
+                )
+                ->exists()
+        );
     }
 }
