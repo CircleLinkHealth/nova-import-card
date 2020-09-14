@@ -48,13 +48,13 @@ class ManageUnresolvedPostmarkCallback
 
     public function getUserIdIfMatched()
     {
-//        if ($this->isMultiMatch){
-//            return null;
-//        }
-
-        if ($this->isUniqueMatch) {
-            return isset($this->matchedData['matchUsersResult']->id) ?? $this->matchedData['matchUsersResult']->id;
+        if ($this->matchedWithUniqueUser()) {
+            return isset($this->matchedData['matchUsersResult']->id) ? $this->matchedData['matchUsersResult']->id : null;
         }
+
+        //todo:        Here Check if suggestions exists. If not then its an error
+
+        return null;
     }
 
     public function handleUnresolved()
@@ -93,6 +93,6 @@ class ManageUnresolvedPostmarkCallback
 
     private function matchedWithUniqueUser()
     {
-        return $this->isUniqueMatch = $this->matchedData['matchUsersResult'] instanceof User;
+        return $this->matchedData['matchUsersResult'] instanceof User;
     }
 }
