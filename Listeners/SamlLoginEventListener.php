@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 
 class SamlLoginEventListener
 {
+    const SESSION_IDP_NAME_KEY = 'saml_idp_name';
+
     /**
      * Create the event listener.
      *
@@ -38,6 +40,7 @@ class SamlLoginEventListener
 
         if ($samlUser && $samlUser->cpmUser) {
             Auth::login($samlUser->cpmUser);
+            session()->put(self::SESSION_IDP_NAME_KEY, $idp);
         }
     }
 }

@@ -7,8 +7,10 @@
 namespace CircleLinkHealth\SamlSp\Providers;
 
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
+use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
 use CircleLinkHealth\SamlSp\Console\RegisterSamlUserMapping;
 use CircleLinkHealth\SamlSp\Listeners\SamlLoginEventListener;
+use CircleLinkHealth\SamlSp\Listeners\SamlLogoutEventListener;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
@@ -116,5 +118,6 @@ class SamlSpServiceProvider extends ServiceProvider
     private function registerListeners()
     {
         $this->app['events']->listen(Saml2LoginEvent::class, SamlLoginEventListener::class);
+        $this->app['events']->listen(Saml2LogoutEvent::class, SamlLogoutEventListener::class);
     }
 }

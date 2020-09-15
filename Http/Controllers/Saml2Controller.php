@@ -36,6 +36,11 @@ class Saml2Controller extends \Aacotroneo\Saml2\Http\Controllers\Saml2Controller
         return view('samlsp::error');
     }
 
+    public function showLogoutSuccess(Request $request)
+    {
+        return view('samlsp::logout-success');
+    }
+
     public function sls(Saml2Auth $saml2Auth, $idpName)
     {
         return parent::sls($saml2Auth, $idpName);

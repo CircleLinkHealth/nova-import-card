@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CPM | Error</title>
+    <title>CPM</title>
 
     <link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
     <style>
@@ -40,20 +40,15 @@
                 style="margin-bottom: 1%;"
                 width="180"/>
 
-        <h1><b><u>Apologies</u>, there's been a an issue.</b></h1>
+        <h1><b>You have successfully logged out.</b></h1>
 
         <h2>
-            This is what the server said:
+            You may close this window.
         </h2>
-
-        <h3>
-            @if(!empty(session('saml2_error')) && isset(session('saml2_error')['last_error_reason']))
-                {{session('saml2_error')['last_error_reason']}}
-            @else
-                Please try again.
-            @endif
-        </h3>
     </div>
 </div>
 </body>
 </html>
+
+
+
