@@ -13,7 +13,7 @@
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Patientapi" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Raygun" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Revisionable" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Saml" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SamlSp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SharedModels" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Sqlviews" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Timetracking" vcs="Git" />
