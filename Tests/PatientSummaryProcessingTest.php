@@ -238,7 +238,7 @@ class PatientSummaryProcessingTest extends TestCase
         //todo: implemented debouncing using https://github.com/mpbarlow/laravel-queue-debouncer . Found it a bit hard to write unit test for.
     }
 
-    public function test_listerner_dispatches_jobs_to_process_when_it_should()
+    public function test_listener_dispatches_jobs_to_process_when_it_should()
     {
         Bus::fake();
 

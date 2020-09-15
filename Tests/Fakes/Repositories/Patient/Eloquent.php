@@ -14,6 +14,7 @@ use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\Chargeabl
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Assert as PHPUnit;
 
@@ -43,33 +44,31 @@ class Eloquent implements PatientServiceProcessorRepository
     public function assertChargeableSummaryNotCreated(int $patientId, string $chargeableServiceCode, Carbon $month): void
     {
         PHPUnit::assertFalse(
-            1 === $this->summariesCreated->where('patientId', $patientId)
-                ->where('chargeableServiceCode', $chargeableServiceCode)
-                ->where('month', $month)
-                ->count()
+            $this->wasChargeableSummaryCreated($patientId, $chargeableServiceCode, $month)
         );
     }
 
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
-        //TODO: TEST
-        $this->summariesCreated->push([
+        $this->summariesCreated->push($array = [
             'patient_id'            => $patientId,
-            'chargeable_service_id' => $chargeableServiceCode,
+            'chargeable_service_id' => $this->chargeableServiceCodeIds()[$chargeableServiceCode],
             'chargeable_month'      => $month,
             'is_fulfilled'          => true,
         ]);
 
-        return new ChargeablePatientMonthlySummary();
+        return new ChargeablePatientMonthlySummary($array);
     }
 
-    public function getChargeablePatientSummaries(int $patientId, Carbon $month)
+    public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection
     {
         // TODO: Implement getChargeablePatientSummaries() method.
     }
 
     public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView
     {
+        ChargeablePatientMonthlySummaryView::unguard();
+        
         return new ChargeablePatientMonthlySummaryView($this->summariesCreated
             ->where('chargeable_service_id', $this->chargeableServiceCodeIds()[$chargeableServiceCode])
             ->where('chargeable_month', $month)
@@ -190,9 +189,9 @@ class Eloquent implements PatientServiceProcessorRepository
 
     private function wasChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month)
     {
-        return 1 === $this->summariesCreated->where('patientId', $patientId)
-            ->where('chargeableServiceCode', $chargeableServiceCode)
-            ->where('month', $month)
+        return 1 === $this->summariesCreated->where('patient_id', $patientId)
+            ->where('chargeable_service_id', $this->chargeableServiceCodeIds()[$chargeableServiceCode])
+            ->where('chargeable_month', $month)
             ->count();
     }
 }
