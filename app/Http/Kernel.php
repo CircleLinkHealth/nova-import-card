@@ -77,6 +77,8 @@ class Kernel extends HttpKernel
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
+            LogoutIfAccessDisabled::class,
         ],
     ];
 

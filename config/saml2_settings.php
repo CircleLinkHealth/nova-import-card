@@ -41,7 +41,7 @@ return $settings = [
     'retrieveParametersFromServer' => false,
 
     // Where to redirect after logout
-    'logoutRoute' => '/',
+    'logoutRoute' => '/saml2/logout-success',
 
     // Where to redirect after login if no other option was provided
     'loginRoute' => '/',
