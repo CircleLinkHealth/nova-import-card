@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Tests\Database\Repositories;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
@@ -18,29 +19,28 @@ use Tests\CustomerTestCase;
 
 class LocationRepositoryTest extends CustomerTestCase
 {
-    protected Location $location;
     protected LocationProcessorEloquentRepository $repo;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->location = factory(Location::class)->create();
-        $this->repo     = new LocationProcessorEloquentRepository();
+        $this->repo = new LocationProcessorEloquentRepository();
     }
 
     public function test_it_fetches_available_location_processors_for_month()
     {
+        $location     = factory(Location::class)->create();
         $startOfMonth = Carbon::now()->startOfMonth();
         foreach ([
             ChargeableService::CCM,
             ChargeableService::BHI,
             ChargeableService::PCM,
         ] as  $code) {
-            $this->repo->store($this->location->id, $code, $startOfMonth);
+            $this->repo->store($location->id, $code, $startOfMonth);
         }
 
-        $processors = $this->repo->availableLocationServiceProcessors($this->location->id, $startOfMonth);
+        $processors = $this->repo->availableLocationServiceProcessors($location->id, $startOfMonth);
 
         self::assertNotNull($processors->getCcm());
         self::assertTrue(is_a($processors->getCcm(), CCM::class));
@@ -83,7 +83,35 @@ class LocationRepositoryTest extends CustomerTestCase
 
     public function test_it_fetches_location_patients_with_billing_relationships_loaded()
     {
-        //create location patients with relevant data
-        //fetch them and assert you got what you gave, dave
+        $patients = $this->repo->patients($locationId = $this->patient(5)[0]->getPreferredContactLocation(), $startOfMonth = Carbon::now()->startOfMonth());
+
+        foreach ($patients as $patient) {
+            self::assertTrue($patient->endOfMonthCcmStatusLogs->isEmpty());
+            self::assertTrue($patient->chargeableMonthlySummaries->isEmpty());
+
+            LogPatientCcmStatusForEndOfMonth::create($patient->id, $patient->getCcmStatus(), $startOfMonth);
+
+            $patient->chargeableMonthlySummaries()->createMany(
+                [
+                    [
+                        'chargeable_service_id' => 1,
+                        'chargeable_month'      => $startOfMonth,
+                    ],
+                    [
+                        'chargeable_service_id' => 2,
+                        'chargeable_month'      => $startOfMonth,
+                    ],
+                ]
+            );
+        }
+
+        $patients = $this->repo->patients($locationId, $startOfMonth);
+
+        foreach ($patients as $patient) {
+            self::assertTrue(($logs = $patient->endOfMonthCcmStatusLogs)->isNotEmpty());
+            self::assertTrue(1 === $logs->count());
+            self::assertTrue(($summaries = $patient->chargeableMonthlySummaries)->isNotEmpty());
+            self::assertTrue(2 == $summaries->count());
+        }
     }
 }

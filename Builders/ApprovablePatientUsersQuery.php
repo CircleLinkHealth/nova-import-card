@@ -21,7 +21,7 @@ trait ApprovablePatientUsersQuery
     public function approvablePatientUsersQuery(Carbon $monthYear): Builder
     {
         return User::with([
-            'endOfMonthCcmStatusLog' => function ($q) use ($monthYear) {
+            'endOfMonthCcmStatusLogs' => function ($q) use ($monthYear) {
                 $q->createdOn($monthYear, 'chargeable_month');
             },
             'attestedProblems' => function ($q) use ($monthYear) {

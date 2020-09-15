@@ -75,7 +75,7 @@ class PatientTest extends CustomerTestCase
 
         self::assertTrue(
             $this->patient()
-                ->endOfMonthCcmStatusLog()
+                ->endOfMonthCcmStatusLogs()
                 ->createdOn($month, 'chargeable_month')
                 ->where('closed_ccm_status', $ccmStatus)
                 ->exists()
