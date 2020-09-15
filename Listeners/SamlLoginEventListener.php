@@ -8,6 +8,7 @@ namespace CircleLinkHealth\SamlSp\Listeners;
 
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SamlLoginEventListener
@@ -31,8 +32,9 @@ class SamlLoginEventListener
     public function handle(Saml2LoginEvent $event)
     {
         /** @var string $idp */
-        $idp       = $event->getSaml2Idp();
-        $idpUserId = $event->getSaml2User()->getAttributesWithFriendlyName()['uid'];
+        $idp        = $event->getSaml2Idp();
+        $attributes = $event->getSaml2User()->getAttributesWithFriendlyName();
+        $idpUserId  = $attributes['uid'];
 
         /** @var SamlUser $samlUser */
         $samlUser = SamlUser::with('cpmUser')
@@ -43,6 +45,11 @@ class SamlLoginEventListener
         if ($samlUser && $samlUser->cpmUser && ! $samlUser->cpmUser->isParticipant()) {
             Auth::login($samlUser->cpmUser);
             session()->put(self::SESSION_IDP_NAME_KEY, $idp);
+            // if we have a Patient ID in the $attributes
+            // $patientId = $attributes['patientId'];
+            // /** @var Request $request */
+            // $request = app('request');
+            // $request->merge(['RelayState' => route('patient.note.index', ['patientId' => $patientId])]);
         }
     }
 }
