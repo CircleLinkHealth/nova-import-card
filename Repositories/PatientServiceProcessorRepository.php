@@ -15,6 +15,7 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\Patient as PatientModel;
+use Illuminate\Database\Eloquent\Collection;
 
 class PatientServiceProcessorRepository implements Repository
 {
@@ -31,13 +32,9 @@ class PatientServiceProcessorRepository implements Repository
         ]);
     }
 
-    public function getChargeablePatientSummaries(int $patientId, Carbon $month)
+    public function getChargeablePatientSummaries(int $patientId, Carbon $month): Collection
     {
-        //todo: use view
-        return ChargeablePatientMonthlySummary::with(['chargeableService' => function ($cs) {
-            $cs->select(['id', 'display_name']);
-        }])
-            ->where('patient_user_id', $patientId)
+        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
             ->get();
     }

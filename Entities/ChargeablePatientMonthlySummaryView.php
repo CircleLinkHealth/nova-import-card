@@ -39,5 +39,11 @@ class ChargeablePatientMonthlySummaryView extends SqlViewModel
 {
     use DateScopesTrait;
 
+    protected $dates = [
+        'chargeable_month',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $table = 'chargeable_patient_monthly_summaries_view';
 }
