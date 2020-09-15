@@ -43,14 +43,13 @@ class CareAmbassadorPanelAPITest extends TestCase
      */
     public function test_admin_can_assign_callback_to_ca_and_ca_can_see_callback_first_in_queue()
     {
-        //assign enrollees to CA - so we can confirm that the callback we add later will take priority over these
         Enrollee::whereIn('id', $this->enrollees->pluck('id')->toArray())
             ->update([
                 'care_ambassador_user_id' => $this->careAmbassadorUser->id,
             ]);
 
         $testNote = 'test note';
-        //call modal endpoint
+
         $this->actingAs($this->admin)->post(route('ca-director.assign-callback', [
             'care_ambassador_user_id' => $this->careAmbassadorUser->id,
             'enrollee_id'             => $this->enrollee->id,
@@ -58,14 +57,12 @@ class CareAmbassadorPanelAPITest extends TestCase
             'callback_note'           => $testNote,
         ]))->assertOk();
 
-        //assert enrollee is updated
         $this->enrollee = $this->enrollee->fresh();
 
         $this->assertEquals($this->enrollee->requested_callback->toDateString(), Carbon::today()->toDateString());
         $this->assertEquals($this->enrollee->care_ambassador_user_id, $this->careAmbassadorUser->id);
         $this->assertEquals($this->enrollee->callback_note, $testNote);
 
-        //assert queue will prioritise
         $next = EnrollableCallQueue::getNext($this->careAmbassadorUser->careAmbassador);
 
         $this->assertNotNull($next);
