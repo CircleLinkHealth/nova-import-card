@@ -41,7 +41,6 @@ class GenerateServiceSummariesForAllPracticeLocations implements ShouldQueue
     public function handle()
     {
         Practice::with('locations')
-            ->activeBillable()
             ->get()
             ->each(function (Practice $p) {
                 foreach ($p->locations as $location) {
