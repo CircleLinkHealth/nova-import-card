@@ -52,6 +52,7 @@ class PracticeRepositoryTest extends CustomerTestCase
 
     public function test_it_fetches_location_patients_with_billing_relationships_loaded()
     {
+        //todo: address duplicate code
         $patients = $this->repo->patients($practiceId = $this->patient(5)[0]->getPrimaryPracticeId(), $startOfMonth = Carbon::now()->startOfMonth());
 
         foreach ($patients as $patient) {
