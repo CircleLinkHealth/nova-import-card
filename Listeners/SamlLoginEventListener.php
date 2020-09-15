@@ -33,12 +33,14 @@ class SamlLoginEventListener
         /** @var string $idp */
         $idp       = $event->getSaml2Idp();
         $idpUserId = $event->getSaml2User()->getAttributesWithFriendlyName()['uid'];
-        $samlUser  = SamlUser::with('cpmUser')
+
+        /** @var SamlUser $samlUser */
+        $samlUser = SamlUser::with('cpmUser')
             ->where('idp', '=', $idp)
             ->where('idp_user_id', '=', $idpUserId)
             ->first();
 
-        if ($samlUser && $samlUser->cpmUser) {
+        if ($samlUser && $samlUser->cpmUser && ! $samlUser->cpmUser->isParticipant()) {
             Auth::login($samlUser->cpmUser);
             session()->put(self::SESSION_IDP_NAME_KEY, $idp);
         }
