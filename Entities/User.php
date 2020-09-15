@@ -1079,7 +1079,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(EmailSettings::class);
     }
 
-    public function endOfMonthCcmStatusLog()
+    public function endOfMonthCcmStatusLogs()
     {
         return $this->hasMany(EndOfMonthCcmStatusLog::class, 'patient_user_id');
     }
