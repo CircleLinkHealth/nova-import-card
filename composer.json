@@ -64,7 +64,7 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/saml-module.git"
+      "url": "git@github.com:CircleLinkHealth/saml-sp-module.git"
     },
     {
       "type": "git",
@@ -200,7 +200,7 @@
     "circlelinkhealth/patientapi-module": "1.3.6",
     "circlelinkhealth/raygun-module": "1.2",
     "circlelinkhealth/revisionable-module": "6.1.1",
-    "circlelinkhealth/saml-module": "1.0.1",
+    "circlelinkhealth/saml-sp-module": "dev-master",
     "circlelinkhealth/shared-models-module": "1.7.6",
     "circlelinkhealth/sqlviews-module": "1.3.4",
     "circlelinkhealth/timetracking-module": "1.2.9",
