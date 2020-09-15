@@ -17,11 +17,14 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         CREATE VIEW {$this->getViewName()}
         AS
         SELECT
-        upc.postmark_id
+        upc.postmark_id,
+        upc.user_id as patient_user_id,
+        c.id
         
         FROM
             unresolved_postmark_callbacks upc
-
+            
+            left join calls c on upc.user_id = c.inbound_cpm_id
     
       ");
     }
