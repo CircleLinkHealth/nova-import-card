@@ -904,7 +904,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "ac2c84692fb4cb62db5f2c1afb99dd23f2e4b27f"
+                "reference": "ed49842168467967a72b8fad8a7156fb6a063bf5"
             },
             "type": "laravel-module",
             "extra": {
@@ -942,7 +942,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-09-15T00:36:00+00:00"
+            "time": "2020-09-15T13:40:38+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -14623,16 +14623,16 @@
         },
         {
             "name": "jkocik/laravel-profiler",
-            "version": "1.3.2",
+            "version": "1.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jkocik/laravel-profiler.git",
-                "reference": "dc5a102204d5cff7a2fb1e613b2df3f64e8be155"
+                "reference": "c472cc383913a85c07627479bec2c40949a550ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jkocik/laravel-profiler/zipball/dc5a102204d5cff7a2fb1e613b2df3f64e8be155",
-                "reference": "dc5a102204d5cff7a2fb1e613b2df3f64e8be155",
+                "url": "https://api.github.com/repos/jkocik/laravel-profiler/zipball/c472cc383913a85c07627479bec2c40949a550ee",
+                "reference": "c472cc383913a85c07627479bec2c40949a550ee",
                 "shasum": ""
             },
             "require": {
@@ -14681,7 +14681,7 @@
                 "laravel",
                 "profiler"
             ],
-            "time": "2020-09-14T02:25:47+00:00"
+            "time": "2020-09-14T22:37:14+00:00"
         },
         {
             "name": "jolicode/jolinotif",
