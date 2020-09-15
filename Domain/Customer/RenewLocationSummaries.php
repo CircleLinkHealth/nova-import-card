@@ -30,7 +30,7 @@ class RenewLocationSummaries
     public function renew(Collection $pastSummaries, Carbon $renewForMonth)
     {
         $pastSummaries->each(function (ChargeableLocationMonthlySummary $clms) use ($renewForMonth) {
-            $this->repo()->store($clms->location_id, $clms->chargeable_service_id, $renewForMonth, $clms->amount);
+            $this->repo()->storeUsingServiceId($clms->location_id, $clms->chargeable_service_id, $renewForMonth, $clms->amount);
         });
     }
 

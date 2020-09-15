@@ -32,7 +32,7 @@ class LocationSummaryProcessingTest extends TestCase
         Bus::fake(ProcessPatientMonthlyServices::class);
         Bus::partialMock();
 
-        $fakePatients = factory(User::class, 5)->make();
+        $fakePatients = factory(User::class, 5)->create();
 
         $builderMock = Mockery::mock(Builder::class);
 
@@ -70,7 +70,7 @@ class LocationSummaryProcessingTest extends TestCase
             $availableProcessors = $job->getAvailableServiceProcessors();
 
             return $job->getChargeableMonth()->equalTo($startOfMonth)
-                && is_a($job->getProcessor(), MonthlyProcessor::class)
+                && is_a($job->processor(), MonthlyProcessor::class)
                 && ! is_null($bhiProcessor = $availableProcessors->getBhi())
                 && is_a($bhiProcessor, BHI::class)
                 && ! is_null($ccmProcessor = $availableProcessors->getCcm())
@@ -126,7 +126,7 @@ class LocationSummaryProcessingTest extends TestCase
         FakeLocationRepository::assertChargeableSummaryCreated($locationId, $cs3, $startOfMonth);
         FakeLocationRepository::assertChargeableSummaryNotCreated($locationId, $cs4 = 4, $startOfMonth);
 
-        FakeLocationRepository::store($locationId, $cs4, $pastMonth);
+        FakeLocationRepository::storeUsingServiceId($locationId, $cs4, $pastMonth);
 
         $processor->processServicesForLocation($locationId, $startOfMonth);
 

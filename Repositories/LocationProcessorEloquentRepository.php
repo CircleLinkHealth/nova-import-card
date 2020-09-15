@@ -34,6 +34,13 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
         return $this->patientsQuery($locationId, $chargeableMonth)->paginate($pageSize);
     }
 
+    public function pastMonthSummaries(int $locationId, Carbon $month): Collection
+    {
+        return $this->servicesForLocation($locationId)
+            ->where('chargeable_month', '<', $month)
+            ->get();
+    }
+
     public function patients(int $locationId, Carbon $monthYear): Collection
     {
         return $this->patientsQuery($locationId, $monthYear)->get();
@@ -57,6 +64,20 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             [
                 'location_id'           => $locationId,
                 'chargeable_service_id' => ChargeableService::getChargeableServiceIdUsingCode($chargeableServiceCode),
+                'chargeable_month'      => $month,
+            ],
+            [
+                'amount' => $amount,
+            ]
+        );
+    }
+
+    public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
+    {
+        return ChargeableLocationMonthlySummary::updateOrCreate(
+            [
+                'location_id'           => $locationId,
+                'chargeable_service_id' => $chargeableServiceId,
                 'chargeable_month'      => $month,
             ],
             [

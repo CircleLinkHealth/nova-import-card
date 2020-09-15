@@ -125,6 +125,19 @@ class Eloquent implements LocationProcessorRepository
         return $stub->toModel();
     }
 
+    public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, ?float $amount = null): ChargeableLocationMonthlySummary
+    {
+        $this->summaries->push(
+            $stub = (new ChargeableLocationMonthlySummaryStub())
+                ->setLocationId($locationId)
+                ->setChargeableServiceId($chargeableServiceId)
+                ->setChargeableMonth($month)
+                ->setAmount($amount)
+        );
+
+        return $stub->toModel();
+    }
+
     private function toEloquentCollection(Collection $collection): EloquentCollection
     {
         return new EloquentCollection(

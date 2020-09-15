@@ -12,10 +12,15 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait LocationServicesQuery
 {
-    public function servicesForMonth($locationId, Carbon $chargeableMonth): Builder
+    public function servicesForLocation(int $locationId): Builder
     {
         return ChargeableLocationMonthlySummary::with(['chargeableService'])
-            ->where('location_id', $locationId)
-            ->createdOn($chargeableMonth, 'chargeable_month');
+            ->where('location_id', $locationId);
+    }
+
+    public function servicesForMonth(int $locationId, Carbon $month): Builder
+    {
+        return $this->servicesForLocation($locationId)
+            ->createdOn($month, 'chargeable_month');
     }
 }
