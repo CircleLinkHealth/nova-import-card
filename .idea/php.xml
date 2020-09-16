@@ -325,6 +325,9 @@
       <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
       <path value="$PROJECT_DIR$/vendor/aacotroneo/laravel-saml2" />
       <path value="$PROJECT_DIR$/vendor/onelogin/php-saml" />
+      <path value="$PROJECT_DIR$/vendor/php-http/guzzle6-adapter" />
+      <path value="$PROJECT_DIR$/vendor/codegreencreative/laravel-samlidp" />
+      <path value="$PROJECT_DIR$/vendor/forlabs/lightsaml" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
