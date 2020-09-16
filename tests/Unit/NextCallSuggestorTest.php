@@ -19,26 +19,28 @@ use Tests\TestCase;
 
 class NextCallSuggestorTest extends TestCase
 {
-    public function test_it_returns_patient_associated_nurse()
+    public function test_it_returns_patient_associated_nurse_in_1st_week_of_month()
     {
-        $patient = factory(User::class)->make([
-            'id' => rand(1, 9999999),
-        ]);
-        $nurse = factory(User::class)->make([
-            'id' => rand(1, 9999999),
-        ]);
-        $repo = Mockery::mock(NurseFinderEloquentRepository::class);
+        Carbon::setTestNow(now()->startOfMonth());
+        $this->itShouldReturnPatientAssociatedNurse();
+    }
 
-        $repo->shouldReceive('find')
-            ->with($patient->id)
-            ->once()
-            ->andReturn($nurse);
+    public function test_it_returns_patient_associated_nurse_in_2nd_week_of_month()
+    {
+        Carbon::setTestNow(now()->startOfMonth()->addWeeks());
+        $this->itShouldReturnPatientAssociatedNurse();
+    }
 
-        $this->instance(NurseFinderEloquentRepository::class, $repo);
+    public function test_it_returns_patient_associated_nurse_in_3rd_week_of_month()
+    {
+        Carbon::setTestNow(now()->startOfMonth()->addWeeks(2));
+        $this->itShouldReturnPatientAssociatedNurse();
+    }
 
-        $suggestion = (new Suggestor())->handle($patient, $handler = new SuccessfulCall());
-
-        self::assertValidNurseResponse($suggestion, $nurse, $patient, $handler);
+    public function test_it_returns_patient_associated_nurse_in_4th_week_of_month()
+    {
+        Carbon::setTestNow(now()->startOfMonth()->addWeeks(3));
+        $this->itShouldReturnPatientAssociatedNurse();
     }
 
     public function test_it_returns_standby_nurse_if_patient_doesnt_have_associated_nurse_and_standby_nurse_is_set()
@@ -87,7 +89,7 @@ class NextCallSuggestorTest extends TestCase
         self::assertEquals(false, $suggestion->ccm_above);
         self::assertEquals('00:00:00', $suggestion->formatted_monthly_time);
         self::assertEquals('Call patient after a week', $suggestion->logic);
-        if (now()->weekOfMonth < 3) {
+        if (now()->addWeek()->isCurrentMonth()) {
             self::assertTrue($suggestion->nextCallDate->isCurrentMonth());
             self::assertTrue(Carbon::parse($suggestion->date)->isCurrentMonth());
         } else {
@@ -114,7 +116,7 @@ class NextCallSuggestorTest extends TestCase
         self::assertEquals(false, $suggestion->ccm_above);
         self::assertEquals('00:00:00', $suggestion->formatted_monthly_time);
         self::assertEquals('Call patient after a week', $suggestion->logic);
-        if (now()->weekOfMonth < 3) {
+        if (now()->addWeek()->isCurrentMonth()) {
             self::assertTrue($suggestion->nextCallDate->isCurrentMonth());
             self::assertTrue(Carbon::parse($suggestion->date)->isCurrentMonth());
         } else {
@@ -131,5 +133,27 @@ class NextCallSuggestorTest extends TestCase
         self::assertEquals("Assigning next call to $nurse->display_name.", $suggestion->window_match);
         self::assertEquals(Suggestor::DEFAULT_WINDOW_START, $suggestion->window_start);
         self::assertEquals(0, $suggestion->ccm_time_in_seconds);
+    }
+
+    private function itShouldReturnPatientAssociatedNurse()
+    {
+        $patient = factory(User::class)->make([
+            'id' => rand(1, 9999999),
+        ]);
+        $nurse = factory(User::class)->make([
+            'id' => rand(1, 9999999),
+        ]);
+        $repo = Mockery::mock(NurseFinderEloquentRepository::class);
+
+        $repo->shouldReceive('find')
+            ->with($patient->id)
+            ->once()
+            ->andReturn($nurse);
+
+        $this->instance(NurseFinderEloquentRepository::class, $repo);
+
+        $suggestion = (new Suggestor())->handle($patient, $handler = new SuccessfulCall());
+
+        self::assertValidNurseResponse($suggestion, $nurse, $patient, $handler);
     }
 }
