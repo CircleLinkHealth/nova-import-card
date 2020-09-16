@@ -512,16 +512,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.154.1",
+            "version": "3.154.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5651d8a92164d98869b70a15e4c06ce4c14c7c28"
+                "reference": "0001c05c03f2bd354f6b38f6b81b60f45c2514f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5651d8a92164d98869b70a15e4c06ce4c14c7c28",
-                "reference": "5651d8a92164d98869b70a15e4c06ce4c14c7c28",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0001c05c03f2bd354f6b38f6b81b60f45c2514f8",
+                "reference": "0001c05c03f2bd354f6b38f6b81b60f45c2514f8",
                 "shasum": ""
             },
             "require": {
@@ -593,7 +593,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-09-11T18:12:41+00:00"
+            "time": "2020-09-15T18:15:35+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -4725,16 +4725,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.28.1",
+            "version": "v7.28.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "f7493ab717ca2a9598b1db2d6a3bae8ac8c755e8"
+                "reference": "0956b0688d96565044074b77f521a653d9fce5fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/f7493ab717ca2a9598b1db2d6a3bae8ac8c755e8",
-                "reference": "f7493ab717ca2a9598b1db2d6a3bae8ac8c755e8",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/0956b0688d96565044074b77f521a653d9fce5fb",
+                "reference": "0956b0688d96565044074b77f521a653d9fce5fb",
                 "shasum": ""
             },
             "require": {
@@ -4879,7 +4879,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-09-09T15:02:46+00:00"
+            "time": "2020-09-15T14:48:02+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -5009,24 +5009,24 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.9.4",
+            "version": "v3.10.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "beeebbec81a79c90b37783f2e44ccdbc0cc3a631"
+                "reference": "5ccdcc817b190505d21cd4ca1a75cf1ca113238f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-beeebbec81a79c90b37783f2e44ccdbc0cc3a631-zip-348430.zip",
-                "reference": "beeebbec81a79c90b37783f2e44ccdbc0cc3a631",
-                "shasum": "1caa0a67d21a8002d300714571944c54edcabd88"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-5ccdcc817b190505d21cd4ca1a75cf1ca113238f-zip-179efb.zip",
+                "reference": "5ccdcc817b190505d21cd4ca1a75cf1ca113238f",
+                "shasum": "4eb7f94a130999d70ca04fae4d89bcabbc4e2b18"
             },
             "require": {
                 "brick/money": "^0.5.0",
                 "cakephp/chronos": "^1.0|^2.0",
                 "doctrine/dbal": "^2.9",
                 "illuminate/support": "^7.0|^8.0",
-                "laravel/ui": "^2.0",
+                "laravel/ui": "^2.0|^3.0",
                 "moontoast/math": "^1.1",
                 "php": "^7.2.5",
                 "spatie/once": "^1.1 | ^2.0",
@@ -5080,7 +5080,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-09-14T18:10:40+00:00"
+            "time": "2020-09-15T15:34:07+00:00"
         },
         {
             "name": "laravel/passport",
@@ -6889,16 +6889,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.39.2",
+            "version": "2.40.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "326efde1bc09077a26cb77f6e2e32e13f06c27f2"
+                "reference": "6c7646154181013ecd55e80c201b9fd873c6ee5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/326efde1bc09077a26cb77f6e2e32e13f06c27f2",
-                "reference": "326efde1bc09077a26cb77f6e2e32e13f06c27f2",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/6c7646154181013ecd55e80c201b9fd873c6ee5d",
+                "reference": "6c7646154181013ecd55e80c201b9fd873c6ee5d",
                 "shasum": ""
             },
             "require": {
@@ -6974,7 +6974,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-09-10T12:16:42+00:00"
+            "time": "2020-09-11T19:00:58+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -14722,16 +14722,16 @@
         },
         {
             "name": "jkocik/laravel-profiler",
-            "version": "1.3.2",
+            "version": "1.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jkocik/laravel-profiler.git",
-                "reference": "dc5a102204d5cff7a2fb1e613b2df3f64e8be155"
+                "reference": "c472cc383913a85c07627479bec2c40949a550ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jkocik/laravel-profiler/zipball/dc5a102204d5cff7a2fb1e613b2df3f64e8be155",
-                "reference": "dc5a102204d5cff7a2fb1e613b2df3f64e8be155",
+                "url": "https://api.github.com/repos/jkocik/laravel-profiler/zipball/c472cc383913a85c07627479bec2c40949a550ee",
+                "reference": "c472cc383913a85c07627479bec2c40949a550ee",
                 "shasum": ""
             },
             "require": {
@@ -14780,7 +14780,7 @@
                 "laravel",
                 "profiler"
             ],
-            "time": "2020-09-14T02:25:47+00:00"
+            "time": "2020-09-14T22:37:14+00:00"
         },
         {
             "name": "jolicode/jolinotif",
