@@ -28,6 +28,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UnresolvedPostmarkCallback extends Model
 {
+    protected $casts = [
+        'suggestions'        => 'array',
+        'unresolved_reasons' => 'array',
+    ];
     protected $fillable = [
         'postmark_id',
         'user_id',

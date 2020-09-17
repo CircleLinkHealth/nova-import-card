@@ -35,34 +35,6 @@ class PostmarkInboundCallbackMatchResults
     }
 
     /**
-     * @return array|Builder|void
-     */
-    public function getMatchedPatients()
-    {
-        /** @var Builder $postmarkInboundPatientsMatched */
-        $postmarkInboundPatientsMatched = $this->getPostmarkInboundPatientsByPhone($this->postmarkCallbackData);
-
-        if ($this->singleMatch($postmarkInboundPatientsMatched->get())) {
-            return (new MatchedData(
-                $postmarkInboundPatientsMatched->first(),
-                $this->patientIsCallbackEligible(
-                    $postmarkInboundPatientsMatched->first(),
-                    $this->postmarkCallbackData
-                ),
-                $this->noCallbackReasoning($postmarkInboundPatientsMatched->first())
-            ))
-                ->getArray();
-        }
-
-        if ($postmarkInboundPatientsMatched->count() > 1) {
-            return  $this->filterPostmarkInboundPatientsByName($postmarkInboundPatientsMatched->get(), $this->postmarkCallbackData);
-        }
-
-        Log::warning("Could not find a patient match for record_id:[$this->recordId] in postmark_inbound_mail");
-        sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient match for record_id:[$this->recordId] in postmark_inbound_mail");
-    }
-
-    /**
      * @return bool
      */
     public function isCallbackEligible(array $inboundPostmarkData, User $patientUser)
@@ -96,6 +68,34 @@ class PostmarkInboundCallbackMatchResults
 
         return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
             && is_null($patientUser->enrollee->care_ambassador_user_id);
+    }
+
+    /**
+     * @return array|Builder|void
+     */
+    public function matchedPatientsData()
+    {
+        /** @var Builder $postmarkInboundPatientsMatched */
+        $postmarkInboundPatientsMatched = $this->getPostmarkInboundPatientsByPhone($this->postmarkCallbackData);
+
+        if ($this->singleMatch($postmarkInboundPatientsMatched->get())) {
+            return (new MatchedData(
+                $postmarkInboundPatientsMatched->first(),
+                $this->patientIsCallbackEligible(
+                    $postmarkInboundPatientsMatched->first(),
+                    $this->postmarkCallbackData
+                ),
+                $this->noCallbackReasoning($postmarkInboundPatientsMatched->first())
+            ))
+                ->getArray();
+        }
+
+        if ($postmarkInboundPatientsMatched->count() > 1) {
+            return  $this->filterPostmarkInboundPatientsByName($postmarkInboundPatientsMatched->get(), $this->postmarkCallbackData);
+        }
+
+        Log::warning("Could not find a patient match for record_id:[$this->recordId] in postmark_inbound_mail");
+        sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient match for record_id:[$this->recordId] in postmark_inbound_mail");
     }
 
     /**
@@ -216,8 +216,8 @@ class PostmarkInboundCallbackMatchResults
             $reason->push(self::WITHDRAW_REQUEST);
         }
 
-        $result =  $reason->toArray();
-        
+        $result = $reason->toArray();
+
         return is_string($result) ? [$result] : $result;
     }
 

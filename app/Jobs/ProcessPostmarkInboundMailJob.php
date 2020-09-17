@@ -77,7 +77,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                 $postmarkCallbackData    = $postmarkCallbackService->postmarkInboundData($recordId);
                 /** @var array $matchedResultsFromDB */
                 $matchedResultsFromDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
-                    ->getMatchedPatients();
+                    ->matchedPatientsData();
 
                 if (empty($matchedResultsFromDB)) {
                     Log::warning("Could not find a patient match for record_id:[$recordId] in postmark_inbound_mail");
