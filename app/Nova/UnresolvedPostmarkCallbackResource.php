@@ -10,7 +10,9 @@ use App\UnresolvedCallbacksResourceModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use phpDocumentor\Reflection\Types\Collection;
 
 class UnresolvedPostmarkCallbackResource extends Resource
 {
@@ -65,8 +67,19 @@ class UnresolvedPostmarkCallbackResource extends Resource
     public function fields(Request $request)
     {
         return [
-            Text::make('kolos', 'suggested_user_id')->sortable(),
+            Text::make('matched user', 'matched_user_id')->sortable(),
+            Text::make('reason', 'unresolved_reason'),
+            Select::make('other matches', 'other_possible_matches'),
+            Text::make('Client Id', 'other_possible_matches')->resolveUsing(function ($value) {
+                $suggestedUsersLink = [];
+                foreach (collect(json_decode($value))->toArray() as $x){
+                    $suggestedUsersLink[] =  link_to_route('patient.careplan.print', $x, '')->toHtml();
+                }
+                return $suggestedUsersLink;
+            })->asHtml(),
+            
             Boolean::make('resolved', 'resolved')->sortable(),
+            Text::make('resolved / callback id', 'call_id'),
         ];
     }
 

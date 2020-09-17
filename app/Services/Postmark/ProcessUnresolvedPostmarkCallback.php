@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
-class ManageUnresolvedPostmarkCallback
+class ProcessUnresolvedPostmarkCallback
 {
     private bool $isMultiMatch;
     private bool $isUniqueMatch;
@@ -66,6 +66,10 @@ class ManageUnresolvedPostmarkCallback
 
     public function saveAsUnresolved(array $suggestedUsersIds)
     {
+        $suggestedUsersIds = [
+           1,
+           2
+        ];
         try {
             UnresolvedPostmarkCallback::firstOrCreate(
                 [

@@ -12,7 +12,7 @@ use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\PostmarkInboundMail;
 use App\Services\Calls\SchedulerService;
-use App\Services\Postmark\ManageUnresolvedPostmarkCallback;
+use App\Services\Postmark\ProcessUnresolvedPostmarkCallback;
 use App\Services\Postmark\PostmarkCallbackMailService;
 use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
@@ -101,7 +101,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                     return;
                 }
 
-                (new ManageUnresolvedPostmarkCallback($matchedResultsFromDB, $recordId))->handleUnresolved();
+                (new ProcessUnresolvedPostmarkCallback($matchedResultsFromDB, $recordId))->handleUnresolved();
 
                 return;
             } catch (\Exception $e) {
