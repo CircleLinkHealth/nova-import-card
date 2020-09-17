@@ -31,7 +31,6 @@ use App\Listeners\NotifyPatientOfCarePlanApproval;
 use App\Listeners\NotifySlackChannel;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\RunComposerIde;
-use App\Listeners\SamlAssertionAttributes;
 use App\Listeners\SendCarePlanForDMProviderApproval;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UpdateCcdaStatus;
@@ -140,10 +139,7 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         MigrationsEnded::class => [
             RunComposerIde::class,
-        ],
-        'CodeGreenCreative\SamlIdp\Events\Assertion' => [
-            SamlAssertionAttributes::class,
-        ],
+        ]
     ];
 
     /**
