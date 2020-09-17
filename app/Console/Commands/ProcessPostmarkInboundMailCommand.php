@@ -63,6 +63,7 @@ class ProcessPostmarkInboundMailCommand extends Command
                 ]
             ), $item->id);
         }
+
         return 0;
     }
 }

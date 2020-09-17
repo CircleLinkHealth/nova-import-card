@@ -512,16 +512,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.154.2",
+            "version": "3.154.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "57be3873ea9a32ccd8467c38d325544c2c064f69"
+                "reference": "199a3e1ee89c38251a4a47433560faf5d6a3ef14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/57be3873ea9a32ccd8467c38d325544c2c064f69",
-                "reference": "57be3873ea9a32ccd8467c38d325544c2c064f69",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/199a3e1ee89c38251a4a47433560faf5d6a3ef14",
+                "reference": "199a3e1ee89c38251a4a47433560faf5d6a3ef14",
                 "shasum": ""
             },
             "require": {
@@ -593,7 +593,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-09-14T19:50:15+00:00"
+            "time": "2020-09-16T18:16:18+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1132,7 +1132,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "f2282909196f8a6c26b47591420d3148ca890c6d"
+                "reference": "172662a049f91382249d830925343200d77fbf20"
             },
             "type": "laravel-module",
             "extra": {
@@ -1154,7 +1154,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-14T21:05:11+00:00"
+            "time": "2020-09-17T16:23:18+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1582,7 +1582,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "f311240c42ca3d7d0a2bf2e1d435dc1e1adafef3"
+                "reference": "57090fbc87cf2c4de9b71a5ecd72824af34f1ea9"
             },
             "type": "laravel-module",
             "extra": {
@@ -1607,7 +1607,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-14T22:53:18+00:00"
+            "time": "2020-09-17T17:07:19+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
@@ -2159,16 +2159,16 @@
         },
         {
             "name": "dillingham/nova-button",
-            "version": "1.0.10",
+            "version": "1.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dillingham/nova-button.git",
-                "reference": "05a03c9c2104a02e51edf840ac29c0a62363666a"
+                "reference": "a4dbcdebc9e1fd667c38e12df6be74cebd772b02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dillingham/nova-button/zipball/05a03c9c2104a02e51edf840ac29c0a62363666a",
-                "reference": "05a03c9c2104a02e51edf840ac29c0a62363666a",
+                "url": "https://api.github.com/repos/dillingham/nova-button/zipball/a4dbcdebc9e1fd667c38e12df6be74cebd772b02",
+                "reference": "a4dbcdebc9e1fd667c38e12df6be74cebd772b02",
                 "shasum": ""
             },
             "type": "library",
@@ -2195,7 +2195,7 @@
                 }
             ],
             "description": "Nova button package",
-            "time": "2020-01-12T14:26:22+00:00"
+            "time": "2020-09-16T21:46:40+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -4725,16 +4725,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.28.1",
+            "version": "v7.28.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "f7493ab717ca2a9598b1db2d6a3bae8ac8c755e8"
+                "reference": "b0942c391975972b1a54b2dc983e33a239f169a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/f7493ab717ca2a9598b1db2d6a3bae8ac8c755e8",
-                "reference": "f7493ab717ca2a9598b1db2d6a3bae8ac8c755e8",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/b0942c391975972b1a54b2dc983e33a239f169a9",
+                "reference": "b0942c391975972b1a54b2dc983e33a239f169a9",
                 "shasum": ""
             },
             "require": {
@@ -4879,7 +4879,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-09-09T15:02:46+00:00"
+            "time": "2020-09-17T14:23:26+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -5009,24 +5009,24 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.9.4",
+            "version": "v3.10.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "beeebbec81a79c90b37783f2e44ccdbc0cc3a631"
+                "reference": "5ccdcc817b190505d21cd4ca1a75cf1ca113238f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-beeebbec81a79c90b37783f2e44ccdbc0cc3a631-zip-348430.zip",
-                "reference": "beeebbec81a79c90b37783f2e44ccdbc0cc3a631",
-                "shasum": "1caa0a67d21a8002d300714571944c54edcabd88"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-5ccdcc817b190505d21cd4ca1a75cf1ca113238f-zip-179efb.zip",
+                "reference": "5ccdcc817b190505d21cd4ca1a75cf1ca113238f",
+                "shasum": "4eb7f94a130999d70ca04fae4d89bcabbc4e2b18"
             },
             "require": {
                 "brick/money": "^0.5.0",
                 "cakephp/chronos": "^1.0|^2.0",
                 "doctrine/dbal": "^2.9",
                 "illuminate/support": "^7.0|^8.0",
-                "laravel/ui": "^2.0",
+                "laravel/ui": "^2.0|^3.0",
                 "moontoast/math": "^1.1",
                 "php": "^7.2.5",
                 "spatie/once": "^1.1 | ^2.0",
@@ -5080,7 +5080,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-09-14T18:10:40+00:00"
+            "time": "2020-09-15T15:34:07+00:00"
         },
         {
             "name": "laravel/passport",
@@ -6889,16 +6889,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.39.2",
+            "version": "2.40.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "326efde1bc09077a26cb77f6e2e32e13f06c27f2"
+                "reference": "6c7646154181013ecd55e80c201b9fd873c6ee5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/326efde1bc09077a26cb77f6e2e32e13f06c27f2",
-                "reference": "326efde1bc09077a26cb77f6e2e32e13f06c27f2",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/6c7646154181013ecd55e80c201b9fd873c6ee5d",
+                "reference": "6c7646154181013ecd55e80c201b9fd873c6ee5d",
                 "shasum": ""
             },
             "require": {
@@ -6974,7 +6974,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-09-10T12:16:42+00:00"
+            "time": "2020-09-11T19:00:58+00:00"
         },
         {
             "name": "nikic/php-parser",

@@ -14,11 +14,10 @@ class MatchedData
      */
     private $reasoning;
     private bool $shouldCreateCallback;
-    
+
     /**
      * MatchedData constructor.
      * @param $matchedData
-     * @param bool $shouldCreateCallback
      * @param string $reasoning
      */
     public function __construct($matchedData, bool $shouldCreateCallback, $reasoning = '')
