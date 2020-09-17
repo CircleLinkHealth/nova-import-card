@@ -69,11 +69,10 @@ class UnresolvedPostmarkCallbackResource extends Resource
         return [
             Text::make('matched user', 'matched_user_id')->sortable(),
             Text::make('reason', 'unresolved_reason'),
-            Select::make('other matches', 'other_possible_matches'),
-            Text::make('Client Id', 'other_possible_matches')->resolveUsing(function ($value) {
+            Text::make('other matches', 'other_possible_matches')->resolveUsing(function ($value) {
                 $suggestedUsersLink = [];
-                foreach (collect(json_decode($value))->toArray() as $x){
-                    $suggestedUsersLink[] =  link_to_route('patient.careplan.print', $x, '')->toHtml();
+                foreach (collect(json_decode($value))->toArray() as $userId){
+                    $suggestedUsersLink[] =  link_to_route('patient.careplan.print', $userId, $userId)->toHtml();
                 }
                 return $suggestedUsersLink;
             })->asHtml(),
