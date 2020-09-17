@@ -74,13 +74,13 @@ class ManageUnresolvedPostmarkCallback
                 [
                     'user_id'           => $this->getUserIdIfMatched(),
                     'unresolved_reason' => $this->matchedData['reasoning'],
-                    'suggestions'       => json_encode($suggestedUsersIds),
+                    'suggestions'       => $suggestedUsersIds,
                 ]
             );
         } catch (\Exception $exception) {
             $message = $exception->getMessage();
             Log::error("Attempt to save $this->recordId as unresolved has failed. ERROR:$message");
-            sendSlackMessage('#carecoach_ops_alerts', "Attempt to mark inbound callback request $this->recordId as unresolved has failed.");
+            sendSlackMessage('#carecoach_ops_alerts', "Attempt to save inbound callback request $this->recordId as unresolved has failed.");
 
             return;
         }
