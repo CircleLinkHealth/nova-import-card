@@ -64,7 +64,6 @@ class UnresolvedPostmarkCallbackResources extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make(__('ID'), 'id')->sortable(),
             Text::make('kolos', 'suggested_user_id')->sortable(),
         ];
     }
