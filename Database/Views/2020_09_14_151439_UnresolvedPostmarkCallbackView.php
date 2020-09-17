@@ -13,13 +13,21 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
      */
     public function createSqlView(): bool
     {
+        $notEnrolled = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::NOT_ENROLLED;
+        $queuedAndUnassigned = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED;
+        $withdrawRequest = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST;
         return \DB::statement("
         CREATE VIEW {$this->getViewName()} AS
         SELECT
         upc.postmark_id as postmark_id,
-        upc.user_id as suggested_user_id,
-        upc.unresolved_reason,
-        upc.suggestions as other_user_suggestions,
+        upc.user_id as matched_user_id,
+        
+        CASE WHEN upc.unresolved_reason = '$notEnrolled' THEN 'Not Enrolled'
+        WHEN upc.unresolved_reason = '$queuedAndUnassigned' THEN 'Enrollment Queue/CA unassigned'
+        WHEN upc.unresolved_reason = '$withdrawRequest' THEN 'Withdraw Request'
+        END as unresolved_reason,
+        
+        upc.suggestions as other_possible_matches,
         
         CASE WHEN c.created_at > upc.created_at
         AND c.sub_type = 'Call Back'
