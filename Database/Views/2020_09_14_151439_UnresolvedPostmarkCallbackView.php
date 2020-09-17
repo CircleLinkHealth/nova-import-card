@@ -42,9 +42,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
              FROM calls c2
              WHERE c.inbound_cpm_id = c2.inbound_cpm_id
              AND c2.id < c.id)
-           
-            
-      ");
+     ");
     }
 
     /**
