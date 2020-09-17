@@ -16,6 +16,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -142,6 +143,7 @@ class LoginController extends Controller
             try {
                 return redirect(route('saml2_logout', ['idpName' => $samlIdp]));
             } catch (Error $e) {
+                Log::critical($e->getMessage(), ['idp' => $samlIdp]);
                 return $this->traitLogout($request);
             }
         }
