@@ -8,10 +8,11 @@ namespace App\Nova;
 
 use App\UnresolvedCallbacksResourceModel;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 
-class UnresolvedPostmarkCallbackResources extends Resource
+class UnresolvedPostmarkCallbackResource extends Resource
 {
     /**
      * The model the resource corresponds to.
@@ -65,6 +66,7 @@ class UnresolvedPostmarkCallbackResources extends Resource
     {
         return [
             Text::make('kolos', 'suggested_user_id')->sortable(),
+            Boolean::make('resolved', 'resolved')->sortable(),
         ];
     }
 

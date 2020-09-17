@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/app-cpm-web.iml" filepath="$PROJECT_DIR$/.idea/app-cpm-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/cpm.clh.iml" filepath="$PROJECT_DIR$/.idea/cpm.clh.iml" />
     </modules>
   </component>
 </project>
