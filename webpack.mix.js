@@ -31,14 +31,14 @@ const webpackConfig = {
             './cptable': 'var cptable'
         }
     ],
-    plugins: [
+    plugins: ['production', 'staging'].indexOf(process.env.MIX_APP_ENV) > -1 ? [
         new SentryWebpackPlugin({
             include: ".",
             ignoreFile: ".sentrycliignore",
             ignore: ["node_modules", "bower_components", "webpack.config.js"],
             configFile: "sentry.properties",
         }),
-    ]
+    ] : []
 };
 
 mix.webpackConfig(webpackConfig);
