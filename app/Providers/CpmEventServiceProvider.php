@@ -139,7 +139,7 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         MigrationsEnded::class => [
             RunComposerIde::class,
-        ]
+        ],
     ];
 
     /**
