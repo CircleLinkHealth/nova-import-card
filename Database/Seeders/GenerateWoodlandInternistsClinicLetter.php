@@ -12,7 +12,7 @@ use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Exception;
 use Illuminate\Database\Seeder;
 
-class GenerateCalvaryClinicLetter extends Seeder
+class GenerateWoodlandInternistsClinicLetter extends Seeder
 {
     const UI_REQUESTS = 'ui_requests';
 
@@ -28,7 +28,7 @@ class GenerateCalvaryClinicLetter extends Seeder
         $practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
 
-        $calvaryPractice = $this->getPractice();
+        $woodlandsPractice = $this->getPractice();
 
         $bodyPageOne = "
 
@@ -38,9 +38,9 @@ class GenerateCalvaryClinicLetter extends Seeder
 
 <p>Here's how it works:</p>
 
-<li>You'll get monthly calls from a Registered Nurse Care Coach to help you manage your health conditions, so you can stay as active and healthy as you can be.</li>
-<li>By staying healthy in between office visits, you'll be less likely to need extra/expensive medical care, including visits to the ER or the hospital, which helps reduce your medical bills.</li>
-<li>You can avoid being on hold when you need something: your nurse can help with prescription refills, appointment scheduling, transportation assistance, and any general questions.</li>
+<li>You'll get monthly calls from a Registered Nurse Care Coach to help you manage your health conditions, so you can stay as active and healthy as you can be.</li><br>
+<li>By staying healthy in between office visits, you'll be less likely to need extra/expensive medical care, including visits to the ER or the hospital, which helps reduce your medical bills.</li><br>
+<li>You can avoid being on hold when you need something: your nurse can help with prescription refills, appointment scheduling, transportation assistance, and any general questions.</li><br>
 <li>You can disenroll at any time. This is a voluntary program meant to provide assistance and benefits outside of our physical office.</li>
 
 <p>What's the Cost?</p>
@@ -51,14 +51,14 @@ class GenerateCalvaryClinicLetter extends Seeder
 <p>I look forward to having you join this program to continue keeping you healthy between office visits.</p>
 <p>Sincerely,</p>
 <p>$customerSignaturePic<br />$signatoryName<br/></p>";
-    
+
         EnrollmentInvitationLetter::updateOrCreate(
             [
-                'practice_id' => $calvaryPractice->id,
+                'practice_id' => $woodlandsPractice->id,
             ],
             [
-                'practice_logo_src'      => '/img/logos/Calvary/calvary_logo.png',
-                'customer_signature_src' => '/img/signatures/calvary-clinic/calvary_signature.png',
+                'practice_logo_src'      => '/img/logos/Woodlands/woodlands_logo.png',
+                'customer_signature_src' => '/img/signatures/woodlands-clinic/woodlands_signature.png',
                 'letter'                 => json_encode(
                     [
                         'page_1' => [
@@ -67,11 +67,11 @@ class GenerateCalvaryClinicLetter extends Seeder
                         ],
                     ]
                 ),
-            
+
                 self::UI_REQUESTS => json_encode([
-                    'logo_position'        => 'text-align:right',
+                    'logo_position'        => 'text-align:left',
                     'extra_address_header' => [
-                        $calvaryPractice->name => [
+                        $woodlandsPractice->name => [
                             'address_line_1',
                             'city',
                             'state',
@@ -85,26 +85,26 @@ class GenerateCalvaryClinicLetter extends Seeder
 
     private function getPractice()
     {
-        $calvaryPractice = Practice::where('name', '=', 'calvary-medical-clinic')->first();
+        $woodlandsPractice = Practice::where('name', '=', 'woodlands-internists-pa')->first();
         if ( ! App::environment(['production'])) {
-            $calvaryPractice = Practice::firstOrCreate(
+            $woodlandsPractice = Practice::firstOrCreate(
                 [
-                    'name' => 'calvary-medical-clinic',
+                    'name' => 'woodlands-internists-pa',
                 ],
                 [
                     'active'                => 1,
-                    'display_name'          => ucfirst(str_replace('-', ' ', 'calvary-medical-clinic')),
+                    'display_name'          => ucfirst(str_replace('-', ' ', 'woodlands-internists')),
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,
-                    'outgoing_phone_number' => 2025550196,
+                    'outgoing_phone_number' => 9362720989,
                 ]
             );
         }
-        if ( ! $calvaryPractice) {
-            throw new Exception('Calvary Practice not found in Practices');
+        if ( ! $woodlandsPractice) {
+            throw new Exception('Woodlands Internists Practice not found in Practices');
         }
 
-        return $calvaryPractice;
+        return $woodlandsPractice;
     }
 }
