@@ -202,23 +202,21 @@ class PostmarkInboundCallbackMatchResults
 
     private function noCallbackReasoning(Model $patientUser)
     {
-        $reason = collect();
+        $reason = '';
         /** @var User $patientUser */
         if ( ! $this->isPatientEnrolled($patientUser)) {
-            $reason->push(self::NOT_ENROLLED);
+            $reason = self::NOT_ENROLLED;
         }
 
         if ($this->isQueuedForEnrollmentAndUnassigned($patientUser)) {
-            $reason->push(self::QUEUED_AND_UNASSIGNED);
+            $reason = self::QUEUED_AND_UNASSIGNED;
         }
 
         if ($this->requestsCancellation($this->postmarkCallbackData)) {
-            $reason->push(self::WITHDRAW_REQUEST);
+            $reason = self::WITHDRAW_REQUEST;
         }
 
-        $result = $reason->toArray();
-
-        return is_string($result) ? [$result] : $result;
+        return $reason;
     }
 
     /**

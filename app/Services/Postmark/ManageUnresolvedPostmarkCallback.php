@@ -73,7 +73,7 @@ class ManageUnresolvedPostmarkCallback
                 ],
                 [
                     'user_id'           => $this->getUserIdIfMatched(),
-                    'unresolved_reason' => json_encode($this->matchedData['reasoning']),
+                    'unresolved_reason' => $this->matchedData['reasoning'],
                     'suggestions'       => json_encode($suggestedUsersIds),
                 ]
             );

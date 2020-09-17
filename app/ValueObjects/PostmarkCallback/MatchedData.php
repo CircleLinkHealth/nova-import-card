@@ -19,9 +19,9 @@ class MatchedData
      * MatchedData constructor.
      * @param $matchedData
      * @param bool $shouldCreateCallback
-     * @param null $reasoning
+     * @param string $reasoning
      */
-    public function __construct($matchedData, bool $shouldCreateCallback, $reasoning = null)
+    public function __construct($matchedData, bool $shouldCreateCallback, $reasoning = '')
     {
         $this->matchedData          = $matchedData;
         $this->shouldCreateCallback = $shouldCreateCallback;
