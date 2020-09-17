@@ -34,7 +34,7 @@ class UnresolvedPostmarkCallbacks extends Migration
             $table->unsignedBigInteger('postmark_id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->json('suggestions')->nullable();
-            $table->json('unresolved_reason')->nullable();
+            $table->string('unresolved_reason')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
