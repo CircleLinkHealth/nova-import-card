@@ -66,10 +66,6 @@ class ProcessUnresolvedPostmarkCallback
 
     public function saveAsUnresolved(array $suggestedUsersIds)
     {
-        $suggestedUsersIds = [
-           1,
-           2
-        ];
         try {
             UnresolvedPostmarkCallback::firstOrCreate(
                 [
