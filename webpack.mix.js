@@ -1,6 +1,8 @@
 const mix = require('laravel-mix');
 const path = require('path');
 const fs = require('fs');
+const SentryWebpackPlugin = require("@sentry/webpack-plugin");
+
 //
 // NOTE:
 //
@@ -14,9 +16,9 @@ const fs = require('fs');
 //
 
 const webpackConfig = {
-    // devtool: 'source-map', // .vue is off by a line or 2. <template>, <style> sections are visible. file structure is clean
-// devtool: 'cheap-eval-source-map', // .vue lines are accurate. <template>, <style> are not visible. Lots of weird duplicate files, with ?ffcc, ?ddaa, etc. in the suffix.
-    devtool: 'cheap-module-source-map', // .vue lines are accurate, <template>, <style> sections are visible. But file structure is messed up, the actual debuggable js is in root directory, not in its subfolder where it is in actual source.
+    devtool: 'source-map', // .vue is off by a line or 2. <template>, <style> sections are visible. file structure is clean
+    // devtool: 'cheap-eval-source-map', // .vue lines are accurate. <template>, <style> are not visible. Lots of weird duplicate files, with ?ffcc, ?ddaa, etc. in the suffix.
+    // devtool: 'cheap-module-source-map', // .vue lines are accurate, <template>, <style> sections are visible. But file structure is messed up, the actual debuggable js is in root directory, not in its subfolder where it is in actual source.
     output: {
         publicPath: "/",
         chunkFilename: 'compiled/js/[name].[chunkhash].js'
@@ -29,7 +31,14 @@ const webpackConfig = {
             './cptable': 'var cptable'
         }
     ],
-    plugins: []
+    plugins: [
+        new SentryWebpackPlugin({
+            include: ".",
+            ignoreFile: ".sentrycliignore",
+            ignore: ["node_modules", "bower_components", "webpack.config.js"],
+            configFile: "sentry.properties",
+        }),
+    ]
 };
 
 mix.webpackConfig(webpackConfig);
