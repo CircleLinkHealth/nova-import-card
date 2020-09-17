@@ -120,11 +120,6 @@ return [
             'bucket' => env('S3_CPM_STORAGE_BUCKET_NAME'),
             'root'   => 'backup',
         ],
-
-        'samlidp' => [
-            'driver' => 'local',
-            'root'   => storage_path().'/samlidp',
-        ],
     ],
 
     /*
