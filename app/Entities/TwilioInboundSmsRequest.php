@@ -10,8 +10,8 @@ class TwilioInboundSmsRequest
 {
     public ?string $AccountSid;
     public ?string $ApiVersion;
-    public string $Body;
-    public string $From;
+    public ?string $Body;
+    public ?string $From;
     public ?string $FromCity;
     public ?string $FromCountry;
     public ?string $FromState;

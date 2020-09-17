@@ -107,7 +107,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-12 padding-top-10">
                             <notifications ref="notificationsComponent" name="assign-callback-modal"></notifications>
                         </div>
                     </div>
@@ -238,7 +238,7 @@
                 if (!this.selected) {
                     Event.$emit('notifications-assign-callback-modal:create', {
                         noTimeout: true,
-                        text: 'Please select a Enrollee to proceed',
+                        text: 'Please select a Patient to proceed',
                         type: 'error'
                     });
                     this.loading = false;
@@ -249,6 +249,16 @@
                     Event.$emit('notifications-assign-callback-modal:create', {
                         noTimeout: true,
                         text: 'Please select a Care Ambassador to proceed',
+                        type: 'error'
+                    });
+                    this.loading = false;
+                    return;
+                }
+
+                if (!this.callback_note) {
+                    Event.$emit('notifications-assign-callback-modal:create', {
+                        noTimeout: true,
+                        text: 'Please leave a note for the Care Ambassador',
                         type: 'error'
                     });
                     this.loading = false;
@@ -320,5 +330,9 @@
 
     .modal-container {
         overflow-y: inherit !important;
+    }
+
+    .padding-top-10 {
+        padding-top: 10px;
     }
 </style>

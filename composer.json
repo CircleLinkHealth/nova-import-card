@@ -184,9 +184,9 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.6",
     "circlelinkhealth/core-module": "1.7.6",
-    "circlelinkhealth/cpm-migrations-module": "2.4.9",
+    "circlelinkhealth/cpm-migrations-module": "2.5.0",
     "circlelinkhealth/customer-module": "3.3.8",
-    "circlelinkhealth/eligibility-module": "3.4.4",
+    "circlelinkhealth/eligibility-module": "3.4.6",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
@@ -323,7 +323,8 @@
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
       "@php artisan nova:publish",
-      "@php artisan vapor-ui:publish --ansi"
+      "@php artisan vapor-ui:publish --ansi",
+      "@php artisan horizon:publish"
     ],
     "unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
