@@ -20,7 +20,7 @@
 <script>
     import EventBus from '../event-bus'
     import {Event} from 'vue-tables-2'
-    import Modal from '../../../common/modal'
+    import Modal from '../../../../../../../../SharedVueComponents/Resources/assets/js/admin/common/modal'
 
     export default {
         name: 'inactivity-modal',

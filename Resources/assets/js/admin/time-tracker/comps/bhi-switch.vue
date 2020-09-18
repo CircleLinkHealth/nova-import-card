@@ -39,7 +39,7 @@
     import { Event } from 'vue-tables-2'
     import EventBus from './event-bus'
     import { rootUrl } from '../../../app.config'
-    import Modal from '../../common/modal'
+    import Modal from '../../../../../../../SharedVueComponents/Resources/assets/js/admin/common/modal'
     import stor from '../../../stor'
 
     export default {

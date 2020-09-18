@@ -34,7 +34,7 @@
 </template>
 
 <script>
-    import Modal from '../../../common/modal'
+    import Modal from '../../../../../../../../SharedVueComponents/Resources/assets/js/admin/common/modal'
     import LoaderComponent from '../../../../components/loader'
     import {rootUrl} from '../../../../app.config'
     import {Event} from 'vue-tables-2'

@@ -63,7 +63,7 @@
 </template>
 
 <script>
-    import Modal from '../../../common/modal'
+    import Modal from '../../../../../../../../SharedVueComponents/Resources/assets/js/admin/common/modal'
     import {Event} from 'vue-tables-2'
     import {rootUrl} from '../../../../app.config'
     import Notifications from '../../../../components/notifications'

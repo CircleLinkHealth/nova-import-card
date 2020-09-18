@@ -13,7 +13,7 @@
 
 <script>
     import {rootUrl} from '../../app.config.js'
-    import Modal from '../common/modal';
+    import Modal from '../../../../../../SharedVueComponents/Resources/assets/js/admin/common/modal';
     import {Event} from 'vue-tables-2'
     import Loader from '../../components/loader';
     import Notifications from '../../components/notifications';

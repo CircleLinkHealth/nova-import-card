@@ -144,7 +144,7 @@
     import DateEditable from './comps/date-editable'
     import SelectEditable from './comps/select-editable'
     import TimeEditable from './comps/time-editable'
-    import Modal from '../common/modal'
+    import Modal from '../../../../../../SharedVueComponents/Resources/assets/js/admin/common/modal'
     import AddActionModal from './comps/modals/add-action.modal'
     import SelectNurseModal from './comps/modals/select-nurse.modal'
     import SelectTimesModel from './comps/modals/select-times.modal'

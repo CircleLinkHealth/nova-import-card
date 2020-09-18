@@ -58,7 +58,7 @@
 
 <script>
     import {Event} from 'vue-tables-2'
-    import Modal from '../../common/modal'
+    import Modal from '../../../../../../../SharedVueComponents/Resources/assets/js/admin/common/modal'
 
     const PROBLEM_TYPES = {
         PROBLEM_1: 1,

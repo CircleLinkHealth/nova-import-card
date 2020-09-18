@@ -24,7 +24,7 @@
     import { Event } from 'vue-tables-2'
 
     import SERVICES from '../../../constants/services.types';
-    import Modal from '../../common/modal'
+    import Modal from '../../../../../../../SharedVueComponents/Resources/assets/js/admin/common/modal'
     import Loader from '../../../components/loader'
 
     export default {

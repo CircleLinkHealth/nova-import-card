@@ -101,7 +101,7 @@
 
 <script>
     import {rootUrl} from '../../app.config.js'
-    import Modal from '../common/modal';
+    import Modal from '../../../../../../SharedVueComponents/Resources/assets/js/admin/common/modal';
     import SelectCaModal from './comps/modals/select-ca.modal'
     import UnassignCaModal from './comps/modals/unassign-ca.modal'
     import {Event} from 'vue-tables-2'
