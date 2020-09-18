@@ -22,7 +22,7 @@ class OutgoingSms extends Resource
      *
      * @var string
      */
-    public static $model = \App\OutgoingSms::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\OutgoingSms::class;
 
     /**
      * The columns that should be searched.
