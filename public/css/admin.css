@@ -1,0 +1,66 @@
+/*
+----------------------------------------------------
+----------------------------------------------------
+        CUSTOM STUFF 3.0
+----------------------------------------------------
+----------------------------------------------------
+*/
+
+.red-text {
+    color: red;
+}
+
+/*
+.btn-orange {
+  background:#E5692F;
+  color:#fff;
+}
+
+.btn-orange:hover {
+  color:#fff;
+}
+
+.btn-orange:focus {
+  color:#fff;
+}
+
+.bg-orange {
+  background:#E5692F;
+  color:#fff;
+}
+
+select {
+  background:#E5692F;
+}
+
+a {
+  color:#fff;
+  text-decoration:underline;
+}
+*/
+
+.work-schedule-label {
+    font-weight: bold !important;
+}
+
+.minimum-padding {
+    padding: 0 5px 0 5px;
+    display: inline-block;
+}
+
+.modal-dialog {
+    z-index: 1051;
+}
+
+.vdp-datepicker.form-control {
+  padding: 0px;
+}
+
+.vdp-datepicker.form-control input[type='text'] {
+    height: 33px;
+    width: 100%;
+}
+
+.dropdown.v-select.form-control {
+  padding: 0;
+}
