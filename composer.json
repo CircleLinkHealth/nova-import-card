@@ -83,63 +83,49 @@
         "ext-redis": "*",
         "ext-simplexml": "*",
         "ext-zend-opcache": "*",
-        "circlelinkhealth/core-module": "dev-vaporizing-admin",
-        "circlelinkhealth/customer-module": "dev-vaporizing-admin",
-        "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
-        "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
-        "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
-        "circlelinkhealth/revisionable-module": "6.1.1",
-        "titasgailius/search-relations": "^1.0",
-        "circlelinkhealth/twofa-module": "1.2.3",
-
-        "dillingham/nova-button": "^1.0",
+        "alexbowers/nova-prepopulate-searchable": "^1.0",
+        "anaseqal/nova-import": "^0.0.3",
         "circlelinkhealth/clh-import-card-extended": "*",
+        "circlelinkhealth/clh-nova-theme": "*",
+        "circlelinkhealth/core-module": "dev-vaporizing-admin",
+        "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
+        "circlelinkhealth/customer-module": "dev-vaporizing-admin",
+        "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
+        "circlelinkhealth/enrollment-invites": "*",
         "circlelinkhealth/generate-patient-call-data-csv": "*",
         "circlelinkhealth/generate-success-stories-report": "*",
         "circlelinkhealth/import-practice-staff-csv": "*",
-        "circlelinkhealth/enrollment-invites": "*",
-
         "circlelinkhealth/invoices-download": "*",
-
+        "circlelinkhealth/revisionable-module": "6.1.1",
+        "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
+        "circlelinkhealth/twofa-module": "1.2.3",
+        "dillingham/nova-button": "^1.0",
         "epartment/nova-dependency-container": "^1.2",
-
-        "fourstacks/nova-checkboxes": "^0.1.5",
-
-        "hubertnnn/laravel-nova-field-dynamic-select": "^0.2.0",
-
-        "jubeki/nova-card-linkable": "^1.0",
-
-        "kreitje/nova-horizon-stats": "^0.3.0",
-
-        "laravel/nova": "^3.0",
-
-        "maatwebsite/laravel-nova-excel": "^1.2",
-
-        "sparclex/nova-import-card": "^7.0.1",
-
-        "suenerds/nova-searchable-belongs-to-filter": "^1.0",
-
-        "vink/nova-cache-card": "^1.0",
-
-        "waynestate/nova-ckeditor4-field": "^0.4.0",
-        "alexbowers/nova-prepopulate-searchable": "^1.0",
-
-        "anaseqal/nova-import": "^0.0.3",
-
-        "circlelinkhealth/clh-nova-theme": "*",
-
         "fideloper/proxy": "^4.2",
+        "fourstacks/nova-checkboxes": "^0.1.5",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3",
+        "hubertnnn/laravel-nova-field-dynamic-select": "^0.2.0",
+        "joshbrw/laravel-module-installer": "^0.1.4",
+        "jubeki/nova-card-linkable": "^1.0",
+        "kreitje/nova-horizon-stats": "^0.3.0",
         "laravel/framework": "^7.24",
-        "laravel/tinker": "^2.0"
+        "laravel/nova": "^3.0",
+        "laravel/tinker": "^2.0",
+        "maatwebsite/laravel-nova-excel": "^1.2",
+        "sparclex/nova-import-card": "^7.0.1",
+        "suenerds/nova-searchable-belongs-to-filter": "^1.0",
+        "titasgailius/search-relations": "^1.0",
+        "vink/nova-cache-card": "^1.0",
+        "waynestate/nova-ckeditor4-field": "^0.4.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
         "fzaninotto/faker": "^1.9.1",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^4.1",
-        "phpunit/phpunit": "^8.5"
+        "phpunit/phpunit": "^8.5",
+        "nwidart/laravel-modules": "^7.1"
     },
     "config": {
         "discard-changes": true,
@@ -152,13 +138,15 @@
         "process-timeout": 3000
     },
     "extra": {
+        "module-dir": "CircleLinkHealth",
         "laravel": {
             "dont-discover": []
         }
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "CircleLinkHealth\\": "CircleLinkHealth/"
         },
         "classmap": [
             "database/seeds",
