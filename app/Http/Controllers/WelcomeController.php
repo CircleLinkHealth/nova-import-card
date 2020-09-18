@@ -71,8 +71,8 @@ class WelcomeController extends Controller
             return redirect()->route('login');
         }
 
-        if ($user->isAdmin()) {
-            return \App::call('CircleLinkHealth\CpmAdmin\Http\Controllers\DashboardController@index');
+        if ($user->isAdmin() && $url = config('services.cpm-admin-app.url')) {
+            return redirect()->to($url);
         }
 
         if ($user->isSaasAdmin()) {

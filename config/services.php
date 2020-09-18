@@ -89,6 +89,10 @@ return [
         'report_url' => env('AWV_URL', '').env('AWV_REPORT_URI', ''),
     ],
 
+    'cpm-admin-app' => [
+        'url' => env('CPM_ADMIN_APP_URL', ''),
+    ],
+
     'phaxio' => [
         'host' => 'https://api.phaxio.com/v2.1/',
 
