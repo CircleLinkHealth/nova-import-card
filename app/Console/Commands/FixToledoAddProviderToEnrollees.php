@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\PracticePull\Demographics;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;

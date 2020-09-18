@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\PracticePull\Demographics;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Adapters\CreatesEligibilityJobFromObject;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
