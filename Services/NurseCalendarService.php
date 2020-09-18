@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Customer\Services;
 
 use App\LoginLogout;
-use App\Services\NursesPerformanceReportService;
+use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use CircleLinkHealth\Customer\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
