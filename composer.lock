@@ -554,7 +554,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "3fe2c5dff5ab55b35ed8a03554590770421bc0a8"
+                "reference": "9e5aa811f7b849c468c2d2bf8ecf87156f9938fd"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -580,7 +580,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-18T20:28:14+00:00"
+            "time": "2020-09-18T21:18:18+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -951,7 +951,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "6042b41be52b87b4c935b8590cf2d58e5d6d025e"
+                "reference": "f95d479aebe61fd9014fd276d0ffdbd5383e6eab"
             },
             "type": "laravel-module",
             "extra": {
@@ -971,7 +971,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-18T20:27:34+00:00"
+            "time": "2020-09-18T21:18:18+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
