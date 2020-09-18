@@ -297,8 +297,6 @@
         <![endif]-->
     @endif
 
-    {{--This is for JS variables. Purposefully included before content.--}}
-    @include('partials.footer')
     @yield('content')
 </div>
 
