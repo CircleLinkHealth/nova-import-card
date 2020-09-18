@@ -130,18 +130,18 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
-    import TextEditable from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/calls/comps/text-editable'
-    import EventBus from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
-    import LoaderComponent from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
-    import ErrorModal from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/billing/comps/error-modal'
-    import ErrorModalButton from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/billing/comps/error-modal-button'
+    import {rootUrl} from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config'
+    import TextEditable from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/calls/comps/text-editable'
+    import EventBus from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import LoaderComponent from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
+    import ErrorModal from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/billing/comps/error-modal'
+    import ErrorModalButton from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/billing/comps/error-modal-button'
     import NotificationComponent from '../notifications'
-    import VueCache from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/vue-cache'
+    import VueCache from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/util/vue-cache'
     import {mapGetters} from 'vuex'
-    import {currentUser} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/getters';
+    import {currentUser} from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/getters';
     import VueSelect from "vue-select";
-    import GetsNurses from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/mixins/gets-nurses'
+    import GetsNurses from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/mixins/gets-nurses'
     import moment from "moment";
 
     export default {

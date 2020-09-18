@@ -51,8 +51,8 @@
     </modal>
 </template>
 <script>
-    import Modal from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/common/modal';
-    import {rootUrl} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config';
+    import Modal from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/common/modal';
+    import {rootUrl} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config';
     import AddCondition from './careplan/add-condition';
     import CareplanMixin from './careplan/mixins/careplan.mixin';
     import {Event} from 'vue-tables-2';

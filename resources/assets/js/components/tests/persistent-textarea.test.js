@@ -1,6 +1,6 @@
 import PersistentTextArea from '../persistent-textarea'
 import { mount } from 'vue-test-utils'
-import { sstor } from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/stor'
+import { sstor } from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/stor'
 
 const STORAGE_KEY = 'my-textarea'
 

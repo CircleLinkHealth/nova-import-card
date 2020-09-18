@@ -34,10 +34,10 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
+    import { rootUrl } from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config'
     import { Event } from 'vue-tables-2'
     import moment from 'moment'
-    import VueCache from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/vue-cache'
+    import VueCache from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/util/vue-cache'
     import AppointmentsModal from './modals/appointments.modal'
     import AppointmentRender from './renders/appointment.render'
     import CareplanMixin from './mixins/careplan.mixin'

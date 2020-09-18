@@ -127,11 +127,11 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config.js'
+    import {rootUrl} from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config.js'
     import {Event} from 'vue-tables-2'
     import {CancelToken} from 'axios'
     import moment from 'moment'
-    import loader from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import loader from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
 
     /**
      * Determines whether to show patient name format as

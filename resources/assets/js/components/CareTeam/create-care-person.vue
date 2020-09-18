@@ -544,11 +544,11 @@
 </template>
 
 <script>
-    import modal from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/modal.vue';
+    import modal from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/modal.vue';
     import SearchProviders from './search-providers.vue'
-    import store from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store';
+    import store from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store';
     import {mapActions, mapGetters} from 'vuex'
-    import {addNotification, clearOpenModal, getPatientCareTeam, updateCarePerson} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/actions'
+    import {addNotification, clearOpenModal, getPatientCareTeam, updateCarePerson} from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/actions'
     import specialtiesOptions from './specialties-options';
     import suffixOptions from './suffix-options';
 

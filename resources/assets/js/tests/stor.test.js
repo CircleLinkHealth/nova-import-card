@@ -1,4 +1,4 @@
-import stor, { sstor } from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/stor'
+import stor, { sstor } from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/stor'
 
 describe('Stor', () => {
     describe('stor.get()', () => {

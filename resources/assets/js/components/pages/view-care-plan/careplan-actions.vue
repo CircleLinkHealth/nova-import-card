@@ -1,12 +1,12 @@
 <script>
     import {mapActions} from 'vuex'
-    import {addNotification, destroyPdf, uploadPdfCarePlan} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/actions'
-    import modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/modal.vue'
+    import {addNotification, destroyPdf, uploadPdfCarePlan} from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/actions'
+    import modal from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/modal.vue'
     import Dropzone from 'vue2-dropzone'
 
     import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
-    import CarePlanApi from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/api/patient-care-plan'
-    import {rootUrl} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
+    import CarePlanApi from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/api/patient-care-plan'
+    import {rootUrl} from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config'
 
     export default {
         components: {

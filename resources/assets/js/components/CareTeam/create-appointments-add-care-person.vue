@@ -550,9 +550,9 @@
 </template>
 
 <script>
-    import modal from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/modal.vue';
+    import modal from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
-    import {getPatientCareTeam, addNotification} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/actions'
+    import {getPatientCareTeam, addNotification} from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/actions'
     import suffixOptions from './suffix-options'
     import specialtiesOptions from './specialties-options'
     import VueSelect from 'vue-select'

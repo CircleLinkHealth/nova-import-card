@@ -130,9 +130,9 @@
     </div>
 </template>
 <script>
-    import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
-    import {rootUrl} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
-    import Errors from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/src/Errors";
+    import LoaderComponent from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader';
+    import {rootUrl} from "../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config";
+    import Errors from "../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/src/Errors";
 
     export default {
         name: 'settings-2fa',

@@ -1,7 +1,7 @@
 import Notifications from '../notifications'
 import { mount, shallow } from 'vue-test-utils'
 import { wrap } from 'module';
-import sleep from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/sleep'
+import sleep from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/util/sleep'
 
 describe('Notifications', () => {
     const wrapper = shallow(Notifications, {

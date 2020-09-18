@@ -13,7 +13,7 @@
 
 <script>
     import vue2Dropzone from 'vue2-dropzone'
-    import {rootUrl, csrfToken} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
+    import {rootUrl, csrfToken} from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config'
     import CcdRegisterEvents from './ccd-upload.event'
 
     export default {

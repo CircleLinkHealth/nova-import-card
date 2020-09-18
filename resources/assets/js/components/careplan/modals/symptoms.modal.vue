@@ -19,9 +19,9 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
+    import { rootUrl } from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config'
     import { Event } from 'vue-tables-2'
-    import Modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/common/modal'
+    import Modal from '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/common/modal'
 
     export default {
         name: 'symptoms-modal',

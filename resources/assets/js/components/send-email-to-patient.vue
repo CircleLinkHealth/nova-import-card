@@ -42,7 +42,7 @@
 
 <script>
     import VueTrix from "vue-trix";
-    import {rootUrl} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config.js';
+    import {rootUrl} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config.js';
 
     export default {
         name: "send-email-to-patient",

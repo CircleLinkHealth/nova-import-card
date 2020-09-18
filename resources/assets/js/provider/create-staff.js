@@ -1,11 +1,11 @@
-require('../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap');
+require('../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/bootstrap');
 require('../../../../public/js/materialize.min');
 require('select2');
 
 window.Vue = require('vue');
 
-Vue.component('material-select', require('../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/src/material-select.vue'));
-Vue.component('select2', require('../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/src/select2.vue'));
+Vue.component('material-select', require('../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/src/material-select.vue'));
+Vue.component('select2', require('../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/src/select2.vue'));
 
 /**
  *
