@@ -18,7 +18,7 @@ class Browser extends Resource
      *
      * @var string
      */
-    public static $model = \App\Browser::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\Browser::class;
 
     /**
      * The columns that should be searched.

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4afc6877395d4bbefa85161c2d92b5eb",
+    "content-hash": "625e62e17b78b5b0715150cb65092e3b",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -554,11 +554,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "11462acabab898ca00dcf2605c14232941827c4f"
+                "reference": "912428ea35dc32b700a967ad686426a788e3ea58"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
                 "circlelinkhealth/customer-module": "*",
+                "circlelinkhealth/raygun-module": "*",
                 "circlelinkhealth/shared-models-module": "*"
             },
             "type": "laravel-module",
@@ -579,7 +580,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-18T15:47:49+00:00"
+            "time": "2020-09-18T17:04:55+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -843,6 +844,39 @@
             }
         },
         {
+            "name": "circlelinkhealth/raygun-module",
+            "version": "v1.2",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-raygun.git",
+                "reference": "965b144632d44c25f3c34839b1b6d58093d4e907"
+            },
+            "require": {
+                "mindscape/raygun4php": "1.*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\Raygun\\Providers\\RaygunServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\Raygun\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-09-04T15:06:34+00:00"
+        },
+        {
             "name": "circlelinkhealth/revisionable-module",
             "version": "v6.1.1",
             "source": {
@@ -895,7 +929,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "6729e40a3de59a21fa61ddd67aa150b8630d2b5b"
+                "reference": "1c0149fa0a80f134c972666e795cc5447b190e8f"
             },
             "type": "laravel-module",
             "autoload": {
@@ -909,7 +943,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T06:06:36+00:00"
+            "time": "2020-09-18T17:04:27+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -4112,6 +4146,56 @@
                 "vector"
             ],
             "time": "2020-08-28T19:41:55+00:00"
+        },
+        {
+            "name": "mindscape/raygun4php",
+            "version": "v1.8.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MindscapeHQ/raygun4php.git",
+                "reference": "7f841d251f5985817cec93e131bb334561c03338"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MindscapeHQ/raygun4php/zipball/7f841d251f5985817cec93e131bb334561c03338",
+                "reference": "7f841d251f5985817cec93e131bb334561c03338",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.16"
+            },
+            "suggest": {
+                "ext-curl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Raygun4php": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mindscape",
+                    "email": "contact@mindscape.co.nz",
+                    "homepage": "http://www.mindscapehq.com"
+                }
+            ],
+            "description": "Raygun.io client for PHP 5.3, to send errors and exceptions automatically.",
+            "homepage": "http://raygun.io",
+            "keywords": [
+                "errors",
+                "exceptions",
+                "logging",
+                "raygun"
+            ],
+            "time": "2019-03-07T01:23:01+00:00"
         },
         {
             "name": "monolog/monolog",
