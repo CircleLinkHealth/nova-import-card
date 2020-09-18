@@ -4,6 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Core\Entities\AppConfig;
+
 if ( ! function_exists('isProductionEnv')) {
     /**
      * Returns whether or not this is a Production server, ie. used by real users.
@@ -37,5 +39,22 @@ if ( ! function_exists('isUnitTestingEnv')) {
     function isUnitTestingEnv()
     {
         return app()->environment(['testing']);
+    }
+}
+
+if ( ! function_exists('upg0506IsEnabled')) {
+    /**
+     * Key: upg0506_is_enabled
+     * Default: false.
+     */
+    function upg0506IsEnabled(): bool
+    {
+        $key = 'upg0506_is_enabled';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            return 'true' === AppConfig::set($key, false);
+        }
+        
+        return 'true' === $val;
     }
 }
