@@ -996,7 +996,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\Customer\\Providers\\CustomerServiceProvider"
+                        "CircleLinkHealth\\Customer\\Providers\\CustomerDeferrableServiceProvider"
                     ],
                     "aliases": []
                 }
