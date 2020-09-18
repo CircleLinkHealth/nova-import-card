@@ -216,7 +216,7 @@
     import Loader from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader.vue';
     import VueSelect from 'vue-select';
     import CareDocumentBox from './comps/care-document-box';
-    import Errors from "../../src/Errors";
+    import Errors from "../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/src/Errors";
 
 
     let self;

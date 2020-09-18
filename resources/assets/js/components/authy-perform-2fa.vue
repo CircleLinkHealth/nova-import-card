@@ -84,7 +84,7 @@
 <script>
     import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
     import {rootUrl} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
-    import Errors from "./src/Errors";
+    import Errors from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/src/Errors";
 
     export default {
         name: 'authy-perform-2fa',

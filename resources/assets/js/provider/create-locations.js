@@ -3,7 +3,7 @@ require('../../../../public/js/materialize.min');
 
 window.Vue = require('vue');
 
-Vue.component('material-select', require('../components/src/material-select.vue'));
+Vue.component('material-select', require('../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/src/material-select.vue'));
 
 const locationsVM = new Vue({
     el: '#create-locations-component',
