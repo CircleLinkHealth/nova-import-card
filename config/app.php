@@ -1,6 +1,9 @@
 <?php
 
+use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
+use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
+use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
 
 return [
 
@@ -180,8 +183,10 @@ return [
         \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
         \App\Providers\NovaServiceProvider::class,
         CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider::class,
-        CpmAdminServiceProvider::class
-
+        CpmAdminServiceProvider::class,
+        RaygunServiceProvider::class,
+        CoreServiceProvider::class,
+        CoreDeferredBindingsServiceProvider::class,
     ],
 
     /*

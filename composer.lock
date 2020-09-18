@@ -517,7 +517,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "f95a47540b8b992246e9f64b19e81205f2c68750"
+                "reference": "5e70f33a9a3257190dc80d095cef7298ae02f836"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -546,7 +546,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T14:35:51+00:00"
+            "time": "2020-09-18T17:32:55+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -554,7 +554,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "912428ea35dc32b700a967ad686426a788e3ea58"
+                "reference": "0502c2c7b730b02e5fa6d082498e641c192ddd7e"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -580,7 +580,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-18T17:04:55+00:00"
+            "time": "2020-09-18T17:32:55+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -929,7 +929,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "1c0149fa0a80f134c972666e795cc5447b190e8f"
+                "reference": "997aa69f2faf7f9df89611d3c7623bfb3f5aef36"
             },
             "type": "laravel-module",
             "autoload": {
@@ -943,7 +943,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T17:04:27+00:00"
+            "time": "2020-09-18T17:22:58+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
