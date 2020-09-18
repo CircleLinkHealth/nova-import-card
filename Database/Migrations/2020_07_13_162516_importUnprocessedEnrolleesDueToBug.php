@@ -28,7 +28,7 @@ class ImportUnprocessedEnrolleesDueToBug extends Migration
         \CircleLinkHealth\Customer\Entities\User::ofType('survey-only')
             ->with(['enrollee.batch'])
             ->whereHas('enrollee', function ($e) {
-                $e->where('status', \CircleLinkHealth\Eligibility\Entities\Enrollee::CONSENTED)
+                $e->where('status', \CircleLinkHealth\SharedModels\Entities\Enrollee::CONSENTED)
                     ->whereNotNull('care_ambassador_user_id')
                     ->whereHas('ccda', function ($ccda) {
                         $ccda->where('imported', false);

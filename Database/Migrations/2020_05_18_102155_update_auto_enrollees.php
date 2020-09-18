@@ -5,7 +5,7 @@
  */
 
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Migrations\Migration;
 
 class UpdateAutoEnrollees extends Migration
