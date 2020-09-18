@@ -102,7 +102,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
     import Modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/common/modal'
     import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
     import {rootUrl} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
-    import {today} from '../util/today'
+    import {today} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/today'
     import notifications from './notifications'
     import VueSelect from 'vue-select'
     import VueCache from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/vue-cache'

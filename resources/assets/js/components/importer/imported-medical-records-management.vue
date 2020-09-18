@@ -131,11 +131,11 @@
 
 <script>
     import {rootUrl} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
-    import TextEditable from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/calls/comps/text-editable'
-    import EventBus from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import TextEditable from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/calls/comps/text-editable'
+    import EventBus from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
-    import ErrorModal from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/billing/comps/error-modal'
-    import ErrorModalButton from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/billing/comps/error-modal-button'
+    import ErrorModal from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/billing/comps/error-modal'
+    import ErrorModalButton from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/billing/comps/error-modal-button'
     import NotificationComponent from '../notifications'
     import VueCache from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/vue-cache'
     import {mapGetters} from 'vuex'
