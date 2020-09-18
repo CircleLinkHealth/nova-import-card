@@ -26,7 +26,7 @@ class Dispute extends Resource
      *
      * @var string
      */
-    public static $model = \CircleLinkHealth\NurseInvoices\Entities\Dispute::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\Dispute::class;
 
     /**
      * The columns that should be searched.

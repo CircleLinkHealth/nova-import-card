@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b8b1ef55c748d3b1bc718540c38f3d3b",
+    "content-hash": "b42a13a6b92412b1f45a52756de231d9",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -517,7 +517,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "7648ac8cee6f2c6586a682f2bf6ce47bf4fab04f"
+                "reference": "ef6a00937c1cb9328ec6d48c0243b81b1c430b68"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -546,7 +546,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T18:30:58+00:00"
+            "time": "2020-09-18T18:43:24+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -554,7 +554,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "7d5d153bc90dab4f5997e712766ebbc33b12ceb2"
+                "reference": "2875ed2fce9354b39a6b3296d4999f08faef5f98"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -580,7 +580,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-18T18:30:57+00:00"
+            "time": "2020-09-18T18:44:09+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -588,7 +588,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "1952bdeacb239bfc9bd0c03a121daf8f2def47dc"
+                "reference": "f0b84236ed66d6f29640c0f5b850bcf620fbd244"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -625,7 +625,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T18:24:47+00:00"
+            "time": "2020-09-18T19:01:22+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -929,7 +929,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "997aa69f2faf7f9df89611d3c7623bfb3f5aef36"
+                "reference": "1e74b3f98bf171660a70428e9c2684beee53e7a4"
             },
             "type": "laravel-module",
             "autoload": {
@@ -943,7 +943,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T17:22:58+00:00"
+            "time": "2020-09-18T19:01:22+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -979,6 +979,68 @@
                 }
             ],
             "time": "2020-09-04T20:08:19+00:00"
+        },
+        {
+            "name": "danielme85/laravel-log-to-db",
+            "version": "v2.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danielme85/laravel-log-to-db.git",
+                "reference": "e4def4bfba5e2910cd470334d32699d186fe89cb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danielme85/laravel-log-to-db/zipball/e4def4bfba5e2910cd470334d32699d186fe89cb",
+                "reference": "e4def4bfba5e2910cd470334d32699d186fe89cb",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": ">=5.6",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "jenssegers/mongodb": ">=4.0",
+                "mockery/mockery": "^1.0",
+                "orchestra/testbench": ">=5.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "danielme85\\LaravelLogToDB\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "LogToDB": "danielme85\\LaravelLogToDB\\LogToDB"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "danielme85\\LaravelLogToDB\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel Mellum",
+                    "email": "mellum@gmail.com"
+                }
+            ],
+            "description": "Custom Larvel 5.6+ Log channel handler that can store log events to SQL or MongoDB databases. Uses Laravel native logging functionality.",
+            "keywords": [
+                "database",
+                "db",
+                "laravel",
+                "log",
+                "logging",
+                "mongodb",
+                "mysql",
+                "sql"
+            ],
+            "time": "2020-09-03T03:08:51+00:00"
         },
         {
             "name": "defuse/php-encryption",
