@@ -8,7 +8,7 @@ namespace App\Jobs;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\TwilioCall;
-use App\VoiceCall;
+use CircleLinkHealth\SharedModels\Entities\VoiceCall;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

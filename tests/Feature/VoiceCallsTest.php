@@ -14,7 +14,7 @@ use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use CircleLinkHealth\SharedModels\Entities\TwilioCall;
-use App\VoiceCall;
+use CircleLinkHealth\SharedModels\Entities\VoiceCall;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
 use Tests\CustomerTestCase;
