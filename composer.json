@@ -73,7 +73,6 @@
     {
       "packagist": false
     },
-
     {
       "type": "git",
       "url": "git@github.com:circlelinkhealth/revisionable-module.git"
