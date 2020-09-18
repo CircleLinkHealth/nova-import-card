@@ -1,4 +1,4 @@
-import Load from '../../../../../../resources/assets/js/util/load'
+import Load from '../util/load'
 
 export default {
     mounted () {

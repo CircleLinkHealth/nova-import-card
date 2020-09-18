@@ -1,4 +1,4 @@
-import { pad } from '../../../../../../resources/assets/js/util/pad'
+import { pad } from './pad'
 
 /**
  * @returns {String} today's date
