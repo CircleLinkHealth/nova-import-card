@@ -13,9 +13,7 @@ class CoreServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->registerViews();
-        $this->registerConfig();
-        $this->registerFactories();
+    
     }
 
     /**
@@ -23,6 +21,9 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerViews();
+        $this->registerConfig();
+        $this->registerFactories();
         $this->app->register(RouteServiceProvider::class);
     }
 
