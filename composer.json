@@ -27,6 +27,9 @@
             "CircleLinkHealth\\Customer\\": ""
         }
     },
+    "config": {
+        "sort-packages": true
+    },
     "require": {
         "circlelinkhealth/core-module": "*",
         "laravel/passport": "^8.0",
@@ -35,6 +38,7 @@
         "fico7489/laravel-pivot": "^3.0",
         "circlelinkhealth/twofa-module": "*",
         "lab404/laravel-impersonate": "^1.2",
+        "propaganistas/laravel-phone": "^4.2.2",
         "spatie/laravel-medialibrary": "^7.0.0"
     },
     "repositories": [
