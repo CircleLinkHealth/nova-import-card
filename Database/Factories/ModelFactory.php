@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\DirectMailMessage;
 use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use Carbon\Carbon;

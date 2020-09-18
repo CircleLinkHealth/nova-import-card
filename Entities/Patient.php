@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;

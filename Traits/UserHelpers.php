@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\StringManipulation;

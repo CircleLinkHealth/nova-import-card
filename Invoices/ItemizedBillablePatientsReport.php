@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Customer\Invoices;
 
 use App\Repositories\BillablePatientsEloquentRepository;
-use App\Repositories\PatientSummaryEloquentRepository;
+use CircleLinkHealth\CpmAdmin\Repositories\PatientSummaryEloquentRepository;
 use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;

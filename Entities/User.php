@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\CareplanAssessment;
 use App\Constants;
 use App\ForeignId;
@@ -183,9 +183,9 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property mixed                                                                                                           $timezone_abbr
  * @property mixed                                                                                                           $timezone_offset
  * @property mixed                                                                                                           $timezone_offset_hours
- * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $inboundActivities
+ * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $inboundActivities
  * @property int|null                                                                                                        $inbound_activities_count
- * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $inboundCalls
+ * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $inboundCalls
  * @property int|null                                                                                                        $inbound_calls_count
  * @property \App\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $inboundMessages
  * @property int|null                                                                                                        $inbound_messages_count
@@ -202,7 +202,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurseInfo
  * @property \App\Observation[]|\Illuminate\Database\Eloquent\Collection                                                     $observations
  * @property int|null                                                                                                        $observations_count
- * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $outboundCalls
+ * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $outboundCalls
  * @property int|null                                                                                                        $outbound_calls_count
  * @property \App\Message[]|\Illuminate\Database\Eloquent\Collection                                                         $outboundMessages
  * @property int|null                                                                                                        $outbound_messages_count
