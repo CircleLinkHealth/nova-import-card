@@ -6,21 +6,17 @@
 
 namespace CircleLinkHealth\CpmAdmin\Providers;
 
-use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
-use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
-use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyInstanceStatusTable;
-use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
-use CircleLinkHealth\SqlViews\Providers\SqlViewsServiceProvider;
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Notifications\DatabaseNotification;
-use Illuminate\Notifications\HasDatabaseNotifications;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 
-class CpmAdminServiceProvider extends ServiceProvider implements DeferrableProvider
+class CpmAdminServiceProvider extends ServiceProvider
 {
+    public function boot()
+    {
+        $this->app->register(RouteServiceProvider::class);
+    }
+
     /**
      * Get the services provided by the provider.
      *
@@ -38,15 +34,12 @@ class CpmAdminServiceProvider extends ServiceProvider implements DeferrableProvi
     public function register()
     {
         $this->registerTranslations();
-        $this->registerConfig();
         $this->registerViews();
         if (class_exists(\App\User::class)) {
             Relation::morphMap([
                 \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
             ]);
         }
-
-        $this->app->register(RouteServiceProvider::class);
     }
 
     /**
