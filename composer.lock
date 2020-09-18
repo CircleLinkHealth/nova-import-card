@@ -517,7 +517,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "5e70f33a9a3257190dc80d095cef7298ae02f836"
+                "reference": "6bf540cd0deb98771a4ac3fd896240f1e27694e3"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -546,7 +546,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T17:32:55+00:00"
+            "time": "2020-09-18T17:44:47+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -554,7 +554,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "0502c2c7b730b02e5fa6d082498e641c192ddd7e"
+                "reference": "f6cc1c8803d44496d18192dba6cdedc011dfd1f9"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -580,7 +580,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-18T17:32:55+00:00"
+            "time": "2020-09-18T17:59:25+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -588,7 +588,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "394e578033d4a77599fe78c84bf2a11bff59630a"
+                "reference": "3b9b143005e8713dcbec1bb6e603eb267d9e866b"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -625,7 +625,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T06:11:17+00:00"
+            "time": "2020-09-18T17:59:25+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
