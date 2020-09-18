@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoiceDailyDispute;
 use Illuminate\Database\Eloquent\Model;
 
 class NurseInvoiceDailyDisputeTimeService

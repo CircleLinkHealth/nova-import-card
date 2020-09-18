@@ -7,7 +7,7 @@
 namespace App\Observers;
 
 use App\Jobs\CreateNurseInvoices;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoiceDailyDispute;
 
 class NurseInvoiceDailyDisputeObserver
 {
