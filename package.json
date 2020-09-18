@@ -1,0 +1,33 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "watch": "npm run development -- --watch",
+        "watch-poll": "npm run watch -- --watch-poll",
+        "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "prod": "npm run production",
+        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "build-import-practice-staff-csv": "cd nova-components/ImportPracticeStaffCsv && npm run dev",
+        "build-import-practice-staff-csv-prod": "cd nova-components/ImportPracticeStaffCsv  && npm install && npm run prod",
+        "build-generate-patient-call-data-csv": "cd nova-components/GeneratePatientCallDataCsv && npm run dev",
+        "build-generate-patient-call-data-csv-prod": "cd nova-components/GeneratePatientCallDataCsv && npm install && npm run prod",
+        "build-clhImportCardExtended": "cd nova-components/ClhImportCardExtended && npm run dev",
+        "build-clhImportCardExtended-prod": "cd nova-components/ClhImportCardExtended && npm install && npm run prod",
+        "build-generate-success-stories-report": "cd nova-components/GenerateSuccessStoriesReport && npm run dev",
+        "build-generate-success-stories-report-prod": "cd nova-components/GenerateSuccessStoriesReport && npm install && npm run prod",
+        "build-enrollment-invites": "cd nova-components/EnrollmentInvites && npm run dev",
+        "build-enrollment-invites-prod": "cd nova-components/EnrollmentInvites && npm install && npm run prod",
+        "build-invoices-download": "cd nova-components/InvoicesDownload && npm run dev",
+        "build-invoices-download-prod": "cd nova-components/InvoicesDownload && npm install && npm run prod"
+    },
+    "devDependencies": {
+        "axios": "^0.19",
+        "cross-env": "^7.0",
+        "laravel-mix": "^5.0.1",
+        "lodash": "^4.17.19",
+        "resolve-url-loader": "^3.1.0",
+        "sass": "^1.15.2",
+        "sass-loader": "^8.0.0"
+    }
+}
