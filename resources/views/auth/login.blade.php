@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('cpm-admin::partials.adminUI')
 
 @section('content')
 <div class="container">
