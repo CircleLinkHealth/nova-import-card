@@ -737,7 +737,7 @@
 import {rootUrl} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config';
 import CallNumpad from '../call-numpad';
 
-import {Logger} from '../../logger-logdna';
+import {Logger} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/logger-logdna';
 import Loader from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader.vue';
 import moment from 'moment';
 

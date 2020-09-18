@@ -186,7 +186,7 @@
     import EventBus from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
     import {registerHandler, sendRequest} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/bc-job-manager";
-    import {Logger} from '../logger-logdna';
+    import {Logger} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/logger-logdna';
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
 

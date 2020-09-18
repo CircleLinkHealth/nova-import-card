@@ -3,7 +3,7 @@ import store from "../../../CircleLinkHealth/SharedVueComponents/Resources/asset
 require('../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap');
 
 import 'es6-string-polyfills';
-import './prototypes/array.prototype';
+import '../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/prototypes/array.prototype';
 import Vue from 'vue';
 import axios from '../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap-axios';
 import VueAxios from 'vue-axios';

@@ -106,7 +106,7 @@ import TimeTracker from '../../../../../CircleLinkHealth/SharedVueComponents/Res
 import TimeTrackerEventBus from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus';
 
 import Loader from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader.vue';
-import {Logger} from '../../logger-logdna';
+import {Logger} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/logger-logdna';
 
 const userId = window.userId;
 const userFullName = window.userFullName;
