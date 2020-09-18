@@ -33,9 +33,14 @@
         "laravel/scout": "^7.1|^8.0",
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
         "fico7489/laravel-pivot": "^3.0",
+        "circlelinkhealth/twofa-module": "*",
         "spatie/laravel-medialibrary": "^7.0.0"
     },
     "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
+        },
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-core.git"
