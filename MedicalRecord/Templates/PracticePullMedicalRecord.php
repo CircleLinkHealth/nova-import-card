@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
-use App\Models\PracticePull\Allergy;
-use App\Models\PracticePull\Demographics;
-use App\Models\PracticePull\Medication;
-use App\Models\PracticePull\Problem as ProblemModel;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Medication;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Problem as ProblemModel;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem as ProblemValueObject;
 
 class PracticePullMedicalRecord extends BaseMedicalRecordTemplate
