@@ -54,7 +54,7 @@ class DashboardController extends Controller
 
         // switch dashboard view based on logged in user
         if ($user->hasRole(['administrator', 'administrator-view-only'])) {
-            return view('admin.dashboard', compact(['user']));
+            return view('cpm-admin::dashboard', compact(['user']));
         }
 
         return redirect()->route('patients.dashboard', []);
