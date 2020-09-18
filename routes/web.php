@@ -6,7 +6,7 @@
 
 Route::get('/e/{shortURLKey}', '\AshAllenDesign\ShortURL\Controllers\ShortURLController')->name('short-url.visit');
 
-Route::get('passwordless-login-for-cp-approval/{token}/{patientId}', 'Auth\LoginController@login')
+Route::get('passwordless-login-for-cp-approval/{token}/{patientId}', '\CircleLinkHealth\Customer\Http\Controllers\Auth\LoginController@login')
     ->name('passwordless.login.for.careplan.approval');
 
 Route::post('webhooks/on-sent-fax', [
@@ -45,9 +45,12 @@ Route::get('home', [
     'as'   => 'home',
 ]);
 
-Route::get('login', 'Auth\LoginController@showLoginForm', ['as' => 'login']);
+Route::get('login', '\CircleLinkHealth\Customer\Http\Controllers\Auth\LoginController@showLoginForm', ['as' => 'login']);
+Route::get('auth/login', '\CircleLinkHealth\Customer\Http\Controllers\Auth\LoginController@showLoginForm', ['as' => 'auth.login']);
+Route::post('login', '\CircleLinkHealth\Customer\Http\Controllers\Auth\LoginController@login');
+Route::post('auth/login', '\CircleLinkHealth\Customer\Http\Controllers\Auth\LoginController@login');
 Route::post('browser-check', [
-    'uses' => 'Auth\LoginController@storeBrowserCompatibilityCheckPreference',
+    'uses' => '\CircleLinkHealth\Customer\Http\Controllers\Auth\LoginController@storeBrowserCompatibilityCheckPreference',
     'as'   => 'store.browser.compatibility.check.preference',
 ]);
 
@@ -55,14 +58,19 @@ Route::group([
     'prefix'     => 'auth',
     'middleware' => ['web'],
 ], function () {
-    Auth::routes();
+    Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+    Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+    Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+    Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
+    Route::get('password/confirm', 'Auth\ConfirmPasswordController@showConfirmForm')->name('password.confirm');
+    Route::post('password/confirm', 'Auth\ConfirmPasswordController@confirm');
 
     Route::get('logout', [
-        'uses' => 'Auth\LoginController@logout',
+        'uses' => '\CircleLinkHealth\Customer\Http\Controllers\Auth\LoginController@logout',
         'as'   => 'user.logout',
     ]);
     Route::get('inactivity-logout', [
-        'uses' => 'Auth\LoginController@inactivityLogout',
+        'uses' => '\CircleLinkHealth\Customer\Http\Controllers\Auth\LoginController@inactivityLogout',
         'as'   => 'user.inactivity-logout',
     ]);
 
@@ -287,26 +295,19 @@ Route::group(['middleware' => 'auth'], function () {
             'prefix'     => 'patients',
             'middleware' => ['patientProgramSecurity'],
         ], function () {
-            /*
-             * deprecated in favor of without-scheduled-activities
-            Route::get('without-scheduled-calls', [
-                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
-                'as'   => 'patients.without-scheduled-calls',
-            ])->middleware('permission:patient.read,careplan.read,call.read');
-            */
-
+            
             Route::get('download/{media_id}/{user_id}/{practice_id}', [
                 'uses' => 'DownloadController@downloadMediaFromSignedUrl',
                 'as'   => 'download.media.from.signed.url',
             ])->middleware('signed');
 
             Route::get('without-scheduled-activities', [
-                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledActivities',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutScheduledActivities',
                 'as'   => 'patients.without-scheduled-activities',
             ])->middleware('permission:patient.read,careplan.read,call.read');
 
             Route::get('without-inbound-calls', [
-                'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutInboundCalls',
                 'as'   => 'patients.without-inbound-calls',
             ])->middleware('permission:patient.read,call.read');
 
@@ -358,18 +359,18 @@ Route::group(['middleware' => 'auth'], function () {
             /*
              * deprecated in favor of without-scheduled-activities
             Route::get('{practiceId}/patients/without-scheduled-calls', [
-                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'practice.patients.without-scheduled-calls',
             ])->middleware('permission:patient.read,careplan.read');
             */
 
             Route::get('{practiceId}/patients/without-scheduled-activities', [
-                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledActivities',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutScheduledActivities',
                 'as'   => 'practice.patients.without-scheduled-activities',
             ])->middleware('permission:patient.read,careplan.read');
 
             Route::get('{practiceId}/patients/without-inbound-calls', [
-                'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutInboundCalls',
                 'as'   => 'practice.patients.without-inbound-calls',
             ])->middleware('permission:patient.read');
         });
@@ -553,7 +554,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::patch(
         'work-hours/{id}',
-        'CareCenter\WorkScheduleController@updateDailyHours'
+        '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@updateDailyHours'
     )->middleware('permission:workHours.update');
     // end API
 
@@ -704,7 +705,7 @@ Route::group(['middleware' => 'auth'], function () {
     ], function () {
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
             Route::get('', [
-                'uses' => 'OfflineActivityTimeRequestController@index',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@index',
                 'as'   => 'offline-activity-time-requests.index',
             ])->middleware('permission:patient.read,offlineActivityRequest.read');
         });
@@ -958,11 +959,11 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
             Route::get('create', [
-                'uses' => 'OfflineActivityTimeRequestController@create',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@create',
                 'as'   => 'offline-activity-time-requests.create',
             ])->middleware('permission:patient.read,offlineActivityRequest.create');
             Route::post('store', [
-                'uses' => 'OfflineActivityTimeRequestController@store',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@store',
                 'as'   => 'offline-activity-time-requests.store',
             ])->middleware('permission:offlineActivityRequest.create');
         });
@@ -970,23 +971,23 @@ Route::group(['middleware' => 'auth'], function () {
         //call scheduling
         Route::group(['prefix' => 'calls'], function () {
             Route::get('', [
-                'uses' => 'CallController@index',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@index',
                 'as'   => 'call.index',
             ])->middleware('permission:call.read');
             Route::get('create', [
-                'uses' => 'CallController@create',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@create',
                 'as'   => 'call.create',
             ])->middleware('permission:call.create');
             Route::get('edit/{actId}', [
-                'uses' => 'CallController@edit',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@edit',
                 'as'   => 'call.edit',
             ]);
             Route::get('next', [
-                'uses' => 'CallController@getPatientNextScheduledCallJson',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@getPatientNextScheduledCallJson',
                 'as'   => 'call.next',
             ])->middleware('permission:call.read');
             Route::post('reschedule', [
-                'uses' => 'CallController@reschedule',
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@reschedule',
                 'as'   => 'call.reschedule',
             ])->middleware('permission:call.update');
         });
@@ -1003,7 +1004,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::get('family-members', [
-            'uses' => 'FamilyController@getMembers',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\FamilyController@getMembers',
             'as'   => 'family.get',
         ])->middleware('permission:patient.read');
     });
@@ -1013,7 +1014,7 @@ Route::group(['middleware' => 'auth'], function () {
         'middleware' => ['permission:has-schedule'],
         'prefix'     => 'care-center',
     ], function () {
-        Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [
+        Route::resource('work-schedule', '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController', [
             'only' => [
                 'index',
                 'store',
@@ -1025,32 +1026,32 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:nurseContactWindow.read,nurseContactWindow.create');
 
         Route::get('work-schedule/get-calendar-data', [
-            'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@calendarEvents',
             'as'   => 'care.center.work.schedule.getCalendarData',
         ])->middleware('permission:nurseContactWindow.read');
 
         Route::get('work-schedule/get-daily-report', [
-            'uses' => 'CareCenter\WorkScheduleController@dailyReportsForNurse',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@dailyReportsForNurse',
             'as'   => 'care.center.work.schedule.getDailyReport',
         ])->middleware('permission:nurseContactWindow.read');
 
         Route::get('work-schedule/get-nurse-calendar-data', [
-            'uses' => 'CareCenter\WorkScheduleController@calendarWorkEventsForAuthNurse',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@calendarWorkEventsForAuthNurse',
             'as'   => 'care.center.work.schedule.calendarWorkEventsForAuthNurse',
         ])->middleware('permission:nurseContactWindow.read');
 
         Route::get('work-schedule/destroy/{id}', [
-            'uses' => 'CareCenter\WorkScheduleController@destroy',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@destroy',
             'as'   => 'care.center.work.schedule.destroy',
         ])->middleware('permission:nurseContactWindow.delete');
 
         Route::post('work-schedule/holidays', [
-            'uses' => 'CareCenter\WorkScheduleController@storeHoliday',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@storeHoliday',
             'as'   => 'care.center.work.schedule.holiday.store',
         ])->middleware('permission:nurseHoliday.create');
 
         Route::get('work-schedule/holidays/destroy/{id}', [
-            'uses' => 'CareCenter\WorkScheduleController@destroyHoliday',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@destroyHoliday',
             'as'   => 'care.center.work.schedule.holiday.destroy',
         ])->middleware('permission:nurseHoliday.delete');
     });
@@ -1067,11 +1068,11 @@ Route::group([], function () {
         'as'   => 'api.pagetracking',
     ]);
     Route::post('callupdate', [
-        'uses' => 'CallController@update',
+        'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@update',
         'as'   => 'api.callupdate',
     ]);
     Route::post('callcreate-multi', [
-        'uses' => 'CallController@createMulti',
+        'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@createMulti',
         'as'   => 'api.callcreate-multi',
     ]);
 });
@@ -1218,12 +1219,12 @@ Route::group([
 //This route was replaced by route with url '/downloadInvoice/{practice}/{name}', and name 'monthly.billing.download'.
 //We keep it here to support Report links mailed before 5/12/17.
 Route::get('/admin/reports/monthly-billing/v2/downloadInvoice/{practice}/{name}', [
-    'uses'       => 'Billing\PracticeInvoiceController@downloadInvoice',
+    'uses'       => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Billing\PracticeInvoiceController@downloadInvoice',
     'middleware' => ['auth'],
 ]);
 
 Route::get('/downloadInvoice/{practice}/{name}', [
-    'uses'       => 'Billing\PracticeInvoiceController@downloadInvoice',
+    'uses'       => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Billing\PracticeInvoiceController@downloadInvoice',
     'as'         => 'monthly.billing.download',
     'middleware' => ['auth'],
 ]);
@@ -1319,19 +1320,19 @@ Route::group([
 
     Route::group(['prefix' => 'monthly-billing'], function () {
         Route::get('make', [
-            'uses' => 'Billing\PracticeInvoiceController@make',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Billing\PracticeInvoiceController@make',
             'as'   => 'saas-admin.monthly.billing.make',
         ]);
 
         Route::post('data', [
-            'uses' => 'Billing\PracticeInvoiceController@data',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Billing\PracticeInvoiceController@data',
             'as'   => 'saas-admin.monthly.billing.data',
         ]);
     });
 
     Route::group(['prefix' => 'practice/billing'], function () {
         Route::get('create', [
-            'uses' => 'Billing\PracticeInvoiceController@createInvoices',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Billing\PracticeInvoiceController@createInvoices',
             'as'   => 'saas-admin.practices.billing.create',
         ]);
     });
@@ -1368,16 +1369,14 @@ Route::get('all-notifications-pages/{page}/{resultsPerPage}', [
 ])->middleware('permission:provider.read,note.read');
 
 Route::get('nurses/holidays', [
-    'uses' => 'CareCenter\WorkScheduleController@getHolidays',
+    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@getHolidays',
     'as'   => 'get.admin.nurse.schedules.holidays',
 ])->middleware('permission:nurse.read');
-
 
 Route::group([
     'prefix'     => 'auth',
     'middleware' => ['web'],
 ], function () {
-    Auth::routes();
     Route::get(
         '/patient-self-enrollment',
         [
@@ -1431,7 +1430,7 @@ Route::get('/notification-subscriptions-dashboard', [
 ])->middleware('auth');
 
 Route::post('nurses/nurse-calendar-data', [
-    'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
+    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
 

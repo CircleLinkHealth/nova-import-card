@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Traits\ManagesPatientCookies;
+use CircleLinkHealth\Customer\Traits\ManagesPatientCookies;
 use Illuminate\Http\Request;
 
 class WelcomeController extends Controller
@@ -46,7 +46,7 @@ class WelcomeController extends Controller
     public function index(Request $request)
     {
         if ( ! auth()->check()) {
-            return \App::call('App\Http\Controllers\Auth\LoginController@showLoginForm');
+            return redirect()->to('login');
         }
 
         $user = auth()->user();

@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Traits\ManagesPatientCookies;
+use CircleLinkHealth\Customer\Traits\ManagesPatientCookies;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
 
