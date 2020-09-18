@@ -3,6 +3,9 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Michalisantoniou6\Cerberus\Middleware\CerberusAbility;
+use Michalisantoniou6\Cerberus\Middleware\CerberusPermission;
+use Michalisantoniou6\Cerberus\Middleware\CerberusRole;
 
 class Kernel extends HttpKernel
 {
@@ -63,5 +66,9 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+    
+        'ability'                => CerberusAbility::class,
+        'permission'             => CerberusPermission::class,
+        'role'                   => CerberusRole::class,
     ];
 }

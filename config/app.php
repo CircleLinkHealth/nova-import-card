@@ -1,5 +1,7 @@
 <?php
 
+use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
+
 return [
 
     /*
@@ -178,6 +180,8 @@ return [
         \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
         \App\Providers\NovaServiceProvider::class,
         CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider::class,
+        CpmAdminServiceProvider::class
+
     ],
 
     /*
