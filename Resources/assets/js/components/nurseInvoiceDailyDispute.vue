@@ -86,7 +86,7 @@
 <script>
     import LoaderComponent from '../../../../../SharedVueComponents/Resources/assets/js/components/loader'
     import {mapActions} from 'vuex'
-    import {addNotification} from '../../../../../SharedVueComponents/Resources/assets/js/store/actions'
+    import {addNotification} from '../../../../../../resources/assets/js/store/actions'
 
 
     export default {
