@@ -7,7 +7,7 @@
 </template>
 
 <script>
-    import Notifications from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications'
+    import Notifications from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications'
     import EventBus from './comps/event-bus'
     import timeDisplay from '../../util/time-display'
 

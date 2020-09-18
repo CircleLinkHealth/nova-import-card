@@ -35,7 +35,7 @@
 
 <script>
     import Modal from '../../../common/modal'
-    import LoaderComponent from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import LoaderComponent from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
     import {rootUrl} from '../../../../app.config'
     import {Event} from 'vue-tables-2'
     import VueCache from '../../../../util/vue-cache'

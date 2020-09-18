@@ -150,7 +150,7 @@
     import SelectTimesModel from './comps/modals/select-times.modal'
     import UnscheduledPatientsModal from './comps/modals/unscheduled-patients.modal'
     import BindAppEvents from './app.events'
-    import Loader from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import Loader from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
     import VueCache from '../../util/vue-cache'
     import GetsNurses from '../../mixins/gets-nurses'
     import {today} from '../../util/today'

@@ -52,10 +52,10 @@
     import TimeDisplay from './comps/time-display'
     import EventBus from './comps/event-bus'
     import {Event} from 'vue-tables-2'
-    import LoaderComponent from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import LoaderComponent from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
     import AwayComponent from './comps/away'
     import BhiComponent from './comps/bhi-switch'
-    import Notifications from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications';
+    import Notifications from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications';
 
     import {registerHandler, sendRequest} from "../../components/bc-job-manager";
 

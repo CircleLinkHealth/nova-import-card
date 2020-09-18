@@ -201,10 +201,10 @@
     import ChargeableServicesModal from './comps/chargeable-services-modal'
     import ErrorModal from './comps/error-modal'
     import buildReport, {styles} from '../../excel'
-    import Select2Component from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/src/select2'
-    import Loader from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import Select2Component from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/src/select2'
+    import Loader from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
     import timeDisplay from '../../util/time-display'
-    import NotificationsComponent from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications'
+    import NotificationsComponent from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications'
     import SERVICES from '../../constants/services.types'
 
     export default {

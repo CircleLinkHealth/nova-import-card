@@ -25,7 +25,7 @@
 
     import SERVICES from '../../../constants/services.types';
     import Modal from '../../common/modal'
-    import Loader from '../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import Loader from '../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
 
     export default {
         name: 'chargeable-services-modal',

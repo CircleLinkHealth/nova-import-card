@@ -211,10 +211,10 @@
 <script>
     import {Event} from 'vue-tables-2'
     import Modal from '../../../common/modal'
-    import LoaderComponent from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import LoaderComponent from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
     import {rootUrl} from '../../../../app.config'
     import {today} from '../../../../util/today'
-    import notifications from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications'
+    import notifications from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications'
     import VueSelect from 'vue-select'
     import VueCache from '../../../../util/vue-cache'
 

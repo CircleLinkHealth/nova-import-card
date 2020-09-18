@@ -34,7 +34,7 @@
 
 <script>
     import EventBus from './comps/event-bus'
-    import LoaderComponent from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import LoaderComponent from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
     import {rootUrl} from "../../app.config";
     import {sendRequest, registerHandler} from "../../components/bc-job-manager";
 

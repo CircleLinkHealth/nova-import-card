@@ -61,8 +61,8 @@
 <script>
     import Modal from '../../../common/modal'
     import {Event} from 'vue-tables-2'
-    import Notifications from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications'
-    import Loader from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import Notifications from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications'
+    import Loader from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
     import Datepicker from 'vuejs-datepicker'
     import moment from 'moment'
     import * as callUpdateFunctions from '../../utils/call-update.fn';

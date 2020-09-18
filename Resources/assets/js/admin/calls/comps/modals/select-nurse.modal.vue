@@ -66,8 +66,8 @@
     import Modal from '../../../common/modal'
     import {Event} from 'vue-tables-2'
     import {rootUrl} from '../../../../app.config'
-    import Notifications from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications'
-    import Loader from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
+    import Notifications from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications'
+    import Loader from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
     import VueCache from '../../../../util/vue-cache'
 
     export default {
