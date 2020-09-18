@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Core\Jobs;
 
-use App\OutgoingSms;
+use CircleLinkHealth\SharedModels\Entities\OutgoingSms;
 use CircleLinkHealth\Core\TwilioClientable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

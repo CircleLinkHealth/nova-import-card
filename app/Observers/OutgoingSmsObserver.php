@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\OutgoingSms;
+use CircleLinkHealth\SharedModels\Entities\OutgoingSms;
 use Illuminate\Support\Facades\Log;
 use NotificationChannels\Twilio\Twilio;
 use NotificationChannels\Twilio\TwilioSmsMessage;

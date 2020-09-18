@@ -33,7 +33,6 @@ use App\Observers\RevisionObserver;
 use App\Observers\SaasAccountObserver;
 use App\Observers\TwilioCallObserver;
 use App\Observers\UserObserver;
-use App\OutgoingSms;
 use App\TwilioCall;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Holiday;
@@ -72,7 +71,6 @@ class ObserversServiceProvider extends ServiceProvider
         Medication::observe(MedicationObserver::class);
         Note::observe(NoteObserver::class);
         NurseInvoiceExtra::observe(NurseInvoiceExtrasObserver::class);
-        OutgoingSms::observe(OutgoingSmsObserver::class);
         PageTimer::observe(PageTimerObserver::class);
         Patient::observe(PatientObserver::class);
         PatientMonthlySummary::observe(PatientMonthlySummaryObserver::class);
