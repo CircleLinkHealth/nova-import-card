@@ -13,7 +13,7 @@
 </template>
 
 <script type="text/babel">
-    import IsLoadable from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/mixins/is-loadable'
+    import IsLoadable from '../../mixins/is-loadable'
 
     export default {
         props: {

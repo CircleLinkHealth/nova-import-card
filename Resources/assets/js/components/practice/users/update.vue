@@ -207,7 +207,7 @@
     import {mapActions, mapGetters} from 'vuex'
     import {addNotification, clearErrors, clearOpenModal, updatePracticeStaff} from '../../../store/actions'
     import {practiceLocations, practiceStaff} from '../../../store/getters'
-    import MaterialSelect from '../../../../../../../../resources/assets/js/components/src/material-select.vue'
+    import MaterialSelect from '../../src/material-select.vue'
     import store from '../../../store';
 
     import {library} from '@fortawesome/fontawesome-svg-core'
