@@ -6,11 +6,9 @@
 
 namespace CircleLinkHealth\Customer\Providers;
 
-use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyInstanceStatusTable;
 use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
-use CircleLinkHealth\SqlViews\Providers\SqlViewsServiceProvider;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -19,7 +17,7 @@ use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 
-class CustomerServiceProvider extends ServiceProvider implements DeferrableProvider
+class CustomerDeferrableServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Get the services provided by the provider.
@@ -43,9 +41,6 @@ class CustomerServiceProvider extends ServiceProvider implements DeferrableProvi
      */
     public function register()
     {
-        $this->registerTranslations();
-        $this->registerConfig();
-        $this->registerViews();
         $this->registerFactories();
         if (class_exists(\App\User::class)) {
             Relation::morphMap([
@@ -53,7 +48,6 @@ class CustomerServiceProvider extends ServiceProvider implements DeferrableProvi
             ]);
         }
 
-        $this->app->register(RouteServiceProvider::class);
         $this->app->bind(DatabaseNotification::class, \CircleLinkHealth\Core\Entities\DatabaseNotification::class);
         $this->app->bind(
             HasDatabaseNotifications::class,
