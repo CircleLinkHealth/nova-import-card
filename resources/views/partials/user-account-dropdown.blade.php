@@ -38,9 +38,9 @@
                 </a>
             </li>
         @endif
-        @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas())
+        @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas() && $url = config('services.cpm-admin-app.url'))
             <li><a style="color: #47beab"
-                   href="{{ route('admin.dashboard') }}">
+                   href="{{ $url }}">
                     Admin Panel
                 </a>
             </li>
