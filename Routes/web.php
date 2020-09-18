@@ -10,6 +10,11 @@
 // NOTE: in two route groups. One for software-only and one for super admins
 //
 Route::prefix('cpmadmin')->group(function () {
+    Route::get('upg0506/{type}', [
+        'uses' => 'Admin\DashboardController@upg0506',
+        'as'   => 'upg0506.demo',
+    ])->middleware('auth');
+    
     Route::group(['prefix' => 'api'], function () {
         Route::group(['prefix' => 'admin'], function () {
             Route::get('clear-cache/{key}', [
