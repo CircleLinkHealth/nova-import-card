@@ -110,7 +110,7 @@
     import AddCustomFilterModal from "./comps/modals/add-custom-filter.modal";
     import EditPatientModal from "./comps/modals/edit-patient.modal";
     import Loader from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
-    import Notifications from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/notifications';
+    import Notifications from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications';
     import Multiselect from 'vue-multiselect';
 
     let self;

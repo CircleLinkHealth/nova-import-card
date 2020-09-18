@@ -204,7 +204,7 @@
     import Select2Component from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/src/select2'
     import Loader from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
     import timeDisplay from '../../util/time-display'
-    import NotificationsComponent from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/notifications'
+    import NotificationsComponent from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications'
     import SERVICES from '../../constants/services.types'
 
     export default {

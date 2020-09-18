@@ -122,7 +122,7 @@
     import LoaderComponent from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
     import {rootUrl} from '../../../../app.config'
     import {today} from '../../../../util/today'
-    import notifications from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/notifications'
+    import notifications from '../../../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications'
     import VueSelect from 'vue-select'
     import VueCache from '../../../../util/vue-cache'
 

@@ -55,7 +55,7 @@
     import LoaderComponent from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
     import AwayComponent from './comps/away'
     import BhiComponent from './comps/bhi-switch'
-    import Notifications from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/notifications';
+    import Notifications from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/notifications/notifications';
 
     import {registerHandler, sendRequest} from "../../components/bc-job-manager";
 
