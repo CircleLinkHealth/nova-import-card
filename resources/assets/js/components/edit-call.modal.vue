@@ -99,7 +99,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
 
 <script>
     import {Event} from 'vue-tables-2'
-    import Modal from '.../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/common/modal'
+    import Modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/common/modal'
     import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
     import {rootUrl} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
     import {today} from '../util/today'

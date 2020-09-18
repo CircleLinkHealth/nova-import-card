@@ -5,7 +5,7 @@ require('select2');
 window.Vue = require('vue');
 
 Vue.component('material-select', require('../components/src/material-select.vue'));
-Vue.component('select2', require('.../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/src/select2.vue'));
+Vue.component('select2', require('../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/src/select2.vue'));
 
 /**
  *

@@ -51,7 +51,7 @@
     </modal>
 </template>
 <script>
-    import Modal from '.../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/common/modal';
+    import Modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/common/modal';
     import {rootUrl} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config';
     import AddCondition from './careplan/add-condition';
     import CareplanMixin from './careplan/mixins/careplan.mixin';

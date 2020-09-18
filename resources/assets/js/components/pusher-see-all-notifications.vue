@@ -69,7 +69,7 @@
         value: 5
     };
     import VueSelect from 'vue-select';
-    import FullScreenLoader from ".../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/NursesWorkSchedules/FullScreenLoader";
+    import FullScreenLoader from "../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/NursesWorkSchedules/FullScreenLoader";
 
     export default {
         name: "pusher-see-all-notifications",

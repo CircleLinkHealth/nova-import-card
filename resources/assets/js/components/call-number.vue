@@ -183,7 +183,7 @@
 </template>
 <script>
     import {rootUrl} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
-    import EventBus from '.../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import EventBus from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
     import {registerHandler, sendRequest} from "./bc-job-manager";
     import {Logger} from '../logger-logdna';
