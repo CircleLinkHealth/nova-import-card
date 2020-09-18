@@ -308,7 +308,6 @@
 @endif
 
 <script src="{{mix('compiled/js/app-clh-admin-ui.js')}}"></script>
-<script type="text/javascript" src="{{ mix('compiled/js/admin-ui.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
 
 <script>
@@ -320,7 +319,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js"
         integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
 
-@include('partials.sentry-js')
+@include('core::partials.sentry-js')
 
 <div style="clear:both;height:100px;"></div>
 
