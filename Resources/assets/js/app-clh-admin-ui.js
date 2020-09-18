@@ -1,8 +1,7 @@
-require('./bootstrap')
-
+require('../../../../Sharedvuecomponents/Resources/assets/js/bootstrap')
 
 import 'es6-string-polyfills'
-import './prototypes/array.prototype'
+import '../../../../Sharedvuecomponents/Resources/assets/js/prototypes/array.prototype'
 import Vue from 'vue'
 import axios from '../../../../Sharedvuecomponents/Resources/assets/js/bootstrap-axios'
 import VueAxios from 'vue-axios'
@@ -43,7 +42,7 @@ const CareAmbassadorKPIs = () => import(/* webpackChunkName: "chunk-admin" */ '.
 const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/pages/work-schedule/daily-hours')
 const Select2Component = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/src/select2')
 const TimeTrackerEventsComponent = () => import(/* webpackChunkName: "chunk-time-tracker-events" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/time-tracker/time-tracker-events')
-const CpmMedicationGroupsMapsSettings = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/cpm-medication-groups-maps-settings')
+const CpmMedicationGroupsMapsSettings = () => import(/* webpackChunkName: "chunk-admin" */ './admin/cpm-medication-groups-maps-settings')
 const NotificationsComponent = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications')
 const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/loader')
 const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/NurseScheduleCalendar');
