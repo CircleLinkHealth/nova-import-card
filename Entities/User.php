@@ -308,7 +308,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
-    use \Laravel\Nova\Actions\Actionable;
     use Authenticatable;
     use CanResetPassword;
     use CerberusSiteUserTrait;
