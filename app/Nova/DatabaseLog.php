@@ -27,7 +27,7 @@ class DatabaseLog extends Resource
      *
      * @var string
      */
-    public static $model = \App\DatabaseLog::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\DatabaseLog::class;
 
     /**
      * The columns that should be searched.
