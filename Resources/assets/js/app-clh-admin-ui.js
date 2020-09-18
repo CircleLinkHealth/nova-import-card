@@ -7,7 +7,7 @@ import Vue from 'vue'
 import axios from '../../../../Sharedvuecomponents/Resources/assets/js/bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
-import store from "../../../../SharedVueComponents/Resources/assets/js/store";
+import store from "../../../../Sharedvuecomponents/Resources/assets/js/store";
 
 if (document) {
     const elem = document.querySelector('meta[name="base-url"]')
@@ -30,25 +30,25 @@ Vue.use(VueForm, {
     }
 });
 
-import EventBus from '../../../../SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+import EventBus from '../../../../Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
 import { ClientTable, ServerTable } from 'vue-tables-2'
 
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
-const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../SharedVueComponents/Resources/assets/js/admin/calls/app-v2')
-const NurseDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../SharedVueComponents/Resources/assets/js/admin/nurse/nurse-daily-report')
-const CaDirectorPanel = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../SharedVueComponents/Resources/assets/js/admin/ca-director/panel')
-const EnrolleeList = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../SharedVueComponents/Resources/assets/js/admin/enrollment-kpis/enrollee-list')
-const PracticeKPIs = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../SharedVueComponents/Resources/assets/js/admin/enrollment-kpis/practice-kpis')
-const CareAmbassadorKPIs = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../SharedVueComponents/Resources/assets/js/admin/enrollment-kpis/careambassador-kpis')
+const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/calls/app-v2')
+const NurseDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/nurse/nurse-daily-report')
+const CaDirectorPanel = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/ca-director/panel')
+const EnrolleeList = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/enrollment-kpis/enrollee-list')
+const PracticeKPIs = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/enrollment-kpis/practice-kpis')
+const CareAmbassadorKPIs = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/enrollment-kpis/careambassador-kpis')
 const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/pages/work-schedule/daily-hours')
 const Select2Component = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/src/select2')
-const TimeTrackerEventsComponent = () => import(/* webpackChunkName: "chunk-time-tracker-events" */ '../../../../SharedVueComponents/Resources/assets/js/admin/time-tracker/time-tracker-events')
-const CpmMedicationGroupsMapsSettings = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/cpm-medication-groups-maps-settings')
+const TimeTrackerEventsComponent = () => import(/* webpackChunkName: "chunk-time-tracker-events" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/time-tracker/time-tracker-events')
+const CpmMedicationGroupsMapsSettings = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/cpm-medication-groups-maps-settings')
 const NotificationsComponent = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications')
 const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/loader')
-const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../SharedVueComponents/Resources/assets/js/admin/NursesWorkSchedules/NurseScheduleCalendar');
-const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../SharedVueComponents/Resources/assets/js/admin/NursesWorkSchedules/FullScreenLoader');
-const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../SharedVueComponents/Resources/assets/js/admin/NursesWorkSchedules/CalendarDailyReport');
+const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/NurseScheduleCalendar');
+const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/FullScreenLoader');
+const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/CalendarDailyReport');
 
 
 Vue.use(ClientTable, {}, false)
