@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Console\Commands\CheckVoiceCalls;
-use App\CpmCallAlert;
+use CircleLinkHealth\SharedModels\Entities\CpmCallAlert;
 use App\Nova\Filters\TwilioCallSourceFilter;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\Traits\Tests\PracticeHelpers;
