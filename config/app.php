@@ -10,6 +10,7 @@ use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvide
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
+use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
@@ -226,6 +227,7 @@ return [
         CoreDeferredBindingsServiceProvider::class,
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
+        CustomerAuthServiceProvider::class
     ],
 
     /*
