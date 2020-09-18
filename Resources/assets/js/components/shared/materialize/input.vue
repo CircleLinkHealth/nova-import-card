@@ -1,7 +1,7 @@
 <script>
     import {mapGetters, mapActions} from 'vuex'
-    import {errors} from '../../../../../../../../resources/assets/js/store/getters'
-    import {clearErrors} from '../../../../../../../../resources/assets/js/store/actions'
+    import {errors} from '../../../store/getters'
+    import {clearErrors} from '../../../store/actions'
 
     export default {
         props: {

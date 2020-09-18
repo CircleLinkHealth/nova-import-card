@@ -30,8 +30,8 @@
 
 <script>
     import {mapGetters, mapActions} from 'vuex'
-    import {practiceStaff} from '../../../../../../../../resources/assets/js/store/getters'
-    import {getPracticeStaff, deletePracticeStaff, getPracticeLocations} from '../../../../../../../../resources/assets/js/store/actions'
+    import {practiceStaff} from '../../../store/getters'
+    import {getPracticeStaff, deletePracticeStaff, getPracticeLocations} from '../../../store/actions'
 
     export default {
         computed: Object.assign({},

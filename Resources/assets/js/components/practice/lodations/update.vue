@@ -250,8 +250,8 @@
 <script>
     import modal from '../../shared/materialize/modal.vue';
     import {mapActions, mapGetters} from 'vuex'
-    import {addNotification, clearErrors, clearOpenModal, updatePracticeLocation} from '../../../../../../../../resources/assets/js/store/actions'
-    import {practiceLocations} from '../../../../../../../../resources/assets/js/store/getters'
+    import {addNotification, clearErrors, clearOpenModal, updatePracticeLocation} from '../../../store/actions'
+    import {practiceLocations} from '../../../store/getters'
     import MaterialSelect from '../../../../../../../../resources/assets/js/components/src/material-select.vue'
 
     export default {

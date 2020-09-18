@@ -205,10 +205,10 @@
 <script>
     import modal from '../../shared/materialize/modal.vue';
     import {mapActions, mapGetters} from 'vuex'
-    import {addNotification, clearErrors, clearOpenModal, updatePracticeStaff} from '../../../../../../../../resources/assets/js/store/actions'
-    import {practiceLocations, practiceStaff} from '../../../../../../../../resources/assets/js/store/getters'
+    import {addNotification, clearErrors, clearOpenModal, updatePracticeStaff} from '../../../store/actions'
+    import {practiceLocations, practiceStaff} from '../../../store/getters'
     import MaterialSelect from '../../../../../../../../resources/assets/js/components/src/material-select.vue'
-    import store from '../../../../../../../../resources/assets/js/store';
+    import store from '../../../store';
 
     import {library} from '@fortawesome/fontawesome-svg-core'
     import {faSpinner} from '@fortawesome/free-solid-svg-icons'

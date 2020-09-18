@@ -14,7 +14,7 @@
 
 <script>
     import {mapActions} from 'vuex'
-    import {addNotification} from '../../../../../../../../resources/assets/js/store/actions'
+    import {addNotification} from '../../../store/actions'
     export default {
         props: ['day', 'hours', 'windows'],
 
