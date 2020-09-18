@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use CircleLinkHealth\NurseInvoices\Traits\Nursable;
 use CircleLinkHealth\SharedModels\Entities\Dispute;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoiceDailyDispute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
@@ -31,7 +32,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property mixed                                                                                                           $invoice_data
  * @property \Illuminate\Support\Carbon|null                                                                                 $created_at
  * @property \Illuminate\Support\Carbon|null                                                                                 $updated_at
- * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute[]|\Illuminate\Database\Eloquent\Collection    $dailyDisputes
+ * @property \CircleLinkHealth\SharedModels\Entities\NurseInvoiceDailyDispute[]|\Illuminate\Database\Eloquent\Collection    $dailyDisputes
  * @property \CircleLinkHealth\SharedModels\Entities\Dispute                                                                $dispute
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection                            $media
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
