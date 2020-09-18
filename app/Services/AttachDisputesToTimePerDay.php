@@ -8,7 +8,7 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
