@@ -11,7 +11,7 @@ use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Tests\TestCase;
 
 /**

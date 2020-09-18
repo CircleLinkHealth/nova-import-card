@@ -13,7 +13,7 @@ use App\Traits\Tests\TimeHelpers;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Tests\CustomerTestCase;
 
 class CallStatusChangeTest extends CustomerTestCase

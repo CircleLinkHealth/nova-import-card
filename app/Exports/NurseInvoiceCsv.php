@@ -8,7 +8,7 @@ namespace App\Exports;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Traits\AttachableAsMedia;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Contracts\Support\Responsable;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromArray;
