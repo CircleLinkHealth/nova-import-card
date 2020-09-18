@@ -5,7 +5,7 @@
     import Dropzone from 'vue2-dropzone'
 
     import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
-    import CarePlanApi from '../../../api/patient-care-plan'
+    import CarePlanApi from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/api/patient-care-plan'
     import {rootUrl} from '../../../app.config'
 
     export default {

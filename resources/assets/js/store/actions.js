@@ -1,8 +1,8 @@
-import careTeam from "../api/care-team";
-import practiceLocationsApi from "../api/practice-location";
-import practiceStaffApi from "../api/practice-staff";
-import carePersonApi from "../api/care-person";
-import carePlanApi from "../api/patient-care-plan";
+import careTeam from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/api/care-team";
+import practiceLocationsApi from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/api/practice-location";
+import practiceStaffApi from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/api/practice-staff";
+import carePersonApi from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/api/care-person";
+import carePlanApi from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/api/patient-care-plan";
 
 export const addNotification = ({commit}, notification) => {
     commit('ADD_NOTIFICATION', notification);
