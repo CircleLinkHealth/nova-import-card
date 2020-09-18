@@ -4,7 +4,7 @@
 
 <script>
     import {mapGetters} from 'vuex'
-    import {openModal} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/getters';
+    import {openModal} from '../../store/getters';
 
     export default {
         computed: Object.assign({},

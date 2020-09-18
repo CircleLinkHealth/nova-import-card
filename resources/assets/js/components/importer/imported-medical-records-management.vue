@@ -139,7 +139,7 @@
     import NotificationComponent from '../notifications'
     import VueCache from '../../util/vue-cache'
     import {mapGetters} from 'vuex'
-    import {currentUser} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/getters';
+    import {currentUser} from '../../store/getters';
     import VueSelect from "vue-select";
     import GetsNurses from '../../mixins/gets-nurses'
     import moment from "moment";

@@ -546,9 +546,9 @@
 <script>
     import modal from '../shared/modal.vue';
     import SearchProviders from './search-providers.vue'
-    import store from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store';
+    import store from '../../store';
     import {mapActions, mapGetters} from 'vuex'
-    import {addNotification, clearOpenModal, getPatientCareTeam, updateCarePerson} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/actions'
+    import {addNotification, clearOpenModal, getPatientCareTeam, updateCarePerson} from '../../store/actions'
     import specialtiesOptions from './specialties-options';
     import suffixOptions from './suffix-options';
 

@@ -7,7 +7,7 @@ import Vue from 'vue'
 import axios from '../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
-import store from "../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store";
+import store from "./store";
 import {ClientTable} from 'vue-tables-2'
 import "vue-trix"
 import EventBus from './admin/time-tracker/comps/event-bus'
