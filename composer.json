@@ -34,6 +34,7 @@
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
         "fico7489/laravel-pivot": "^3.0",
         "circlelinkhealth/twofa-module": "*",
+        "lab404/laravel-impersonate": "^1.2",
         "spatie/laravel-medialibrary": "^7.0.0"
     },
     "repositories": [
