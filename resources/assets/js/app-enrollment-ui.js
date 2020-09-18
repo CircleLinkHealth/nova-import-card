@@ -1,4 +1,4 @@
-import store from "./store";
+import store from "../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store";
 
 require('./bootstrap');
 

@@ -64,7 +64,7 @@
 
 <script>
     import {mapGetters, mapActions} from 'vuex'
-    import {setOpenModal} from "../store/actions";
+    import {setOpenModal} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/actions";
 
     export default {
         data() {
