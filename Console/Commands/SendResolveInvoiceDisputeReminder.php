@@ -110,7 +110,7 @@ class SendResolveInvoiceDisputeReminder extends Command
             return true;
         }
 
-        $disputesExist = \CircleLinkHealth\NurseInvoices\Entities\Dispute::whereIn('disputable_id', \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice::where('month_year', $invoiceMonth)->pluck('id'))->where('is_resolved', false)->exists();
+        $disputesExist = \CircleLinkHealth\SharedModels\Entities\Dispute::whereIn('disputable_id', \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice::where('month_year', $invoiceMonth)->pluck('id'))->where('is_resolved', false)->exists();
 
         if ( ! $disputesExist) {
             return false;

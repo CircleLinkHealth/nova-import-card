@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Notifications;
 
-use CircleLinkHealth\NurseInvoices\Entities\Dispute;
+use CircleLinkHealth\SharedModels\Entities\Dispute;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;

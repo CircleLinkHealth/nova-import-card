@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Traits;
 
-use CircleLinkHealth\NurseInvoices\Entities\Dispute;
+use CircleLinkHealth\SharedModels\Entities\Dispute;
 
 /**
  * Created by PhpStorm.

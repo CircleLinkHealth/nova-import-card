@@ -14,6 +14,7 @@ use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use CircleLinkHealth\NurseInvoices\Traits\Nursable;
+use CircleLinkHealth\SharedModels\Entities\Dispute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
@@ -31,7 +32,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Illuminate\Support\Carbon|null                                                                                 $created_at
  * @property \Illuminate\Support\Carbon|null                                                                                 $updated_at
  * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute[]|\Illuminate\Database\Eloquent\Collection    $dailyDisputes
- * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute                                                                $dispute
+ * @property \CircleLinkHealth\SharedModels\Entities\Dispute                                                                $dispute
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection                            $media
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurse
@@ -56,7 +57,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                    $daily_disputes_count
  * @property int|null                                                                                    $media_count
  * @property int|null                                                                                    $notifications_count
- * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection $disputes
+ * @property \CircleLinkHealth\SharedModels\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection $disputes
  * @property int|null                                                                                    $disputes_count
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
