@@ -1291,31 +1291,6 @@ if ( ! function_exists('read_file_using_generator')) {
         fclose($handle);
     }
 }
-if ( ! function_exists('getEhrReportWritersFolderUrl')) {
-    function getEhrReportWritersFolderUrl()
-    {
-        //this is to make local environments faster for devs
-        //comment out this if section to use the feature
-        if (app()->environment('local')) {
-            return null;
-        }
-
-        $key = 'ehr_report_writers_folder_url';
-
-        return \Cache::remember($key, 2, function () use ($key) {
-            return AppConfig::pull($key, null);
-        });
-
-//        Commenting out due to Heroku migration
-//        $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
-//
-//        if ( ! $dir) {
-//            return null;
-//        }
-//
-//        return "https://drive.google.com/drive/folders/{$dir['path']}";
-    }
-}
 
 if ( ! function_exists('getGoogleDirectoryByName')) {
     function getGoogleDirectoryByName($name)

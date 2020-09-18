@@ -272,15 +272,6 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                 <li>
                                     <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                                 </li>
-                                @if($user->hasRole('developer') || $user->isAdmin())
-                                    <li>
-                                        <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('admin.reports.nurse.metrics') }}">
-                                            Nurse Performance Report</a>
-                                    </li>
-                                @endif
                             </ul>
                         </li>
                         {{--Live Notifications--}}
