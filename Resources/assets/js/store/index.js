@@ -3,11 +3,10 @@ import Vuex from "vuex";
 import * as actions from "./actions";
 import * as getters from "./getters";
 import * as mutations from "./mutations";
-import Errors from '../../../../../../resources/assets/js/components/src/Errors'
+import Errors from '../components/src/Errors'
 
 Vue.use(Vuex)
 
-// const debug = process.env.NODE_ENV !== 'production'
 const debug = true
 Vue.config.debug = true
 
