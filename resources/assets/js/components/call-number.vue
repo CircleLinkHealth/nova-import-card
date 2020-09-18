@@ -184,7 +184,7 @@
 <script>
     import {rootUrl} from "../app.config";
     import EventBus from '../admin/time-tracker/comps/event-bus'
-    import LoaderComponent from '../components/loader';
+    import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
     import {registerHandler, sendRequest} from "./bc-job-manager";
     import {Logger} from '../logger-logdna';
     import CallNumpad from './call-numpad';

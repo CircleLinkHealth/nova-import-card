@@ -133,7 +133,7 @@
     import {rootUrl} from '../../app.config'
     import TextEditable from '../../admin/calls/comps/text-editable'
     import EventBus from '../../admin/time-tracker/comps/event-bus'
-    import LoaderComponent from '../loader'
+    import LoaderComponent from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
     import ErrorModal from '../../admin/billing/comps/error-modal'
     import ErrorModalButton from '../../admin/billing/comps/error-modal-button'
     import NotificationComponent from '../notifications'

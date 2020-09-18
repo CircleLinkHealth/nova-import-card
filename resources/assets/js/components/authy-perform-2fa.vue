@@ -82,7 +82,7 @@
     </div>
 </template>
 <script>
-    import LoaderComponent from './loader';
+    import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
     import {rootUrl} from "../app.config";
     import Errors from "./src/Errors";
 

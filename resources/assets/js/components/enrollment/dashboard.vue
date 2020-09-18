@@ -105,7 +105,7 @@ import {rootUrl} from '../../app.config';
 import TimeTracker from '../../admin/time-tracker';
 import TimeTrackerEventBus from '../../admin/time-tracker/comps/event-bus';
 
-import Loader from '../loader.vue';
+import Loader from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader.vue';
 import {Logger} from '../../logger-logdna';
 
 const userId = window.userId;

@@ -131,7 +131,7 @@
     import {Event} from 'vue-tables-2'
     import {CancelToken} from 'axios'
     import moment from 'moment'
-    import loader from '../loader'
+    import loader from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
 
     /**
      * Determines whether to show patient name format as

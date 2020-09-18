@@ -31,7 +31,7 @@
 
 <script>
 // import PusherSeeAllNotifications from './pusher-see-all-notifications';
-import LoaderComponent from './loader'
+import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
 
 export default {
     name: "pusher-notifications",

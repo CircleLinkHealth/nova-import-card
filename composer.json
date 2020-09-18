@@ -125,6 +125,10 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/short-url.git"
     }
   ],
@@ -149,6 +153,7 @@
     "circlelinkhealth/ccda-parser-processor-php-module": "1.1.3",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.1.9",
     "circlelinkhealth/condition-code-lookup-module": "1.1.6",
+    "circlelinkhealth/sharedvuecomponents-module": "dev-vaporizing-admin",
     "circlelinkhealth/core-module": "dev-vaporizing-admin",
     "circlelinkhealth/cpm-migrations-module": "dev-vaporizing-admin",
     "circlelinkhealth/customer-module": "dev-vaporizing-admin",
