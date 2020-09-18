@@ -177,7 +177,7 @@ return [
     
         \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
         \App\Providers\NovaServiceProvider::class,
-
+        CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider::class,
     ],
 
     /*
