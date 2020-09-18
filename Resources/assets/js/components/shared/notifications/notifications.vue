@@ -19,7 +19,7 @@
 <script>
     import Notification from './notification.vue'
     import {mapGetters} from 'vuex'
-    import {notifications} from '../../../store/getters'
+    import {notifications} from '../../../../../../../../resources/assets/js/store/getters'
 
     export default {
         components: {

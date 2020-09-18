@@ -34,7 +34,7 @@
      * Notification Component
      */
     import {mapActions} from 'vuex'
-    import {removeNotification} from '../../../store/actions'
+    import {removeNotification} from '../../../../../../../../resources/assets/js/store/actions'
 
     export default {
         props: ['notification'],
