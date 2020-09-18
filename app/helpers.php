@@ -1794,23 +1794,6 @@ if ( ! function_exists('isPatientPcmBadgeEnabled')) {
     }
 }
 
-if ( ! function_exists('upg0506IsEnabled')) {
-    /**
-     * Key: upg0506_is_enabled
-     * Default: false.
-     */
-    function upg0506IsEnabled(): bool
-    {
-        $key = 'upg0506_is_enabled';
-        $val = AppConfig::pull($key, null);
-        if (null === $val) {
-            return 'true' === AppConfig::set($key, false);
-        }
-
-        return 'true' === $val;
-    }
-}
-
 if ( ! function_exists('patientLoginIsEnabledForPractice')) {
     /**
      * Key: enable_patient_login_for_practice
