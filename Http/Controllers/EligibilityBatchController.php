@@ -13,7 +13,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordEligibilityJobToCsvAdapter;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ProcessEligibilityBatch;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;

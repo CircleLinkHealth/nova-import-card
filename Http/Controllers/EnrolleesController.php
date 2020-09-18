@@ -9,7 +9,7 @@ namespace CircleLinkHealth\Eligibility\Http\Controllers;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use CircleLinkHealth\Eligibility\Jobs\ImportMedicalRecordsById;
 use Illuminate\Http\Request;

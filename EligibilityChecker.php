@@ -14,7 +14,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\Entities\Problem;
 use CircleLinkHealth\Eligibility\Exceptions\InvalidStructureException;

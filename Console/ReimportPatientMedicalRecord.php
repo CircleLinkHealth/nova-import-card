@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Console;
 
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;

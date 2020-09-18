@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Eligibility\Console\Athena;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;

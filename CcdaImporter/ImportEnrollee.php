@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CsvWithJsonMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\Ccda;

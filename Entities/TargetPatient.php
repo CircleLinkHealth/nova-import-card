@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\BelongsToCcda;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 /**
  * CircleLinkHealth\Eligibility\Entities\TargetPatient.
@@ -30,7 +31,7 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property string                                                                                      $description
  * @property \CircleLinkHealth\Customer\Entities\Ehr                                                     $ehr
- * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                                        $enrollee
+ * @property \CircleLinkHealth\SharedModels\Entities\Enrollee|null                                        $enrollee
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User|null                                               $user
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newModelQuery()

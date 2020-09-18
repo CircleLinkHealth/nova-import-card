@@ -14,7 +14,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
 use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
 use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;

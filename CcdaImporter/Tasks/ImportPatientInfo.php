@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\FiresImportingHooks;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Support\Str;
 

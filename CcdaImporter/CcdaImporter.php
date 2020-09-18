@@ -27,7 +27,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -51,7 +51,7 @@ class CcdaImporter
      */
     protected $ccda;
     /**
-     * @var \CircleLinkHealth\Eligibility\Entities\Enrollee
+     * @var \CircleLinkHealth\SharedModels\Entities\Enrollee
      */
     protected $enrollee;
     /**

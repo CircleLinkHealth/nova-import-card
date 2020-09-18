@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

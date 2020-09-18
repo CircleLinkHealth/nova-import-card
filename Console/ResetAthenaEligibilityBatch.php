@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Eligibility\Console;
 
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;

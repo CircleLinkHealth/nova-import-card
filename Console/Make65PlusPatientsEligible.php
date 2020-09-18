@@ -9,7 +9,7 @@ namespace CircleLinkHealth\Eligibility\Console;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\Console\Input\InputArgument;
