@@ -72,7 +72,7 @@ class WelcomeController extends Controller
         }
 
         if ($user->isAdmin()) {
-            return \App::call('App\Http\Controllers\Admin\DashboardController@index');
+            return \App::call('CircleLinkHealth\CpmAdmin\Http\Controllers\DashboardController@index');
         }
 
         if ($user->isSaasAdmin()) {

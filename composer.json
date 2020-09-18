@@ -60,6 +60,10 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-core.git"
     },
     {
@@ -186,6 +190,7 @@
     "circlelinkhealth/core-module": "1.7.6",
     "circlelinkhealth/cpm-migrations-module": "2.5.0",
     "circlelinkhealth/customer-module": "3.3.8",
+    "circlelinkhealth/cpm-admin-module": "*",
     "circlelinkhealth/eligibility-module": "3.4.6",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",

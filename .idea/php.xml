@@ -322,6 +322,11 @@
       <path value="$PROJECT_DIR$/vendor/spatie/db-dumper" />
       <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
       <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/php-http/guzzle6-adapter" />
+      <path value="$PROJECT_DIR$/vendor/laravel/vapor-core" />
+      <path value="$PROJECT_DIR$/vendor/laravel/vapor-ui" />
+      <path value="$PROJECT_DIR$/vendor/hollodotme/fast-cgi-client" />
+      <path value="$PROJECT_DIR$/vendor/riverline/multipart-parser" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
