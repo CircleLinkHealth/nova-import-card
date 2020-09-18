@@ -1,4 +1,4 @@
-require('../bootstrap');
+require('../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap');
 require('../../../../public/js/materialize.min');
 
 window.Vue = require('vue');

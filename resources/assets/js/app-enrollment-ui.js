@@ -1,6 +1,6 @@
 import store from "../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store";
 
-require('./bootstrap');
+require('../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap');
 
 import 'es6-string-polyfills';
 import './prototypes/array.prototype';
