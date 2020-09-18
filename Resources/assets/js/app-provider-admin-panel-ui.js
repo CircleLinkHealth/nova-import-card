@@ -4,7 +4,7 @@ require('materialize-css')
 require('materialize-css/js/toasts')
 
 import Vue from 'vue'
-import axios from './bootstrap-axios'
+import axios from '../../../../Sharedvuecomponents/Resources/assets/js/bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
@@ -30,13 +30,13 @@ Vue.use(VueForm, {
     }
 });
 
-import InputComponent from './components/shared/materialize/input'
-import ManagePracticeLocations from './components/pages/provider-admin-panel/manage-practice-locations'
-import ManagePracticeUsers from './components/pages/provider-admin-panel/manage-practice-staff'
-import Select2Component from './components/src/select2'
-import OpenModal from './components/shared/open-modal'
-import NotificationsComponent from './components/shared/notifications/notifications'
-import GridComponent from './components/shared/grid'
+import InputComponent from '../../../../Sharedvuecomponents/Resources/assets/js/components/shared/materialize/input'
+import ManagePracticeLocations from '../../../../Sharedvuecomponents/Resources/assets/js/components/pages/provider-admin-panel/manage-practice-locations'
+import ManagePracticeUsers from '../../../../Sharedvuecomponents/Resources/assets/js/components/pages/provider-admin-panel/manage-practice-staff'
+import Select2Component from '../../../../Sharedvuecomponents/Resources/assets/js/components/src/select2'
+import OpenModal from '../../../../Sharedvuecomponents/Resources/assets/js/components/shared/open-modal'
+import NotificationsComponent from '../../../../Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications'
+import GridComponent from '../../../../Sharedvuecomponents/Resources/assets/js/components/shared/grid'
 
 Vue.component('v-input', InputComponent)
 Vue.component('managePracticeLocations', ManagePracticeLocations)
