@@ -49,7 +49,7 @@ class Demographics implements ToModel, WithChunkReading, WithHeadingRow, WithBat
 
     public function model(array $row)
     {
-        return new \App\Models\PracticePull\Demographics([
+        return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics([
             'practice_id'             => $this->practiceId,
             'mrn'                     => $this->nullOrValue($row['mrn']),
             'first_name'              => $this->nullOrValue($row['first_name']),

@@ -7,7 +7,7 @@
 namespace App\Nova;
 
 use CircleLinkHealth\Customer\CpmConstants;
-use App\Models\PracticePull\Medication;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Medication;
 use App\Nova\Actions\PracticePull\ImportMedications;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Date;

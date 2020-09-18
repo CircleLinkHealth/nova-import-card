@@ -48,7 +48,7 @@ class Medications implements ToModel, WithChunkReading, WithHeadingRow, WithBatc
 
     public function model(array $row)
     {
-        return new \App\Models\PracticePull\Medication([
+        return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Medication([
             'practice_id' => $this->practiceId,
             'mrn'         => $this->nullOrValue($row['patientid']),
             'name'        => $this->nullOrValue($row['rx']),

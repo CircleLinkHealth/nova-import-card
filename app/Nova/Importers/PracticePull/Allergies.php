@@ -47,7 +47,7 @@ class Allergies implements ToModel, WithChunkReading, WithHeadingRow, WithBatchI
 
     public function model(array $row)
     {
-        return new \App\Models\PracticePull\Allergy([
+        return new \CircleLinkHealth\SharedModels\Entities\PracticePull\Allergy([
             'practice_id' => $this->practiceId,
             'mrn'         => $this->nullOrValue($row['patientid']),
             'name'        => $this->nullOrValue($row['name']),

@@ -6,7 +6,7 @@
 
 namespace App\Nova\Importers\PracticePull;
 
-use App\Models\PracticePull\Problem;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Problem;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
