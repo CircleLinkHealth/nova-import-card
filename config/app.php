@@ -8,7 +8,6 @@ use App\Providers\CpmArtisanServiceProvider;
 use App\Providers\PrimaryNavComposer;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
-use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
@@ -197,7 +196,6 @@ return [
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,
 
-
         \CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
@@ -222,9 +220,8 @@ return [
         EligibilityServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
-     
+
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
-        CpmAdminServiceProvider::class
     ],
 
     /*
