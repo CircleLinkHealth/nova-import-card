@@ -6,7 +6,7 @@
 
 namespace App\Notifications;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;

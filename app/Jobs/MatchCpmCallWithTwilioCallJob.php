@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\TwilioCall;
 use App\VoiceCall;
 use Carbon\Carbon;

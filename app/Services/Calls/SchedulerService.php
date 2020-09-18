@@ -7,7 +7,7 @@
 namespace App\Services\Calls;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Note;
 use App\Policies\CreateNoteForPatient;

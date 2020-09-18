@@ -6,7 +6,7 @@
 
 namespace App\Services\Calls;
 
-use App\Repositories\CallRepository;
+use CircleLinkHealth\CpmAdmin\Repositories\CallRepository;
 use Carbon\Carbon;
 
 class ManagementService

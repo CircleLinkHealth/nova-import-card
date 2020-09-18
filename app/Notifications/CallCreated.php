@@ -6,7 +6,7 @@
 
 namespace App\Notifications;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use App\Services\NotificationService;

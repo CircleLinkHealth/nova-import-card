@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Jobs\CreateNurseInvoices;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;

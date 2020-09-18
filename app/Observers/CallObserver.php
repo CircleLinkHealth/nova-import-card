@@ -6,13 +6,13 @@
 
 namespace App\Observers;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Events\CarePlanWasApproved;
 use App\Jobs\MatchCpmCallWithTwilioCallJob;
 use App\Note;
 use App\Notifications\CallCreated;
-use App\Services\ActivityService;
+use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use App\Services\Calls\SchedulerService;
 use App\Services\NotificationService;
 use Carbon\Carbon;

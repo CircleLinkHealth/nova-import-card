@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;

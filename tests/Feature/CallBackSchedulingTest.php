@@ -7,7 +7,7 @@
 namespace Tests\Feature;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;

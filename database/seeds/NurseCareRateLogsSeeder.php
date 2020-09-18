@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Call;
-use App\Jobs\StoreTimeTracking;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
 use App\Note;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;

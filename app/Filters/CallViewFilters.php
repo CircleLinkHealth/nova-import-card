@@ -6,7 +6,7 @@
 
 namespace App\Filters;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
 

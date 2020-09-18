@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;

@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\AppConfig\DMDomainForAutoApproval;
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;

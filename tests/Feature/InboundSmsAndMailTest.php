@@ -7,7 +7,7 @@
 namespace Tests\Feature;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\Services\Calls\SchedulerService;

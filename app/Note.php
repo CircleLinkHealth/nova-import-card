@@ -18,6 +18,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\PdfReportTrait;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 
@@ -38,7 +39,7 @@ use Illuminate\Support\Facades\Cache;
  * @property int|null                                                        $logger_id
  * @property \App\Models\Addendum[]|\Illuminate\Database\Eloquent\Collection $addendums
  * @property \CircleLinkHealth\Customer\Entities\User                        $author
- * @property \App\Call                                                       $call
+ * @property \CircleLinkHealth\SharedModels\Entities\Call                                                       $call
  * @property \CircleLinkHealth\Customer\Entities\User                        $patient
  * @property \CircleLinkHealth\Customer\Entities\User                        $program
  * @property string                                                          $status

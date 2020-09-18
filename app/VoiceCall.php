@@ -7,6 +7,7 @@
 namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\SharedModels\Entities\Call;
 
 /**
  * App\VoiceCall.
@@ -25,7 +26,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int                             $alert_level
- * @property \App\Call|null                  $cpmCall
+ * @property \CircleLinkHealth\SharedModels\Entities\Call|null                  $cpmCall
  */
 class VoiceCall extends BaseModel
 {

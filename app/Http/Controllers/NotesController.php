@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\UnsuccessfulCall;
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\CarePlanWasApproved;
 use App\Events\NoteFinalSaved;
@@ -23,7 +23,7 @@ use App\Rules\PatientEmailDoesNotContainPhi;
 use App\Rules\ValidatePatientCustomEmail;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
-use App\Services\CPM\CpmProblemService;
+use CircleLinkHealth\SharedModels\Services\CpmProblemService;
 use App\Services\NoteService;
 use App\Services\PatientCustomEmail;
 use App\ValueObjects\CreateManualCallAfterNote;

@@ -5,7 +5,7 @@
  */
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;

@@ -305,11 +305,11 @@
                                                                 <input type="radio"
                                                                        @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                        @endif
-                                                                       @if (!empty($call) && $call->status === \App\Call::NOT_REACHED) checked
+                                                                       @if (!empty($call) && $call->status === \CircleLinkHealth\SharedModels\Entities\Call::NOT_REACHED) checked
                                                                        @endif
                                                                        class="call-status-radio"
                                                                        name="call_status"
-                                                                       value="{{\App\Call::NOT_REACHED}}"
+                                                                       value="{{\CircleLinkHealth\SharedModels\Entities\Call::NOT_REACHED}}"
                                                                        id="not-reached"/>
                                                                 <label for="not-reached">
                                                                     <span> </span>Patient Not Reached
@@ -319,11 +319,11 @@
                                                                 <input type="radio"
                                                                        @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                        @endif
-                                                                       @if (!empty($call) && $call->status === \App\Call::REACHED) checked
+                                                                       @if (!empty($call) && $call->status === \CircleLinkHealth\SharedModels\Entities\Call::REACHED) checked
                                                                        @endif
                                                                        name="call_status"
                                                                        class="call-status-radio"
-                                                                       value="{{\App\Call::REACHED}}"
+                                                                       value="{{\CircleLinkHealth\SharedModels\Entities\Call::REACHED}}"
                                                                        id="reached"/>
                                                                 <label for="reached">
                                                                     <span> </span>Successful Clinical Call
@@ -334,11 +334,11 @@
                                                                 <input type="radio"
                                                                        @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                        @endif
-                                                                       @if (!empty($call) && $call->status === \App\Call::IGNORED) checked
+                                                                       @if (!empty($call) && $call->status === \CircleLinkHealth\SharedModels\Entities\Call::IGNORED) checked
                                                                        @endif
                                                                        name="call_status"
                                                                        class="call-status-radio"
-                                                                       value="{{\App\Call::IGNORED}}"
+                                                                       value="{{\CircleLinkHealth\SharedModels\Entities\Call::IGNORED}}"
                                                                        id="ignored"/>
                                                                 <label for="ignored">
                                                                     <span> </span>Patient Busy - Rescheduled Call
@@ -354,10 +354,10 @@
                                                                     <input type="checkbox"
                                                                            @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                            @endif
-                                                                           @if (!empty($call) && $call->status === \App\Call::WELCOME) checked
+                                                                           @if (!empty($call) && $call->status === \CircleLinkHealth\SharedModels\Entities\Call::WELCOME) checked
                                                                            @endif
                                                                            name="welcome_call"
-                                                                           value="{{\App\Call::WELCOME}}"
+                                                                           value="{{\CircleLinkHealth\SharedModels\Entities\Call::WELCOME}}"
                                                                            id="welcome_call"/>
                                                                     <label for="welcome_call">
                                                                         <span> </span>Successful
@@ -370,10 +370,10 @@
                                                                     <input type="checkbox"
                                                                            @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                            @endif
-                                                                           @if (!empty($call) && $call->status === \App\Call::OTHER) checked
+                                                                           @if (!empty($call) && $call->status === \CircleLinkHealth\SharedModels\Entities\Call::OTHER) checked
                                                                            @endif
                                                                            name="other_call"
-                                                                           value="{{\App\Call::OTHER}}"
+                                                                           value="{{\CircleLinkHealth\SharedModels\Entities\Call::OTHER}}"
                                                                            id="other_call"/>
                                                                     <label for="other_call">
                                                                         <span> </span>Successful

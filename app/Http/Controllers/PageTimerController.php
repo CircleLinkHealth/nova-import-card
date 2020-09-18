@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\StoreTimeTracking;
+use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;

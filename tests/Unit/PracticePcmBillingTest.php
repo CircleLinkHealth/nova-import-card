@@ -6,8 +6,8 @@
 
 namespace Tests\Unit;
 
-use App\Http\Resources\ApprovableBillablePatient;
-use App\Services\ApproveBillablePatientsService;
+use CircleLinkHealth\CpmAdmin\Http\Resources\ApprovableBillablePatient;
+use CircleLinkHealth\CpmAdmin\Services\ApproveBillablePatientsService;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use App\Traits\Tests\UserHelpers;

@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Services\ActivityService;
+use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

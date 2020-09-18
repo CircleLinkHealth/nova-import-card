@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Console\Commands\CheckVoiceCalls;
 use App\CpmCallAlert;
 use App\Nova\Filters\TwilioCallSourceFilter;

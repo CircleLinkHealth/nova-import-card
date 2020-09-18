@@ -235,7 +235,7 @@ class WebixFormatter implements ReportFormatter
     public function formatDataForViewPrintCareplanReport($user)
     {
         $careplanReport    = [];
-        $cpmProblemService = app(\App\Services\CPM\CpmProblemService::class);
+        $cpmProblemService = app(\CircleLinkHealth\SharedModels\Services\CpmProblemService::class);
 
         $user->loadMissing(PatientCareplanRelations::get());
 

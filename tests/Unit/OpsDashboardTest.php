@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use App\Jobs\GenerateOpsDailyPracticeReport;
-use App\Repositories\PatientSummaryEloquentRepository;
+use CircleLinkHealth\CpmAdmin\Repositories\PatientSummaryEloquentRepository;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;

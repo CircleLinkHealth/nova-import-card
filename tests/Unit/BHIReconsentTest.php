@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Services\Calls\SchedulerService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;

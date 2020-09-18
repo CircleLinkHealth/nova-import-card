@@ -8,7 +8,7 @@ namespace App\Algorithms\Calls\NextCallSuggestor\Handlers;
 
 use App\Algorithms\Calls\NextCallSuggestor\HandlerResponse;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestion;
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Contracts\CallHandler;
 use Carbon\Carbon;
 

@@ -7,7 +7,7 @@
 namespace App\Services\CCD;
 
 use App\Repositories\CcdProblemRepository;
-use App\Services\CPM\CpmInstructionService;
+use CircleLinkHealth\SharedModels\Services\CpmInstructionService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;

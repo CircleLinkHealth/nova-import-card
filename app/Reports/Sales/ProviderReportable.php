@@ -6,7 +6,7 @@
 
 namespace App\Reports\Sales;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Contracts\Reports\Reportable;
 use App\Note;
 use App\Observation;

@@ -6,7 +6,7 @@
 
 namespace App\Filters;
 
-use App\Repositories\CallRepository;
+use CircleLinkHealth\CpmAdmin\Repositories\CallRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;

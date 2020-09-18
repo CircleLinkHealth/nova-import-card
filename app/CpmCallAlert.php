@@ -7,6 +7,7 @@
 namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\SharedModels\Entities\Call;
 
 /**
  * App\CpmCallAlert.
@@ -23,7 +24,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CpmCallAlert newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\CpmCallAlert query()
  * @mixin \Eloquent
- * @property \App\Call|null $cpmCall
+ * @property \CircleLinkHealth\SharedModels\Entities\Call|null $cpmCall
  */
 class CpmCallAlert extends BaseModel
 {

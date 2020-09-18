@@ -6,7 +6,7 @@
 
 namespace App\Providers;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Models\Addendum;
 use App\Note;
 use App\Observers\AddendumObserver;

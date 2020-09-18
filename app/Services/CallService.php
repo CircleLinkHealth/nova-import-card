@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\CallViewNurses;
 
 class CallService

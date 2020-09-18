@@ -8,7 +8,7 @@ namespace Tests\Unit\CallSchedulingAlgo;
 
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;

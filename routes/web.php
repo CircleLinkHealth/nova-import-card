@@ -172,40 +172,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     // API
     Route::group(['prefix' => 'api'], function () {
-        Route::group(['prefix' => 'admin'], function () {
-            Route::get('clear-cache/{key}', [
-                'uses' => 'Admin\DashboardController@clearCache',
-                'as'   => 'clear.cache.key',
-            ])->middleware('permission:call.read');
-            //the new calls route that uses calls-view table
-            Route::get('calls-v2', [
-                'uses' => 'API\Admin\CallsViewController@index',
-                'as'   => 'calls.v2.index',
-            ])->middleware('permission:call.read');
-
-            Route::group(['prefix' => 'calls'], function () {
-                Route::get('', [
-                    'uses' => 'API\Admin\CallsController@index',
-                    'as'   => 'calls.index',
-                ])->middleware('permission:call.read');
-
-                Route::get('{id}', [
-                    'uses' => 'API\Admin\CallsController@show',
-                    'as'   => 'calls.show',
-                ])->middleware('permission:call.read');
-
-                Route::delete('{ids}', [
-                    'uses' => 'API\Admin\CallsController@remove',
-                    'as'   => 'calls.destroy',
-                ])->middleware('permission:call.delete');
-            });
-
-            Route::post(
-                'user.outbound-calls',
-                'API\UserOutboundCallController@store'
-            )->middleware('permission:call.create');
-        });
-
         Route::get('providers/{providerId}/patients/{patientId}/ccm-time', [
             'uses' => 'API\ActivityController@between',
             'as'   => 'get.ccm.time.from.to',

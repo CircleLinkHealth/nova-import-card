@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use Illuminate\Console\Command;
 

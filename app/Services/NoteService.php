@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\CareplanAssessment;
 use App\Filters\NoteFilters;
 use App\Http\Requests\SafeRequest;

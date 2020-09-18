@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\ApproveBillablePatientsService;
+use CircleLinkHealth\CpmAdmin\Services\ApproveBillablePatientsService;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use App\Traits\Tests\UserHelpers;

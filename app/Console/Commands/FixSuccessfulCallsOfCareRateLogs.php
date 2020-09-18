@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Note;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;

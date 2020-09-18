@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Repositories\CallRepository;
+use CircleLinkHealth\CpmAdmin\Repositories\CallRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Console\Command;

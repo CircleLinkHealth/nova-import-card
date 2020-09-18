@@ -9,6 +9,7 @@ namespace App\Services\CPM;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 use CircleLinkHealth\SharedModels\Entities\CpmProblemUser;
+use CircleLinkHealth\SharedModels\Services\CpmProblemService;
 
 class CpmProblemUserService
 {

@@ -251,7 +251,7 @@ function formatTime($time)
                                                     && 'addendum_response' !== $call->type) {
                                                     $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
-                                                if (($call->asap || 'Call Back' === $call->type) && \App\Call::REACHED !== $call->status && \App\Call::DONE !== $call->status) {
+                                                if (($call->asap || 'Call Back' === $call->type) && \CircleLinkHealth\SharedModels\Entities\Call::REACHED !== $call->status && \CircleLinkHealth\SharedModels\Entities\Call::DONE !== $call->status) {
                                                     $boldRow   = 'bold-row';
                                                     $textBlack = 'color:black;';
                                                 }
@@ -307,7 +307,7 @@ function formatTime($time)
                                                         {{ presentDate($call->scheduled_date, false) }}
                                                     </td>
 
-                                                    @if($call->asap === 1 && $call->status !== \App\Call::REACHED && $call->status !== \App\Call::DONE)
+                                                    @if($call->asap === 1 && $call->status !== \CircleLinkHealth\SharedModels\Entities\Call::REACHED && $call->status !== \CircleLinkHealth\SharedModels\Entities\Call::DONE)
                                                         <td>{{ 'ASAP' }}</td>
                                                         <td>{{ 'N/A' }}</td>
                                                     @else

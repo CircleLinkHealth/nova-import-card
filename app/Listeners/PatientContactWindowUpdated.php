@@ -6,7 +6,7 @@
 
 namespace App\Listeners;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;

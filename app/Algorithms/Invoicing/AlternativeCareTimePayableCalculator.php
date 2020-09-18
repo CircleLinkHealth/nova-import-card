@@ -6,7 +6,7 @@
 
 namespace App\Algorithms\Invoicing;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Note;
 use App\User;
 use Carbon\Carbon;

@@ -7,7 +7,7 @@
 namespace App\View\Composers;
 
 use App\Constants;
-use App\Jobs\StoreTimeTracking;
+use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
 use App\Policies\CreateNoteForPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;

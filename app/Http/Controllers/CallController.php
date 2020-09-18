@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Http\Requests\CreateNewCallRequest;
 use App\Http\Resources\Call as CallResource;
 use App\Rules\DateBeforeUsingCarbon;

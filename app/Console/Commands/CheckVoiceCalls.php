@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\CpmCallAlert;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use Illuminate\Console\Command;

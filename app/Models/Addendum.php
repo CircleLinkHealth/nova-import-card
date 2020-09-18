@@ -6,7 +6,7 @@
 
 namespace App\Models;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Contracts\AttachableToNotification;
 use App\Contracts\RelatesToActivity;
 use App\Traits\ActivityRelatable;

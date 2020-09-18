@@ -9,7 +9,7 @@ namespace App\Algorithms\Calls\NextCallSuggestor;
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestion as NextCallSuggestion;
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Constants;
 use App\Contracts\CallHandler;
 use Carbon\Carbon;

@@ -6,7 +6,7 @@
 
 namespace App\Traits;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 
 trait ActivityRelatable
 {
