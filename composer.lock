@@ -633,7 +633,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4ff60ecfbe5299159599658e57f745ab36105eec"
+                "reference": "1be1ec3601bf29e207acc8d2f37ca7b4a160507f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -659,7 +659,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T05:38:58+00:00"
+            "time": "2020-09-18T19:28:47+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -929,7 +929,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "c6b118500c994471e73d8db0c63b847011ac3561"
+                "reference": "8eb085b98bd46a29ec10feeff1cb421ea8269e68"
             },
             "type": "laravel-module",
             "autoload": {
@@ -943,7 +943,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T19:16:10+00:00"
+            "time": "2020-09-18T19:33:26+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
