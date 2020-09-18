@@ -13,7 +13,7 @@ use App\Nova\Filters\TwilioCallSourceFilter;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
-use App\TwilioCall;
+use CircleLinkHealth\SharedModels\Entities\TwilioCall;
 use App\VoiceCall;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;

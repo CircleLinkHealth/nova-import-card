@@ -7,7 +7,7 @@
 namespace App\Observers;
 
 use App\Jobs\MatchTwilioCallWithCpmCallJob;
-use App\TwilioCall;
+use CircleLinkHealth\SharedModels\Entities\TwilioCall;
 
 class TwilioCallObserver
 {
