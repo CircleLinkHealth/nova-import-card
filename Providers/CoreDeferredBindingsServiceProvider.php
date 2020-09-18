@@ -6,6 +6,17 @@
 
 namespace CircleLinkHealth\Core\Providers;
 
+use CircleLinkHealth\Core\Console\Commands\CreateAndSeedTestSuiteDB;
+use CircleLinkHealth\Core\Console\Commands\CreateMySqlDB;
+use CircleLinkHealth\Core\Console\Commands\CreatePostgreSQLDB;
+use CircleLinkHealth\Core\Console\Commands\HerokuOnRelease;
+use CircleLinkHealth\Core\Console\Commands\PostDeploymentTasks;
+use CircleLinkHealth\Core\Console\Commands\ReviewAppCreateDb;
+use CircleLinkHealth\Core\Console\Commands\ReviewAppPreDestroy;
+use CircleLinkHealth\Core\Console\Commands\ReviewAppSeedDb;
+use CircleLinkHealth\Core\Console\Commands\RunScheduler;
+use CircleLinkHealth\Core\Console\Commands\StoreJiraTicketsDeployed;
+use CircleLinkHealth\Core\Console\Commands\StoreRelease;
 use CircleLinkHealth\Core\Entities\DatabaseNotification as CircleLinkDatabaseNotification;
 use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel as CircleLinkDatabaseChannel;
 use CircleLinkHealth\Core\Traits\HasDatabaseNotifications as CircleLinkHasDatabaseNotifications;
@@ -35,6 +46,17 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
             CircleLinkHasDatabaseNotifications::class,
             CircleLinkNotifiable::class,
             CircleLinkDatabaseNotification::class,
+            CreateMySqlDB::class,
+            CreatePostgreSQLDB::class,
+            HerokuOnRelease::class,
+            PostDeploymentTasks::class,
+            ReviewAppCreateDb::class,
+            ReviewAppPreDestroy::class,
+            ReviewAppSeedDb::class,
+            RunScheduler::class,
+            StoreJiraTicketsDeployed::class,
+            StoreRelease::class,
+            CreateAndSeedTestSuiteDB::class,
         ];
     }
 
@@ -43,6 +65,25 @@ class CoreDeferredBindingsServiceProvider extends ServiceProvider implements Def
      */
     public function register()
     {
+        $arr = [
+            CreateMySqlDB::class,
+            CreatePostgreSQLDB::class,
+            HerokuOnRelease::class,
+            PostDeploymentTasks::class,
+            ReviewAppCreateDb::class,
+            ReviewAppPreDestroy::class,
+            ReviewAppSeedDb::class,
+            RunScheduler::class,
+            StoreJiraTicketsDeployed::class,
+            StoreRelease::class,
+        ];
+    
+        if ($this->app->environment('testing')) {
+            $arr[] = CreateAndSeedTestSuiteDB::class;
+        }
+    
+        $this->commands($arr);
+        
         $this->app->bind(LaravelDatabaseChannel::class, CircleLinkDatabaseChannel::class);
         $this->app->bind(LaravelHasDatabaseNotifications::class, CircleLinkHasDatabaseNotifications::class);
         $this->app->bind(LaravelNotifiable::class, CircleLinkNotifiable::class);
