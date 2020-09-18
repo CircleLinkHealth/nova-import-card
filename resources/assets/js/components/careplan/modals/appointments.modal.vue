@@ -81,7 +81,7 @@
 <script>
     import { rootUrl } from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
     import { Event } from 'vue-tables-2'
-    import Modal from '../../../admin/common/modal'
+    import Modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/common/modal'
     import moment from 'moment'
     import VueSelect from 'vue-select'
     import AppointmentRender from '../renders/appointment.render'

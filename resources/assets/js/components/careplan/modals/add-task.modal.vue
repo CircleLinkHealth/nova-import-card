@@ -155,7 +155,7 @@
     import {today} from '../../../util/today';
     import notifications from '../../notifications';
     import VueSelect from 'vue-select';
-    import VueCache from '../../../util/vue-cache';
+    import VueCache from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/vue-cache';
     import {mapActions} from 'vuex';
 
     const UNASSIGNED_VALUE = {label: 'Unassigned', value: null};

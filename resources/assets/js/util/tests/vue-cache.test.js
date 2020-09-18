@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueAxios from 'vue-axios'
 import axios from 'axios'
-import VueCache from '../vue-cache'
+import VueCache from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/vue-cache'
 import MockAdapter from 'axios-mock-adapter'
 import { shallow, mount } from 'vue-test-utils';
 
