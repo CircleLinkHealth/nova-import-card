@@ -8,8 +8,8 @@ namespace CircleLinkHealth\CpmAdmin\Http\Resources;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 

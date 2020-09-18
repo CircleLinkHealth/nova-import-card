@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Requests;
 
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

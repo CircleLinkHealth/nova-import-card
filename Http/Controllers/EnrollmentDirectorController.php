@@ -14,7 +14,7 @@ use CircleLinkHealth\CpmAdmin\Http\Requests\UpdateMultipleEnrollees;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Filters\EnrolleeCustomFilter;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\EnrolleeView;
 use CircleLinkHealth\SharedModels\Filters\EnrolleeFilters;
 use Illuminate\Http\Request;

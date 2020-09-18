@@ -8,8 +8,8 @@ namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
 use CircleLinkHealth\CpmAdmin\Http\Requests\CreateOfflineActivityTimeRequest;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
+use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\OfflineActivityTimeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 

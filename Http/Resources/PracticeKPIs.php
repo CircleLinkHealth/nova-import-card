@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Resources;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Support\Facades\DB;
 
 class PracticeKPIs
