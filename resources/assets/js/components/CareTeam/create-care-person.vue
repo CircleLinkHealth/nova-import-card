@@ -544,7 +544,7 @@
 </template>
 
 <script>
-    import modal from '../shared/modal.vue';
+    import modal from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/modal.vue';
     import SearchProviders from './search-providers.vue'
     import store from '../../store';
     import {mapActions, mapGetters} from 'vuex'

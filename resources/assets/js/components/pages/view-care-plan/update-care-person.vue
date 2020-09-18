@@ -548,7 +548,7 @@
 </template>
 
 <script>
-    import modal from '../../shared/modal.vue';
+    import modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/modal.vue';
     import {mapActions, mapGetters} from 'vuex'
 
     import {addNotification, clearOpenModal, getPatientCareTeam, updateCarePerson} from '../../../store/actions'

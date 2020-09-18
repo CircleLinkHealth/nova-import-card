@@ -149,7 +149,7 @@
      */
 
     import {Event} from 'vue-tables-2'
-    import Modal from '../../shared/modal';
+    import Modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/modal';
     import LoaderComponent from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
     import {rootUrl} from '../../../app.config';
     import {today} from '../../../util/today';

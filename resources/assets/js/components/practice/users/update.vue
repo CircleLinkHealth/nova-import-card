@@ -203,7 +203,7 @@
 </template>
 
 <script>
-    import modal from '../../shared/materialize/modal.vue';
+    import modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/materialize/modal.vue';
     import {mapActions, mapGetters} from 'vuex'
     import {addNotification, clearErrors, clearOpenModal, updatePracticeStaff} from '../../../store/actions'
     import {practiceLocations, practiceStaff} from '../../../store/getters'

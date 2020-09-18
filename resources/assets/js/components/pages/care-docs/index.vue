@@ -211,7 +211,7 @@
 
 <script>
     import {rootUrl} from '../../../app.config.js'
-    import modal from '../../shared/modal.vue'
+    import modal from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/modal.vue'
     import Dropzone from 'vue2-dropzone'
     import Loader from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader.vue';
     import VueSelect from 'vue-select';
