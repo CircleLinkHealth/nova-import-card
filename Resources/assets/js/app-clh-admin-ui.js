@@ -4,10 +4,10 @@ require('./bootstrap')
 import 'es6-string-polyfills'
 import './prototypes/array.prototype'
 import Vue from 'vue'
-import axios from './bootstrap-axios'
+import axios from '../../../../Sharedvuecomponents/Resources/assets/js/bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
-import store from "./store";
+import store from "../../../../Sharedvuecomponents/Resources/assets/js/store";
 
 if (document) {
     const elem = document.querySelector('meta[name="base-url"]')
@@ -40,15 +40,12 @@ const CaDirectorPanel = () => import(/* webpackChunkName: "chunk-admin" */ './ad
 const EnrolleeList = () => import(/* webpackChunkName: "chunk-admin" */ './admin/enrollment-kpis/enrollee-list')
 const PracticeKPIs = () => import(/* webpackChunkName: "chunk-admin" */ './admin/enrollment-kpis/practice-kpis')
 const CareAmbassadorKPIs = () => import(/* webpackChunkName: "chunk-admin" */ './admin/enrollment-kpis/careambassador-kpis')
-const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ './components/pages/work-schedule/daily-hours')
-const Select2Component = () => import(/* webpackChunkName: "chunk-admin" */ './components/src/select2')
+const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/pages/work-schedule/daily-hours')
+const Select2Component = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/src/select2')
 const TimeTrackerEventsComponent = () => import(/* webpackChunkName: "chunk-time-tracker-events" */ './admin/time-tracker/time-tracker-events')
-const PassportClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/Clients')
-const PassportAuthorizedClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/AuthorizedClients')
-const PassportPersonalAccessTokensComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/PersonalAccessTokens')
 const CpmMedicationGroupsMapsSettings = () => import(/* webpackChunkName: "chunk-admin" */ './admin/cpm-medication-groups-maps-settings')
-const NotificationsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/shared/notifications/notifications')
-const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/loader')
+const NotificationsComponent = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications')
+const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/components/loader')
 const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
 const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/FullScreenLoader');
 const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarDailyReport');
@@ -67,10 +64,6 @@ Vue.component('careambassador-kpis', CareAmbassadorKPIs)
 Vue.component('nurseDailyHours', NurseDailyHours)
 Vue.component('select2', Select2Component)
 Vue.component('time-tracker-events', TimeTrackerEventsComponent)
-Vue.component('passport-clients', PassportClientsComponent)
-Vue.component('passport-authorized-clients', PassportAuthorizedClientsComponent)
-Vue.component('importer-trainer', ImporterTrainerComponent)
-Vue.component('passport-personal-access-tokens', PassportPersonalAccessTokensComponent)
 Vue.component('cpm-medication-groups-maps-settings', CpmMedicationGroupsMapsSettings)
 Vue.component('notifications', NotificationsComponent);
 Vue.component('loader', LoaderComponent);
