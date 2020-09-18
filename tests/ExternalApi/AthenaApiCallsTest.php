@@ -6,9 +6,9 @@
 
 namespace Tests\ExternalApi;
 
-use App\Services\AthenaAPI\Calls;
-use App\ValueObjects\Athena\Patient;
-use App\ValueObjects\Athena\Problem;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Patient;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Problem;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;

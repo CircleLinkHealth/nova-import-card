@@ -9,6 +9,7 @@ namespace App\Services\AthenaAPI;
 use App\Entities\CcdaRequest;
 use App\Jobs\ImportCcda;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Str;
 
