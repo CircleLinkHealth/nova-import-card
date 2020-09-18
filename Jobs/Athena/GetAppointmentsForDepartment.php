@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs\Athena;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -119,7 +119,7 @@ class GetAppointmentsForDepartment implements ShouldQueue
             $target = TargetPatient::updateOrCreate(
                 [
                     'practice_id'       => Practice::where('external_id', $this->ehrPracticeId)->value('id'),
-                    'ehr_id'            => Constants::athenaEhrId(),
+                    'ehr_id'            => CpmConstants::athenaEhrId(),
                     'ehr_patient_id'    => $ehrPatientId,
                     'ehr_practice_id'   => $this->ehrPracticeId,
                     'ehr_department_id' => $departmentId,

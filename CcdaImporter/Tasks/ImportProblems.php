@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Importer\Section\Validators\NameNotNull;
 use App\Importer\Section\Validators\ValidStatus;
 use CircleLinkHealth\ConditionCodeLookup\Console\Commands\LookupCondition;
@@ -134,23 +134,23 @@ class ImportProblems extends BaseCcdaImportTask
             ->has('cpmProblem')
             ->where(
                 function ($q) use ($codes) {
-                    $q->whereIn(Constants::ICD9, $codes)
-                        ->where(Constants::ICD9, '!=', '')
-                        ->whereNotNull(Constants::ICD9);
+                    $q->whereIn(CpmConstants::ICD9, $codes)
+                        ->where(CpmConstants::ICD9, '!=', '')
+                        ->whereNotNull(CpmConstants::ICD9);
                 }
             )
             ->orWhere(
                 function ($q) use ($codes) {
-                    $q->whereIn(Constants::ICD10, $codes)
-                        ->where(Constants::ICD10, '!=', '')
-                        ->whereNotNull(Constants::ICD10);
+                    $q->whereIn(CpmConstants::ICD10, $codes)
+                        ->where(CpmConstants::ICD10, '!=', '')
+                        ->whereNotNull(CpmConstants::ICD10);
                 }
             )
             ->orWhere(
                 function ($q) use ($codes) {
-                    $q->whereIn(Constants::SNOMED, $codes)
-                        ->where(Constants::SNOMED, '!=', '')
-                        ->whereNotNull(Constants::SNOMED);
+                    $q->whereIn(CpmConstants::SNOMED, $codes)
+                        ->where(CpmConstants::SNOMED, '!=', '')
+                        ->whereNotNull(CpmConstants::SNOMED);
                 }
             )
             ->first();

@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\CcdaImporter\Tasks;
 
-use App\MedicationGroupsMap;
+use CircleLinkHealth\SharedModels\Entities\MedicationGroupsMap;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\CcdaImporter\BaseCcdaImportTask;
 use CircleLinkHealth\Eligibility\CcdaImporter\FiresImportingHooks;
