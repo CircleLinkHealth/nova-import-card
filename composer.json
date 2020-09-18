@@ -17,9 +17,28 @@
             }
         }
     },
+    "require": {
+        "circlelinkhealth/core-module": "*",
+        "circlelinkhealth/customer-module": "*",
+        "circlelinkhealth/shared-models-module": "*"
+    },
     "autoload": {
         "psr-4": {
             "CircleLinkHealth\\CpmAdmin\\": ""
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-customer.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-core.git"
+        }
+    ]
 }
