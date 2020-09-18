@@ -7,21 +7,19 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\CareAmbassadorLog;
-use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Customer\Filters\EnrolleeCustomFilter;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\Customer\Filters\EnrolleeCustomFilter;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Customer\Traits\HasNotificationContactPreferences;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
-use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
-use Laravel\Nova\Actions\Actionable;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
@@ -141,7 +139,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  */
 class Practice extends BaseModel implements HasMedia
 {
-    use Actionable;
     use HasChargeableServices;
     use HasImportingHooks;
     use HasMediaTrait;
