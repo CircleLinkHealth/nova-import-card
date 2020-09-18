@@ -17,7 +17,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 
 $factory->define(
@@ -50,7 +50,7 @@ $factory->define(Patient::class, function (Faker\Generator $faker) use ($factory
 });
 
 $factory->define(
-    \CircleLinkHealth\TimeTracking\Entities\Activity::class,
+    \CircleLinkHealth\SharedModels\Entities\Activity::class,
     function (Faker\Generator $faker) use ($factory) {
         return [
             'type'          => $faker->text(15),

@@ -11,7 +11,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

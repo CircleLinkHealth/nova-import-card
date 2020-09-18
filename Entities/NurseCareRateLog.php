@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 
 /**
  * CircleLinkHealth\Customer\Entities\NurseCareRateLog.
@@ -22,7 +22,7 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @property bool|null                                             $is_behavioral
  * @property \Carbon\Carbon|null                                   $created_at
  * @property \Carbon\Carbon|null                                   $updated_at
- * @property \CircleLinkHealth\TimeTracking\Entities\Activity|null $activity
+ * @property \CircleLinkHealth\SharedModels\Entities\Activity|null $activity
  * @property \CircleLinkHealth\Customer\Entities\Nurse             $nurse
  * @method   static                                                \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereActivityId($value)
  * @method   static                                                \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereCcmType($value)

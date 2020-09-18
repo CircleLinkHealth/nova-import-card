@@ -147,7 +147,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public static function careGivenToPatientForCurrentMonthByNurse(Patient $patient, Nurse $nurse)
     {
-        return \CircleLinkHealth\TimeTracking\Entities\Activity::where('provider_id', $nurse->user_id)
+        return \CircleLinkHealth\SharedModels\Entities\Activity::where('provider_id', $nurse->user_id)
             ->where('patient_id', $patient->user_id)
             ->where(function ($q) {
                 $q->where(

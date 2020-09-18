@@ -493,7 +493,7 @@ class Patient extends BaseModel
 
     public function lastNurseThatPerformedActivity()
     {
-        $id = \CircleLinkHealth\TimeTracking\Entities\Activity::where('patient_id', $this->user_id)
+        $id = \CircleLinkHealth\SharedModels\Entities\Activity::where('patient_id', $this->user_id)
             ->whereHas('provider', function ($q) {
                 $q->ofType('care-center');
             })
