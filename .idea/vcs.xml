@@ -6,8 +6,10 @@
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CpmAdmin" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Customer" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Eligibility" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Raygun" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Revisionable" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SharedModels" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Sharedvuecomponents" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Twofa" vcs="Git" />
   </component>
 </project>

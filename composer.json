@@ -72,6 +72,10 @@
         },
         {
             "type": "git",
+            "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git"
+        },
+        {
+            "type": "git",
             "url": "git@github.com:circlelinkhealth/revisionable-module.git"
         }
     ],
@@ -95,6 +99,7 @@
         "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
         "circlelinkhealth/customer-module": "dev-vaporizing-admin",
         "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
+        "circlelinkhealth/sharedvuecomponents-module": "dev-vaporizing-admin",
         "circlelinkhealth/enrollment-invites": "*",
         "circlelinkhealth/generate-patient-call-data-csv": "*",
         "circlelinkhealth/generate-success-stories-report": "*",

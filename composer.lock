@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b42a13a6b92412b1f45a52756de231d9",
+    "content-hash": "b12b9814e0a27668059e7bf30270c9a1",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -929,7 +929,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "8eb085b98bd46a29ec10feeff1cb421ea8269e68"
+                "reference": "cc06d954225603ad3b01508d5114a770fb3e9ddf"
             },
             "type": "laravel-module",
             "autoload": {
@@ -943,7 +943,35 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T19:33:26+00:00"
+            "time": "2020-09-18T19:42:28+00:00"
+        },
+        {
+            "name": "circlelinkhealth/sharedvuecomponents-module",
+            "version": "dev-vaporizing-admin",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
+                "reference": "84a2b41f4d4fc5a44b2e33754c66aafdbcc2f89b"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\SharedVueComponents\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "",
+                    "email": ""
+                }
+            ],
+            "time": "2020-09-18T19:58:16+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -11305,6 +11333,7 @@
         "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/sharedvuecomponents-module": 20,
         "circlelinkhealth/shared-models-module": 20
     },
     "prefer-stable": true,
