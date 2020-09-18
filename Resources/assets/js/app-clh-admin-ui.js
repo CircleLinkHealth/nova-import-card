@@ -7,7 +7,7 @@ import Vue from 'vue'
 import axios from '../../../../Sharedvuecomponents/Resources/assets/js/bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
-import store from "../../../../../resources/assets/js/store";
+import store from "../../../../SharedVueComponents/Resources/assets/js/store";
 
 if (document) {
     const elem = document.querySelector('meta[name="base-url"]')
