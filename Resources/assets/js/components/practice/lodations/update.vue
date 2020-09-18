@@ -252,7 +252,7 @@
     import {mapActions, mapGetters} from 'vuex'
     import {addNotification, clearErrors, clearOpenModal, updatePracticeLocation} from '../../../store/actions'
     import {practiceLocations} from '../../../store/getters'
-    import MaterialSelect from '../../../../../../../../resources/assets/js/components/src/material-select.vue'
+    import MaterialSelect from '../../src/material-select.vue'
 
     export default {
         props: {
