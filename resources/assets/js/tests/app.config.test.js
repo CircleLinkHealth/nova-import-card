@@ -1,5 +1,5 @@
-import DocumentMock from '../util/tests/mocks/document.mock'
-import ElementMock from '../util/tests/mocks/element.mock'
+import DocumentMock from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/tests/mocks/document.mock'
+import ElementMock from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/tests/mocks/element.mock'
 import {
     rootUrl,
     baseValue,
