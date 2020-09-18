@@ -10,7 +10,7 @@ use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
@@ -68,7 +68,7 @@ use Illuminate\Support\Collection;
  * @property int                                                                                              $is_demo
  * @property int                                                                                              $pay_interval
  * @property int                                                                                              $is_variable_rate
- * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice[]|\Illuminate\Database\Eloquent\Collection $invoices
+ * @property \CircleLinkHealth\SharedModels\Entities\NurseInvoice[]|\Illuminate\Database\Eloquent\Collection $invoices
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsDemo($value)
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsVariableRate($value)
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse wherePayInterval($value)

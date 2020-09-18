@@ -32,7 +32,7 @@ use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\SharedModels\Entities\Dispute;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
