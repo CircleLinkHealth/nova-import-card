@@ -331,7 +331,7 @@ class Patient extends BaseModel
      * 1. Get next month
      * 2. Find first entry from end of month
      * 3. If exists, then return the `old_value`
-     * 4. Otherwise, return ccm_status from {@link Patient @patientInfo}.
+     * 4. Otherwise, return ccm_status from {@link \CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Patient @patientInfo}.
      *
      * NOTE: if relation is already loaded, data from relation will be used
      *
