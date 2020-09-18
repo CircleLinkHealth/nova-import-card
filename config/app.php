@@ -11,7 +11,7 @@ use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
-use CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider;
+\\
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use Illuminate\Support\Arr;
 
@@ -198,7 +198,6 @@ return [
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,
 
-        \App\Providers\NovaServiceProvider::class,
 
         \CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
 
@@ -225,8 +224,7 @@ return [
         CardServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
-        \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
-
+     
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
         CpmAdminServiceProvider::class
     ],

@@ -8,7 +8,7 @@ namespace App\Services\PdfReports\Handlers;
 
 use CircleLinkHealth\Core\Contracts\PdfReport;
 use App\Contracts\PdfReportHandler;
-use App\Services\AthenaAPI\CreateAndPostPdfCareplan as AthenaApi;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\CreateAndPostPdfCareplan as AthenaApi;
 
 class AthenaApiPdfHandler implements PdfReportHandler
 {

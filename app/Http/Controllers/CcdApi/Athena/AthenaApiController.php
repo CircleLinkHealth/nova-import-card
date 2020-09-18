@@ -8,7 +8,7 @@ namespace App\Http\Controllers\CcdApi\Athena;
 
 use App\Http\Controllers\Controller;
 use App\Services\AthenaAPI\CcdService;
-use App\Services\AthenaAPI\CreateAndPostPdfCareplan;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Illuminate\Http\Request;
 
 class AthenaApiController extends Controller
