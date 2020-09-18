@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Http\Requests;
 
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

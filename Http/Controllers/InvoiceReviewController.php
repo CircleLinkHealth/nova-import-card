@@ -9,7 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Services\AttachDisputesToTimePerDay;
 use Carbon\Carbon;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\NurseInvoices\Http\Requests\AdminShowNurseInvoice;
 use CircleLinkHealth\NurseInvoices\Http\Requests\ShowNurseInvoice;

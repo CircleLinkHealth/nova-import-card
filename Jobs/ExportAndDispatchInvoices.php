@@ -8,7 +8,7 @@ namespace CircleLinkHealth\NurseInvoices\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\Nurseinvoices\GenerateInvoicesExport;
 use CircleLinkHealth\NurseInvoices\Notifications\NurseInvoicesDownloaded;
 use Illuminate\Bus\Queueable;

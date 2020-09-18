@@ -9,7 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Exports;
 use App\Services\AttachDisputesToTimePerDay;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Http\Controllers\InvoiceReviewController;
 use Illuminate\Support\Collection;
 

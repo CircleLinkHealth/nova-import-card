@@ -9,7 +9,7 @@ namespace CircleLinkHealth\NurseInvoices;
 use App\TimeTrackedPerDayView;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoiceDailyDispute;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;

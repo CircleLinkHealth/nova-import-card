@@ -9,7 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Notifications;
 use CircleLinkHealth\Core\Contracts\HasAttachment;
 use App\Mail\NurseInvoiceMailer;
 use CircleLinkHealth\Customer\Entities\Media;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;

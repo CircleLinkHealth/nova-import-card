@@ -8,7 +8,7 @@ namespace CircleLinkHealth\NurseInvoices\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\TotalTimeAggregator;
 use CircleLinkHealth\NurseInvoices\VariablePayCalculator;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
