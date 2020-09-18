@@ -22,16 +22,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">CCD Viewer</div>
-
-                    <div class="panel-body">
-                        @include('cpm-admin::CCDViewer.create-old-viewer')
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="row">
