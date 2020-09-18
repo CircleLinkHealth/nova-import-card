@@ -11,7 +11,6 @@ use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
-\\
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use Illuminate\Support\Arr;
 
@@ -221,7 +220,6 @@ return [
         NurseInvoicesServiceProvider::class,
         EligibilityDeferrableServiceProvider::class,
         EligibilityServiceProvider::class,
-        CardServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
      
