@@ -5,7 +5,7 @@ require('./bootstrap');
 import 'es6-string-polyfills';
 import './prototypes/array.prototype';
 import Vue from 'vue';
-import axios from './bootstrap-axios';
+import axios from '../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap-axios';
 import VueAxios from 'vue-axios';
 import EventBus from './admin/time-tracker/comps/event-bus';
 import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'

@@ -4,7 +4,7 @@ import 'es6-string-polyfills'
 import './prototypes/array.prototype'
 
 import Vue from 'vue'
-import axios from './bootstrap-axios'
+import axios from '../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";

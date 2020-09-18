@@ -14,7 +14,7 @@ try {
 } catch (e) {
 }
 
-require('./bootstrap-axios');
+require('../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/bootstrap-axios');
 require('./logger-logdna').init();
 require('./pusher-echo').init();
 
