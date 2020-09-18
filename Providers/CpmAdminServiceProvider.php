@@ -15,6 +15,7 @@ class CpmAdminServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->registerVueComponents();
     }
 
     /**
@@ -92,6 +93,14 @@ class CpmAdminServiceProvider extends ServiceProvider
             ),
             'cpm-admin'
         );
+    }
+
+    public function registerVueComponents()
+    {
+        $this->publishes([
+            __DIR__.'/../Resources/assets/js/' => resource_path(
+                'assets/js/'
+            ), ], 'vue-components');
     }
 
     /**

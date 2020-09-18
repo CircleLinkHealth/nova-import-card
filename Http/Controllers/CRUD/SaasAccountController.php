@@ -34,7 +34,7 @@ class SaasAccountController extends Controller
      */
     public function create()
     {
-        return view('admin.saasAccounts.create', [
+        return view('cpm-admin::admin.saasAccounts.create', [
             'submitUrl'    => route('saas-accounts.store'),
             'submitMethod' => 'POST',
         ]);

@@ -27,11 +27,11 @@ class CallsDashboardController extends Controller
         if ($note) {
             $call = $note->call()->first();
             if ($call) {
-                return view('admin.CallsDashboard.edit', compact(['note', 'call']));
+                return view('cpm-admin::admin.CallsDashboard.edit', compact(['note', 'call']));
             }
             $nurses = User::ofType('care-center')->get();
 
-            return view('admin.CallsDashboard.create-call', compact(['note', 'nurses']));
+            return view('cpm-admin::admin.CallsDashboard.create-call', compact(['note', 'nurses']));
         }
         $message = 'Note Does Not Exist.';
 
@@ -53,7 +53,7 @@ class CallsDashboardController extends Controller
             ->first();
         $call = $note->call;
         if ($call) {
-            return view('admin.CallsDashboard.edit', compact(['note', 'call']));
+            return view('cpm-admin::admin.CallsDashboard.edit', compact(['note', 'call']));
         }
 
         $status  = $request['status'];
@@ -142,7 +142,7 @@ class CallsDashboardController extends Controller
 
     public function index()
     {
-        return view('admin.CallsDashboard.index');
+        return view('cpm-admin::admin.CallsDashboard.index');
     }
 
     private function modifyNurseCareRateLogs(User $nurse, Note $note, string $oldStatus, string $newStatus)

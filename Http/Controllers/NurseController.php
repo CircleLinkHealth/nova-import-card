@@ -60,7 +60,7 @@ class NurseController extends Controller
 
     public function makeDailyReport()
     {
-        return view('admin.reports.nursedaily');
+        return view('cpm-admin::admin.reports.nursedaily');
     }
 
     public function makeHourlyStatistics()
@@ -70,7 +70,7 @@ class NurseController extends Controller
 //                                Carbon::parse('2016-09-29 10:00:00')))
 //            ->nurseCallsPerHour();
 
-        return view('statistics.nurses.info');
+        return view('cpm-admin::statistics.nurses.info');
     }
 
     public function monthlyReport(Request $request)
@@ -96,6 +96,6 @@ class NurseController extends Controller
 
         $rows = $rows->withPath('admin/reports/nurse/monthly');
 
-        return view('admin.nurse.monthly-report', compact(['date', 'rows']));
+        return view('cpm-admin::admin.nurse.monthly-report', compact(['date', 'rows']));
     }
 }

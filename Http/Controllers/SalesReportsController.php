@@ -108,7 +108,7 @@ class SalesReportsController extends Controller
             )->handle();
         }
 
-        return view('sales.reportlist', ['reports' => $links]);
+        return view('cpm-admin::sales.reportlist', ['reports' => $links]);
     }
 
     public function makePracticeReport(Request $request)
@@ -153,7 +153,7 @@ class SalesReportsController extends Controller
             return response()->download($path, $name, ['Content-Length: '.filesize($path)]);
         }
 
-        return view('sales.by-practice.report', ['data' => $data]);
+        return view('cpm-admin::sales.by-practice.report', ['data' => $data]);
     }
 
     public function makeProviderReport(Request $request)
@@ -188,6 +188,6 @@ class SalesReportsController extends Controller
             ]);
         }
 
-        return view('sales.by-provider.report', ['data' => $data]);
+        return view('cpm-admin::sales.by-provider.report', ['data' => $data]);
     }
 }

@@ -121,7 +121,7 @@ class PracticeInvoiceController extends Controller
             ->get();
         $invoice_no = AppConfig::pull('billing_invoice_count', 0);
 
-        return view('billing.practice.create', compact(
+        return view('cpm-admin::billing.practice.create', compact(
             [
                 'readyToBill',
                 'invoice_no',
@@ -228,7 +228,7 @@ class PracticeInvoiceController extends Controller
 
         $chargeableServices = ChargeableService::all();
 
-        return view('admin.reports.billing', compact([
+        return view('cpm-admin::admin.reports.billing', compact([
             'cpmProblems',
             'practices',
             'chargeableServices',

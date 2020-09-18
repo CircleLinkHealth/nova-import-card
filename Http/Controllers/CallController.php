@@ -134,7 +134,7 @@ class CallController extends Controller
                 ->orWhere('type', '=', 'call');
         })->where('inbound_cpm_id', $patientId)->paginate();
 
-        return view('admin.calls.index', ['calls' => $calls, 'patient' => User::find($patientId)]);
+        return view('cpm-admin::admin.calls.index', ['calls' => $calls, 'patient' => User::find($patientId)]);
     }
 
     public function update(Request $request)

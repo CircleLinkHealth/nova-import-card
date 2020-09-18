@@ -322,7 +322,7 @@ class WorkScheduleController extends Controller
         //Temporary fix
         $disableTimeTracking = true; // @todo: we need this ?  it wasnt used in view
 
-        return view('care-center.work-schedule', compact('authData', 'today'));
+        return view('cpm-admin::care-center.work-schedule', compact('authData', 'today'));
     }
 
     /**
@@ -477,7 +477,7 @@ class WorkScheduleController extends Controller
         $authData = $this->fullCalendarService->getAuthData();
         $today    = Carbon::parse(now())->toDateString();
 
-        return view('admin.nurse.schedules.index', compact('authData', 'today'));
+        return view('cpm-admin::admin.nurse.schedules.index', compact('authData', 'today'));
     }
 
     /**

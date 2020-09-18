@@ -90,7 +90,7 @@ class DashboardController extends Controller
     {
         $patient = User::find('393');
 
-        return view('admin.testplan', compact(['patient']));
+        return view('cpm-admin::admin.testplan', compact(['patient']));
     }
 
     public function upg0506($type)

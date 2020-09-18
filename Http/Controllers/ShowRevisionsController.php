@@ -75,7 +75,7 @@ class ShowRevisionsController extends Controller
                 ->paginate(20);
         }
 
-        return view('admin.allActivity.index', compact([
+        return view('cpm-admin::admin.allActivity.index', compact([
             'errors',
             'startDate',
             'endDate',
@@ -129,7 +129,7 @@ class ShowRevisionsController extends Controller
 
         $errors = collect();
 
-        return view('admin.allActivity.index', compact([
+        return view('cpm-admin::admin.allActivity.index', compact([
             'errors',
             'startDate',
             'endDate',

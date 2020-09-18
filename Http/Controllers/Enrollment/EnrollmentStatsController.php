@@ -96,7 +96,7 @@ class EnrollmentStatsController extends Controller
      */
     public function makeAmbassadorStats()
     {
-        return view('admin.reports.enrollment.ambassador-kpis');
+        return view('cpm-admin::admin.reports.enrollment.ambassador-kpis');
     }
 
     /**
@@ -106,7 +106,7 @@ class EnrollmentStatsController extends Controller
      */
     public function makePracticeStats()
     {
-        return view('admin.reports.enrollment.practice-kpis');
+        return view('cpm-admin::admin.reports.enrollment.practice-kpis');
     }
 
     /**

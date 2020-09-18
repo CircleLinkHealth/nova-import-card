@@ -81,7 +81,7 @@ class MedicationGroupsMapController extends Controller
             )
             ->toJson();
 
-        return view('admin.medicationGroupsMaps.index', compact('medicationGroups', 'maps'));
+        return view('cpm-admin::admin.medicationGroupsMaps.index', compact('medicationGroups', 'maps'));
     }
 
     /**

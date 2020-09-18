@@ -17,7 +17,7 @@ class ObservationController extends Controller
 {
     public function dashboardIndex()
     {
-        return view('admin.observations.dashboard.index');
+        return view('cpm-admin::admin.observations.dashboard.index');
     }
 
     public function deleteObservation(Request $request)
@@ -42,7 +42,7 @@ class ObservationController extends Controller
             ->where('id', $obsId)
             ->first();
 
-        return view('admin.observations.dashboard.edit', compact('observation'));
+        return view('cpm-admin::admin.observations.dashboard.edit', compact('observation'));
     }
 
     public function getObservationsList(Request $request)
@@ -63,7 +63,7 @@ class ObservationController extends Controller
 
         $observations = $observations->withPath('admin/observations-dashboard/list');
 
-        return view('admin.observations.dashboard.index', compact(['user', 'observations']));
+        return view('cpm-admin::admin.observations.dashboard.index', compact(['user', 'observations']));
     }
 
     public function updateObservation(Request $request)

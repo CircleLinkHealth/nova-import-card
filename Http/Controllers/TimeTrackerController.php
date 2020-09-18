@@ -13,6 +13,6 @@ class TimeTrackerController extends Controller
 {
     public function index(Request $request)
     {
-        return view('admin.timeTracker.index');
+        return view('cpm-admin::admin.timeTracker.index');
     }
 }

@@ -17,7 +17,7 @@ class FamilyController extends Controller
     {
         $wpUsers = Patient::enrolled()->pluck('user_id');
 
-        return view('admin.families.create', compact(['users, filterUser ']));
+        return view('cpm-admin::admin.families.create', compact(['users, filterUser ']));
     }
 
     public function delete()
@@ -69,7 +69,7 @@ class FamilyController extends Controller
     {
         $families = Family::all();
 
-        return view('admin.families.index', compact(['families']));
+        return view('cpm-admin::admin.families.index', compact(['families']));
     }
 
     public function store(Request $request)

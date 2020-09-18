@@ -234,7 +234,7 @@ class ReportsController extends Controller
             'noLiveCountTimeTracking' => true,
         ];
 
-        return view('wpUsers.patient.progress', $data);
+        return view('cpm-admin::wpUsers.patient.progress', $data);
     }
 
     public function pausedPatientsLetterPrintList()
@@ -249,7 +249,7 @@ class ReportsController extends Controller
 
         $url = route('get.paused.letters.file').'?patientUserIds=';
 
-        return view('patient.printPausedPatientsLetters', compact(['patients', 'url']));
+        return view('cpm-admin::patient.printPausedPatientsLetters', compact(['patients', 'url']));
     }
 
     public function progress(

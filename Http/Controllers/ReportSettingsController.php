@@ -25,7 +25,7 @@ class ReportSettingsController extends Controller
         $nurseUnsuccessful = $settings->where('name', 'nurse_report_unsuccessful')->first();
         $timeGoal          = $settings->where('name', 'time_goal_per_billable_patient')->first();
 
-        return view('admin.report-settings', compact([
+        return view('cpm-admin::admin.report-settings', compact([
             'nurseSuccessful',
             'nurseUnsuccessful',
             'timeGoal',

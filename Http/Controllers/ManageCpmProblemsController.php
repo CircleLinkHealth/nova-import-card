@@ -43,7 +43,7 @@ class ManageCpmProblemsController extends Controller
     {
         $problem = CpmProblem::where('id', $request['problem_id'])->first();
 
-        return view('admin.problemKeywords.edit', compact(['problem']));
+        return view('cpm-admin::admin.problemKeywords.edit', compact(['problem']));
     }
 
     /**
@@ -55,29 +55,9 @@ class ManageCpmProblemsController extends Controller
     {
         $problems = CpmProblem::get()->sortBy('name');
 
-        return view('admin.problemKeywords.index', compact(['problems']));
+        return view('cpm-admin::admin.problemKeywords.index', compact(['problems']));
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-    }
-
+    
     /**
      * Update the specified resource in storage.
      *

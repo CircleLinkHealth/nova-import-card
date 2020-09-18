@@ -184,7 +184,7 @@ END ASC, attempt_count ASC");
 
     public function index()
     {
-        return view('admin.ca-director.index');
+        return view('cpm-admin::admin.ca-director.index');
     }
 
     public function markEnrolleesAsIneligible(UpdateMultipleEnrollees $request)

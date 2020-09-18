@@ -64,7 +64,7 @@ class EnrollmentConsentController extends Controller
 
     public function makeEnrollmentReport()
     {
-        return view('admin.reports.enrollment.enrollment-list');
+        return view('cpm-admin::admin.reports.enrollment.enrollment-list');
     }
 
    
