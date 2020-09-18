@@ -263,10 +263,12 @@
                                 <a href="{{ url('/superadmin') }}"
                                    style=""><i class="glyphicon glyphicon-fire"></i> SuperAdmin</a>
                             </li>
+                        @if(config('services.cpm-app.url'))
                             <li class="dropdown">
-                                <a href="{{ route('patients.dashboard') }}"
+                                <a href="{{ config('services.cpm-app.url') }}"
                                    style=""><i class="glyphicon glyphicon-eye-open"></i> Provider</a>
                             </li>
+                        @endif
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                    aria-expanded="false">{{ Auth::user()->getFullName() }} [ID:{{ Auth::user()->id }}
