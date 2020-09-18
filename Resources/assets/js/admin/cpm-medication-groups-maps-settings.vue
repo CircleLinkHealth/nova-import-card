@@ -60,7 +60,7 @@
 </template>
 
 <script>
-    import {addNotification} from '../../../../../SharedVueComponents/Resources/assets/js/store/actions'
+    import {addNotification} from '../../../../../Sharedvuecomponents/Resources/assets/js/store/actions'
     import {mapActions} from 'vuex'
 
     export default {
