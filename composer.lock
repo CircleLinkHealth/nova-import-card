@@ -517,7 +517,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "ef6a00937c1cb9328ec6d48c0243b81b1c430b68"
+                "reference": "423b4279f20500d79dd02a926d579544b399881d"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -546,7 +546,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T18:43:24+00:00"
+            "time": "2020-09-18T19:08:56+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -588,7 +588,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f0b84236ed66d6f29640c0f5b850bcf620fbd244"
+                "reference": "88193fc7a574d2ff7ec85a5d69c13754a37a5966"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -625,7 +625,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T19:01:22+00:00"
+            "time": "2020-09-18T19:16:10+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -929,7 +929,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "1e74b3f98bf171660a70428e9c2684beee53e7a4"
+                "reference": "c6b118500c994471e73d8db0c63b847011ac3561"
             },
             "type": "laravel-module",
             "autoload": {
@@ -943,7 +943,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T19:01:22+00:00"
+            "time": "2020-09-18T19:16:10+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",

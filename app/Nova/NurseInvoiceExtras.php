@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;

@@ -19,7 +19,7 @@ class NurseInvoiceBreakdown extends Resource
      *
      * @var string
      */
-    public static $model = \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\NurseInvoice::class;
 
     /**
      * The columns that should be searched.
