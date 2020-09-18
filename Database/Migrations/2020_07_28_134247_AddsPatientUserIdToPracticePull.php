@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Models\PracticePull\Demographics;
+use CircleLinkHealth\SharedModels\Entities\PracticePull\Demographics;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
