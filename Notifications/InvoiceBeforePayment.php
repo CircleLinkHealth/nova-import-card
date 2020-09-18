@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Notifications;
 
-use App\Contracts\HasAttachment;
+use CircleLinkHealth\Core\Contracts\HasAttachment;
 use App\Mail\NurseInvoiceMailer;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;

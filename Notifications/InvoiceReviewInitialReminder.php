@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Notifications;
 
-use App\Contracts\HasAttachment;
+use CircleLinkHealth\Core\Contracts\HasAttachment;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Bus\Queueable;
