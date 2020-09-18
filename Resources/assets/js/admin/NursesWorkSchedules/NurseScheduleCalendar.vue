@@ -260,7 +260,7 @@
     import 'fullcalendar/dist/fullcalendar.css';
     import VueSelect from 'vue-select';
     import {mapActions} from 'vuex';
-    import {addNotification} from '../../../../../resources/assets/js/store/actions.js';
+    import {addNotification} from '../../store/actions.js';
     import CalendarLoader from './FullScreenLoader';
     import axios from "../../bootstrap-axios";
     import CalendarDailyReport from "./CalendarDailyReport";
