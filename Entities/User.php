@@ -16,7 +16,7 @@ use App\Models\EmailSettings;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
-use App\Repositories\Cache\UserNotificationList;
+use CircleLinkHealth\Customer\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
