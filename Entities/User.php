@@ -200,7 +200,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection           $nurseBonuses
  * @property int|null                                                                                                        $nurse_bonuses_count
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurseInfo
- * @property \App\Observation[]|\Illuminate\Database\Eloquent\Collection                                                     $observations
+ * @property \CircleLinkHealth\SharedModels\Entities\Observation[]|\Illuminate\Database\Eloquent\Collection                                                     $observations
  * @property int|null                                                                                                        $observations_count
  * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $outboundCalls
  * @property int|null                                                                                                        $outbound_calls_count
@@ -2406,7 +2406,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function observations()
     {
-        return $this->hasMany('App\Observation', 'user_id', 'id');
+        return $this->hasMany('CircleLinkHealth\SharedModels\Entities\Observation', 'user_id', 'id');
     }
 
     public function onFirstCall(): bool
