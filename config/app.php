@@ -7,6 +7,8 @@
 use App\Providers\CpmArtisanServiceProvider;
 use App\Providers\PrimaryNavComposer;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
+use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
+use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
@@ -220,6 +222,8 @@ return [
         EligibilityServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
+        CoreServiceProvider::class,
+        CoreDeferredBindingsServiceProvider::class,
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
     ],
