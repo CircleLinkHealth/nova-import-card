@@ -10,7 +10,7 @@ use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Support\Collection;
 
 trait NursePerformanceCalculations

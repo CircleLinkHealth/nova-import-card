@@ -7,7 +7,7 @@
 namespace App\Nova;
 
 use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;

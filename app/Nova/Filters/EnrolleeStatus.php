@@ -6,7 +6,7 @@
 
 namespace App\Nova\Filters;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Laravel\Nova\Filters\Filter;
 

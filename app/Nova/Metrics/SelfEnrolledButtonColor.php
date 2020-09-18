@@ -8,7 +8,7 @@ namespace App\Nova\Metrics;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Partition;
 

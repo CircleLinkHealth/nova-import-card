@@ -8,7 +8,7 @@ namespace App\Jobs;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

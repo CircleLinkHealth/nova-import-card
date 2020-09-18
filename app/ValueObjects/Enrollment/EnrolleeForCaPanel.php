@@ -10,7 +10,7 @@ use App\CareAmbassadorLog;
 use App\TrixField;
 use Carbon\CarbonTimeZone;
 use CircleLinkHealth\Core\StringManipulation;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Log;
 
 class EnrolleeForCaPanel

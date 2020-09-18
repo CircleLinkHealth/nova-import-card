@@ -7,7 +7,7 @@
 namespace App\Observers;
 
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class EnrolleeObserver
 {

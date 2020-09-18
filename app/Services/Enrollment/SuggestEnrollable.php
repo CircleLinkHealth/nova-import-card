@@ -6,7 +6,7 @@
 
 namespace App\Services\Enrollment;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class SuggestEnrollable extends EnrollableService
 {

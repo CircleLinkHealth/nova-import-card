@@ -12,7 +12,7 @@ use App\Nova\Metrics\SelfEnrolledButtonColor;
 use App\Nova\Metrics\SelfEnrolledPatientTotal;
 use App\Nova\Metrics\TotalInvitationsSentHourly;
 use App\SelfEnrollment\Helpers;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

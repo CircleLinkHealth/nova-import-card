@@ -44,7 +44,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\Revisionable\Entities\Revision;
@@ -53,7 +53,7 @@ use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use CircleLinkHealth\SharedModels\Entities\Medication;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Support\ServiceProvider;
 
 class ObserversServiceProvider extends ServiceProvider

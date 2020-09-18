@@ -13,7 +13,7 @@ use App\Nova\Actions\SelfEnrollmentManualInvite;
 use App\Nova\Filters\EnrolleeStatus;
 use App\Nova\Filters\PatientAutoEnrollmentStatus;
 use App\Nova\Filters\PracticeFilter;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
 use Laravel\Nova\Fields\BelongsTo;

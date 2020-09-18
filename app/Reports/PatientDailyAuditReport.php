@@ -10,7 +10,7 @@ use CircleLinkHealth\SharedModels\Entities\Note;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Support\Facades\DB;
 
 /**

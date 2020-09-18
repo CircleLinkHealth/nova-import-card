@@ -9,7 +9,7 @@ namespace App\Charts;
 use Carbon\CarbonPeriod;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use ConsoleTVs\Charts\Classes\Chartjs\Chart;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;

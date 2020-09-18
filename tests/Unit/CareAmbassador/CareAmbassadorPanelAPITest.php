@@ -10,7 +10,7 @@ use App\Services\Enrollment\EnrollableCallQueue;
 use App\Traits\Tests\CareAmbassadorHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Tests\TestCase;
 
 class CareAmbassadorPanelAPITest extends TestCase

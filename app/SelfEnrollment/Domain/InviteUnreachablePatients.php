@@ -12,7 +12,7 @@ use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
 
 class InviteUnreachablePatients extends AbstractSelfEnrollableUserIterator

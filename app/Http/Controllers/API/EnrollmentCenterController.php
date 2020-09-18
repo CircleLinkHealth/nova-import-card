@@ -13,7 +13,7 @@ use App\Services\Enrollment\EnrollableCallQueue;
 use App\Services\Enrollment\SuggestEnrollable;
 use App\Services\Enrollment\UpdateEnrollable;
 use App\ValueObjects\Enrollment\EnrolleeForCaPanel;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;

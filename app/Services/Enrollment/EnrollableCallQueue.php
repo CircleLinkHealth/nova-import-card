@@ -8,7 +8,7 @@ namespace App\Services\Enrollment;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CareAmbassador;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 /**
  * Class EnrollableCallQueue.

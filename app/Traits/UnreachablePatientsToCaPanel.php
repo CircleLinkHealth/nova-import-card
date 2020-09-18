@@ -7,7 +7,7 @@
 namespace App\Traits;
 
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 trait UnreachablePatientsToCaPanel
 {

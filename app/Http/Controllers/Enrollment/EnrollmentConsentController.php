@@ -8,7 +8,7 @@ namespace App\Http\Controllers\Enrollment;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
 
 class EnrollmentConsentController extends Controller

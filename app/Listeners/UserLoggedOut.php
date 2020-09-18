@@ -7,7 +7,7 @@
 namespace App\Listeners;
 
 use Carbon\Carbon;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;

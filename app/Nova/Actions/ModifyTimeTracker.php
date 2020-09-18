@@ -8,7 +8,7 @@ namespace App\Nova\Actions;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

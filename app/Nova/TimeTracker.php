@@ -11,7 +11,7 @@ use App\Nova\Filters\BillableTimeFilter;
 use App\Nova\Filters\PageTimerDurationFilter;
 use App\Nova\Filters\TimestampFilter;
 use Carbon\Carbon;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;

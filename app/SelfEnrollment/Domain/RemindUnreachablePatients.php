@@ -11,7 +11,7 @@ use App\SelfEnrollment\Jobs\SendReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
 
 class RemindUnreachablePatients extends AbstractSelfEnrollableUserIterator

@@ -13,7 +13,7 @@ use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
 
 class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator

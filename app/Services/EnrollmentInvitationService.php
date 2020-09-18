@@ -9,7 +9,7 @@ namespace App\Services\Enrollment;
 use App\SelfEnrollment\Helpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class EnrollmentInvitationService
 {

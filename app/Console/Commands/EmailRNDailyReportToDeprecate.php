@@ -9,8 +9,8 @@ namespace App\Console\Commands;
 use App\Notifications\NurseDailyReportToDeprecate;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Console\Command;
 
 class EmailRNDailyReportToDeprecate extends Command

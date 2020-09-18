@@ -9,7 +9,7 @@ namespace Tests\Unit;
 use App\Traits\Tests\CareAmbassadorHelpers;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;

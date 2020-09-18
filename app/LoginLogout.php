@@ -7,7 +7,7 @@
 namespace App;
 
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int                                                                                          $was_edited
  * @property \Illuminate\Support\Carbon|null                                                              $created_at
  * @property \Illuminate\Support\Carbon|null                                                              $updated_at
- * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection $activities
+ * @property \CircleLinkHealth\SharedModels\Entities\PageTimer[]|\Illuminate\Database\Eloquent\Collection $activities
  * @property int|null                                                                                     $activities_count
  * @property \CircleLinkHealth\Customer\Entities\User|null                                                $user
  * @method   static                                                                                       \Illuminate\Database\Eloquent\Builder|\App\LoginLogout newModelQuery()

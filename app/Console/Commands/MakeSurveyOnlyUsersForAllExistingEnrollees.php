@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 
 class MakeSurveyOnlyUsersForAllExistingEnrollees extends Command

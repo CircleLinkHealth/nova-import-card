@@ -9,7 +9,7 @@ namespace App\Console\Commands;
 use App\SelfEnrollment\Helpers;
 use App\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 
 class ImportCompletedCalvaryPatientsMissed extends Command

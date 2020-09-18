@@ -9,7 +9,7 @@ namespace App\Services\Enrollment;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 class SyncExistingUnreachablePatientWithEnrollmentData
 {

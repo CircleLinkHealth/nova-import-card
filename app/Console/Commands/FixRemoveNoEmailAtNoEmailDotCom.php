@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 

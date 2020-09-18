@@ -9,8 +9,8 @@ namespace App\Traits\Tests;
 use App\Services\Enrollment\UpdateEnrollable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 
 trait CareAmbassadorHelpers
 {

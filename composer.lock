@@ -1095,7 +1095,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "6d4658c478b05db95fc8a4a20bf5b2836ef72edc"
+                "reference": "d452e8897b7fc4fa806b41c7efef879013ed3abc"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1124,7 +1124,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T02:38:37+00:00"
+            "time": "2020-09-18T03:47:56+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1132,7 +1132,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "30fad9836d84e0eedd863224a75d9c435e5a5073"
+                "reference": "73d5484e191fff66f95a608ef34893250528fe87"
+            },
+            "require": {
+                "circlelinkhealth/core-module": "*",
+                "circlelinkhealth/customer-module": "*",
+                "circlelinkhealth/shared-models-module": "*"
             },
             "type": "laravel-module",
             "extra": {
@@ -1152,7 +1157,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-18T02:38:36+00:00"
+            "time": "2020-09-18T04:06:42+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1160,7 +1165,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "e8a9803142ea76245cef34ddf17f9155ce037df4"
+                "reference": "460621ff98e70518d838100fcb579ddea03b9c3b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1182,7 +1187,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T02:38:36+00:00"
+            "time": "2020-09-18T04:02:47+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1190,7 +1195,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "c63cd9bb697423ed1858444c9026eeef75396bbe"
+                "reference": "3e1eaa4bced1d50092bf9072f0d1eaf11c7ff8e7"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1224,7 +1229,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T02:38:36+00:00"
+            "time": "2020-09-18T04:02:47+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1232,7 +1237,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "bbbf140b2efdbda4b658a472a7d68577677d8b1f"
+                "reference": "44a5992ba9e43bf31d242de0d0235fd1b7749034"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1258,7 +1263,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T02:38:36+00:00"
+            "time": "2020-09-18T03:47:55+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1588,7 +1593,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "b0e784509f85a36f5e64acc96d5ff43315c11948"
+                "reference": "82547bc11dc6ee6a1ae9f229b42d713c6656a99b"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1602,7 +1607,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T02:38:36+00:00"
+            "time": "2020-09-18T04:02:47+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",

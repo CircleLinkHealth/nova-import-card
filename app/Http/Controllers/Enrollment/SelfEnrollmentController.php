@@ -13,7 +13,7 @@ use App\SelfEnrollment\Helpers;
 use App\Services\Enrollment\EnrollmentBaseLetter;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;

@@ -9,7 +9,7 @@ namespace App\Http\Controllers;
 use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 

@@ -11,7 +11,7 @@ use CircleLinkHealth\CpmAdmin\Http\Resources\PracticeKPIs;
 use App\Traits\Tests\CareAmbassadorHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 

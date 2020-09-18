@@ -8,7 +8,7 @@ namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 /**
  * Structured twilio call logs.
@@ -77,7 +77,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
  * @property \CircleLinkHealth\Customer\Entities\User|null        $inboundUser
  * @property \CircleLinkHealth\Customer\Entities\User|null        $outboundUser
  * @property int|null                                             $inbound_enrollee_id
- * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null $inboundEnrollee
+ * @property \CircleLinkHealth\SharedModels\Entities\Enrollee|null $inboundEnrollee
  * @property \App\VoiceCall|null                                  $voiceCall
  */
 class TwilioCall extends BaseModel
