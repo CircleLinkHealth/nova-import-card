@@ -8,7 +8,7 @@ namespace App\Nova;
 
 use CircleLinkHealth\Customer\CpmConstants;
 use App\Nova\Actions\DownloadCsv;
-use App\SelfEnrollmentMetrics;
+use CircleLinkHealth\SharedModels\Entities\SelfEnrollmentMetrics;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;

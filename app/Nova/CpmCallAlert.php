@@ -107,7 +107,7 @@ class CpmCallAlert extends Resource
                 $msgs = [];
                 foreach ($voiceCalls as $voiceCall) {
                     $voiceCallable = $voiceCall->voiceCallable;
-                    if (is_a($voiceCallable, \App\TwilioCall::class)) {
+                    if (is_a($voiceCallable, \CircleLinkHealth\SharedModels\Entities\TwilioCall::class)) {
                         $duration = $voiceCallable->dial_conference_duration;
                         $status = $voiceCallable->dial_call_status ?? $voiceCallable->call_status;
                         $createdAt = $voiceCallable->created_at->toDateTimeString();
