@@ -1,8 +1,8 @@
-import careTeam from "../../../../../../resources/assets/js/api/care-team";
-import practiceLocationsApi from "../../../../../../resources/assets/js/api/practice-location";
-import practiceStaffApi from "../../../../../../resources/assets/js/api/practice-staff";
-import carePersonApi from "../../../../../../resources/assets/js/api/care-person";
-import carePlanApi from "../../../../../../resources/assets/js/api/patient-care-plan";
+import careTeam from "../../../../../SharedVueComponents/Resources/assets/js/api/care-team";
+import practiceLocationsApi from "../../../../../SharedVueComponents/Resources/assets/js/api/practice-location";
+import practiceStaffApi from "../../../../../SharedVueComponents/Resources/assets/js/api/practice-staff";
+import carePersonApi from "../../../../../SharedVueComponents/Resources/assets/js/api/care-person";
+import carePlanApi from "../../../../../SharedVueComponents/Resources/assets/js/api/patient-care-plan";
 
 export const addNotification = ({commit}, notification) => {
     commit('ADD_NOTIFICATION', notification);
