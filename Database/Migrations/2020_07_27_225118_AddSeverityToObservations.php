@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Observation;
+use CircleLinkHealth\SharedModels\Entities\Observation;
 use App\ObservationMeta;
 use App\Services\Observations\ObservationConstants;
 use Illuminate\Database\Migrations\Migration;
