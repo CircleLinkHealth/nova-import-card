@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "959288931720744353bf2c3f92cd1e9b",
+    "content-hash": "ec4c5ed7b10bc47fff59faaa34267cb9",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -915,7 +915,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "2875ed2fce9354b39a6b3296d4999f08faef5f98"
+                "reference": "dd9831b792322861e7bd571e0d25d0f17af9cbeb"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -941,7 +941,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-18T18:44:09+00:00"
+            "time": "2020-09-18T22:31:53+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1058,7 +1058,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "d409291ad1cd8404834628c207e778b21df59b16"
+                "reference": "a9ca97bdfd3bfcc965fe0cf83067a8f094f5ac33"
             },
             "type": "laravel-module",
             "extra": {
@@ -1080,7 +1080,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T19:21:44+00:00"
+            "time": "2020-09-18T22:31:53+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1198,7 +1198,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "8eb085b98bd46a29ec10feeff1cb421ea8269e68"
+                "reference": "cc06d954225603ad3b01508d5114a770fb3e9ddf"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1212,7 +1212,35 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T19:33:26+00:00"
+            "time": "2020-09-18T19:42:28+00:00"
+        },
+        {
+            "name": "circlelinkhealth/sharedvuecomponents-module",
+            "version": "dev-vaporizing-admin",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
+                "reference": "96dc6618f8de1b616c4cf4a8dc4e173548e6c72c"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\Sharedvuecomponents\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "",
+                    "email": ""
+                }
+            ],
+            "time": "2020-09-18T22:31:53+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -2832,16 +2860,16 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.7.1",
+            "version": "v2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "e748d1d5a51166754f13809d35f1fa162cbec530"
+                "reference": "9df720d72c59456b5466e3f66e1e78cfe422a5ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/e748d1d5a51166754f13809d35f1fa162cbec530",
-                "reference": "e748d1d5a51166754f13809d35f1fa162cbec530",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/9df720d72c59456b5466e3f66e1e78cfe422a5ba",
+                "reference": "9df720d72c59456b5466e3f66e1e78cfe422a5ba",
                 "shasum": ""
             },
             "require": {
@@ -2890,7 +2918,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-09-08T16:38:08+00:00"
+            "time": "2020-09-18T20:02:04+00:00"
         },
         {
             "name": "google/apiclient-services",
@@ -2931,16 +2959,16 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.12.0",
+            "version": "v1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "74cad289014f7ef747618480f6b59f6303357f34"
+                "reference": "173191f5defd1d9ae8bdfc28da31b63eb73dd34e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/74cad289014f7ef747618480f6b59f6303357f34",
-                "reference": "74cad289014f7ef747618480f6b59f6303357f34",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/173191f5defd1d9ae8bdfc28da31b63eb73dd34e",
+                "reference": "173191f5defd1d9ae8bdfc28da31b63eb73dd34e",
                 "shasum": ""
             },
             "require": {
@@ -2979,7 +3007,7 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2020-09-08T16:33:56+00:00"
+            "time": "2020-09-18T20:03:05+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -16859,6 +16887,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/sharedvuecomponents-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
