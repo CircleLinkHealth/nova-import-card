@@ -33,7 +33,7 @@ use CircleLinkHealth\Customer\Traits\TimezoneTrait;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\SharedModels\Entities\Dispute;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
 use CircleLinkHealth\SharedModels\Entities\Call;
@@ -197,7 +197,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $notes_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
- * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection           $nurseBonuses
+ * @property \CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection           $nurseBonuses
  * @property int|null                                                                                                        $nurse_bonuses_count
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurseInfo
  * @property \CircleLinkHealth\SharedModels\Entities\Observation[]|\Illuminate\Database\Eloquent\Collection                  $observations
