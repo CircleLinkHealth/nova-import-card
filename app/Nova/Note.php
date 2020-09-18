@@ -43,14 +43,14 @@ class Note extends Resource
      *
      * @var string
      */
-    public static $group = \App\Constants::NOVA_GROUP_CARE_COACHES;
+    public static $group = \CircleLinkHealth\Customer\CpmConstants::NOVA_GROUP_CARE_COACHES;
 
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \App\Note::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\Note::class;
 
     /**
      * The columns that should be searched.
@@ -179,7 +179,7 @@ class Note extends Resource
     public function filters(Request $request)
     {
         return [
-            new NoteStatusFilter(\App\Note::STATUS_DRAFT),
+            new NoteStatusFilter(\CircleLinkHealth\SharedModels\Entities\Note::STATUS_DRAFT),
             new CarePlanStatusFilter(CarePlan::QA_APPROVED),
         ];
     }

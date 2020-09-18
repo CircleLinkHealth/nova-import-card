@@ -111,7 +111,7 @@ if (isset($patient)) {
                                     </span>
                                 </span>
                         </div>
-                        @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)))
+                        @if(auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)))
                             <div class="col-xs-12 text-right hidden-print">
                                 <span class="btn btn-group text-right">
                                     <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"

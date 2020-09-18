@@ -6,7 +6,7 @@
 
 namespace App\Listeners;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Core\Traits\RunsConsoleCommands;
 
 class RunComposerIde
@@ -23,7 +23,7 @@ class RunComposerIde
     public function handle($event)
     {
         if (app()->environment('local')) {
-            $this->runCpmCommand(['composer', 'ide'], true, Constants::TEN_MINUTES_IN_SECONDS);
+            $this->runCpmCommand(['composer', 'ide'], true, CpmConstants::TEN_MINUTES_IN_SECONDS);
         }
     }
 }

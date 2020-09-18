@@ -6,7 +6,7 @@
 
 namespace App\Repositories\Cache;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Contracts\UserNotificationListInterface;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -90,7 +90,7 @@ class UserNotificationList implements UserNotificationListInterface
      */
     public function userHashKey()
     {
-        return str_replace('{$userId}', $this->userId, Constants::CACHED_USER_NOTIFICATIONS);
+        return str_replace('{$userId}', $this->userId, CpmConstants::CACHED_USER_NOTIFICATIONS);
     }
 
     /**

@@ -7,7 +7,7 @@
 namespace App\Notifications;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
-use App\Contracts\HasAttachment;
+use CircleLinkHealth\Core\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use App\Services\NotificationService;
 use App\Traits\ArrayableNotification;

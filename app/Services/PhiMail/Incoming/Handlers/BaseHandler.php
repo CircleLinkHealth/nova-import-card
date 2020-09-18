@@ -6,7 +6,7 @@
 
 namespace App\Services\PhiMail\Incoming\Handlers;
 
-use App\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Services\PhiMail\Incoming\IncomingDMMimeHandlerInterface;
 
 abstract class BaseHandler implements IncomingDMMimeHandlerInterface

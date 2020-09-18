@@ -7,8 +7,8 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
-use App\Console\Commands\CountPatientMonthlySummaryCalls;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Tests\CustomerTestCase;
 

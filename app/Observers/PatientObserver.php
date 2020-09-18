@@ -8,8 +8,8 @@ namespace App\Observers;
 
 use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use App\Listeners\AssignPatientToStandByNurse;
-use App\Notifications\PatientUnsuccessfulCallNotification;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\CpmAdmin\Notifications\PatientUnsuccessfulCallNotification;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;

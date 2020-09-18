@@ -194,7 +194,7 @@
                             <div class="new-note-item">
                                 <div class="form-block col-md-12">
                                     <div class="row">
-                                        @if(! auth()->user()->isCareCoach() || (auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id)))
+                                        @if(! auth()->user()->isCareCoach() || (auth()->user()->isCareCoach() && app(\CircleLinkHealth\Customer\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id)))
                                         <div class="new-note-item">
                                                 @include('partials.sendToCareTeam')
                                             </div>

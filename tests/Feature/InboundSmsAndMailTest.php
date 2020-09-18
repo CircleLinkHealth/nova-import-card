@@ -6,11 +6,11 @@
 
 namespace Tests\Feature;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\SharedModels\Entities\Call;
-use App\Notifications\PatientUnsuccessfulCallNotification;
+use CircleLinkHealth\CpmAdmin\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;

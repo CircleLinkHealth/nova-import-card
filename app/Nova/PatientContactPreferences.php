@@ -15,7 +15,7 @@ use Laravel\Nova\Fields\Text;
 
 class PatientContactPreferences extends Resource
 {
-    public static $group = \App\Constants::NOVA_GROUP_ENROLLMENT;
+    public static $group = \CircleLinkHealth\Customer\CpmConstants::NOVA_GROUP_ENROLLMENT;
 
     public static $importer = PatientContactPreferencesImporter::class;
 

@@ -6,8 +6,8 @@
 
 namespace Tests\Unit;
 
-use App\Services\Enrollment\CareAmbassadorKPIs;
-use App\Services\Enrollment\PracticeKPIs;
+use CircleLinkHealth\CpmAdmin\Http\Resources\CareAmbassadorKPIs;
+use CircleLinkHealth\CpmAdmin\Http\Resources\PracticeKPIs;
 use App\Traits\Tests\CareAmbassadorHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;

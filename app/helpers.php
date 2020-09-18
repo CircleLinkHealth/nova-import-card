@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Jobs\SendSlackMessage;
 use AshAllenDesign\ShortURL\Classes\Builder as ShortUrlBuilder;
 use Carbon\Carbon;
@@ -1039,21 +1039,21 @@ if ( ! function_exists('getProblemCodeSystemName')) {
                 '2.16.840.1.113883.6.96' == $clue
                 || Str::contains(strtolower($clue), ['snomed'])
             ) {
-                return Constants::SNOMED_NAME;
+                return CpmConstants::SNOMED_NAME;
             }
 
             if (
                 '2.16.840.1.113883.6.103' == $clue
                 || Str::contains(strtolower($clue), ['9'])
             ) {
-                return Constants::ICD9_NAME;
+                return CpmConstants::ICD9_NAME;
             }
 
             if (
                 '2.16.840.1.113883.6.3' == $clue
                 || Str::contains(strtolower($clue), ['10'])
             ) {
-                return Constants::ICD10_NAME;
+                return CpmConstants::ICD10_NAME;
             }
         }
 
@@ -1071,7 +1071,7 @@ if ( ! function_exists('getProblemCodeSystemCPMId')) {
     {
         $name = getProblemCodeSystemName($clues);
 
-        $map = Constants::CODE_SYSTEM_NAME_ID_MAP;
+        $map = CpmConstants::CODE_SYSTEM_NAME_ID_MAP;
 
         if (array_key_exists($name, $map)) {
             return $map[$name];
@@ -1734,7 +1734,7 @@ if ( ! function_exists('stripNonTrixTags')) {
      */
     function stripNonTrixTags($trixString)
     {
-        return strip_tags($trixString, Constants::TRIX_ALLOWABLE_TAGS_STRING);
+        return strip_tags($trixString, CpmConstants::TRIX_ALLOWABLE_TAGS_STRING);
     }
 }
 

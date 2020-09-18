@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Jobs\DecorateUPG0506CcdaWithPdfData;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\SharedModels\Entities\Ccda;

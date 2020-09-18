@@ -110,7 +110,7 @@ return [
             'provider' => 'users',
             'email'    => 'emails.password',
             'table'    => 'lv_password_resets',
-            'expire'   => \App\Constants::THIRTY_DAYS_IN_MINUTES * 60,
+            'expire'   => \CircleLinkHealth\Customer\CpmConstants::THIRTY_DAYS_IN_MINUTES * 60,
             'throttle' => 60,
         ],
     ],

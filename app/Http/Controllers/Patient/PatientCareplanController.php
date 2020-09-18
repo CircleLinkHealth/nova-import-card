@@ -6,14 +6,14 @@
 
 namespace App\Http\Controllers\Patient;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use App\CarePlanPrintListView;
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
 use App\Relationships\PatientCareplanRelations;
-use App\Repositories\PatientReadRepository;
+use CircleLinkHealth\Customer\Services\PatientReadRepository;
 use App\Services\CareplanService;
 use App\Services\PatientService;
 use Auth;
@@ -246,7 +246,7 @@ class PatientCareplanController extends Controller
                 'wpUsers.patient.multiview',
                 $viewParams,
                 null,
-                Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
+                CpmConstants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
             );
 
             $pageCount = $this->pdfService->countPages($fileNameWithPath);

@@ -6,7 +6,7 @@
 
 namespace App\Services\PhiMail\Incoming;
 
-use App\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\Services\PhiMail\Incoming\Handlers\Plain;
 use App\Services\PhiMail\Incoming\Handlers\Unknown;

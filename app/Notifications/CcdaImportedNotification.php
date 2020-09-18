@@ -6,7 +6,7 @@
 
 namespace App\Notifications;
 
-use App\Contracts\HasAttachment;
+use CircleLinkHealth\Core\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use App\Traits\ArrayableNotification;
 use CircleLinkHealth\SharedModels\Entities\Ccda;

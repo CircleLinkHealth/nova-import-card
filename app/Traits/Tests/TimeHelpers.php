@@ -8,7 +8,7 @@ namespace App\Traits\Tests;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Testing\TestResponse;

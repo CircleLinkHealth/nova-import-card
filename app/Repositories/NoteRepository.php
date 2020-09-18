@@ -7,7 +7,7 @@
 namespace App\Repositories;
 
 use App\Filters\NoteFilters;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Carbon\Carbon;
 
 class NoteRepository

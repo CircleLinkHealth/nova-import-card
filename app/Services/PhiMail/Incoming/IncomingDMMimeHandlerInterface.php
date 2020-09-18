@@ -6,7 +6,7 @@
 
 namespace App\Services\PhiMail\Incoming;
 
-use App\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 
 interface IncomingDMMimeHandlerInterface
 {

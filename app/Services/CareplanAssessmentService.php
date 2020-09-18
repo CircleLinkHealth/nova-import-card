@@ -7,7 +7,7 @@
 namespace App\Services;
 
 use App\CareplanAssessment;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Notifications\SendAssessmentNotification;
 use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\CareplanRepository;

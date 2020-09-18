@@ -8,10 +8,10 @@ namespace App\Jobs;
 
 use App\Entities\EmailAddressParts;
 use App\Entities\PostmarkInboundMailRequest;
-use App\Notifications\PatientUnsuccessfulCallNotification;
+use CircleLinkHealth\CpmAdmin\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\PostmarkInboundMail;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

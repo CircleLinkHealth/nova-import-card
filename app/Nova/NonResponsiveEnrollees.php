@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
@@ -14,7 +14,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class NonResponsiveEnrollees extends Resource
 {
-    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
+    public static $group = CpmConstants::NOVA_GROUP_ENROLLMENT;
     /**
      * The model the resource corresponds to.
      *

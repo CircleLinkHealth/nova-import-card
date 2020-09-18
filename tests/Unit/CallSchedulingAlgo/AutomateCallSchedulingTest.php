@@ -6,7 +6,7 @@
 
 namespace Tests\Unit\CallSchedulingAlgo;
 
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\ChargeableService;

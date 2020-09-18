@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;

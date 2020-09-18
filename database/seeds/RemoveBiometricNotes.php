@@ -1,6 +1,6 @@
 <?php
 
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Database\Seeder;
 
 class RemoveBiometricNotes extends Seeder

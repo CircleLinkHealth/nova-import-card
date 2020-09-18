@@ -6,11 +6,11 @@
 
 namespace App\Services;
 
-use App\Filters\PatientFilters;
+use CircleLinkHealth\Customer\Filters\PatientFilters;
 use App\Http\Resources\UserAutocompleteResource;
 use App\Http\Resources\UserCsvResource;
 use App\Http\Resources\UserSafeResource;
-use App\Repositories\PatientReadRepository;
+use CircleLinkHealth\Customer\Services\PatientReadRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Patient;

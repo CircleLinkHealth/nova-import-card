@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\DirectMail;
-use App\DirectMailMessage;
+use CircleLinkHealth\Core\Contracts\DirectMail;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Services\PhiMail\CheckResult;
 use Illuminate\Http\Request;
 

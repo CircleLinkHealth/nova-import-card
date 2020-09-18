@@ -10,7 +10,7 @@ use App\Events\CarePlanWasProviderApproved;
 use App\Events\CarePlanWasQAApproved;
 use App\Events\CarePlanWasRNApproved;
 use App\Events\PdfableCreated;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;

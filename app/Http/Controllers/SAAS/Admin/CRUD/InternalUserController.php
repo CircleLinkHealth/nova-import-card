@@ -8,7 +8,7 @@ namespace App\Http\Controllers\SAAS\Admin\CRUD;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SAAS\StoreInternalUser;
-use App\Notifications\SAAS\SendInternalUserSignupInvitation;
+use CircleLinkHealth\CpmAdmin\Notifications\SAAS\SendInternalUserSignupInvitation;
 use CircleLinkHealth\CpmAdmin\DTO\InternalUser;
 use Auth;
 use CircleLinkHealth\Customer\Entities\Practice;

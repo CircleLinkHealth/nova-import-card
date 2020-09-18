@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Filters\CallViewFilters;
+use CircleLinkHealth\SharedModels\Filters\CallViewFilters;
 use CircleLinkHealth\CpmAdmin\Http\Controllers\Reports\CallReportController;
 use App\Notifications\PatientActivityManagementEndOfMonthReportGeneratedNotification;
 use App\User;

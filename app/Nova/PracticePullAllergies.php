@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Models\PracticePull\Allergy;
 use App\Nova\Actions\PracticePull\ImportAllergies;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ use Laravel\Nova\Fields\Text;
 
 class PracticePullAllergies extends Resource
 {
-    public static $group = Constants::NOVA_GROUP_PRACTICE_DATA_PULLS;
+    public static $group = CpmConstants::NOVA_GROUP_PRACTICE_DATA_PULLS;
     /**
      * The model the resource corresponds to.
      *

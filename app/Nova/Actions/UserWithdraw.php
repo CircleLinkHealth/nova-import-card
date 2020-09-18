@@ -6,7 +6,7 @@
 
 namespace App\Nova\Actions;
 
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Epartment\NovaDependencyContainer\HasDependencies;

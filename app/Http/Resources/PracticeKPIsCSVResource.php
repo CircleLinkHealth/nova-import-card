@@ -6,7 +6,8 @@
 
 namespace App\Http\Resources;
 
-use App\Services\Enrollment\PracticeKPIs;
+use CircleLinkHealth\CpmAdmin\Http\Resources\PracticeKPIs;
+use CircleLinkHealth\CpmAdmin\Http\Resources\PracticeKPIsCSVResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PracticeKPIsCSVResource extends JsonResource

@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\User;
 use Illuminate\Console\Command;
 

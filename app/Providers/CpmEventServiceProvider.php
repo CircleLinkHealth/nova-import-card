@@ -6,7 +6,7 @@
 
 namespace App\Providers;
 
-use App\Events\CallIsReadyForAttestedProblemsAttachment;
+use CircleLinkHealth\SharedModels\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Events\CarePlanWasApproved;
 use App\Events\CarePlanWasProviderApproved;
 use App\Events\CarePlanWasQAApproved;

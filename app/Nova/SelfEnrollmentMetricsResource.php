@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Nova\Actions\DownloadCsv;
 use App\SelfEnrollmentMetrics;
 use Circlelinkhealth\EnrollmentInvites\EnrollmentInvites;
@@ -17,7 +17,7 @@ use Laravel\Nova\Fields\Text;
 class SelfEnrollmentMetricsResource extends Resource
 {
     const AUTO_ENROLLMENT_INVITATIONS_PANEL = '/superadmin/resources/auto-enrollment-invitation-panels';
-    public static $group                    = Constants::NOVA_GROUP_ENROLLMENT;
+    public static $group                    = CpmConstants::NOVA_GROUP_ENROLLMENT;
     /**
      * The model the resource corresponds to.
      *

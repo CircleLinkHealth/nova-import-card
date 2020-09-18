@@ -6,9 +6,9 @@
 
 namespace App\Jobs;
 
-use App\Contracts\DirectMail;
+use CircleLinkHealth\Core\Contracts\DirectMail;
 use App\Contracts\Efax;
-use App\Notifications\Channels\DirectMailChannel;
+use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use App\Notifications\SendAuditReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;

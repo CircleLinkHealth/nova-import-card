@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

@@ -16,7 +16,7 @@ use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\CheckUserTotalTimeTracked;
 use App\Console\Commands\CheckVoiceCalls;
-use App\Console\Commands\CountPatientMonthlySummaryCalls;
+use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;

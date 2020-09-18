@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Nova\Filters\BillableTimeFilter;
 use App\Nova\Filters\PageTimerDurationFilter;
 use App\Nova\Filters\TimestampFilter;
@@ -32,7 +32,7 @@ class TimeTracker extends Resource
      *
      * @var string
      */
-    public static $group = Constants::NOVA_GROUP_CARE_COACHES;
+    public static $group = CpmConstants::NOVA_GROUP_CARE_COACHES;
 
     /**
      * The model the resource corresponds to.

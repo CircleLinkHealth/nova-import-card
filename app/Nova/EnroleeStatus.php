@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Nova\Importers\EnroleeStatus as EnroleeStatusImporter;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
@@ -24,7 +24,7 @@ class EnroleeStatus extends Resource
      *
      * @var string
      */
-    public static $group    = Constants::NOVA_GROUP_ENROLLMENT;
+    public static $group    = CpmConstants::NOVA_GROUP_ENROLLMENT;
     public static $importer = EnroleeStatusImporter::class;
 
     /**

@@ -18,7 +18,7 @@ class DirectMailMessage extends Resource
      *
      * @var string
      */
-    public static $model = \App\DirectMailMessage::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\DirectMailMessage::class;
 
     /**
      * The columns that should be searched.

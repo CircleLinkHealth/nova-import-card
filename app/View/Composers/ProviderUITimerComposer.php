@@ -6,9 +6,9 @@
 
 namespace App\View\Composers;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
-use App\Policies\CreateNoteForPatient;
+use CircleLinkHealth\Customer\Policies\CreateNoteForPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -133,7 +133,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $monthlyBhiTime = $patient->formattedTime($bhiSeconds);
 
                 $ccm_above = false;
-                if ($ccmSeconds >= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
+                if ($ccmSeconds >= CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
                     $ccm_above = true;
                 }
 

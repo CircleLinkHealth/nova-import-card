@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -44,7 +44,7 @@ class PracticeObserver
     public function saved(Practice $practice)
     {
         if ($practice->isDirty('default_user_scope') && $practice->default_user_scope !== $practice->getOriginal('default_user_scope')) {
-            User::ofPractice($practice)->ofType(Constants::PRACTICE_STAFF_ROLE_NAMES)->update([
+            User::ofPractice($practice)->ofType(CpmConstants::PRACTICE_STAFF_ROLE_NAMES)->update([
                 'scope' => $practice->default_user_scope,
             ]);
             if (User::SCOPE_LOCATION === $practice->default_user_scope) {

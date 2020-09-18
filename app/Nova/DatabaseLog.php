@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
@@ -20,7 +20,7 @@ class DatabaseLog extends Resource
      *
      * @var string
      */
-    public static $group = Constants::NOVA_GROUP_SETTINGS;
+    public static $group = CpmConstants::NOVA_GROUP_SETTINGS;
 
     /**
      * The model the resource corresponds to.

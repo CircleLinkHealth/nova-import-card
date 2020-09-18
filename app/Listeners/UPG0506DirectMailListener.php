@@ -6,7 +6,7 @@
 
 namespace App\Listeners;
 
-use App\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\UPG\UPGPdfCarePlan;

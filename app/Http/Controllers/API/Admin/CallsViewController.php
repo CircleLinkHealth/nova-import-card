@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers\API\Admin;
 
-use App\CallView;
-use App\Filters\CallViewFilters;
+use CircleLinkHealth\SharedModels\Entities\CallView;
+use CircleLinkHealth\SharedModels\Filters\CallViewFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\CallView as CallViewResource;
 use Illuminate\Http\Request;

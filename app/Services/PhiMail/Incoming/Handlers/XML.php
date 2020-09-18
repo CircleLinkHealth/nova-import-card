@@ -6,7 +6,7 @@
 
 namespace App\Services\PhiMail\Incoming\Handlers;
 
-use App\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use CircleLinkHealth\Customer\Entities\EmrDirectAddress;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 

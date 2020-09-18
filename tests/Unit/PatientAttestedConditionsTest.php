@@ -6,9 +6,9 @@
 
 namespace Tests\Unit;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\SharedModels\Entities\Call;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\CpmAdmin\Repositories\PatientSummaryEloquentRepository;
 use App\Services\CCD\CcdProblemService;
 use App\Traits\Tests\UserHelpers;

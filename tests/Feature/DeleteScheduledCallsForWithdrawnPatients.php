@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Tests\CustomerTestCase;
 

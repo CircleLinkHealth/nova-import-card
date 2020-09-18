@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
@@ -15,7 +15,7 @@ use Laravel\Nova\Fields\Textarea;
 
 class OutgoingSms extends Resource
 {
-    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
+    public static $group = CpmConstants::NOVA_GROUP_ENROLLMENT;
 
     /**
      * The model the resource corresponds to.

@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

@@ -6,7 +6,7 @@
 
 namespace App\Services\PhiMail;
 
-use App\Contracts\DirectMail;
+use CircleLinkHealth\Core\Contracts\DirectMail;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;

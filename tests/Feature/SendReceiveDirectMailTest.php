@@ -7,7 +7,7 @@
 namespace Tests\Feature;
 
 use App\Console\Commands\SendTestDirectMail;
-use App\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Services\PhiMail\SendResult;
 use Tests\TestCase;
 

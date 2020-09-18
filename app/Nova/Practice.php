@@ -20,7 +20,7 @@ class Practice extends Resource
      *
      * @var string
      */
-    public static $group = \App\Constants::NOVA_GROUP_PRACTICES;
+    public static $group = \CircleLinkHealth\Customer\CpmConstants::NOVA_GROUP_PRACTICES;
 
     public static $importer = PatientConsentLetters::class;
     /**

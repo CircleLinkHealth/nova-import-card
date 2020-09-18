@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\DirectMail;
+use CircleLinkHealth\Core\Contracts\DirectMail;
 use App\Contracts\Efax;
 use CircleLinkHealth\Core\StringManipulation;
 use Illuminate\Http\Request;

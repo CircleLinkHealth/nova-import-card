@@ -6,7 +6,7 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\DateBeforeUsingCarbon;
+use CircleLinkHealth\Core\Rules\DateBeforeUsingCarbon;
 use App\Rules\DateValidatorMultipleFormats;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -19,7 +19,7 @@ class StoreManualScheduledCall extends FormRequest
      */
     public function authorize()
     {
-        return app(\App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $this->route('patientId'));
+        return app(\CircleLinkHealth\Customer\Policies\CreateNoteForPatient::class)->can(auth()->id(), $this->route('patientId'));
     }
 
     /**

@@ -6,8 +6,8 @@
 
 namespace App\Notifications;
 
-use App\Contracts\FaxableNotification;
-use App\ValueObjects\SimpleNotification;
+use CircleLinkHealth\Core\Contracts\FaxableNotification;
+use CircleLinkHealth\Core\DTO\SimpleNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;

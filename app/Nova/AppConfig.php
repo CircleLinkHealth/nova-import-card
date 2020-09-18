@@ -6,14 +6,14 @@
 
 namespace App\Nova;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Core\Entities\AppConfig as AppConfigModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
 
 class AppConfig extends Resource
 {
-    public static $group = Constants::NOVA_GROUP_SETTINGS;
+    public static $group = CpmConstants::NOVA_GROUP_SETTINGS;
     /**
      * The model the resource corresponds to.
      *

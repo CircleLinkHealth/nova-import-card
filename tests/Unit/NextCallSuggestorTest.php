@@ -9,7 +9,7 @@ namespace Tests\Unit;
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestion;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use App\Contracts\CallHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;

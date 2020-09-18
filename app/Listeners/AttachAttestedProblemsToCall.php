@@ -6,7 +6,7 @@
 
 namespace App\Listeners;
 
-use App\Events\CallIsReadyForAttestedProblemsAttachment;
+use CircleLinkHealth\SharedModels\Events\CallIsReadyForAttestedProblemsAttachment;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Contracts\Queue\ShouldQueue;

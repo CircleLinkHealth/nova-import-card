@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\FullCalendar\NurseCalendarService;
-use App\Jobs\CreateCalendarRecurringEventsJob;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
+use CircleLinkHealth\Customer\Jobs\CreateCalendarRecurringEventsJob;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;

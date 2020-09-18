@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Circlelinkhealth\GenerateSuccessStoriesReport\GenerateSuccessStoriesReport;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
@@ -25,7 +25,7 @@ class NotesSuccessStories extends Resource
      *
      * @var string
      */
-    public static $group = \App\Constants::NOVA_GROUP_PRACTICES;
+    public static $group = \CircleLinkHealth\Customer\CpmConstants::NOVA_GROUP_PRACTICES;
     /**
      * The model the resource corresponds to.
      *

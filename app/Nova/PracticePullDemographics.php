@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Models\PracticePull\Demographics;
 use App\Nova\Actions\PracticePull\ImportDemographics;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ use Laravel\Nova\Fields\Text;
 
 class PracticePullDemographics extends Resource
 {
-    public static $group = Constants::NOVA_GROUP_PRACTICE_DATA_PULLS;
+    public static $group = CpmConstants::NOVA_GROUP_PRACTICE_DATA_PULLS;
     /**
      * The model the resource corresponds to.
      *

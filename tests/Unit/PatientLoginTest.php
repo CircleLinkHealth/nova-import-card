@@ -8,7 +8,7 @@ namespace Tests\Unit;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Http\Controllers\NotesController;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Notifications\NotifyPatientCarePlanApproved;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;

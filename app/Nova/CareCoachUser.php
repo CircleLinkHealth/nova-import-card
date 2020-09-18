@@ -23,7 +23,7 @@ class CareCoachUser extends NovaUser
      *
      * @var string
      */
-    public static $group = \App\Constants::NOVA_GROUP_CARE_COACHES;
+    public static $group = \CircleLinkHealth\Customer\CpmConstants::NOVA_GROUP_CARE_COACHES;
 
     /**
      * Build an "index" query for the given resource.

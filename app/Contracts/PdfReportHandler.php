@@ -6,6 +6,8 @@
 
 namespace App\Contracts;
 
+use CircleLinkHealth\Core\Contracts\PdfReport;
+
 interface PdfReportHandler
 {
     /**

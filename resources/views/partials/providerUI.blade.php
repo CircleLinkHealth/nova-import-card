@@ -8,7 +8,7 @@
             @include('partials.providerUI.patientnav')
         @endif
 
-        @if(!empty($patient->id) && (! auth()->user()->isCareCoach() || (auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))))
+        @if(!empty($patient->id) && (! auth()->user()->isCareCoach() || (auth()->user()->isCareCoach() && app(\CircleLinkHealth\Customer\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))))
             @include('partials.fab')
         @endif
     @endif

@@ -6,10 +6,10 @@
 
 namespace Tests\Unit\CallSchedulingAlgo;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\SharedModels\Entities\Call;
-use App\Http\Controllers\CallController;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\CpmAdmin\Http\Controllers\CallController;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;

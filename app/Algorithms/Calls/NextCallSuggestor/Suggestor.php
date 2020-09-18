@@ -8,9 +8,9 @@ namespace App\Algorithms\Calls\NextCallSuggestor;
 
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestion as NextCallSuggestion;
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\SharedModels\Entities\Call;
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Contracts\CallHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -131,7 +131,7 @@ class Suggestor
             $suggestion->patient->id,
             Carbon::now()
         );
-        $suggestion->ccm_above = $suggestion->ccm_time_in_seconds >= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+        $suggestion->ccm_above = $suggestion->ccm_time_in_seconds >= CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
 
         return $suggestion;
     }

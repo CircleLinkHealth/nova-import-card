@@ -190,7 +190,7 @@
                                                 <label id="phone-label" style="margin-bottom: 0">
                                                     <div>
                                                         <input type="checkbox"
-                                                               @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                               @if (!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE) disabled
                                                                @endif
                                                                id="phone"/>
                                                         <label for="phone" style="margin-bottom: 0">
@@ -203,7 +203,7 @@
                                                 <label id="task-label" style="display: none; margin-bottom: 0">
                                                     <div>
                                                         <input type="checkbox"
-                                                               @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                               @if (!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE) disabled
                                                                @endif
                                                                @if (!empty($call) && !empty($call->sub_type)) checked
                                                                @endif
@@ -221,7 +221,7 @@
                                                         @foreach($tasks as $task)
                                                             <div class="radio">
                                                                 <input type="radio"
-                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @if (!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE) disabled
                                                                        @endif
                                                                        @if (!empty($call) && $call->sub_type === $task->sub_type) checked
                                                                        @endif
@@ -271,7 +271,7 @@
                                                              style="display: none;">
                                                             <div class="multi-input-wrapper">
                                                                 <div class="radio-inline"><input type="radio"
-                                                                                                 @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                                                 @if (!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE) disabled
                                                                                                  @endif
                                                                                                  @if (!empty($call) && !$call->is_cpm_outbound) checked
                                                                                                  @endif
@@ -282,7 +282,7 @@
                                                                             for="Inbound"><span> </span>Inbound</label>
                                                                 </div>
                                                                 <div class="radio-inline"><input type="radio"
-                                                                                                 @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                                                 @if (!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE) disabled
                                                                                                  @endif
                                                                                                  @if (!empty($call) && $call->is_cpm_outbound) checked
                                                                                                  @endif
@@ -303,7 +303,7 @@
                                                              style="padding-bottom: 3px; display: none">
                                                             <div class="radio">
                                                                 <input type="radio"
-                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @if (!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE) disabled
                                                                        @endif
                                                                        @if (!empty($call) && $call->status === \CircleLinkHealth\SharedModels\Entities\Call::NOT_REACHED) checked
                                                                        @endif
@@ -317,7 +317,7 @@
                                                             </div>
                                                             <div class="radio">
                                                                 <input type="radio"
-                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @if (!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE) disabled
                                                                        @endif
                                                                        @if (!empty($call) && $call->status === \CircleLinkHealth\SharedModels\Entities\Call::REACHED) checked
                                                                        @endif
@@ -332,7 +332,7 @@
                                                             <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
                                                             <div class="radio">
                                                                 <input type="radio"
-                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @if (!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE) disabled
                                                                        @endif
                                                                        @if (!empty($call) && $call->status === \CircleLinkHealth\SharedModels\Entities\Call::IGNORED) checked
                                                                        @endif
@@ -352,7 +352,7 @@
                                                             <div>
                                                                 <div class="radio">
                                                                     <input type="checkbox"
-                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                           @if (!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE) disabled
                                                                            @endif
                                                                            @if (!empty($call) && $call->status === \CircleLinkHealth\SharedModels\Entities\Call::WELCOME) checked
                                                                            @endif
@@ -368,7 +368,7 @@
                                                             <div>
                                                                 <div class="radio">
                                                                     <input type="checkbox"
-                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                           @if (!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE) disabled
                                                                            @endif
                                                                            @if (!empty($call) && $call->status === \CircleLinkHealth\SharedModels\Entities\Call::OTHER) checked
                                                                            @endif
@@ -673,7 +673,7 @@
             const medications = @json($medications);
             const isEditingCompleteTask = @json(!empty($call) && !empty($call->sub_type));
             const editingTaskType = isEditingCompleteTask ? @json(optional($call)->sub_type) : undefined;
-            const disableAutoSave = @json(!empty($note) && $note->status == \App\Note::STATUS_COMPLETE);
+            const disableAutoSave = @json(!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE);
             const hasRnApprovedCarePlan = @json($hasRnApprovedCarePlan);
             const shouldRnApprove = @json($shouldRnApprove);
 

@@ -6,7 +6,7 @@
 
 namespace App\Exports;
 
-use App\Reports\NurseDailyReport as NurseStatsService;
+use CircleLinkHealth\CpmAdmin\Services\NurseDailyReport as NurseStatsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use CircleLinkHealth\Customer\Entities\User;

@@ -6,11 +6,11 @@
 
 namespace App\Notifications;
 
-use App\Contracts\DirectMailableNotification;
-use App\Contracts\FaxableNotification;
-use App\Contracts\NotificationAboutPatient;
+use CircleLinkHealth\Core\Contracts\DirectMailableNotification;
+use CircleLinkHealth\Core\Contracts\FaxableNotification;
+use CircleLinkHealth\Core\Contracts\NotificationAboutPatient;
 use App\Reports\PatientDailyAuditReport;
-use App\ValueObjects\SimpleNotification;
+use CircleLinkHealth\Core\DTO\SimpleNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

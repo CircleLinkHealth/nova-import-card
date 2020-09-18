@@ -8,7 +8,7 @@ namespace App\Reports\Sales;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Contracts\Reports\Reportable;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Observation;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;

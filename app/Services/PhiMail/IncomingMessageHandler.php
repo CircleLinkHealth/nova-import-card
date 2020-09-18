@@ -6,7 +6,7 @@
 
 namespace App\Services\PhiMail;
 
-use App\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Jobs\DecorateUPG0506CcdaWithPdfData;
 use App\Jobs\ImportCcda;
 use App\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;

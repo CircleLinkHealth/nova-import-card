@@ -7,7 +7,7 @@
 use CircleLinkHealth\SharedModels\Entities\Call;
 use App\CareplanAssessment;
 use App\Models\Addendum;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\Customer\Entities\Appointment;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;

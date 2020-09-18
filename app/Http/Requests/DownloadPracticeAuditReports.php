@@ -6,7 +6,7 @@
 
 namespace App\Http\Requests;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -40,7 +40,7 @@ class DownloadPracticeAuditReports extends FormRequest
                             ->where('program_id', $this->input('practice_id'))
                             ->whereIn(
                                 'role_id',
-                                Role::whereIn('name', array_merge(Constants::PRACTICE_STAFF_ROLE_NAMES, ['administrator']))->pluck('id')->all()
+                                Role::whereIn('name', array_merge(CpmConstants::PRACTICE_STAFF_ROLE_NAMES, ['administrator']))->pluck('id')->all()
                             );
                     }
                 ),

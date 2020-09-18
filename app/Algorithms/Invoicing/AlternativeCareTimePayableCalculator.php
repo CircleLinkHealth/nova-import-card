@@ -7,7 +7,7 @@
 namespace App\Algorithms\Invoicing;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use App\User;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;

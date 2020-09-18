@@ -6,7 +6,7 @@
 
 namespace App\Services\AWV;
 
-use App\Notifications\Channels\DirectMailChannel;
+use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Notifications\SendCareDocument;
 use CircleLinkHealth\Core\Facades\Notification;

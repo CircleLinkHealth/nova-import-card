@@ -6,6 +6,8 @@
 
 namespace App\Contracts;
 
+use CircleLinkHealth\Core\Contracts\FaxableNotification;
+
 interface Efax
 {
     public function createFaxFor(string $number): Efax;

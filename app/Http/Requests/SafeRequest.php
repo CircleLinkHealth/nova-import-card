@@ -6,7 +6,7 @@
 
 namespace App\Http\Requests;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SafeRequest extends FormRequest
@@ -29,7 +29,7 @@ class SafeRequest extends FormRequest
         foreach ($all as $key => $value) {
             if (empty($value)) {
                 $result[$key] = $value;
-            } elseif (in_array($key, Constants::TRIX_FIELDS)) {
+            } elseif (in_array($key, CpmConstants::TRIX_FIELDS)) {
                 //if input is Trix value we need some tags
                 $result[$key] = stripNonTrixTags($value);
             } elseif (is_array($value)) {

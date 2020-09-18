@@ -6,7 +6,7 @@
 
 namespace App\Providers;
 
-use App\FullCalendar\NurseCalendarService;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;

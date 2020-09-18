@@ -29,7 +29,7 @@ class User extends Resource
      *
      * @var string
      */
-    public static $group = \App\Constants::NOVA_GROUP_ADMIN;
+    public static $group = \CircleLinkHealth\Customer\CpmConstants::NOVA_GROUP_ADMIN;
 
     /**
      * The model the resource corresponds to.

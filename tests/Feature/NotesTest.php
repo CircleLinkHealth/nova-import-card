@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Tests\CustomerTestCase;
 
 class NotesTest extends CustomerTestCase

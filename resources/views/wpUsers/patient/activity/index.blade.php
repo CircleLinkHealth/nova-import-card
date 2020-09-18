@@ -291,7 +291,7 @@
 
                             </script>
                         @endpush
-                        @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)))
+                        @if(auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)))
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
                                            header:'CarePlanManager.com - Patient Activity Report <?= date('M d,Y'); ?>',

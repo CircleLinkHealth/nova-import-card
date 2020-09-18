@@ -26,7 +26,7 @@ class NurseInvoice extends Resource
      *
      * @var string
      */
-    public static $group = \App\Constants::NOVA_GROUP_CARE_COACHES;
+    public static $group = \CircleLinkHealth\Customer\CpmConstants::NOVA_GROUP_CARE_COACHES;
     /**
      * The model the resource corresponds to.
      *

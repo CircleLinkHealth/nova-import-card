@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Patient;
 
 use App\Contracts\ReportFormatter;
-use App\FullCalendar\NurseCalendarService;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CallPatientRequest;
 use App\Services\Observations\ObservationConstants;

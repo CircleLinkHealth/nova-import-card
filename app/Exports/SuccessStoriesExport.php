@@ -6,7 +6,7 @@
 
 namespace App\Exports;
 
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;

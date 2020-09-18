@@ -7,6 +7,7 @@
 namespace App\Filters;
 
 use App\Repositories\NoteRepository;
+use CircleLinkHealth\Core\Filters\QueryFilters;
 use Illuminate\Http\Request;
 
 class NoteFilters extends QueryFilters

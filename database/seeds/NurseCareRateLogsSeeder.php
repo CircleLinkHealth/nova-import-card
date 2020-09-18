@@ -6,7 +6,7 @@
 
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;

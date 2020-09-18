@@ -6,8 +6,8 @@
 
 namespace Tests\Feature;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
-use App\Note;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Notifications\PracticeStaffCreatedNote;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\Patient;

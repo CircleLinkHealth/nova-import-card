@@ -9,7 +9,7 @@ namespace App\Http\Controllers;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Models\Addendum;
 use App\Services\CallService;
-use App\Services\NoteService;
+use CircleLinkHealth\Customer\Services\NoteService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

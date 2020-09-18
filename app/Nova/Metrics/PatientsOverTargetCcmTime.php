@@ -6,7 +6,7 @@
 
 namespace App\Nova\Metrics;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\PracticeRoleUser;
@@ -58,12 +58,12 @@ class PatientsOverTargetCcmTime extends Value
             ->where(
                 'old_value',
                 '<',
-                Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
+                CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
             )
             ->where(
                 'new_value',
                 '>=',
-                Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
+                CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
             )
             ->leftJoin($summariesTable, "$revisionsTable.revisionable_id", '=', "$summariesTable.id")
             ->leftJoin(

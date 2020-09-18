@@ -6,14 +6,14 @@
 
 namespace App\Listeners;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use App\AppConfig\DMDomainForAutoApproval;
 use CircleLinkHealth\SharedModels\Entities\Call;
-use App\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Notifications\CarePlanDMApprovalConfirmation;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;

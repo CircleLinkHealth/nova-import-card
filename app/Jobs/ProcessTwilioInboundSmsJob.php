@@ -7,9 +7,9 @@
 namespace App\Jobs;
 
 use App\Entities\TwilioInboundSmsRequest;
-use App\Notifications\PatientUnsuccessfulCallNotification;
+use CircleLinkHealth\CpmAdmin\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\TwilioInboundSms;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;

@@ -42,7 +42,7 @@
                             <input id='firstName_btn' type='button' class='btn btn-primary' value='Show by First Name'
                                    style='display:none;margin:15px;'
                                    onclick='obs_alerts_dtable.hideColumn("last_name");obs_alerts_dtable.showColumn("first_name");obs_alerts_dtable.sort("#first_name#");this.style.display = "none";getElementById("lastName_btn").style.display = "inline-block";'>
-                            @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)))
+                            @if(auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)))
                                 <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                        onclick="webix.toPDF($$(obs_alerts_dtable), {
         header:'CarePlanManager.com - Patient CarePlan Print List',

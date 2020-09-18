@@ -7,11 +7,11 @@
 namespace App\Formatters;
 
 use App\Contracts\ReportFormatter;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Relationships\PatientCareplanRelations;
 use App\Services\CPM\CpmMiscService;
-use App\Services\NoteService;
-use App\Services\ReportsService;
+use CircleLinkHealth\Customer\Services\NoteService;
+use CircleLinkHealth\Customer\Services\ReportsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;

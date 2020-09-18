@@ -10,7 +10,7 @@ use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Console\Commands\CheckVoiceCalls;
 use App\CpmCallAlert;
 use App\Nova\Filters\TwilioCallSourceFilter;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use App\TwilioCall;

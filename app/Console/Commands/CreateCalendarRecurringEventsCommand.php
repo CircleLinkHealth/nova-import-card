@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\FullCalendar\NurseCalendarService;
-use App\Jobs\CreateCalendarRecurringEventsJob;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
+use CircleLinkHealth\Customer\Jobs\CreateCalendarRecurringEventsJob;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use Illuminate\Console\Command;

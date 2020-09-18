@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Contracts\DirectMail;
+use CircleLinkHealth\Core\Contracts\DirectMail;
 use Illuminate\Console\Command;
 
 class CheckEmrDirectInbox extends Command

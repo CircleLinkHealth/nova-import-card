@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use App\FullCalendar\NurseCalendarService;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;

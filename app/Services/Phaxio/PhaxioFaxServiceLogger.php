@@ -7,7 +7,7 @@
 namespace App\Services\Phaxio;
 
 use App\Contracts\Efax;
-use App\Contracts\FaxableNotification;
+use CircleLinkHealth\Core\Contracts\FaxableNotification;
 use App\FaxLog;
 use Phaxio\Fax;
 

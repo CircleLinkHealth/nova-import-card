@@ -7,7 +7,7 @@
 namespace Tests\Concerns\PhaxioFake;
 
 use App\Contracts\Efax;
-use App\Contracts\FaxableNotification;
+use CircleLinkHealth\Core\Contracts\FaxableNotification;
 use App\Notifications\Channels\FaxChannel;
 use Phaxio\Fax;
 use Psr\Log\LoggerInterface;

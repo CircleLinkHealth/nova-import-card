@@ -6,7 +6,7 @@
 
 namespace App\Providers;
 
-use App\Contracts\DirectMail;
+use CircleLinkHealth\Core\Contracts\DirectMail;
 use App\Services\PhiMail\IncomingMessageHandler;
 use App\Services\PhiMail\PhiMail;
 use CircleLinkHealth\Customer\Entities\User;

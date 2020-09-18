@@ -7,7 +7,7 @@
 namespace App\Nova;
 
 use App\CcdaView;
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Nova\Actions\DownloadCsv;
 use App\Nova\Actions\ImportCcdaAction;
 use App\Nova\Actions\ReimportCcda;
@@ -29,7 +29,7 @@ class Ccda extends Resource
      *
      * @var string
      */
-    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
+    public static $group = CpmConstants::NOVA_GROUP_ENROLLMENT;
     /**
      * The model the resource corresponds to.
      *

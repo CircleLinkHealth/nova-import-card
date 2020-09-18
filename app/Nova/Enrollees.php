@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Nova\Actions\ImportEnrollee;
 use App\Nova\Actions\ImportEnrollees;
 use App\Nova\Actions\SelfEnrollmentManualInvite;
@@ -29,7 +29,7 @@ class Enrollees extends Resource
      *
      * @var string
      */
-    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
+    public static $group = CpmConstants::NOVA_GROUP_ENROLLMENT;
 
     /**
      * The model the resource corresponds to.

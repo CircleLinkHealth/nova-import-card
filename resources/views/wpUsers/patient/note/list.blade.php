@@ -332,7 +332,7 @@
                                     </li>
                                 </div>
                                 <div class="col-sm-6">
-                                    @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)))
+                                    @if(auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)))
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toExcel($$(obs_alerts_dtable), {
