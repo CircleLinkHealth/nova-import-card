@@ -49,7 +49,7 @@
 <script>
     import LoaderComponent from '../../../../../SharedVueComponents/Resources/assets/js/components/loader';
     import {rootUrl} from "../../../../../SharedVueComponents/Resources/assets/js/app.config.js";
-    import Errors from "../../../../../../resources/assets/js/components/src/Errors";
+    import Errors from "../../../../../SharedVueComponents/Resources/assets/js/components/src/Errors";
 
     export default {
         props: [
