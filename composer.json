@@ -24,6 +24,10 @@
         },
         {
             "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-raygun.git"
+        },
+        {
+            "type": "git",
             "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git"
         },
         {
@@ -117,6 +121,8 @@
         "suenerds/nova-searchable-belongs-to-filter": "^1.0",
         "titasgailius/search-relations": "^1.0",
         "vink/nova-cache-card": "^1.0",
+        "circlelinkhealth/raygun-module": "1.2",
+
         "waynestate/nova-ckeditor4-field": "^0.4.0"
     },
     "require-dev": {
