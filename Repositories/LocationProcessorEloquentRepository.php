@@ -14,6 +14,7 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -27,6 +28,12 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
     public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth): AvailableServiceProcessors
     {
         return AvailableServiceProcessors::push($this->locationServiceProcessors($locationId, $chargeableMonth));
+    }
+
+    public function enrolledPatients(int $locationId, Carbon $monthYear): Collection
+    {
+        return $this->patientsQuery($locationId, $monthYear, Patient::ENROLLED)
+            ->get();
     }
 
     public function paginatePatients(int $locationId, Carbon $chargeableMonth, int $pageSize): LengthAwarePaginator
@@ -52,10 +59,18 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->whereHas('patient.patientInfo', fn ($info) => $info->where('preferred_contact_location', $locationId));
     }
 
-    public function patientsQuery(int $locationId, Carbon $monthYear): Builder
+    public function patientsQuery(int $locationId, Carbon $monthYear, ?string $ccmStatus = null): Builder
     {
         return $this->approvablePatientUsersQuery($monthYear)
-            ->whereHas('patientInfo', fn ($info) => $info->where('preferred_contact_location', $locationId));
+            ->whereHas(
+                'patientInfo',
+                function ($info) use ($locationId, $ccmStatus) {
+                    $info->where('preferred_contact_location', $locationId)
+                        ->when( ! is_null($ccmStatus), function ($query) use ($ccmStatus) {
+                             $query->ccmStatus($ccmStatus);
+                         });
+                }
+            );
     }
 
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary

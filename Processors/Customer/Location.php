@@ -12,6 +12,7 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Customer\RenewLocationSummaries;
 use CircleLinkHealth\CcmBilling\Http\Resources\ApprovablePatientCollection;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessLocationPatientsChunk;
+use CircleLinkHealth\Customer\Entities\Patient;
 
 class Location implements CustomerProcessor
 {
@@ -32,7 +33,7 @@ class Location implements CustomerProcessor
         //todo: check for location processors, if none exist send slack message and abort
 
         $this->repo()
-            ->patientsQuery($locationId, $chargeableMonth)
+            ->patientsQuery($locationId, $chargeableMonth, Patient::ENROLLED)
             ->chunkIntoJobs(
                 100,
                 new ProcessLocationPatientsChunk(

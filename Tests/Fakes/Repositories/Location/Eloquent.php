@@ -82,7 +82,7 @@ class Eloquent implements LocationProcessorRepository
         // TODO: Implement patientServices() method.
     }
 
-    public function patientsQuery(int $customerModelId, Carbon $monthYear): Builder
+    public function patientsQuery(int $customerModelId, Carbon $monthYear, ?string $ccmStatus = null): Builder
     {
         return $this->builder;
     }

@@ -24,7 +24,7 @@ interface LocationProcessorRepository
 
     public function patientServices(int $customerModelId, Carbon $monthYear): Builder;
 
-    public function patientsQuery(int $customerModelId, Carbon $monthYear): Builder;
+    public function patientsQuery(int $customerModelId, Carbon $monthYear, ?string $ccmStatus = null): Builder;
 
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
 

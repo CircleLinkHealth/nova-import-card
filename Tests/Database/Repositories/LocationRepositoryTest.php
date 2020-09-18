@@ -15,6 +15,8 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Tests\CustomerTestCase;
 
 class LocationRepositoryTest extends CustomerTestCase
@@ -113,5 +115,21 @@ class LocationRepositoryTest extends CustomerTestCase
             self::assertTrue(($summaries = $patient->chargeableMonthlySummaries)->isNotEmpty());
             self::assertTrue(2 == $summaries->count());
         }
+    }
+
+    public function test_it_filters_patients_by_ccm_status()
+    {
+        $patients = $this->patient(5);
+
+        ($patientToPause = $patients[0])->patientInfo->update([
+            'ccm_status' => Patient::PAUSED,
+        ]);
+
+        $repoPatients = $this->repo->enrolledPatients($patientToPause->getPreferredContactLocation(), $startOfMonth = Carbon::now()->startOfMonth());
+
+        self::assertNull($repoPatients->firstWhere('id', $patientToPause->id));
+        self::assertTrue($repoPatients->filter(function (User $p) {
+            return Patient::ENROLLED !== $p->getCcmStatus();
+        })->isEmpty());
     }
 }
