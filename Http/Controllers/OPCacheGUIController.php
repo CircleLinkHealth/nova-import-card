@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
 
 class OPCacheGUIController extends Controller
 {

@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateOfflineActivityTimeRequest;
+use CircleLinkHealth\CpmAdmin\Http\Requests\CreateOfflineActivityTimeRequest;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class OfflineActivityTimeRequestController extends Controller
 {

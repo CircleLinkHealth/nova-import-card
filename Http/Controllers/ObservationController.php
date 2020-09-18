@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Observation;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Observation;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Controller;

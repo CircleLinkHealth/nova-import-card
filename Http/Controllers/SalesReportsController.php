@@ -6,16 +6,16 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Mail\SalesPracticeReport;
-use App\Reports\Sales\Location\SalesByLocationReport;
-use App\Reports\Sales\Practice\SalesByPracticeReport;
-use App\Reports\Sales\Provider\SalesByProviderReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
+use CircleLinkHealth\CpmAdmin\Mail\SalesPracticeReport;
+use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Location\SalesByLocationReport;
+use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Practice\SalesByPracticeReport;
+use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider\SalesByProviderReport;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Mail;
 
 class SalesReportsController extends Controller

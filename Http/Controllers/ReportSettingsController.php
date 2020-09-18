@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdateReportSettings;
-use App\ReportSetting;
+use CircleLinkHealth\CpmAdmin\Http\Requests\UpdateReportSettings;
+use CircleLinkHealth\SharedModels\Entities\ReportSetting;
+use Illuminate\Routing\Controller;
 
 class ReportSettingsController extends Controller
 {
