@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 

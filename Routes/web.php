@@ -13,12 +13,12 @@ Route::prefix('cpmadmin')->group(function () {
     Route::group(['prefix' => 'api'], function () {
         Route::group(['prefix' => 'admin'], function () {
             Route::get('clear-cache/{key}', [
-                'uses' => 'Admin\DashboardController@clearCache',
+                'uses' => 'DashboardController@clearCache',
                 'as' => 'clear.cache.key',
             ])->middleware('permission:call.read');
             //the new calls route that uses calls-view table
             Route::get('calls-v2', [
-                'uses' => 'API\Admin\CallsViewController@index',
+                'uses' => 'API\CallsViewController@index',
                 'as' => 'calls.v2.index',
             ])->middleware('permission:call.read');
         

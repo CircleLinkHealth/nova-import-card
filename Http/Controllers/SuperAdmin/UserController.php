@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Note;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;

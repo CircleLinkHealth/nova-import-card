@@ -4,24 +4,26 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API\Admin;
+namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
-use App\Filters\CallFilters;
-use App\Filters\PatientFilters;
-use App\Http\Controllers\API\ApiController;
-use App\Http\Resources\Call as CallResource;
-use App\Http\Resources\UserResource;
-use App\Services\Calls\ManagementService;
-use App\Services\NoteService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
+use CircleLinkHealth\CpmAdmin\Filters\CallFilters;
+use CircleLinkHealth\CpmAdmin\Http\Resources\Call as CallResource;
+use CircleLinkHealth\CpmAdmin\Services\ManagementService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Filters\PatientFilters;
+use CircleLinkHealth\Customer\Http\Resources\UserResource;
+use CircleLinkHealth\Customer\Services\NoteService;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 
-class CallsController extends ApiController
+class CallsController extends Controller
 {
+    use ApiReturnHelpers;
     private $noteService;
     private $service;
 

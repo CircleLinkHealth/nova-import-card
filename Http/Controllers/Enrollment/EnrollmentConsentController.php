@@ -6,28 +6,17 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment;
 
-use App\EnrolleeView;
-use App\Filters\EnrolleeFilters;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\EnrolleeCsvResource;
 use Carbon\Carbon;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
+use CircleLinkHealth\CpmAdmin\Http\Resources\EnrolleeCsvResource;
+use CircleLinkHealth\SharedModels\Entities\EnrolleeView;
+use CircleLinkHealth\SharedModels\Filters\EnrolleeFilters;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class EnrollmentConsentController extends Controller
 {
-    public function create($invite_code)
-    {
-        $enrollee                   = Enrollee::whereInviteCode($invite_code)->first();
-        $enrollee->invite_opened_at = Carbon::now()->toDateTimeString();
-        $enrollee->save();
-
-        if (is_null($enrollee)) {
-            return view('errors.enrollmentConsentUrlError');
-        }
-
-        return view('enrollment-consent.create', ['enrollee' => $enrollee]);
-    }
+    use ApiReturnHelpers;
 
     /**
      * @return mixed
@@ -78,35 +67,5 @@ class EnrollmentConsentController extends Controller
         return view('admin.reports.enrollment.enrollment-list');
     }
 
-    public function store(Request $request)
-    {
-        $input = $request->input();
-
-        $enrollee = Enrollee::find($input['enrollee_id']);
-
-        $enrollee->consented_at = Carbon::parse($input['consented_at'])->toDateTimeString();
-        $enrollee->status       = 'consented';
-        $enrollee->save();
-
-        return json_encode($enrollee);
-    }
-
-    public function update(Request $request)
-    {
-        $input = $request->input();
-
-        $enrollee = Enrollee::find($input['enrollee_id']);
-
-        if (isset($input['days'])) {
-            $enrollee->preferred_days = implode(', ', $input['days']);
-        }
-
-        if (isset($input['times'])) {
-            $enrollee->preferred_window = implode(', ', $input['times']);
-        }
-
-        $enrollee->save();
-
-        return view('enrollment-consent.thanks', ['enrollee' => $enrollee]);
-    }
+   
 }

@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class ManageCpmProblemsController extends Controller
 {

@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Reports;
 
-use App\CallView;
-use App\Filters\CallViewFilters;
-use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\SharedModels\Entities\CallView;
+use CircleLinkHealth\SharedModels\Filters\CallViewFilters;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class CallReportController extends Controller
 {

@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\Family;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class FamilyController extends Controller
 {

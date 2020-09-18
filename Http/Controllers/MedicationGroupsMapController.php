@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreMedicationGroupMapRequest;
-use App\MedicationGroupsMap;
+use CircleLinkHealth\CpmAdmin\Http\Requests\StoreMedicationGroupMapRequest;
+use CircleLinkHealth\SharedModels\Entities\MedicationGroupsMap;
 use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class MedicationGroupsMapController extends Controller
 {

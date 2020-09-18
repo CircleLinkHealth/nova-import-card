@@ -6,14 +6,14 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
-use App\Exports\CareCoachMonthlyReport;
-use App\Filters\NurseDailyReportFilters;
-use App\Http\Controllers\Controller;
-use App\Reports\NurseDailyReport;
+use CircleLinkHealth\CpmAdmin\Exports\CareCoachMonthlyReport;
+use CircleLinkHealth\CpmAdmin\Filters\NurseDailyReportFilters;
+use CircleLinkHealth\CpmAdmin\Services\NurseDailyReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Routing\Controller;
 
 class NurseController extends Controller
 {

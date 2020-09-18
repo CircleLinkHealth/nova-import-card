@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\CRUD;
 
-use App\Http\Requests\CreateSaasAccount;
-use App\Notifications\SAAS\SendInternalUserSignupInvitation;
+use CircleLinkHealth\CpmAdmin\Http\Requests\CreateSaasAccount;
+use CircleLinkHealth\CpmAdmin\Notifications\SAAS\SendInternalUserSignupInvitation;
 use CircleLinkHealth\CpmAdmin\Services\SAAS\UserManagementService;
 use CircleLinkHealth\CpmAdmin\DTO\InternalUser;
 use CircleLinkHealth\Customer\Entities\Practice;

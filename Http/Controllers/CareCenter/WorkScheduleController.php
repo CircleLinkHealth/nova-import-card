@@ -6,25 +6,27 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter;
 
-use App\FullCalendar\NurseCalendarService;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\CalendarRange;
-use App\Jobs\CreateCalendarRecurringEventsJob;
-use App\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
+use CircleLinkHealth\CpmAdmin\Http\Requests\CalendarRange;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
+use CircleLinkHealth\Customer\Jobs\CreateCalendarRecurringEventsJob;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
+use CircleLinkHealth\Customer\Traits\ValidatesWorkScheduleCalendar;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Validation\Rule;
 use Validator;
 
 class WorkScheduleController extends Controller
 {
+    use ApiReturnHelpers;
     use ValidatesWorkScheduleCalendar;
 
     protected $fullCalendarService;

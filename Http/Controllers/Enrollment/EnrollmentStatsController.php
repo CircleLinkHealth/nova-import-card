@@ -6,20 +6,23 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\CareAmbassadorKPIsCSVResourceCollection;
-use App\Http\Resources\PracticeKPIsCSVResourceCollection;
-use App\Services\Enrollment\CareAmbassadorKPIs;
-use App\Services\Enrollment\PracticeKPIs;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
+use CircleLinkHealth\CpmAdmin\Http\Resources\CareAmbassadorKPIs;
+use CircleLinkHealth\CpmAdmin\Http\Resources\CareAmbassadorKPIsCSVResourceCollection;
+use CircleLinkHealth\CpmAdmin\Http\Resources\PracticeKPIs;
+use CircleLinkHealth\CpmAdmin\Http\Resources\PracticeKPIsCSVResourceCollection;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 
 class EnrollmentStatsController extends Controller
 {
+    use ApiReturnHelpers;
+    
     /**
      * Render ambassador stats datatable.
      *
