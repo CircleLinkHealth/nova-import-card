@@ -9,7 +9,7 @@
     <meta name="base-url" content="{{ url('/') }}">
     <title>CPM API</title>
 
-<!-- Stylesheets -->
+    <!-- Stylesheets -->
     <link href="{{ mix('/css/admin.css') }}" rel="stylesheet">
     <link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
@@ -26,11 +26,7 @@
     <!-- JQuery -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css" integrity="sha256-iWTx/iC9IoKaoSKD5+WVFef8ZYNIgQ4AxVpMbBw2hig=" crossorigin="anonymous" />
 
-    <!-- http://trentrichardson.com/examples/timepicker/ -->
-    <link rel="stylesheet"
-          href="{{mix('/css/jquery-ui-timepicker-addon.min.css')}}">
-
-    <link rel="stylesheet" href="{{mix('/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha512-Dop/vW3iOtayerlYAqCgkVr2aTr2ErwwTYOvRFUpzl2VhCMJyjQF0Q9TjUXIo6JhuM/3i0vVEt2e/7QQmnHQqw==" crossorigin="anonymous" />
 
     <link rel="stylesheet" type="text/css"
           href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
@@ -167,10 +163,10 @@
                                 <li>
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
                                 </li>
-{{--                                to remove?--}}
-{{--                                <li>--}}
-{{--                                    <a href="{{route('OpsDashboard.index.chart')}}">Ops Chart</a>--}}
-{{--                                </li>--}}
+                                {{--                                to remove?--}}
+                                {{--                                <li>--}}
+                                {{--                                    <a href="{{route('OpsDashboard.index.chart')}}">Ops Chart</a>--}}
+                                {{--                                </li>--}}
                                 <li><a href="{{ route('admin.reports.nurse.metrics') }}">
                                         Nurse Performance Report</a></li>
                                 <li>
@@ -317,7 +313,6 @@
 <script src="{{mix('compiled/js/app-clh-admin-ui.js')}}"></script>
 <script type="text/javascript" src="{{ mix('compiled/js/admin-ui.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
 
 <script>
     $(document).ready(function () {
