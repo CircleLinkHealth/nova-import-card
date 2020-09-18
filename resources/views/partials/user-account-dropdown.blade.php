@@ -8,7 +8,7 @@
     </div>
     <ul class="dropdown-menu" role="menu" style="background: white !important;">
 
-        @include('partials.last-login')
+        @include('core::partials.last-login')
 
         @impersonating
         <li>
