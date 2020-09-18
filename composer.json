@@ -175,7 +175,6 @@
     "jenssegers/agent": "^2.5",
     "jeremykenedy/slack-laravel": "^7.0.0",
     "joshbrw/laravel-module-installer": "^0.1.5",
-    "lab404/laravel-impersonate": "^1.2",
     "laracasts/utilities": "~3.0",
     "laravel-notification-channels/twilio": "^2.1",
     "laravel/framework": "^7.6",
