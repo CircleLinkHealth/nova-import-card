@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
-use App\Services\AthenaAPI\Calls;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Console\Command;

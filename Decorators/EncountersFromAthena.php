@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Decorators;
 
-use App\Traits\ValidatesDates;
+use CircleLinkHealth\Core\Traits\ValidatesDates;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;

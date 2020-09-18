@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
-use App\Services\AthenaAPI\Calls;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Appointment;
 use CircleLinkHealth\Customer\Entities\User;

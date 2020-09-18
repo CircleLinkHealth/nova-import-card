@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Providers;
 
-use App\Services\AthenaAPI\Calls;
-use App\Services\AthenaAPI\Connection;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Connection;
 use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\DetermineTargetPatientEligibility;
 use CircleLinkHealth\Eligibility\Console\Athena\FixBatch235;
