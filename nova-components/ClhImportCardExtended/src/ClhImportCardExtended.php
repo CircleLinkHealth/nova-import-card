@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\ClhImportCardExtended;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
+use App\User;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\Select;
 

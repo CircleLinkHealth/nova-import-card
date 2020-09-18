@@ -70,7 +70,7 @@ class Practice extends Resource
         return [
             ClhImportCardExtended::make(self::class, [
                 Text::make('email')
-                    ->withModel(\CircleLinkHealth\Customer\Entities\User::class, 'email')
+                    ->withModel(\App\User::class, 'email')
                     ->inputRules(['required', 'email']),
             ], 'Create and Send Patient Consent Letters'),
         ];

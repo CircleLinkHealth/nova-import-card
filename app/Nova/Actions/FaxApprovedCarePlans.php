@@ -7,7 +7,7 @@
 namespace App\Nova\Actions;
 
 use App\Jobs\FaxPatientCarePlansToLocation;
-use CircleLinkHealth\Customer\Entities\User;
+use App\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

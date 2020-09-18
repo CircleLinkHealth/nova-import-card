@@ -12,7 +12,7 @@ use App\Nova\Actions\UserUnreachable;
 use App\Nova\Actions\UserWithdraw;
 use App\Nova\Filters\UserPracticeFilter;
 use App\Nova\Filters\UserRoleFilter;
-use CircleLinkHealth\Customer\Entities\User as CpmUser;
+use App\User as CpmUser;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
@@ -191,7 +191,7 @@ class User extends Resource
     {
         $withRelations = ['primaryPractice', 'roles', 'practices'];
 
-        /** @var \CircleLinkHealth\Customer\Entities\User $user */
+        /** @var \App\User $user */
         $user = auth()->user();
         if ($user->isAdmin()) {
             return $query->with($withRelations);

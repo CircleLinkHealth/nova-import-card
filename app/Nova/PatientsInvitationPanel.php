@@ -18,7 +18,7 @@ class PatientsInvitationPanel extends Resource
      *
      * @var string
      */
-    public static $model = \CircleLinkHealth\Customer\Entities\User::class;
+    public static $model = \App\User::class;
 
     /**
      * The columns that should be searched.

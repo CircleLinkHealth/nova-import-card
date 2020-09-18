@@ -9,7 +9,7 @@ namespace App\Nova\Importers;
 use App\Search\LocationByName;
 use App\Search\RoleByName;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
-use CircleLinkHealth\Customer\Entities\User;
+use App\User;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Str;
