@@ -47,9 +47,6 @@ class CustomerServiceProvider extends ServiceProvider implements DeferrableProvi
         $this->registerConfig();
         $this->registerViews();
         $this->registerFactories();
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-        $this->app->register(CpmMigrationsServiceProvider::class);
-        $this->app->register(SqlViewsServiceProvider::class);
         if (class_exists(\App\User::class)) {
             Relation::morphMap([
                 \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
