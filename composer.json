@@ -11,7 +11,6 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\CpmAdmin\\Providers\\CpmAdminServiceProvider"
             ],
             "aliases": {
 
