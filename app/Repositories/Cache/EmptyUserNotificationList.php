@@ -6,7 +6,7 @@
 
 namespace App\Repositories\Cache;
 
-use App\Contracts\UserNotificationListInterface;
+use CircleLinkHealth\Customer\Contracts\UserNotificationListInterface;
 
 /**
  * This is an empty class that is returned instead of UserNotificationList on the saas environment where there is no cache setup.
