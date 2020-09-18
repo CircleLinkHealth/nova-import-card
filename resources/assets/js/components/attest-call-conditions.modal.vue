@@ -52,7 +52,7 @@
 </template>
 <script>
     import Modal from '../admin/common/modal';
-    import {rootUrl} from '../app.config';
+    import {rootUrl} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config';
     import AddCondition from './careplan/add-condition';
     import CareplanMixin from './careplan/mixins/careplan.mixin';
     import {Event} from 'vue-tables-2';

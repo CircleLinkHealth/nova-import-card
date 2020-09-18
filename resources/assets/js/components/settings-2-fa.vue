@@ -131,7 +131,7 @@
 </template>
 <script>
     import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
-    import {rootUrl} from "../app.config";
+    import {rootUrl} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
     import Errors from "./src/Errors";
 
     export default {

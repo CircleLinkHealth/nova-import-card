@@ -46,7 +46,7 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../app.config'
+    import {rootUrl} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
     import {Event} from 'vue-tables-2'
     import MedicationsModal from './modals/medications.modal'
     import CareplanMixin from './mixins/careplan.mixin'

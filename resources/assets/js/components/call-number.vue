@@ -182,7 +182,7 @@
     </div>
 </template>
 <script>
-    import {rootUrl} from "../app.config";
+    import {rootUrl} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
     import EventBus from '../admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
     import {registerHandler, sendRequest} from "./bc-job-manager";

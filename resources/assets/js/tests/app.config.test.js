@@ -5,7 +5,7 @@ import {
     baseValue,
     csrfToken,
     testRootUrl
-} from '../app.config'
+} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
 
 const base = new ElementMock({
     tagName: 'base',

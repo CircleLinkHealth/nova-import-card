@@ -130,7 +130,7 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../app.config'
+    import {rootUrl} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
     import TextEditable from '../../admin/calls/comps/text-editable'
     import EventBus from '../../admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'

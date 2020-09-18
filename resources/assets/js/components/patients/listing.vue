@@ -127,7 +127,7 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../app.config.js'
+    import {rootUrl} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config.js'
     import {Event} from 'vue-tables-2'
     import {CancelToken} from 'axios'
     import moment from 'moment'

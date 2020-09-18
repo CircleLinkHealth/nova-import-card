@@ -101,7 +101,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
     import {Event} from 'vue-tables-2'
     import Modal from '../admin/common/modal'
     import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader'
-    import {rootUrl} from '../app.config'
+    import {rootUrl} from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
     import {today} from '../util/today'
     import notifications from './notifications'
     import VueSelect from 'vue-select'

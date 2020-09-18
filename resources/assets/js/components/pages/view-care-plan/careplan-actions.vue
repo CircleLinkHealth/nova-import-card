@@ -6,7 +6,7 @@
 
     import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
     import CarePlanApi from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/api/patient-care-plan'
-    import {rootUrl} from '../../../app.config'
+    import {rootUrl} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
 
     export default {
         components: {

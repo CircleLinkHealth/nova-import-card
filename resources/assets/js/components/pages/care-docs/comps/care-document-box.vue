@@ -80,7 +80,7 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../../../app.config.js'
+    import {rootUrl} from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config.js'
     import modal from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/shared/modal.vue'
     import Loader from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader.vue';
 

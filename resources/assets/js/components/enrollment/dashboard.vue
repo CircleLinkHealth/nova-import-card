@@ -100,7 +100,7 @@ import {Device} from 'twilio-client';
 
 import PatientToEnroll from './patient-to-enroll';
 
-import {rootUrl} from '../../app.config';
+import {rootUrl} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config';
 
 import TimeTracker from '../../admin/time-tracker';
 import TimeTrackerEventBus from '../../admin/time-tracker/comps/event-bus';

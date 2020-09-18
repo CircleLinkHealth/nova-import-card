@@ -34,7 +34,7 @@
     import LoaderComponent from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/components/loader';
     import {Event} from 'vue-tables-2';
     import {today} from "../util/today";
-    import {rootUrl} from "../app.config";
+    import {rootUrl} from "../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config";
 
     const defaultNextCall = {
         id: null,

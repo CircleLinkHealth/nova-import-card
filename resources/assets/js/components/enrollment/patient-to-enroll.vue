@@ -734,7 +734,7 @@
 
 <script>
 
-import {rootUrl} from '../../app.config';
+import {rootUrl} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config';
 import CallNumpad from '../call-numpad';
 
 import {Logger} from '../../logger-logdna';

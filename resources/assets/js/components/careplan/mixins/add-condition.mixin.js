@@ -1,6 +1,6 @@
 import CareplanMixin from './careplan.mixin';
 import {Event} from 'vue-tables-2';
-import {rootUrl} from '../../../app.config'
+import {rootUrl} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/app.config'
 
 export default {
     data: function () {
