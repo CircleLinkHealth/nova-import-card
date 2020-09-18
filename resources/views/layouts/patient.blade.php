@@ -51,7 +51,7 @@
 
 </div> <!-- end #app -->
 
-@include('partials.sentry-js')
+@include('core::partials.sentry-js')
 @stack('scripts')
 </body>
 </html>

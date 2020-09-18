@@ -170,7 +170,7 @@
     @endif
 @endauth
 
-@include('partials.sentry-js')
+@include('core::partials.sentry-js')
 </body>
 
 </html>
