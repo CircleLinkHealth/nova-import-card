@@ -7,6 +7,7 @@
 namespace App;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Observation;
 
 /**
  * App\ObservationMeta.
@@ -21,7 +22,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int              $legacy_meta_id
  * @property \Carbon\Carbon   $created_at
  * @property \Carbon\Carbon   $updated_at
- * @property \App\Observation $observationMeta
+ * @property \CircleLinkHealth\SharedModels\Entities\Observation $observationMeta
  * @method   static           \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereCommentId($value)
  * @method   static           \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereCreatedAt($value)
  * @method   static           \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereId($value)
@@ -64,7 +65,7 @@ class ObservationMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function observationMeta()
     {
-        return $this->belongsTo(\App\Observation::class, 'obs_id');
+        return $this->belongsTo(\CircleLinkHealth\SharedModels\Entities\Observation::class, 'obs_id');
     }
 
     public function save(array $params = [])

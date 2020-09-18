@@ -30,7 +30,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int                                      $legacy_comment_id
  * @property \Carbon\Carbon                           $created_at
  * @property \Carbon\Carbon                           $updated_at
- * @property \App\Observation                         $observation
+ * @property \CircleLinkHealth\SharedModels\Entities\Observation                         $observation
  * @property \CircleLinkHealth\Customer\Entities\User $user
  * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAgent($value)
  * @method   static                                   \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentApproved($value)
@@ -85,7 +85,7 @@ class Comment extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function observation()
     {
-        return $this->belongsTo(\App\Observation::class, 'comment_ID');
+        return $this->belongsTo(\CircleLinkHealth\SharedModels\Entities\Observation::class, 'comment_ID');
     }
 
     public function save(array $params = [])

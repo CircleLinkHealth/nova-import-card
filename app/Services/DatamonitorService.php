@@ -7,7 +7,7 @@
 namespace App\Services;
 
 use App\CPRulesQuestions;
-use App\Observation;
+use CircleLinkHealth\SharedModels\Entities\Observation;
 use App\ObservationMeta;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;

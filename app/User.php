@@ -128,7 +128,7 @@ namespace App;
  * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection           $nurseBonuses
  * @property int|null                                                                                                        $nurse_bonuses_count
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurseInfo
- * @property \App\Observation[]|\Illuminate\Database\Eloquent\Collection                                                     $observations
+ * @property \CircleLinkHealth\SharedModels\Entities\Observation[]|\Illuminate\Database\Eloquent\Collection                                                     $observations
  * @property int|null                                                                                                        $observations_count
  * @property \CircleLinkHealth\SharedModels\Entities\Call[]|\Illuminate\Database\Eloquent\Collection                                                            $outboundCalls
  * @property int|null                                                                                                        $outbound_calls_count

@@ -2,10 +2,10 @@
 
 <?php
 
-$enrollmentSection = \App\Reports\Sales\Provider\Sections\EnrollmentSummary::class;
-$rangeSection      = \App\Reports\Sales\Provider\Sections\RangeSummary::class;
-$financialSection  = \App\Reports\Sales\Provider\Sections\FinancialSummary::class;
-$practiceSection   = \App\Reports\Sales\Provider\Sections\PracticeDemographics::class;
+$enrollmentSection = \CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider\Sections\EnrollmentSummary::class;
+$rangeSection      = \CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider\Sections\RangeSummary::class;
+$financialSection  = \CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider\Sections\FinancialSummary::class;
+$practiceSection   = \CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider\Sections\PracticeDemographics::class;
 
 ?>
 

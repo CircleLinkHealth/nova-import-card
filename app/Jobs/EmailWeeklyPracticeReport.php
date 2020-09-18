@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use App\Notifications\WeeklyPracticeReport;
-use App\Reports\Sales\Practice\SalesByPracticeReport;
+use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Practice\SalesByPracticeReport;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

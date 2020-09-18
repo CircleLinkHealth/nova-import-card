@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Observation;
+use CircleLinkHealth\SharedModels\Entities\Observation;
 use App\Services\Observations\ObservationConstants;
 use App\Services\Observations\ObservationService;
 use Carbon\Carbon;

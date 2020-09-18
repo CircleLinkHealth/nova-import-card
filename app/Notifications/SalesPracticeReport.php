@@ -6,7 +6,7 @@
 
 namespace App\Notifications;
 
-use App\Mail\SalesPracticeReport as SalesPracticeReportMailable;
+use CircleLinkHealth\CpmAdmin\Mail\SalesPracticeReport as SalesPracticeReportMailable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 

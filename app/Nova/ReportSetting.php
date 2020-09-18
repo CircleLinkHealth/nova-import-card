@@ -24,7 +24,7 @@ class ReportSetting extends Resource
      *
      * @var string
      */
-    public static $model = \App\ReportSetting::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\ReportSetting::class;
 
     /**
      * The columns that should be searched.
