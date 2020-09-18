@@ -1,4 +1,4 @@
-import EventBus from '../../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+import EventBus from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
 
 export default (App, VueDropZone) => {
     VueDropZone.$on('vdropzone-success', (file, response) => {

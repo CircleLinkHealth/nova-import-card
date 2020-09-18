@@ -18,7 +18,7 @@
 </template>
 
 <script>
-    import EventBus from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
+    import EventBus from '../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
     import {Event} from 'vue-tables-2'
 
     export default {

@@ -141,7 +141,7 @@
     import {mapGetters} from 'vuex'
     import {currentUser} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/getters';
     import VueSelect from "vue-select";
-    import GetsNurses from '../../mixins/gets-nurses'
+    import GetsNurses from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/mixins/gets-nurses'
     import moment from "moment";
 
     export default {

@@ -1,5 +1,5 @@
-import timeDisplay from '../time-display'
-import { hours, minutes, seconds } from '../time-display'
+import timeDisplay from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/time-display'
+import { hours, minutes, seconds } from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/util/time-display'
 
 describe('Time Display', () => {
     describe('hours()', () => {
