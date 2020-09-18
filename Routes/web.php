@@ -772,4 +772,27 @@ Route::prefix('cpmadmin')->group(function () {
             );
         }
     );
+    
+    Route::group([
+        'prefix' => 'ops-dashboard',
+    ], function () {
+        Route::get('/index', [
+            'uses' => 'OpsDashboardController@index',
+            'as'   => 'OpsDashboard.index',
+        ])->middleware('permission:opsReport.read');
+        Route::get('/chart', [
+            'uses' => 'OpsDashboardController@opsGraph',
+            'as'   => 'OpsDashboard.index.chart',
+        ])->middleware('permission:opsReport.read');
+        Route::get('/index/csv', [
+            'uses' => 'OpsDashboardController@dailyCsv',
+            'as'   => 'OpsDashboard.dailyCsv',
+        ])->middleware('permission:opsReport.read');
+        
+        //billing churn - not working, may fix in the future if it becomes a priority
+        Route::get('/billing-churn', [
+            'uses' => 'OpsDashboardController@getBillingChurn',
+            'as'   => 'OpsDashboard.billingChurn',
+        ])->middleware('permission:opsReport.read');
+    });
 });
