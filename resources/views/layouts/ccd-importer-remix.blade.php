@@ -19,7 +19,7 @@
         @yield('content')
     </div>
 
-    @include('partials.footer')
+
 
     <script src="{{ mix('compiled/js/app-provider-ui.js') }}"></script>
 </body>

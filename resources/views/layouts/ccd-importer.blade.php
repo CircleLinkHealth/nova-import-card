@@ -33,7 +33,7 @@
     @endif
 </div>
 
-@include('partials.footer')
+
 
 {{--<script src="{{ mix('/compiled/js/scripts.js') }}"></script>--}}
 <script src="{{mix('/js/uploader.js')}}"></script>

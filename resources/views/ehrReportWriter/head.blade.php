@@ -122,7 +122,7 @@
 
 </div>
 </body>
-@include('partials.footer')
+
 @yield('content')
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->
