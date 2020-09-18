@@ -21,7 +21,7 @@ class CpmCallAlert extends Resource
      *
      * @var string
      */
-    public static $model = \App\CpmCallAlert::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\CpmCallAlert::class;
 
     /**
      * The columns that should be searched.
