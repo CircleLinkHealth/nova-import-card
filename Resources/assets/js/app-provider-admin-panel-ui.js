@@ -3,8 +3,6 @@ require('hammerjs')
 require('materialize-css')
 require('materialize-css/js/toasts')
 
-//require('../../../public/js/materialize.min')
-
 import Vue from 'vue'
 import axios from './bootstrap-axios'
 import VueAxios from 'vue-axios'
