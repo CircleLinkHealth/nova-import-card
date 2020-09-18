@@ -4,5 +4,12 @@
     "Eligibility": true,
     "NurseInvoices": true,
     "SqlViews": true,
-    "CarePlanModels": true
+    "CarePlanModels": true,
+    "CcdaParser": true,
+    "ConditionCodeLookup": true,
+    "Core": true,
+    "Customer": true,
+    "Raygun": true,
+    "TimeTracking": true,
+    "TwoFA": true
 }
