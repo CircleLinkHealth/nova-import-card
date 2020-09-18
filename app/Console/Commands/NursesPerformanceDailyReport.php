@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\NursesPerformanceReportService;
+use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Console\Command;

@@ -8,7 +8,7 @@ namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use CircleLinkHealth\Customer\Jobs\CreateCalendarRecurringEventsJob;
-use App\Services\NursesPerformanceReportService;
+use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\SaasAccount;

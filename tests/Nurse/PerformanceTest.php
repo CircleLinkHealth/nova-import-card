@@ -6,7 +6,7 @@
 
 namespace Tests\Nurse;
 
-use App\Services\NursesPerformanceReportService;
+use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use Tests\CustomerTestCase;
 
