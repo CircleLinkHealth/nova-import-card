@@ -88,11 +88,6 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'create-test-patients',
     ]);
 
-    Route::get('upg0506/{type}', [
-        'uses' => 'Admin\DashboardController@upg0506',
-        'as'   => 'upg0506.demo',
-    ]);
-
     Route::get('impersonate/leave', [
         'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@leave',
         'as'   => 'impersonate.leave',
