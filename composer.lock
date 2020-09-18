@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "959288931720744353bf2c3f92cd1e9b",
+    "content-hash": "3aaa6ca4c500cc885ad63c6ee825af18",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -978,12 +978,14 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "a2e04b212a531d76799e0f17a857d186d2beeed2"
+                "reference": "10601d597ba3dc89eb18918a8bddc746c3c633d0"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
                 "circlelinkhealth/core-module": "*",
+                "circlelinkhealth/twofa-module": "*",
                 "fico7489/laravel-pivot": "^3.0",
+                "lab404/laravel-impersonate": "^1.2",
                 "laravel/passport": "^8.0",
                 "laravel/scout": "^7.1|^8.0",
                 "spatie/laravel-medialibrary": "^7.0.0"
@@ -1012,7 +1014,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T05:51:39+00:00"
+            "time": "2020-09-18T05:59:20+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
