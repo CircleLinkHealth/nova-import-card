@@ -15,7 +15,7 @@ try {
 }
 
 require('./bootstrap-axios');
-require('../../../../../resources/assets/js/logger-logdna').init();
-require('../../../../../resources/assets/js/pusher-echo').init();
+require('./logger-logdna').init();
+require('./pusher-echo').init();
 
 
