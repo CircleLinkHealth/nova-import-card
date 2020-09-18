@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\TrixField;
+use CircleLinkHealth\SharedModels\Entities\TrixField;
 use Illuminate\Database\Seeder;
 
 class CareAmbassadorDefaultScriptsSeeder extends Seeder

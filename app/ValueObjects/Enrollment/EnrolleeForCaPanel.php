@@ -7,7 +7,7 @@
 namespace App\ValueObjects\Enrollment;
 
 use App\CareAmbassadorLog;
-use App\TrixField;
+use CircleLinkHealth\SharedModels\Entities\TrixField;
 use Carbon\CarbonTimeZone;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
