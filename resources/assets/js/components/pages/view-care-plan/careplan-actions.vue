@@ -1,6 +1,6 @@
 <script>
     import {mapActions} from 'vuex'
-    import {addNotification, destroyPdf, uploadPdfCarePlan} from '../../../store/actions'
+    import {addNotification, destroyPdf, uploadPdfCarePlan} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/actions'
     import modal from '../../shared/modal.vue'
     import Dropzone from 'vue2-dropzone'
 

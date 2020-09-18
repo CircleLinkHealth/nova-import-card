@@ -1,7 +1,7 @@
 <script>
     import {mapGetters, mapActions} from 'vuex'
-    import {errors} from '../../../store/getters'
-    import {clearErrors} from '../../../store/actions'
+    import {errors} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/getters'
+    import {clearErrors} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/actions'
 
     export default {
         props: {

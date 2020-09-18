@@ -552,7 +552,7 @@
 <script>
     import modal from '../shared/modal.vue';
     import {mapGetters, mapActions} from 'vuex'
-    import {getPatientCareTeam, addNotification} from '../../store/actions'
+    import {getPatientCareTeam, addNotification} from '../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/actions'
     import suffixOptions from './suffix-options'
     import specialtiesOptions from './specialties-options'
     import VueSelect from 'vue-select'

@@ -40,8 +40,8 @@
 
 <script>
     import {mapGetters, mapActions} from 'vuex'
-    import {getPatientCareTeam} from '../../../store/actions'
-    import {patientCareTeam} from '../../../store/getters'
+    import {getPatientCareTeam} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/actions'
+    import {patientCareTeam} from '../../../../../../CircleLinkHealth/SharedVueComponents/Resources/assets/js/store/getters'
     import UpdateCarePerson from './update-care-person.vue'
 
     export default {
