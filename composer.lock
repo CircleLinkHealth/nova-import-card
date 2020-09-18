@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3aaa6ca4c500cc885ad63c6ee825af18",
+    "content-hash": "959288931720744353bf2c3f92cd1e9b",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -978,7 +978,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "10601d597ba3dc89eb18918a8bddc746c3c633d0"
+                "reference": "df6e11237536165ab8daa20cbfdffcae81ceaef2"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -988,6 +988,7 @@
                 "lab404/laravel-impersonate": "^1.2",
                 "laravel/passport": "^8.0",
                 "laravel/scout": "^7.1|^8.0",
+                "propaganistas/laravel-phone": "^4.2.2",
                 "spatie/laravel-medialibrary": "^7.0.0"
             },
             "type": "laravel-module",
@@ -1014,7 +1015,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T05:59:20+00:00"
+            "time": "2020-09-18T06:00:50+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1196,7 +1197,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "87f20b2f22308b49e2133fff7149ac01c327079a"
+                "reference": "6729e40a3de59a21fa61ddd67aa150b8630d2b5b"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1210,7 +1211,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T04:52:49+00:00"
+            "time": "2020-09-18T06:06:36+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
