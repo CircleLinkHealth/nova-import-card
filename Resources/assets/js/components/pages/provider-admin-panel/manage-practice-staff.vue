@@ -3,8 +3,8 @@
 </template>
 
 <script>
-    import UpdateStaff from '../../../../../../../../resources/assets/js/components/practice/users/update.vue'
-    import IndexStaff from '../../../../../../../../resources/assets/js/components/practice/users/index.vue'
+    import UpdateStaff from '../../practice/users/update.vue'
+    import IndexStaff from '../../practice/users/index.vue'
 
     export default {
 

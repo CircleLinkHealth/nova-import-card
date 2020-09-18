@@ -3,8 +3,8 @@
 </template>
 
 <script>
-    import UpdateLocation from '../../../../../../../../resources/assets/js/components/practice/lodations/update.vue'
-    import IndexLocations from '../../../../../../../../resources/assets/js/components/practice/lodations/index.vue'
+    import UpdateLocation from '../../practice/lodations/update.vue'
+    import IndexLocations from '../../practice/lodations/index.vue'
 
     export default {
         components: {
