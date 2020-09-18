@@ -191,7 +191,6 @@
     "nao-pon/flysystem-google-drive": "~1.1",
     "nvanheuverzwijn/monolog-logdna": "^2.1",
     "phaxio/phaxio": "^2.0",
-    "propaganistas/laravel-phone": "^4.2.2",
     "pusher/pusher-php-server": "^4.0",
     "seld/jsonlint": "^1.7",
     "sentry/sentry-laravel": "^1.7",
