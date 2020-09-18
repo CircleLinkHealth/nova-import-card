@@ -31,7 +31,7 @@ use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
-use CircleLinkHealth\NurseInvoices\Entities\Dispute;
+use CircleLinkHealth\SharedModels\Entities\Dispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
@@ -162,7 +162,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                   $cpmSymptoms
  * @property int|null                                                                                                        $cpm_symptoms_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight                                                               $cpmWeight
- * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                     $disputes
+ * @property \CircleLinkHealth\SharedModels\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                     $disputes
  * @property int|null                                                                                                        $disputes_count
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                                            $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo                                                         $ehrReportWriterInfo
