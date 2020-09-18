@@ -60,7 +60,7 @@ return [
         'database' => [
             'driver'           => 'custom',
             'via'              => danielme85\LaravelLogToDB\LogToDbHandler::class,
-            'model'            => \App\DatabaseLog::class, //Your own optional custom model
+            'model'            => \CircleLinkHealth\SharedModels\Entities\DatabaseLog::class, //Your own optional custom model
             'level'            => env('APP_LOG_LEVEL', 'debug'),
             'name'             => 'database',
             'connection'       => 'default',
