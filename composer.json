@@ -59,8 +59,16 @@
             "url": "./nova-components/ImportPracticeStaffCsv"
         },
         {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
+        },
+        {
             "type": "path",
             "url": "./nova-components/GeneratePatientCallDataCsv"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:circlelinkhealth/revisionable-module.git"
         }
     ],
     "require": {
@@ -80,6 +88,10 @@
         "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
         "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
         "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
+        "circlelinkhealth/revisionable-module": "6.1.1",
+        "titasgailius/search-relations": "^1.0",
+        "circlelinkhealth/twofa-module": "1.2.3",
+
         "dillingham/nova-button": "^1.0",
         "circlelinkhealth/clh-import-card-extended": "*",
         "circlelinkhealth/generate-patient-call-data-csv": "*",

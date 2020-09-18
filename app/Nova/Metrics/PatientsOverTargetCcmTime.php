@@ -8,8 +8,8 @@ namespace App\Nova\Metrics;
 
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\PracticeRoleUser;
+use App\Practice;
+use App\PracticeRoleUser;
 use App\User;
 use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Http\Request;

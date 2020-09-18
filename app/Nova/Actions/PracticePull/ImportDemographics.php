@@ -8,7 +8,7 @@ namespace App\Nova\Actions\PracticePull;
 
 use Anaseqal\NovaImport\Actions\Action;
 use App\Nova\Importers\PracticePull\Demographics;
-use CircleLinkHealth\Customer\Entities\Practice;
+use App\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;

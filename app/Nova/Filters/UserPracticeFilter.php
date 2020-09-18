@@ -6,7 +6,7 @@
 
 namespace App\Nova\Filters;
 
-use CircleLinkHealth\Customer\Entities\Practice;
+use App\Practice;
 use App\User;
 use Illuminate\Http\Request;
 use Laravel\Nova\Filters\Filter;

@@ -2,7 +2,7 @@
 
 namespace App;
 
-class User extends \CircleLinkHealth\Customer\Entities\User
+class Practice extends \CircleLinkHealth\Customer\Entities\Practice
 {
     use \Laravel\Nova\Actions\Actionable;
 }

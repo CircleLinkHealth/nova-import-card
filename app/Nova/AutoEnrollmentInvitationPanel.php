@@ -18,7 +18,7 @@ class AutoEnrollmentInvitationPanel extends Resource
      *
      * @var string
      */
-    public static $model = \CircleLinkHealth\Customer\Entities\Practice::class;
+    public static $model = \App\Practice::class;
 
     /**
      * The columns that should be searched.

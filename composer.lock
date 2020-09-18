@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6bdbc1bb1adb2ebcfae9c5ba47422633",
+    "content-hash": "dded36c21e2bdff0e786dc2786b6e247",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -541,7 +541,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "42d5685eb83ae27037f58dd46c581bb579ca7b23"
+                "reference": "a2e04b212a531d76799e0f17a857d186d2beeed2"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -575,7 +575,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T05:16:48+00:00"
+            "time": "2020-09-18T05:51:39+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -792,6 +792,53 @@
             "transport-options": {
                 "relative": true
             }
+        },
+        {
+            "name": "circlelinkhealth/revisionable-module",
+            "version": "v6.1.1",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:circlelinkhealth/revisionable-module.git",
+                "reference": "5d833c8a7d28b84f92ca1cc71f4987dbcfc42c73"
+            },
+            "require": {
+                "laravel/framework": "^6.18|^7.0",
+                "php": "~7.3.16|^7.4"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\Revisionable\\Providers\\RevisionableServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\Revisionable\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@circlelinkhealth.com"
+                }
+            ],
+            "description": "Keep a revision history for your models without thinking, created as a package for use with Laravel",
+            "homepage": "http://github.com/CircleLinkHealth/revisionable-module",
+            "keywords": [
+                "ardent",
+                "audit",
+                "history",
+                "laravel",
+                "model",
+                "revision"
+            ],
+            "time": "2020-04-24T08:46:54+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
