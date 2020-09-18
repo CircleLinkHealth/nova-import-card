@@ -200,8 +200,6 @@
                                 Practices <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
-                                <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
                                 <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
                                         Patient Report</a></li>
                             </ul>
@@ -240,7 +238,6 @@
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('eligibility.batches.index') }}">Eligibility</a></li>
-                                <li><a href="{{ route('report-writer.dashboard') }}">Report Writer Panel</a></li>
                                 <li><a href="{{ getEhrReportWritersFolderUrl() }}" target="_blank">EHR Report Writers
                                         Google Folder</a></li>
                             </ul>
