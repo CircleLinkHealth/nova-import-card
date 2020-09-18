@@ -1,0 +1,13 @@
+{
+    "name": "SharedVueComponents",
+    "alias": "sharedvuecomponents",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
