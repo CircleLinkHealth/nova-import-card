@@ -7,7 +7,7 @@
     <title>CarePlanManager | Log In</title>
 
     @include('modules.raygun.partials.real-user-monitoring')
-    @include('partials.new-relic-tracking')
+    @include('core::partials.new-relic-tracking')
 
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
     <link href="{{ mix('/img/favicon.png') }}" rel="icon">

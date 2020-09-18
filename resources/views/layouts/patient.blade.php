@@ -35,7 +35,7 @@
     </style>
     @stack('styles')
     @include('modules.raygun.partials.real-user-monitoring')
-    @include('partials.new-relic-tracking')
+    @include('core::partials.new-relic-tracking')
 </head>
 <body>
 
