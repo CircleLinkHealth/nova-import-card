@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\TimeTracking\Entities;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Services\ActivityService;
+use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;

@@ -10,7 +10,7 @@ use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShowPatientActivities;
 use App\Reports\PatientDailyAuditReport;
-use App\Services\ActivityService;
+use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
