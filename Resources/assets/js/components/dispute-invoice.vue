@@ -47,7 +47,7 @@
     </div>
 </template>
 <script>
-    import LoaderComponent from '../../../../../../resources/assets/js/components/loader';
+    import LoaderComponent from '../../../../../SharedVueComponents/Resources/assets/js/components/loader';
     import {rootUrl} from "../../../../../../resources/assets/js/app.config.js";
     import Errors from "../../../../../../resources/assets/js/components/src/Errors";
 
