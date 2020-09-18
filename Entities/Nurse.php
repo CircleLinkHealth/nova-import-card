@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\FullCalendar\NurseCalendarService;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;

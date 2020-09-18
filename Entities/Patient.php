@@ -83,7 +83,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient ccmStatus($status, $operator = '=')
  * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient enrolled()
  * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient enrolledOrPaused()
- * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient filter(\App\Filters\QueryFilters $filters)
+ * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient filter(\CircleLinkHealth\Core\Filters\QueryFilters $filters)
  * @method   static                                                                                              bool|null forceDelete()
  * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient hasFamily()
  * @method   static                                                                                              \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient newModelQuery()

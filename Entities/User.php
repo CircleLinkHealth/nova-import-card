@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
 use App\CareplanAssessment;
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\ForeignId;
 use App\LoginLogout;
 use App\Message;
@@ -193,7 +193,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $locations_count
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection                            $media
  * @property int|null                                                                                                        $media_count
- * @property \App\Note[]|\Illuminate\Database\Eloquent\Collection                                                            $notes
+ * @property \CircleLinkHealth\SharedModels\Entities\Note[]|\Illuminate\Database\Eloquent\Collection                                                            $notes
  * @property int|null                                                                                                        $notes_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
@@ -234,7 +234,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $ucp_count
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User exceptType($type)
- * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\CircleLinkHealth\Core\Filters\QueryFilters $filters)
  * @method   static                                                                                                          bool|null forceDelete()
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasBillingProvider($billing_provider_id)
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User intersectLocationsWith($user)
@@ -2062,7 +2062,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return null;
         }
 
-        $cacheKey = str_replace('{$userId}', $this->id, Constants::CACHE_USER_HAS_CCDA);
+        $cacheKey = str_replace('{$userId}', $this->id, CpmConstants::CACHE_USER_HAS_CCDA);
 
         return Cache::remember(
             $cacheKey,
@@ -2231,7 +2231,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function isInternalUser()
     {
-        return $this->hasRole(Constants::CLH_INTERNAL_USER_ROLE_NAMES);
+        return $this->hasRole(CpmConstants::CLH_INTERNAL_USER_ROLE_NAMES);
     }
 
     /**
@@ -2292,7 +2292,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function isPracticeStaff(): bool
     {
-        return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
+        return $this->hasRole(CpmConstants::PRACTICE_STAFF_ROLE_NAMES);
     }
 
     /**
@@ -2386,7 +2386,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function notes()
     {
-        return $this->hasMany('App\Note', 'patient_id', 'id');
+        return $this->hasMany('CircleLinkHealth\SharedModels\Entities\Note', 'patient_id', 'id');
     }
 
     /**
@@ -3286,7 +3286,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function scopePracticeStaff($query)
     {
-        return $query->ofType(Constants::PRACTICE_STAFF_ROLE_NAMES);
+        return $query->ofType(CpmConstants::PRACTICE_STAFF_ROLE_NAMES);
     }
 
     /**

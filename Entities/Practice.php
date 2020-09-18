@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\CareAmbassadorLog;
-use App\Constants;
-use App\EnrolleeCustomFilter;
+use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\Customer\Filters\EnrolleeCustomFilter;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\StringManipulation;
@@ -94,7 +94,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $careAmbassadorLogs
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection
  *     $chargeableServices
- * @property \App\EnrolleeCustomFilter[]|\Illuminate\Database\Eloquent\Collection                 $enrolleeCustomFilters
+ * @property \CircleLinkHealth\Customer\Filters\EnrolleeCustomFilter[]|\Illuminate\Database\Eloquent\Collection                 $enrolleeCustomFilters
  * @property \App\PracticeEnrollmentTips                                                          $enrollmentTips
  * @property string                                                                               $number_with_dashes
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection $media
@@ -472,7 +472,7 @@ class Practice extends BaseModel implements HasMedia
 
     public function isAthenaEhr(): bool
     {
-        return $this->ehr_id === Constants::athenaEhrId();
+        return $this->ehr_id === CpmConstants::athenaEhrId();
     }
 
     public function isTwilioEnabled()

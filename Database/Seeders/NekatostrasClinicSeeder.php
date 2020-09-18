@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Database\Seeder;
@@ -25,7 +25,7 @@ class NekatostrasClinicSeeder extends Seeder
             $practice = $this->firstOrCreatePractice(self::NEKATOSTRAS_PRACTICE);
             $location = $this->firstOrCreateLocation($practice->id, self::IATRO_SOPHIE_LOCATION);
 
-            foreach (array_merge(Constants::PRACTICE_STAFF_ROLE_NAMES, [
+            foreach (array_merge(CpmConstants::PRACTICE_STAFF_ROLE_NAMES, [
                 'care-center-external',
                 'care-ambassador',
                 'care-center',

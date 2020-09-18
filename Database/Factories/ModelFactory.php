@@ -5,7 +5,7 @@
  */
 
 use CircleLinkHealth\SharedModels\Entities\Call;
-use App\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;
@@ -61,7 +61,7 @@ $factory->define(
     }
 );
 
-$factory->define(App\Note::class, function (Faker\Generator $faker) use ($factory) {
+$factory->define(\CircleLinkHealth\SharedModels\Entities\Note::class, function (Faker\Generator $faker) use ($factory) {
     return [
         'patient_id'           => $factory->create(\CircleLinkHealth\Customer\Entities\User::class)->id,
         'author_id'            => $factory->create(\CircleLinkHealth\Customer\Entities\User::class)->id,
