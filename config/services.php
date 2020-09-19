@@ -89,17 +89,6 @@ return [
         'report_url' => env('AWV_URL', '').env('AWV_REPORT_URI', ''),
     ],
 
-    'cpm-admin-app' => [
-        'url' => env('CPM_ADMIN_APP_URL', ''),
-    ],
-
-    'phaxio' => [
-        'host' => 'https://api.phaxio.com/v2.1/',
-
-        'key'    => env('PHAXIO_KEY', null),
-        'secret' => env('PHAXIO_SECRET', null),
-    ],
-
     'tester' => [
         'email'     => 'nektariosx01@gmail.com',
         'phone'     => '+35799018718',

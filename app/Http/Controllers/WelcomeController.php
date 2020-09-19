@@ -71,7 +71,7 @@ class WelcomeController extends Controller
             return redirect()->route('login');
         }
 
-        if ($user->isAdmin() && $url = config('services.cpm-admin-app.url')) {
+        if ($user->isAdmin() && $url = config('core.apps.cpm-admin.url')) {
             return redirect()->to($url);
         }
 

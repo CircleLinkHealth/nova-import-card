@@ -38,7 +38,7 @@
                 </a>
             </li>
         @endif
-        @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas() && $url = config('services.cpm-admin-app.url'))
+        @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas() && $url = config('core.apps.cpm-admin.url'))
             <li><a style="color: #47beab"
                    href="{{ $url }}">
                     Admin Panel
