@@ -8,7 +8,7 @@ namespace App\Console\Commands;
 
 use App\Notifications\SendAuditReport;
 use App\Reports\PatientDailyAuditReport;
-use App\Services\Phaxio\PhaxioFaxService;
+use CircleLinkHealth\Core\Services\Phaxio\PhaxioFaxService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\CustomerNotificationContactTimePreference;

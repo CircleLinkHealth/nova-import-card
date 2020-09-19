@@ -208,7 +208,7 @@ return [
 
         App\Providers\HtmlToPdfServiceProvider::class,
         App\Providers\DirectMailServiceProvider::class,
-        App\Providers\FaxServiceProvider::class,
+        \CircleLinkHealth\Core\Providers\FaxServiceProvider::class,
         App\Providers\TwilioClientServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
 

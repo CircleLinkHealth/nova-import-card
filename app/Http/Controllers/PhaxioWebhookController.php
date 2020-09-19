@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\FaxLog;
+use CircleLinkHealth\SharedModels\Entities\FaxLog;
 use App\Http\Requests\PhaxioWebhookRequest;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Jobs\PhaxioNotificationStatusUpdateJob;
