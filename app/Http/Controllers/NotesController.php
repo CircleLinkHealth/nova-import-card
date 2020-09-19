@@ -15,7 +15,7 @@ use App\Events\NoteFinalSaved;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Http\Requests\CreateNoteRequest;
 use App\Http\Requests\NotesReport;
-use App\Http\Requests\SafeRequest;
+use CircleLinkHealth\Customer\Http\Requests\SafeRequest;
 use App\Jobs\SendSingleNotification;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Rules\PatientEmailAttachments;

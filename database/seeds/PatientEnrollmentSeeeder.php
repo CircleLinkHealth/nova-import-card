@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\CareplanAssessment;
+use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;

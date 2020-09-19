@@ -51,7 +51,7 @@ namespace App;
  * @property \CircleLinkHealth\TwoFA\Entities\AuthyUser                                                                      $authyUser
  * @property \App\CareAmbassador                                                                                             $careAmbassador
  * @property \CircleLinkHealth\SharedModels\Entities\CarePlan                                                                $carePlan
- * @property \App\CareplanAssessment                                                                                         $carePlanAssessment
+ * @property \CircleLinkHealth\SharedModels\Entities\CareplanAssessment                                                                                         $carePlanAssessment
  * @property \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection                       $careTeamMembers
  * @property int|null                                                                                                        $care_team_members_count
  * @property \CircleLinkHealth\SharedModels\Entities\Allergy[]|\Illuminate\Database\Eloquent\Collection                      $ccdAllergies

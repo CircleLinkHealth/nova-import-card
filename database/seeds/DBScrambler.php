@@ -5,7 +5,7 @@
  */
 
 use CircleLinkHealth\SharedModels\Entities\Call;
-use App\CareplanAssessment;
+use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
 use App\Models\Addendum;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\Customer\Entities\Appointment;

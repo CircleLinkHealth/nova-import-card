@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\CareplanAssessment;
+use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
 use App\Services\CareplanAssessmentService;
 use App\Services\CareplanService;
 use CircleLinkHealth\Customer\Services\NoteService;

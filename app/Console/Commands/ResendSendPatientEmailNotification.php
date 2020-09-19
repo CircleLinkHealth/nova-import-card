@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Notifications\SendPatientEmail;
+use CircleLinkHealth\Customer\Notifications\SendPatientEmail;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use Illuminate\Console\Command;
 

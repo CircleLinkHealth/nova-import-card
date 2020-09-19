@@ -8,7 +8,7 @@ namespace App\Services;
 
 use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Notifications\SendCareDocument;
-use App\Notifications\SendPatientEmail;
+use CircleLinkHealth\Customer\Notifications\SendPatientEmail;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\User;
 use Notification;
