@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Core\Jobs;
 
-use App\FaxLog;
+use CircleLinkHealth\SharedModels\Entities\FaxLog;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 
 class PhaxioNotificationStatusUpdateJob extends NotificationStatusUpdateJob
