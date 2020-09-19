@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\CareplanAssessment;
+use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
 use App\ForeignId;
 use App\LoginLogout;
 use App\Message;
@@ -123,7 +123,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\TwoFA\Entities\AuthyUser                                                                      $authyUser
  * @property \CircleLinkHealth\Customer\Entities\CareAmbassador                                                              $careAmbassador
  * @property \CircleLinkHealth\SharedModels\Entities\CarePlan                                                                $carePlan
- * @property \App\CareplanAssessment                                                                                         $carePlanAssessment
+ * @property \CircleLinkHealth\SharedModels\Entities\CareplanAssessment                                                                                         $carePlanAssessment
  * @property \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection                       $careTeamMembers
  * @property int|null                                                                                                        $care_team_members_count
  * @property \CircleLinkHealth\SharedModels\Entities\Allergy[]|\Illuminate\Database\Eloquent\Collection                      $ccdAllergies

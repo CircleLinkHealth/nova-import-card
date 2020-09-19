@@ -6,20 +6,20 @@
 
 namespace CircleLinkHealth\Customer\Services;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
-use App\CareplanAssessment;
-use App\Filters\NoteFilters;
-use App\Http\Requests\SafeRequest;
-use CircleLinkHealth\SharedModels\Entities\Note;
-use App\Notifications\SendPatientEmail;
-use App\Repositories\CareplanAssessmentRepository;
-use App\Repositories\NoteRepository;
-use App\View\MetaTag;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\Customer\Entities\MetaTag;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Http\Requests\SafeRequest;
+use CircleLinkHealth\Customer\Notifications\SendPatientEmail;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
+use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Filters\NoteFilters;
+use CircleLinkHealth\SharedModels\Repositories\CareplanAssessmentRepository;
+use CircleLinkHealth\SharedModels\Repositories\NoteRepository;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
