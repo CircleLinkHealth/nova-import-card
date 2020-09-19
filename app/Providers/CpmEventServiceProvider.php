@@ -117,7 +117,6 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         PatientUserCreated::class => [
             AttachUPG0506CarePlanToPatientUser::class,
-            ProcessPatientServices::class,
         ],
         CarePlanWasApproved::class => [
             UpdateCarePlanStatus::class,
