@@ -228,9 +228,9 @@ Route::prefix('cpmadmin')->group(function () {
 
         Route::get(
             'saas-accounts/create',
-            'Admin\CRUD\SaasAccountController@create'
+            'CRUD\SaasAccountController@create'
         )->middleware('permission:saas.create');
-        Route::post('saas-accounts', 'Admin\CRUD\SaasAccountController@store')->middleware('permission:saas.create');
+        Route::post('saas-accounts', 'CRUD\SaasAccountController@store')->middleware('permission:saas.create');
 
         Route::view('api-clients', 'admin.manage-api-clients');
 
