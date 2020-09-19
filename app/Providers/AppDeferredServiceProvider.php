@@ -8,7 +8,7 @@ namespace App\Providers;
 
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
-use App\Services\SnappyPdfWrapper;
+use CircleLinkHealth\Core\Services\SnappyPdfWrapper;
 use CircleLinkHealth\Core\Services\HtmlToPdfService;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
