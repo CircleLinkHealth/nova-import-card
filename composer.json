@@ -76,6 +76,10 @@
         },
         {
             "type": "git",
+            "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git"
+        },
+        {
+            "type": "git",
             "url": "git@github.com:circlelinkhealth/revisionable-module.git"
         }
     ],
@@ -130,7 +134,7 @@
         "titasgailius/search-relations": "^1.0",
         "vink/nova-cache-card": "^1.0",
         "circlelinkhealth/raygun-module": "1.2",
-
+        "daltcore/lara-pdf-merger": "1.1.2",
         "waynestate/nova-ckeditor4-field": "^0.4.0"
     },
     "require-dev": {

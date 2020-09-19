@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b12b9814e0a27668059e7bf30270c9a1",
+    "content-hash": "acc7c8bbb4a9a6a0e37b5091a45337b8",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -517,7 +517,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "423b4279f20500d79dd02a926d579544b399881d"
+                "reference": "7c84210ede645c902a57dd354cd9a3f5ef8e762a"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -546,7 +546,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T19:08:56+00:00"
+            "time": "2020-09-19T00:47:48+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -554,7 +554,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "ed4520ed5d54e2fe2ede79c82230827808a4e738"
+                "reference": "a243a5d91ddc227b2aa348d02142be15f603f3d0"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -580,7 +580,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-18T23:05:39+00:00"
+            "time": "2020-09-19T00:52:23+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -588,7 +588,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "cfcc7de3c161c081a754f74d20b255c7ec9085d6"
+                "reference": "c0a51e277bce35fe2499cbec2522f87a3f640c44"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -623,7 +623,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-19T00:15:23+00:00"
+            "time": "2020-09-19T00:36:48+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -927,7 +927,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "b606bc75af6c04ed6f999ae266cf53ec5fb918ab"
+                "reference": "900df0a7a0e12abffb89843774d8c6ab8e19d3de"
             },
             "type": "laravel-module",
             "autoload": {
@@ -941,7 +941,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-18T23:35:59+00:00"
+            "time": "2020-09-19T00:47:48+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -4972,6 +4972,42 @@
                 "random"
             ],
             "time": "2018-07-02T15:55:56+00:00"
+        },
+        {
+            "name": "phaxio/phaxio",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phaxio/phaxio-php.git",
+                "reference": "6ad1f76b4f1ff1f68176dab9509ae66fdaa85487"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phaxio/phaxio-php/zipball/6ad1f76b4f1ff1f68176dab9509ae66fdaa85487",
+                "reference": "6ad1f76b4f1ff1f68176dab9509ae66fdaa85487",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Phaxio\\": "lib/",
+                    "Phaxio": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The Phaxio API PHP library",
+            "homepage": "http://www.phaxio.com/",
+            "keywords": [
+                "fax",
+                "phaxio"
+            ],
+            "time": "2019-03-08T19:14:29+00:00"
         },
         {
             "name": "php-http/message-factory",
