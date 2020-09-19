@@ -11,7 +11,7 @@
 //
 Route::prefix('cpmadmin')->group(function () {
     Route::get('upg0506/{type}', [
-        'uses' => 'Admin\DashboardController@upg0506',
+        'uses' => 'DashboardController@upg0506',
         'as'   => 'upg0506.demo',
     ])->middleware('auth');
     
@@ -29,17 +29,17 @@ Route::prefix('cpmadmin')->group(function () {
         
             Route::group(['prefix' => 'calls'], function () {
                 Route::get('', [
-                    'uses' => 'API\Admin\CallsController@index',
+                    'uses' => 'API\CallsController@index',
                     'as' => 'calls.index',
                 ])->middleware('permission:call.read');
             
                 Route::get('{id}', [
-                    'uses' => 'API\Admin\CallsController@show',
+                    'uses' => 'API\CallsController@show',
                     'as' => 'calls.show',
                 ])->middleware('permission:call.read');
             
                 Route::delete('{ids}', [
-                    'uses' => 'API\Admin\CallsController@remove',
+                    'uses' => 'API\CallsController@remove',
                     'as' => 'calls.destroy',
                 ])->middleware('permission:call.delete');
             });
@@ -58,7 +58,7 @@ Route::prefix('cpmadmin')->group(function () {
         ],
         'prefix' => 'admin',
     ], function () {
-        Route::get('opcache', 'Admin\OPCacheGUIController@index');
+        Route::get('opcache', 'OPCacheGUIController@index');
 
         Route::get('calls-v2', [
             'uses' => 'PatientCallManagementController@remixV2',
@@ -156,16 +156,16 @@ Route::prefix('cpmadmin')->group(function () {
         });
 
         Route::group(['prefix' => 'demo'], function () {
-            Route::get('create', 'Demo\SendSampleNoteController@showMakeNoteForm');
+            Route::get('create', 'SendSampleNoteController@showMakeNoteForm');
 
             Route::post('make-pdf', [
                 'as'   => 'demo.note.make.pdf',
-                'uses' => 'Demo\SendSampleNoteController@makePdf',
+                'uses' => 'SendSampleNoteController@makePdf',
             ])->middleware('permission:practice.read,note.create,careplan-pdf.create');
 
             Route::post('send-efax', [
                 'as'   => 'demo.note.efax',
-                'uses' => 'Demo\SendSampleNoteController@sendNoteViaEFax',
+                'uses' => 'SendSampleNoteController@sendNoteViaEFax',
             ])->middleware('permission:note.send');
         });
 
