@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CpmAdmin\Services;
 
 use CircleLinkHealth\CpmAdmin\Http\Resources\ApprovableBillablePatient;
-use App\Repositories\BillablePatientsEloquentRepository;
+use CircleLinkHealth\SharedModels\Repositories\BillablePatientsEloquentRepository;
 use CircleLinkHealth\CpmAdmin\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
 
