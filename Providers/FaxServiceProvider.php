@@ -35,7 +35,7 @@ class FaxServiceProvider extends ServiceProvider implements DeferrableProvider
     public function register()
     {
         $this->app->singleton(Efax::class, function () {
-            $config = config('services.phaxio');
+            $config = config('core.services.phaxio');
 
             $phaxio = new Phaxio($config['key'], $config['secret'], $config['host']);
 
