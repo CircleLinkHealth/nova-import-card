@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use CircleLinkHealth\Customer\NurseTimeAlgorithms\AlternativeCareTimePayableCalculator;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Bus\Queueable;

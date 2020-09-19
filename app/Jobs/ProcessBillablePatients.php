@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Repositories\BillablePatientsEloquentRepository;
+use CircleLinkHealth\SharedModels\Repositories\BillablePatientsEloquentRepository;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

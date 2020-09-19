@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use CircleLinkHealth\Customer\NurseTimeAlgorithms\AlternativeCareTimePayableCalculator;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
