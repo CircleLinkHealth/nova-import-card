@@ -6,7 +6,7 @@
 
 namespace Tests\Concerns\PhaxioFake;
 
-use App\Contracts\Efax;
+use CircleLinkHealth\Core\Contracts\Efax;
 use CircleLinkHealth\Core\Contracts\FaxableNotification;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Assert as PHPUnit;

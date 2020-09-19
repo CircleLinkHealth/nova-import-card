@@ -6,7 +6,7 @@
 
 namespace Tests\Concerns\PhaxioFake;
 
-use App\Contracts\Efax;
+use CircleLinkHealth\Core\Contracts\Efax;
 use Illuminate\Support\Facades\Facade;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;

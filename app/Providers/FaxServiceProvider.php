@@ -6,7 +6,7 @@
 
 namespace App\Providers;
 
-use App\Contracts\Efax;
+use CircleLinkHealth\Core\Contracts\Efax;
 use App\Services\Phaxio\PhaxioFaxService;
 use App\Services\Phaxio\PhaxioFaxServiceLogger;
 use Illuminate\Contracts\Support\DeferrableProvider;

@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use CircleLinkHealth\Core\Contracts\DirectMail;
-use App\Contracts\Efax;
+use CircleLinkHealth\Core\Contracts\Efax;
 use CircleLinkHealth\Core\StringManipulation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;

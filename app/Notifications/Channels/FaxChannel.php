@@ -6,7 +6,7 @@
 
 namespace App\Notifications\Channels;
 
-use App\Contracts\Efax;
+use CircleLinkHealth\Core\Contracts\Efax;
 use CircleLinkHealth\Core\Contracts\FaxableNotification;
 
 class FaxChannel
