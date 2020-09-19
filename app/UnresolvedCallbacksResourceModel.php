@@ -11,5 +11,5 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
 class UnresolvedCallbacksResourceModel extends SqlViewModel
 {
     protected $primaryKey = 'postmark_id';
-    protected $table = 'unresolved_postmark_callback_view';
+    protected $table      = 'unresolved_postmark_callback_view';
 }
