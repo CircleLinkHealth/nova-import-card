@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\Http\Requests\SafeRequest;
+use CircleLinkHealth\Customer\Http\Requests\SafeRequest;
 use App\Services\CCD\CcdProblemService;
 use Illuminate\Routing\Controller;
 
