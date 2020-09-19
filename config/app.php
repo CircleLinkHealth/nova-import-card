@@ -3,7 +3,6 @@
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
-use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
 
 return [
@@ -188,7 +187,8 @@ return [
         RaygunServiceProvider::class,
         CoreServiceProvider::class,
         CoreDeferredBindingsServiceProvider::class,
-        CustomerAuthServiceProvider::class,
+        CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider::class,
+        CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
     ],
 
     /*
