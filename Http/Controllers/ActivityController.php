@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\TimeTracking\Http\Controllers;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use CircleLinkHealth\Customer\NurseTimeAlgorithms\AlternativeCareTimePayableCalculator;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShowPatientActivities;
 use App\Reports\PatientDailyAuditReport;
