@@ -2,6 +2,7 @@
 
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
+use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
 
@@ -189,6 +190,7 @@ return [
         CoreDeferredBindingsServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
+        FaxServiceProvider::class,
     ],
 
     /*

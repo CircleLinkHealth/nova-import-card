@@ -104,6 +104,7 @@
         "circlelinkhealth/generate-patient-call-data-csv": "*",
         "circlelinkhealth/generate-success-stories-report": "*",
         "circlelinkhealth/import-practice-staff-csv": "*",
+        "phaxio/phaxio": "^2.0",
         "circlelinkhealth/invoices-download": "*",
         "circlelinkhealth/revisionable-module": "6.1.1",
         "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
