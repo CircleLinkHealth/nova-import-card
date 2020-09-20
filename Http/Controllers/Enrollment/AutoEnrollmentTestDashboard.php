@@ -6,8 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment;
 
-use App\Console\Commands\SendSelfEnrollmentReminders;
-use App\Http\Controllers\Controller;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Constants;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\InviteUnreachablePatients;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\UnreachablesFinalAction;
@@ -17,6 +16,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
