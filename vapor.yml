@@ -27,6 +27,7 @@ environments:
     memory: 1024
     cli-memory: 512
     runtime: php-7.4
+    cache: cpm-staging-cache
     queues:
       - high
       - default
@@ -34,10 +35,10 @@ environments:
     build:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
       - 'php artisan event:cache'
-#      - 'php artisan config:cache'
-#      - 'php artisan view:cache'
-#      - 'php artisan route:cache'
       - 'npm ci && npm run prod && rm -rf node_modules'
+      - 'php artisan config:cache'
+      - 'php artisan view:cache'
+      - 'php artisan route:cache'
     deploy:
       - 'php artisan migrate --force'
       - 'php artisan migrate:views'
