@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Tests;
 
 use App\EnrollmentInvitationsBatch;
-use App\SelfEnrollment\Jobs\SendInvitation;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
