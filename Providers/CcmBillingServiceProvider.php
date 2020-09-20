@@ -79,6 +79,7 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
             ProcessSinglePatientMonthlyServices::class,
             ProcessAllPracticePatientMonthlyServices::class,
             GenerateServiceSummariesForAllPracticeLocations::class,
+            GenerateEndOfMonthCcmStatusLogs::class,
         ]);
     }
 

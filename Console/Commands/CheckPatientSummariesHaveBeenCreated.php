@@ -7,8 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
 use CircleLinkHealth\CcmBilling\Jobs\CheckPatientSummariesHaveBeenCreated as Job;
+use Illuminate\Console\Command;
 
-class CheckPatientSummariesHaveBeenCreated extends CommandForSpecificMonth
+class CheckPatientSummariesHaveBeenCreated extends Command
 {
     /**
      * The console command description.
@@ -40,6 +41,6 @@ class CheckPatientSummariesHaveBeenCreated extends CommandForSpecificMonth
      */
     public function handle()
     {
-        Job::dispatch($this->month());
+        Job::dispatch($this->argument('month'));
     }
 }

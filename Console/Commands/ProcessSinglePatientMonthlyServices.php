@@ -7,8 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices as Job;
+use Illuminate\Console\Command;
 
-class ProcessSinglePatientMonthlyServices extends CommandForSpecificMonth
+class ProcessSinglePatientMonthlyServices extends Command
 {
     /**
      * The console command description.
@@ -30,6 +31,6 @@ class ProcessSinglePatientMonthlyServices extends CommandForSpecificMonth
      */
     public function handle()
     {
-        Job::dispatch($this->argument('patientId'), $this->month());
+        Job::dispatch($this->argument('patientId'), $this->argument('month'));
     }
 }

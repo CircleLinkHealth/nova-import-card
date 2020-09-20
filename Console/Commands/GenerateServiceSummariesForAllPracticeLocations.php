@@ -7,8 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
 use CircleLinkHealth\CcmBilling\Jobs\GenerateServiceSummariesForAllPracticeLocations as Job;
+use Illuminate\Console\Command;
 
-class GenerateServiceSummariesForAllPracticeLocations extends CommandForSpecificMonth
+class GenerateServiceSummariesForAllPracticeLocations extends Command
 {
     /**
      * The console command description.
@@ -40,6 +41,6 @@ class GenerateServiceSummariesForAllPracticeLocations extends CommandForSpecific
      */
     public function handle()
     {
-        Job::dispatch($this->month());
+        Job::dispatch($this->argument('month'));
     }
 }

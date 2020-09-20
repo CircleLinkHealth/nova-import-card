@@ -33,7 +33,7 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
     public function __construct(int $patientId, Carbon $month)
     {
         $this->patientId = $patientId;
-        $this->month     = $month;
+        $this->month     = $month ?? Carbon::now()->startOfMonth()->startOfDay();
     }
 
     public function getMonth(): Carbon

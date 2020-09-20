@@ -28,10 +28,10 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(int $practiceId, Carbon $chargeableMonth)
+    public function __construct(int $practiceId, Carbon $chargeableMonth = null)
     {
         $this->practiceId      = $practiceId;
-        $this->chargeableMonth = $chargeableMonth;
+        $this->chargeableMonth = $chargeableMonth ?? Carbon::now()->startOfMonth()->startOfDay();
     }
 
     /**

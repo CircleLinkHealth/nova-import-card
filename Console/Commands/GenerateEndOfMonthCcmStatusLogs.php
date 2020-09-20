@@ -7,8 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
 use CircleLinkHealth\CcmBilling\Jobs\GenerateEndOfMonthCcmStatusLogs as Job;
+use Illuminate\Console\Command;
 
-class GenerateEndOfMonthCcmStatusLogs extends CommandForSpecificMonth
+class GenerateEndOfMonthCcmStatusLogs extends Command
 {
     /**
      * The console command description.
@@ -40,6 +41,6 @@ class GenerateEndOfMonthCcmStatusLogs extends CommandForSpecificMonth
      */
     public function handle()
     {
-        Job::dispatch($this->month());
+        Job::dispatch($this->argument('month'));
     }
 }

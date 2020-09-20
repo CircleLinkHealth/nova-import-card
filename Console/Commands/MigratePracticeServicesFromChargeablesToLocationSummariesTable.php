@@ -7,8 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Console\Commands;
 
 use CircleLinkHealth\CcmBilling\Jobs\MigratePracticeServicesFromChargeablesToLocationSummariesTable as Job;
+use Illuminate\Console\Command;
 
-class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends CommandForSpecificMonth
+class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Command
 {
     /**
      * The console command description.
@@ -40,6 +41,6 @@ class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Com
      */
     public function handle()
     {
-        Job::dispatch($this->argument('practiceId'), $this->month());
+        Job::dispatch($this->argument('practiceId'), $this->argument('month'));
     }
 }

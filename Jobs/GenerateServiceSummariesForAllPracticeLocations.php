@@ -25,12 +25,10 @@ class GenerateServiceSummariesForAllPracticeLocations implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
-    public function __construct(Carbon $month)
+    public function __construct(Carbon $month = null)
     {
-        $this->month = $month;
+        $this->month = $month ?? Carbon::now()->startOfMonth()->startOfDay();
     }
 
     /**

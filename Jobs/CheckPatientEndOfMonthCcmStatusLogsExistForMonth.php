@@ -28,9 +28,9 @@ class CheckPatientEndOfMonthCcmStatusLogsExistForMonth implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Carbon $month)
+    public function __construct(Carbon $month = null)
     {
-        $this->month = $month;
+        $this->month = $month ?? Carbon::now()->startOfMonth()->startOfDay();
     }
 
     public function getMonth(): Carbon

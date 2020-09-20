@@ -30,10 +30,10 @@ class GenerateLocationSummaries implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(int $locationId, Carbon $month)
+    public function __construct(int $locationId, Carbon $month = null)
     {
         $this->locationId = $locationId;
-        $this->month      = $month;
+        $this->month      = $month ?? Carbon::now()->startOfMonth()->startOfDay();
     }
 
     public function getLocationId(): int

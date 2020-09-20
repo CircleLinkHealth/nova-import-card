@@ -32,10 +32,10 @@ class CheckPatientSummariesHaveBeenCreatedForPractice implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(int $practiceId, Carbon $month)
+    public function __construct(int $practiceId, Carbon $month = null)
     {
         $this->practiceId = $practiceId;
-        $this->month      = $month;
+        $this->month      = $month ?? Carbon::now()->startOfMonth()->startOfDay();
     }
 
     public function getMonth(): Carbon

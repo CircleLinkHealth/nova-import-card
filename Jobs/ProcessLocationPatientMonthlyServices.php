@@ -32,10 +32,10 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(int $locationId, Carbon $chargeableMonth)
+    public function __construct(int $locationId, Carbon $chargeableMonth = null)
     {
         $this->locationId      = $locationId;
-        $this->chargeableMonth = $chargeableMonth;
+        $this->chargeableMonth = $chargeableMonth ?? Carbon::now()->startOfMonth()->startOfDay();
         $this->processor       = app(Location::class);
     }
 

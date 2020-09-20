@@ -26,9 +26,9 @@ class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(Carbon $month)
+    public function __construct(Carbon $month = null)
     {
-        $this->month = $month;
+        $this->month = $month ?? Carbon::now()->startOfMonth()->startOfDay();
     }
 
     public function getMonth(): Carbon
