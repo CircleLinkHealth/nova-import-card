@@ -24,7 +24,6 @@ environments:
       - 'php artisan queue:restart'
       - 'php artisan schedule-monitor:sync'
   staging:
-    network: vapor-network-1599877584
     memory: 1024
     cli-memory: 512
     runtime: php-7.4
