@@ -19,7 +19,6 @@ class AppDeferredServiceProvider extends ServiceProvider implements DeferrablePr
     {
         return [
             DevelopmentServiceProvider::class,
-            HtmlToPdfService::class,
             ReportFormatter::class,
         ];
     }
@@ -32,16 +31,6 @@ class AppDeferredServiceProvider extends ServiceProvider implements DeferrablePr
         if ($this->app->environment('local')) {
             DevelopmentServiceProvider::class;
         }
-
-        $this->app->bind(
-            HtmlToPdfService::class,
-            function () {
-                $this->app->register(\Barryvdh\Snappy\ServiceProvider::class);
-
-                return $this->app->make(SnappyPdfWrapper::class)
-                    ->setTemporaryFolder(storage_path('tmp'));
-            }
-        );
 
         $this->app->bind(
             ReportFormatter::class,
