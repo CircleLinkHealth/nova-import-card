@@ -591,7 +591,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "bb869cb6bb70b2c7cc2844ff44a4f88c7cc45e08"
+                "reference": "bac4b57c57f9855a977085a202cc4b778f82de4b"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -600,13 +600,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\ClhImportCardExtended\\CardServiceProvider"
+                        "Circlelinkhealth\\ClhImportCardExtended\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "CircleLinkHealth\\ClhImportCardExtended\\": "src/"
+                    "Circlelinkhealth\\ClhImportCardExtended\\": "src/"
                 }
             },
             "license": [
@@ -850,7 +850,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "bd5f5af9bff0a3e12ab6dd3ecf2ba68ab0929a88"
+                "reference": "4ccdf99bf9b5f2821f0ad5d7cc9920625856b3ac"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -859,13 +859,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\GeneratePatientCallDataCsv\\CardServiceProvider"
+                        "Circlelinkhealth\\GeneratePatientCallDataCsv\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "CircleLinkHealth\\GeneratePatientCallDataCsv\\": "src/"
+                    "Circlelinkhealth\\GeneratePatientCallDataCsv\\": "src/"
                 }
             },
             "license": [
@@ -922,7 +922,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "6faa8301ceb8b7fb3ff64fa5d7c616f279ab8fe2"
+                "reference": "393cc59c79b73a1ff6e0e9af6c7f014fb74bfa1a"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -932,13 +932,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\ImportPracticeStaffCsv\\CardServiceProvider"
+                        "Circlelinkhealth\\ImportPracticeStaffCsv\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "CircleLinkHealth\\ImportPracticeStaffCsv\\": "src/"
+                    "Circlelinkhealth\\ImportPracticeStaffCsv\\": "src/"
                 }
             },
             "license": [
