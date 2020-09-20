@@ -1,7 +1,13 @@
 <?php
 
-Route::get('login', 'Auth\LoginController@showLoginForm', ['as' => 'login']);
-Route::get('auth/login', 'Auth\LoginController@showLoginForm', ['as' => 'auth.login']);
+Route::get('login', [
+    'uses' => 'Auth\LoginController@showLoginForm',
+    'as' => 'login'
+]);
+Route::get('auth/login', [
+    'uses' => 'Auth\LoginController@showLoginForm',
+    'as' => 'auth.login'
+]);
 Route::post('login', 'Auth\LoginController@login');
 Route::post('auth/login', 'Auth\LoginController@login');
 Route::post('browser-check', [
