@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Notifications\PostmarkTestCallbackNotification;
+use App\Notifications\PostmarkCallbackNotificationTest;
 use App\Notifications\SendGridTestNotification;
 use CircleLinkHealth\Core\Facades\Notification;
 use Illuminate\Bus\Queueable;
@@ -52,7 +52,7 @@ class SendTestEmailToSendGrid extends Command
         if ($this->isCallbackMail) {
             try {
                 $anonymous = $this->sendToAnonymous();
-                $anonymous->notifyNow(new PostmarkTestCallbackNotification());
+                $anonymous->notifyNow(new PostmarkCallbackNotificationTest());
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
             }

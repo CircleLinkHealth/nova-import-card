@@ -10,7 +10,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PostmarkTestCallbackNotification extends Notification
+class PostmarkCallbackNotificationTest extends Notification
 {
     use Queueable;
 
