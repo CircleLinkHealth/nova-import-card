@@ -84,3 +84,10 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
 //        return "https://drive.google.com/drive/folders/{$dir['path']}";
     }
 }
+
+if ( ! function_exists('isSelfEnrollmentTestModeEnabled')) {
+    function isSelfEnrollmentTestModeEnabled(): bool
+    {
+        return filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
+    }
+}
