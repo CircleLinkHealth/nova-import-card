@@ -67,7 +67,7 @@ if (isset($patient) && ! empty($patient)) {
     @endpush
     <div>
         @include('core::partials.errors.errors')
-        @include('CircleLinkHealth.Core.Resources.views.partials.errors.messages')
+        @include('core::partials.core::partials.errors.messages')
     </div>
     <div class="container-fluid patient-documents-container">
         <div class="row">
