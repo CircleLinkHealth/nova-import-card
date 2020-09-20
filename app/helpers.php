@@ -1403,13 +1403,6 @@ if ( ! function_exists('isTwoFaEnabledForPractice')) {
     }
 }
 
-if ( ! function_exists('isSelfEnrollmentTestModeEnabled')) {
-    function isSelfEnrollmentTestModeEnabled(): bool
-    {
-        return filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
-    }
-}
-
 if ( ! function_exists('getSampleNotePdfPath')) {
     function getSampleNotePdfPath()
     {
