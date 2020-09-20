@@ -54,7 +54,7 @@
                         <div class="panel-heading">Manage Patient Calls</div>
                         <div class="panel-body">
                             <div>
-                                @include('errors.errors')
+                                @include('core::partials.errors.errors')
                                 @include('errors.messages')
                             </div>
                             <div>

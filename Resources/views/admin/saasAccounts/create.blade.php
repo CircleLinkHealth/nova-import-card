@@ -21,7 +21,7 @@
                             <div class="col-md-10 col-md-offset-1">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        @include('errors.errors')
+                                        @include('core::partials.errors.errors')
                                         @include('errors.messages')
                                     </div>
                                 </div>

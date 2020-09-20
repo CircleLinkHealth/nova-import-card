@@ -263,9 +263,9 @@
                                 <a href="{{ url('/superadmin') }}"
                                    style=""><i class="glyphicon glyphicon-fire"></i> SuperAdmin</a>
                             </li>
-                        @if(config('services.cpm-app.url'))
+                        @if(config('core.apps.cpm-provider.url'))
                             <li class="dropdown">
-                                <a href="{{ config('services.cpm-app.url') }}"
+                                <a href="{{ config('core.apps.cpm-provider.url').'manage-patients/dashboard' }}"
                                    style=""><i class="glyphicon glyphicon-eye-open"></i> Provider</a>
                             </li>
                         @endif

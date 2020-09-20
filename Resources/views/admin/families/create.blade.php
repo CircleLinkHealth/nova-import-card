@@ -20,7 +20,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">New Family</div>
                     <div class="panel-body">
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
 
                         <div class="form-group">
                             <div class="col-sm-2">{!! Form::label('name', 'Family Name:') !!}</div>

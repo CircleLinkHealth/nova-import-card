@@ -20,7 +20,7 @@
             <h2>Manage Report Settings</h2>
         </div>
         <div class="col-md-12">
-            @include('errors.errors')
+            @include('core::partials.errors.errors')
         </div>
         <div>
             <div class="settings-form">

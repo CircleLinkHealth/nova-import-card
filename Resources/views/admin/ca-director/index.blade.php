@@ -46,7 +46,7 @@
                         <div>
                             <div class="panel-body">
                                 <div>
-                                    @include('errors.errors')
+                                    @include('core::partials.errors.errors')
                                     @include('errors.messages')
                                 </div>
                                 <div class="col-md-12" style="text-align: right">

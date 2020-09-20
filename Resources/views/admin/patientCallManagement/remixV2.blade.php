@@ -58,7 +58,7 @@ $isAdmin = auth()->user()->isAdmin();
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <div>
-                                    @include('errors.errors')
+                                    @include('core::partials.errors.errors')
                                     @include('errors.messages')
                                 </div>
                                 <div>

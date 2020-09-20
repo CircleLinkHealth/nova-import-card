@@ -69,7 +69,7 @@
     <div class="container-fluid" style="padding-top: 50px;">
         <div class="row">
             <div class="col-md-12">
-                @include('errors.errors')
+                @include('core::partials.errors.errors')
             </div>
         </div>
         <div class="row">
