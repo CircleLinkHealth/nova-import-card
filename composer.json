@@ -95,8 +95,9 @@
         "ext-redis": "*",
         "ext-simplexml": "*",
         "ext-zend-opcache": "*",
-        "alexbowers/nova-prepopulate-searchable": "^1.0",
+        "alexbowers/nova-prepopulate-searchable": "^1.0",sna
         "anaseqal/nova-import": "^0.0.3",
+        "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/clh-import-card-extended": "*",
         "circlelinkhealth/clh-nova-theme": "*",
         "circlelinkhealth/core-module": "dev-vaporizing-admin",
@@ -158,7 +159,9 @@
     "extra": {
         "module-dir": "CircleLinkHealth",
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                "barryvdh/laravel-snappy"
+            ]
         }
     },
     "autoload": {
