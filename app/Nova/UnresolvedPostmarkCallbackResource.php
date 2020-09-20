@@ -66,14 +66,21 @@ class UnresolvedPostmarkCallbackResource extends Resource
         return [
             Text::make('matched user', 'matched_user_id')->sortable(),
             Text::make('reason', 'unresolved_reason'),
-            Text::make('other matches', 'other_possible_matches')->resolveUsing(function ($value) {
-                $suggestedUsersLink = [];
-                foreach (collect(json_decode($value))->toArray() as $userId) {
-//                    $suggestedUsersLink[] = link_to_route('', '', '')->toHtml();
-                    $suggestedUsersLink[] = $userId;
-                }
+            //            Text::make('possible matches', 'other_possible_matches')->resolveUsing(function ($value) {
+            //                $suggestedUsersLink = [];
+            //                foreach (collect(json_decode($value))->toArray() as $userId) {
+            //                    $suggestedUsersLink[] = link_to_route('patient.careplan.print', $userId, $userId)->toHtml();
+            //                }
+            //                return $suggestedUsersLink;
+            ////                return $suggestedUsersLink values foreach $row.
+            //            })->asHtml(),
 
-                return $suggestedUsersLink;
+            Text::make('possible matches', 'other_possible_matches', function ($usersId) {
+                $links = collect();
+                foreach (json_decode($usersId) as $userId) {
+                    $links->push(link_to_route('patient.careplan.print', $userId, $userId)->toHtml());
+                }
+                return array_values($links->toArray());
             })->asHtml(),
 
             Boolean::make('resolved', 'resolved')->sortable(),

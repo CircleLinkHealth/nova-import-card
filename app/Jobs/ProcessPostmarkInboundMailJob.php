@@ -12,9 +12,9 @@ use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\PostmarkInboundMail;
 use App\Services\Calls\SchedulerService;
-use App\Services\Postmark\ProcessUnresolvedPostmarkCallback;
 use App\Services\Postmark\PostmarkCallbackMailService;
 use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
+use App\Services\Postmark\ProcessUnresolvedPostmarkCallback;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
@@ -33,7 +33,6 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     use SerializesModels;
 
     const FROM_CALLBACK_EMAIL_USERNAME = 'callcenterusa.net';
-    const FROM_CALLBACK_FULL_EMAIL     = 'message.dispatch@callcenterusa.net';
 
     public int $tries = 1;
 
@@ -106,7 +105,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                 return;
             } catch (\Exception $e) {
                 if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {
-                    //                Assign to CA's ???
+                    //                Assign to as Unresolved for CA's to check ???
                     return;
                 }
                 Log::error($e->getMessage());

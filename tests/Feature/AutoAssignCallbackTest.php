@@ -116,7 +116,7 @@ class AutoAssignCallbackTest extends TestCase
             'postmark_id' => $this->postmarkRecord->id,
         ]);
 
-        $this->assertUnresolvedReasons(PostmarkInboundCallbackMatchResults::NOT_ENROLLED);
+        $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::NOT_ENROLLED);
     }
 
     public function test_it_saves_as_unresolved_if_its_unresolved_multi_match_patients()
@@ -229,7 +229,7 @@ class AutoAssignCallbackTest extends TestCase
             'postmark_id' => $this->postmarkRecord->id,
         ]);
 
-        $this->assertUnresolvedReasons(PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED);
+        $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED);
     }
 
     public function test_it_saves_as_unresolved_if_patient_requested_to_withdraw()
@@ -241,7 +241,7 @@ class AutoAssignCallbackTest extends TestCase
             'postmark_id' => $this->postmarkRecord->id,
         ]);
 
-        $this->assertUnresolvedReasons(PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST);
+        $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST);
     }
 
     public function test_it_will_create_callback_if_multiple_match_is_resolved_to_single_match()
@@ -274,13 +274,12 @@ class AutoAssignCallbackTest extends TestCase
         ]);
     }
 
-    private function assertUnresolvedReasons(string $reason)
+    private function assertUnresolvedReason(string $reason)
     {
         $unresolvedPostmarkRecord = UnresolvedPostmarkCallback::where('postmark_id', $this->postmarkRecord->id)
             ->firstOrFail();
-        $unresolvedPostmarkRecordArray = collect(json_decode($unresolvedPostmarkRecord->unresolved_reason))->toArray();
 
-        self::assertTrue(in_array($reason, $unresolvedPostmarkRecordArray));
+        assert($unresolvedPostmarkRecord->unresolved_reason === $reason);
     }
 
     private function dispatchPostmarkInboundMail(array $recordData, int $recordId)

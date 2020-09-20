@@ -200,20 +200,25 @@ class PostmarkInboundCallbackMatchResults
             ->getArray();
     }
 
+    /**
+     *  Returns the reason why a callback can't be assigned to a $patientUser.
+     *
+     * @return string
+     */
     private function noCallbackReasoning(Model $patientUser)
     {
         $reason = '';
         /** @var User $patientUser */
-        if ( ! $this->isPatientEnrolled($patientUser)) {
-            $reason = self::NOT_ENROLLED;
-        }
-
         if ($this->isQueuedForEnrollmentAndUnassigned($patientUser)) {
             $reason = self::QUEUED_AND_UNASSIGNED;
         }
 
         if ($this->requestsCancellation($this->postmarkCallbackData)) {
             $reason = self::WITHDRAW_REQUEST;
+        }
+
+        if ( ! $this->isPatientEnrolled($patientUser)) {
+            $reason = self::NOT_ENROLLED;
         }
 
         return $reason;
