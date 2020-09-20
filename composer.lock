@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "04fc9077c4d0a5c453a4709452a33144",
+    "content-hash": "1bee6697a236ef863177f6bdea070710",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1120,6 +1120,39 @@
             "time": "2020-09-18T22:31:53+00:00"
         },
         {
+            "name": "circlelinkhealth/sqlviews-module",
+            "version": "dev-vaporizing-admin",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
+                "reference": "aeede49755114937f66b565a9e03ade417e1bfe0"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\SqlViews\\Providers\\SqlViewsServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\SqlViews\\": ""
+                },
+                "classmap": [
+                    "Database/Views"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-09-20T01:57:06+00:00"
+        },
+        {
             "name": "circlelinkhealth/twofa-module",
             "version": "v1.2.3",
             "source": {
@@ -1919,16 +1952,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.20",
+            "version": "2.1.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "f46887bc48db66c7f38f668eb7d6ae54583617ff"
+                "reference": "563d0cdde5d862235ffe24a158497f4d490191b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/f46887bc48db66c7f38f668eb7d6ae54583617ff",
-                "reference": "f46887bc48db66c7f38f668eb7d6ae54583617ff",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/563d0cdde5d862235ffe24a158497f4d490191b5",
+                "reference": "563d0cdde5d862235ffe24a158497f4d490191b5",
                 "shasum": ""
             },
             "require": {
@@ -1973,7 +2006,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2020-09-06T13:44:32+00:00"
+            "time": "2020-09-19T14:37:56+00:00"
         },
         {
             "name": "epartment/nova-dependency-container",
@@ -11934,6 +11967,7 @@
         "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/sqlviews-module": 20,
         "circlelinkhealth/sharedvuecomponents-module": 20,
         "circlelinkhealth/shared-models-module": 20
     },

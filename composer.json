@@ -55,6 +55,10 @@
             "url": "./nova-components/EnrollmentInvites"
         },
         {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
+        },
+        {
             "type": "path",
             "url": "./nova-components/InvoicesDownload"
         },
@@ -104,6 +108,7 @@
         "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
         "circlelinkhealth/customer-module": "dev-vaporizing-admin",
         "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
+        "circlelinkhealth/sqlviews-module": "dev-vaporizing-admin",
         "fzaninotto/faker": "^1.9.1",
         "circlelinkhealth/sharedvuecomponents-module": "dev-vaporizing-admin",
         "circlelinkhealth/enrollment-invites": "*",
