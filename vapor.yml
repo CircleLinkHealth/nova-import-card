@@ -38,7 +38,7 @@ environments:
 #      - 'php artisan config:cache'
 #      - 'php artisan view:cache'
 #      - 'php artisan route:cache'
-      - 'npm install && npm run prod && rm -rf node_modules'
+      - 'npm ci && npm run prod && rm -rf node_modules'
     deploy:
 #      - 'php artisan migrate --force'
 #      - 'php artisan migrate:views'
