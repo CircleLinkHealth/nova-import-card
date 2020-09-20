@@ -59,7 +59,7 @@ $isAdmin = auth()->user()->isAdmin();
                             <div class="panel-body">
                                 <div>
                                     @include('core::partials.errors.errors')
-                                    @include('errors.messages')
+                                    @include('core::partials.errors.messages')
                                 </div>
                                 <div>
                                     <call-mgmt-app-v2 :is-admin="@json($isAdmin)" ref="callMgmtAppV2"></call-mgmt-app-v2>

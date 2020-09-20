@@ -22,7 +22,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         @include('core::partials.errors.errors')
-                                        @include('errors.messages')
+                                        @include('core::partials.errors.messages')
                                     </div>
                                 </div>
 

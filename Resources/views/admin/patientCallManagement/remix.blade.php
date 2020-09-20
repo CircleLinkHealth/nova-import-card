@@ -55,7 +55,7 @@
                         <div class="panel-body">
                             <div>
                                 @include('core::partials.errors.errors')
-                                @include('errors.messages')
+                                @include('core::partials.errors.messages')
                             </div>
                             <div>
                                 <call-mgmt-app ref="callMgmtApp"></call-mgmt-app>
