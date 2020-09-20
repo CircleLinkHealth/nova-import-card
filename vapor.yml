@@ -1,5 +1,6 @@
 id: 13702
 name: cpm-admin
+separate-vendor: true
 environments:
   production:
     memory: 1024
