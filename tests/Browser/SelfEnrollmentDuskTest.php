@@ -6,8 +6,8 @@
 
 namespace Tests\Browser;
 
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use AshAllenDesign\ShortURL\Models\ShortURL;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;

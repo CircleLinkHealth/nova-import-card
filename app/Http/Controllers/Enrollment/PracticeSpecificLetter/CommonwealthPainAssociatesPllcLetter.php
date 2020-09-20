@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Enrollment\PracticeSpecificLetter;
 
 use App\Contracts\SelfEnrollmentLetter;
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use App\Http\Controllers\EnrollmentLetterDefaultConfigs;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;

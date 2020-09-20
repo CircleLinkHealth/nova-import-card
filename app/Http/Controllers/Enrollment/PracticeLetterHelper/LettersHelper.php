@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment\PracticeLetterHelper;
 
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Model;

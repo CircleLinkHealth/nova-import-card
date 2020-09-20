@@ -50,7 +50,7 @@ Route::group([
     'middleware' => ['web'],
 ], function () {
     Route::get('enrollment-logout', [
-        'uses' => 'Enrollment\SelfEnrollmentController@logoutEnrollee',
+        'uses' => '\CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController@logoutEnrollee',
         'as'   => 'user.enrollee.logout',
     ]);
 });
@@ -1355,37 +1355,37 @@ Route::group([
     Route::get(
         '/patient-self-enrollment',
         [
-            'uses' => 'Enrollment\SelfEnrollmentController@enrollmentAuthForm',
+            'uses' => '\CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController@enrollmentAuthForm',
             'as'   => 'invitation.enrollment.loginForm',
         ]
     )->middleware('signed');
 
     Route::post('login-enrollment-survey', [
-        'uses' => 'Enrollment\SelfEnrollmentController@authenticate',
+        'uses' => '\CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController@authenticate',
         'as'   => 'invitation.enrollment.login',
     ]);
 });
 // TEMPORARY SIGNED ROUTE
 
 Route::get('/enrollment-survey', [
-    'uses' => 'Enrollment\SelfEnrollmentController@enrollNow',
+    'uses' => '\CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController@enrollNow',
     'as'   => 'patient.self.enroll.now',
 ]);
 
 Route::get('/enrollment-info', [
-    'uses' => 'Enrollment\SelfEnrollmentController@enrolleeRequestsInfo',
+    'uses' => '\CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController@enrolleeRequestsInfo',
     'as'   => 'patient.requests.enroll.info',
 ]);
 
 // Redirects to view with enrollees details to contact.
 Route::get('/enrollee-contact-details', [
-    'uses' => 'Enrollment\SelfEnrollmentController@enrolleeContactDetails',
+    'uses' => '\CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController@enrolleeContactDetails',
     'as'   => 'enrollee.to.call.details',
 ])->middleware('auth');
 
 // Incoming from AWV
 Route::get('/review-letter/{userId}', [
-    'uses' => 'Enrollment\SelfEnrollmentController@reviewLetter',
+    'uses' => '\CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController@reviewLetter',
     'as'   => 'enrollee.to.review.letter',
 ]);
 
@@ -1409,11 +1409,11 @@ Route::post('nurses/nurse-calendar-data', [
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
 
-Route::get('login-enrollees-survey/{user}/{survey}', 'Enrollment\SelfEnrollmentController@sendToSurvey')
+Route::get('login-enrollees-survey/{user}/{survey}', '\CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController@sendToSurvey')
     ->name('enrollee.login.signed')
     ->middleware('signed');
 
 Route::post('enrollee-login-viewed', [
-    'uses' => 'Enrollment\SelfEnrollmentController@viewFormVisited',
+    'uses' => '\CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController@viewFormVisited',
     'as'   => 'enrollee.login.viewed',
 ])->middleware('guest');

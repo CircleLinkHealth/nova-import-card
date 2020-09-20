@@ -12,7 +12,7 @@ use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\CarePlanWasApproved;
 use App\Events\NoteFinalSaved;
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use App\Http\Requests\CreateNoteRequest;
 use App\Http\Requests\NotesReport;
 use CircleLinkHealth\Customer\Http\Requests\SafeRequest;

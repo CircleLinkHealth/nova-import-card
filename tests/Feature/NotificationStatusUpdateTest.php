@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Jobs\NotificationStatusUpdateJob;
 use Illuminate\Support\Str;

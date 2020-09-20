@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\Practice;

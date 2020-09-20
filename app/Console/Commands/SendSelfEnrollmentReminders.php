@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
-use App\SelfEnrollment\Constants;
-use App\SelfEnrollment\Domain\RemindEnrollees;
-use App\SelfEnrollment\Domain\RemindUnreachablePatients;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Constants;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\RemindEnrollees;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\RemindUnreachablePatients;
 use Illuminate\Console\Command;
 
 class SendSelfEnrollmentReminders extends Command
