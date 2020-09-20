@@ -31,4 +31,3 @@ environments:
       - 'php artisan route:cache -vvv'
       - 'npm install && npm run prod && rm -rf node_modules'
     deploy:
-      - 'php artisan schedule-monitor:sync -vvv'
