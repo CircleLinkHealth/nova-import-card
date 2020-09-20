@@ -7,7 +7,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Create Activity </div>
                     <div class="panel-body">
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
 
                         <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ action('ActivityController@store') }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">

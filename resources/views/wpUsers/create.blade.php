@@ -17,7 +17,7 @@
                         <h1>Create New User</h1>
                     </div>
                     <div class="panel-body">
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
 
                         {!! Form::open(array('url' => route('admin.users.store'), 'class' => 'form-horizontal')) !!}
 

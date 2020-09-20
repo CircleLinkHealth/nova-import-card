@@ -3,7 +3,7 @@
 @section('title', 'Manage Enrollment')
 
 @section('module')
-    @include('errors.errors')
+    @include('core::partials.errors.errors')
 
     <div class="container">
         {!! Form::open(['url' => route('provider.dashboard.store.enrollment', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12', 'id' => 'edit-enrollment-form']) !!}

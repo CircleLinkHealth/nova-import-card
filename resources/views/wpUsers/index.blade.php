@@ -129,8 +129,8 @@
 
     <div class="container-fluid">
         <div class="row">
-            @include('errors.errors')
-            @include('errors.messages')
+            @include('core::partials.errors.errors')
+            @include('CircleLinkHealth.Core.Resources.views.partials.errors.messages')
         </div>
         <div class="row">
             <div class="col-md-10 col-md-offset-1">

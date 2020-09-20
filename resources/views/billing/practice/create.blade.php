@@ -23,7 +23,7 @@
         </script>
     @endpush
 
-    @include('errors.messages')
+    @include('CircleLinkHealth.Core.Resources.views.partials.errors.messages')
 
     {!! Form::open(array('url' => route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid" style="padding-top: 50px;">

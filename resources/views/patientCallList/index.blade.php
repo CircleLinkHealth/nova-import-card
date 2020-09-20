@@ -188,8 +188,8 @@ function formatTime($time)
                                     </div>
                                 </div>
                                 <div class="">
-                                    @include('errors.errors')
-                                    @include('errors.messages')
+                                    @include('core::partials.errors.errors')
+                                    @include('CircleLinkHealth.Core.Resources.views.partials.errors.messages')
                                     @push('styles')
                                         <style>
                                             .table tbody > tr > td.vert-align {

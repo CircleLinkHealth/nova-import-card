@@ -105,7 +105,7 @@ if (isset($patient) && ! empty($patient)) {
                                             </ul>
                                         </div>
                                         <div class="row" style="margin-bottom: 5%;">
-                                            @include('errors.incompatibleBrowser')
+                                            @include('CircleLinkHealth.Core.Resources.views.partials.errors.incompatibleBrowser')
                                         </div>
                                     </div>
                                 @endif

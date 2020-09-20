@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
                         <table class="table table-striped">
                             <thead>
                             <tr>

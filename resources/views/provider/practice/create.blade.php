@@ -3,7 +3,7 @@
 @section('title', 'Manage Practice')
 
 @section('module')
-    @include('errors.errors')
+    @include('core::partials.errors.errors')
 
     <div class="container">
         {!! Form::open(['url' => route('provider.dashboard.store.practice', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12', 'id' => 'edit-practice-form']) !!}

@@ -52,8 +52,8 @@
     <section class="main-form col-lg-12 col-sm-11">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
-                @include('errors.errors')
-                @include('errors.messages')
+                @include('core::partials.errors.errors')
+                @include('CircleLinkHealth.Core.Resources.views.partials.errors.messages')
             </div>
             <div class="main-form-container col-lg-4 col-lg-offset-4 col-sm-4 col-sm-offset-4">
                 <div class="row">

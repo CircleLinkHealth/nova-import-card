@@ -26,7 +26,7 @@
                         Editing Practice: {{ $program->display_name }}
                     </div>
                     <div class="panel-body">
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
 
 
                         {!! Form::open(array('url' => route('saas-admin.practices.update', array('id' => $program->id)), 'class' => 'form-horizontal')) !!}

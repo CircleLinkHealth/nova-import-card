@@ -121,7 +121,7 @@
                      style="border-top: 3px solid #50b2e2">
 
                     <div style="margin-top:2px">
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
                     </div>
 
                     @if($isProviderSelected)

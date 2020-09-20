@@ -16,7 +16,7 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
 
                         <form id="location-form" class="form-horizontal" role="form" method="POST"
                               action="{{ action('\App\Http\Controllers\LocationController@store') }}">

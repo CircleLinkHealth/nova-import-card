@@ -5,7 +5,7 @@
 @section('module')
 
 
-    @include('errors.materialize-errors')
+    @include('CircleLinkHealth.Core.Resources.views.partials.errors.materialize-errors')
 
     @push('styles')
         <style>

@@ -18,10 +18,10 @@
 
     <div class="col-lg-8 col-lg-offset-2">
         <div>
-            @include('errors.messages')
+            @include('CircleLinkHealth.Core.Resources.views.partials.errors.messages')
         </div>
         <div>
-            @include('errors.errors')
+            @include('core::partials.errors.errors')
         </div>
     </div>
 

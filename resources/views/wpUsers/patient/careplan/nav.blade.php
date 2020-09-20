@@ -1,5 +1,5 @@
 <div class="edit-navigation-buttons col-lg-10 col-lg-offset-1">
-    @include('errors.errors')
+    @include('core::partials.errors.errors')
     <br/>
     <div class="btn-group btn-group-justified" role="group" aria-label="...">
         <div class="btn-group" role="group">

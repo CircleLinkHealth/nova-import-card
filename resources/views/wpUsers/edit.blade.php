@@ -40,7 +40,7 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
 
-                        @include('errors.errors')
+                        @include('core::partials.errors.errors')
 
                         {!! Form::open(array('url' => route('admin.users.update', array('id' => $patient->id)), 'class' => 'form-horizontal')) !!}
 
