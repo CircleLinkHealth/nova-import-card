@@ -47,6 +47,30 @@ class UnresolvedPostmarkCallbackResource extends Resource
     }
 
     /**
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
+    }
+
+    /**
      * Get the cards available for the request.
      *
      * @return array
@@ -55,30 +79,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
     {
         return [];
     }
-    
-    /**
-     * @return bool
-     */
-    public static function authorizedToCreate(Request $request)
-    {
-        return false;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function authorizedToDelete(Request $request)
-    {
-        return false;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function authorizedToUpdate(Request $request)
-    {
-        return false;
-    }
+
     /**
      * Get the fields displayed by the resource.
      *
@@ -95,6 +96,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
                 foreach (json_decode($usersId) as $userId) {
                     $links->push(link_to_route('patient.careplan.print', $userId, $userId)->toHtml());
                 }
+
                 return array_values($links->toArray());
             })->asHtml(),
 
