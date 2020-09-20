@@ -5,7 +5,6 @@ use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\Core\Providers\HtmlToPdfServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
-use CircleLinkHealth\Core\Services\HtmlToPdfService;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
 
@@ -186,7 +185,6 @@ return [
     
         \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
         \App\Providers\NovaServiceProvider::class,
-        CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider::class,
         CpmAdminServiceProvider::class,
         RaygunServiceProvider::class,
         CoreServiceProvider::class,
