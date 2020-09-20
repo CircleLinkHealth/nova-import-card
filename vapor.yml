@@ -40,5 +40,5 @@ environments:
       - 'php artisan route:cache'
       - 'npm install && npm run prod && rm -rf node_modules'
     deploy:
-      - 'php artisan migrate --force'
-      - 'php artisan migrate:views'
+#      - 'php artisan migrate --force'
+#      - 'php artisan migrate:views'
