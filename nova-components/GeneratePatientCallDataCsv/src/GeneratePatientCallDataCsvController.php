@@ -4,11 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\GeneratePatientCallDataCsv;
+namespace Circlelinkhealth\GeneratePatientCallDataCsv;
 
 use App\Services\PatientCallData;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Exports\FromArray;
+use Circlelinkhealth\Core\Exports\FromArray;
 
 class GeneratePatientCallDataCsvController
 {

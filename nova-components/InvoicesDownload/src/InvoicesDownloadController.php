@@ -7,7 +7,7 @@
 namespace Circlelinkhealth\InvoicesDownload;
 
 use Carbon\Carbon;
-use CircleLinkHealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
+use Circlelinkhealth\NurseInvoices\Jobs\ExportAndDispatchInvoices;
 
 class InvoicesDownloadController
 {

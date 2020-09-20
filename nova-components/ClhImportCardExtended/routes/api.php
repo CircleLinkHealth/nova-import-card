@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\ClhImportCardExtended\CLHImportCardController;
+use Circlelinkhealth\ClhImportCardExtended\CLHImportCardController;
 use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------

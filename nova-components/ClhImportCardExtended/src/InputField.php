@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\ClhImportCardExtended;
+namespace Circlelinkhealth\ClhImportCardExtended;
 
 use Illuminate\Database\Eloquent\Model;
 use Validator;

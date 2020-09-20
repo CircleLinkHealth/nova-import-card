@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\ImportPracticeStaffCsv;
+namespace Circlelinkhealth\ImportPracticeStaffCsv;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;

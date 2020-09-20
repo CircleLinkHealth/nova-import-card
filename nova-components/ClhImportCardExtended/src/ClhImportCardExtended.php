@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\ClhImportCardExtended;
+namespace Circlelinkhealth\ClhImportCardExtended;
 
-use CircleLinkHealth\Customer\Entities\Practice;
+use Circlelinkhealth\Customer\Entities\Practice;
 use App\User;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\Select;

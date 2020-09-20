@@ -11,13 +11,13 @@
     },
     "autoload": {
         "psr-4": {
-            "CircleLinkHealth\\GeneratePatientCallDataCsv\\": "src/"
+            "Circlelinkhealth\\GeneratePatientCallDataCsv\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\GeneratePatientCallDataCsv\\CardServiceProvider"
+                "Circlelinkhealth\\GeneratePatientCallDataCsv\\CardServiceProvider"
             ]
         }
     },
