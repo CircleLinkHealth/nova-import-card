@@ -18,6 +18,8 @@ use Illuminate\Support\Str;
 
 class PostmarkInboundCallbackMatchResults
 {
+    const NO_NAME_MATCH         = 'no_name_match';
+    const NO_NAME_MATCH_SELF    = 'no_name_match_self';
     const NOT_ENROLLED          = 'not_enrolled';
     const QUEUED_AND_UNASSIGNED = 'queue_auto_enrollment_and_unassigned';
     const WITHDRAW_REQUEST      = 'withdraw_request';
@@ -60,14 +62,18 @@ class PostmarkInboundCallbackMatchResults
     /**
      * @return bool
      */
-    public function isQueuedForEnrollmentAndUnassigned(User $patientUser)
+    public function isQueuedForEnrollmentAndUnassigned(Model $patientUser)
     {
-        if ( ! $patientUser->enrollee->exists()) {
+        /** @var Enrollee $enrollee */
+        /** @var User $patientUser */
+        $enrollee = $patientUser->enrollee;
+        if ( ! $enrollee->exists()) {
             return false;
         }
 
-        return Enrollee::QUEUE_AUTO_ENROLLMENT === $patientUser->enrollee->status
-            && is_null($patientUser->enrollee->care_ambassador_user_id);
+        return Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status
+            && is_null($enrollee->toArray()['care_ambassador_user_id']);
+        
     }
 
     /**
@@ -119,32 +125,24 @@ class PostmarkInboundCallbackMatchResults
 
         $patientsMatchWithInboundName = $patientsMatchedByPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
 
-        if ($patientsMatchWithInboundName->isEmpty()) {
-            Log::info("Postmark inbound callback with record id:$this->recordId was matched with phone but failed to match with user name");
+        if ($patientsMatchWithInboundName->isEmpty() || ! 1 === $patientsMatchWithInboundName->count()) {
+            sendSlackMessage('#carecoach_ops_alerts', "Inbound callback with record id:$this->recordId was matched with phone but failed to match with user name.");
 
             return (new MatchedData(
                 $patientsMatchedByPhone,
-                false
-            ))
-                ->getArray();
-        }
-
-        if (1 === $patientsMatchWithInboundName->count()) {
-            return (new MatchedData(
-                $patientsMatchWithInboundName->first(),
-                $this->patientIsCallbackEligible(
-                    $patientsMatchWithInboundName->first(),
-                    $this->postmarkCallbackData
-                ),
-                $this->noCallbackReasoning($patientsMatchWithInboundName->first())
+                false,
+                self::NO_NAME_MATCH
             ))
                 ->getArray();
         }
 
         return (new MatchedData(
-            $patientsMatchWithInboundName,
-            false,
-            'unmatched'
+            $patientsMatchWithInboundName->first(),
+            $this->patientIsCallbackEligible(
+                $patientsMatchWithInboundName->first(),
+                $this->postmarkCallbackData
+            ),
+            $this->noCallbackReasoning($patientsMatchWithInboundName->first())
         ))
             ->getArray();
     }
@@ -195,9 +193,17 @@ class PostmarkInboundCallbackMatchResults
         return (new MatchedData(
             $patientsMatchedByCallerFieldName,
             false,
-            'no_name_match'
+            self::NO_NAME_MATCH_SELF
         ))
             ->getArray();
+    }
+
+    /**
+     * @return bool
+     */
+    private function multiMatch(Builder $postmarkInboundPatientsMatched)
+    {
+        return $postmarkInboundPatientsMatched->count() > 1;
     }
 
     /**
@@ -210,15 +216,15 @@ class PostmarkInboundCallbackMatchResults
         $reason = '';
         /** @var User $patientUser */
         if ($this->isQueuedForEnrollmentAndUnassigned($patientUser)) {
-            $reason = self::QUEUED_AND_UNASSIGNED;
+            return self::QUEUED_AND_UNASSIGNED;
         }
 
         if ($this->requestsCancellation($this->postmarkCallbackData)) {
-            $reason = self::WITHDRAW_REQUEST;
+            return self::WITHDRAW_REQUEST;
         }
 
         if ( ! $this->isPatientEnrolled($patientUser)) {
-            $reason = self::NOT_ENROLLED;
+            return self::NOT_ENROLLED;
         }
 
         return $reason;
@@ -236,7 +242,6 @@ class PostmarkInboundCallbackMatchResults
             'lastName'  => isset($patientNameArray[2]) ? $patientNameArray[2] : '',
         ];
     }
-    
 
     /**
      * @return array|false|string[]
@@ -258,14 +263,5 @@ class PostmarkInboundCallbackMatchResults
     private function singleMatch(Collection $postmarkInboundPatientsMatched)
     {
         return 1 === $postmarkInboundPatientsMatched->count();
-    }
-    
-    /**
-     * @param Builder $postmarkInboundPatientsMatched
-     * @return bool
-     */
-    private function multiMatch(Builder $postmarkInboundPatientsMatched)
-    {
-        return $postmarkInboundPatientsMatched->count() > 1;
     }
 }

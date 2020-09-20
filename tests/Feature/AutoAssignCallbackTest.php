@@ -220,6 +220,9 @@ class AutoAssignCallbackTest extends TestCase
                 'care_ambassador_user_id' => null,
             ]
         );
+        
+        $this->patientEnrollee->save();
+        
 
         $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
 
