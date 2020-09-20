@@ -90,7 +90,7 @@ class PostmarkInboundCallbackMatchResults
                 ->getArray();
         }
 
-        if ($postmarkInboundPatientsMatched->count() > 1) {
+        if ($this->multiMatch($postmarkInboundPatientsMatched)) {
             return  $this->filterPostmarkInboundPatientsByName($postmarkInboundPatientsMatched->get(), $this->postmarkCallbackData);
         }
 
@@ -236,6 +236,7 @@ class PostmarkInboundCallbackMatchResults
             'lastName'  => isset($patientNameArray[2]) ? $patientNameArray[2] : '',
         ];
     }
+    
 
     /**
      * @return array|false|string[]
@@ -257,5 +258,14 @@ class PostmarkInboundCallbackMatchResults
     private function singleMatch(Collection $postmarkInboundPatientsMatched)
     {
         return 1 === $postmarkInboundPatientsMatched->count();
+    }
+    
+    /**
+     * @param Builder $postmarkInboundPatientsMatched
+     * @return bool
+     */
+    private function multiMatch(Builder $postmarkInboundPatientsMatched)
+    {
+        return $postmarkInboundPatientsMatched->count() > 1;
     }
 }
