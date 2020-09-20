@@ -24,6 +24,9 @@ return [
         'cpm-admin' => [
             'url' => env('CPM_ADMIN_APP_URL', ''),
         ],
+        'cpm-provider' => [
+            'url' => env('CPM_PROVIDER_APP_URL', ''),
+        ],
     ],
     
     'services' => [
