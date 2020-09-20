@@ -28,6 +28,8 @@ class HtmlToPdfServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->singleton(
             HtmlToPdfService::class,
             function () {
+                $this->app->register(\Barryvdh\Snappy\ServiceProvider::class);
+            
                 return $this->app->make(SnappyPdfWrapper::class)
                     ->setTemporaryFolder(storage_path('tmp'));
             }
