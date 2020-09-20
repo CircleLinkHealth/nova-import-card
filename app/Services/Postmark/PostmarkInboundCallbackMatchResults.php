@@ -125,7 +125,7 @@ class PostmarkInboundCallbackMatchResults
 
         $patientsMatchWithInboundName = $patientsMatchedByPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
 
-        if ($patientsMatchWithInboundName->isEmpty() || ! 1 === $patientsMatchWithInboundName->count()) {
+        if ($patientsMatchWithInboundName->isEmpty() ||  1 !== $patientsMatchWithInboundName->count()) {
             sendSlackMessage('#carecoach_ops_alerts', "Inbound callback with record id:$this->recordId was matched with phone but failed to match with user name.");
 
             return (new MatchedData(
@@ -213,7 +213,7 @@ class PostmarkInboundCallbackMatchResults
      */
     private function noCallbackReasoning(Model $patientUser)
     {
-        $reason = '';
+        $reason = 'unmatched';
         /** @var User $patientUser */
         if ($this->isQueuedForEnrollmentAndUnassigned($patientUser)) {
             return self::QUEUED_AND_UNASSIGNED;
