@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\Providers;
 
-use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
-use CircleLinkHealth\Eligibility\Services\AthenaAPI\Connection;
 use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\DetermineTargetPatientEligibility;
 use CircleLinkHealth\Eligibility\Console\Athena\FixBatch235;
@@ -24,8 +22,10 @@ use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\Console\ResetAthenaEligibilityBatch;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Connection;
 use Illuminate\Contracts\Support\DeferrableProvider;
-use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
 class EligibilityDeferrableServiceProvider extends ServiceProvider implements DeferrableProvider
@@ -55,6 +55,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             UpdatePracticeAppointments::class,
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,
+            SendSelfEnrollmentReminders::class,
         ];
     }
 
@@ -79,6 +80,7 @@ class EligibilityDeferrableServiceProvider extends ServiceProvider implements De
             UpdatePracticeAppointments::class,
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,
+            SendSelfEnrollmentReminders::class,
         ]);
 
         $this->app->singleton(AthenaApiImplementation::class, function () {
