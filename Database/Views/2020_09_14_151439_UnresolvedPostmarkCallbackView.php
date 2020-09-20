@@ -16,7 +16,9 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         $notEnrolled         = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::NOT_ENROLLED;
         $queuedAndUnassigned = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED;
         $withdrawRequest     = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST;
-        
+        $noNameMatch         = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::NO_NAME_MATCH;
+        $noNameSelfMatch         = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
+
         return \DB::statement("
         CREATE VIEW {$this->getViewName()} AS
         SELECT
@@ -26,10 +28,11 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         CASE WHEN upc.unresolved_reason = '$notEnrolled' THEN 'Not Enrolled'
         WHEN upc.unresolved_reason = '$queuedAndUnassigned' THEN 'Enrollment Queue / CA unassigned'
         WHEN upc.unresolved_reason = '$withdrawRequest' THEN 'Withdraw Request'
+        WHEN upc.unresolved_reason = '$noNameMatch' THEN 'Name not matched'
+        WHEN upc.unresolved_reason = '$noNameSelfMatch' THEN 'Pt. SELF not matched'
         END as unresolved_reason,
         
         upc.suggestions as other_possible_matches,
-        CASE WHEN upc.suggestions LIKE 'user_id%' THEN true ELSE false END,
         
         CASE WHEN c.created_at > upc.created_at
         AND c.sub_type = 'Call Back'
