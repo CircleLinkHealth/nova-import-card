@@ -1,5 +1,5 @@
-id: 13482
-name: app-cpm-web
+id: 13702
+name: cpm-admin
 separate-vendor: true
 environments:
   production:

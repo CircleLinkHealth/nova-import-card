@@ -95,7 +95,7 @@
         "ext-redis": "*",
         "ext-simplexml": "*",
         "ext-zend-opcache": "*",
-        "alexbowers/nova-prepopulate-searchable": "^1.0",sna
+        "alexbowers/nova-prepopulate-searchable": "^1.0",
         "anaseqal/nova-import": "^0.0.3",
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/clh-import-card-extended": "*",
