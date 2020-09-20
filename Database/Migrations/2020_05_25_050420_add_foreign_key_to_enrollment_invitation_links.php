@@ -5,7 +5,7 @@
  */
 
 use App\EnrollmentInvitationsBatch;
-use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
