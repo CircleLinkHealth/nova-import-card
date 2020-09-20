@@ -669,47 +669,47 @@ Route::prefix('cpmadmin')->group(function () {
         ],
     ], function () {
         Route::get('/send-enrollee-reminder-test', [
-            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendEnrolleesReminderTestMethod',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@sendEnrolleesReminderTestMethod',
             'as'   => 'send.reminder.enrollee.qa',
         ])->middleware('auth');
 
         Route::get('/send-patient-reminder-test', [
-            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendPatientsReminderTestMethod',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@sendPatientsReminderTestMethod',
             'as'   => 'send.reminder.patient.qa',
         ])->middleware('auth');
 
         Route::get('/final-action-unreachables-test', [
-            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@finalActionTest',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@finalActionTest',
             'as'   => 'final.action.qa',
         ])->middleware('auth');
 
         Route::get('/evaluate-enrolled-from-survey', [
-            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@evaluateEnrolledForSurveyTest',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@evaluateEnrolledForSurveyTest',
             'as'   => 'evaluate.survey.completed',
         ])->middleware('auth');
 
         Route::get('/reset-enrollment-test', [
-            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@resetEnrollmentTest',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@resetEnrollmentTest',
             'as'   => 'reset.test.qa',
         ])->middleware('auth');
 
         Route::get('/send-enrollee-invites', [
-            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@inviteEnrolleesToEnrollTest',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@inviteEnrolleesToEnrollTest',
             'as'   => 'send.enrollee.invitations',
         ])->middleware('auth');
 
         Route::get('/send-unreachable-invites', [
-            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@inviteUnreachablesToEnrollTest',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@inviteUnreachablesToEnrollTest',
             'as'   => 'send.unreachable.invitations',
         ])->middleware('auth');
 
         Route::get('/trigger-enrolldata-test', [
-            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@triggerEnrollmentSeederTest',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@triggerEnrollmentSeederTest',
             'as'   => 'trigger.enrolldata.test',
         ])->middleware('auth');
 
         Route::get('/invite-unreachable', [
-            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendInvitesPanelTest',
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@sendInvitesPanelTest',
             'as'   => 'send.invitates.panel',
         ])->middleware('auth');
         //---------------------------------------
