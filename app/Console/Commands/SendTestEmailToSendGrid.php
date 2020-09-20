@@ -15,6 +15,8 @@ use Illuminate\Console\Command;
 class SendTestEmailToSendGrid extends Command
 {
     use Queueable;
+
+    const POSTMARK_INBOUND_ADRESS = 'ce336c4be369b05746140c3478913fbd@inbound.postmarkapp.com';
     /**
      * The console command description.
      *
@@ -46,8 +48,8 @@ class SendTestEmailToSendGrid extends Command
 
     public function handle()
     {
-        $this->email          = $this->argument('email') ?: null;
         $this->isCallbackMail = (bool) $this->option('callback-mail');
+        $this->email          = $this->isCallbackMail ?: self::POSTMARK_INBOUND_ADRESS;
 
         if ($this->isCallbackMail) {
             try {
