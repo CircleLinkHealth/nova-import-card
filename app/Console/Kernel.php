@@ -33,7 +33,7 @@ use App\Console\Commands\RemoveDuplicateScheduledCalls;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
-use App\Console\Commands\SendSelfEnrollmentReminders;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
 use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
 use App\Jobs\OverwritePatientMrnsFromSupplementalData;
 use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
