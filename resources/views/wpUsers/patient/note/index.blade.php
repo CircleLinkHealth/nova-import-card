@@ -15,7 +15,7 @@
 
     <div class="col-lg-8 col-lg-offset-2">
         <div>
-            @include('core::partials.core::partials.errors.messages')
+            @include('core::partials.errors.messages')
         </div>
         <div>
             @include('core::partials.errors.errors')

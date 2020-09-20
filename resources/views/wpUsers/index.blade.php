@@ -130,7 +130,7 @@
     <div class="container-fluid">
         <div class="row">
             @include('core::partials.errors.errors')
-            @include('core::partials.core::partials.errors.messages')
+            @include('core::partials.errors.messages')
         </div>
         <div class="row">
             <div class="col-md-10 col-md-offset-1">

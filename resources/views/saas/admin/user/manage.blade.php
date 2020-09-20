@@ -52,7 +52,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         @include('core::partials.errors.errors')
-                                        @include('core::partials.core::partials.errors.messages')
+                                        @include('core::partials.errors.messages')
                                         @if(!empty($successMessage))
                                             <div class="alert alert-success"> {{ $successMessage }}</div>
                                         @endif
