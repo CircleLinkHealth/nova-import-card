@@ -55,7 +55,30 @@ class UnresolvedPostmarkCallbackResource extends Resource
     {
         return [];
     }
-
+    
+    /**
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+    
+    /**
+     * @return bool
+     */
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+    
+    /**
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
+    }
     /**
      * Get the fields displayed by the resource.
      *

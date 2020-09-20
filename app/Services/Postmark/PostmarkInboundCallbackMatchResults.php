@@ -73,7 +73,6 @@ class PostmarkInboundCallbackMatchResults
 
         return Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status
             && is_null($enrollee->toArray()['care_ambassador_user_id']);
-        
     }
 
     /**
@@ -125,7 +124,7 @@ class PostmarkInboundCallbackMatchResults
 
         $patientsMatchWithInboundName = $patientsMatchedByPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
 
-        if ($patientsMatchWithInboundName->isEmpty() ||  1 !== $patientsMatchWithInboundName->count()) {
+        if ($patientsMatchWithInboundName->isEmpty() || 1 !== $patientsMatchWithInboundName->count()) {
             sendSlackMessage('#carecoach_ops_alerts', "Inbound callback with record id:$this->recordId was matched with phone but failed to match with user name.");
 
             return (new MatchedData(
