@@ -10,6 +10,7 @@ use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvide
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
+use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
@@ -194,7 +195,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         \App\Providers\RouteServiceProvider::class,
-        App\Providers\VaporUiServiceProvider::class,
+        \CircleLinkHealth\Core\Providers\VaporUiServiceProvider::class,
         \App\Providers\AuthServiceProvider::class,
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,
@@ -227,7 +228,8 @@ return [
         CoreDeferredBindingsServiceProvider::class,
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
-        CustomerAuthServiceProvider::class
+        CustomerAuthServiceProvider::class,
+        VaporUiServiceProvider::class,
     ],
 
     /*
