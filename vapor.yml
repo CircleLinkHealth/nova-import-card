@@ -34,8 +34,10 @@ environments:
     build:
       - 'composer install --no-dev'
       - 'php artisan event:cache'
-      - 'npm install && npm run prod && rm -rf node_modules'
-    deploy:
       - 'php artisan config:cache -vvv'
       - 'php artisan view:cache -vvv'
       - 'php artisan route:cache -vvv'
+      - 'npm install && npm run prod && rm -rf node_modules'
+    deploy:
+      - 'php artisan migrate --force'
+      - 'php artisan migrate:views'
