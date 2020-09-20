@@ -220,7 +220,6 @@
     "barryvdh/laravel-ide-helper": "^2.6.7",
     "facade/ignition": "^2.0",
     "friendsofphp/php-cs-fixer": "^2.16.3",
-    "fzaninotto/faker": "^1.4",
     "heroku/heroku-buildpack-php" : "dev-master",
     "jkocik/laravel-profiler": "^1.2",
     "kitloong/laravel-migrations-generator": "^4.3",
