@@ -17,21 +17,10 @@ class TwoFAServiceProvider extends ServiceProvider
     {
         $this->registerConfig();
         $this->registerVueComponents();
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->registerViews();
 
         $this->app->register(RouteServiceProvider::class);
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [];
     }
 
     /**
