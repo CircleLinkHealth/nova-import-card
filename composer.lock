@@ -199,16 +199,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.154.6",
+            "version": "3.154.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "83a1382930359e4d4f4c9187239f059d5b282520"
+                "reference": "fa2bf35b5d80e9597e5a2cd7e337eeeb44d09d9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/83a1382930359e4d4f4c9187239f059d5b282520",
-                "reference": "83a1382930359e4d4f4c9187239f059d5b282520",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fa2bf35b5d80e9597e5a2cd7e337eeeb44d09d9c",
+                "reference": "fa2bf35b5d80e9597e5a2cd7e337eeeb44d09d9c",
                 "shasum": ""
             },
             "require": {
@@ -280,7 +280,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-09-18T18:16:42+00:00"
+            "time": "2020-09-21T18:12:58+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -704,7 +704,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "e111e23aa9d3dcd2e03a2677edc0c13b166ed5a4"
+                "reference": "f589878bc5f1cbe29ee2f034a91e2d91fc5283cb"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -730,7 +730,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-21T15:05:48+00:00"
+            "time": "2020-09-21T15:15:21+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1159,7 +1159,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "0422a174fcc88d1903252d8d1e43efe28d088d9c"
+                "reference": "b45d64871a97a557c9371301aaec7bbe771758e7"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1186,7 +1186,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-21T15:04:48+00:00"
+            "time": "2020-09-21T15:12:00+00:00"
         },
         {
             "name": "daltcore/lara-pdf-merger",
@@ -4485,16 +4485,16 @@
         },
         {
             "name": "league/mime-type-detection",
-            "version": "1.4.0",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/mime-type-detection.git",
-                "reference": "fda190b62b962d96a069fcc414d781db66d65b69"
+                "reference": "ea2fbfc988bade315acd5967e6d02274086d0f28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/fda190b62b962d96a069fcc414d781db66d65b69",
-                "reference": "fda190b62b962d96a069fcc414d781db66d65b69",
+                "url": "https://api.github.com/repos/thephpleague/mime-type-detection/zipball/ea2fbfc988bade315acd5967e6d02274086d0f28",
+                "reference": "ea2fbfc988bade315acd5967e6d02274086d0f28",
                 "shasum": ""
             },
             "require": {
@@ -4532,7 +4532,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-08-09T10:34:01+00:00"
+            "time": "2020-09-21T18:10:53+00:00"
         },
         {
             "name": "league/oauth2-server",
