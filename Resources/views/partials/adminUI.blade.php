@@ -244,31 +244,21 @@
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        @if (Auth::guest())
-                            {{--<li><a href="{{ url('/auth/login') }}">Login</a></li>--}}
-                            {{--<li><a href="{{ url('/auth/register') }}">Register</a></li>--}}
-                        @else
+                        @if (! Auth::guest())
                             <li class="dropdown">
                                 <div id="time-tracker"></div>
-                            </li>
-
-                            <li class="dropdown">
-                                <a href="{{url('/jobs/completed')}}">
-                                    <span class="badge">{{auth()->user()->cachedNotificationsList()->count()}}</span>
-                                    Jobs Done
-                                </a>
                             </li>
 
                             <li class="dropdown">
                                 <a href="{{ url('/superadmin') }}"
                                    style=""><i class="glyphicon glyphicon-fire"></i> SuperAdmin</a>
                             </li>
-                        @if(config('core.apps.cpm-provider.url'))
-                            <li class="dropdown">
-                                <a href="{{ config('core.apps.cpm-provider.url').'manage-patients/dashboard' }}"
-                                   style=""><i class="glyphicon glyphicon-eye-open"></i> Provider</a>
-                            </li>
-                        @endif
+                            @if(config('core.apps.cpm-provider.url'))
+                                <li class="dropdown">
+                                    <a href="{{ config('core.apps.cpm-provider.url').'manage-patients/dashboard' }}"
+                                       style=""><i class="glyphicon glyphicon-eye-open"></i> Provider</a>
+                                </li>
+                            @endif
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                    aria-expanded="false">{{ Auth::user()->getFullName() }} [ID:{{ Auth::user()->id }}
