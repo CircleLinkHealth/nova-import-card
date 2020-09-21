@@ -32,14 +32,14 @@ class ChargeableServiceHumanFriendlyNamesSeeder extends Seeder
     private function codeReadableNameMap(): array
     {
         return [
-            ChargeableService::CCM            => 'CCM',
-            ChargeableService::CCM_PLUS_40    => 'CCM40',
-            ChargeableService::CCM_PLUS_60    => 'CCM60',
-            ChargeableService::BHI            => 'BHI',
-            ChargeableService::PCM            => 'PCM',
-            ChargeableService::AWV_INITIAL    => 'AWV1',
-            ChargeableService::AWV_SUBSEQUENT => 'AWV2',
-            ChargeableService::G0511          => 'RHC',
+            ChargeableService::CCM                     => 'CCM',
+            ChargeableService::CCM_PLUS_40             => 'CCM40',
+            ChargeableService::CCM_PLUS_60             => 'CCM60',
+            ChargeableService::BHI                     => 'BHI',
+            ChargeableService::PCM                     => 'PCM',
+            ChargeableService::AWV_INITIAL             => 'AWV1',
+            ChargeableService::AWV_SUBSEQUENT          => 'AWV2',
+            ChargeableService::GENERAL_CARE_MANAGEMENT => 'RHC',
         ];
     }
 
