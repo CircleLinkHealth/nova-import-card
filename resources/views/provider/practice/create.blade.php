@@ -128,7 +128,7 @@
 @endsection
 
 @push('scripts')
-    <script src="{{mix('/js/materialize.min.js')}}"></script>
+    <script src="{{asset('/js/materialize.min.js')}}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
     <script src="https://unpkg.com/libphonenumber-js/bundle/libphonenumber-js.min.js"></script>
     <script type="text/javascript">

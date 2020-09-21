@@ -12,8 +12,8 @@
 @include('partials.hotjar-code')
 
 <!-- Stylesheets -->
-    <link href="{{ mix('/css/admin.css') }}" rel="stylesheet">
-    <link href="{{ mix('/img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
+    <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
     <!-- Fonts -->
     <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
@@ -30,9 +30,9 @@
 
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"
-          href="{{mix('/css/jquery-ui-timepicker-addon.min.css')}}">
+          href="{{asset('/css/jquery-ui-timepicker-addon.min.css')}}">
 
-    <link rel="stylesheet" href="{{mix('/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{asset('/css/bootstrap.min.css')}}">
 
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
 
@@ -72,7 +72,7 @@
                     <div class="row">
                         <div class="col-md-3 col-xs-12">
                             <a class="navbar-brand" href="{{ url('/') }}" style="padding: 5px 15px; border: none"><img
-                                        src="{{mix('/img/logos/LogoHorizontal_Color.svg')}}"
+                                        src="{{asset('/img/logos/LogoHorizontal_Color.svg')}}"
                                         alt="Care Plan Manager"
                                         style="position:relative;top:-7px"
                                         height="50"
@@ -128,10 +128,10 @@
     <!-- Script for polyfilling Promises on IE9 and 10 -->
 
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
-    <script src="{{ mix('js/polyfills/es7-object-polyfill.min.js') }}"></script>
+    <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif
 
-<script type="text/javascript" src="{{ mix('compiled/js/issue-688.js') }}"></script>
+<script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
 <script>
     $(document).ready(function () {
         $('.select2').select2();

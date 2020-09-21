@@ -26,6 +26,6 @@
 
 <p><i>Your username is your work email address, and you can obtain or reset password by clicking the circled “Lost/Need a password...?” in below screenshot:</i></p>
 
-<p style="text-align: center"><img style="width: 200px" src="{{ $message->embed(mix('/img/forgot.png')) }}"></p>
+<p style="text-align: center"><img style="width: 200px" src="{{ $message->embed(asset('/img/forgot.png')) }}"></p>
 
 <p>@include('sales.partials.footer')</p>

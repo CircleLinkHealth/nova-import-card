@@ -4,7 +4,7 @@
 
 @section('head')
     @push('styles')
-        <link rel="stylesheet" href="{{ mix('/css/provider-dashboard.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('/css/provider-dashboard.css') }}"/>
     @endpush
 @endsection
 
@@ -29,7 +29,7 @@
         <ul id="slide-out" class="side-nav" style="transform: translateX(0);">
             <li class="center-align">
                 <a href="{{ url('/') }}" class="provider-dashboard-logo">
-                    <img src="{{mix('/img/clh_logo.svg')}}" height="64" class="brand-logo">
+                    <img src="{{asset('/img/clh_logo.svg')}}" height="64" class="brand-logo">
                 </a>
             </li>
             <li>

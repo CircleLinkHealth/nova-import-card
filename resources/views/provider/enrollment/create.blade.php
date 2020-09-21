@@ -36,7 +36,7 @@
 @endpush
 
 @push('scripts')
-    <script src="{{mix('/js/materialize.min.js')}}"></script>
+    <script src="{{asset('/js/materialize.min.js')}}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-lite.css" rel="stylesheet">

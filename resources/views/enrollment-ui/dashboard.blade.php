@@ -136,5 +136,5 @@
         </enrollment-dashboard>
     </div>
 
-    <script src="{{mix('compiled/js/app-enrollment-ui.js')}}"></script>
+    <script src="{{asset('compiled/js/app-enrollment-ui.js')}}"></script>
 @stop

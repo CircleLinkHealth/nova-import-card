@@ -7,7 +7,7 @@
     <meta id="token" name="csrf-token" content="{{ csrf_token() }}">
     <meta name="base-url" content="{{ url('/') }}">
 
-    <link href="{{ mix('/css/enrollablesearch.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/enrollablesearch.css') }}" rel="stylesheet">
 
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -35,7 +35,7 @@
 <body>
 @stack('prescripts')
 
-<script type="text/javascript" src="{{ mix('compiled/js/issue-688.js') }}"></script>
+<script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
 
 @stack('scripts')
 

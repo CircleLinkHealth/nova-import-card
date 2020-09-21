@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 
-    <link href="{{mix('/img/favicon.png')}}" rel="icon">
+    <link href="{{asset('/img/favicon.png')}}" rel="icon">
 
     <!-- Scripts -->
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
@@ -35,8 +35,8 @@
 
 
 
-{{--<script src="{{ mix('/compiled/js/scripts.js') }}"></script>--}}
-<script src="{{mix('/js/uploader.js')}}"></script>
+{{--<script src="{{ asset('/compiled/js/scripts.js') }}"></script>--}}
+<script src="{{asset('/js/uploader.js')}}"></script>
 </body>
 
 

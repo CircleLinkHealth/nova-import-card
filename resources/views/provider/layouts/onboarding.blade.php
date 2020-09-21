@@ -6,7 +6,7 @@
             .onboarding-user-card > .mdl-card__title {
                 color: #fff;
                 height: 170px;
-                background: url({{mix('/img/clh_logo.svg')}}) center / contain;
+                background: url({{asset('/img/clh_logo.svg')}}) center / contain;
                 background-repeat: no-repeat;
                 padding: 0;
                 margin: 0;
@@ -27,7 +27,7 @@
             }
         </style>
 
-        <link rel="stylesheet" href="{{ mix('/css/onboarding.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('/css/onboarding.css') }}"/>
     @endpush
 @endsection
 

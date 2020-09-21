@@ -32,7 +32,7 @@ $practiceSection   = \CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Practice\
     <div class="page-header">
         @if($data['isEmail'])
             <div style="text-align: center">
-                <img src="{{mix('img/logos/LogoHorizontal_Color.svg')}}"
+                <img src="{{asset('img/logos/LogoHorizontal_Color.svg')}}"
                      alt="Care Plan Manager"
                      style="position:relative;"
                      width="200px"/>

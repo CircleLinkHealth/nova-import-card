@@ -31,7 +31,7 @@ $practiceSection   = \CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider\
     <div class="page-header">
 
         @if($data['isEmail'])
-            <div style="text-align: center"><img src="{{mix('/img/ui/logo.png')}}"
+            <div style="text-align: center"><img src="{{asset('/img/ui/logo.png')}}"
                                                  alt="Care Plan Manager"
                                                  style="position:relative;"
                                                  width="200px"/>

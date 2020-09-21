@@ -26,7 +26,7 @@
     <!-- Tile icon for Win8 (144x144 + tile color) -->
     <meta name="msapplication-TileColor" content="#3372DF">
 
-    <link href="{{ mix('/img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
 
@@ -47,7 +47,7 @@
 
 
 
-<script src="{{mix('compiled/js/app-provider-admin-panel-ui.js')}}"></script>
+<script src="{{asset('compiled/js/app-provider-admin-panel-ui.js')}}"></script>
 @stack('scripts')
 
 </body>
