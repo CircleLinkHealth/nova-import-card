@@ -663,7 +663,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "808ee04e5066db3de4c3e7140498e20295ab4b76"
+                "reference": "bab63b07cf8d44ac8fec84b73baba7bf787144c5"
             },
             "require": {
                 "laravel/passport": "^8.0",
@@ -696,7 +696,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-21T05:34:25+00:00"
+            "time": "2020-09-21T14:49:21+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -704,7 +704,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "7af5105356881ba275836aa5d368807ed0159a7c"
+                "reference": "e111e23aa9d3dcd2e03a2677edc0c13b166ed5a4"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -730,7 +730,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-21T03:04:18+00:00"
+            "time": "2020-09-21T15:05:48+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1159,7 +1159,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "1a3a0d48b46fc4042d22c95b43c7b4aedd8fd695"
+                "reference": "0422a174fcc88d1903252d8d1e43efe28d088d9c"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1186,7 +1186,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-21T14:20:12+00:00"
+            "time": "2020-09-21T15:04:48+00:00"
         },
         {
             "name": "daltcore/lara-pdf-merger",
