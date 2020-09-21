@@ -324,7 +324,7 @@ export default {
                 </div>
 
                 <div class="row">
-                    <form :action="routeCarePlanNotEligible"
+                    <form v-if="shouldShowApprovalButton && (isProvider || isAdmin) && isEnrolled()" :action="routeCarePlanNotEligible"
                           method="POST" id="not-eligible-form" style="display: inline">
                         <span v-html="csrfInput"></span>
                         <button type="button"
