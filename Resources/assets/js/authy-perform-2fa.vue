@@ -82,9 +82,9 @@
     </div>
 </template>
 <script>
-    import LoaderComponent from '../../../../SharedVueComponents/Resources/assets/js/components/loader';
-    import {rootUrl} from "../../../../SharedVueComponents/Resources/assets/js/app.config";
-    import Errors from "../../../../SharedVueComponents/Resources/assets/js/components/src/Errors";
+    import LoaderComponent from '../../../../Sharedvuecomponents/Resources/assets/js/components/loader';
+    import {rootUrl} from "../../../../Sharedvuecomponents/Resources/assets/js/app.config";
+    import Errors from "../../../../Sharedvuecomponents/Resources/assets/js/components/src/Errors";
 
     export default {
         name: 'authy-perform-2fa',
