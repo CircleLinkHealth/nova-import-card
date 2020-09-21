@@ -878,11 +878,13 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "d525871471428f42e38d89238bdef8b10868a5e6"
+                "reference": "b06980cfffcc13d070432fc41ef04d199af8a2dc"
             },
             "require": {
+                "laravel/passport": "^8.0",
                 "laravel/vapor-core": "^2.9",
                 "laravel/vapor-ui": "^0.0.5",
+                "laravelcollective/html": "^6.1",
                 "maatwebsite/excel": "^3.1"
             },
             "type": "laravel-module",
@@ -909,7 +911,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-20T17:50:52+00:00"
+            "time": "2020-09-21T04:10:26+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -981,7 +983,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "5cc25d6f367e44754fc850f460c91ec879d20544"
+                "reference": "e6ebf1aceb803b6a889cb2f8f26a95c3af8c802b"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -989,7 +991,6 @@
                 "circlelinkhealth/twofa-module": "*",
                 "fico7489/laravel-pivot": "^3.0",
                 "lab404/laravel-impersonate": "^1.2",
-                "laravel/passport": "^8.0",
                 "laravel/scout": "^7.1|^8.0",
                 "propaganistas/laravel-phone": "^4.2.2",
                 "spatie/laravel-medialibrary": "^7.0.0"
@@ -1016,7 +1017,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-20T02:24:48+00:00"
+            "time": "2020-09-21T04:10:04+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
