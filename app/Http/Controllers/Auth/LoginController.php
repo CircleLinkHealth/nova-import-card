@@ -10,20 +10,24 @@ use App\Http\Controllers\Controller;
 use App\Traits\ManagesPatientCookies;
 use App\Traits\PasswordLessAuth;
 use Carbon\Carbon;
+use CircleLinkHealth\SamlSp\Listeners\SamlLoginEventListener;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Jenssegers\Agent\Agent;
+use OneLogin\Saml2\Error;
 
 class LoginController extends Controller
 {
     use AuthenticatesUsers {
         login as traitLogin;
+        logout as traitLogout;
     }
     use ManagesPatientCookies;
     /*
@@ -130,6 +134,21 @@ class LoginController extends Controller
         }
 
         return $loginResponse;
+    }
+
+    public function logout(Request $request)
+    {
+        $samlIdp = session(SamlLoginEventListener::SESSION_IDP_NAME_KEY, null);
+        if ( ! empty($samlIdp)) {
+            try {
+                return redirect(route('saml2_logout', ['idpName' => $samlIdp]));
+            } catch (Error $e) {
+                Log::critical($e->getMessage(), ['idp' => $samlIdp]);
+                return $this->traitLogout($request);
+            }
+        }
+
+        return $this->traitLogout($request);
     }
 
     /**
