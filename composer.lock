@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86abb49e61b48d317f8bcd4b73dced54",
+    "content-hash": "f5da108c3d6623a9b872d354fd1d5d58",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -878,7 +878,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "521d8e48e35b91662e59e80ad7a90066ea38938a"
+                "reference": "bab63b07cf8d44ac8fec84b73baba7bf787144c5"
             },
             "require": {
                 "laravel/passport": "^8.0",
@@ -911,7 +911,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-21T05:20:41+00:00"
+            "time": "2020-09-21T14:49:21+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -919,7 +919,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "7af5105356881ba275836aa5d368807ed0159a7c"
+                "reference": "e111e23aa9d3dcd2e03a2677edc0c13b166ed5a4"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -945,7 +945,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-21T03:04:18+00:00"
+            "time": "2020-09-21T15:05:48+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1311,11 +1311,11 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "v1.2.3",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "0a76dcd482d9b5dc9277a46113fec7eeefa4b7d4"
+                "reference": "0422a174fcc88d1903252d8d1e43efe28d088d9c"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1342,7 +1342,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T20:08:19+00:00"
+            "time": "2020-09-21T15:04:48+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -16899,6 +16899,7 @@
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/sqlviews-module": 20,
         "circlelinkhealth/timetracking-module": 20,
+        "circlelinkhealth/twofa-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },
