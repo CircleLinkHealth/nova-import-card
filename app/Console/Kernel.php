@@ -39,10 +39,10 @@ use App\Jobs\OverwritePatientMrnsFromSupplementalData;
 use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use App\Notifications\NurseDailyReport;
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Console\Commands\CheckPatientEndOfMonthCcmStatusLogsExist;
-use CircleLinkHealth\CcmBilling\Console\Commands\CheckPatientSummariesHaveBeenCreated;
-use CircleLinkHealth\CcmBilling\Console\Commands\GenerateEndOfMonthCcmStatusLogs;
-use CircleLinkHealth\CcmBilling\Console\Commands\ProcessAllPracticePatientMonthlyServices;
+use CircleLinkHealth\CcmBilling\Jobs\CheckPatientEndOfMonthCcmStatusLogsExistForMonth;
+use CircleLinkHealth\CcmBilling\Jobs\CheckPatientSummariesHaveBeenCreated;
+use CircleLinkHealth\CcmBilling\Jobs\GenerateEndOfMonthCcmStatusLogs;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -204,13 +204,13 @@ class Kernel extends ConsoleKernel
             Location::class,
         ])->dailyAt('03:15');
 
-        $schedule->command(CheckPatientSummariesHaveBeenCreated::class, [
-            now()->subMonth()->startOfMonth()->toDateString(),
+        $schedule->job(CheckPatientSummariesHaveBeenCreated::class, [
+            Carbon::now()->subMonth()->startOfMonth()->toDateString(),
         ])
             ->monthlyOn(1, '03:30');
 
-        $schedule->command(CheckPatientEndOfMonthCcmStatusLogsExist::class, [
-            now()->subMonth()->startOfMonth()->toDateString(),
+        $schedule->job(CheckPatientEndOfMonthCcmStatusLogsExistForMonth::class, [
+            Carbon::now()->subMonth()->startOfMonth()->toDateString(),
         ])
             ->monthlyOn(1, '03:45');
 
@@ -276,7 +276,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])
             ->dailyAt('10:27');
 
-        $schedule->command(ProcessAllPracticePatientMonthlyServices::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
+        $schedule->job(ProcessAllPracticePatientMonthlyServices::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
             ->monthlyOn(date('t'), '22:00')
             ->onOneServer();
 
@@ -309,7 +309,7 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->onOneServer();
 
-        $schedule->command(GenerateEndOfMonthCcmStatusLogs::class, [now()->startOfMonth()->toDateString()])
+        $schedule->job(GenerateEndOfMonthCcmStatusLogs::class, [now()->startOfMonth()->toDateString()])
             ->monthlyOn(date('t'), '23:50')
             ->onOneServer();
     }
