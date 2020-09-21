@@ -965,7 +965,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "55e8ebe4883373bbf7abf50bb02663def1121208"
+                "reference": "af3f495bacab5b1de49e340a47da099b22b0a4bd"
             },
             "type": "laravel-module",
             "extra": {
@@ -1003,7 +1003,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-09-21T21:41:27+00:00"
+            "time": "2020-09-21T22:22:38+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1269,7 +1269,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "cba7cbe6bc18116a1d08f40e4e52f44930769fb1"
+                "reference": "6fcb5ebbf6b079455998b3faa01fc82f8b3dc07b"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1303,7 +1303,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-15T00:36:00+00:00"
+            "time": "2020-09-21T23:03:41+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1311,7 +1311,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "6ab66cc3aa02782d926d822161d69095701a38fb"
+                "reference": "7659a43a95cfd77660aae17d40aadd2d258e0f59"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1337,7 +1337,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-21T22:01:19+00:00"
+            "time": "2020-09-21T22:22:38+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
