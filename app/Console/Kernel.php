@@ -39,6 +39,7 @@ use App\Jobs\OverwritePatientMrnsFromSupplementalData;
 use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use App\Notifications\NurseDailyReport;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Jobs\CheckLocationSummariesHaveBeenCreated;
 use CircleLinkHealth\CcmBilling\Jobs\CheckPatientEndOfMonthCcmStatusLogsExistForMonth;
 use CircleLinkHealth\CcmBilling\Jobs\CheckPatientSummariesHaveBeenCreated;
 use CircleLinkHealth\CcmBilling\Jobs\GenerateEndOfMonthCcmStatusLogs;
@@ -189,6 +190,24 @@ class Kernel extends ConsoleKernel
             ->dailyAt('01:10')
             ->onOneServer();
 
+        $schedule->job(CheckLocationSummariesHaveBeenCreated::class, [
+            Carbon::now()->startOfMonth()->toDateString(),
+        ])
+            ->monthlyOn(1, '02:20')
+            ->onOneServer();
+
+        $schedule->job(CheckPatientSummariesHaveBeenCreated::class, [
+            Carbon::now()->startOfMonth()->toDateString(),
+        ])
+            ->monthlyOn(1, '02:30')
+            ->onOneServer();
+
+        $schedule->job(CheckPatientEndOfMonthCcmStatusLogsExistForMonth::class, [
+            Carbon::now()->subMonth()->startOfMonth()->toDateString(),
+        ])
+            ->monthlyOn(1, '02:45')
+            ->onOneServer();
+
         $schedule->command(GetCcds::class)
             ->dailyAt('03:00')
             ->onOneServer();
@@ -204,16 +223,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(ImportCommand::class, [
             Location::class,
         ])->dailyAt('03:15');
-
-        $schedule->job(CheckPatientSummariesHaveBeenCreated::class, [
-            Carbon::now()->subMonth()->startOfMonth()->toDateString(),
-        ])
-            ->monthlyOn(1, '03:30');
-
-        $schedule->job(CheckPatientEndOfMonthCcmStatusLogsExistForMonth::class, [
-            Carbon::now()->subMonth()->startOfMonth()->toDateString(),
-        ])
-            ->monthlyOn(1, '03:45');
 
         $schedule->command(CheckForMissingLogoutsAndInsert::class)
             ->dailyAt('04:00');
