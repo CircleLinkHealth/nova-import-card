@@ -67,8 +67,8 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
                 function ($info) use ($locationId, $ccmStatus) {
                     $info->where('preferred_contact_location', $locationId)
                         ->when( ! is_null($ccmStatus), function ($query) use ($ccmStatus) {
-                             $query->ccmStatus($ccmStatus);
-                         });
+                            $query->ccmStatus($ccmStatus);
+                        });
                 }
             );
     }

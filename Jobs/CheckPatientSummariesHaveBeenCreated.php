@@ -27,6 +27,7 @@ class CheckPatientSummariesHaveBeenCreated extends Job
     public static function fromParameters(string ...$parameters)
     {
         $date = isset($parameters[0]) ? Carbon::parse($parameters[0]) : null;
+
         return new static($date);
     }
 

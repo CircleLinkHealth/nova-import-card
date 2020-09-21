@@ -68,7 +68,7 @@ class Eloquent implements PatientServiceProcessorRepository
     public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView
     {
         ChargeablePatientMonthlySummaryView::unguard();
-        
+
         return new ChargeablePatientMonthlySummaryView($this->summariesCreated
             ->where('chargeable_service_id', $this->chargeableServiceCodeIds()[$chargeableServiceCode])
             ->where('chargeable_month', $month)
