@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1bee6697a236ef863177f6bdea070710",
+    "content-hash": "89043034a17927dba17441ac9fd64687",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1155,11 +1155,11 @@
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "v1.2.3",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "0a76dcd482d9b5dc9277a46113fec7eeefa4b7d4"
+                "reference": "1a3a0d48b46fc4042d22c95b43c7b4aedd8fd695"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1186,7 +1186,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T20:08:19+00:00"
+            "time": "2020-09-21T14:20:12+00:00"
         },
         {
             "name": "daltcore/lara-pdf-merger",
@@ -12037,7 +12037,8 @@
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/sqlviews-module": 20,
         "circlelinkhealth/sharedvuecomponents-module": 20,
-        "circlelinkhealth/shared-models-module": 20
+        "circlelinkhealth/shared-models-module": 20,
+        "circlelinkhealth/twofa-module": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
