@@ -119,7 +119,7 @@
         "circlelinkhealth/invoices-download": "*",
         "circlelinkhealth/revisionable-module": "6.1.1",
         "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
-        "circlelinkhealth/twofa-module": "1.2.3",
+        "circlelinkhealth/twofa-module": "dev-vaporizing-admin",
         "danielme85/laravel-log-to-db": "^2.3",
         "dillingham/nova-button": "^1.0",
         "epartment/nova-dependency-container": "^1.2",
