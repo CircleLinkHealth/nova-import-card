@@ -28,6 +28,7 @@
         ]
     },
     "require": {
+        "laravel/passport": "^8.0",
         "maatwebsite/excel": "^3.1",
         "laravel/vapor-core": "^2.9",
         "laravel/vapor-ui": "^0.0.5"
