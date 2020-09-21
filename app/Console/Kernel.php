@@ -39,6 +39,8 @@ use App\Jobs\OverwritePatientMrnsFromSupplementalData;
 use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use App\Notifications\NurseDailyReport;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Console\Commands\CheckPatientEndOfMonthCcmStatusLogsExist;
+use CircleLinkHealth\CcmBilling\Console\Commands\CheckPatientSummariesHaveBeenCreated;
 use CircleLinkHealth\CcmBilling\Console\Commands\GenerateEndOfMonthCcmStatusLogs;
 use CircleLinkHealth\CcmBilling\Console\Commands\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
@@ -201,6 +203,16 @@ class Kernel extends ConsoleKernel
         $schedule->command(ImportCommand::class, [
             Location::class,
         ])->dailyAt('03:15');
+
+        $schedule->command(CheckPatientSummariesHaveBeenCreated::class, [
+            now()->subMonth()->startOfMonth()->toDateString(),
+        ])
+            ->monthlyOn(1, '03:30');
+
+        $schedule->command(CheckPatientEndOfMonthCcmStatusLogsExist::class, [
+            now()->subMonth()->startOfMonth()->toDateString(),
+        ])
+            ->monthlyOn(1, '03:45');
 
         $schedule->command(CheckForMissingLogoutsAndInsert::class)
             ->dailyAt('04:00');
