@@ -320,8 +320,12 @@
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <path value="$PROJECT_DIR$/vendor/lorisleiva/cron-translator" />
       <path value="$PROJECT_DIR$/vendor/spatie/db-dumper" />
+      <path value="$PROJECT_DIR$/vendor/robrichards/xmlseclibs" />
       <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
       <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/aacotroneo/laravel-saml2" />
+      <path value="$PROJECT_DIR$/vendor/onelogin/php-saml" />
+      <path value="$PROJECT_DIR$/vendor/php-http/guzzle6-adapter" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
