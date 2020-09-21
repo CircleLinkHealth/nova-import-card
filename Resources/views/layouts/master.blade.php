@@ -7,13 +7,13 @@
         <title>Module NurseInvoices</title>
 
        {{-- Laravel Mix - CSS File --}}
-       {{-- <link rel="stylesheet" href="{{ mix('css/nurseinvoices.css') }}"> --}}
+       {{-- <link rel="stylesheet" href="{{ asset('css/nurseinvoices.css') }}"> --}}
 
     </head>
     <body>
         @yield('content')
 
         {{-- Laravel Mix - JS File --}}
-        {{-- <script src="{{ mix('js/nurseinvoices.js') }}"></script> --}}
+        {{-- <script src="{{ asset('js/nurseinvoices.js') }}"></script> --}}
     </body>
 </html>
