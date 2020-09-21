@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
             ]);
         });
     });
-    
+
     Route::group(['prefix' => 'settings'], function () {
         Route::get('', [
             'uses' => 'UserSettingsController@show',
