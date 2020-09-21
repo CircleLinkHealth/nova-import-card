@@ -10,8 +10,8 @@
     <title>CPM API</title>
 
     <!-- Stylesheets -->
-    <link href="{{ mix('/css/admin.css') }}" rel="stylesheet">
-    <link href="{{ mix('/img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
+    <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
     <!-- Fonts -->
     <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
@@ -66,7 +66,7 @@
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
-                        <img src="{{mix('/img/logos/LogoHorizontal_Color.svg')}}"
+                        <img src="{{asset('/img/logos/LogoHorizontal_Color.svg')}}"
                              alt="Care Plan Manager"
                              style="position:relative;top:-15px"
                              width="100px"/>
@@ -294,10 +294,10 @@
     <!-- Script for polyfilling Promises on IE9 and 10 -->
 
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
-    <script src="{{ mix('js/polyfills/es7-object-polyfill.min.js') }}"></script>
+    <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif
 
-<script src="{{mix('compiled/js/app-clh-admin-ui.js')}}"></script>
+<script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
 
 <script>

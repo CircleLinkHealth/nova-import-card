@@ -23,11 +23,11 @@
         }
         td.details-control {
             color:#fff;
-            background: url('{{ mix('/vendor/datatables-images/details_open.png') }}') no-repeat center center;
+            background: url('{{ asset('/vendor/datatables-images/details_open.png') }}') no-repeat center center;
             cursor: pointer;
         }
         tr.shown td.details-control {
-            background: url('{{ mix('/vendor/datatables-images/details_close.png') }}') no-repeat center center;
+            background: url('{{ asset('/vendor/datatables-images/details_close.png') }}') no-repeat center center;
         }
         div.modal-dialog {
             z-index: 1051; /* should ensure the modal body is always visible */

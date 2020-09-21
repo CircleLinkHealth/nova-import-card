@@ -4,10 +4,10 @@
     @push('styles')
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     @endpush
-    {{--  <script src="{{ mix('/js/bootstrap-select.min.js') }}"></script>  --}}
+    {{--  <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>  --}}
 
     @push('scripts')
-        <script src="{{ mix('/js/typeahead.bundle.js') }}"></script>
+        <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
     @endpush
     
     <div class="container-fluid">
