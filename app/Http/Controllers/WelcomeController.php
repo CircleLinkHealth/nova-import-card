@@ -71,11 +71,7 @@ class WelcomeController extends Controller
             return redirect()->route('login');
         }
 
-        if ($user->isAdmin() && $url = config('core.apps.cpm-admin.url')) {
-            return redirect()->to($url);
-        }
-
-        if ($user->isSaasAdmin()) {
+        if ($user->isAdmin() || $user->isSaasAdmin()) {
             return \App::call('App\Http\Controllers\Patient\PatientController@showDashboard');
         }
 
