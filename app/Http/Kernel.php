@@ -16,7 +16,7 @@ use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\EnrollmentCenter;
 use App\Http\Middleware\LogoutIfAccessDisabled;
 use App\Http\Middleware\PatientProgramSecurity;
-use App\Http\Middleware\SentryContext;
+use CircleLinkHealth\Core\Http\Middleware\SentryContext;
 use App\Http\Middleware\VerifyCsrfToken;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
