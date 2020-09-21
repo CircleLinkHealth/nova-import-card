@@ -6,6 +6,9 @@
 
 namespace CircleLinkHealth\CpmAdmin\Providers;
 
+use CircleLinkHealth\CpmAdmin\Console\Commands\CountBillablePatientsForMonth;
+use CircleLinkHealth\CpmAdmin\Console\Commands\CountPatientMonthlySummaryCalls;
+use CircleLinkHealth\CpmAdmin\Console\Commands\SyncNumberOfCallsForCurrentMonth;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -41,6 +44,11 @@ class CpmAdminServiceProvider extends ServiceProvider
                 \CircleLinkHealth\Customer\Entities\User::class => \App\User::class,
             ]);
         }
+        $this->commands([
+            CountBillablePatientsForMonth::class,
+            CountPatientMonthlySummaryCalls::class,
+            SyncNumberOfCallsForCurrentMonth::class,
+        ]);
     }
 
     /**
