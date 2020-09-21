@@ -24,6 +24,7 @@ environments:
       - 'php artisan queue:restart'
       - 'php artisan schedule-monitor:sync'
   staging:
+    domain: cpm-admin.clh-staging.com
     memory: 1024
     cli-memory: 512
     runtime: php-7.4
