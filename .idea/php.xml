@@ -321,6 +321,7 @@
       <path value="$PROJECT_DIR$/vendor/mpbarlow/laravel-queue-debouncer" />
       <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
       <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/mxl/laravel-job" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
