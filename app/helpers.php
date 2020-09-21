@@ -4,17 +4,15 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Customer\CpmConstants;
 use App\Jobs\SendSlackMessage;
 use AshAllenDesign\ShortURL\Classes\Builder as ShortUrlBuilder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
@@ -113,50 +111,6 @@ if ( ! function_exists('str_contains_unsafe_characters')) {
     function str_contains_unsafe_characters(string $string)
     {
         return Str::contains($string, ['<', '>', '&', '=']);
-    }
-}
-
-if ( ! function_exists('parseIds')) {
-    /**
-     * Get all of the IDs from the given mixed value.
-     *
-     * @param mixed $value
-     *
-     * @return array
-     */
-    function parseIds($value)
-    {
-        if (empty($value)) {
-            return [];
-        }
-
-        if ($value instanceof Model) {
-            return [$value->getKey()];
-        }
-
-        if ($value instanceof EloquentCollection) {
-            return $value->modelKeys();
-        }
-
-        if (is_array($value)) {
-            $value = collect($value);
-        }
-
-        if ($value instanceof Collection) {
-            return $value->map(
-                function ($el) {
-                    $id = parseIds($el);
-
-                    return $id[0] ?? null;
-                }
-            )->values()->toArray();
-        }
-
-        if (is_string($value) && Str::contains($value, ',')) {
-            return explode(',', $value);
-        }
-
-        return array_filter((array) $value);
     }
 }
 
