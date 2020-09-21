@@ -320,6 +320,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property ChargeablePatientMonthlySummaryView[]|EloquentCollection                                                $chargeableMonthlySummariesView
  * @property int|null                                                                                                $chargeable_monthly_summaries_view_count
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User hasBhiConsent()
+ * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLogs
+ * @property int|null                                                                                                $end_of_month_ccm_status_logs_count
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
