@@ -1360,49 +1360,6 @@ if ( ! function_exists('is_falsey')) {
     }
 }
 
-if ( ! function_exists('isAllowedToSee2FA')) {
-    function isAllowedToSee2FA(User $user = null)
-    {
-        $twoFaEnabled = (bool) config('auth.two_fa_enabled');
-        if ( ! $twoFaEnabled) {
-            return false;
-        }
-
-        if ( ! $user) {
-            $user = auth()->user();
-        }
-
-        if ( ! $user || $user->isParticipant()) {
-            return false;
-        }
-
-        return $user->isAdmin() || isTwoFaEnabledForPractice($user->program_id);
-    }
-}
-
-if ( ! function_exists('isTwoFaEnabledForPractice')) {
-    /**
-     * Key: two_fa_enabled_practices
-     * Default: false.
-     *
-     * @param mixed $practiceId
-     */
-    function isTwoFaEnabledForPractice($practiceId): bool
-    {
-        $key = 'two_fa_enabled_practices';
-        $val = AppConfig::pull($key, null);
-        if (null === $val) {
-            AppConfig::set($key, '');
-
-            $twoFaEnabledPractices = [];
-        } else {
-            $twoFaEnabledPractices = explode(',', $val);
-        }
-
-        return in_array($practiceId, $twoFaEnabledPractices);
-    }
-}
-
 if ( ! function_exists('getSampleNotePdfPath')) {
     function getSampleNotePdfPath()
     {
