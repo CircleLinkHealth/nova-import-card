@@ -14,7 +14,7 @@ use App\Http\Middleware\CheckOnboardingInvite;
 use App\Http\Middleware\CheckPatientUserData;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\EnrollmentCenter;
-use App\Http\Middleware\LogoutIfAccessDisabled;
+use CircleLinkHealth\Core\Http\Middleware\LogoutIfAccessDisabled;
 use App\Http\Middleware\PatientProgramSecurity;
 use CircleLinkHealth\Core\Http\Middleware\SentryContext;
 use App\Http\Middleware\VerifyCsrfToken;
