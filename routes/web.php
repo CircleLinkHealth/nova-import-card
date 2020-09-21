@@ -658,15 +658,6 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
     });
 
-    //CPM-2167 - moved outside of manage-patients, because
-    //           AuthyMiddleware was interfering with PatientProgramSecurity
-    Route::group(['prefix' => 'settings'], function () {
-        Route::get('', [
-            'uses' => 'UserSettingsController@show',
-            'as'   => 'user.settings.manage',
-        ]);
-    });
-
     //
     // PROVIDER UI (/manage-patients, /reports, ect)
     //
