@@ -37,7 +37,6 @@ environments:
       - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
       - 'php artisan event:cache'
       - 'npm ci && npm run prod && rm -rf node_modules'
-      - 'php artisan config:cache'
       - 'php artisan view:cache'
       - 'php artisan route:cache'
     deploy:
