@@ -75,9 +75,11 @@ class ChargeableService extends BaseModel
         self::CCM,
         'CPT 99487',
         'CPT 99489',
-        self::G0511,
+        self::GENERAL_CARE_MANAGEMENT,
     ];
-    const G0511         = 'G0511';
+
+    const GENERAL_CARE_MANAGEMENT = 'G0511';
+
     const PCM           = 'G2065';
     const SOFTWARE_ONLY = 'Software-Only';
 
