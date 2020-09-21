@@ -7,6 +7,8 @@ use CircleLinkHealth\Core\Providers\HtmlToPdfServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
+use CircleLinkHealth\TwoFA\Providers\AuthyServiceProvider;
+use CircleLinkHealth\TwoFA\Providers\TwoFAServiceProvider;
 
 return [
 
@@ -194,7 +196,6 @@ return [
         FaxServiceProvider::class,
         HtmlToPdfServiceProvider::class,
         VaporUiServiceProvider::class,
-
     ],
 
     /*
