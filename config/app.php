@@ -196,7 +196,7 @@ return [
 
         \App\Providers\RouteServiceProvider::class,
         \CircleLinkHealth\Core\Providers\VaporUiServiceProvider::class,
-        \App\Providers\AuthServiceProvider::class,
+        \CircleLinkHealth\Core\Providers\AuthServiceProvider::class,
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,
 
