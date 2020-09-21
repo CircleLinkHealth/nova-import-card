@@ -10,19 +10,10 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use MichaelLedin\LaravelJob\Job;
 
-class MigratePracticeServicesFromChargeablesToLocationSummariesTable implements ShouldQueue
+class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Job
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     protected Carbon $month;
 
     protected int $practiceId;
@@ -36,6 +27,13 @@ class MigratePracticeServicesFromChargeablesToLocationSummariesTable implements 
     {
         $this->practiceId = $practiceId;
         $this->month      = $month ?? Carbon::now()->startOfMonth()->startOfDay();
+    }
+
+    public static function fromParameters(string ...$parameters)
+    {
+        $date = isset($parameters[1]) ? Carbon::parse($parameters[1]) : null;
+
+        return new static((int) $parameters[0], $date);
     }
 
     /**

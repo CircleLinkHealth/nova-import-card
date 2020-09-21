@@ -38,16 +38,8 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
     public function provides()
     {
         return [
-            MigratePracticeServicesFromChargeablesToLocationSummariesTable::class,
-            MigrateChargeableServicesFromChargeablesToLocationSummariesTable::class,
-            ProcessSinglePatientMonthlyServices::class,
-            ProcessAllPracticePatientMonthlyServices::class,
-            GenerateServiceSummariesForAllPracticeLocations::class,
             PatientMonthlyBillingProcessor::class,
-            GenerateEndOfMonthCcmStatusLogs::class,
             PatientServiceProcessorRepository::class,
-            CheckPatientEndOfMonthCcmStatusLogsExist::class,
-            CheckPatientSummariesHaveBeenCreated::class,
         ];
     }
 
@@ -73,14 +65,7 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
         $this->app->singleton(LocationProcessorRepository::class, LocationProcessorEloquentRepository::class);
         $this->app->singleton(PatientProcessorEloquentRepositoryInterface::class, PatientProcessorEloquentRepository::class);
 
-        $this->commands([
-            MigratePracticeServicesFromChargeablesToLocationSummariesTable::class,
-            MigrateChargeableServicesFromChargeablesToLocationSummariesTable::class,
-            ProcessSinglePatientMonthlyServices::class,
-            ProcessAllPracticePatientMonthlyServices::class,
-            GenerateServiceSummariesForAllPracticeLocations::class,
-            GenerateEndOfMonthCcmStatusLogs::class,
-        ]);
+//        $this->commands([]);
     }
 
     /**

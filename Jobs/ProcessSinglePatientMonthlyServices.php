@@ -10,19 +10,9 @@ use App\Contracts\HasUniqueIdentifierForDebounce;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
-class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessingJob implements ShouldQueue, HasUniqueIdentifierForDebounce
+class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessingJob implements HasUniqueIdentifierForDebounce
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     protected Carbon $month;
 
     protected int $patientId;
@@ -34,6 +24,12 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
     {
         $this->patientId = $patientId;
         $this->month     = $month ?? Carbon::now()->startOfMonth()->startOfDay();
+    }
+
+    public static function fromParameters(string ...$parameters)
+    {
+        $date = isset($parameters[1]) ? Carbon::parse($parameters[1]) : null;
+        return new static((int) $parameters[0], $date);
     }
 
     public function getMonth(): Carbon

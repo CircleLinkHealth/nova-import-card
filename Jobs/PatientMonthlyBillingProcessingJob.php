@@ -8,8 +8,9 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
+use MichaelLedin\LaravelJob\Job;
 
-abstract class PatientMonthlyBillingProcessingJob
+abstract class PatientMonthlyBillingProcessingJob extends Job
 {
     protected PatientMonthlyBillingProcessor $processor;
 

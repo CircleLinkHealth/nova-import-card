@@ -8,19 +8,10 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use MichaelLedin\LaravelJob\Job;
 
-class MigrateChargeableServicesFromChargeablesToLocationSummariesTable implements ShouldQueue
+class MigrateChargeableServicesFromChargeablesToLocationSummariesTable extends Job
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     protected Carbon $month;
 
     /**
@@ -31,6 +22,13 @@ class MigrateChargeableServicesFromChargeablesToLocationSummariesTable implement
     public function __construct(Carbon $month = null)
     {
         $this->month = $month ?? Carbon::now()->startOfMonth()->startOfDay();
+    }
+
+    public static function fromParameters(string ...$parameters)
+    {
+        $date = isset($parameters[0]) ? Carbon::parse($parameters[0]) : null;
+
+        return new static($date);
     }
 
     /**
