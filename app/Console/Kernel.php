@@ -42,6 +42,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\CheckPatientEndOfMonthCcmStatusLogsExistForMonth;
 use CircleLinkHealth\CcmBilling\Jobs\CheckPatientSummariesHaveBeenCreated;
 use CircleLinkHealth\CcmBilling\Jobs\GenerateEndOfMonthCcmStatusLogs;
+use CircleLinkHealth\CcmBilling\Jobs\GenerateServiceSummariesForAllPracticeLocations;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
@@ -276,8 +277,12 @@ class Kernel extends ConsoleKernel
         $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])
             ->dailyAt('10:27');
 
-        $schedule->job(ProcessAllPracticePatientMonthlyServices::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
+        $schedule->job(GenerateServiceSummariesForAllPracticeLocations::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
             ->monthlyOn(date('t'), '22:00')
+            ->onOneServer();
+
+        $schedule->job(ProcessAllPracticePatientMonthlyServices::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
+            ->monthlyOn(date('t'), '22:10')
             ->onOneServer();
 
         $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
