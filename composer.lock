@@ -1315,7 +1315,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "0422a174fcc88d1903252d8d1e43efe28d088d9c"
+                "reference": "b45d64871a97a557c9371301aaec7bbe771758e7"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1342,7 +1342,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-21T15:04:48+00:00"
+            "time": "2020-09-21T15:12:00+00:00"
         },
         {
             "name": "clue/stream-filter",
