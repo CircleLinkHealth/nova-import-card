@@ -7,13 +7,13 @@
         <title>Module ApiPatient</title>
 
        {{-- Laravel Mix - CSS File --}}
-       {{-- <link rel="stylesheet" href="{{ mix('css/apipatient.css') }}"> --}}
+       {{-- <link rel="stylesheet" href="{{ asset('css/apipatient.css') }}"> --}}
 
     </head>
     <body>
         @yield('content')
 
         {{-- Laravel Mix - JS File --}}
-        {{-- <script src="{{ mix('js/apipatient.js') }}"></script> --}}
+        {{-- <script src="{{ asset('js/apipatient.js') }}"></script> --}}
     </body>
 </html>
