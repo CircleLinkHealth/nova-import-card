@@ -31,7 +31,6 @@
     },
     "require": {
         "circlelinkhealth/core-module": "*",
-        "laravel/passport": "^8.0",
         "laravel/scout": "^7.1|^8.0",
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
         "fico7489/laravel-pivot": "^3.0",
