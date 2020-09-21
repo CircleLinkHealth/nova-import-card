@@ -131,8 +131,7 @@
     <script src="{{ mix('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif
 
-<script src="{{mix('compiled/js/app-clh-admin-ui.js')}}"></script>
-<script type="text/javascript" src="{{ mix('compiled/js/admin-ui.js') }}"></script>
+<script type="text/javascript" src="{{ mix('compiled/js/issue-688.js') }}"></script>
 <script>
     $(document).ready(function () {
         $('.select2').select2();

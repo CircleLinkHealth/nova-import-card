@@ -70,7 +70,6 @@ mix.combine([
  *
  */
 
-/** start fixing issue 688 */
 mix.combine([
     'bower_components/jquery/dist/jquery.js',
     'bower_components/jquery-ui/jquery-ui.js',
@@ -81,21 +80,7 @@ mix.combine([
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'public/js/typeahead.bundle.js',
 ], 'public/compiled/js/issue-688.js');
-/** end fixing issue 688 */
 
-/** start fixing admin-ui */
-mix.combine([
-    'bower_components/jquery/dist/jquery.js',
-    'bower_components/jquery-ui/jquery-ui.js',
-    'bower_components/jquery-idletimer/dist/idle-timer.js',
-    'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
-    'bower_components/select2/dist/js/select2.js',
-    'bower_components/bootstrap/dist/js/bootstrap.js'
-], 'public/compiled/js/admin-ui.js');
-/** end fixing admin-ui */
-
-//apps
-mix.js('resources/assets/js/app.js', 'public/compiled/js').sourceMaps();
 mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps();
 mix.js('resources/assets/js/app-enrollment-ui.js', 'public/compiled/js').sourceMaps();
 
