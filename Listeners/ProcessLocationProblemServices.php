@@ -27,6 +27,6 @@ class ProcessLocationProblemServices
      */
     public function handle(LocationServicesAttached $event)
     {
-        //dispatch job
+        //TODO: to decide how we're handling default location problem services
     }
 }
