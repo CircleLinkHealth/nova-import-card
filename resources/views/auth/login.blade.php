@@ -1,3 +1,6 @@
+@include('core::partials.errors.errors')
+
+
 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
     <form class="form-prevent-multi-submit" role="form" method="POST" action="{{ url('/auth/login') }}"
           autocomplete="off">
