@@ -29,6 +29,7 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
     public static function fromParameters(string ...$parameters)
     {
         $date = isset($parameters[1]) ? Carbon::parse($parameters[1]) : null;
+
         return new static((int) $parameters[0], $date);
     }
 
@@ -58,6 +59,12 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
         $patient = $this->repo()
             ->patientWithBillingDataForMonth($this->getPatientId(), $this->getMonth())
             ->first();
+
+        if (is_null($patient->patientInfo->location)) {
+            sendSlackMessage('#billing_alerts', "Patient ({$patient->id}) does not have location attached. Cannot Process Billing, please investigate");
+
+            return;
+        }
 
         $this->processor()->process(
             (new PatientMonthlyBillingDTO())
