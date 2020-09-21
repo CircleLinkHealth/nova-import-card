@@ -91,7 +91,7 @@ class CompareCurrentAndLegacyBillingDataForPractice extends Job
                     return;
                 }
 
-                if ($pms->no_of_calls !== $patient->chargeableMonthlySummariesView->sum('no_of_calls')) {
+                if ($pms->no_of_calls !== $patient->chargeableMonthlySummariesView->first()->no_of_calls) {
                     $this->idsToInvestigate[] = $patient->id;
 
                     return;
