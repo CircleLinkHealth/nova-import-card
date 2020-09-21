@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/app-cpm-admin/tests" isTestSource="true" packagePrefix="Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/app-cpm-admin/app" isTestSource="false" packagePrefix="App\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/.vapor" />
       <excludeFolder url="file://$MODULE_DIR$/app-cpm-admin/vendor/asm89/stack-cors" />
       <excludeFolder url="file://$MODULE_DIR$/app-cpm-admin/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/app-cpm-admin/vendor/composer" />
