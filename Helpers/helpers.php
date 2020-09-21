@@ -5,6 +5,10 @@
  */
 
 use CircleLinkHealth\Core\Entities\AppConfig;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 if ( ! function_exists('isProductionEnv')) {
     /**
@@ -54,7 +58,7 @@ if ( ! function_exists('upg0506IsEnabled')) {
         if (null === $val) {
             return 'true' === AppConfig::set($key, false);
         }
-        
+
         return 'true' === $val;
     }
 }
@@ -67,9 +71,9 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
         if (app()->environment('local')) {
             return null;
         }
-        
+
         $key = 'ehr_report_writers_folder_url';
-        
+
         return \Cache::remember($key, 2, function () use ($key) {
             return AppConfig::pull($key, null);
         });
@@ -99,15 +103,15 @@ if ( ! function_exists('isAllowedToSee2FA')) {
         if ( ! $twoFaEnabled) {
             return false;
         }
-        
+
         if ( ! $user) {
             $user = auth()->user();
         }
-        
+
         if ( ! $user || $user->isParticipant()) {
             return false;
         }
-        
+
         return $user->isAdmin() || isTwoFaEnabledForPractice($user->program_id);
     }
 }
@@ -125,12 +129,56 @@ if ( ! function_exists('isTwoFaEnabledForPractice')) {
         $val = AppConfig::pull($key, null);
         if (null === $val) {
             AppConfig::set($key, '');
-            
+
             $twoFaEnabledPractices = [];
         } else {
             $twoFaEnabledPractices = explode(',', $val);
         }
-        
+
         return in_array($practiceId, $twoFaEnabledPractices);
+    }
+}
+
+if ( ! function_exists('parseIds')) {
+    /**
+     * Get all of the IDs from the given mixed value.
+     *
+     * @param mixed $value
+     *
+     * @return array
+     */
+    function parseIds($value)
+    {
+        if (empty($value)) {
+            return [];
+        }
+
+        if ($value instanceof Model) {
+            return [$value->getKey()];
+        }
+
+        if ($value instanceof EloquentCollection) {
+            return $value->modelKeys();
+        }
+
+        if (is_array($value)) {
+            $value = collect($value);
+        }
+
+        if ($value instanceof Collection) {
+            return $value->map(
+                function ($el) {
+                    $id = parseIds($el);
+
+                    return $id[0] ?? null;
+                }
+            )->values()->toArray();
+        }
+
+        if (is_string($value) && Str::contains($value, ',')) {
+            return explode(',', $value);
+        }
+
+        return array_filter((array) $value);
     }
 }
