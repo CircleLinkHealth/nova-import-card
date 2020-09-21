@@ -48,6 +48,9 @@ const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ '../.
 const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/NurseScheduleCalendar');
 const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/FullScreenLoader');
 const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ '../../../../Sharedvuecomponents/Resources/assets/js/admin/NursesWorkSchedules/CalendarDailyReport');
+const UserAccountSettings = () => import(/* webpackChunkName: "chunk-user-account-settings" */ '../../../../Twofa/Resources/assets/js/user-account-settings');
+const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2fa" */ '../../../../Twofa/Resources/assets/js/authy-perform-2fa');
+
 
 
 Vue.use(ClientTable, {}, false)
@@ -69,6 +72,8 @@ Vue.component('loader', LoaderComponent);
 Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
 Vue.component('calendar-loader', CalendarLoader);
 Vue.component('calendar-daily-report', CalendarDailyReport);
+Vue.component('user-account-settings', UserAccountSettings);
+Vue.component('authy-perform-2fa', AuthyPerform2FA);
 
 
 
