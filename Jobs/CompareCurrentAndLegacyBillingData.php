@@ -7,18 +7,12 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use CircleLinkHealth\Customer\Entities\Practice;
+use MichaelLedin\LaravelJob\Job;
 
-class CompareCurrentAndLegacyBillingData implements ShouldQueue
+class CompareCurrentAndLegacyBillingData extends Job
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    protected Carbon $month;
 
     /**
      * Create a new job instance.
@@ -28,6 +22,16 @@ class CompareCurrentAndLegacyBillingData implements ShouldQueue
         $this->month = $month ?? Carbon::now()->startOfMonth()->startOfDay();
     }
 
+    public static function fromParameters(...$parameters)
+    {
+        return new self(Carbon::parse($parameters[0]));
+    }
+
+    public function getMonth(): Carbon
+    {
+        return $this->month;
+    }
+
     /**
      * Execute the job.
      *
@@ -35,13 +39,8 @@ class CompareCurrentAndLegacyBillingData implements ShouldQueue
      */
     public function handle()
     {
-        //get all enrolled patients
-        //get all services including unfulfilled
-        //get PMS
-
-        //compare that foreach CS there's a chargeable Location summary
-        //compare that PMS time matches with CPMS View time
-
-        //gather Patient Ids and prompt investigation via slack
+        Practice::activeBillable()
+            ->get()
+            ->each(fn (Practice $p) => CompareCurrentAndLegacyBillingDataForPractice::dispatch($p->id, $this->getMonth()));
     }
 }
