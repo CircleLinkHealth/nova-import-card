@@ -74,6 +74,16 @@ class MedicalRecordFactory
     {
         return new PracticePullMedicalRecord(optional($ccda)->patient_mrn ?? $user->getMRN(), optional($ccda)->practice_id ?? $user->program_id);
     }
+    
+    public function createWoodlandsInternistsPaMedicalRecord(User $user, ?Ccda $ccda)
+    {
+        return new PracticePullMedicalRecord(optional($ccda)->patient_mrn ?? $user->getMRN(), optional($ccda)->practice_id ?? $user->program_id);
+    }
+  
+    public function createCameronMemorialMedicalRecord(User $user, ?Ccda $ccda)
+    {
+        return new PracticePullMedicalRecord(optional($ccda)->patient_mrn ?? $user->getMRN(), optional($ccda)->practice_id ?? $user->program_id);
+    }
 
     private function getEligibilityJobWithTargetPatient(User $user)
     {
