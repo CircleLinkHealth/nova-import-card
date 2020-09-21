@@ -24,8 +24,6 @@ class SeedLocationSummariesFromChargeablesTableData extends Migration
      */
     public function up()
     {
-        Artisan::call('billing:migrate-all-location-services', [
-            'month' => '2020-08-01',
-        ]);
+        \CircleLinkHealth\CcmBilling\Jobs\MigrateChargeableServicesFromChargeablesToLocationSummariesTable::dispatch(\Carbon\Carbon::now()->startOfMonth());
     }
 }
