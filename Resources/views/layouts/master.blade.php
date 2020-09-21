@@ -7,13 +7,13 @@
         <title>Module TimeTracking</title>
 
        {{-- Laravel Mix - CSS File --}}
-       {{-- <link rel="stylesheet" href="{{ mix('css/timetracking.css') }}"> --}}
+       {{-- <link rel="stylesheet" href="{{ asset('css/timetracking.css') }}"> --}}
 
     </head>
     <body>
         @yield('content')
 
         {{-- Laravel Mix - JS File --}}
-        {{-- <script src="{{ mix('js/timetracking.js') }}"></script> --}}
+        {{-- <script src="{{ asset('js/timetracking.js') }}"></script> --}}
     </body>
 </html>
