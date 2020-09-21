@@ -76,7 +76,7 @@ const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-import
 const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patient-next-call" */ './components/patient-next-call');
 const PatientSpouseComponent = () => import(/* webpackChunkName: "chunk-patient-spouse" */ './components/patient-spouse');
 const CallNumberComponent = () => import(/* webpackChunkName: "chunk-call-number" */ './components/call-number');
-const UserAccountSettings = () => import(/* webpackChunkName: "chunk-user-account-settings" */ './components/user-account-settings');
+const UserAccountSettings = () => import(/* webpackChunkName: "chunk-user-account-settings" */ '../../../CircleLinkHealth/Twofa/Resources/assets/js/user-account-settings');
 const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2fa" */ './components/authy-perform-2fa');
 const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ './components/importer/ccd-upload');
 const ImportedMedicalRecordsManagement = () => import(/* webpackChunkName: "chunk-imported-medical-records-management" */ './components/importer/imported-medical-records-management');
