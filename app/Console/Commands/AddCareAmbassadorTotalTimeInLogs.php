@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\CareAmbassadorLog;
+use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;

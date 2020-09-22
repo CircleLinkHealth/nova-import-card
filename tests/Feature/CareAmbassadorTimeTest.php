@@ -6,7 +6,7 @@
 
 namespace Tests\Feature;
 
-use App\CareAmbassadorLog;
+use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use App\Traits\Tests\TimeHelpers;
 use Tests\CustomerTestCase;
 

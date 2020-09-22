@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CareAmbassadorLog;
+use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use CircleLinkHealth\Customer\Http\Requests\SafeRequest as Request;
 use App\Http\Resources\Enrollable;
 use App\Services\Enrollment\EnrollableCallQueue;

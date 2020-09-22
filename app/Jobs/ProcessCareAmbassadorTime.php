@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\CareAmbassadorLog;
+use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Bus\Queueable;

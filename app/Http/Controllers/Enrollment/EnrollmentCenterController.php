@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\CareAmbassadorLog;
+use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Carbon;
