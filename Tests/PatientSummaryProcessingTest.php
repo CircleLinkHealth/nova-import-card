@@ -242,18 +242,7 @@ class PatientSummaryProcessingTest extends TestCase
     {
         Bus::fake();
 
-        event(new PatientUserCreated($user = factory(User::class)->make(['id' => $patientId = 1])));
-
-        Bus::assertDispatched(function (ProcessSinglePatientMonthlyServices $job) use ($patientId) {
-            return $job->getPatientId() === $patientId
-                && $job->getMonth()->equalTo(Carbon::now()->startOfMonth()->startOfDay());
-        });
-
-        Bus::assertDispatchedTimes(ProcessSinglePatientMonthlyServices::class, 1);
-
-        Bus::fake();
-
-        event(new PatientProblemsChanged($patientId));
+        event(new PatientProblemsChanged($patientId = 1));
 
         Bus::assertDispatched(function (ProcessSinglePatientMonthlyServices $job) use ($patientId) {
             return $job->getPatientId() === $patientId
