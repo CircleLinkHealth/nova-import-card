@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Middleware\ProviderDashboardACL;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -75,5 +76,7 @@ class Kernel extends HttpKernel
         'ability'                => \Michalisantoniou6\Cerberus\Middleware\CerberusAbility::class,
         'permission'             => \Michalisantoniou6\Cerberus\Middleware\CerberusPermission::class,
         'role'                   => \Michalisantoniou6\Cerberus\Middleware\CerberusRole::class,
+        'providerDashboardACL'   => ProviderDashboardACL::class,
+
     ];
 }
