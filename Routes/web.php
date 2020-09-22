@@ -349,44 +349,6 @@ Route::prefix('api')->group(function() {
             'prefix' => 'reports',
         ], function () {
             Route::group([
-                'prefix' => 'monthly-billing/v2',
-            ], function () {
-                /*
-                 * '/make'
-                 * '/data'
-                 * '/counts'
-                 * '/storeProblem'
-                 * '/status/update'
-                 * Search for it above in a different tree of permissions
-                 */
-
-                Route::get('/services', [
-                    'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
-                    'as'   => 'monthly.billing.services',
-                ])->middleware('permission:chargeableService.read');
-
-                Route::post('/updatePracticeServices', [
-                    'uses' => 'Billing\PracticeInvoiceController@updatePracticeChargeableServices',
-                    'as'   => 'monthly.billing.practice.services',
-                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
-
-                Route::post('/updateSummaryServices', [
-                    'uses' => 'Billing\PracticeInvoiceController@updateSummaryChargeableServices',
-                    'as'   => 'monthly.billing.summary.services',
-                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
-
-                Route::post('/getBillingCount', [
-                    'uses' => 'Billing\PracticeInvoiceController@getCounts',
-                    'as'   => 'monthly.billing.counts',
-                ])->middleware('permission:patientSummary.update');
-
-                Route::post('/send', [
-                    'uses' => 'Billing\PracticeInvoiceController@send',
-                    'as'   => 'monthly.billing.send',
-                ])->middleware('permission:patientSummary.read');
-            });
-
-            Route::group([
                 'prefix' => 'sales',
             ], function () {
                 //LOCATIONS -hidden on adminUI currently.
