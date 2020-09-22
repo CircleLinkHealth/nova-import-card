@@ -1,4 +1,4 @@
-@extends('provider.layouts.default')
+@extends('cpm-admin::provider.layouts.default')
 
 @section('head')
     @push('styles')

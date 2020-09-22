@@ -49,7 +49,7 @@
                 <div class="collapsible-body" style="padding: 5%;">
 
                     <div class="row">
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                                 'name' => "locations[@{{index}}][name]",
                                 'label' => 'Name',
                                 'class' =>'col s6',
@@ -73,7 +73,7 @@
                     </div>
 
                     <div class="row">
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                                 'name' => "locations[@{{index}}][address_line_1]",
                                 'label' => 'Address Line 1 ',
                                 'class' =>'col s8',
@@ -88,7 +88,7 @@
                                 ]
                             ])
 
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                                 'name' => "locations[@{{index}}][address_line_2]",
                                 'label' => 'Address Line 2 ',
                                 'class' =>'col s4',
@@ -104,7 +104,7 @@
                     </div>
 
                     <div class="row">
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                                 'name' => "locations[@{{index}}][city]",
                                 'label' => 'City ',
                                 'class' =>'col s6',
@@ -119,7 +119,7 @@
                                 ]
                             ])
 
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                                 'name' => "locations[@{{index}}][state]",
                                 'label' => 'State ',
                                 'class' =>'col s6',
@@ -136,7 +136,7 @@
                     </div>
 
                     <div class="row">
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                             'name' => "locations[@{{index}}][postal_code]",
                             'label' => 'Postal Code ',
                             'class' =>'col s6',
@@ -151,7 +151,7 @@
                                 ]
                         ])
 
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                             'name' => "locations[@{{index}}][phone]",
                             'label' => 'Phone',
                             'class' =>'col s6',
@@ -170,7 +170,7 @@
                     </div>
 
                     <div class="row">
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                            'name' => "locations[@{{index}}][fax]",
                            'label' => 'Fax',
                            'class' =>'col s6',
@@ -187,7 +187,7 @@
                            'data_error' => 'Fax number must have this format: xxx-xxx-xxxx'
                        ])
 
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                            'name' => "locations[@{{index}}][emr_direct_address]",
                            'label' => 'EMR Direct Address',
                            'class' =>'col s6',
@@ -211,7 +211,7 @@
                             Please provide login information for your EHR system.
                         </h6>
 
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                             'name' => 'locations[@{{index}}][ehr_login]',
                             'label' => 'EHR Login',
                             'class' => 'col s6',
@@ -224,7 +224,7 @@
                             ]
                         ])
 
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                             'name' => 'locations[@{{index}}][ehr_password]',
                             'label' => 'EHR Password',
                             'class' => 'col s6',
@@ -240,7 +240,7 @@
                         ])
 
                         <p class="right-align" v-if="index == 0">
-                            @include('provider.partials.mdl.form.checkbox', [
+                            @include('cpm-admin::provider.partials.mdl.form.checkbox', [
                                'name' => 'sameEHRLogin',
                                'label' => 'Same for all locations?',
                                'value' => '1',
@@ -261,7 +261,7 @@
                         </h6>
 
                         <div>
-                            @include('provider.partials.mdl.form.radio', [
+                            @include('cpm-admin::provider.partials.mdl.form.radio', [
                                 'id' => 'billing-provider-@{{index}}',
                                 'label' => 'Patient\'s Billing / Main provider.',
                                 'name' => 'locations[@{{index}}][clinical_contact][type]',
@@ -278,7 +278,7 @@
                         </div>
 
                         <div>
-                            @include('provider.partials.mdl.form.radio', [
+                            @include('cpm-admin::provider.partials.mdl.form.radio', [
                                 'id' => 'instead-of-billing-provider-@{{index}}',
                                 'label' => 'Notify others instead of the billing provider.',
                                 'name' => 'locations[@{{index}}][clinical_contact][type]',
@@ -298,13 +298,13 @@
                                      enter-active-class="animated tada"
                                      leave-active-class="animated bounceOutRight"
                                      mode="in-out">
-                                    @include('provider.partials.clinical-issues-contact')
+                                    @include('cpm-admin::provider.partials.clinical-issues-contact')
                                 </div>
                             </transition>
                         </div>
 
                         <div>
-                            @include('provider.partials.mdl.form.radio', [
+                            @include('cpm-admin::provider.partials.mdl.form.radio', [
                                 'id' => 'in-addition-to-billing-provider-@{{index}}',
                                 'label' => 'Notify others in addition to the billing provider.',
                                 'name' => 'locations[@{{index}}][clinical_contact][type]',
@@ -321,14 +321,14 @@
                             <transition name="fade">
                                 <div v-if="loc.clinical_contact.type == 'in_addition_to_billing_provider' ? true : false"
                                      name="fade" mode="in-out">
-                                    @include('provider.partials.clinical-issues-contact')
+                                    @include('cpm-admin::provider.partials.clinical-issues-contact')
                                 </div>
                             </transition>
                         </div>
 
 
                         <div class="right-align" v-if="index == 0">
-                            @include('provider.partials.mdl.form.checkbox', [
+                            @include('cpm-admin::provider.partials.mdl.form.checkbox', [
                                'label' => 'Same for all locations?',
                                'name' => 'locations[@{{index}}][same_clinical_contact]',
                                'value' => '1',

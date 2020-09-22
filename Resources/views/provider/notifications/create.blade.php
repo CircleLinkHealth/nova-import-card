@@ -1,4 +1,4 @@
-@extends('provider.layouts.dashboard')
+@extends('cpm-admin::provider.layouts.dashboard')
 
 @section('title', 'Notifications and Settings')
 

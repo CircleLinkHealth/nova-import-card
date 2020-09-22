@@ -1,4 +1,4 @@
-@extends('provider.layouts.default')
+@extends('cpm-admin::provider.layouts.default')
 
 @section('title', 'Provider Dashboard')
 
@@ -15,7 +15,7 @@
         }
 
         .provider-dashboard-logo {
-            height: 6.3rem !important;
+            height: 5rem !important;
         }
     </style>
 @endpush
@@ -23,13 +23,13 @@
 @section('content')
     <header>
         <div class="row">
-            @include('provider.partials.topBarHeader')
+            @include('cpm-admin::provider.partials.topBarHeader')
         </div>
 
         <ul id="slide-out" class="side-nav" style="transform: translateX(0);">
             <li class="center-align">
                 <a href="{{ url('/') }}" class="provider-dashboard-logo">
-                    <img src="{{asset('/img/clh_logo.svg')}}" height="64" class="brand-logo">
+                    <img src="{{asset('/img/logos/LogoHorizontal_Color.svg')}}" height="64" class="brand-logo">
                 </a>
             </li>
             <li>
@@ -41,7 +41,7 @@
                 <div class="divider"></div>
             </li>
             <li>
-                @include('provider.navigation.default')
+                @include('cpm-admin::provider.navigation.default')
             </li>
         </ul>
     </header>

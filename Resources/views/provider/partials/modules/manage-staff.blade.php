@@ -51,7 +51,7 @@
                 <div class="collapsible-body" style="padding: 5%;">
 
                     <div class="row">
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                                 'name' => "users[@{{index}}][first_name]",
                                 'label' => 'First Name',
                                 'class' =>'col s6',
@@ -66,7 +66,7 @@
                                 ]
                             ])
 
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                                 'name' => "users[@{{index}}][last_name]",
                                 'label' => 'Last Name',
                                 'class' =>'col s6',
@@ -83,7 +83,7 @@
                     </div>
 
                     <div class="row">
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                             'name' => "users[@{{index}}][email]",
                             'label' => 'Email',
                             'class' => 'col s6',
@@ -110,7 +110,7 @@
                     </div>
 
                     <div class="row">
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                             'name' => 'users[@{{index}}][phone_number]',
                             'label' => 'Phone',
                             'class' => 'col s6',
@@ -129,7 +129,7 @@
                             'data_error' => 'Phone number must have this format: xxx-xxx-xxxx'
                         ])
 
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                            'name' => 'users[@{{index}}][phone_extension]',
                            'label' => 'Extension',
                            'class' => 'col s3',
@@ -155,7 +155,7 @@
                     </div>
 
                     <div class="row">
-                        @include('provider.partials.mdl.form.text.textfield', [
+                        @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
                            'name' => "users[@{{index}}][emr_direct_address]",
                            'label' => 'EMR Direct Address',
                            'type' => 'email',
@@ -176,7 +176,7 @@
                     <div class="row">
                         <div class="col s5 offset-s8">
                             <div class="left-align">
-                                @include('provider.partials.mdl.form.checkbox', [
+                                @include('cpm-admin::provider.partials.mdl.form.checkbox', [
                                     'label' => 'Grant admin rights',
                                     'name' => 'users[@{{index}}][grand_admin_rights]',
                                     'value' => '1',
@@ -188,7 +188,7 @@
                             </div>
 
                             <div class="left-align">
-                                @include('provider.partials.mdl.form.checkbox', [
+                                @include('cpm-admin::provider.partials.mdl.form.checkbox', [
                                     'label' => 'Send billing reports',
                                     'name' => 'users[@{{index}}][send_billing_reports]',
                                     'value' => '1',
@@ -208,7 +208,7 @@
                             <h6>Whom should we notify for clinical issues regarding provider’s patients?</h6>
 
                             <div>
-                                @include('provider.partials.mdl.form.radio', [
+                                @include('cpm-admin::provider.partials.mdl.form.radio', [
                                     'id' => 'billing-provider-@{{index}}',
                                     'label' => 'Provider',
                                     'name' => 'users[@{{index}}][forward_alerts_to][who]',
@@ -225,7 +225,7 @@
                             </div>
 
                             <div>
-                                @include('provider.partials.mdl.form.radio', [
+                                @include('cpm-admin::provider.partials.mdl.form.radio', [
                                     'id' => 'instead-of-provider-@{{index}}',
                                     'label' => 'Someone else instead of provider.',
                                     'name' => 'users[@{{index}}][forward_alerts_to][who]',
@@ -244,14 +244,14 @@
                                     <div v-show="newUser.forward_alerts_to.who == '{{\CircleLinkHealth\Customer\Entities\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
-                                            @include('provider.partials.clinicalIssuesNotifyUser')
+                                            @include('cpm-admin::provider.partials.clinicalIssuesNotifyUser')
                                         </div>
                                     </div>
                                 </transition>
                             </div>
 
                             <div>
-                                @include('provider.partials.mdl.form.radio', [
+                                @include('cpm-admin::provider.partials.mdl.form.radio', [
                                     'id' => 'in-addition-@{{index}}',
                                     'label' => 'Notify others in addition to provider.',
                                     'name' => 'users[@{{index}}][forward_alerts_to][who]',
@@ -269,7 +269,7 @@
                                     <div v-show="newUser.forward_alerts_to.who == '{{\CircleLinkHealth\Customer\Entities\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
-                                            @include('provider.partials.clinicalIssuesNotifyUser')
+                                            @include('cpm-admin::provider.partials.clinicalIssuesNotifyUser')
                                         </div>
                                     </div>
                                 </transition>
@@ -286,7 +286,7 @@
                             <h6>Whom should we notify for approval of care plans regarding provider’s patients?</h6>
 
                             <div>
-                                @include('provider.partials.mdl.form.radio', [
+                                @include('cpm-admin::provider.partials.mdl.form.radio', [
                                     'id' => 'cp-emails-billing-provider-@{{index}}',
                                     'label' => 'Provider',
                                     'name' => 'users[@{{index}}][forward_careplan_approval_emails_to][who]',
@@ -303,7 +303,7 @@
                             </div>
 
                             <div>
-                                @include('provider.partials.mdl.form.radio', [
+                                @include('cpm-admin::provider.partials.mdl.form.radio', [
                                     'id' => 'cp-emails-instead-of-provider-@{{index}}',
                                     'label' => 'Someone else instead of provider.',
                                     'name' => 'users[@{{index}}][forward_careplan_approval_emails_to][who]',
@@ -322,14 +322,14 @@
                                     <div v-show="newUser.forward_careplan_approval_emails_to.who == '{{\CircleLinkHealth\Customer\Entities\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
-                                            @include('provider.partials.forwardCareplanApprovalEmails')
+                                            @include('cpm-admin::provider.partials.forwardCareplanApprovalEmails')
                                         </div>
                                     </div>
                                 </transition>
                             </div>
 
                             <div>
-                                @include('provider.partials.mdl.form.radio', [
+                                @include('cpm-admin::provider.partials.mdl.form.radio', [
                                     'id' => 'cp-emails-in-addition-@{{index}}',
                                     'label' => 'Notify others in addition to provider.',
                                     'name' => 'users[@{{index}}][forward_careplan_approval_emails_to][who]',
@@ -347,7 +347,7 @@
                                     <div v-show="newUser.forward_careplan_approval_emails_to.who == '{{\CircleLinkHealth\Customer\Entities\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
-                                            @include('provider.partials.forwardCareplanApprovalEmails')
+                                            @include('cpm-admin::provider.partials.forwardCareplanApprovalEmails')
                                         </div>
                                     </div>
                                 </transition>
