@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\CareAmbassadorLog;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\StringManipulation;
@@ -17,6 +16,7 @@ use CircleLinkHealth\Customer\Traits\HasNotificationContactPreferences;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
+use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -88,14 +88,14 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                              \Illuminate\Database\Query\Builder|Practice withTrashed()
  * @method   static                                                                                              \Illuminate\Database\Query\Builder|Practice withoutTrashed()
  * @mixin \Eloquent
- * @property int|null                                                          $saas_account_id
- * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $careAmbassadorLogs
+ * @property int|null                                                                                             $saas_account_id
+ * @property \CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $careAmbassadorLogs
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection
  *     $chargeableServices
- * @property \CircleLinkHealth\Customer\Filters\EnrolleeCustomFilter[]|\Illuminate\Database\Eloquent\Collection                 $enrolleeCustomFilters
- * @property \App\PracticeEnrollmentTips                                                          $enrollmentTips
- * @property string                                                                               $number_with_dashes
- * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection $media
+ * @property \CircleLinkHealth\Customer\Filters\EnrolleeCustomFilter[]|\Illuminate\Database\Eloquent\Collection $enrolleeCustomFilters
+ * @property \CircleLinkHealth\SharedModels\Entities\PracticeEnrollmentTips                                     $enrollmentTips
+ * @property string                                                                                             $number_with_dashes
+ * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection               $media
  * @property \Illuminate\Notifications\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection
  *     $notifications
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
@@ -247,11 +247,11 @@ class Practice extends BaseModel implements HasMedia
     }
 
     /**
-     * @return \App\PracticeEnrollmentTips|\Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \CircleLinkHealth\SharedModels\Entities\PracticeEnrollmentTips|\Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function enrollmentTips()
     {
-        return $this->hasOne('App\PracticeEnrollmentTips', 'practice_id');
+        return $this->hasOne('CircleLinkHealth\SharedModels\Entities\PracticeEnrollmentTips', 'practice_id');
     }
 
     /**
@@ -578,7 +578,7 @@ class Practice extends BaseModel implements HasMedia
             ]
         );
     }
-    
+
     public function scopeHasImportingHookEnabled($builder, string $hook, string $listener)
     {
         return $builder->where("importing_hooks->{$hook}->listener", $listener);

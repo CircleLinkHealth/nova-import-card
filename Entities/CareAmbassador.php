@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\CareAmbassadorLog;
+use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
 
 /**
  * App\CareAmbassador.
@@ -17,7 +17,7 @@ use App\CareAmbassadorLog;
  * @property int                                                               $speaks_spanish
  * @property \Carbon\Carbon|null                                               $created_at
  * @property \Carbon\Carbon|null                                               $updated_at
- * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $logs
+ * @property \CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $logs
  * @property \CircleLinkHealth\Customer\Entities\User                          $user
  * @method   static                                                            \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereCreatedAt($value)
  * @method   static                                                            \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereHourlyRate($value)
