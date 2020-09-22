@@ -20,6 +20,7 @@ use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Schema\Blueprint;
@@ -111,7 +112,11 @@ class AppServiceProvider extends ServiceProvider
 
         EloquentBuilder::macro(
             'chunkIntoJobs',
-            function (int $limit, ChunksEloquentBuilder $job) {
+            function (int $limit, ShouldQueue $job) {
+                if ( ! $job instanceof ChunksEloquentBuilder) {
+                    throw new \Exception('The Query Builder macro "chunkIntoJobs" can only be called with jobs that implement the ChunksEloquentBuilder interface.');
+                }
+
                 $count = $this->count();
                 $offset = 0;
 
