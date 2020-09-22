@@ -92,8 +92,8 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
             [
                 'is_primary'     => 1,
                 'name'           => $practice->name,
-                'address_line_1' => '84982 Sipes Manor Theoborough, AZ 58735-9955',
-                'city'           => 'West Jeraldbury',
+                'address_line_1' => '84982 This is demo Address, AZ 58735-9955',
+                'city'           => 'West Guantanamo Demo World',
                 'state'          => 'MD',
                 'postal_code'    => '21335 - 9764',
             ]
