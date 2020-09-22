@@ -877,53 +877,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'family.get',
         ])->middleware('permission:patient.read');
     });
-
-    // CARE-CENTER GROUP
-    Route::group([
-        'middleware' => ['permission:has-schedule'],
-        'prefix'     => 'care-center',
-    ], function () {
-        Route::resource('work-schedule', '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController', [
-            'only' => [
-                'index',
-                'store',
-            ],
-            'names' => [
-                'index' => 'care.center.work.schedule.index',
-                'store' => 'care.center.work.schedule.store',
-            ],
-        ])->middleware('permission:nurseContactWindow.read,nurseContactWindow.create');
-
-        Route::get('work-schedule/get-calendar-data', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@calendarEvents',
-            'as'   => 'care.center.work.schedule.getCalendarData',
-        ])->middleware('permission:nurseContactWindow.read');
-
-        Route::get('work-schedule/get-daily-report', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@dailyReportsForNurse',
-            'as'   => 'care.center.work.schedule.getDailyReport',
-        ])->middleware('permission:nurseContactWindow.read');
-
-        Route::get('work-schedule/get-nurse-calendar-data', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@calendarWorkEventsForAuthNurse',
-            'as'   => 'care.center.work.schedule.calendarWorkEventsForAuthNurse',
-        ])->middleware('permission:nurseContactWindow.read');
-
-        Route::get('work-schedule/destroy/{id}', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@destroy',
-            'as'   => 'care.center.work.schedule.destroy',
-        ])->middleware('permission:nurseContactWindow.delete');
-
-        Route::post('work-schedule/holidays', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@storeHoliday',
-            'as'   => 'care.center.work.schedule.holiday.store',
-        ])->middleware('permission:nurseHoliday.create');
-
-        Route::get('work-schedule/holidays/destroy/{id}', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@destroyHoliday',
-            'as'   => 'care.center.work.schedule.holiday.destroy',
-        ])->middleware('permission:nurseHoliday.delete');
-    });
 });
 
 // pagetimer
