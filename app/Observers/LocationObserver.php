@@ -16,8 +16,7 @@ class LocationObserver
      */
     public function created(Location $location)
     {
-        //todo: finialize decision
-        sendSlackMessage('#channel-to-decide', "New Location with ID:$location->id failed.
+        sendSlackMessage('#billing_alerts', "New Location with ID:$location->id created.
             Please head to Location Chargeable Service management and assign chargeable services this location.");
     }
 }
