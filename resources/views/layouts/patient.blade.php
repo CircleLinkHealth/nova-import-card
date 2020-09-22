@@ -6,7 +6,7 @@
     <meta http-equiv="content-language" content="en-US"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="base-url" content="{{ url('/') }}">
-    <base href="{{asset('')}}">
+    <base href="{{url('/')}}">
 
     <title>CarePlanManager - @yield('title')</title>
 
