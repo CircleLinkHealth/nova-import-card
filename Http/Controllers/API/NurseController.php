@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API;
 
-use App\Filters\NurseFilters;
-use App\Http\Controllers\API\ApiController;
-use App\Http\Resources\NurseInfo;
+use CircleLinkHealth\CpmAdmin\Filters\NurseFilters;
+use CircleLinkHealth\Customer\Http\Resources\NurseInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class NurseController extends ApiController
+class NurseController extends Controller
 {
     /**
      * @SWG\GET(
