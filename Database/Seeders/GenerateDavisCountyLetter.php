@@ -41,10 +41,10 @@ class GenerateDavisCountyLetter extends Seeder
 <li>You can avoid being on hold when you need something: your nurse can help with prescription refills, appointment scheduling, transportation assistance, and any general questions.</li><br>
 <li>You can disenroll at any time. This is a voluntary program meant to provide assistance and benefits outside of our physical office.</li>
 
-<p>What's the Cost?</p>
+<p style='text-decoration: underline;'>What's the Cost?</p>
 <p>The program is covered by Medicare. If you have Medicaid or a supplemental insurance, it will likely cover the copay, which means you'll have $0 out-of-pocket costs. In addition, during this crisis, your Dr. may waive co-pays for this kind of remote care. Medicare has invested in this program because it saves them money by keeping people like you healthy.</p>
 
-<p>What's Next?</p>
+<p style='text-decoration: underline;'>What's Next?</p>
 <p>In a few days, you'll get a call from one of our care coordinators from $practiceNumber. They'll be happy to answer your questions, and help you get started if you decide to join during that call.</p>
 <p>I look forward to having you join this program to continue keeping you healthy between office visits.</p>
 <p>Sincerely,</p>
