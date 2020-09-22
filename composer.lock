@@ -878,7 +878,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "bab63b07cf8d44ac8fec84b73baba7bf787144c5"
+                "reference": "c2058bea01267e36720b57b5ed6d9ae508fd0bd3"
             },
             "require": {
                 "laravel/passport": "^8.0",
@@ -911,7 +911,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-21T14:49:21+00:00"
+            "time": "2020-09-22T19:24:09+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -919,7 +919,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "2f1b82a4ef87af963dcc21df82ffd6d3d2988179"
+                "reference": "d022d1021824fbd3e0b49add57662e123a6d82f3"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -945,7 +945,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-22T18:21:29+00:00"
+            "time": "2020-09-22T19:24:09+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -983,7 +983,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "243d0f1d4fbe43860d4a8539e38b051d4bc32e74"
+                "reference": "0adfa8f8dcf4822efb9c28361cfeed8a8eac19a6"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1017,7 +1017,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-22T18:21:29+00:00"
+            "time": "2020-09-22T19:24:09+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1199,7 +1199,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "900df0a7a0e12abffb89843774d8c6ab8e19d3de"
+                "reference": "8548e59a294f9841a80c759869110620e8988393"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1213,7 +1213,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-19T00:47:48+00:00"
+            "time": "2020-09-22T19:24:09+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
