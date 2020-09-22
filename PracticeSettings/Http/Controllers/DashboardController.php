@@ -66,7 +66,7 @@ class DashboardController extends Controller
                 return $service;
             });
 
-        return view('provider.chargableServices.create', array_merge([
+        return view('cpm-admin::provider.chargableServices.create', array_merge([
             'practice'           => $this->primaryPractice,
             'practiceSlug'       => $this->practiceSlug,
             'practiceSettings'   => $this->primaryPractice->cpmSettings(),
@@ -92,7 +92,7 @@ class DashboardController extends Controller
             return response('Practice not found', 404);
         }
 
-        return view('provider.location.create', [
+        return view('cpm-admin::provider.location.create', [
             'practiceSlug' => $this->practiceSlug,
             'practice'     => $this->primaryPractice,
         ]);
