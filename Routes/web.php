@@ -37,8 +37,7 @@ Route::group([
 });
 
 Route::group([
-    'prefix'     => 'auth',
-    'middleware' => ['web'],
+    'middleware' => ['web','auth'],
 ], function () {
     Route::group([
         'prefix' => 'reports',
