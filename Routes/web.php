@@ -39,9 +39,21 @@ Route::prefix('api')->group(function() {
         ])->middleware('permission:patient.read');
     });
     
+    Route::prefix('patients')->group(function () {
+        Route::get('without-scheduled-activities', [
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutScheduledActivities',
+            'as'   => 'patients.without-scheduled-activities',
+        ])->middleware('permission:patient.read,careplan.read,call.read');
+        
+        Route::get('without-inbound-calls', [
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutInboundCalls',
+            'as'   => 'patients.without-inbound-calls',
+        ])->middleware('permission:patient.read,call.read');
+    });
+    
     Route::get('nurses', 'API\NurseController@index')->middleware('permission:nurse.read');
 });
-Route::prefix('cpmadmin')->group(function () {
+
     Route::get('upg0506/{type}', [
         'uses' => 'DashboardController@upg0506',
         'as'   => 'upg0506.demo',
@@ -699,6 +711,29 @@ Route::prefix('cpmadmin')->group(function () {
 
     Route::prefix('admin')->group(
         function () {
+            Route::group(['prefix' => 'calls'], function () {
+                Route::get('', [
+                    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@index',
+                    'as'   => 'call.index',
+                ])->middleware('permission:call.read');
+                Route::get('create', [
+                    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@create',
+                    'as'   => 'call.create',
+                ])->middleware('permission:call.create');
+                Route::get('edit/{actId}', [
+                    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@edit',
+                    'as'   => 'call.edit',
+                ]);
+                Route::get('next', [
+                    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@getPatientNextScheduledCallJson',
+                    'as'   => 'call.next',
+                ])->middleware('permission:call.read');
+                Route::post('reschedule', [
+                    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@reschedule',
+                    'as'   => 'call.reschedule',
+                ])->middleware('permission:call.update');
+            });
+            
             Route::prefix('users')->group(
                 function () {
                     Route::get(
@@ -790,7 +825,7 @@ Route::prefix('cpmadmin')->group(function () {
         'uses' => 'NursePerformanceRepController@nurseMetricsDashboard',
         'as'   => 'admin.reports.nurse.metrics',
     ])->middleware('permission:nurseReport.read');
-});
+
 
 Route::group([
     'prefix'     => 'practices/{practiceSlug}',
@@ -887,3 +922,12 @@ Route::resource(
     'practice.users',
     'API\PracticeStaffController'
 )->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete')->only(['destroy', 'index', 'update']);
+
+Route::post('callupdate', [
+    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@update',
+    'as'   => 'api.callupdate',
+]);
+Route::post('callcreate-multi', [
+    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@createMulti',
+    'as'   => 'api.callcreate-multi',
+]);
