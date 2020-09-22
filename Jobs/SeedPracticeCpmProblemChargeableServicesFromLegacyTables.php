@@ -59,7 +59,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
         $this->setChargeableServices();
 
         if (is_null($this->ccmCodeId) && is_null($this->bhiCodeId) && is_null($this->pcmCodeId)) {
-            Log::error('Practice/Location Cpm Problem Chargeable Services seeding aborted - no Chargeable Services found.');
+            sendSlackMessage('#billing_alerts', 'Practice/Location Cpm Problem Chargeable Services seeding aborted - no Chargeable Services found.');
 
             return;
         }
@@ -92,7 +92,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                     //todo: find out - can a problem both be pcm and ccm?
                     // For example, for patients that have only that they can use it as PCM, however patients can have it along with others and be CCM
                     if ( ! $isBhi || $isDementia || $isDepression) {
-                        $this->repo()->store($location->id, $problem->id, $this->bhiCodeId);
+                        $this->repo()->store($location->id, $problem->id, $this->ccmCodeId);
                     }
                 }
             });
@@ -115,8 +115,8 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
         }
 
         $this->pcmCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::PCM))->id;
-        $this->ccmCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::BHI))->id;
-        $this->bhiCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::CCM))->id;
+        $this->bhiCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::BHI))->id;
+        $this->ccmCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::CCM))->id;
     }
 
     private function setCpmProblems()

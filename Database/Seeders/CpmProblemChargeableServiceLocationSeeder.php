@@ -19,7 +19,7 @@ class CpmProblemChargeableServiceLocationSeeder extends Seeder
      */
     public function run()
     {
-        Practice::get()->each(function (Practice $practice) {
+        Practice::each(function (Practice $practice) {
             SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
         });
     }
