@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\SuperAdmin;
 
-use App\Http\Controllers\Controller;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use Auth;
 use Carbon\Carbon;
@@ -18,6 +17,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use DateTimeZone;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
