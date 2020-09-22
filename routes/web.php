@@ -1190,19 +1190,6 @@ Route::group([
     ])->middleware('permission:enrollee.read,enrollee.update');
 });
 
-//This route was replaced by route with url '/downloadInvoice/{practice}/{name}', and name 'monthly.billing.download'.
-//We keep it here to support Report links mailed before 5/12/17.
-Route::get('/admin/reports/monthly-billing/v2/downloadInvoice/{practice}/{name}', [
-    'uses'       => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Billing\PracticeInvoiceController@downloadInvoice',
-    'middleware' => ['auth'],
-]);
-
-Route::get('/downloadInvoice/{practice}/{name}', [
-    'uses'       => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Billing\PracticeInvoiceController@downloadInvoice',
-    'as'         => 'monthly.billing.download',
-    'middleware' => ['auth'],
-]);
-
 Route::group([
     'prefix' => 'twilio',
 ], function () {
@@ -1291,25 +1278,6 @@ Route::group([
             'edit'   => 'saas-admin.practices.edit',
         ],
     ]);
-
-    Route::group(['prefix' => 'monthly-billing'], function () {
-        Route::get('make', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Billing\PracticeInvoiceController@make',
-            'as'   => 'saas-admin.monthly.billing.make',
-        ]);
-
-        Route::post('data', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Billing\PracticeInvoiceController@data',
-            'as'   => 'saas-admin.monthly.billing.data',
-        ]);
-    });
-
-    Route::group(['prefix' => 'practice/billing'], function () {
-        Route::get('create', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Billing\PracticeInvoiceController@createInvoices',
-            'as'   => 'saas-admin.practices.billing.create',
-        ]);
-    });
 });
 
 Route::get('notifications/{id}', [
