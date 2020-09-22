@@ -303,9 +303,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'ProblemInstructionController@removeInstructionFromCcdProblem'
             )->middleware('permission:patientProblem.update');
         });
-
-        Route::get('nurses', 'API\NurseController@index')->middleware('permission:nurse.read');
-
+        
         Route::group([
             'middleware' => [
                 'permission:ccd-import',
