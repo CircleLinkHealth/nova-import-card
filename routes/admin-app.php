@@ -20,3 +20,12 @@ Route::group([
         'as'   => 'provider.dashboard.manage.practice',
     ]);
 });
+
+Route::post('callupdate', [
+    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@update',
+    'as'   => 'api.callupdate',
+]);
+Route::post('callcreate-multi', [
+    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@createMulti',
+    'as'   => 'api.callcreate-multi',
+]);
