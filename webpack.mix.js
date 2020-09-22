@@ -59,9 +59,6 @@ mix.webpackConfig(webpackConfig);
  * CSS
  *
  */
-mix.combine([
-    'resources/assets/sass/css/provider/dashboard.css',
-], 'public/compiled/css/provider-dashboard.css');
 
 
 /**
