@@ -321,11 +321,6 @@ Route::prefix('api')->group(function() {
             'as'   => 'enrollment.practice.stats.data',
         ])->middleware('permission:ambassador.read,practice.read');
 
-        Route::patch('nurses/window/{id}', [
-            'uses' => 'CareCenter\WorkScheduleController@patchAdminEditWindow',
-            'as'   => 'patch.admin.edit.nurse.schedules',
-        ]);
-
         Route::get(
             'athena/ccdas/check',
             'CcdApi\Athena\AthenaApiController@getTodays'
