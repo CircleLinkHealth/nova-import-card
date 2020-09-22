@@ -919,7 +919,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "42ed098298405d196b9846202b2e42e555e1d45a"
+                "reference": "c79e5d93229194354232d1970e090d23909ca87a"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -945,7 +945,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-22T21:06:05+00:00"
+            "time": "2020-09-22T21:29:06+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -983,7 +983,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "27c49d4b78c49c32b19617b1d1461cfdbf8e2751"
+                "reference": "c1444333fa06d493ffbcf7e9a59a35bbe827d89d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1017,7 +1017,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-22T20:39:35+00:00"
+            "time": "2020-09-22T21:33:01+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
