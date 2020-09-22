@@ -1,0 +1,28 @@
+{
+  "baseUrl": "http://app-cpm-web.test",
+  "watchForFilesChanges": true,
+  "chromeWebSecurity": false,
+  "viewportWidth": 1000,
+  "viewportHeight": 600,
+  "waitForAnimations": true,
+  "animationDistanceTreshold": 20,
+  "defaultCommandTimeout": 6000,
+  "execTimeout": 60000,
+  "pageLoadTimeout": 120000,
+  "requestTimeout": 15000,
+  "responseTimeout": 15000,
+  "video": false,
+  "failOnStatusCode": false,
+  "pluginsFile": "cypress/plugins/index.js",
+  "reporter": "mochawesome",
+  "reporterOptions": {
+    "charts": true,
+    "quiet": true,
+    "overwrite": false,
+    "html": false,
+    "json": true,
+    "reportDir": "cypress/reports/mocha"
+  },
+
+  "projectId": "fraekr"
+}
