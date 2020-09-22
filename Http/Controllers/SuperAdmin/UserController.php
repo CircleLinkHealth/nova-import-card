@@ -112,8 +112,7 @@ class UserController extends Controller
         if ( ! $user) {
             return response('User not found', 401);
         }
-
-        //$user->practices()->detach();
+        
         $user->delete();
 
         return redirect()->back()->with('messages', ['successfully deleted user']);
