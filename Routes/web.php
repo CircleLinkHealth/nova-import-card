@@ -14,43 +14,43 @@ Route::prefix('cpmadmin')->group(function () {
         'uses' => 'DashboardController@upg0506',
         'as'   => 'upg0506.demo',
     ])->middleware('auth');
-    
+
     Route::group(['prefix' => 'api'], function () {
         Route::group(['prefix' => 'admin'], function () {
             Route::get('clear-cache/{key}', [
                 'uses' => 'DashboardController@clearCache',
-                'as' => 'clear.cache.key',
+                'as'   => 'clear.cache.key',
             ])->middleware('permission:call.read');
             //the new calls route that uses calls-view table
             Route::get('calls-v2', [
                 'uses' => 'API\CallsViewController@index',
-                'as' => 'calls.v2.index',
+                'as'   => 'calls.v2.index',
             ])->middleware('permission:call.read');
-        
+
             Route::group(['prefix' => 'calls'], function () {
                 Route::get('', [
                     'uses' => 'API\CallsController@index',
-                    'as' => 'calls.index',
+                    'as'   => 'calls.index',
                 ])->middleware('permission:call.read');
-            
+
                 Route::get('{id}', [
                     'uses' => 'API\CallsController@show',
-                    'as' => 'calls.show',
+                    'as'   => 'calls.show',
                 ])->middleware('permission:call.read');
-            
+
                 Route::delete('{ids}', [
                     'uses' => 'API\CallsController@remove',
-                    'as' => 'calls.destroy',
+                    'as'   => 'calls.destroy',
                 ])->middleware('permission:call.delete');
             });
-        
+
             Route::post(
                 'user.outbound-calls',
                 'API\UserOutboundCallController@store'
             )->middleware('permission:call.create');
         });
     });
-    
+
     Route::group([
         'middleware' => [
             'auth',
@@ -64,43 +64,6 @@ Route::prefix('cpmadmin')->group(function () {
             'uses' => 'PatientCallManagementController@remixV2',
             'as'   => 'admin.patientCallManagement.v2.index',
         ]);
-
-        Route::group([
-            'prefix' => 'reports',
-        ], function () {
-            Route::group([
-                'prefix' => 'monthly-billing/v2',
-            ], function () {
-            Route::get('/make', [
-                'uses' => 'Billing\PracticeInvoiceController@make',
-                'as'   => 'monthly.billing.make',
-            ])->middleware('permission:patientSummary.read,patientProblem.read,chargeableService.read,practice.read');
-
-            Route::post('/data', [
-                'uses' => 'Billing\PracticeInvoiceController@data',
-                'as'   => 'monthly.billing.data',
-            ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
-
-            Route::get('/counts', [
-                'uses' => 'Billing\PracticeInvoiceController@counts',
-            ])->middleware('permission:patientSummary.read');
-
-            Route::post('/close', [
-                'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',
-                'as'   => 'monthly.billing.close.month',
-            ])->middleware('permission:patientSummary.update');
-
-            Route::post('/open', [
-                'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
-                'as'   => 'monthly.billing.open.month',
-            ])->middleware('permission:patientSummary.update');
-
-            Route::post('/status/update', [
-                'uses' => 'Billing\PracticeInvoiceController@updateStatus',
-                'as'   => 'monthly.billing.status.update',
-            ])->middleware('permission:patientSummary.update');
-        });
-        });
     });
 
     Route::group([
@@ -349,80 +312,80 @@ Route::prefix('cpmadmin')->group(function () {
             Route::group([
                 'prefix' => 'monthly-billing/v2',
             ], function () {
-            /*
-             * '/make'
-             * '/data'
-             * '/counts'
-             * '/storeProblem'
-             * '/status/update'
-             * Search for it above in a different tree of permissions
-             */
+                /*
+                 * '/make'
+                 * '/data'
+                 * '/counts'
+                 * '/storeProblem'
+                 * '/status/update'
+                 * Search for it above in a different tree of permissions
+                 */
 
-            Route::get('/services', [
-                'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
-                'as'   => 'monthly.billing.services',
-            ])->middleware('permission:chargeableService.read');
+                Route::get('/services', [
+                    'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
+                    'as'   => 'monthly.billing.services',
+                ])->middleware('permission:chargeableService.read');
 
-            Route::post('/updatePracticeServices', [
-                'uses' => 'Billing\PracticeInvoiceController@updatePracticeChargeableServices',
-                'as'   => 'monthly.billing.practice.services',
-            ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
+                Route::post('/updatePracticeServices', [
+                    'uses' => 'Billing\PracticeInvoiceController@updatePracticeChargeableServices',
+                    'as'   => 'monthly.billing.practice.services',
+                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
 
-            Route::post('/updateSummaryServices', [
-                'uses' => 'Billing\PracticeInvoiceController@updateSummaryChargeableServices',
-                'as'   => 'monthly.billing.summary.services',
-            ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
+                Route::post('/updateSummaryServices', [
+                    'uses' => 'Billing\PracticeInvoiceController@updateSummaryChargeableServices',
+                    'as'   => 'monthly.billing.summary.services',
+                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
 
-            Route::post('/getBillingCount', [
-                'uses' => 'Billing\PracticeInvoiceController@getCounts',
-                'as'   => 'monthly.billing.counts',
-            ])->middleware('permission:patientSummary.update');
+                Route::post('/getBillingCount', [
+                    'uses' => 'Billing\PracticeInvoiceController@getCounts',
+                    'as'   => 'monthly.billing.counts',
+                ])->middleware('permission:patientSummary.update');
 
-            Route::post('/send', [
-                'uses' => 'Billing\PracticeInvoiceController@send',
-                'as'   => 'monthly.billing.send',
-            ])->middleware('permission:patientSummary.read');
-        });
+                Route::post('/send', [
+                    'uses' => 'Billing\PracticeInvoiceController@send',
+                    'as'   => 'monthly.billing.send',
+                ])->middleware('permission:patientSummary.read');
+            });
 
             Route::group([
                 'prefix' => 'sales',
             ], function () {
-            //LOCATIONS -hidden on adminUI currently.
+                //LOCATIONS -hidden on adminUI currently.
 
-            Route::get('location/create', [
-                'uses' => 'SalesReportsController@createLocationReport',
-                'as'   => 'reports.sales.location.create',
-            ])->middleware('permission:practice.read');
+                Route::get('location/create', [
+                    'uses' => 'SalesReportsController@createLocationReport',
+                    'as'   => 'reports.sales.location.create',
+                ])->middleware('permission:practice.read');
 
-            Route::post('location/report', [
-                'uses' => 'SalesReportsController@makeLocationReport',
-                'as'   => 'reports.sales.location.report',
-            ])->middleware('permission:salesReport.create');
+                Route::post('location/report', [
+                    'uses' => 'SalesReportsController@makeLocationReport',
+                    'as'   => 'reports.sales.location.report',
+                ])->middleware('permission:salesReport.create');
 
-            //PROVIDERS
+                //PROVIDERS
 
-            Route::get('provider/create', [
-                'uses' => 'SalesReportsController@createProviderReport',
-                'as'   => 'reports.sales.provider.create',
-            ])->middleware('permission:salesReport.create');
+                Route::get('provider/create', [
+                    'uses' => 'SalesReportsController@createProviderReport',
+                    'as'   => 'reports.sales.provider.create',
+                ])->middleware('permission:salesReport.create');
 
-            Route::post('provider/report', [
-                'uses' => 'SalesReportsController@makeProviderReport',
-                'as'   => 'reports.sales.provider.report',
-            ])->middleware('permission:salesReport.create');
+                Route::post('provider/report', [
+                    'uses' => 'SalesReportsController@makeProviderReport',
+                    'as'   => 'reports.sales.provider.report',
+                ])->middleware('permission:salesReport.create');
 
-            //PRACTICES
+                //PRACTICES
 
-            Route::get('practice/create', [
-                'uses' => 'SalesReportsController@createPracticeReport',
-                'as'   => 'reports.sales.practice.create',
-            ])->middleware('permission:salesReport.create');
+                Route::get('practice/create', [
+                    'uses' => 'SalesReportsController@createPracticeReport',
+                    'as'   => 'reports.sales.practice.create',
+                ])->middleware('permission:salesReport.create');
 
-            Route::post('practice/report', [
-                'uses' => 'SalesReportsController@makePracticeReport',
-                'as'   => 'reports.sales.practice.report',
-            ])->middleware('permission:salesReport.create');
-        });
+                Route::post('practice/report', [
+                    'uses' => 'SalesReportsController@makePracticeReport',
+                    'as'   => 'reports.sales.practice.report',
+                ])->middleware('permission:salesReport.create');
+            });
 
             Route::get('call-v2', [
                 'uses' => 'Reports\CallReportController@exportxlsV2',
@@ -432,26 +395,26 @@ Route::prefix('cpmadmin')->group(function () {
             Route::group([
                 'prefix' => 'calls-dashboard',
             ], function () {
-            Route::get('/index', [
-                'uses' => 'CallsDashboardController@index',
-                'as'   => 'CallsDashboard.index',
-            ]);
+                Route::get('/index', [
+                    'uses' => 'CallsDashboardController@index',
+                    'as'   => 'CallsDashboard.index',
+                ]);
 
-            Route::get('/create', [
-                'uses' => 'CallsDashboardController@create',
-                'as'   => 'CallsDashboard.create',
-            ])->middleware('permission:call.read');
+                Route::get('/create', [
+                    'uses' => 'CallsDashboardController@create',
+                    'as'   => 'CallsDashboard.create',
+                ])->middleware('permission:call.read');
 
-            Route::patch('/edit', [
-                'uses' => 'CallsDashboardController@edit',
-                'as'   => 'CallsDashboard.edit',
-            ])->middleware('permission:call.update');
+                Route::patch('/edit', [
+                    'uses' => 'CallsDashboardController@edit',
+                    'as'   => 'CallsDashboard.edit',
+                ])->middleware('permission:call.update');
 
-            Route::post('/create-call', [
-                'uses' => 'CallsDashboardController@createCall',
-                'as'   => 'CallsDashboard.create-call',
-            ])->middleware('permission:call.create');
-        });
+                Route::post('/create-call', [
+                    'uses' => 'CallsDashboardController@createCall',
+                    'as'   => 'CallsDashboard.create-call',
+                ])->middleware('permission:call.create');
+            });
         });
 
         Route::group(
@@ -482,34 +445,21 @@ Route::prefix('cpmadmin')->group(function () {
             Route::group([
                 'prefix' => 'manage-cpm-problems',
             ], function () {
-            Route::get('/index', [
-                'uses' => 'ManageCpmProblemsController@index',
-                'as'   => 'manage-cpm-problems.index',
-            ])->middleware('permission:patientProblem.read');
+                Route::get('/index', [
+                    'uses' => 'ManageCpmProblemsController@index',
+                    'as'   => 'manage-cpm-problems.index',
+                ])->middleware('permission:patientProblem.read');
 
-            Route::get('/edit', [
-                'uses' => 'ManageCpmProblemsController@edit',
-                'as'   => 'manage-cpm-problems.edit',
-            ])->middleware('permission:patientProblem.read');
+                Route::get('/edit', [
+                    'uses' => 'ManageCpmProblemsController@edit',
+                    'as'   => 'manage-cpm-problems.edit',
+                ])->middleware('permission:patientProblem.read');
 
-            Route::patch('/update', [
-                'uses' => 'ManageCpmProblemsController@update',
-                'as'   => 'manage-cpm-problems.update',
-            ])->middleware('permission:patientProblem.update');
-        });
-        });
-
-        //Practice Billing
-        Route::group(['prefix' => 'practice/billing'], function () {
-            Route::get('create', [
-                'uses' => 'Billing\PracticeInvoiceController@createInvoices',
-                'as'   => 'practice.billing.create',
-            ])->middleware('permission:practiceInvoice.read');
-
-            Route::post('make', [
-                'uses' => 'Billing\PracticeInvoiceController@makeInvoices',
-                'as'   => 'practice.billing.make',
-            ])->middleware('permission:practiceInvoice.create');
+                Route::patch('/update', [
+                    'uses' => 'ManageCpmProblemsController@update',
+                    'as'   => 'manage-cpm-problems.update',
+                ])->middleware('permission:patientProblem.update');
+            });
         });
 
         // excel reports
@@ -772,7 +722,7 @@ Route::prefix('cpmadmin')->group(function () {
             );
         }
     );
-    
+
     Route::group([
         'prefix' => 'ops-dashboard',
     ], function () {
@@ -788,14 +738,14 @@ Route::prefix('cpmadmin')->group(function () {
             'uses' => 'OpsDashboardController@dailyCsv',
             'as'   => 'OpsDashboard.dailyCsv',
         ])->middleware('permission:opsReport.read');
-        
+
         //billing churn - not working, may fix in the future if it becomes a priority
         Route::get('/billing-churn', [
             'uses' => 'OpsDashboardController@getBillingChurn',
             'as'   => 'OpsDashboard.billingChurn',
         ])->middleware('permission:opsReport.read');
     });
-    
+
     Route::get('reports/nurse/weekly/data', [
         'uses' => 'NursePerformanceRepController@nurseMetricsPerformanceData',
         'as'   => 'admin.reports.nurse.performance.data',
