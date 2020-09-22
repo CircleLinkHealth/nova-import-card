@@ -1,7 +1,7 @@
 <div class="flow-text" style="max-height: 590px; overflow-y: scroll;">
     <div>
         <div class="header" style="display: inline-flex; margin-bottom: 60px">
-            <div class="address">
+            <div class="address" style="margin-right: 246px; max-width: 377px;">
                 @if($extraAddressValuesExists)
                 <br>
                     {{$extraAddressValues[0]['address_line_1']}}
@@ -12,7 +12,7 @@
                 @endif
             </div>
 
-            <div class="logo" style="text-align: right; opacity: 90%; margin-left: 377px;">
+            <div class="logo" style="text-align: right; opacity: 90%;">
                     @include('enrollment-letters.practiceLogo')
                 </div>
         </div>
