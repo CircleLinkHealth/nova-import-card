@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Customer\Http\Resources;
 
 use App\Http\Resources\BillingProvider;
 use App\Http\Resources\Note;
-use App\Http\Resources\NurseInfo;
+use CircleLinkHealth\Customer\Http\Resources\NurseInfo;
 use App\Http\Resources\PatientInfo;
 use App\Http\Resources\PatientMonthlySummary;
 use App\Http\Resources\PracticeResource;
