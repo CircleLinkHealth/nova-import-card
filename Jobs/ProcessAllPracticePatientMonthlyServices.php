@@ -41,7 +41,6 @@ class ProcessAllPracticePatientMonthlyServices extends Job
      */
     public function handle()
     {
-        Practice::get()
-            ->each(fn (Practice $p) => ProcessPracticePatientMonthlyServices::dispatch($p->id, $this->getMonth()));
+        Practice::each(fn (Practice $p) => ProcessPracticePatientMonthlyServices::dispatch($p->id, $this->getMonth()));
     }
 }

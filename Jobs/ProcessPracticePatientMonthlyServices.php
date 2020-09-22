@@ -42,7 +42,6 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
     public function handle()
     {
         Location::where('practice_id', $this->practiceId)
-            ->get()
             ->each(function (Location $location) {
                 ProcessLocationPatientMonthlyServices::dispatch($location->id, $this->chargeableMonth);
             });
