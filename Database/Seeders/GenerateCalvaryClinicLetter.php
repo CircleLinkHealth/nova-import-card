@@ -51,7 +51,7 @@ class GenerateCalvaryClinicLetter extends Seeder
 <p>I look forward to having you join this program to continue keeping you healthy between office visits.</p>
 <p>Sincerely,</p>
 <p>$customerSignaturePic<br />$signatoryName<br/></p>";
-    
+
         EnrollmentInvitationLetter::updateOrCreate(
             [
                 'practice_id' => $calvaryPractice->id,
@@ -67,7 +67,7 @@ class GenerateCalvaryClinicLetter extends Seeder
                         ],
                     ]
                 ),
-            
+
                 self::UI_REQUESTS => json_encode([
                     'logo_position'        => 'text-align:right',
                     'extra_address_header' => [
