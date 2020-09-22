@@ -225,14 +225,6 @@ class PatientSummaryProcessingTest extends TestCase
         ));
     }
 
-    public function test_job_to_create_summaries_will_be_dispatched_for_practice_if_summaries_dont_exist()
-    {
-    }
-
-    public function test_job_to_log_ccm_status_will_be_dispatched_if_logs_dont_exist()
-    {
-    }
-
     public function test_job_to_process_patient_summaries_can_happen_once_every_five_minutes()
     {
         //todo: implemented debouncing using https://github.com/mpbarlow/laravel-queue-debouncer . Found it a bit hard to write unit test for.

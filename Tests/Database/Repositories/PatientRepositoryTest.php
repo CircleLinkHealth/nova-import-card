@@ -88,7 +88,7 @@ class PatientRepositoryTest extends CustomerTestCase
         );
         self::assertTrue(
             0 === $locationServices
-                ->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::G0511))
+                ->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::GENERAL_CARE_MANAGEMENT))
                 ->where('chargeable_month', $startOfMonth)
                 ->count()
         );
