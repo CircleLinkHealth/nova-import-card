@@ -23,7 +23,7 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Tests\CustomerTestCase;
 
-class PatientTest extends CustomerTestCase
+class PatientBillingDatabaseTest extends CustomerTestCase
 {
     protected PatientServiceProcessorRepository $repo;
 

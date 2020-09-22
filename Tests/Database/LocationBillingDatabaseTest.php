@@ -12,7 +12,7 @@ use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Tests\CustomerTestCase;
 
-class LocationTest extends CustomerTestCase
+class LocationBillingDatabaseTest extends CustomerTestCase
 {
     protected LocationProcessorEloquentRepository $repo;
 

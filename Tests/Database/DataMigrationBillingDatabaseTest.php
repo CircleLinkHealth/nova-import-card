@@ -6,6 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
-class DataMigrationTest
+class DataMigrationBillingDatabaseTest
 {
 }

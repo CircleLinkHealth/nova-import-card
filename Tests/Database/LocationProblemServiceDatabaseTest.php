@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Tests\CustomerTestCase;
 
-class LocationProblemServiceTest extends CustomerTestCase
+class LocationProblemServiceDatabaseTest extends CustomerTestCase
 {
     protected LocationProblemServiceRepository $repo;
 
