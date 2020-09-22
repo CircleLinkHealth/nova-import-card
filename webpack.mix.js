@@ -45,8 +45,6 @@ const webpackConfig = {
 
 mix.webpackConfig(webpackConfig);
 
-
-
 mix.js('CircleLinkHealth/CpmAdmin/Resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps();
 mix.js('CircleLinkHealth/CpmAdmin/Resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps();
 
