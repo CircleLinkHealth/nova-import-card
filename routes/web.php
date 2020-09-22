@@ -304,52 +304,6 @@ Route::group(['middleware' => 'auth'], function () {
             )->middleware('permission:patientProblem.update');
         });
 
-        Route::group(['prefix' => 'practices'], function () {
-            Route::get('', 'API\PracticeController@getPractices')->middleware('permission:practice.read');
-            Route::get(
-                '{practiceId}/providers',
-                'API\PracticeController@getPracticeProviders'
-            )->middleware('permission:provider.read');
-            Route::get(
-                '{practiceId}/locations',
-                'API\PracticeController@getPracticeLocations'
-            )->middleware('permission:location.read');
-            Route::get(
-                '{practiceId}/locations/{locationId}/providers',
-                [
-                    'uses' => 'API\PracticeController@getLocationProviders',
-                    'as'   => 'api.get.location.providers',
-                ]
-            )->middleware('permission:provider.read');
-            Route::get(
-                'all',
-                'API\PracticeController@allPracticesWithLocationsAndStaff'
-            )->middleware('permission:practice.read,location.read,provider.read');
-            Route::get(
-                '{practiceId}/patients',
-                'API\PracticeController@getPatients'
-            )->middleware('permission:patient.read');
-            Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses')->middleware('permission:nurse.read');
-
-            /*
-             * deprecated in favor of without-scheduled-activities
-            Route::get('{practiceId}/patients/without-scheduled-calls', [
-                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutScheduledCalls',
-                'as'   => 'practice.patients.without-scheduled-calls',
-            ])->middleware('permission:patient.read,careplan.read');
-            */
-
-            Route::get('{practiceId}/patients/without-scheduled-activities', [
-                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutScheduledActivities',
-                'as'   => 'practice.patients.without-scheduled-activities',
-            ])->middleware('permission:patient.read,careplan.read');
-
-            Route::get('{practiceId}/patients/without-inbound-calls', [
-                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutInboundCalls',
-                'as'   => 'practice.patients.without-inbound-calls',
-            ])->middleware('permission:patient.read');
-        });
-
         Route::get('nurses', 'API\NurseController@index')->middleware('permission:nurse.read');
 
         Route::group([
