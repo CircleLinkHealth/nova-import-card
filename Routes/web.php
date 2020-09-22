@@ -768,67 +768,72 @@ Route::group([
     ],
 ], function () {
     Route::post('chargeable-services', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@postStoreChargeableServices',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreChargeableServices',
         'as'   => 'provider.dashboard.store.chargeable-services',
     ])->middleware('permission:practiceSetting.create');
     
     Route::get('chargeable-services', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@getCreateChargeableServices',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreateChargeableServices',
         'as'   => 'provider.dashboard.manage.chargeable-services',
     ])->middleware('permission:practiceSetting.read');
     
     Route::post('invite', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@postStoreInvite',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreInvite',
         'as'   => 'post.store.invite',
     ])->middleware('permission:invite.create');
     
     Route::post('locations', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@postStoreLocations',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreLocations',
         'as'   => 'provider.dashboard.store.locations',
     ])->middleware('permission:practiceSetting.create');
     
     Route::post('staff', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@postStoreStaff',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreStaff',
         'as'   => 'provider.dashboard.store.staff',
     ])->middleware('permission:practiceSetting.update');
     
     Route::post('notifications', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@postStoreNotifications',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreNotifications',
         'as'   => 'provider.dashboard.store.notifications',
     ])->middleware('permission:practiceSetting.update');
     
     Route::get('notifications', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@getCreateNotifications',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreateNotifications',
         'as'   => 'provider.dashboard.manage.notifications',
     ])->middleware('permission:practiceSetting.read');
     
     Route::post('practice', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@postStorePractice',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStorePractice',
         'as'   => 'provider.dashboard.store.practice',
     ])->middleware('permission:practiceSetting.update');
     
     Route::get('practice', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@getCreatePractice',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreatePractice',
         'as'   => 'provider.dashboard.manage.practice',
     ])->middleware('permission:practiceSetting.read');
     
     Route::get('staff', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@getCreateStaff',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreateStaff',
         'as'   => 'provider.dashboard.manage.staff',
     ])->middleware('permission:practiceSetting.read');
     
     Route::get('locations', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@getCreateLocation',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreateLocation',
         'as'   => 'provider.dashboard.manage.locations',
     ])->middleware('permission:practiceSetting.read');
     
     Route::get('enrollment', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@getCreateEnrollment',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreateEnrollment',
         'as'   => 'provider.dashboard.manage.enrollment',
     ])->middleware('permission:practiceSetting.read');
     
     Route::post('enrollment', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Settings\Http\Controllers\DashboardController@postStoreEnrollment',
+        'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreEnrollment',
         'as'   => 'provider.dashboard.store.enrollment',
     ])->middleware('permission:practiceSetting.update');
 });
+
+Route::resource(
+    'practice.users',
+    'API\PracticeStaffController'
+)->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete')->only(['destroy', 'index', 'update']);

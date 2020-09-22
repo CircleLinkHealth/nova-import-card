@@ -1,5 +1,5 @@
 <div class="row">
-    @include('provider.partials.mdl.form.text.textfield', [
+    @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
     'name' => 'locations[@{{index}}][clinical_contact][first_name]',
     'label' => 'First name',
     'class' => 'col s6',
@@ -14,7 +14,7 @@
     ],
 ])
 
-    @include('provider.partials.mdl.form.text.textfield', [
+    @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
         'name' => 'locations[@{{index}}][clinical_contact][last_name]',
         'label' => 'Last name',
         'class' => 'col s6',
@@ -31,7 +31,7 @@
 </div>
 
 <div class="row">
-    @include('provider.partials.mdl.form.text.textfield', [
+    @include('cpm-admin::provider.partials.mdl.form.text.textfield', [
         'name' => 'locations[@{{index}}][clinical_contact][email]',
         'value' => '@{{loc.clinical_contact.email}}',
         'label' => 'E-mail',

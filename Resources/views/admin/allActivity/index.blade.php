@@ -86,7 +86,7 @@
             <div class="row">
                 <div class="container">
                     <div class="col-md-4 col-md-offset-4 alert alert-danger">
-                        @include('provider.partials.errors.validation')
+                        @include('cpm-admin::provider.partials.errors.validation')
                     </div>
                 </div>
             </div>

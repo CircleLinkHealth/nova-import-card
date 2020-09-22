@@ -102,7 +102,7 @@ class DashboardController extends Controller
     {
         $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients()->pluck('email')->implode(',');
 
-        return view('provider.notifications.create', array_merge([
+        return view('cpm-admin::provider.notifications.create', array_merge([
             'practice'          => $this->primaryPractice,
             'practiceSlug'      => $this->practiceSlug,
             'practiceSettings'  => $this->primaryPractice->cpmSettings(),
@@ -115,7 +115,7 @@ class DashboardController extends Controller
         $users     = $this->onboardingService->getExistingStaff($this->primaryPractice);
         $locations = $this->onboardingService->getExistingLocations($this->primaryPractice);
 
-        return view('provider.practice.create', array_merge([
+        return view('cpm-admin::provider.practice.create', array_merge([
             'practiceSlug' => $this->practiceSlug,
             'staff'        => $users['existingUsers'],
             'locations'    => $locations,
@@ -137,12 +137,12 @@ class DashboardController extends Controller
         $practiceSlug = $this->practiceSlug;
 
         //removed variable invite
-        return view('provider.user.create-staff', compact('practiceSlug', 'practice'));
+        return view('cpm-admin::provider.user.create-staff', compact('practiceSlug', 'practice'));
     }
 
     public function getIndex()
     {
-        return view('provider.layouts.dashboard', array_merge([
+        return view('cpm-admin::provider.layouts.dashboard', array_merge([
             'practiceSlug' => $this->practiceSlug,
         ], $this->returnWithAll));
     }
@@ -218,7 +218,7 @@ class DashboardController extends Controller
             $providers = $this->primaryPractice->getProviders($this->primaryPractice->id)->filter(function ($p) {
                 return ! (bool) $p->emr_direct_address;
             });
-            $route = route('provider.dashboard.manage.staff', ['practiceSlug' => $this->primaryPractice->name]);
+            $route = route('cpm-admin::provider.dashboard.manage.staff', ['practiceSlug' => $this->primaryPractice->name]);
 
             if ($providers->count() > 0) {
                 $errors->push("You have selected the option to send Care Plan Approval Reminders via DIRECT. 
