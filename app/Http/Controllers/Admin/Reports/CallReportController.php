@@ -18,6 +18,8 @@ class CallReportController extends Controller
 {
     public function exportXlsV2(Request $request, CallViewFilters $filters)
     {
+        ini_set('memory_limit', '512M');
+
         $date = Carbon::now()->startOfMonth();
 
         $calls = CallView::filter($filters)
