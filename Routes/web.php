@@ -1,14 +1,46 @@
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
-
-//
-// ADMIN (/admin)
-//
-// NOTE: in two route groups. One for software-only and one for super admins
-//
+Route::prefix('api')->group(function() {
+    Route::group(['prefix' => 'practices'], function () {
+        Route::get('', 'API\PracticeController@getPractices')->middleware('permission:practice.read');
+        Route::get(
+            '{practiceId}/providers',
+            'API\PracticeController@getPracticeProviders'
+        )->middleware('permission:provider.read');
+        Route::get(
+            '{practiceId}/locations',
+            'API\PracticeController@getPracticeLocations'
+        )->middleware('permission:location.read');
+        Route::get(
+            '{practiceId}/locations/{locationId}/providers',
+            [
+                'uses' => 'API\PracticeController@getLocationProviders',
+                'as'   => 'api.get.location.providers',
+            ]
+        )->middleware('permission:provider.read');
+        Route::get(
+            'all',
+            'API\PracticeController@allPracticesWithLocationsAndStaff'
+        )->middleware('permission:practice.read,location.read,provider.read');
+        Route::get(
+            '{practiceId}/patients',
+            'API\PracticeController@getPatients'
+        )->middleware('permission:patient.read');
+        Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses')->middleware('permission:nurse.read');
+        
+        Route::get('{practiceId}/patients/without-scheduled-activities', [
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutScheduledActivities',
+            'as'   => 'practice.patients.without-scheduled-activities',
+        ])->middleware('permission:patient.read,careplan.read');
+        
+        Route::get('{practiceId}/patients/without-inbound-calls', [
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutInboundCalls',
+            'as'   => 'practice.patients.without-inbound-calls',
+        ])->middleware('permission:patient.read');
+    });
+    
+    Route::get('nurses', 'API\NurseController@index')->middleware('permission:nurse.read');
+});
 Route::prefix('cpmadmin')->group(function () {
     Route::get('upg0506/{type}', [
         'uses' => 'DashboardController@upg0506',
