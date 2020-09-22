@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Repositories;
 
-use App\Http\Controllers\API\PracticeStaffController;
+use CircleLinkHealth\CpmAdmin\Http\Controllers\API\PracticeStaffController;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\GoogleDrive;
