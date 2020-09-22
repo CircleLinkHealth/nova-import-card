@@ -639,6 +639,14 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'CCDViewer\CCDViewerController@oldViewer',
         'as'   => 'ccd-old-viewer.post',
     ])->middleware('permission:ccda.read');
+    
+    Route::get(
+        '{id}/destroy',
+        [
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\SuperAdmin\UserController@destroy',
+            'as'   => 'admin.users.destroy',
+        ]
+    )->middleware('permission:user.delete');
 
     // CCD Importer Routes
     Route::group([
