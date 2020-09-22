@@ -30,8 +30,8 @@ environments:
         runtime: php-7.4
         cache: cpm-staging-cache
         queues:
-            - high
             - default
+            - high
             - low
         build:
             - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --classmap-authoritative'
