@@ -190,35 +190,36 @@
         },
         {
             "name": "algolia/scout-extended",
-            "version": "v1.9.0",
+            "version": "v1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/scout-extended.git",
-                "reference": "1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0"
+                "reference": "d3932eee760f6bf205560b61152392acddbfb50f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0",
-                "reference": "1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0",
+                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/d3932eee760f6bf205560b61152392acddbfb50f",
+                "reference": "d3932eee760f6bf205560b61152392acddbfb50f",
                 "shasum": ""
             },
             "require": {
                 "algolia/algoliasearch-client-php": "^2.5.1",
                 "ext-json": "*",
-                "illuminate/console": "^6.0|^7.0",
-                "illuminate/contracts": "^6.0|^7.0",
-                "illuminate/database": "^6.0|^7.0",
-                "illuminate/filesystem": "^6.0|^7.0",
-                "illuminate/support": "^6.0|^7.0",
+                "illuminate/console": "^6.0|^7.0|^8.0",
+                "illuminate/contracts": "^6.0|^7.0|^8.0",
+                "illuminate/database": "^6.0|^7.0|^8.0",
+                "illuminate/filesystem": "^6.0|^7.0|^8.0",
+                "illuminate/support": "^6.0|^7.0|^8.0",
                 "laravel/scout": "^8.0",
-                "php": "^7.2",
+                "php": "^7.3",
                 "riimu/kit-phpencoder": "^2.4"
             },
             "require-dev": {
                 "fzaninotto/faker": "^1.8",
+                "laravel/legacy-factories": "^1.0",
                 "mockery/mockery": "^1.1",
-                "nunomaduro/larastan": "^0.5",
-                "orchestra/testbench": "^4.0|^5.0",
+                "nunomaduro/larastan": "^0.6",
+                "orchestra/testbench": "^4.0|^5.0|^6.0",
                 "phpstan/phpstan": "^0.12.14",
                 "phpunit/phpunit": "^8.0|^9.0"
             },
@@ -262,7 +263,7 @@
                 "scout",
                 "search"
             ],
-            "time": "2020-03-03T14:27:21+00:00"
+            "time": "2020-09-23T13:38:42+00:00"
         },
         {
             "name": "amnuts/opcache-gui",
@@ -573,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.155.0",
+            "version": "3.155.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1957df567541f738fd01bbd2710af7665b61f6d3"
+                "reference": "575430a46c329a2a3723cdcb2d30df390f434ba1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1957df567541f738fd01bbd2710af7665b61f6d3",
-                "reference": "1957df567541f738fd01bbd2710af7665b61f6d3",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/575430a46c329a2a3723cdcb2d30df390f434ba1",
+                "reference": "575430a46c329a2a3723cdcb2d30df390f434ba1",
                 "shasum": ""
             },
             "require": {
@@ -654,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-09-22T18:11:10+00:00"
+            "time": "2020-09-23T18:11:33+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -965,7 +966,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "0bd32681599be0a0119cdbdfd93b88119b89edad"
+                "reference": "15c5b99120ebeffcf3e6c34dbb96260a004abf1d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1003,7 +1004,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-09-23T13:05:36+00:00"
+            "time": "2020-09-23T21:43:26+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1760,7 +1761,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "f92f87e1d1b03dc71d70b6c5f370f23e926e513c"
+                "reference": "b6ba2c55b0936f7d88ce4a664dd9971fd5b81fb2"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1785,7 +1786,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-08T19:09:11+00:00"
+            "time": "2020-09-23T21:43:26+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -7144,16 +7145,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.10.0",
+            "version": "v4.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "1c13d05035deff45f1230ca68bd7d74d621762d9"
+                "reference": "1b479e7592812411c20c34d9ed33db3957bde66e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/1c13d05035deff45f1230ca68bd7d74d621762d9",
-                "reference": "1c13d05035deff45f1230ca68bd7d74d621762d9",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/1b479e7592812411c20c34d9ed33db3957bde66e",
+                "reference": "1b479e7592812411c20c34d9ed33db3957bde66e",
                 "shasum": ""
             },
             "require": {
@@ -7192,7 +7193,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2020-09-19T14:52:48+00:00"
+            "time": "2020-09-23T18:23:49+00:00"
         },
         {
             "name": "nvanheuverzwijn/monolog-logdna",
