@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\Core\Notifications\Channels;
 
+use App\Exceptions\CannotSendNotificationException;
+use App\NotificationsExclusion;
 use CircleLinkHealth\Core\TwilioInterface;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Notifications\Events\NotificationFailed;
@@ -44,6 +46,10 @@ class CustomTwilioChannel extends TwilioChannel
     public function send($notifiable, Notification $notification)
     {
         try {
+            if (isset($notifiable->id) && $this->isUserBlackListed($notifiable->id)) {
+                throw new CannotSendNotificationException("User[$notifiable->id] is in sms exclusions list. Will not send sms.");
+            }
+
             $to        = $this->getTo($notifiable);
             $message   = $notification->toTwilio($notifiable);
             $useSender = $this->canReceiveAlphanumericSender($notifiable);
@@ -67,8 +73,11 @@ class CustomTwilioChannel extends TwilioChannel
             } else {
                 $this->events->fire($event);
             }
-            //we want to throw so that NotificationSent event will not be raised.
-            throw $exception;
         }
+    }
+
+    private function isUserBlackListed($userId)
+    {
+        return NotificationsExclusion::isSmsBlackListed($userId);
     }
 }
