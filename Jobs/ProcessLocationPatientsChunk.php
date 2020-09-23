@@ -73,7 +73,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob implements S
      */
     public function handle()
     {
-        $this->getBuilder()->each(function (User $patient) {
+        $this->getBuilder()->get()->each(function (User $patient) {
             ProcessPatientMonthlyServices::dispatch(
                 (new PatientMonthlyBillingDTO())
                     ->subscribe($this->getAvailableServiceProcessors())

@@ -51,7 +51,8 @@ class LocationSummaryProcessingTest extends TestCase
 
         $builderMock->makePartial();
 
-        $chunkJob = new ProcessLocationPatientsChunk(
+        $chunkJobPartiallyMocked = Mockery::mock(ProcessLocationPatientsChunk::class, [
+            $locationId = 1,
             AvailableServiceProcessors::push(
                 [
                     new CCM(),
@@ -59,12 +60,13 @@ class LocationSummaryProcessingTest extends TestCase
                     new PCM(),
                 ]
             ),
-            $startOfMonth = Carbon::now()->startOfMonth()->startOfDay()
-        );
+            $startOfMonth = Carbon::now()->startOfMonth()->startOfDay(),
+        ]);
+        $chunkJobPartiallyMocked->shouldReceive('getBuilder')
+            ->andReturn($builderMock);
 
-        $chunkJob->setBuilder(0, 100, $builderMock);
-
-        $chunkJob->handle();
+        $chunkJobPartiallyMocked->makePartial();
+        $chunkJobPartiallyMocked->handle();
 
         Bus::assertDispatched(function (ProcessPatientMonthlyServices $job) use ($startOfMonth) {
             $availableProcessors = $job->getAvailableServiceProcessors();
