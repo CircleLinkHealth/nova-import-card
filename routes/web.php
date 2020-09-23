@@ -1953,7 +1953,7 @@ Route::group([
     ]);
 
     Route::post('/inbound', [
-        'uses' => 'PostmarkController@inbound',
+        'uses' => 'Postmark\PostmarkController@inbound',
         'as'   => 'postmark.inbound',
     ]);
 });
