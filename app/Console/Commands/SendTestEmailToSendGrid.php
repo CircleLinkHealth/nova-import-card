@@ -58,8 +58,9 @@ class SendTestEmailToSendGrid extends Command
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
             }
-
-            return $this->info('Done');
+            
+            $this->info('Done');
+            return;
         }
 
         if ( ! is_null($this->email)) {

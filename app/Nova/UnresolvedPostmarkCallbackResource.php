@@ -9,7 +9,9 @@ namespace App\Nova;
 use App\UnresolvedCallbacksResourceModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Markdown;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 
 class UnresolvedPostmarkCallbackResource extends Resource
 {
@@ -99,7 +101,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
 
                 return array_values($links->toArray());
             })->asHtml(),
-
+            Textarea::make('inbound callback', 'inbound_data')->hideFromIndex(),
             Boolean::make('resolved', 'resolved')->sortable(),
             Text::make('resolved callback id', 'call_id'),
         ];
