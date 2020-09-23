@@ -249,11 +249,7 @@ class Kernel extends ConsoleKernel
                 return SendResolveInvoiceDisputeReminder::shouldSkip();
             })
             ->onOneServer();
-
-        $schedule->command(SendUnsuccessfulCallPatientsReminderNotification::class)
-            ->dailyAt('10:00')
-            ->onOneServer();
-
+        
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
             ->weeklyOn(1, '10:00')
             ->onOneServer();
