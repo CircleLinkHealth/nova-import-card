@@ -6,9 +6,13 @@
 
 namespace App\Contracts;
 
-use Illuminate\Database\Eloquent\Builder;
-
 interface ChunksEloquentBuilder
 {
-    public function setBuilder(int $offset, int $limit, Builder $builder): self;
+    public function getLimit(): int;
+
+    public function getOffset(): int;
+
+    public function setLimit(int $limit): self;
+
+    public function setOffset(int $offset): self;
 }
