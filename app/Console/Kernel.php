@@ -34,7 +34,6 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\SendSelfEnrollmentReminders;
-use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
 use App\Jobs\OverwritePatientMrnsFromSupplementalData;
 use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use App\Notifications\NurseDailyReport;
@@ -249,7 +248,7 @@ class Kernel extends ConsoleKernel
                 return SendResolveInvoiceDisputeReminder::shouldSkip();
             })
             ->onOneServer();
-        
+
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
             ->weeklyOn(1, '10:00')
             ->onOneServer();
