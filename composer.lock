@@ -129,35 +129,36 @@
         },
         {
             "name": "algolia/scout-extended",
-            "version": "v1.9.0",
+            "version": "v1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/scout-extended.git",
-                "reference": "1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0"
+                "reference": "d3932eee760f6bf205560b61152392acddbfb50f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0",
-                "reference": "1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0",
+                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/d3932eee760f6bf205560b61152392acddbfb50f",
+                "reference": "d3932eee760f6bf205560b61152392acddbfb50f",
                 "shasum": ""
             },
             "require": {
                 "algolia/algoliasearch-client-php": "^2.5.1",
                 "ext-json": "*",
-                "illuminate/console": "^6.0|^7.0",
-                "illuminate/contracts": "^6.0|^7.0",
-                "illuminate/database": "^6.0|^7.0",
-                "illuminate/filesystem": "^6.0|^7.0",
-                "illuminate/support": "^6.0|^7.0",
+                "illuminate/console": "^6.0|^7.0|^8.0",
+                "illuminate/contracts": "^6.0|^7.0|^8.0",
+                "illuminate/database": "^6.0|^7.0|^8.0",
+                "illuminate/filesystem": "^6.0|^7.0|^8.0",
+                "illuminate/support": "^6.0|^7.0|^8.0",
                 "laravel/scout": "^8.0",
-                "php": "^7.2",
+                "php": "^7.3",
                 "riimu/kit-phpencoder": "^2.4"
             },
             "require-dev": {
                 "fzaninotto/faker": "^1.8",
+                "laravel/legacy-factories": "^1.0",
                 "mockery/mockery": "^1.1",
-                "nunomaduro/larastan": "^0.5",
-                "orchestra/testbench": "^4.0|^5.0",
+                "nunomaduro/larastan": "^0.6",
+                "orchestra/testbench": "^4.0|^5.0|^6.0",
                 "phpstan/phpstan": "^0.12.14",
                 "phpunit/phpunit": "^8.0|^9.0"
             },
@@ -201,7 +202,7 @@
                 "scout",
                 "search"
             ],
-            "time": "2020-03-03T14:27:21+00:00"
+            "time": "2020-09-23T13:38:42+00:00"
         },
         {
             "name": "amnuts/opcache-gui",
@@ -1010,7 +1011,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
-                "reference": "1bbdc8741c1bce578b353148a21acb8186232dbe",
+                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a",
                 "shasum": null
             },
             "require": {
@@ -1036,10 +1037,7 @@
             "keywords": [
                 "laravel",
                 "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
+            ]
         },
         {
             "name": "circlelinkhealth/condition-code-lookup-module",
@@ -1083,7 +1081,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "fcba7f93780a5ae43e0242240b3f99204c443245"
+                "reference": "c33a46d868bad465e4ed3d9832507aa541de0acd"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1112,7 +1110,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-23T11:42:10+00:00"
+            "time": "2020-09-23T14:08:43+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1226,7 +1224,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
-                "reference": "b6cf4442f05d1bf70a7740842be0523456f73b14",
+                "reference": "3d7e5ac1e98048bb2f469171feb8cb1532131c9c",
                 "shasum": null
             },
             "require": {
@@ -1253,10 +1251,7 @@
             "keywords": [
                 "laravel",
                 "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
+            ]
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1301,7 +1296,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
-                "reference": "8d2f73917c098fb67e5c3e1d4e957838b1ce33a4",
+                "reference": "647bc07cacc81615878d4210f947957280127fdc",
                 "shasum": null
             },
             "require": {
@@ -1327,10 +1322,7 @@
             "keywords": [
                 "laravel",
                 "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
+            ]
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
@@ -1376,7 +1368,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
-                "reference": "7b4fcc04ab2b3522353cc2707bafc9452ac690b1",
+                "reference": "94203596bccb49bf965bc7dd2d58399e27db25d7",
                 "shasum": null
             },
             "require": {
@@ -1402,10 +1394,7 @@
             "keywords": [
                 "laravel",
                 "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
+            ]
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
