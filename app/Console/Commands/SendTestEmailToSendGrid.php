@@ -49,7 +49,7 @@ class SendTestEmailToSendGrid extends Command
     public function handle()
     {
         $this->isCallbackMail = (bool) $this->option('callback-mail');
-        $this->email          = $this->isCallbackMail ?: self::POSTMARK_INBOUND_ADRESS;
+        $this->email          = $this->isCallbackMail ? self::POSTMARK_INBOUND_ADRESS : $this->argument('email');
 
         if ($this->isCallbackMail) {
             try {

@@ -62,9 +62,7 @@ trait PostmarkCallbackHelpers
     {
         return  PostmarkInboundMail::create(
             [
-                //                'from' => ProcessPostmarkInboundMailJob::FROM_CALLBACK_FULL_EMAIL,
                 'data' => json_encode($this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf)),
-                //                'body' => 'This is it',
             ]
         );
     }

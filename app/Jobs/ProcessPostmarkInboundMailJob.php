@@ -95,8 +95,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                         null,
                         SchedulerService::CALL_BACK_TYPE
                     );
-
-                    //@todo: Send Live Notification. It should be done by Call observer already. Check!
+                    
                     return;
                 }
 
