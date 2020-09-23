@@ -17,13 +17,14 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         $queuedAndUnassigned = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED;
         $withdrawRequest     = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST;
         $noNameMatch         = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::NO_NAME_MATCH;
-        $noNameSelfMatch         = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
+        $noNameSelfMatch     = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
 
         return \DB::statement("
         CREATE VIEW {$this->getViewName()} AS
         SELECT
         upc.postmark_id as postmark_id,
         upc.user_id as matched_user_id,
+        p.data as inbound_data,
         
         CASE WHEN upc.unresolved_reason = '$notEnrolled' THEN 'Not Enrolled'
         WHEN upc.unresolved_reason = '$queuedAndUnassigned' THEN 'Enrollment Queue / CA unassigned'
@@ -50,6 +51,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
             unresolved_postmark_callbacks upc
            
             left join calls c on upc.user_id = c.inbound_cpm_id
+            left join postmark_inbound_mail p on upc.postmark_id = p.id
          
          WHERE 0 = (SELECT COUNT(c2.id)
              FROM calls c2
