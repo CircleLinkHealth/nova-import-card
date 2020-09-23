@@ -73,8 +73,6 @@ class CustomTwilioChannel extends TwilioChannel
             } else {
                 $this->events->fire($event);
             }
-            //we want to throw so that NotificationSent event will not be raised.
-            throw $exception;
         }
     }
 

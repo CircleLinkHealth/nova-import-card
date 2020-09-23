@@ -110,6 +110,10 @@ class NotificationStatusUpdateJob implements ShouldQueue
             return false;
         }
 
+        if ('failed' === $currentStatus && 'pending' === $newStatus) {
+            return true;
+        }
+
         if ('mail' === $this->channel) {
             if ('sending' === $currentStatus && 'pending' === $newStatus) {
                 return true;
