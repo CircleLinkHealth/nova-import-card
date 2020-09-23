@@ -16,14 +16,18 @@ class PatientActivityCreated implements PatientEvent
 
     protected int $patientUserId;
 
+    protected bool $shouldDebounce;
+
     /**
      * Create a new event instance.
      *
+     * @param  mixed $shouldDebounce
      * @return void
      */
-    public function __construct(int $patientUserId)
+    public function __construct(int $patientUserId, $shouldDebounce = true)
     {
-        $this->patientUserId = $patientUserId;
+        $this->patientUserId  = $patientUserId;
+        $this->shouldDebounce = $shouldDebounce;
     }
 
     /**
@@ -48,6 +52,6 @@ class PatientActivityCreated implements PatientEvent
 
     public function shouldDebounce(): bool
     {
-        return true;
+        return $this->shouldDebounce;
     }
 }
