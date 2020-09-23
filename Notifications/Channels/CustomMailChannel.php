@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\Core\Notifications\Channels;
 
+use App\Exceptions\CannotSendNotificationException;
+use App\NotificationsExclusion;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Events\NotificationFailed;
@@ -24,6 +26,10 @@ class CustomMailChannel extends MailChannel
     public function send($notifiable, Notification $notification)
     {
         try {
+            if ($this->isUserBlackListed($notifiable->id)) {
+                throw new CannotSendNotificationException("User[$notifiable->id] is in mail exclusions list. Will not send mail.");
+            }
+
             $message = $notification->toMail($notifiable);
 
             if ( ! $notifiable->routeNotificationFor('mail', $notification) &&
@@ -56,5 +62,10 @@ class CustomMailChannel extends MailChannel
                 $this->events->fire($event);
             }
         }
+    }
+
+    private function isUserBlackListed($userId)
+    {
+        return NotificationsExclusion::isMailBlackListed($userId);
     }
 }
