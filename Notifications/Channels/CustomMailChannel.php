@@ -26,7 +26,7 @@ class CustomMailChannel extends MailChannel
     public function send($notifiable, Notification $notification)
     {
         try {
-            if ($this->isUserBlackListed($notifiable->id)) {
+            if (isset($notifiable->id) && $this->isUserBlackListed($notifiable->id)) {
                 throw new CannotSendNotificationException("User[$notifiable->id] is in mail exclusions list. Will not send mail.");
             }
 

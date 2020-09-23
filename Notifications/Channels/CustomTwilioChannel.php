@@ -46,7 +46,7 @@ class CustomTwilioChannel extends TwilioChannel
     public function send($notifiable, Notification $notification)
     {
         try {
-            if ($this->isUserBlackListed($notifiable->id)) {
+            if (isset($notifiable->id) && $this->isUserBlackListed($notifiable->id)) {
                 throw new CannotSendNotificationException("User[$notifiable->id] is in sms exclusions list. Will not send sms.");
             }
 
