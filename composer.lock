@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7531b9efe3004e26b70824c901c34806",
+    "content-hash": "b34d67533afd422ec926209305c184fc",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1077,11 +1077,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-sms_exclusions_list",
+            "version": "v1.7.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "c33a46d868bad465e4ed3d9832507aa541de0acd"
+                "reference": "c9543418178a31e942cf90540b12ccc4e3ae2983"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1110,15 +1110,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-23T14:08:43+00:00"
+            "time": "2020-09-23T17:16:11+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-sms_exclusions_list",
+            "version": "v2.5.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "4172472a7042363ed6a9c5d0de7349a0e882aa17"
+                "reference": "65d625ff77d3a2f2e9271bc55a11e9bb45bc587f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1140,7 +1140,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-23T10:24:57+00:00"
+            "time": "2020-09-23T17:17:44+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -16635,8 +16635,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/core-module": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "orangehill/iseed": 20
     },
