@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateOfflineActivityTimeRequest;
+use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
@@ -34,6 +35,7 @@ class OfflineActivityTimeRequestController extends Controller
 
         if ($isApproved) {
             $timeRequest->approve();
+            event(new PatientActivityCreated($timeRequest->patient_id));
         } else {
             $timeRequest->reject();
         }
