@@ -35,6 +35,7 @@ class Location implements CustomerProcessor
             ->chunkIntoJobs(
                 100,
                 new ProcessLocationPatientsChunk(
+                    $locationId,
                     $this->repo->availableLocationServiceProcessors(
                         $locationId,
                         $chargeableMonth

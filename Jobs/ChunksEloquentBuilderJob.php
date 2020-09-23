@@ -11,27 +11,32 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class ChunksEloquentBuilderJob implements ChunksEloquentBuilder
 {
-    protected Builder $builder;
-
     protected int $limit;
 
     protected int $offset;
 
-    public function getLimit()
+    abstract public function getBuilder(): Builder;
+
+    public function getLimit(): int
     {
         return $this->limit;
     }
 
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
 
-    public function setBuilder(int $offset, int $limit, Builder $builder): self
+    public function setLimit(int $limit): self
     {
-        $this->builder = $builder
-            ->offset($this->offset = $offset)
-            ->limit($this->limit = $limit);
+        $this->limit = $limit;
+
+        return $this;
+    }
+
+    public function setOffset(int $offset): self
+    {
+        $this->offset = $offset;
 
         return $this;
     }
