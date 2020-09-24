@@ -25,8 +25,10 @@ class SeedLocationProblemServicesFromExistingTables extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', [
-            '--class' => CpmProblemChargeableServiceLocationSeeder::class,
-        ]);
+        if (isCpm()) {
+            Artisan::call('db:seed', [
+                '--class' => CpmProblemChargeableServiceLocationSeeder::class,
+            ]);
+        }
     }
 }

@@ -24,6 +24,8 @@ class SeedLocationSummariesFromChargeablesTableData extends Migration
      */
     public function up()
     {
-        \CircleLinkHealth\CcmBilling\Jobs\MigrateChargeableServicesFromChargeablesToLocationSummariesTable::dispatch(\Carbon\Carbon::now()->startOfMonth());
+        if (isCpm()) {
+            \CircleLinkHealth\CcmBilling\Jobs\MigrateChargeableServicesFromChargeablesToLocationSummariesTable::dispatch(\Carbon\Carbon::now()->startOfMonth());
+        }
     }
 }

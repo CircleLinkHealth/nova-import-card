@@ -25,8 +25,10 @@ class SeedHumanFriendlyNamesForChargeableServices extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', [
-            '--class' => ChargeableServiceHumanFriendlyNamesSeeder::class,
-        ]);
+        if (isCpm()) {
+            Artisan::call('db:seed', [
+                '--class' => ChargeableServiceHumanFriendlyNamesSeeder::class,
+            ]);
+        }
     }
 }
