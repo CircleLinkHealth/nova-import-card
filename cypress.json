@@ -14,7 +14,6 @@
   "video": false,
   "failOnStatusCode": false,
   "pluginsFile": "cypress/plugins/index.js",
-  "reporter": "mochawesome",
   "reporterOptions": {
     "charts": true,
     "quiet": true,
@@ -23,6 +22,5 @@
     "json": true,
     "reportDir": "cypress/reports/mocha"
   },
-
   "projectId": "fraekr"
 }
