@@ -19,7 +19,7 @@ class G0511 extends AbstractProcessor
 
     public function code(): string
     {
-        return ChargeableService::G0511;
+        return ChargeableService::GENERAL_CARE_MANAGEMENT;
     }
 
     public function minimumNumberOfCalls(): int
