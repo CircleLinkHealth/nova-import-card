@@ -26,7 +26,7 @@ describe('Downloads files', () => {
 		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
 	});
 
-	it('Should download PDF file from Patient List page', () => {
+	/*it('Should download PDF file from Patient List page', () => {
 		cy.visit('/manage-patients/listing');
 		cy.downloadFile(
 			Cypress.config().baseUrl + '/manage-patients/listing/pdf',
@@ -34,7 +34,7 @@ describe('Downloads files', () => {
 			'patientList.pdf'
 		);
 	});
-
+*/
 	it('Should download CSV file from Ops Dashboard page', () => {
 		cy.visit('/ops-dashboard/index');
 		cy.downloadFile(
