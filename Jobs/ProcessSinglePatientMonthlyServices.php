@@ -23,7 +23,7 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
     public function __construct(int $patientId, Carbon $month)
     {
         $this->patientId = $patientId;
-        $this->month     = ($month ?? Carbon::now()->startOfMonth()->startOfDay())->toDateString();
+        $this->month     = ($month ?? Carbon::now()->startOfMonth())->toDateString();
     }
 
     public static function fromParameters(string ...$parameters)
