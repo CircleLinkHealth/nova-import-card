@@ -31,7 +31,7 @@
     "build-invoices-download-prod": "cd nova-components/InvoicesDownload && npm install && npm run prod",
     "startare": "pack build cpm-web --builder heroku/buildpacks:18 -b heroku/php -b heroku/nodejs --env-file=.env",
     "cy:open": "cypress open",
-    "cy:run": "cypress run"
+    "cy:run": "cypress run --browser chrome --headless"
   },
   "jest": {
     "verbose": true,
