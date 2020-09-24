@@ -13,7 +13,7 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessingJob implements HasUniqueIdentifierForDebounce
 {
-    protected Carbon $month;
+    protected string $month;
 
     protected int $patientId;
 
@@ -23,7 +23,7 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
     public function __construct(int $patientId, Carbon $month)
     {
         $this->patientId = $patientId;
-        $this->month     = $month ?? Carbon::now()->startOfMonth()->startOfDay();
+        $this->month     = ($month ?? Carbon::now()->startOfMonth()->startOfDay())->toDateString();
     }
 
     public static function fromParameters(string ...$parameters)
@@ -35,7 +35,7 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
 
     public function getMonth(): Carbon
     {
-        return $this->month;
+        return Carbon::parse($this->month);
     }
 
     public function getPatientId(): int
