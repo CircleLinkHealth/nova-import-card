@@ -4,69 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fc10d6cb366f9cb25df1c7433f6ed175",
+    "content-hash": "b34d67533afd422ec926209305c184fc",
     "packages": [
-        {
-            "name": "aacotroneo/laravel-saml2",
-            "version": "2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/aacotroneo/laravel-saml2.git",
-                "reference": "6ed350b37aec3470655335a33e24496e15bde9b7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/aacotroneo/laravel-saml2/zipball/6ed350b37aec3470655335a33e24496e15bde9b7",
-                "reference": "6ed350b37aec3470655335a33e24496e15bde9b7",
-                "shasum": ""
-            },
-            "require": {
-                "ext-openssl": "*",
-                "illuminate/support": ">=5.0.0",
-                "onelogin/php-saml": "^3.0.0",
-                "php": ">=5.5.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "0.9.*",
-                "phpunit/phpunit": "~4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Aacotroneo\\Saml2\\Saml2ServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Aacotroneo\\Saml2\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "aacotroneo",
-                    "email": "aacotroneo@gmail.com"
-                },
-                {
-                    "name": "Niraj Patkar",
-                    "email": "niraj@alphonso.in"
-                }
-            ],
-            "description": "A Laravel package for Saml2 integration as a SP (service provider) for multiple IdPs, based on OneLogin toolkit which is much more lightweight than simplesamlphp.",
-            "homepage": "https://github.com/aacotroneo/laravel-saml2",
-            "keywords": [
-                "SAML2",
-                "laravel",
-                "onelogin",
-                "saml"
-            ],
-            "time": "2019-10-01T23:05:14+00:00"
-        },
         {
             "name": "alexbowers/nova-prepopulate-searchable",
             "version": "v1.0.1",
@@ -190,35 +129,36 @@
         },
         {
             "name": "algolia/scout-extended",
-            "version": "v1.9.0",
+            "version": "v1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/scout-extended.git",
-                "reference": "1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0"
+                "reference": "d3932eee760f6bf205560b61152392acddbfb50f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0",
-                "reference": "1ca3d75c21f7dd8d209c044c1447cf54a7fba5c0",
+                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/d3932eee760f6bf205560b61152392acddbfb50f",
+                "reference": "d3932eee760f6bf205560b61152392acddbfb50f",
                 "shasum": ""
             },
             "require": {
                 "algolia/algoliasearch-client-php": "^2.5.1",
                 "ext-json": "*",
-                "illuminate/console": "^6.0|^7.0",
-                "illuminate/contracts": "^6.0|^7.0",
-                "illuminate/database": "^6.0|^7.0",
-                "illuminate/filesystem": "^6.0|^7.0",
-                "illuminate/support": "^6.0|^7.0",
+                "illuminate/console": "^6.0|^7.0|^8.0",
+                "illuminate/contracts": "^6.0|^7.0|^8.0",
+                "illuminate/database": "^6.0|^7.0|^8.0",
+                "illuminate/filesystem": "^6.0|^7.0|^8.0",
+                "illuminate/support": "^6.0|^7.0|^8.0",
                 "laravel/scout": "^8.0",
-                "php": "^7.2",
+                "php": "^7.3",
                 "riimu/kit-phpencoder": "^2.4"
             },
             "require-dev": {
                 "fzaninotto/faker": "^1.8",
+                "laravel/legacy-factories": "^1.0",
                 "mockery/mockery": "^1.1",
-                "nunomaduro/larastan": "^0.5",
-                "orchestra/testbench": "^4.0|^5.0",
+                "nunomaduro/larastan": "^0.6",
+                "orchestra/testbench": "^4.0|^5.0|^6.0",
                 "phpstan/phpstan": "^0.12.14",
                 "phpunit/phpunit": "^8.0|^9.0"
             },
@@ -262,7 +202,7 @@
                 "scout",
                 "search"
             ],
-            "time": "2020-03-03T14:27:21+00:00"
+            "time": "2020-09-23T13:38:42+00:00"
         },
         {
             "name": "amnuts/opcache-gui",
@@ -573,16 +513,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.154.7",
+            "version": "3.155.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "fa2bf35b5d80e9597e5a2cd7e337eeeb44d09d9c"
+                "reference": "1957df567541f738fd01bbd2710af7665b61f6d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fa2bf35b5d80e9597e5a2cd7e337eeeb44d09d9c",
-                "reference": "fa2bf35b5d80e9597e5a2cd7e337eeeb44d09d9c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1957df567541f738fd01bbd2710af7665b61f6d3",
+                "reference": "1957df567541f738fd01bbd2710af7665b61f6d3",
                 "shasum": ""
             },
             "require": {
@@ -654,7 +594,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-09-21T18:12:58+00:00"
+            "time": "2020-09-22T18:11:10+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1071,7 +1011,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
-                "reference": "1bbdc8741c1bce578b353148a21acb8186232dbe",
+                "reference": "6ecab1c47b37727c17819ad31972bbd437c4a44a",
                 "shasum": null
             },
             "require": {
@@ -1097,10 +1037,7 @@
             "keywords": [
                 "laravel",
                 "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
+            ]
         },
         {
             "name": "circlelinkhealth/condition-code-lookup-module",
@@ -1140,11 +1077,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.7.6",
+            "version": "v1.7.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "d7941dfca9c65bf0f76fe2342bfec4b0e2c52c25"
+                "reference": "c9543418178a31e942cf90540b12ccc4e3ae2983"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1173,15 +1110,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T14:57:36+00:00"
+            "time": "2020-09-23T17:16:11+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.5.1",
+            "version": "v2.5.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "788ab4b41b4d1a7ca31c767e39c92f9a2ba8c5b8"
+                "reference": "65d625ff77d3a2f2e9271bc55a11e9bb45bc587f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1203,7 +1140,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-21T11:11:31+00:00"
+            "time": "2020-09-23T17:17:44+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1287,7 +1224,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
-                "reference": "b6cf4442f05d1bf70a7740842be0523456f73b14",
+                "reference": "3d7e5ac1e98048bb2f469171feb8cb1532131c9c",
                 "shasum": null
             },
             "require": {
@@ -1314,10 +1251,7 @@
             "keywords": [
                 "laravel",
                 "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
+            ]
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1362,7 +1296,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
-                "reference": "8d2f73917c098fb67e5c3e1d4e957838b1ce33a4",
+                "reference": "647bc07cacc81615878d4210f947957280127fdc",
                 "shasum": null
             },
             "require": {
@@ -1388,10 +1322,7 @@
             "keywords": [
                 "laravel",
                 "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
+            ]
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
@@ -1437,7 +1368,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
-                "reference": "7b4fcc04ab2b3522353cc2707bafc9452ac690b1",
+                "reference": "94203596bccb49bf965bc7dd2d58399e27db25d7",
                 "shasum": null
             },
             "require": {
@@ -1463,10 +1394,7 @@
             "keywords": [
                 "laravel",
                 "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
+            ]
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -1607,44 +1535,6 @@
                 "revision"
             ],
             "time": "2020-04-24T08:46:54+00:00"
-        },
-        {
-            "name": "circlelinkhealth/saml-sp-module",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "099d2d4e3dc40d3bf78eaef5d0786c8d495d505b"
-            },
-            "require": {
-                "aacotroneo/laravel-saml2": "^2.1",
-                "circlelinkhealth/core-module": "*"
-            },
-            "type": "laravel-module",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\SamlSp\\Providers\\SamlSpServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "classmap": [
-                    "Database/Seeders",
-                    "Database/Factories"
-                ],
-                "psr-4": {
-                    "CircleLinkHealth\\Saml\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "Pangratios Cosma",
-                    "email": "pangratios@circlelinkhealth.com"
-                }
-            ],
-            "time": "2020-09-17T07:31:11+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -3184,16 +3074,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.9",
+            "version": "8.12.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "674b79ae3362409d08e550cb196d982485a76225"
+                "reference": "befffd590d1e2333bbb6d712541ccccf5fc08f1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/674b79ae3362409d08e550cb196d982485a76225",
-                "reference": "674b79ae3362409d08e550cb196d982485a76225",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/befffd590d1e2333bbb6d712541ccccf5fc08f1f",
+                "reference": "befffd590d1e2333bbb6d712541ccccf5fc08f1f",
                 "shasum": ""
             },
             "require": {
@@ -3248,7 +3138,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-08-31T09:51:44+00:00"
+            "time": "2020-09-22T07:23:22+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -5255,16 +5145,16 @@
         },
         {
             "name": "laravel/ui",
-            "version": "v2.4.0",
+            "version": "v2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/ui.git",
-                "reference": "f5398544a9cd4804a42d09ce51735e37cd51ea2d"
+                "reference": "1c69ae3e8b52fe6c9eaf83b43c6dd8ef5c3f9e2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/ui/zipball/f5398544a9cd4804a42d09ce51735e37cd51ea2d",
-                "reference": "f5398544a9cd4804a42d09ce51735e37cd51ea2d",
+                "url": "https://api.github.com/repos/laravel/ui/zipball/1c69ae3e8b52fe6c9eaf83b43c6dd8ef5c3f9e2c",
+                "reference": "1c69ae3e8b52fe6c9eaf83b43c6dd8ef5c3f9e2c",
                 "shasum": ""
             },
             "require": {
@@ -5306,7 +5196,7 @@
                 "laravel",
                 "ui"
             ],
-            "time": "2020-09-11T15:31:52+00:00"
+            "time": "2020-09-22T16:51:51+00:00"
         },
         {
             "name": "laravelcollective/html",
@@ -6778,16 +6668,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.40.0",
+            "version": "2.40.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "6c7646154181013ecd55e80c201b9fd873c6ee5d"
+                "reference": "d9a76d8b7eb0f97cf3a82529393245212f40ba3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/6c7646154181013ecd55e80c201b9fd873c6ee5d",
-                "reference": "6c7646154181013ecd55e80c201b9fd873c6ee5d",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/d9a76d8b7eb0f97cf3a82529393245212f40ba3b",
+                "reference": "d9a76d8b7eb0f97cf3a82529393245212f40ba3b",
                 "shasum": ""
             },
             "require": {
@@ -6853,7 +6743,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2020-09-11T19:00:58+00:00"
+            "time": "2020-09-23T08:17:37+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -7016,56 +6906,6 @@
                 "psr-7"
             ],
             "time": "2020-06-13T15:59:10+00:00"
-        },
-        {
-            "name": "onelogin/php-saml",
-            "version": "3.4.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/onelogin/php-saml.git",
-                "reference": "5fbf3486704ac9835b68184023ab54862c95f213"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/onelogin/php-saml/zipball/5fbf3486704ac9835b68184023ab54862c95f213",
-                "reference": "5fbf3486704ac9835b68184023ab54862c95f213",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4",
-                "robrichards/xmlseclibs": ">=3.0.4"
-            },
-            "require-dev": {
-                "pdepend/pdepend": "^2.5.0",
-                "php-coveralls/php-coveralls": "^1.0.2 || ^2.0",
-                "phploc/phploc": "^2.1 || ^3.0 || ^4.0",
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5 || ^7.1",
-                "sebastian/phpcpd": "^2.0 || ^3.0 || ^4.0",
-                "squizlabs/php_codesniffer": "^3.1.1"
-            },
-            "suggest": {
-                "ext-curl": "Install curl lib to be able to use the IdPMetadataParser for parsing remote XMLs",
-                "ext-gettext": "Install gettext and php5-gettext libs to handle translations",
-                "ext-openssl": "Install openssl lib in order to handle with x509 certs (require to support sign and encryption)"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "OneLogin\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "OneLogin PHP SAML Toolkit",
-            "homepage": "https://developers.onelogin.com/saml/php",
-            "keywords": [
-                "SAML2",
-                "onelogin",
-                "saml"
-            ],
-            "time": "2019-11-25T17:30:07+00:00"
         },
         {
             "name": "opis/closure",
@@ -7364,16 +7204,16 @@
         },
         {
             "name": "php-http/discovery",
-            "version": "1.10.0",
+            "version": "1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/discovery.git",
-                "reference": "88ff14cad4a0db68b343260fa7ac3f1599703660"
+                "reference": "4366bf1bc39b663aa87459bd725501d2f1988b6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/discovery/zipball/88ff14cad4a0db68b343260fa7ac3f1599703660",
-                "reference": "88ff14cad4a0db68b343260fa7ac3f1599703660",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/4366bf1bc39b663aa87459bd725501d2f1988b6c",
+                "reference": "4366bf1bc39b663aa87459bd725501d2f1988b6c",
                 "shasum": ""
             },
             "require": {
@@ -7425,7 +7265,7 @@
                 "message",
                 "psr7"
             ],
-            "time": "2020-09-04T08:41:23+00:00"
+            "time": "2020-09-22T13:31:04+00:00"
         },
         {
             "name": "php-http/httplug",
@@ -8708,44 +8548,6 @@
                 "variable"
             ],
             "time": "2018-07-03T12:46:23+00:00"
-        },
-        {
-            "name": "robrichards/xmlseclibs",
-            "version": "3.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/robrichards/xmlseclibs.git",
-                "reference": "f8f19e58f26cdb42c54b214ff8a820760292f8df"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/f8f19e58f26cdb42c54b214ff8a820760292f8df",
-                "reference": "f8f19e58f26cdb42c54b214ff8a820760292f8df",
-                "shasum": ""
-            },
-            "require": {
-                "ext-openssl": "*",
-                "php": ">= 5.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "RobRichards\\XMLSecLibs\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "A PHP library for XML Security",
-            "homepage": "https://github.com/robrichards/xmlseclibs",
-            "keywords": [
-                "security",
-                "signature",
-                "xml",
-                "xmldsig"
-            ],
-            "time": "2020-09-05T13:00:25+00:00"
         },
         {
             "name": "seld/jsonlint",
