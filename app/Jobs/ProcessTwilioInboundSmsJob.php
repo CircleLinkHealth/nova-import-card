@@ -35,7 +35,7 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
     private $dbRecordId;
 
     private TwilioInboundSmsRequest $input;
-
+                                
     /**
      * Create a new job instance.
      *
