@@ -136,6 +136,7 @@ class InboundSmsAndMailTest extends CustomerTestCase
         /** @var Collection $patients */
         $aPatient = $this->createUsersOfType('participant', 1);
         $bPatient = $this->patient();
+        self::assertNotEmpty($bPatient->getPhoneNumberForSms());
         PhoneNumber::whereIn('user_id', [$aPatient->id, $bPatient->id])
             ->update(['number' => $bPatient->getPhoneNumberForSms()]);
 
