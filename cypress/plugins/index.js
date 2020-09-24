@@ -17,13 +17,12 @@
  */
 
 const { downloadFile } = require("cypress-downloadfile/lib/addPlugin");
-module.exports = (on, config) => {
-  on("task", { downloadFile });
-};
+
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
   on("task", require("./swap-env"));
+  on("task", { downloadFile });
 };
