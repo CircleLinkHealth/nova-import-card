@@ -30,8 +30,9 @@ class Constants
         Constants::ICD10_NAME  => 2,
         Constants::SNOMED_NAME => 3,
     ];
-    const ICD10      = ProblemCodeSystem::ICD10;
-    const ICD10_NAME = ProblemCodeSystem::ICD10_NAME;
+    const FIVE_MINUTES_IN_SECONDS = 300;
+    const ICD10                   = ProblemCodeSystem::ICD10;
+    const ICD10_NAME              = ProblemCodeSystem::ICD10_NAME;
 
     /**
      * Problem Codes.
@@ -75,6 +76,7 @@ class Constants
     const THIRTY_DAYS_IN_MINUTES     = 43200;
     const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre><br><ul><ol><li><span><a>';
     const TRIX_FIELDS                = ['patient-email-body'];
+    const TWENTY_MINUTES_IN_SECONDS  = 1200;
     const VIEWING_PATIENT            = 'viewing-patient';
 
     public static function athenaEhrId()

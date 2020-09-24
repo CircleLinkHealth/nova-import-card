@@ -245,7 +245,7 @@ class PatientSummaryEloquentRepository
             case ChargeableService::BHI:
                 return $summary->bhi_time >= self::MINUTES_20;
             case ChargeableService::CCM:
-            case ChargeableService::GENERAL_CARE_MANAGEMENT:
+            case ChargeableService::G0511:
                 return $summary->ccm_time >= self::MINUTES_20;
             case ChargeableService::PCM:
                 return $summary->ccm_time >= self::MINUTES_30;
