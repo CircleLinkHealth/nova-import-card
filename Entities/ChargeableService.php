@@ -160,7 +160,7 @@ class ChargeableService extends BaseModel
 
     public function scopeGeneralCareManagement($query)
     {
-        return $query->where('code', self::G0511);
+        return $query->where('code', self::GENERAL_CARE_MANAGEMENT);
     }
 
     public function scopePcm($query)
