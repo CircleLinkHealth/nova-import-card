@@ -95,7 +95,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                         null,
                         SchedulerService::CALL_BACK_TYPE
                     );
-                    
+
                     return;
                 }
 

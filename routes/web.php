@@ -1948,7 +1948,7 @@ Route::group([
     'prefix' => 'postmark',
 ], function () {
     Route::post('/status', [
-        'uses' => 'PostmarkController@statusCallback',
+        'uses' => 'Postmark\PostmarkController@statusCallback',
         'as'   => 'postmark.status',
     ]);
 

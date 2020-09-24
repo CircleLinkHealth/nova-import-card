@@ -43,27 +43,27 @@ class ProcessPostmarkInboundMailCommand extends Command
      */
     public function handle()
     {
-        $item = PostmarkInboundMail::findOrFail($this->argument('recordId'));
-        ProcessPostmarkInboundMailJob::dispatch(new PostmarkInboundMailRequest(
-            [
-                'From'     => $item->from,
-                'TextBody' => $item->body,
-            ]
-        ), $item->id);
-
-        return 0;
-
-//        $all = PostmarkInboundMail::where('from', ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL_USERNAME)->get();
-//
-//        foreach ($all as $item) {
-//            ProcessPostmarkInboundMailJob::dispatchNow(new PostmarkInboundMailRequest(
-//                [
-//                    'From'     => $item->from,
-//                    'TextBody' => $item->body,
-//                ]
-//            ), $item->id);
-//        }
+//        $item = PostmarkInboundMail::findOrFail($this->argument('recordId'));
+//        ProcessPostmarkInboundMailJob::dispatch(new PostmarkInboundMailRequest(
+//            [
+//                'From'     => $item->from,
+//                'TextBody' => $item->body,
+//            ]
+//        ), $item->id);
 //
 //        return 0;
+
+        $all = PostmarkInboundMail::where('from', ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL_USERNAME)->get();
+
+        foreach ($all as $item) {
+            ProcessPostmarkInboundMailJob::dispatchNow(new PostmarkInboundMailRequest(
+                [
+                    'From'     => $item->from,
+                    'TextBody' => $item->body,
+                ]
+            ), $item->id);
+        }
+
+        return 0;
     }
 }
