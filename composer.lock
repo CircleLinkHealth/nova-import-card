@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "515aa3adacb695d14a1cf12aa3ab91f7",
+    "content-hash": "15c4e214c272a4f534a2476093bf61fc",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -836,11 +836,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.3.4",
+            "version": "v1.3.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "4a16d296f22aa46d0f09ebd79aa0e4a186bab4f3"
+                "reference": "6a34e099d96432028129d738aa740967ff1ecf24"
             },
             "type": "laravel-module",
             "extra": {
@@ -865,7 +865,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:01:11+00:00"
+            "time": "2020-09-24T13:12:42+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
@@ -11342,6 +11342,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2019-09-17T06:23:10+00:00"
         },
         {
