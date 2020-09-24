@@ -1240,7 +1240,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "00640a593f5c3ebd8232e9ed6aa943156b030ae9"
+                "reference": "3fb60458cf4d379d3d636e510f3c966b2ed0effd"
             },
             "type": "laravel-module",
             "extra": {
@@ -1262,7 +1262,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-21T21:53:21+00:00"
+            "time": "2020-09-24T14:19:17+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1706,7 +1706,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "1f473f5d083bebf0fd504d3ede9091b0b37aa722"
+                "reference": "4d333489c6262de08061f428e5278885eb52b6da"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1720,7 +1720,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-12T20:24:19+00:00"
+            "time": "2020-09-24T14:19:17+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
