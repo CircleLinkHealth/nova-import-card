@@ -38,16 +38,24 @@ abstract class BaseSqlView implements SqlViewInterface
     public static function run(): bool
     {
         $obj = new static();
+        if (! $obj->shouldRun()) {
+            return false;
+        }
 
         $dropped = $obj->dropSqlView();
-        if ( ! $dropped) {
+        if (! $dropped) {
             throw new \Exception("Could not drop mysql view `{$obj->getViewName()}`");
         }
         $created = $obj->createSqlView();
-        if ( ! $created) {
+        if (! $created) {
             throw new \Exception("Could not create mysql view `{$obj->getViewName()}`");
         }
 
         return (bool) $created && (bool) $dropped;
+    }
+
+    public function shouldRun(): bool
+    {
+        return true;
     }
 }
