@@ -70,7 +70,7 @@ export default class ViewCareplan extends BasePage {
 			':nth-child(14) > :nth-child(1) > .col-xs-12 > .patient-summary__subtitles > .btn'
 		).click();
 		cy.get('form > :nth-child(1) > .form-control').focus().type(`${text}`);
-		cy.get('.top-20 > .btn').click();
+		cy.contains('Save').click();
 		cy.reload();
 		cy.get(':nth-child(14) > .gutter > .col-xs-12 > ul').should(
 			'contain',
@@ -82,7 +82,7 @@ export default class ViewCareplan extends BasePage {
 			':nth-child(14) > :nth-child(1) > .col-xs-12 > .patient-summary__subtitles > .btn'
 		).click();
 		cy.get('form > :nth-child(1) > .form-control').clear();
-		cy.get('.top-20 > .btn').click({ force: true });
+		cy.contains('Save').click({ force: true });
 		cy.reload();
 		cy.get(':nth-child(14) > .gutter > .col-xs-12 > ul').should('be.empty');
 	}
@@ -118,7 +118,7 @@ export default class ViewCareplan extends BasePage {
 	}
 	addSocialServices(text) {
 		cy.get('form > :nth-child(1) > .form-control').type(`${text}`);
-		cy.get('.top-20 > .btn').click({ force: true });
+		cy.contains('Save').click({ force: true });
 		cy.reload();
 		cy.get(':nth-child(11) > .gutter > .col-xs-12 > ul').should(
 			'contain',
@@ -130,7 +130,7 @@ export default class ViewCareplan extends BasePage {
 			':nth-child(11) > :nth-child(1) > .col-xs-12 > .patient-summary__subtitles > .btn'
 		).click();
 		cy.get('form > :nth-child(1) > .form-control').clear();
-		cy.get('.top-20 > .btn').focus().click({ force: true });
+		cy.contains('Save').click({ force: true });
 		cy.reload();
 		cy.get(':nth-child(11) > .text-center').should(
 			'contain',
