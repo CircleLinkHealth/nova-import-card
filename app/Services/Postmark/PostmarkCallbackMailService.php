@@ -24,7 +24,8 @@ class PostmarkCallbackMailService
             return;
         }
 
-        return collect(json_decode($postmarkRecord->data))->toArray();
+        $inboundDataArray = collect(json_decode($postmarkRecord->data))->toArray();
+        return collect(json_decode($inboundDataArray['TextBody']))->toArray();
     }
 
     /**

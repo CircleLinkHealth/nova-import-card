@@ -61,18 +61,17 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         $recordId = $this->dbRecordId ?: $this->storeRawLogs();
 
         // 1. read source email, find patient
-        $email      = $this->removeAliasFromEmail($this->input->From);
-        $emailParts = $this->splitEmail($email);
-        $users      = User::where('email', 'REGEXP', '^'.$emailParts->username.'[+|@]')
-            ->where('email', 'REGEXP', $emailParts->domain.'$');
-
+        $email = $this->removeAliasFromEmail($this->input->From);
         if ( ! $email) {
             Log::error("Empty Postmark notification field:'From'. Record id $recordId");
-        }
 
-        if (self::FROM_CALLBACK_EMAIL_USERNAME === $emailParts->username) {
+            return;
+        }
+        $emailParts = $this->splitEmail($email);
+
+        if (/*self::FROM_CALLBACK_EMAIL_USERNAME === $emailParts->username*/true) {
             try {
-                $postmarkCallbackService = (new PostmarkCallbackMailService());
+                $postmarkCallbackService = app(PostmarkCallbackMailService::class);
                 $postmarkCallbackData    = $postmarkCallbackService->postmarkInboundData($recordId);
                 /** @var array $matchedResultsFromDB */
                 $matchedResultsFromDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
@@ -100,8 +99,6 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                 }
 
                 (new ProcessUnresolvedPostmarkCallback($matchedResultsFromDB, $recordId))->handleUnresolved();
-
-                return;
             } catch (\Exception $e) {
                 if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {
                     //                Assign to as Unresolved for CA's to check ???
@@ -109,13 +106,13 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                 }
                 Log::error($e->getMessage());
                 sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
-
-                return;
             }
+
+            return;
         }
 
-        /** @var User $user */
-        $user = User::whereEmail($email)
+        $users = User::where('email', 'REGEXP', '^'.$emailParts->username.'[+|@]')
+            ->where('email', 'REGEXP', $emailParts->domain.'$')
             ->with([
                 'primaryPractice' => function ($q) {
                     $q->select(['id', 'display_name']);
