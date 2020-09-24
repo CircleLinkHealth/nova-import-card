@@ -21,12 +21,15 @@ describe('Tests CA Director Page: Edit Enrollee and Assign to Care Ambassador ',
 				cy.get('.form-control').click();
 			});
 
-	before(function () {
+	beforeEach(function () {
 		basePage.setLargeDesktopViewport();
 		cy.visit('/');
 		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
 		cy.visit('/admin/ca-director');
 	});
+	afterEach(function () {
+		navbar.adminLogout();
+	})
 
 
 	it('Should allow CA Director to edit first unassigned enrollee on the table', () => {
@@ -67,6 +70,7 @@ describe('Tests CA Director Page: Edit Enrollee and Assign to Care Ambassador ',
 			.click()
 			.type(TESTER_CA)
 			.type('{enter}');
+		cy.wait(3000)
 
 		cy.get('.modal-ok-button').click({ force: true });
 		caDirectorPage.getEnrolleeTable();
