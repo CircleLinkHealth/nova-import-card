@@ -1,3 +1,5 @@
+import { TESTER_CA } from "../../support/config";
+
 export default class Navbar {
 	clickOnLogo() {
 		cy.get('.navbar-brand').click();
@@ -52,7 +54,7 @@ export default class Navbar {
 		cy.contains('Logout').click();
 	}
 	careAmbassadorLogout() {
-		cy.get(':nth-child(4) > .dropdown-trigger').click();
+		cy.contains(TESTER_CA).click();
 		cy.contains('Logout').click();
 	}
 }

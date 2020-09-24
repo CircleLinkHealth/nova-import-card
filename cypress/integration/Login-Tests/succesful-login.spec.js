@@ -32,7 +32,8 @@ describe('Tests Successful Login for Users', () => {
 	it('should allow Provider Login', () => {
 		loginPage.Uilogin(PROVIDER_USERNAME, PROVIDER_PASSWORD);
 		cy.wait(3000);
-		navbar.providerLogout();
+		cy.get(':nth-child(6) > .dropdown-toggle').click();
+		cy.contains('Logout').click();
 		basePage.logMessage('Provider successfully logs in and logs out');
 	});
 
