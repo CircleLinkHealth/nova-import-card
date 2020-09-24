@@ -1,6 +1,6 @@
 @extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')
-@section('title', 'Toledo Invitation')
-@section('activity', 'Toledo Invitation')
+@section('title', 'Davis Invitation')
+@section('activity', 'Davis Invitation')
 @section('content')
     <div class="container">
         <div class="letter-view">

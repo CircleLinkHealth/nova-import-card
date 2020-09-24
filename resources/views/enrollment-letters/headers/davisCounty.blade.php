@@ -1,31 +1,32 @@
 <div class="flow-text" style="max-height: 590px; overflow-y: scroll;">
-    <div>
-        <div class="header" style="display: inline-flex; margin-bottom: 60px">
-            <div class="address" style="margin-right: 246px; max-width: 377px;">
+    <div class="header" style="/*display: inline-flex; */margin-bottom: 60px">
+            <div class="address" style="/*margin-right: 246px;*/ max-width: 377px;">
                 @if($extraAddressValuesExists)
                 <br>
                     {{$extraAddressValues[0]['address_line_1']}}
                     <br>
                     {{$extraAddressValues[0]['city']}}
                     {{$extraAddressValues[0]['state']}}
+                    <br>
                     {{$extraAddressValues[0]['postal_code']}}
                 @endif
             </div>
 
-            <div class="logo" style="text-align: right; opacity: 90%;">
-                    @include('enrollment-letters.practiceLogo')
-                </div>
+            <div class="logo" style="opacity: 90%; margin-top: -130px; text-align: right; margin-right: 120px;">
+                @include('enrollment-letters.practiceLogo')
+            </div>
+
         </div>
+
     </div>
 
     <div class="letter-sent">
-        {{$dateLetterSent}}
+        {{\Carbon\Carbon::parse($dateLetterSent)->format('m/d/y')}}
     </div>
 
     <div class="letter-head">
         Dear {{$userEnrollee->first_name}} {{$userEnrollee->last_name}},
     </div>
-</div>
 
 <style>
     .letter-head{
