@@ -11,7 +11,7 @@ describe('Tests Email Subscriptions Page', () => {
 	before(function () {
 		basePage.setLargeDesktopViewport();
 		cy.visit('/');
-		loginPage.login(NURSE_USERNAME, NURSE_PASSWORD);
+		loginPage.Uilogin(NURSE_USERNAME, NURSE_PASSWORD);
 	});
 	it('Should allow nurse to check / uncheck options for receiving emails', () => {
 		cy.visit('/notification-subscriptions-dashboard');

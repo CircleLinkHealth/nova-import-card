@@ -22,7 +22,7 @@ describe('Tests admin can create new patient', () => {
 	beforeEach(function () {
 		basePage.setLargeDesktopViewport();
 		cy.visit('/');
-		loginPage.login(ADMIN_USERNAME, ADMIN_PASSWORD);
+		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
 	});
 
 	it('Should fill out form and save profile', () => {

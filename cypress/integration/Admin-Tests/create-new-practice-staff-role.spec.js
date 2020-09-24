@@ -11,10 +11,10 @@ describe("Tests that Admin can create new practice staff user and then delete", 
   const basePage = new BasePage();
   const loginPage = new LoginPage();
 
-  beforeEach(function() {
+  beforeEach(function () {
     basePage.setLargeDesktopViewport();
     cy.visit("/");
-    loginPage.login(ADMIN_USERNAME, ADMIN_PASSWORD);
+    loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
     cy.visit("/practices/" + PRACTICE_SLUG + "/staff");
   });
 

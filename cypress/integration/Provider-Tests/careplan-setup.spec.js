@@ -23,7 +23,7 @@ describe('Tests Care Plan Setup by Provider', () => {
 	beforeEach(function () {
 		basePage.setLargeDesktopViewport();
 		cy.visit('/');
-		loginPage.login(PROVIDER_USERNAME, PROVIDER_PASSWORD);
+		loginPage.Uilogin(PROVIDER_USERNAME, PROVIDER_PASSWORD);
 		cy.visit('/manage-patients/listing');
 		cy.contains('Patient List').should('be.visible');
 	});

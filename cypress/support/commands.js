@@ -27,7 +27,7 @@ Cypress.Commands.add("setViewport", (size) => {
   }
 });
 
-Cypress.Commands.add("login", (username, password) => {
+Cypress.Commands.add("Uilogin", (username, password) => {
   cy.get("#email").type(username, {
     log: false,
   });

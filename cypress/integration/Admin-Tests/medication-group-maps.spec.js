@@ -14,7 +14,7 @@ describe('Tests Medication Group Mapping', () => {
 	beforeEach(function () {
 		basePage.setLargeDesktopViewport();
 		cy.visit('/');
-		loginPage.login(ADMIN_USERNAME, ADMIN_PASSWORD);
+		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
 		cy.visit('/admin/medication-groups-maps');
 		cy.get('.form-control').as('medNameInputField');
 		cy.get('.select2-hidden-accessible').as('medTypeSelect');

@@ -11,7 +11,7 @@ describe('Tests CP PDF upload', () => {
 	before(function () {
 		basePage.setLargeDesktopViewport();
 		cy.visit('/');
-		loginPage.login(ADMIN_USERNAME, ADMIN_PASSWORD);
+		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
 		cy.visit('/manage-patients/listing');
 		patientList.selectPatient('1');
 	});

@@ -16,7 +16,7 @@ describe('Tests New User Page', () => {
 	beforeEach(function () {
 		basePage.setLargeDesktopViewport();
 		cy.visit('/');
-		loginPage.login(ADMIN_USERNAME, ADMIN_PASSWORD);
+		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
 	});
 
 	it('Should make assertions on New User page', () => {

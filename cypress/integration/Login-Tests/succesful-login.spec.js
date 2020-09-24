@@ -23,28 +23,28 @@ describe('Tests Successful Login for Users', () => {
 	});
 
 	it('should allow Nurse Login', () => {
-		loginPage.login(NURSE_USERNAME, NURSE_PASSWORD);
+		loginPage.Uilogin(NURSE_USERNAME, NURSE_PASSWORD);
 		cy.wait(3000);
 		navbar.nurseLogout();
 		basePage.logMessage('Nurse successfully logs in and logs out');
 	});
 
 	it('should allow Provider Login', () => {
-		loginPage.login(PROVIDER_USERNAME, PROVIDER_PASSWORD);
+		loginPage.Uilogin(PROVIDER_USERNAME, PROVIDER_PASSWORD);
 		cy.wait(3000);
 		navbar.providerLogout();
 		basePage.logMessage('Provider successfully logs in and logs out');
 	});
 
 	it('should allow Admin Login', () => {
-		loginPage.login(ADMIN_USERNAME, ADMIN_PASSWORD);
+		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
 		cy.wait(3000);
 		navbar.adminLogout();
 		basePage.logMessage('Admin successfully logs in and logs out');
 	});
 
 	it('should allow Care Ambassador Login', () => {
-		loginPage.login(CARE_AMBASSADOR_USERNAME, CARE_AMBASSADOR_PASSWORD);
+		loginPage.Uilogin(CARE_AMBASSADOR_USERNAME, CARE_AMBASSADOR_PASSWORD);
 		cy.wait(3000);
 		navbar.careAmbassadorLogout();
 		basePage.logMessage('Care Ambassador successfully logs in and logs out');

@@ -23,7 +23,7 @@ describe('Downloads files', () => {
 	beforeEach(function () {
 		basePage.setLargeDesktopViewport();
 		cy.visit('/');
-		loginPage.login(ADMIN_USERNAME, ADMIN_PASSWORD);
+		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
 	});
 
 	it('Should download PDF file from Patient List page', () => {
@@ -39,9 +39,9 @@ describe('Downloads files', () => {
 		cy.visit('/ops-dashboard/index');
 		cy.downloadFile(
 			Cypress.config().baseUrl +
-				'/ops-dashboard/index/csv' +
-				'?date=' +
-				todaysDate,
+			'/ops-dashboard/index/csv' +
+			'?date=' +
+			todaysDate,
 			'File-Downloads',
 			'Ops-Dashboard.csv'
 		);
@@ -51,11 +51,11 @@ describe('Downloads files', () => {
 		cy.visit('/reports/nurse/weekly');
 		cy.downloadFile(
 			Cypress.config().baseUrl +
-				'/reports/nurse/weekly/excel' +
-				'?start_date=' +
-				todaysDate +
-				'&end_date=' +
-				todaysDate,
+			'/reports/nurse/weekly/excel' +
+			'?start_date=' +
+			todaysDate +
+			'&end_date=' +
+			todaysDate,
 			'File-Downloads',
 			'Nurse-performance-report.xlsx'
 		);

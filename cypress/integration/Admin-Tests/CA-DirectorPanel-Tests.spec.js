@@ -21,15 +21,13 @@ describe('Tests CA Director Page: Edit Enrollee and Assign to Care Ambassador ',
 				cy.get('.form-control').click();
 			});
 
-	beforeEach(function () {
+	before(function () {
 		basePage.setLargeDesktopViewport();
 		cy.visit('/');
-		loginPage.login(ADMIN_USERNAME, ADMIN_PASSWORD);
+		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
 		cy.visit('/admin/ca-director');
 	});
-	afterEach(function () {
-		navbar.adminLogout();
-	});
+
 
 	it('Should allow CA Director to edit first unassigned enrollee on the table', () => {
 		cy.isHidden('.col-sm-5.text-right'); // options for "Assign To CA", Unassign From CA", "Mark As Ineligible"

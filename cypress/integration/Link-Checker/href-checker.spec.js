@@ -22,7 +22,7 @@ describe('Tests all Hrefs on Admin Panel Homepage', () => {
 		cy.visit('/');
 	});
 	it('should find all hrefs on Admin Panel Homepage and validate they are not empty', () => {
-		loginPage.login(ADMIN_USERNAME, ADMIN_PASSWORD);
+		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
 		cy.get('#app').find('a').get('[href=""]').should('length', 0); // There should be no A elements with a blank href
 		if (emptyHref) {
 			console.log('[href="]');

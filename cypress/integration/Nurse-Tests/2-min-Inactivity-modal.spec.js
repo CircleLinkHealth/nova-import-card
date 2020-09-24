@@ -11,7 +11,7 @@ describe('Tests that inactivity modal pops up after 2 minutes of inactivity time
 	it('Should show inactivity modal when nurse is inactive for 2 minutes', () => {
 		basePage.setLargeDesktopViewport();
 		cy.visit('/');
-		loginPage.login(NURSE_USERNAME, NURSE_PASSWORD);
+		loginPage.Uilogin(NURSE_USERNAME, NURSE_PASSWORD);
 		basePage.pause(125000);
 		cy.get('.modal-container').should('be.visible');
 		cy.contains('You have gone idle ...');

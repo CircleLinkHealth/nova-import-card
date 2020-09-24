@@ -15,7 +15,7 @@ describe('Tests provider Ability to Input Observations on Patient', () => {
 	beforeEach(() => {
 		basePage.setLargeDesktopViewport();
 		cy.visit('/auth/login');
-		loginPage.login(PROVIDER_USERNAME, PROVIDER_PASSWORD);
+		loginPage.Uilogin(PROVIDER_USERNAME, PROVIDER_PASSWORD);
 		cy.visit('/manage-patients/listing');
 		patientList.selectPatient('5');
 		cy.wait(3000);

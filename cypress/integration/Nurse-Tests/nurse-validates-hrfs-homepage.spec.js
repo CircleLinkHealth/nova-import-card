@@ -6,7 +6,7 @@ describe('Tests Navbar for Nurse', () => {
 	before(function () {
 		cy.visit('/');
 		cy.wait(3000);
-		loginPage.login(NURSE_USERNAME, NURSE_PASSWORD);
+		loginPage.Uilogin(NURSE_USERNAME, NURSE_PASSWORD);
 	});
 
 	it('should display Scheduled Activities page content', function () {
