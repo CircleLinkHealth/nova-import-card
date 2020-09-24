@@ -44,12 +44,10 @@ class ProcessPostmarkInboundMailCommand extends Command
     public function handle()
     {
         $item = PostmarkInboundMail::findOrFail($this->argument('recordId'));
-        ProcessPostmarkInboundMailJob::dispatch(new PostmarkInboundMailRequest(
-            [
-                'From'     => $item->from,
-                'TextBody' => $item->body,
-            ]
-        ), $item->id);
+        ProcessPostmarkInboundMailJob::dispatch(new PostmarkInboundMailRequest([
+            'From'     => $item->from,
+            'TextBody' => $item->body,
+        ]), $item->id);
 
         return 0;
 
