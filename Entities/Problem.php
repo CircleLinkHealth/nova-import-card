@@ -92,6 +92,12 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
             return [];
         }
 
+        if (is_null($this->patient->patientInfo)) {
+            sendSlackMessage('#billing_alerts', "Patient ({$this->patient->id}) does not have patientInfo attached.");
+
+            return [];
+        }
+
         $locationId ??= $this->patient->patientInfo->preferred_contact_location;
 
         if (is_null($locationId)) {
