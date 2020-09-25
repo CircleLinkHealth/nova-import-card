@@ -1,6 +1,6 @@
-<div class="flow-text" style="max-height: 590px; overflow-y: scroll;">
-    <div class="header" style="/*display: inline-flex; */margin-bottom: 60px">
-            <div class="address" style="/*margin-right: 246px;*/ max-width: 377px;">
+<div class="flow-text" style="max-height: 590px;">
+    <div class="header" style="display: inline-flex; margin-bottom: 60px">
+            <div class="address" style="max-width: 377px;">
                 @if($extraAddressValuesExists)
                 <br>
                     {{$extraAddressValues[0]['address_line_1']}}
@@ -12,7 +12,7 @@
                 @endif
             </div>
 
-            <div class="logo" style="opacity: 90%; margin-top: -130px; text-align: right; margin-right: 120px;">
+            <div class="logo">
                 @include('enrollment-letters.practiceLogo')
             </div>
 
@@ -39,6 +39,18 @@
 
     .header{
         font-size: 23px;
+    }
+
+    .logo{
+        opacity: 90%;
+        margin-left: 500px;
+        margin-top: 15px;
+    }
+
+    @media (max-width: 490px) {
+        .logo{
+            margin-left: 50px;
+        }
     }
 
     @media (max-width: 490px) {
