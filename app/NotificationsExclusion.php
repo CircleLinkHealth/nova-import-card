@@ -37,6 +37,16 @@ class NotificationsExclusion extends Model
     ];
     protected $table = 'notifications_exclusions';
 
+    public static function isMailBlackListed($userId): bool
+    {
+        return self::isBlackListed($userId, 'mail');
+    }
+
+    public static function isSmsBlackListed($userId): bool
+    {
+        return self::isBlackListed($userId, 'sms');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -47,15 +57,5 @@ class NotificationsExclusion extends Model
         return self::where('user_id', '=', $userId)
             ->where($channel, '=', true)
             ->exists();
-    }
-
-    public static function isMailBlackListed($userId): bool
-    {
-        return self::isBlackListed($userId, 'mail');
-    }
-
-    public static function isSmsBlackListed($userId): bool
-    {
-        return self::isBlackListed($userId, 'sms');
     }
 }
