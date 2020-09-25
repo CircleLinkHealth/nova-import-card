@@ -2571,6 +2571,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function patientProblemsForBillingProcessing(): Collection
     {
+        if ( ! $this->relationLoaded('ccdProblems')) {
+            $this->load(['ccdProblems' => function ($problems) {
+                $problems->isBillable();
+            }]);
+        }
+
         return  $this->ccdProblems->map(function (Problem $p) {
             return (new PatientProblemForProcessing())
                 ->setId($p->id)
