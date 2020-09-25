@@ -1240,7 +1240,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "3fb60458cf4d379d3d636e510f3c966b2ed0effd"
+                "reference": "968d86d7c9741f8cf35224c1a8b4447e18b9fc56"
             },
             "type": "laravel-module",
             "extra": {
@@ -1262,7 +1262,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-24T14:19:17+00:00"
+            "time": "2020-09-25T15:04:46+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1312,7 +1312,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "7659a43a95cfd77660aae17d40aadd2d258e0f59"
+                "reference": "90fd9542e16fa19172a48806a7b7fd110948ded5"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1338,7 +1338,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-21T22:22:38+00:00"
+            "time": "2020-09-25T15:05:16+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1728,7 +1728,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "421d0917aaccbf339c306ef6d814ee109113fbc9"
+                "reference": "d3078bce93c7cbf7131f8fd79684893ee06291a4"
             },
             "type": "laravel-module",
             "extra": {
@@ -1753,7 +1753,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-08T19:07:55+00:00"
+            "time": "2020-09-25T15:07:58+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
