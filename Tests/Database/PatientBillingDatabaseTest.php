@@ -153,7 +153,6 @@ class PatientBillingDatabaseTest extends CustomerTestCase
         ->hasChargeableServiceCodeForLocation(ChargeableService::BHI, $location->id)
             ->first();
         
-        dd($bhiCpmProblem->toArray());
         //create user that when processed can be BHI eligible
 
         //make that user BHI chargeable - core difference is the consent.
