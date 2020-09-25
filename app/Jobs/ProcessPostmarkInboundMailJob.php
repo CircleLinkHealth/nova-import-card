@@ -32,7 +32,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    const FROM_CALLBACK_EMAIL_USERNAME = 'callcenterusa.net';
+    const FROM_CALLBACK_EMAIL_DOMAIN = 'callcenterusa.net';
 
     public int $tries = 1;
 
@@ -69,7 +69,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         }
         $emailParts = $this->splitEmail($email);
 
-        if (/*self::FROM_CALLBACK_EMAIL_USERNAME === $emailParts->username*/true) {
+        if (self::FROM_CALLBACK_EMAIL_DOMAIN === $emailParts->domain) {
             try {
                 $postmarkCallbackService = app(PostmarkCallbackMailService::class);
                 $postmarkCallbackData    = $postmarkCallbackService->postmarkInboundData($recordId);

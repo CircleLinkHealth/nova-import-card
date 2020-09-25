@@ -13,7 +13,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Seeder;
 
-class SeedInboundPostmarkCallbacks extends Seeder
+class InboundPostmarkCallbackDataSeeder extends Seeder
 {
     use PostmarkCallbackHelpers;
     use PracticeHelpers;
@@ -50,15 +50,15 @@ class SeedInboundPostmarkCallbacks extends Seeder
      */
     public function run()
     {
-        $n = 1;
-        $this->createUsersOfTypeEnrolled($n, 5);
-        $this->createUsersOfTypeNotEnrolled($n, 3);
-        $this->createUsersOfTypeQueuedForEnrolmentButNotCAassigned($n, 7);
-        $this->createUsersOfTypeNameIsSelf($n, 3);
-        $this->createUsersOfTypeRequestedToWithdraw($n, 4);
-        $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf($n, 6);
-        $this->createUsersOfTypeResolvableMultiMatches($n, 2);
-        $this->createUsersOfTypeNotResolvableMultiMatches($n, 2);
+        $start = 1;
+        $this->createUsersOfTypeEnrolled($start, 5);
+        $this->createUsersOfTypeNotEnrolled($start, 3);
+        $this->createUsersOfTypeQueuedForEnrolmentButNotCAassigned($start, 7);
+        $this->createUsersOfTypeNameIsSelf($start, 3);
+        $this->createUsersOfTypeRequestedToWithdraw($start, 4);
+        $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf($start, 6);
+        $this->createUsersOfTypeResolvableMultiMatches($start, 2);
+        $this->createUsersOfTypeNotResolvableMultiMatches($start, 2);
     }
 
     private function createUsersOfTypeEnrolled(int $n, int $limit)

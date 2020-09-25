@@ -21,7 +21,7 @@ trait PostmarkCallbackHelpers
 
         $inboundPostmarkData = [
             'For'      => 'GROUP DISTRIBUTION',
-            'From'     => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL_USERNAME,
+            'From'     => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL_DOMAIN,
             'Phone'    => $number,
             'Ptn'      => $name,
             'Msg'      => '| REQUEST TO BE REMOVED OFF ALL LISTS  |',
