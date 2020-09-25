@@ -8,15 +8,19 @@ namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
 use App\Call;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Database\Seeders\CpmProblemChargeableServiceLocationSeeder;
 use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
+use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
+use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
@@ -129,6 +133,34 @@ class PatientBillingDatabaseTest extends CustomerTestCase
         );
     }
 
+    public function test_patient_is_bhi_and_is_pcm_helpers_use_new_summaries()
+    {
+        $patient = $this->patient();
+    
+       
+
+        //make sure patient locations have services
+        $location = $patient->patientInfo->location;
+        $practice = $location->practice;
+        
+        SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
+        AppConfig::updateOrCreate([
+            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
+            'config_value' => $practice->name,
+        ]);
+        
+        $bhiCpmProblem = CpmProblem::withChargeableServicesForLocation($location->id)
+        ->hasChargeableServiceCodeForLocation(ChargeableService::BHI, $location->id)
+            ->first();
+        
+        dd($bhiCpmProblem->toArray());
+        //create user that when processed can be BHI eligible
+
+        //make that user BHI chargeable - core difference is the consent.
+
+        //create user that when processed can be PCM eligible
+    }
+
     public function test_patient_summary_sql_view_has_correct_auxiliary_metrics()
     {
         self::assertNotNull(
@@ -207,16 +239,12 @@ class PatientBillingDatabaseTest extends CustomerTestCase
         $cpmProblems = CpmProblem::take(5)->get()->values()->toArray();
 
         for ($i = 4; $i > 0; --$i) {
-            try {
-                $code = $i > 2 ? ChargeableService::BHI : ChargeableService::CCM;
-                $locationProblemServiceRepo->store($locationId, $problemId = $cpmProblems[$i]['id'], ChargeableService::getChargeableServiceIdUsingCode($code));
-                $patient->ccdProblems()->create([
-                    'cpm_problem_id' => $problemId,
-                    'name'           => str_random(8),
-                ]);
-            } catch (\Throwable $exception) {
-                dd(['i' => $i]);
-            }
+            $code = $i > 2 ? ChargeableService::BHI : ChargeableService::CCM;
+            $locationProblemServiceRepo->store($locationId, $problemId = $cpmProblems[$i]['id'], ChargeableService::getChargeableServiceIdUsingCode($code));
+            $patient->ccdProblems()->create([
+                'cpm_problem_id' => $problemId,
+                'name'           => str_random(8),
+            ]);
         }
 
         self::assertFalse(ChargeablePatientMonthlySummary::where('patient_user_id', $patient->id)
