@@ -39,6 +39,7 @@ class CallsView extends BaseSqlView
             if (u5.no_of_successful_calls is null, 0, u5.no_of_successful_calls) as no_of_successful_calls,
             u7.practice_id,
             u7.practice,
+            u7.is_demo,
             u10.state,
             u1.timezone,
             c.window_start as call_time_start,
@@ -68,11 +69,11 @@ class CallsView extends BaseSqlView
 						from patient_info pi
 						left join patient_contact_window pcw on pi.id = pcw.patient_info_id
 						where pi.ccm_status in ('enrolled', 'paused')
-						group by pi.user_id) as u4 on c.inbound_cpm_id = u4.patient_id
+						group by pi.user_id, pi.general_comment, pi.ccm_status, pi.preferred_contact_language) as u4 on c.inbound_cpm_id = u4.patient_id
 						
             left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, pms.no_of_calls from patient_monthly_summaries pms where month_year = DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) u5 on c.inbound_cpm_id = u5.patient_id
 
-			left join (select u.id as user_id, p.id as practice_id, p.display_name as practice from practices p join users u on u.program_id = p.id where p.active = 1) u7 on c.inbound_cpm_id = u7.user_id
+			left join (select u.id as user_id, p.id as practice_id, p.display_name as practice, p.is_demo from practices p join users u on u.program_id = p.id where p.active = 1) u7 on c.inbound_cpm_id = u7.user_id
 
             left join patients_bhi_chargeable_view pbhi on c.inbound_cpm_id = pbhi.id
 
