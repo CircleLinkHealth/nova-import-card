@@ -837,6 +837,7 @@ class Enrollee extends BaseModel
     {
         return $query->where('id', '!=', $enrollee->id)
             ->where('practice_id', $enrollee->practice_id)
+            ->whereNotNull('provider_id')
             ->whereNotIn(
                 'status',
                 [
