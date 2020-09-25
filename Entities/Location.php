@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
@@ -301,5 +302,11 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     public function user()
     {
         return $this->belongsToMany(User::class);
+    }
+    
+    public function cpmProblemServices(){
+        return $this->belongsToMany(ChargeableService::class, 'location_problem_services')
+            ->using(LocationProblemService::class)
+            ->withPivot(['cpm_problem_id']);
     }
 }
