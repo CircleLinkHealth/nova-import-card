@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests;
 
-use App\Events\PatientUserCreated;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
 use CircleLinkHealth\CcmBilling\Events\PatientSuccessfulCallCreated;

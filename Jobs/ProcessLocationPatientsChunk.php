@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
-use App\Contracts\ChunksEloquentBuilder;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;

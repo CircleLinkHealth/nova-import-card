@@ -33,7 +33,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
 
         $this->repo = new PatientServiceProcessorRepository();
     }
-    
+
     public function test_it_creates_ccm_status_logs_at_the_end_of_month()
     {
         $ccmStatusLogQuery = EndOfMonthCcmStatusLog::where('patient_user_id', $patientId = $this->patient()->id)
