@@ -1270,7 +1270,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "e6e052f4817ed734c3211a2f17138b101d4cfad9"
+                "reference": "eb30972dde790c23b29a8d60cddd51a8967251ba"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1304,7 +1304,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-25T18:39:00+00:00"
+            "time": "2020-09-25T22:08:05+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1706,7 +1706,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "0aee0539b0bd94680a457a9853cb5c85d76d88ab"
+                "reference": "32348386731c18ec615bd4e496afc6cf65d05f48"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1720,7 +1720,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-25T18:39:00+00:00"
+            "time": "2020-09-25T22:08:05+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
