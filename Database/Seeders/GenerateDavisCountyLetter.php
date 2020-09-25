@@ -67,7 +67,7 @@ class GenerateDavisCountyLetter extends Seeder
                 ),
 
                 'ui_requests' => json_encode([
-                    'logo_position'        => 'text-align:left',
+                    'logo_position'        => 'text-align:right',
                     'extra_address_header' => [
                         $davisCountyPractice->name => [
                             'address_line_1',
