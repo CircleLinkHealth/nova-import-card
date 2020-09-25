@@ -185,11 +185,18 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->belongsToMany(User::class, 'cpm_problems_users', 'patient_id');
     }
 
-    public function scopeWithChargeableServicesForLocation($query, $locationId)
+    public function scopeWithChargeableServicesForLocation($query, int $locationId)
     {
         return $query->with(['locationChargeableServices' => function ($lps) use ($locationId) {
-            $lps->where('pivot.location_id', $locationId);
+            $lps->where('location_id', $locationId);
         }]);
+    }
+    
+    public function scopeHasChargeableServiceCodeForLocation($query, string $chargeableServiceCode, int $locationId){
+        return $query->whereHas('locationChargeableServices', function ($lcs) use ($chargeableServiceCode, $locationId){
+            $lcs->where('location_id', $locationId)
+                ->where('code', $chargeableServiceCode);
+        });
     }
 
     public function scopeWithIcd10Codes($builder)
