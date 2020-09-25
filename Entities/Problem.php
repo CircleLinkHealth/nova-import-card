@@ -168,4 +168,20 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
             ->withPivot('name', 'icd_10_code')
             ->withTimestamps();
     }
+
+    public function scopeIsBillable($query, $ignoreWith = false)
+    {
+        return $query->when( ! $ignoreWith, function ($q) {
+            $q->with(['cpmProblem.locationChargeableServices', 'codes', 'icd10Codes']);
+        })
+            ->whereHas('cpmProblem', function ($cpmProblem) {
+                $cpmProblem->notGenericDiabetes();
+            })
+            ->isMonitored();
+    }
+
+    public function scopeIsMonitored($query)
+    {
+        return $query->where('is_monitored', true);
+    }
 }

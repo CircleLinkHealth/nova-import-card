@@ -75,6 +75,8 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     const DIABETES_TYPE_1 = 'Diabetes Type 1';
 
     const DIABETES_TYPE_2 = 'Diabetes Type 2';
+    
+    const GENERIC_DIABETES = 'Diabetes';
 
     protected $guarded = [];
 
@@ -212,5 +214,10 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     public function user()
     {
         return $this->hasMany(CpmProblemUser::class, 'cpm_problem_id');
+    }
+    
+    public function scopeNotGenericDiabetes($query)
+    {
+        return $query->where('name', '!=', self::GENERIC_DIABETES);
     }
 }
