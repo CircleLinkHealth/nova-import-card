@@ -10,6 +10,7 @@ class DefaultProblemServicesToLocation
 {
     public static function attach(int $locationId): void
     {
+        //todo:
         //need practice for pcm
         //bhi and ccm can be taken from CPM problem
         //class CpmProblemService that decides that
