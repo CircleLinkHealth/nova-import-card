@@ -135,48 +135,6 @@ class PatientBillingDatabaseTest extends CustomerTestCase
         );
     }
 
-    public function test_patient_is_bhi_helper_uses_new_summaries()
-    {
-        $patient = $this->patient();
-
-        $location = $patient->patientInfo->location;
-        $practice = $location->practice;
-
-        $practice->chargeableServices()->sync(ChargeableService::getChargeableServiceIdUsingCode($bhiCode = ChargeableService::BHI));
-        SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
-        AppConfig::updateOrCreate([
-            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
-            'config_value' => $practice->name,
-        ]);
-
-        $bhiCpmProblem = CpmProblem::withChargeableServicesForLocation($location->id)
-            ->hasChargeableServiceCodeForLocation($bhiCode, $location->id)
-            ->first();
-
-        self::assertTrue($patient->ccdProblems->isEmpty());
-
-        $patient->ccdProblems()->create([
-            'name'           => str_random(8),
-            'cpm_problem_id' => $bhiCpmProblem->id,
-            'is_monitored'   => true,
-        ]);
-
-        MigrateChargeableServicesFromChargeablesToLocationSummariesTable::dispatch();
-        GenerateLocationSummaries::dispatch($location->id, $startOfMOnth = Carbon::now()->startOfMonth());
-
-        self::assertTrue($location->chargeableServiceSummaries->isNotEmpty());
-        self::assertTrue($location->chargeableServiceSummaries->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode($bhiCode))->isNotEmpty());
-
-        ProcessSinglePatientMonthlyServices::dispatch($patient->id, $startOfMOnth);
-
-        $patient->notes()->create([
-            'type'      => Patient::BHI_CONSENT_NOTE_TYPE,
-            'author_id' => $this->careCoach()->id,
-        ]);
-
-        self::assertTrue($patient->isBhi());
-    }
-
     public function test_patient_summary_sql_view_has_correct_auxiliary_metrics()
     {
         self::assertNotNull(
