@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Tests\CustomerTestCase;
 
 class BillingTestCase extends CustomerTestCase
@@ -26,8 +27,10 @@ class BillingTestCase extends CustomerTestCase
     {
         parent::setUp();
 
-        $this->setupPractice()
-            ->setupLocation();
+        $this->setupPcmProblems()
+            ->setupPractice()
+            ->setupLocation()
+        ;
     }
 
     public function getLocation(): Location
@@ -49,6 +52,23 @@ class BillingTestCase extends CustomerTestCase
         }
 
         return $this->practice;
+    }
+
+    public function setupPcmProblems(): self
+    {
+        $pcmProblems = CpmProblem::notGenericDiabetes()
+            ->where('is_behavioral', false)
+            ->take(5)
+            ->get()
+            ->transform(fn (CpmProblem $p) => [
+                'code'        => $p->default_icd_10_code,
+                'code_type'   => 'ICD10',
+                'description' => $p->name,
+            ]);
+        
+        $this->getPractice()->pcmProblems()->createMany($pcmProblems->toArray());
+
+        return $this;
     }
 
     private function setupLocation(): self

@@ -16,8 +16,7 @@ class PatientBillingHelpersTest extends BillingTestCase
 {
     public function test_patient_is_bhi_helper_uses_new_summaries()
     {
-        $bhiCpmProblem = CpmProblem::withChargeableServicesForLocation(($location = $this->getLocation())->id)
-            ->hasChargeableServiceCodeForLocation($bhiCode = ChargeableService::BHI, $location->id)
+        $bhiCpmProblem = CpmProblem::hasChargeableServiceCodeForLocation($bhiCode = ChargeableService::BHI, ($location = $this->getLocation())->id)
             ->first();
 
         self::assertTrue(($patient = $this->patient())->ccdProblems->isEmpty());
@@ -38,5 +37,25 @@ class PatientBillingHelpersTest extends BillingTestCase
         ]);
 
         self::assertTrue($patient->isBhi());
+    }
+
+    public function test_patient_is_pcm_helper_uses_new_summaries()
+    {
+        $pcmProblem = CpmProblem::hasChargeableServiceCodeForLocation($pcmCode = ChargeableService::PCM, ($location = $this->getLocation())->id)
+            ->first();
+
+        self::assertTrue(($patient = $this->patient())->ccdProblems->isEmpty());
+
+        $patient->ccdProblems()->create([
+            'name'           => str_random(8),
+            'cpm_problem_id' => $pcmProblem->id,
+            'is_monitored'   => true,
+        ]);
+
+        self::assertTrue($location->chargeableServiceSummaries->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode($pcmCode))->isNotEmpty());
+
+        ProcessSinglePatientMonthlyServices::dispatch($patient->id, Carbon::now()->startOfMonth());
+
+        self::assertTrue($patient->isPcm());
     }
 }
