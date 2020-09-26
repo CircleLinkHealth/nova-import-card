@@ -102,11 +102,12 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                 (new ProcessUnresolvedPostmarkCallback($matchedResultsFromDB, $recordId))->handleUnresolved();
             } catch (\Exception $e) {
                 if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {
-                    //                Assign to as Unresolved for CA's to check ???
+                    Log::error($e->getMessage());
+                    sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See inbound_postmark_mail id [$recordId]. Nurse not found");
                     return;
                 }
                 Log::error($e->getMessage());
-                sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
+                sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See inbound_postmark_mail id [$recordId]");
             }
 
             return;
