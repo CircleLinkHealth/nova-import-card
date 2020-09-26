@@ -9,7 +9,6 @@ namespace App\Nova;
 use App\UnresolvedCallbacksResourceModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\Markdown;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 
@@ -108,6 +107,14 @@ class UnresolvedPostmarkCallbackResource extends Resource
     public function filters(Request $request)
     {
         return [];
+    }
+
+    /**
+     * @return string
+     */
+    public static function label()
+    {
+        return 'Unresolved Callback Notifications';
     }
 
     /**
