@@ -14,9 +14,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Not used. Chargeable Services are manually added to new locations.
+ */
 class AutoAttachServicesToNewLocation
 {
-    //todo: probably deprecate the file after we see we indeed prefer manual assignment of Location CS on location creation
     protected int $locationId;
     protected Carbon $month;
 

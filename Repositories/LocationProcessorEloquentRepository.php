@@ -116,4 +116,11 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->values()
             ->toArray();
     }
+    
+    public function hasServicesForMonth(int $locationId, Carbon $month): bool
+    {
+        return $this->servicesForLocation($locationId)
+            ->createdOn($month, 'chargeable_month')
+            ->exist();
+    }
 }

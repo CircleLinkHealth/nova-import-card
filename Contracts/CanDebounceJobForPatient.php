@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Contracts;
 
-interface PatientEvent
+interface CanDebounceJobForPatient
 {
     public function debounceDuration(): int;
 

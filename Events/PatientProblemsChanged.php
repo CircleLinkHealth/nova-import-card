@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\CcmBilling\Events;
 
-use CircleLinkHealth\CcmBilling\Contracts\PatientEvent;
+use CircleLinkHealth\CcmBilling\Contracts\CanDebounceJobForPatient;
 use Illuminate\Queue\SerializesModels;
 
-class PatientProblemsChanged implements PatientEvent
+class PatientProblemsChanged implements CanDebounceJobForPatient
 {
     use SerializesModels;
 
@@ -37,7 +37,7 @@ class PatientProblemsChanged implements PatientEvent
 
     public function debounceDuration(): int
     {
-        return 0;
+        return 5;
     }
 
     public function getPatientId(): int
@@ -47,6 +47,6 @@ class PatientProblemsChanged implements PatientEvent
 
     public function shouldDebounce(): bool
     {
-        return false;
+        return true;
     }
 }
