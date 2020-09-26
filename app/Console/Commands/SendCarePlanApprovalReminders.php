@@ -92,7 +92,7 @@ class SendCarePlanApprovalReminders extends Command
 
         if (isProductionEnv() && $recipientsWithNoDMAddresses->isNotEmpty()) {
             sendSlackMessage(
-                '#cpm_general_alerts',
+                '#customer-cpm-alerts',
                 "We were not able to send Care Plan Approval Notifications via DIRECT to these providers because no DIRECT addresses were found.\n{$recipientsWithNoDMAddresses->implode(",\n")}"
             );
         }
