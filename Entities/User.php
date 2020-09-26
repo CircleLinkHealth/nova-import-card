@@ -2197,7 +2197,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isBhi()
     {
         return \Cache::remember("user:$this->id:is_bhi", 5, function () {
-            return User::isBhiChargeable()
+            return User::whereHas('chargeableMonthlySummariesView', function ($summary) {
+                $summary->where('chargeable_service_code', ChargeableService::BHI)
+                    ->createdOn(Carbon::now()->startOfMonth(), 'chargeable_month');
+            })
                 ->where('id', $this->id)
                 ->exists();
         });
@@ -3061,41 +3064,44 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopeIsBhiChargeable($builder)
     {
         return $builder
-            ->whereHas(
-                'primaryPractice',
-                function ($q) {
-                    $q->hasServiceCode('CPT 99484');
-                }
-            )->whereHas(
-                'patientInfo',
-                function ($q) {
-                    $q->enrolled();
-                }
-            )
-            ->whereHas(
-                'ccdProblems.cpmProblem',
-                function ($q) {
-                    $q->where('is_behavioral', true);
-                }
-            )
+//            ->whereHas(
+//                'primaryPractice',
+//                function ($q) {
+//                    $q->hasServiceCode('CPT 99484');
+//                }
+//            )->whereHas(
+//                'patientInfo',
+//                function ($q) {
+//                    $q->enrolled();
+//                }
+//            )
+//            ->whereHas(
+//                'ccdProblems.cpmProblem',
+//                function ($q) {
+//                    $q->where('is_behavioral', true);
+//                }
+//            )
             ->where(
                 function ($q) {
-                    $q->where(function ($q) {
-                        $q->notOfPracticeRequiringSpecialBhiConsent()
-                            ->whereHas(
-                                'patientInfo',
+                    $q
+//                        ->where(function ($q) {
+//                        $q->notOfPracticeRequiringSpecialBhiConsent()
+//                            ->whereHas(
+//                                'patientInfo',
+//                                function ($q) {
+//                                    $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
+//                                }
+//                            );
+//                    })
+                        ->orWhere(function ($q) {
+                            $q->orWhereHas(
+                                'notes',
                                 function ($q) {
-                                    $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
-                                }
-                            );
-                    })->orWhere(function ($q) {
-                        $q->orWhereHas(
-                            'notes',
-                            function ($q) {
                                 $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
                             }
-                        );
-                    });
+                            );
+                        })
+                    ;
                 }
             );
     }
