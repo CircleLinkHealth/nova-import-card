@@ -719,7 +719,7 @@ class SchedulerService
         }
 
         if (Call::REACHED === $call->status) {
-            event(new PatientSuccessfulCallCreated($patient->id));
+            event(new PatientSuccessfulCallCreated($note->patient_id));
         }
 
         return $call;

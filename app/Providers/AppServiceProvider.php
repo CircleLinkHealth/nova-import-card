@@ -15,6 +15,16 @@ use App\Services\AWV\DirectPatientDocument;
 use App\Services\AWV\EmailPatientDocument;
 use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository as PatientProcessorEloquentRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
 use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
@@ -218,6 +228,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\Propaganistas\LaravelPhone\PhoneServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
+
+        //Billing error - to remove
+        $this->app->bind(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
+        $this->app->singleton(PatientServiceRepositoryInterface::class, PatientServiceProcessorRepository::class);
+        $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
+        $this->app->singleton(LocationProcessorRepository::class, LocationProcessorEloquentRepository::class);
+        $this->app->singleton(PatientProcessorEloquentRepositoryInterface::class, PatientProcessorEloquentRepository::class);
 
 //        Auth::provider('enrollmentLogin', function ($app, array $config) {
 //            return new AutoEnrollmentLoginProvider($app['hash'], $config['model']);
