@@ -37,7 +37,7 @@ class PatientProblemsChanged implements CanDebounceJobForPatient
 
     public function debounceDuration(): int
     {
-        return 0;
+        return 5;
     }
 
     public function getPatientId(): int
@@ -47,6 +47,6 @@ class PatientProblemsChanged implements CanDebounceJobForPatient
 
     public function shouldDebounce(): bool
     {
-        return false;
+        return true;
     }
 }
