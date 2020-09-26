@@ -19,6 +19,7 @@ use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientHasServiceCode;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
@@ -2194,12 +2195,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      *
      * @return bool
      */
-    public function isBhi()
+    public function isBhi():bool
     {
         return \Cache::remember("user:$this->id:is_bhi", 5, function () {
-            return User::isBhiChargeable()
-                ->where('id', $this->id)
-                ->exists();
+            return PatientHasServiceCode::execute($this->id, ChargeableService::BHI);
         });
     }
 
@@ -2298,33 +2297,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole('participant');
     }
 
-    public function isPcm()
+    public function isPcm() : bool
     {
-        if ($this->ccmNoOfMonitoredProblems() >= 2) {
-            return false;
-        }
-
-        return User::whereHas('ccdProblems', function ($q) {
-            $q->where(function ($q) {
-                $q->whereHas('codes', function ($q) {
-                    $q->whereIn('code', function ($q) {
-                        $q->select('code')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
-                    });
-                })->orWhereHas('cpmProblem', function ($q) {
-                    $q->whereIn('default_icd_10_code', function ($q) {
-                        $q->select('code')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
-                    })->orWhereIn('name', function ($q) {
-                        $q->select('description')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
-                    });
-                });
-            })->orWhere(function ($q) {
-                $q->whereIn('name', function ($q) {
-                    $q->select('description')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
-                });
-            });
-        })
-            ->where('id', '=', $this->id)
-            ->exists();
+        return PatientHasServiceCode::execute($this->id, ChargeableService::PCM);
     }
 
     public function isPracticeStaff(): bool
