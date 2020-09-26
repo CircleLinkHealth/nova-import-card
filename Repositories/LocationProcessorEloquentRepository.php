@@ -47,6 +47,13 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->where('chargeable_month', '<', $month)
             ->get();
     }
+    
+    public function hasServicesForMonth(int $locationId, Carbon $month): bool
+    {
+        return $this->servicesForLocation($locationId)
+            ->where('chargeable_month', $month)
+            ->exists();
+    }
 
     public function patients(int $locationId, Carbon $monthYear): Collection
     {
