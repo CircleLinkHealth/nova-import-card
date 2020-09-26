@@ -74,10 +74,9 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
 
                     $isBhi = $problem->is_behavioral;
 
-                    $isPcm = $practicePcmProblems->where(
-                        function ($q) use ($problem) {
-                            $q->where('code', $problem->default_icd_10_code)
-                                ->orWhere('description', $problem->name);
+                    $isPcm = $practicePcmProblems->filter(
+                        function ($pcmProblem) use ($problem) {
+                            return $pcmProblem->code === $problem->default_icd_10_code || $pcmProblem->desrciption === $problem->name;
                         }
                     )->count() > 0;
                     if ($isBhi || $isDementia || $isDementia) {
@@ -87,9 +86,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                     if ($isPcm) {
                         $this->repo()->store($location->id, $problem->id, $this->pcmCodeId);
                     }
-
-                    //todo: find out - can a problem both be pcm and ccm?
-                    // For example, for patients that have only that they can use it as PCM, however patients can have it along with others and be CCM
+                    
                     if ( ! $isBhi || $isDementia || $isDepression) {
                         $this->repo()->store($location->id, $problem->id, $this->ccmCodeId);
                     }
