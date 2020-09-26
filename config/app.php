@@ -7,6 +7,7 @@
 use App\Providers\CpmArtisanServiceProvider;
 use App\Providers\PrimaryNavComposer;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
+use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
@@ -223,6 +224,7 @@ return [
         CardServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
+        CcmBillingServiceProvider::class,
         \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
