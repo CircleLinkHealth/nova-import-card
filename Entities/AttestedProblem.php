@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Entities;
 
 use App\Call;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
@@ -68,5 +69,13 @@ class AttestedProblem extends Pivot
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_user_id');
+    }
+
+    /**
+     * Todo: deprecate.
+     */
+    public function pms()
+    {
+        return $this->belongsTo(PatientMonthlySummary::class, 'patient_monthly_summary_id');
     }
 }
