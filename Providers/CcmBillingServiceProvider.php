@@ -31,7 +31,10 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
     {
         return [
             PatientMonthlyBillingProcessor::class,
-            PatientServiceProcessorRepository::class,
+            PatientServiceRepositoryInterface::class,
+            LocationProcessorRepository::class,
+            LocationProblemServiceRepositoryInterface::class,
+            PatientProcessorEloquentRepositoryInterface::class,
         ];
     }
 
