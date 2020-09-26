@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Tests\CustomerTestCase;
 
@@ -103,5 +104,16 @@ class BillingTestCase extends CustomerTestCase
         ]);
 
         return $this;
+    }
+    
+    public function createPatientCcdProblemOfCode(User $patient, string $serviceCode){
+        $problem = CpmProblem::hasChargeableServiceCodeForLocation($serviceCode, $patient->patientInfo->location->id)
+            ->first();
+        
+        $patient->ccdProblems()->create([
+            'name'           => str_random(8),
+            'cpm_problem_id' => $problem->id,
+            'is_monitored'   => true,
+        ]);
     }
 }
