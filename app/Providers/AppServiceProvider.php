@@ -228,14 +228,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\Propaganistas\LaravelPhone\PhoneServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
-    
-        //billing error - need to fix
-//        $this->app->bind(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
-//
-//        $this->app->singleton(PatientServiceRepositoryInterface::class, PatientServiceProcessorRepository::class);
-//        $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
-//        $this->app->singleton(LocationProcessorRepository::class, LocationProcessorEloquentRepository::class);
-//        $this->app->singleton(PatientProcessorEloquentRepositoryInterface::class, PatientProcessorEloquentRepository::class);
 
 //        Auth::provider('enrollmentLogin', function ($app, array $config) {
 //            return new AutoEnrollmentLoginProvider($app['hash'], $config['model']);
