@@ -20,7 +20,7 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
     /**
      * Create a new job instance.
      */
-    public function __construct(int $patientId, Carbon $month)
+    public function __construct(int $patientId, Carbon $month = null)
     {
         $this->patientId = $patientId;
         $this->month     = ($month ?? Carbon::now()->startOfMonth())->toDateString();
