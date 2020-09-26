@@ -61,9 +61,12 @@ trait PostmarkCallbackHelpers
     {
         return  PostmarkInboundMail::create(
             [
-                //                saving to body will throw SQLSTATE[HY000]: General error: 3105
-                // The value specified for generated column 'body' in table 'postmark_inbound_mail' is not allowed.
-                'body' => json_encode($this->getCallbackMailData($this->patient, $requestToWithdraw, $nameIsSelf)),
+                'data' => json_encode(
+                    [
+                        'From'     => 'message.dispatch@callcenterusa.net',
+                        'TextBody' => $this->getCallbackMailData($this->patient, $requestToWithdraw, $nameIsSelf),
+                    ]
+                ),
             ]
         );
     }

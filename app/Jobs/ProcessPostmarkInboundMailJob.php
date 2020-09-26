@@ -33,6 +33,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     use SerializesModels;
 
     const FROM_CALLBACK_EMAIL_DOMAIN = 'callcenterusa.net';
+    const FROM_CALLBACK_MAIL = 'message.dispatch@callcenterusa.net';
 
     public int $tries = 1;
 

@@ -50,5 +50,18 @@ class ProcessPostmarkInboundMailCommand extends Command
         ]), $item->id);
 
         return 0;
+//
+//        $all = PostmarkInboundMail::where('from', ProcessPostmarkInboundMailJob::FROM_CALLBACK_MAIL)->get();
+//
+//        foreach ($all as $item) {
+//            ProcessPostmarkInboundMailJob::dispatchNow(new PostmarkInboundMailRequest(
+//                [
+//                    'From'     => $item->from,
+//                    'TextBody' => $item->body,
+//                ]
+//            ), $item->id);
+//        }
+//
+//        return 0;
     }
 }
