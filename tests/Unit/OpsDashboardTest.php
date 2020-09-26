@@ -326,7 +326,6 @@ class OpsDashboardTest extends \Tests\TestCase
 
     private function runCommandToGenerateEntireOpsDailyReport(Carbon $date = null)
     {
-        //this will first take all eligible practices and run
         Artisan::call(
             'report:OpsDailyReport',
             [
@@ -337,7 +336,6 @@ class OpsDashboardTest extends \Tests\TestCase
 
     private function runJobToGenerateDBDataForPractice($practiceId, $date = null)
     {
-        //this will produce DB entry with data for given practice
         GenerateOpsDailyPracticeReport::dispatch($practiceId, $date);
     }
 }

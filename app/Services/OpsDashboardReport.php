@@ -8,6 +8,7 @@ namespace App\Services;
 
 use App\Reports\OpsDashboardPracticeReportData;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -297,17 +298,15 @@ class OpsDashboardReport
                     }
                 }
 
-                $pms = $patient->patientSummaries->first();
-                if ($pms) {
-                    $totalCcmTime[] = $pms->ccm_time;
-                    $this->report->incrementTimeRangeCount($pms);
+                $patientSummaries = $patient->chargeableMonthlySummariesView;
+                if ($patientSummaries->isNotEmpty()) {
+                    $this->report->incrementTimeRangeCount($patientSummaries);
                 } else {
+                    sendSlackMessage('#billing_alerts', "No summaries found for Patient:{$patient->id}, please investigate.");
                     $this->report->incrementZeroMinsCount();
                 }
             }
             $this->categorizePatientByStatusUsingRevisions($patient);
-            //categorize so we can count for totals as well. Obviously we could have used collection->whereStatus on patient collection
-            //but since we are looping the patient collection here, categorize so we can count to help with performance
             $this->categorizePatientByStatusUsingPatientInfo($patient, $patientWasEnrolledPriorDay);
         }
 

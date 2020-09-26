@@ -7,7 +7,8 @@
 namespace App\Reports;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Support\Collection;
 
 /**
@@ -160,10 +161,14 @@ class OpsDashboardPracticeReportData
         ++$this->tenToFifteenMinsCount;
     }
 
-    public function incrementTimeRangeCount(PatientMonthlySummary $pms)
+    public function incrementTimeRangeCount(Collection $patientSummaries)
     {
-        $ccmTime = $pms->ccm_time;
-        $bhiTime = $pms->bhi_time;
+        [$ccmSummaries, $bhiSummaries] = $patientSummaries->partition(function (ChargeablePatientMonthlySummaryView $summary) {
+            return ChargeableService::BHI !== $summary->chargeable_service_code;
+        });
+        $ccmTime                   = $ccmSummaries->sum('total_time');
+        $this->totalCcmTimeArray[] = $ccmTime;
+        $bhiTime                   = $bhiSummaries->sum('total_time');
 
         if (0 === $ccmTime || null == $ccmTime) {
             $this->incrementZeroMinsCount();
