@@ -6,14 +6,14 @@
 
 namespace App\Events;
 
-use CircleLinkHealth\CcmBilling\Contracts\PatientEvent;
+use CircleLinkHealth\CcmBilling\Contracts\CanDebounceJobForPatient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PatientUserCreated implements PatientEvent
+class PatientUserCreated implements CanDebounceJobForPatient
 {
     use Dispatchable;
     use InteractsWithSockets;
