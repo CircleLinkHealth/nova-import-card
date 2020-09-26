@@ -24,7 +24,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         SELECT
         upc.postmark_id as postmark_id,
         upc.user_id as matched_user_id,
-        p.data as inbound_data,
+        p.body as inbound_data,
         
         CASE WHEN upc.unresolved_reason = '$notEnrolled' THEN 'Not Enrolled'
         WHEN upc.unresolved_reason = '$queuedAndUnassigned' THEN 'Enrollment Queue / CA unassigned'
