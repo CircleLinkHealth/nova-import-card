@@ -51,18 +51,19 @@ trait PostmarkCallbackHelpers
         ]);
     }
 
-    private function createPatientData(string $status, bool $requestToWithdraw = false, bool $nameIsSelf = false)
+    private function createPatientData(string $status)
     {
         $this->patient         = $this->createUserWithPatientCcmStatus($this->practice, $status);
         $this->patientEnrollee = $this->createEnrolleeWithStatus($this->patient, $this->careAmbassador->id, $status);
-        $this->postmarkRecord  = $this->createPostmarkCallbackNotification($this->patient, $requestToWithdraw, $nameIsSelf);
     }
 
-    private function createPostmarkCallbackNotification(User $patient, bool $requestToWithdraw, bool $nameIsSelf)
+    private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf)
     {
         return  PostmarkInboundMail::create(
             [
-                'data' => json_encode($this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf)),
+                //                saving to body will throw SQLSTATE[HY000]: General error: 3105
+                // The value specified for generated column 'body' in table 'postmark_inbound_mail' is not allowed.
+                'body' => json_encode($this->getCallbackMailData($this->patient, $requestToWithdraw, $nameIsSelf)),
             ]
         );
     }
@@ -70,5 +71,10 @@ trait PostmarkCallbackHelpers
     private function createUserWithPatientCcmStatus(\CircleLinkHealth\Customer\Entities\Practice $practice, string $status)
     {
         return $this->createUser($practice->id, 'participant', $status);
+    }
+
+    private function generatePostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf)
+    {
+        $this->postmarkRecord = json_encode($this->getCallbackMailData($this->patient, $requestToWithdraw, $nameIsSelf));
     }
 }

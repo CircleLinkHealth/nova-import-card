@@ -24,7 +24,13 @@ class PostmarkCallbackMailService
             return;
         }
 
-        $inboundDataArray = collect(json_decode($postmarkRecord->data))->toArray();
+        $inboundDataArray = collect(json_decode($postmarkRecord->body))->toArray();
+        
+        if (empty($inboundDataArray)){
+            Log::error("Inbound Callback data is empty for inbound_postmark_mail id: [$postmarkRecordId]");
+            return;
+        }
+        
         return collect(json_decode($inboundDataArray['TextBody']))->toArray();
     }
 

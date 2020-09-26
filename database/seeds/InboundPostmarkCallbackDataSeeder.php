@@ -50,48 +50,55 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
      */
     public function run()
     {
-        $start = 1;
-        $this->createUsersOfTypeEnrolled($start, 5);
-        $this->createUsersOfTypeNotEnrolled($start, 3);
-        $this->createUsersOfTypeQueuedForEnrolmentButNotCAassigned($start, 7);
-        $this->createUsersOfTypeNameIsSelf($start, 3);
-        $this->createUsersOfTypeRequestedToWithdraw($start, 4);
-        $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf($start, 6);
-        $this->createUsersOfTypeResolvableMultiMatches($start, 2);
-        $this->createUsersOfTypeNotResolvableMultiMatches($start, 2);
+        $this->createUsersOfTypeEnrolled(3);
+        $this->createUsersOfTypeNotEnrolled(3);
+        $this->createUsersOfTypeQueuedForEnrolmentButNotCAassigned(3);
+        $this->createUsersOfTypeNameIsSelf(3);
+        $this->createUsersOfTypeRequestedToWithdraw(3);
+        $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf(3);
+        $this->createUsersOfTypeResolvableMultiMatches(3);
+        $this->createUsersOfTypeNotResolvableMultiMatches(3);
     }
 
-    private function createUsersOfTypeEnrolled(int $n, int $limit)
+    private function createUsersOfTypeEnrolled(int $limit)
     {
+        $n = 1;
         while ($n <= $limit) {
             $this->createPatientData(Enrollee::ENROLLED);
-            $this->command->info("Generated $n users out of $limit of type:[Enrollee::ENROLLED].");
+            $this->createPostmarkCallbackData(false, false);
+            $this->command->info("Generated $n users out of $limit of type:[ENROLLED].");
             ++$n;
         }
     }
 
-    private function createUsersOfTypeNameIsSelf(int $n, int $limit)
+    private function createUsersOfTypeNameIsSelf(int $limit)
     {
+        $n = 1;
         while ($n <= $limit) {
-            $this->createPatientData(Patient::ENROLLED, false, true);
+            $this->createPatientData(Patient::ENROLLED);
+            $this->createPostmarkCallbackData(false, true);
             $this->command->info("Generated $n users out of $limit of type:[Name Is SELF].");
             ++$n;
         }
     }
 
-    private function createUsersOfTypeNotEnrolled(int $n, int $limit)
+    private function createUsersOfTypeNotEnrolled(int $limit)
     {
+        $n = 1;
         while ($n <= $limit) {
             $this->createPatientData(Patient::PAUSED);
+            $this->createPostmarkCallbackData(false, false);
             $this->command->info("Generated $n users out of $limit of type:[NOT ENROLLED.]");
             ++$n;
         }
     }
 
-    private function createUsersOfTypeNotResolvableMultiMatches(int $n, int $limit)
+    private function createUsersOfTypeNotResolvableMultiMatches(int $limit)
     {
+        $n = 1;
         while ($n <= $limit) {
             $this->createPatientData(Patient::ENROLLED);
+            $this->createPostmarkCallbackData(false, false);
             $this->patient->phoneNumbers
                 ->first()
                 ->update(
@@ -108,10 +115,12 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
         }
     }
 
-    private function createUsersOfTypeQueuedForEnrolmentButNotCAassigned(int $n, int $limit)
+    private function createUsersOfTypeQueuedForEnrolmentButNotCAassigned(int $limit)
     {
+        $n = 1;
         while ($n <= $limit) {
             $this->createPatientData(Enrollee::QUEUE_AUTO_ENROLLMENT);
+            $this->createPostmarkCallbackData(false, false);
             $this->patientEnrollee->update(
                 [
                     'care_ambassador_user_id' => null,
@@ -122,28 +131,34 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
         }
     }
 
-    private function createUsersOfTypeRequestedToWithdraw(int $n, int $limit)
+    private function createUsersOfTypeRequestedToWithdraw(int $limit)
     {
+        $n = 1;
         while ($n <= $limit) {
-            $this->createPatientData(Patient::ENROLLED, true, false);
+            $this->createPatientData(Patient::ENROLLED);
+            $this->createPostmarkCallbackData(true, false);
             $this->command->info("Generated $n users out of $limit of type:[Requested To Withdraw].");
             ++$n;
         }
     }
 
-    private function createUsersOfTypeRequestedToWithdrawAndNameIsSelf(int $n, int $limit)
+    private function createUsersOfTypeRequestedToWithdrawAndNameIsSelf(int $limit)
     {
+        $n = 1;
         while ($n <= $limit) {
-            $this->createPatientData(Patient::ENROLLED, true, true);
+            $this->createPatientData(Patient::ENROLLED);
+            $this->createPostmarkCallbackData(true, true);
             $this->command->info("Generated $n users out of $limit of type Requested To Withdraw And Name Is SELF.");
             ++$n;
         }
     }
 
-    private function createUsersOfTypeResolvableMultiMatches(int $n, int $limit)
+    private function createUsersOfTypeResolvableMultiMatches(int $limit)
     {
+        $n = 1;
         while ($n <= $limit) {
             $this->createPatientData(Patient::ENROLLED);
+            $this->createPostmarkCallbackData(false, false);
             $this->patient->phoneNumbers
                 ->first()
                 ->update(
