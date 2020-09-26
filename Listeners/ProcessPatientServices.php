@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Listeners;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientEvent;
+use CircleLinkHealth\CcmBilling\Contracts\CanDebounceJobForPatient;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 
 class ProcessPatientServices
@@ -17,7 +17,7 @@ class ProcessPatientServices
      *
      * @return void
      */
-    public function handle(PatientEvent $event)
+    public function handle(CanDebounceJobForPatient $event)
     {
         $job = new ProcessSinglePatientMonthlyServices(
             $event->getPatientId(),
