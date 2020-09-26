@@ -92,15 +92,8 @@ class UnresolvedPostmarkCallbackResource extends Resource
         return [
             Text::make('inbound id', 'postmark_id')->sortable(),
             Text::make('matched user', 'matched_user_id')->sortable(),
-            Text::make('reason', 'unresolved_reason'),
-            Text::make('possible matches', 'other_possible_matches', function ($usersId) {
-                $links = collect();
-                foreach (json_decode($usersId) as $userId) {
-                    $links->push(link_to_route('patient.careplan.print', $userId, $userId)->toHtml());
-                }
-
-                return array_values($links->toArray());
-            })->asHtml(),
+            Text::make('reason', 'unresolved_reason')->sortable(),
+            Text::make('possible matches', 'other_possible_matches')->sortable(),
             Textarea::make('inbound callback', 'inbound_data')->hideFromIndex(),
             Boolean::make('resolved', 'resolved')->sortable(),
             Text::make('resolved callback id', 'call_id'),
