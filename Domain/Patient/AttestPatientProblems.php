@@ -190,7 +190,9 @@ class AttestPatientProblems
     private function getPms(): ?PatientMonthlySummary
     {
         if (is_null($this->pmsId)) {
-            return null;
+            $this->pms = PatientMonthlySummary::getForMonth($this->getChargeableMonth())
+                ->where('patient_id', $this->getPatientUserId())
+                ->first();
         }
 
         if ( ! isset($this->pms)) {
