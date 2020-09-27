@@ -713,7 +713,13 @@ class SchedulerService
         }
 
         if ($attestedProblems) {
-            event(new NurseAttestedToPatientProblems($attestedProblems, auth()->id()), $call->id);
+            event(
+                new NurseAttestedToPatientProblems(
+                    collect($attestedProblems)->flatten()->toArray(),
+                    auth()->id(),
+                    $call->id
+                )
+            );
         }
 
         if (Call::REACHED === $call->status) {
