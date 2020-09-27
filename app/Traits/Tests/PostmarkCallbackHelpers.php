@@ -19,26 +19,29 @@ trait PostmarkCallbackHelpers
         $number      = $this->phone->number;
         $name        = $nameIsSelf ? 'SELF' : $patient->display_name;
 
-        $inboundPostmarkData = [
-            'For'      => 'GROUP DISTRIBUTION',
-            'From'     => ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL_DOMAIN,
-            'Phone'    => $number,
-            'Ptn'      => $name,
-            'Msg'      => '| REQUEST TO BE REMOVED OFF ALL LISTS  |',
-            'Primary'  => $patient->getBillingProviderName() ?: 'Salah',
-            'Msg ID'   => 'Not relevant',
-            'IS Rec #' => 'Not relevant',
-            'Clr ID'   => "$number $patient->display_name",
-            'Taken'    => 'Not relevant',
-        ];
+        $inboundMailDomain = ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL_DOMAIN;
+        $primary           = $patient->getBillingProviderName() ?: 'Salah';
+        $clrId             = $number.' '.$patient->display_name;
+
+        $callbackMailData = "For: GROUP DISTRIBUTION
+        From:| $inboundMailDomain |
+        Phone:| $number |
+        Ptn:| $name  |
+        Cancel/Withdraw Reason:| PTN EXPIRED  |
+        Msg:| REQUEST TO BE REMOVED OFF ALL LISTS  |
+        Primary:| $primary |
+        Msg ID: Not relevant
+        IS Rec #: Not relevant
+        Clr ID: $clrId
+        Taken: Not relevant";
 
         if ($requestsToWithdraw) {
-            $requestsToWithdrawText                        = 'I want to Cancel';
-            $inboundPostmarkData['Cancel/Withdraw Reason'] = $requestsToWithdrawText;
-            $inboundPostmarkData['Msg']                    = 'Im so happy yohhoo.';
+            $withdrawReasonText = 'Cancel/Withdraw Reason:| I want to Cancel |';
+            $msg                = 'Msg:| Im so happy yohhoo. |';
+            $callbackMailData   = $callbackMailData.$withdrawReasonText.$msg;
         }
 
-        return $inboundPostmarkData;
+        return $callbackMailData;
     }
 
     private function createEnrolleeWithStatus(User $patient, int $careAmbassadorId, string $status)

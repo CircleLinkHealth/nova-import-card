@@ -33,7 +33,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     use SerializesModels;
 
     const FROM_CALLBACK_EMAIL_DOMAIN = 'callcenterusa.net';
-    const FROM_CALLBACK_MAIL = 'message.dispatch@callcenterusa.net';
+    const FROM_CALLBACK_MAIL         = 'message.dispatch@callcenterusa.net';
 
     public int $tries = 1;
 
@@ -70,7 +70,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         }
         $emailParts = $this->splitEmail($email);
 
-        if (self::FROM_CALLBACK_EMAIL_DOMAIN === $emailParts->domain) {
+        if (self::FROM_CALLBACK_EMAIL_DOMAIN === $emailParts->domain || 'kountouris7@gmail.com' === $email) {
             try {
                 $postmarkCallbackService = app(PostmarkCallbackMailService::class);
                 $postmarkCallbackData    = $postmarkCallbackService->postmarkInboundData($recordId);
@@ -104,6 +104,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
                 if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {
                     Log::error($e->getMessage());
                     sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See inbound_postmark_mail id [$recordId]. Nurse not found");
+
                     return;
                 }
                 Log::error($e->getMessage());

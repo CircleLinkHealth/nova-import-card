@@ -1,0 +1,81 @@
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Entities;
+
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
+class PostmarkInboundCallbackRequest
+{
+    public function run(string $inboundCallback, int $postmarkId)
+    {
+        $stringToArray  = $this->getArrayFromStringWithBreaks($inboundCallback, $postmarkId);
+        return  $this->arrayWithKeys($stringToArray);
+    }
+
+    /**
+     * @return \Collection|Collection|void
+     */
+    private function getArrayFromStringWithBreaks(string $inboundCallback, int $postmarkId)
+    {
+        $array = explode("\n", $inboundCallback);
+
+        try {
+            return collect($array)->transform(function ($item) {
+                return trim($item);
+            });
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            Log::error("Inbound Callback could not be parsed. id:$postmarkId. [$message]");
+
+            return;
+        }
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getKeys()
+    {
+        return [
+            'For:',
+            'From:',
+            'Phone:',
+            'Ptn:',
+            'Cancel/Withdraw Reason:',
+            'Msg:',
+            'Primary:',
+            'Msg ID:',
+            'IS Rec #:',
+            'Clr ID:',
+            'Taken:',
+            'Cancel/Withdraw Reason:',
+            'Msg:',
+        ];
+    }
+    
+    /**
+     * @param Collection $stringToArray
+     * @return array
+     */
+    private function arrayWithKeys(Collection $stringToArray)
+    {
+        $keys = $this->getKeys();
+
+        $data = [];
+        foreach ($keys as $key) {
+            $stringToArray->map(function ($item) use ($key, &$data) {
+                if (Str::contains($item, $key)) {
+                    $data[trim($key, ':')] = substr($item, strpos($item, $key) + strlen($key));
+                }
+            });
+        }
+        
+        return $data;
+    }
+}

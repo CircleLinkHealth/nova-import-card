@@ -6,6 +6,7 @@
 
 namespace App\Services\Postmark;
 
+use App\Entities\PostmarkInboundCallbackRequest;
 use App\PostmarkInboundMail;
 use Illuminate\Support\Facades\Log;
 
@@ -24,7 +25,7 @@ class PostmarkCallbackMailService
             return;
         }
 
-        $inboundDataArray = collect(json_decode($postmarkRecord->body))->toArray();
+        $inboundDataArray = (new PostmarkInboundCallbackRequest())->run($postmarkRecord->body, $postmarkRecordId);
 
         if (empty($inboundDataArray)) {
             Log::error("Inbound Callback data is empty for inbound_postmark_mail id: [$postmarkRecordId]");
