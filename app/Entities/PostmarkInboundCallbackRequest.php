@@ -14,8 +14,28 @@ class PostmarkInboundCallbackRequest
 {
     public function run(string $inboundCallback, int $postmarkId)
     {
-        $stringToArray  = $this->getArrayFromStringWithBreaks($inboundCallback, $postmarkId);
+        $stringToArray = $this->getArrayFromStringWithBreaks($inboundCallback, $postmarkId);
+
         return  $this->arrayWithKeys($stringToArray);
+    }
+
+    /**
+     * @return array
+     */
+    private function arrayWithKeys(Collection $stringToArray)
+    {
+        $keys = $this->getKeys();
+
+        $data = [];
+        foreach ($keys as $key) {
+            $stringToArray->map(function ($item) use ($key, &$data) {
+                if (Str::contains($item, $key)) {
+                    $data[trim($key, ':')] = trim(trim(substr($item, strpos($item, $key) + strlen($key)), '|'));
+                }
+            });
+        }
+
+        return $data;
     }
 
     /**
@@ -57,25 +77,5 @@ class PostmarkInboundCallbackRequest
             'Cancel/Withdraw Reason:',
             'Msg:',
         ];
-    }
-    
-    /**
-     * @param Collection $stringToArray
-     * @return array
-     */
-    private function arrayWithKeys(Collection $stringToArray)
-    {
-        $keys = $this->getKeys();
-
-        $data = [];
-        foreach ($keys as $key) {
-            $stringToArray->map(function ($item) use ($key, &$data) {
-                if (Str::contains($item, $key)) {
-                    $data[trim($key, ':')] = substr($item, strpos($item, $key) + strlen($key));
-                }
-            });
-        }
-        
-        return $data;
     }
 }

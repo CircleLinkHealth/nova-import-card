@@ -73,41 +73,41 @@ class GenerateInboundCallbackDataForTesting extends Command
             $this->error('Please enter user type.');
         }
 
-        $jsonData = ['No callback data'];
+        $inboundData = ['No callback data'];
 
         if ($this->isTrue(Enrollee::ENROLLED)) {
-            $jsonData = $this->createUsersOfTypeEnrolled(2);
+            $inboundData = $this->createUsersOfTypeEnrolled(2);
         }
 
         if ($this->isTrue(Patient::PAUSED)) {
-            $jsonData = $this->createUsersOfTypeNotEnrolled(2);
+            $inboundData = $this->createUsersOfTypeNotEnrolled(2);
         }
 
         if ($this->isTrue('queued_ca_unassigned')) {
-            $jsonData = $this->createUsersOfTypeQueuedForEnrolmentButNotCAassigned(2);
+            $inboundData = $this->createUsersOfTypeQueuedForEnrolmentButNotCAassigned(2);
         }
 
         if ($this->isTrue('callback_name_self')) {
-            $jsonData = $this->createUsersOfTypeNameIsSelf(2);
+            $inboundData = $this->createUsersOfTypeNameIsSelf(2);
         }
 
         if ($this->isTrue('withdraw_request')) {
-            $jsonData = $this->createUsersOfTypeRequestedToWithdraw(2);
+            $inboundData = $this->createUsersOfTypeRequestedToWithdraw(2);
         }
 
         if ($this->isTrue('requests_withdraw_name_self')) {
-            $jsonData = $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf(2);
+            $inboundData = $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf(2);
         }
 
         if ($this->isTrue('resolvable_multimatch')) {
-            $jsonData = $this->createUsersOfTypeResolvableMultiMatches(2);
+            $inboundData = $this->createUsersOfTypeResolvableMultiMatches(2);
         }
 
         if ($this->isTrue('unresolvable_multimatch')) {
-            $jsonData = $this->createUsersOfTypeNotResolvableMultiMatches(2);
+            $inboundData = $this->createUsersOfTypeNotResolvableMultiMatches(2);
         }
 
-        $this->info(json_encode($jsonData));
+        $this->info(json_encode($inboundData));
     }
 
     /**
@@ -115,53 +115,53 @@ class GenerateInboundCallbackDataForTesting extends Command
      */
     private function createUsersOfTypeEnrolled(int $limit)
     {
-        $n        = 1;
-        $jsonData = collect();
+        $n           = 1;
+        $inboundData = collect();
         while ($n <= $limit) {
             $this->createPatientData(Enrollee::ENROLLED);
             $this->generatePostmarkCallbackData(false, false);
             $this->info("Generated $n users out of $limit of type:[ENROLLED].");
-            $jsonData->push(collect(json_decode($this->postmarkRecord))->toArray());
+            $inboundData->push($this->postmarkRecord);
             ++$n;
         }
 
-        return $jsonData->toArray();
+        return $inboundData->toArray();
     }
 
     private function createUsersOfTypeNameIsSelf(int $limit)
     {
-        $n        = 1;
-        $jsonData = collect();
+        $n           = 1;
+        $inboundData = collect();
         while ($n <= $limit) {
             $this->createPatientData(Patient::ENROLLED);
             $this->generatePostmarkCallbackData(false, true);
             $this->info("Generated $n users out of $limit of type:[Name Is SELF].");
-            $jsonData->push(collect(json_decode($this->postmarkRecord))->toArray());
+            $inboundData->push($this->postmarkRecord);
             ++$n;
         }
 
-        return $jsonData->toArray();
+        return $inboundData->toArray();
     }
 
     private function createUsersOfTypeNotEnrolled(int $limit)
     {
-        $jsonData = collect();
-        $n        = 1;
+        $inboundData = collect();
+        $n           = 1;
         while ($n <= $limit) {
             $this->createPatientData(Patient::PAUSED);
             $this->generatePostmarkCallbackData(false, false);
             $this->info("Generated $n users out of $limit of type:[NOT ENROLLED.]");
-            $jsonData->push(collect(json_decode($this->postmarkRecord))->toArray());
+            $inboundData->push($this->postmarkRecord);
             ++$n;
         }
 
-        return $jsonData->toArray();
+        return $inboundData->toArray();
     }
 
     private function createUsersOfTypeNotResolvableMultiMatches(int $limit)
     {
-        $n        = 1;
-        $jsonData = collect();
+        $n           = 1;
+        $inboundData = collect();
         while ($n <= $limit) {
             $this->createPatientData(Patient::ENROLLED);
             $this->generatePostmarkCallbackData(false, false);
@@ -177,17 +177,17 @@ class GenerateInboundCallbackDataForTesting extends Command
             $this->patient->last_name    = 'Flouretzou';
             $this->patient->save();
             $this->info("Generated $n users out of $limit of type:[NOT Eligible Multi Matches].");
-            $jsonData->push(collect(json_decode($this->postmarkRecord))->toArray());
+            $inboundData->push($this->postmarkRecord);
             ++$n;
         }
 
-        return $jsonData->toArray();
+        return $inboundData->toArray();
     }
 
     private function createUsersOfTypeQueuedForEnrolmentButNotCAassigned(int $limit)
     {
-        $jsonData = collect();
-        $n        = 1;
+        $inboundData = collect();
+        $n           = 1;
         while ($n <= $limit) {
             $this->createPatientData(Enrollee::QUEUE_AUTO_ENROLLMENT);
             $this->generatePostmarkCallbackData(false, false);
@@ -197,47 +197,47 @@ class GenerateInboundCallbackDataForTesting extends Command
                 ]
             );
             $this->info("Generated $n users out of $limit of type:[Queued for self enrolment but not CA assigned].");
-            $jsonData->push(collect(json_decode($this->postmarkRecord))->toArray());
+            $inboundData->push($this->postmarkRecord);
             ++$n;
         }
 
-        return $jsonData->toArray();
+        return $inboundData->toArray();
     }
 
     private function createUsersOfTypeRequestedToWithdraw(int $limit)
     {
-        $n        = 1;
-        $jsonData = collect();
+        $n           = 1;
+        $inboundData = collect();
         while ($n <= $limit) {
             $this->createPatientData(Patient::ENROLLED);
             $this->generatePostmarkCallbackData(true, false);
             $this->info("Generated $n users out of $limit of type:[Requested To Withdraw].");
-            $jsonData->push(collect(json_decode($this->postmarkRecord))->toArray());
+            $inboundData->push($this->postmarkRecord);
             ++$n;
         }
 
-        return $jsonData->toArray();
+        return $inboundData->toArray();
     }
 
     private function createUsersOfTypeRequestedToWithdrawAndNameIsSelf(int $limit)
     {
-        $n        = 1;
-        $jsonData = collect();
+        $n           = 1;
+        $inboundData = collect();
         while ($n <= $limit) {
             $this->createPatientData(Patient::ENROLLED);
             $this->generatePostmarkCallbackData(true, true);
             $this->info("Generated $n users out of $limit of type Requested To Withdraw And Name Is SELF.");
-            $jsonData->push(collect(json_decode($this->postmarkRecord))->toArray());
+            $inboundData->push($this->postmarkRecord);
             ++$n;
         }
 
-        return $jsonData->toArray();
+        return $inboundData->toArray();
     }
 
     private function createUsersOfTypeResolvableMultiMatches(int $limit)
     {
-        $n        = 1;
-        $jsonData = collect();
+        $n           = 1;
+        $inboundData = collect();
         while ($n <= $limit) {
             $this->createPatientData(Patient::ENROLLED);
             $this->generatePostmarkCallbackData(false, false);
@@ -249,11 +249,11 @@ class GenerateInboundCallbackDataForTesting extends Command
                     ]
                 );
             $this->info("Generated $n users out of $limit of type:[Eligible Multi Matches].");
-            $jsonData->push(collect(json_decode($this->postmarkRecord))->toArray());
+            $inboundData->push($this->postmarkRecord);
             ++$n;
         }
 
-        return $jsonData->toArray();
+        return $inboundData->toArray();
     }
 
     /**

@@ -27,9 +27,8 @@ trait PostmarkCallbackHelpers
         From:| $inboundMailDomain |
         Phone:| $number |
         Ptn:| $name  |
-        Cancel/Withdraw Reason:| PTN EXPIRED  |
-        Msg:| REQUEST TO BE REMOVED OFF ALL LISTS  |
         Primary:| $primary |
+        Msg:| REQUEST TO BE REMOVED OFF ALL LISTS  |
         Msg ID: Not relevant
         IS Rec #: Not relevant
         Clr ID: $clrId
@@ -37,8 +36,8 @@ trait PostmarkCallbackHelpers
 
         if ($requestsToWithdraw) {
             $withdrawReasonText = 'Cancel/Withdraw Reason:| I want to Cancel |';
-            $msg                = 'Msg:| Im so happy yohhoo. |';
-            $callbackMailData   = $callbackMailData.$withdrawReasonText.$msg;
+            $extraValues        = "\n".$withdrawReasonText;
+            $callbackMailData   = $callbackMailData.$extraValues;
         }
 
         return $callbackMailData;
@@ -81,6 +80,6 @@ trait PostmarkCallbackHelpers
 
     private function generatePostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf)
     {
-        $this->postmarkRecord = json_encode($this->getCallbackMailData($this->patient, $requestToWithdraw, $nameIsSelf));
+        $this->postmarkRecord = $this->getCallbackMailData($this->patient, $requestToWithdraw, $nameIsSelf);
     }
 }
