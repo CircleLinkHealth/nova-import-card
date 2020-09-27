@@ -77,6 +77,7 @@ class Constants
     const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre><br><ul><ol><li><span><a>';
     const TRIX_FIELDS                = ['patient-email-body'];
     const TWENTY_MINUTES_IN_SECONDS  = 1200;
+    const THIRTY_MINUTES_IN_SECONDS = 1800;
     const VIEWING_PATIENT            = 'viewing-patient';
 
     public static function athenaEhrId()
