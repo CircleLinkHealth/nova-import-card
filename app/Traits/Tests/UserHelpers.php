@@ -8,6 +8,8 @@ namespace App\Traits\Tests;
 
 use App\Call;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
+use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -358,8 +360,14 @@ trait UserHelpers
 
         //$pcmOnly means one ccm condition only
         if ($pcmOnly) {
+            $cpmProb     = CpmProblem::notGenericDiabetes()->first();
             $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test'.Str::random(5), 'code' => 'pcm_test'],
+                [
+                    'name'           => $name = 'test'.Str::random(5),
+                    'is_monitored'   => true,
+                    'code'           => 'pcm_test',
+                    'cpm_problem_id' => $cpmProb->id,
+                ],
             ]);
             $patient->ccdProblems()->first()->codes()->create([
                 'code' => 'pcm_test',
@@ -367,26 +375,34 @@ trait UserHelpers
             PcmProblem::create([
                 'practice_id' => $practice->id,
                 'code'        => 'pcm_test',
+                'description' => $cpmProb->name,
             ]);
+
+            SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
         } else {
             $ccdProblems = $patient->ccdProblems()->createMany([
                 ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
-                ['name' => 'test'.Str::random(5)],
-                ['name' => 'test'.Str::random(5)],
+                ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
+                ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
             ]);
         }
 
-        $len = $ccdProblems->count();
-        for ($i = 0; $i < $len; ++$i) {
-            $problem = $ccdProblems->get($i);
-            $isLast  = $i === $len - 1;
-            if ($isLast && $isBhi) {
-                $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
-            } else {
-                $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 0));
+        //todo:revisit/cleanup
+        if ( ! $pcmOnly) {
+            $len = $ccdProblems->count();
+            for ($i = 0; $i < $len; ++$i) {
+                $problem = $ccdProblems->get($i);
+                $isLast  = $i === $len - 1;
+                if ($isLast && $isBhi) {
+                    $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
+                } else {
+                    $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 0));
+                }
+                $problem->save();
             }
-            $problem->save();
         }
+
+        ProcessSinglePatientMonthlyServices::dispatch($patient->id);
 
         return $patient;
     }

@@ -6,6 +6,10 @@
 
 namespace App\Traits\Tests;
 
+use CircleLinkHealth\CcmBilling\Jobs\GenerateLocationSummaries;
+use CircleLinkHealth\CcmBilling\Jobs\GenerateServiceSummariesForAllPracticeLocations;
+use CircleLinkHealth\CcmBilling\Jobs\MigrateChargeableServicesFromChargeablesToLocationSummariesTable;
+use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -50,6 +54,10 @@ trait PracticeHelpers
         }
 
         $practice->chargeableServices()->sync($sync);
+    
+        MigrateChargeableServicesFromChargeablesToLocationSummariesTable::dispatch();
+        GenerateServiceSummariesForAllPracticeLocations::dispatch();
+        SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
 
         return $practice;
     }

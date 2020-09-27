@@ -25,11 +25,13 @@ class TimeTrackingAndChargeableServiceTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice, true);
+
         $this->addTime($nurse, $patient, 15, true, false, true);
         /** @var Activity $activity */
         $activity = $patient->activities->first();
         /** @var ChargeableService $cs */
         $cs = ChargeableService::firstWhere('code', '=', ChargeableService::BHI);
+
         self::assertEquals($activity->chargeable_service_id, $cs->id);
     }
 
@@ -92,6 +94,9 @@ class TimeTrackingAndChargeableServiceTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true, true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice, false, true);
+
+        //todo: cleanup all related with this test
+
         $this->addTime($nurse, $patient, 15, true, false);
         /** @var Activity $activity */
         $activity = $patient->activities->first();
