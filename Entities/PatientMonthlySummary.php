@@ -13,7 +13,6 @@ use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 /**
  * CircleLinkHealth\Customer\Entities\PatientMonthlySummary.
@@ -558,13 +557,7 @@ class PatientMonthlySummary extends BaseModel
 
     public function syncAttestedProblems(array $attestedProblems)
     {
-        //remove summary id without detaching. We may still need the association of the problem with the call
         $this->attestedProblems()->update(['call_problems.patient_monthly_summary_id' => null]);
-
-        DB::table('call_problems')
-            ->whereNull('call_id')
-            ->whereNull('patient_monthly_summary_id')
-            ->delete();
 
         $this->attestedProblems()->attach($attestedProblems);
 
