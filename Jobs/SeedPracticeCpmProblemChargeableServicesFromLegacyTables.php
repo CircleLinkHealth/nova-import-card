@@ -10,6 +10,7 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -75,10 +76,11 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                     $isBhi = $problem->is_behavioral;
 
                     $isPcm = $practicePcmProblems->filter(
-                        function ($pcmProblem) use ($problem) {
-                            return $pcmProblem->code === $problem->default_icd_10_code || $pcmProblem->desrciption === $problem->name;
+                        function (PcmProblem $pcmProblem) use ($problem) {
+                            return $pcmProblem->code === $problem->default_icd_10_code || $pcmProblem->description === $problem->name;
                         }
                     )->count() > 0;
+
                     if ($isBhi || $isDementia || $isDementia) {
                         $this->repo()->store($location->id, $problem->id, $this->bhiCodeId);
                     }
@@ -86,7 +88,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                     if ($isPcm) {
                         $this->repo()->store($location->id, $problem->id, $this->pcmCodeId);
                     }
-                    
+
                     if ( ! $isBhi || $isDementia || $isDepression) {
                         $this->repo()->store($location->id, $problem->id, $this->ccmCodeId);
                     }
