@@ -17,27 +17,28 @@ use Illuminate\Database\Eloquent\Collection;
 
 class AttestPatientProblems
 {
-    protected Addendum $addendum;
-    protected int $addendumId;
+    protected ?Addendum $addendum;
+    protected ?int $addendumId;
 
     //add in Job too
-    protected int $attestorId;
+    protected ?int $attestorId;
 
-    protected Call $call;
+    protected ?Call $call;
 
-    protected int $callId;
+    protected ?int $callId;
+
     protected array $ccdProblemIds;
 
     protected Collection $ccdProblems;
 
-    protected Carbon $chargeableMonth;
+    protected ?Carbon $chargeableMonth;
 
-    protected int $patientUserId;
+    protected ?int $patientUserId;
 
     //todo: deprecate
-    protected PatientMonthlySummary $pms;
+    protected ?PatientMonthlySummary $pms;
 
-    protected int $pmsId;
+    protected ?int $pmsId;
 
     public function createRecords(): void
     {
@@ -52,21 +53,21 @@ class AttestPatientProblems
         }
     }
 
-    public function forAddendum(int $addendumId): self
+    public function forAddendum(?int $addendumId): self
     {
         $this->addendumId = $addendumId;
 
         return $this;
     }
 
-    public function forCall(int $callId): self
+    public function forCall(?int $callId): self
     {
         $this->callId = $callId;
 
         return $this;
     }
 
-    public function forMonth(Carbon $month): self
+    public function forMonth(?Carbon $month): self
     {
         $this->chargeableMonth = $month;
 
@@ -74,14 +75,14 @@ class AttestPatientProblems
     }
 
     //todo:deprecate
-    public function forPms(int $pmsId): self
+    public function forPms(?int $pmsId): self
     {
         $this->pmsId = $pmsId;
 
         return $this;
     }
 
-    public function fromAttestor(int $attestorId): self
+    public function fromAttestor(?int $attestorId): self
     {
         $this->attestorId = $attestorId;
 
@@ -100,7 +101,7 @@ class AttestPatientProblems
         AttestedProblem::create([
             'patient_user_id'            => $this->getPatientUserId(),
             'call_id'                    => $this->callId,
-            'patient_monthly_summary_id' => $this->pmsId,
+            'patient_monthly_summary_id' => $this->pmsId ?? $this->getPms()->id ?? null,
             'chargeable_month'           => $this->getChargeableMonth(),
             'addendum_id'                => $this->addendumId,
             'ccd_problem_id'             => $problem->id,
@@ -145,7 +146,7 @@ class AttestPatientProblems
 
         if ( ! isset($this->call)) {
             $this->call = Call::with('note')
-                ->firstOrFail($this->callId);
+                ->findOrFail($this->callId);
         }
 
         return $this->call;
@@ -158,30 +159,45 @@ class AttestPatientProblems
 
     private function getChargeableMonth(): ?Carbon
     {
-        if ( ! isset($this->chargeableMonth)) {
-            $date = $this->getPms()->month_year
-                ?? $this->getCall()->called_date
-                ?? $this->getAddendum()->addendumable->performed_at
-                ?? null;
-
-            if (is_null($date)) {
-                $problemsString = implode(',', $this->ccdProblemIds);
-                sendSlackMessage('#billing_alerts', "Failed to perform attestations for problems: $problemsString. Could not determine chargeable month");
-
-                return null;
-            }
-            $this->chargeableMonth = Carbon::parse($date)->startOfMonth();
+        if (isset($this->chargeableMonth)) {
+            return $this->chargeableMonth;
         }
 
+        $date = $this->getMonthFromCall()
+                ?? $this->getMonthFromAddendumNote()
+                ?? $this->getMonthFromPms();
+
+        if (is_null($date)) {
+            $this->sendSlackWarning();
+
+            return null;
+        }
+        
+        $this->chargeableMonth = $date;
+
         return $this->chargeableMonth;
+    }
+
+    private function getMonthFromAddendumNote(): ?Carbon
+    {
+        return $this->startOfMonthOrNull($this->getAddendum()->addendumable->performed_at ?? null);
+    }
+
+    private function getMonthFromCall(): ?Carbon
+    {
+        return $this->startOfMonthOrNull($this->getCall()->called_date ?? null);
+    }
+
+    private function getMonthFromPms(): ?Carbon
+    {
+        return $this->startOfMonthOrNull($this->getPms()->month_year ?? null);
     }
 
     private function getPatientUserId(): int
     {
         if ( ! isset($this->patientUserId)) {
             $this->patientUserId = $this->getCall()->note->patient_id
-                ?? $this->getProblems()->first()->patient_id
-                ?? $this->getPms()->patient_id;
+                ?? $this->getProblems()->first()->patient_id;
         }
 
         return $this->patientUserId;
@@ -190,12 +206,16 @@ class AttestPatientProblems
     private function getPms(): ?PatientMonthlySummary
     {
         if (is_null($this->pmsId)) {
-            $this->pms = PatientMonthlySummary::getForMonth($this->getChargeableMonth())
+            $this->pms = PatientMonthlySummary::getForMonth(
+                $this->chargeableMonth
+                ?? $this->getMonthFromCall()
+                ?? $this->getMonthFromAddendumNote()
+            )
                 ->where('patient_id', $this->getPatientUserId())
                 ->first();
         }
 
-        if ( ! isset($this->pms)) {
+        if (isset($this->pmsId) && ! isset($this->pms)) {
             $this->pms = PatientMonthlySummary::firstOrFail($this->pmsId);
         }
 
@@ -206,12 +226,26 @@ class AttestPatientProblems
     {
         if ( ! isset($this->ccdProblems)) {
             $this->ccdProblems = Problem::with([
-                'cpmPrbolem',
+                'cpmProblem',
                 'icd10Codes',
             ])
                 ->find($this->getCcdProblemIds());
         }
 
         return $this->ccdProblems;
+    }
+
+    private function sendSlackWarning(): void
+    {
+        $problemsString = implode(',', $this->ccdProblemIds);
+        sendSlackMessage(
+            '#billing_alerts',
+            "Warning:  Attestation for problems: {$problemsString} for patient ({$this->getPatientUserId()}) is incomplete. Could not determine chargeable month."
+        );
+    }
+
+    private function startOfMonthOrNull($date = null): ?Carbon
+    {
+        return ! is_null($date) ? Carbon::parse($date)->startOfMonth() : null;
     }
 }

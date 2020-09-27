@@ -46,12 +46,14 @@ class AttestedProblem extends Pivot
 
     protected $fillable = [
         'patient_user_id',
-        'ccd_problem_id',
+        'attestor_id',
         'call_id',
+        'ccd_problem_id',
         'ccd_problem_name',
         'ccd_problem_icd_10_code',
         'chargeable_month',
         'patient_monthly_summary_id',
+        'addendum_id',
     ];
 
     protected $table = 'call_problems';
