@@ -56,8 +56,8 @@ class CallStatusChangeTest extends CustomerTestCase
             ->where('patient_id', '=', $patient->id)
             ->first();
 
-        self::assertEquals(1, $pms->no_of_calls);
-        self::assertEquals(1, $pms->no_of_successful_calls);
+        self::assertEquals(2, $pms->no_of_calls);
+        self::assertEquals(2, $pms->no_of_successful_calls);
 
         /** @var User $admin */
         $admin = $this->superadmin();
@@ -113,8 +113,8 @@ class CallStatusChangeTest extends CustomerTestCase
             ->where('patient_id', '=', $patient->id)
             ->first();
 
-        self::assertEquals(1, $pms->no_of_calls);
-        self::assertEquals(0, $pms->no_of_successful_calls);
+        self::assertEquals(2, $pms->no_of_calls);
+        self::assertEquals(1, $pms->no_of_successful_calls);
 
         /** @var User $admin */
         $admin = $this->superadmin();
@@ -170,8 +170,8 @@ class CallStatusChangeTest extends CustomerTestCase
             ->where('patient_id', '=', $patient->id)
             ->first();
 
-        self::assertEquals(0, $pms->no_of_calls);
-        self::assertEquals(0, $pms->no_of_successful_calls);
+        self::assertEquals(1, $pms->no_of_calls);
+        self::assertEquals(1, $pms->no_of_successful_calls);
 
         /** @var User $admin */
         $admin = $this->superadmin();
@@ -227,8 +227,8 @@ class CallStatusChangeTest extends CustomerTestCase
             ->where('patient_id', '=', $patient->id)
             ->first();
 
-        self::assertEquals(0, $pms->no_of_calls);
-        self::assertEquals(0, $pms->no_of_successful_calls);
+        self::assertEquals(1, $pms->no_of_calls);
+        self::assertEquals(1, $pms->no_of_successful_calls);
 
         /** @var User $admin */
         $admin = $this->superadmin();
