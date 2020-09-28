@@ -11,6 +11,7 @@ use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
+use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
@@ -231,6 +232,7 @@ return [
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
         CustomerAuthServiceProvider::class,
         VaporUiServiceProvider::class,
+        CpmMigrationsServiceProvider::class,
     ],
 
     /*
