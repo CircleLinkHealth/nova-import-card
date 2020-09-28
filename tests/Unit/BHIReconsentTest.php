@@ -8,7 +8,7 @@ namespace Tests\Unit;
 
 use App\Call;
 use App\Services\Calls\SchedulerService;
-use App\Traits\Tests\UserHelpers;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;

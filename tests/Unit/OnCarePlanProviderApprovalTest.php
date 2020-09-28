@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use App\Notifications\CarePlanProviderApproved;
-use App\Traits\Tests\UserHelpers;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;

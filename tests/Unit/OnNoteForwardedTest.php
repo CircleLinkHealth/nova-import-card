@@ -8,7 +8,7 @@ namespace Tests\Unit;
 
 use App\Notifications\NoteForwarded;
 use App\Services\NoteService;
-use App\Traits\Tests\UserHelpers;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Notification;

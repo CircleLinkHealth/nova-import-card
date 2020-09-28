@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
-use App\Traits\Tests\UserHelpers;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;

@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use App\Traits\Tests\TimeHelpers;
-use App\Traits\Tests\UserHelpers;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use App\UserTotalTimeChecker;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
