@@ -3067,14 +3067,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $builder->whereHas(
             'primaryPractice',
             function ($q) {
-                    $q->hasServiceCode('CPT 99484');
-                }
+                $q->hasServiceCode('CPT 99484');
+            }
         )->whereHas(
-                'patientInfo',
-                function ($q) {
+            'patientInfo',
+            function ($q) {
                     $q->enrolled();
                 }
-            )
+        )
             ->whereHas(
                 'ccdProblems.cpmProblem',
                 function ($q) {
