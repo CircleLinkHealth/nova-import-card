@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.155.3",
+            "version": "3.155.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "da40d5d22acbe542f37c44c78ee520005a6c81a2"
+                "reference": "892ec081f4466ea023d6158d78b6a8b82d38c9ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/da40d5d22acbe542f37c44c78ee520005a6c81a2",
-                "reference": "da40d5d22acbe542f37c44c78ee520005a6c81a2",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/892ec081f4466ea023d6158d78b6a8b82d38c9ae",
+                "reference": "892ec081f4466ea023d6158d78b6a8b82d38c9ae",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-09-25T18:12:28+00:00"
+            "time": "2020-09-28T18:13:43+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "8a4bb73efe73e457b354cdab1afe276368f692f8"
+                "reference": "f92152c7383b79ca38d03e44fa7d69ca4524d8ac"
             },
             "type": "laravel-module",
             "extra": {
@@ -992,7 +992,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-09-27T23:51:10+00:00"
+            "time": "2020-09-28T22:51:42+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1259,7 +1259,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "06092acc907739272f67ca81c706789e5944e733"
+                "reference": "e8cbeb0ea708e98192ed62077fb71b14d8633b95"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1293,7 +1293,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-27T14:29:41+00:00"
+            "time": "2020-09-28T22:51:43+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1301,7 +1301,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "90fd9542e16fa19172a48806a7b7fd110948ded5"
+                "reference": "293bf79e09ad901295f8eb702d4f6e8464bd9e73"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1327,7 +1327,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-25T15:05:16+00:00"
+            "time": "2020-09-28T22:27:03+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1686,7 +1686,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "32348386731c18ec615bd4e496afc6cf65d05f48"
+                "reference": "f97ff85f15f141c2ca2d283d10ae7c9f804a2e95"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1700,7 +1700,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-25T22:08:05+00:00"
+            "time": "2020-09-28T22:51:42+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -6576,24 +6576,24 @@
         },
         {
             "name": "mpbarlow/laravel-queue-debouncer",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpbarlow/laravel-queue-debouncer.git",
-                "reference": "cf16a46c50ba91b80d3e826cd7df2d945319c3a6"
+                "reference": "e8d0e1127673e021e76ee3c2362604a63f235112"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpbarlow/laravel-queue-debouncer/zipball/cf16a46c50ba91b80d3e826cd7df2d945319c3a6",
-                "reference": "cf16a46c50ba91b80d3e826cd7df2d945319c3a6",
+                "url": "https://api.github.com/repos/mpbarlow/laravel-queue-debouncer/zipball/e8d0e1127673e021e76ee3c2362604a63f235112",
+                "reference": "e8d0e1127673e021e76ee3c2362604a63f235112",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": "^6.0|^7.0",
+                "laravel/framework": "^6.0|^7.0|^8.0",
                 "php": "^7.2"
             },
             "require-dev": {
-                "orchestra/testbench": "^4.0|^5.0",
+                "orchestra/testbench": "^4.0|^5.0|^6.0",
                 "phpunit/phpunit": "^8.0|^9.0"
             },
             "type": "library",
@@ -6622,7 +6622,7 @@
             "authors": [
                 {
                     "name": "Matt Barlow",
-                    "email": "mattpeterbarlow@gmail.com"
+                    "email": "matt@barlow.coffee"
                 }
             ],
             "description": "A wrapper job for debouncing other queue jobs.",
@@ -6632,7 +6632,7 @@
                 "laravel",
                 "queue"
             ],
-            "time": "2020-03-11T23:50:05+00:00"
+            "time": "2020-09-28T18:42:13+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",

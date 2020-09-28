@@ -12,6 +12,7 @@ use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
 use App\PracticeEnrollmentTips;
 use App\Services\OnboardingService;
+use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Invite;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -164,6 +165,9 @@ class DashboardController extends Controller
         $this->primaryPractice
             ->chargeableServices()
             ->sync($sync);
+
+        //temporary solution until ROAD-286 gets deployed
+        SetupPracticeBillingData::sync($this->primaryPractice->id);
 
         return redirect()->back();
     }
