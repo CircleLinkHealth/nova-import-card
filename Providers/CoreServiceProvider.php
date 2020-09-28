@@ -39,7 +39,7 @@ class CoreServiceProvider extends ServiceProvider implements DeferrableProvider
             CreateAndSeedTestSuiteDB::class,
         ];
     }
-    
+
     /**
      * Register the service provider.
      */
@@ -49,7 +49,7 @@ class CoreServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->registerConfig();
         $this->registerFactories();
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-        
+
         $arr = [
             CreateMySqlDB::class,
             CreatePostgreSQLDB::class,
