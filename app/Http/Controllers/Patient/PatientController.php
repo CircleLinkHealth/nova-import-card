@@ -24,13 +24,8 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -230,72 +225,6 @@ class PatientController extends Controller
         ], 200);
     }
 
-    public function saveNewPhoneNumber(Request $request)
-    {
-        $phoneType   = $request->input('phoneType');
-        $phoneNumber = ($request->input('phoneNumber'));
-        $userId      = $request->input('patientUserId');
-
-        if ( ! ImportPhones::validatePhoneNumber($phoneNumber)) {
-            return response()->json([
-                'message' => 'Phone number is not a valid US number',
-            ]);
-        }
-
-        $phoneNumber = formatPhoneNumberE164($phoneNumber);
-        /** @var User $patientUser */
-        $patientUser  = User::with('patientInfo', 'phoneNumbers')->where('id', $userId)->firstOrFail();
-        $phoneNumbers = $this->getAllNumbersOfPatient($patientUser->id); // @todo: you re doing the same query  on line 204.
-        $locationId   = optional($patientUser->patientInfo)->location->id ?? null;
-        $numberExists = $patientUser->phoneNumbers()->where('type', $phoneType)->exists();
-
-        if (is_null($locationId)) {
-            $patientWithPractice = $patientUser->loadMissing('primaryPractice');
-            try {
-                $practice = $patientWithPractice->primaryPractice;
-            } catch (\Exception $e) {
-                throw new \Exception("Practice for patient with user id: {$patientUser->id} not found");
-            }
-
-            $locationId = $practice->primary_location_id;
-        }
-
-        if ($numberExists) {
-            return response()->json(
-                [
-                    'message' => "The Phone Type Number '$phoneType' already exists for this patient",
-                ],
-            );
-        }
-
-        // One trip to DB
-        $newPhoneNumber = PhoneNumber::firstOrCreate(
-            [
-                'user_id' => $userId,
-                'number'  => $phoneNumber,
-                'type'    => $phoneType,
-            ],
-            [
-                'is_primary'  => $request->input('makePrimary'),
-                'location_id' => $locationId,
-            ]
-        );
-
-        //should only be one
-        $existingPrimaryNumbers = $phoneNumbers->where('is_primary', '=', true)->all();
-        if ($request->input('makePrimary') && ! empty($existingPrimaryNumbers)) {
-            foreach ($existingPrimaryNumbers as $number) {
-                // One more trip to DB
-                $this->updatePreviousPrimaryPhone($number, $newPhoneNumber->id);
-            }
-        }
-
-        return response()->json([
-            'data'    => $phoneNumber,
-            'message' => 'Phone number has been saved!',
-        ], 200);
-    }
-
     public function showCallPatientPage(CallPatientRequest $request, $patientId)
     {
         /** @var User $user */
@@ -409,24 +338,17 @@ class PatientController extends Controller
         return view('wpUsers.patient.listing');
     }
 
-    public function showPatientListingPdf(Request $request, PdfService $pdfService)
+    public function showPatientListingPdf(PdfService $pdfService)
     {
         if (auth()->user()->isCareCoach()) {
             abort(403);
-        }
-
-        $showPracticePatientsInput = $request->input('showPracticePatients', null);
-        $isProvider                = auth()->user()->isProvider();
-        $showPracticePatients      = true;
-        if ($isProvider && (User::SCOPE_LOCATION === auth()->user()->scope || 'false' === $showPracticePatientsInput)) {
-            $showPracticePatients = false;
         }
 
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
         $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';
         $file             = $pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
-            'patients' => $this->formatter->patients(null, $showPracticePatients),
+            'patients' => $this->formatter->patients(),
         ], null, [
             'orientation'  => 'Landscape',
             'margin-left'  => '3',
@@ -571,9 +493,9 @@ class PatientController extends Controller
                     break;
                 case 'Cigarettes':
                 case ObservationConstants::CIGARETTE_COUNT:
-                if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
-                    $observation['description'] = $description;
-                }
+                    if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                        $observation['description'] = $description;
+                    }
                     $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Blood_Pressure':
@@ -581,7 +503,7 @@ class PatientController extends Controller
                 case ObservationConstants::BLOOD_PRESSURE:
                 case ObservationConstants::BLOOD_SUGAR:
                 case ObservationConstants::WEIGHT:
-                $observation['description']         = $observation['obs_key'];
+                    $observation['description']     = $observation['obs_key'];
                     $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case ObservationConstants::MEDICATIONS_ADHERENCE_OBSERVATION_TYPE:
@@ -599,11 +521,11 @@ class PatientController extends Controller
                     break;
                 case 'Other':
                 case ObservationConstants::LIFESTYLE_OBSERVATION_TYPE:
-                if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
-                    $observation['description'] = $description;
-                }
-                $obs_by_pcp['obs_lifestyle'][] = $this->prepareForWebix($observation);
-                break;
+                    if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                        $observation['description'] = $description;
+                    }
+                    $obs_by_pcp['obs_lifestyle'][] = $this->prepareForWebix($observation);
+                    break;
                 default:
                     break;
             }
@@ -696,6 +618,11 @@ class PatientController extends Controller
         return redirect()->back();
     }
 
+    private function getAllNumbersOfPatient(int $patientUserId)
+    {
+        return PhoneNumber::whereUserId($patientUserId)->get();
+    }
+
     private function prepareForWebix($observation)
     {
         return [
@@ -714,15 +641,6 @@ class PatientController extends Controller
     }
 
     private function unsetCurrentPrimaryNumber(PhoneNumber $currentPrimaryPhone)
-    /**
-     * @return \App\PhoneNumber[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
-     */
-    private function getAllNumbersOfPatient(int $patientUserId)
-    {
-        return PhoneNumber::whereUserId($patientUserId)->get();
-    }
-
-    private function updatePreviousPrimaryPhone(PhoneNumber $phone, int $newPhoneId)
     {
         $currentPrimaryPhone->is_primary = false;
         $currentPrimaryPhone->save();
