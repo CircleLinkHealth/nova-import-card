@@ -18,21 +18,23 @@ class CallReportController extends Controller
 {
     public function exportXlsV2(Request $request, CallViewFilters $filters)
     {
+        ini_set('memory_limit', '512M');
+        
         $date = Carbon::now()->startOfMonth();
-
+        
         $calls = CallView::filter($filters)
             ->get();
-
+        
         if ($request->has('json')) {
             // interrupt request and return json
             return response()->json($calls);
         }
-
+        
         $data = $this->generateXlsData($date, $calls);
-
+        
         return $data->download($data->getFilename());
     }
-
+    
     /**
      * @return int media id
      */
@@ -43,10 +45,10 @@ class CallReportController extends Controller
         $model      = SaasAccount::whereSlug('circlelink-health')->firstOrFail();
         $collection = "pam_{$date->toDateString()}";
         $media      = $data->storeAndAttachMediaTo($model, $collection);
-
+        
         return $media->id;
     }
-
+    
     /**
      * Display a listing of the resource.
      *
@@ -55,17 +57,17 @@ class CallReportController extends Controller
     public function index(Request $request)
     {
     }
-
+    
     private function formatTime($time)
     {
         $seconds = $time;
         $H       = floor($seconds / 3600);
         $i       = ($seconds / 60) % 60;
         $s       = $seconds % 60;
-
+        
         return sprintf('%02d:%02d:%02d', $H, $i, $s);
     }
-
+    
     private function generateXlsData($date, $calls)
     {
         $headings = [
@@ -85,9 +87,9 @@ class CallReportController extends Controller
             'Billing Provider',
             'Scheduler',
         ];
-
+        
         $rows = [];
-
+        
         foreach ($calls as $call) {
             $rows[] = [
                 $call->id,
@@ -107,9 +109,9 @@ class CallReportController extends Controller
                 $call->scheduler,
             ];
         }
-
+        
         $fileName = 'CLH-Report-'.$date.'.xls';
-
+        
         return new FromArray($fileName, $rows, $headings);
     }
 }
