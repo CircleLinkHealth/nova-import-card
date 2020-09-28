@@ -24,44 +24,45 @@ class OfflineActivityTimeRequestController extends Controller
         return view('cpm-admin::care-center.offlineActivityTimeRequest.index')
             ->with('requests', $requests);
     }
-
+    
     public function adminRespond(Request $request)
     {
         $timeRequest = OfflineActivityTimeRequest::findOrFail($request->input('offline_time_request_id'));
-
+        
         $isApproved = (bool) $request->input('approved');
-
+        
         $timeRequest->is_approved = $isApproved;
-
+        
         if ($isApproved) {
             $timeRequest->approve();
+            event(new PatientActivityCreated($timeRequest->patient_id, false));
         } else {
             $timeRequest->reject();
         }
-
+        
         return redirect()->route('admin.offline-activity-time-requests.index');
     }
-
+    
     public function create($patientId)
     {
         if ( ! $patientId) {
             return abort(404);
         }
-
+        
         $patient = User::find($patientId);
-
+        
         if ( ! $patient) {
             return response('User not found', 401);
         }
-
+        
         $patient_name = $patient->getFullName();
-
+        
         $userTimeZone = $patient->timezone;
-
+        
         if (empty($userTimeZone)) {
             $userTimeZone = 'America/New_York';
         }
-
+        
         return view(
             'care-center.offlineActivityTimeRequest.create',
             [
@@ -74,7 +75,7 @@ class OfflineActivityTimeRequestController extends Controller
             ]
         );
     }
-
+    
     public function index()
     {
         $requests = OfflineActivityTimeRequest::with('patient')
@@ -84,7 +85,7 @@ class OfflineActivityTimeRequestController extends Controller
         return view('cpm-admin::care-center.offlineActivityTimeRequest.index')
             ->with('requests', $requests);
     }
-
+    
     /**
      * @param $patientId
      *
@@ -105,11 +106,11 @@ class OfflineActivityTimeRequestController extends Controller
                 'performed_at'     => \Carbon::parse($request->input('performed_at')),
             ]
         );
-
+        
         if ($offlineActivityRequest) {
             return redirect()->route('offline-activity-time-requests.index');
         }
-
+        
         throw new \Exception('Failed saving Offline Activity Time Request', 500);
     }
 }
