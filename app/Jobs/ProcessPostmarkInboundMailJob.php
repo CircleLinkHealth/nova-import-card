@@ -59,6 +59,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
 
             return;
         }
+        
         $emailParts = $this->splitEmail($email);
 
         if (self::FROM_CALLBACK_EMAIL_DOMAIN === $emailParts->domain || 'kountouris7@gmail.com' === $email) {
