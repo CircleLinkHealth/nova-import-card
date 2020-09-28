@@ -8,6 +8,7 @@ namespace CircleLinkHealth\SamlSp\Listeners;
 
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -51,6 +52,16 @@ class SamlLoginEventListener
         if ($samlUser && $samlUser->cpmUser && ! $samlUser->cpmUser->isParticipant()) {
             Auth::login($samlUser->cpmUser);
             session()->put(self::SESSION_IDP_NAME_KEY, $idp);
+
+            $cpmUrl = config('services.cpm.url', null);
+            if (!isEmpty($cpmUrl)) {
+                /** @var Request $request */
+                $request = app('request');
+                $request->merge([
+                    'RelayState' => config('services.cpm.url'),
+                ]);
+            }
+
             // if we have a Patient ID in the $attributes
             // $patientId = $attributes['patientId'];
             // /** @var Request $request */
