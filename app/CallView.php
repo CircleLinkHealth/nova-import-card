@@ -83,6 +83,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
  * @property string|null                                                                                 $preferred_contact_language
+ * @property int|null                                                                                    $is_demo
  */
 class CallView extends SqlViewModel
 {

@@ -7,11 +7,11 @@
 namespace Tests\Unit;
 
 use App\Notifications\CarePlanProviderApproved;
-use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Rules\DoesNotHaveBothTypesOfDiabetes;

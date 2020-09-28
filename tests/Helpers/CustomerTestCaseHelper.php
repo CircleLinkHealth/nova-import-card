@@ -6,10 +6,10 @@
 
 namespace Tests\Helpers;
 
-use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 
 trait CustomerTestCaseHelper
 {

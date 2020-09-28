@@ -60,9 +60,8 @@ class PatientCareplanController extends Controller
     {
         return $this->editOrCreateDemographics($request);
     }
-    
+
     /**
-     * @param DeleteAlternateContactRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function deleteAlternateContact(DeleteAlternateContactRequest $request)

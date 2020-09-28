@@ -7,10 +7,10 @@
 namespace Tests\Unit;
 
 use App\Traits\Tests\TimeHelpers;
-use CircleLinkHealth\Customer\Traits\UserHelpers;
 use App\UserTotalTimeChecker;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Tests\TestCase;
 
 class CheckUserTotalTimeTrackedTest extends TestCase

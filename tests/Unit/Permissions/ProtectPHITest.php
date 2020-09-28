@@ -6,11 +6,11 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Tests\TestCase;
 
