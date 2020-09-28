@@ -1792,11 +1792,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'gender'                  => 'required',
             'mrn_number'              => 'required',
             'birth_date'              => 'required',
-            'home_phone_number'       => 'required',
-            'consent_date'            => 'required',
-            'ccm_status'              => 'required',
-            'program_id'              => 'required',
-            'email'                   => [
+            'home_phone_number'       => [
+                Rule::requiredIf($this->relationLoaded('phoneNumbers')
+                    ? $this->phoneNumbers->isEmpty()
+                    : $this->phoneNumbers()->doesntExist()),
+            ],
+            'consent_date' => 'required',
+            'ccm_status'   => 'required',
+            'program_id'   => 'required',
+            'email'        => [
                 'sometimes',
                 Rule::unique('users', 'email')->ignore($this),
             ],
