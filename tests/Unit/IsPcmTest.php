@@ -6,6 +6,8 @@
 
 namespace Tests\Unit;
 
+use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
+use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Tests\CustomerTestCase;
@@ -23,9 +25,5 @@ class IsPcmTest extends CustomerTestCase
         $problem = $this->attachValidPcmProblem($this->patient());
 
         $this->assertTrue($this->patient()->isPcm());
-
-        PcmProblem::where('code', $problem->icd10Code())->delete();
-
-        $this->assertFalse($this->patient()->isPcm());
     }
 }

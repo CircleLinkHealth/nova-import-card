@@ -7,6 +7,8 @@
 namespace Tests;
 
 use App\Traits\Tests\UserHelpers;
+use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -65,7 +67,6 @@ class CustomerTestCase extends TestCase
      * Useful when wanting to add extra functionality (eg. assertions) to an object.
      *
      * @throws \ReflectionException
-     *
      * @return mixed|string
      */
     public function castToFake(object $instance, string $destinationClass)
@@ -203,6 +204,7 @@ class CustomerTestCase extends TestCase
         if ( ! $this->practice) {
             $this->practice = factory(Practice::class)->create();
             $this->location();
+            $this->setupPracticeServices();
         }
 
         return $this->practice;
@@ -228,6 +230,17 @@ class CustomerTestCase extends TestCase
     protected function resetProvider()
     {
         $this->provider = null;
+    }
+
+    protected function setupPracticeServices()
+    {
+        $this->practice->chargeableServices()->sync([
+            ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI),
+            ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::CCM),
+            ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM),
+        ]);
+
+        SetupPracticeBillingData::forPractice($this->practice->id);
     }
 
     /**
