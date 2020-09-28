@@ -6,21 +6,10 @@
 
 namespace CircleLinkHealth\CpmMigrations\Providers;
 
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class CpmMigrationsServiceProvider extends ServiceProvider implements DeferrableProvider
+class CpmMigrationsServiceProvider extends ServiceProvider
 {
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [];
-    }
-    
     /**
      * Register the service provider.
      *
