@@ -19,7 +19,7 @@ use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Domain\Patient\PatientHasServiceCode;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
@@ -2198,7 +2198,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isBhi():bool
     {
         return \Cache::remember("user:$this->id:is_bhi", 5, function () {
-            return PatientHasServiceCode::execute($this->id, ChargeableService::BHI);
+            return PatientIsOfServiceCode::execute($this->id, ChargeableService::BHI);
         });
     }
 
@@ -2299,7 +2299,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function isPcm() : bool
     {
-        return PatientHasServiceCode::execute($this->id, ChargeableService::PCM);
+        return PatientIsOfServiceCode::execute($this->id, ChargeableService::PCM);
     }
 
     public function isPracticeStaff(): bool
