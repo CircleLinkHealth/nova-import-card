@@ -769,6 +769,16 @@ if ( ! function_exists('generateRandomString')) {
     }
 }
 
+if ( ! function_exists('generateRandomIntegerOfDigitSize')) {
+    /**
+     * @param mixed $digits
+     */
+    function generateRandomIntegerOfDigitSize($digits = 5): int
+    {
+        return rand(pow(10, $digits - 1), pow(10, $digits) - 1);
+    }
+}
+
 if ( ! function_exists('clhWindowToTimestamps')) {
     /**
      * Convert timestamps to a Contact Window.
