@@ -84,15 +84,10 @@ class PostmarkInboundCallbackMatchResults
         $postmarkInboundPatientsMatched = $this->getPostmarkInboundPatientsByPhone($this->postmarkCallbackData);
 
         if ($this->singleMatch($postmarkInboundPatientsMatched->get())) {
-            return (new MatchedData(
-                $postmarkInboundPatientsMatched->first(),
-                $this->patientIsCallbackEligible(
-                    $postmarkInboundPatientsMatched->first(),
-                    $this->postmarkCallbackData
-                ),
-                $this->noCallbackReasoning($postmarkInboundPatientsMatched->first())
-            ))
-                ->getArray();
+            $matchedPatient     = $postmarkInboundPatientsMatched->first();
+            $isCallbackEligible = $this->patientIsCallbackEligible($matchedPatient, $this->postmarkCallbackData);
+
+            return $this->singleMatchResult($matchedPatient, $isCallbackEligible);
         }
 
         if ($this->multiMatch($postmarkInboundPatientsMatched)) {
@@ -127,23 +122,13 @@ class PostmarkInboundCallbackMatchResults
         if ($patientsMatchWithInboundName->isEmpty() || 1 !== $patientsMatchWithInboundName->count()) {
             sendSlackMessage('#carecoach_ops_alerts', "Inbound callback with record id:$this->recordId was matched with phone but failed to match with user name.");
 
-            return (new MatchedData(
-                $patientsMatchedByPhone,
-                false,
-                self::NO_NAME_MATCH
-            ))
-                ->getArray();
+            return $this->multimatchResult($patientsMatchedByPhone, false, self::NO_NAME_MATCH);
         }
 
-        return (new MatchedData(
-            $patientsMatchWithInboundName->first(),
-            $this->patientIsCallbackEligible(
-                $patientsMatchWithInboundName->first(),
-                $this->postmarkCallbackData
-            ),
-            $this->noCallbackReasoning($patientsMatchWithInboundName->first())
-        ))
-            ->getArray();
+        $matchedPatient     = $patientsMatchWithInboundName->first();
+        $isCallbackEligible = $this->patientIsCallbackEligible($matchedPatient, $this->postmarkCallbackData);
+
+        return $this->singleMatchResult($matchedPatient, $isCallbackEligible);
     }
 
     /**
@@ -178,23 +163,13 @@ class PostmarkInboundCallbackMatchResults
         }
 
         if ($this->singleMatch($patientsMatchedByCallerFieldName)) {
-            return (new MatchedData(
-                $patientsMatchedByCallerFieldName->first(),
-                $this->patientIsCallbackEligible(
-                    $patientsMatchedByCallerFieldName->first(),
-                    $this->postmarkCallbackData
-                ),
-                $this->noCallbackReasoning($patientsMatchedByCallerFieldName->first())
-            ))
-                ->getArray();
-        }
+            $matchedPatient     = $patientsMatchedByCallerFieldName->first();
+            $isCallbackEligible = $this->patientIsCallbackEligible($matchedPatient, $this->postmarkCallbackData);
 
-        return (new MatchedData(
-            $patientsMatchedByCallerFieldName,
-            false,
-            self::NO_NAME_MATCH_SELF
-        ))
-            ->getArray();
+          return $this->singleMatchResult($matchedPatient, $isCallbackEligible);
+        }
+        
+        return $this->multimatchResult($patientsMatchedByCallerFieldName, false, self::NO_NAME_MATCH_SELF);
     }
 
     /**
@@ -210,9 +185,12 @@ class PostmarkInboundCallbackMatchResults
      *
      * @return string
      */
-    private function noCallbackReasoning(Model $patientUser)
+    private function noCallbackReasoning(Model $patientUser, bool $isCallbackEligible)
     {
-        $reason = 'unmatched';
+        if ($isCallbackEligible) {
+            return '';
+        }
+
         /** @var User $patientUser */
         if ($this->isQueuedForEnrollmentAndUnassigned($patientUser)) {
             return self::QUEUED_AND_UNASSIGNED;
@@ -226,7 +204,7 @@ class PostmarkInboundCallbackMatchResults
             return self::NOT_ENROLLED;
         }
 
-        return $reason;
+        return 'unmatched';
     }
 
     /**
@@ -262,5 +240,25 @@ class PostmarkInboundCallbackMatchResults
     private function singleMatch(Collection $postmarkInboundPatientsMatched)
     {
         return 1 === $postmarkInboundPatientsMatched->count();
+    }
+
+    private function singleMatchResult(?Model $matchedPatient, bool $isCallbackEligible)
+    {
+        return (new MatchedData(
+            $matchedPatient,
+            $isCallbackEligible,
+            $this->noCallbackReasoning($matchedPatient, $isCallbackEligible)
+        ))
+            ->getArray();
+    }
+    
+    private function multimatchResult(Collection $patientsMatched, bool $createCallback, string $reasoning)
+    {
+        return (new MatchedData(
+            $patientsMatched,
+            $createCallback,
+            $reasoning
+        ))
+            ->getArray();
     }
 }

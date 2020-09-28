@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use App\Entities\PostmarkInboundCallbackRequest;
 use App\Entities\PostmarkInboundMailRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
@@ -107,6 +108,57 @@ class AutoAssignCallbackTest extends TestCase
 
         $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
         $this->assertCallbackExists($patient1->id);
+    }
+
+    public function test_email_body_is_decoded_successfully()
+    {
+        $this->createPatientData(Enrollee::ENROLLED);
+        $this->createPostmarkCallbackData(false, false);
+        $patient         = $this->patient;
+        $postmarkRecord  = $this->postmarkRecord;
+        $inboundTextBody = collect(json_decode($postmarkRecord->data))->toArray();
+
+        assert(isset($inboundTextBody['TextBody']));
+
+        $textBodyData     = $inboundTextBody['TextBody'];
+        $inboundDataArray = (new PostmarkInboundCallbackRequest())->run($textBodyData, $postmarkRecord->id);
+
+        assert(is_array($inboundDataArray));
+        assert(! isset($inboundDataArray['Cancel/Withdraw Reason']));
+        $keys = (new PostmarkInboundCallbackRequest())->getKeys();
+
+        foreach ($keys as $key) {
+            $keyTrimmed = trim($key, ':');
+            if (isset($inboundDataArray[$keyTrimmed])) {
+                assert(array_key_exists($keyTrimmed, $inboundDataArray));
+            }
+        }
+    }
+
+    public function test_email_body_is_decoded_successfully_with_extra_keys()
+    {
+        $this->createPatientData(Enrollee::ENROLLED);
+        $this->createPostmarkCallbackData(true, false);
+        $patient         = $this->patient;
+        $postmarkRecord  = $this->postmarkRecord;
+        $inboundTextBody = collect(json_decode($postmarkRecord->data))->toArray();
+
+        assert(isset($inboundTextBody['TextBody']));
+
+        $textBodyData     = $inboundTextBody['TextBody'];
+        $inboundDataArray = (new PostmarkInboundCallbackRequest())->run($textBodyData, $postmarkRecord->id);
+
+        assert(is_array($inboundDataArray));
+        assert(isset($inboundDataArray['Cancel/Withdraw Reason']));
+
+        $keys = (new PostmarkInboundCallbackRequest())->getKeys();
+
+        foreach ($keys as $key) {
+            $keyTrimmed = trim($key, ':');
+            if (isset($inboundDataArray[$keyTrimmed])) {
+                assert(array_key_exists($keyTrimmed, $inboundDataArray));
+            }
+        }
     }
 
     public function test_it_saves_as_unresolved_callback_if_patient_is_not_enrolled()

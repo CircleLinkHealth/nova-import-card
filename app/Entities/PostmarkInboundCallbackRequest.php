@@ -60,7 +60,7 @@ class PostmarkInboundCallbackRequest
     /**
      * @return string[]
      */
-    private function getKeys()
+    public function getKeys()
     {
         return [
             'For:',
