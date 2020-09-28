@@ -224,6 +224,7 @@ return [
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
         \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
+        \CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider::class,
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
     ],
