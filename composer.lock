@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "43e3c1880e981f9cde77f71731e8e857",
+    "content-hash": "7d90c92a37a0f0f68d9fefcccc6ed0b0",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -66,57 +66,6 @@
                 "saml"
             ],
             "time": "2019-10-01T23:05:14+00:00"
-        },
-        {
-            "name": "alexbowers/nova-prepopulate-searchable",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/alexbowers/nova-prepopulate-searchable.git",
-                "reference": "e4b7d0a19190689cfb312dafd979bd73c42274d2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/alexbowers/nova-prepopulate-searchable/zipball/e4b7d0a19190689cfb312dafd979bd73c42274d2",
-                "reference": "e4b7d0a19190689cfb312dafd979bd73c42274d2",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/nova": ">=1.0.13",
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AlexBowers\\NovaPrepopulateSearchable\\ToolServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AlexBowers\\NovaPrepopulateSearchable\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Alex Bowers",
-                    "email": "bowersbros@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A tool to allow BelongsTo searchable fields to be pre-populated with data",
-            "homepage": "https://github.com/alexbowers/nova-prepopulate-searchable",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "abandoned": "genealabs/nova-prepopulate-searchable",
-            "time": "2018-09-06T20:24:04+00:00"
         },
         {
             "name": "algolia/algoliasearch-client-php",
@@ -310,48 +259,6 @@
                 "issues": "https://github.com/amnuts/opcache-gui/issues"
             },
             "time": "2018-08-07T23:43:00+00:00"
-        },
-        {
-            "name": "anaseqal/nova-import",
-            "version": "0.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/anaseqal/nova-import.git",
-                "reference": "548fa4d39ea914b1a5ce82b388a9d1df1bdd857a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/anaseqal/nova-import/zipball/548fa4d39ea914b1a5ce82b388a9d1df1bdd857a",
-                "reference": "548fa4d39ea914b1a5ce82b388a9d1df1bdd857a",
-                "shasum": ""
-            },
-            "require": {
-                "maatwebsite/excel": "*",
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Anaseqal\\NovaImport\\ToolServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Anaseqal\\NovaImport\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova tool.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "time": "2020-04-13T12:32:35+00:00"
         },
         {
             "name": "appstract/laravel-opcache",
@@ -814,58 +721,6 @@
             "time": "2020-08-18T23:57:15+00:00"
         },
         {
-            "name": "brick/money",
-            "version": "0.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/brick/money.git",
-                "reference": "f922b357dc56f78c398c6cd055fbaa75eaffdbeb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/brick/money/zipball/f922b357dc56f78c398c6cd055fbaa75eaffdbeb",
-                "reference": "f922b357dc56f78c398c6cd055fbaa75eaffdbeb",
-                "shasum": ""
-            },
-            "require": {
-                "brick/math": "~0.7.3 || ~0.8.0 || ~0.9.0",
-                "php": "^7.1|^8.0"
-            },
-            "require-dev": {
-                "brick/varexporter": "~0.2.1",
-                "ext-dom": "*",
-                "ext-pdo": "*",
-                "php-coveralls/php-coveralls": "^2.2",
-                "phpunit/phpunit": "^7.5.15"
-            },
-            "suggest": {
-                "ext-intl": "Required to format Money objects"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Brick\\Money\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Money and currency library",
-            "keywords": [
-                "brick",
-                "currency",
-                "money"
-            ],
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/brick/money",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2020-08-19T22:52:38+00:00"
-        },
-        {
             "name": "cakephp/chronos",
             "version": "2.0.6",
             "source": {
@@ -1090,78 +945,6 @@
             "time": "2020-08-17T04:36:06+00:00"
         },
         {
-            "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-Road_222_phone_type_on_call_page",
-            "dist": {
-                "type": "path",
-                "url": "./nova-components/ClhImportCardExtended",
-                "reference": "bb869cb6bb70b2c7cc2844ff44a4f88c7cc45e08"
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\ClhImportCardExtended\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\ClhImportCardExtended\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova card.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "circlelinkhealth/clh-nova-theme",
-            "version": "dev-Road_222_phone_type_on_call_page",
-            "dist": {
-                "type": "path",
-                "url": "./nova-components/ClhNovaTheme",
-                "reference": "1bbdc8741c1bce578b353148a21acb8186232dbe"
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Circlelinkhealth\\ClhNovaTheme\\ThemeServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Circlelinkhealth\\ClhNovaTheme\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova theme.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
             "name": "circlelinkhealth/condition-code-lookup-module",
             "version": "v1.1.6",
             "source": {
@@ -1199,13 +982,17 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.7.7",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "c9543418178a31e942cf90540b12ccc4e3ae2983"
+                "reference": "c2058bea01267e36720b57b5ed6d9ae508fd0bd3"
             },
             "require": {
+                "laravel/passport": "^8.0",
+                "laravel/vapor-core": "^2.9",
+                "laravel/vapor-ui": "^0.0.5",
+                "laravelcollective/html": "^6.1",
                 "maatwebsite/excel": "^3.1"
             },
             "type": "laravel-module",
@@ -1232,15 +1019,49 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-23T17:16:11+00:00"
+            "time": "2020-09-22T19:24:09+00:00"
+        },
+        {
+            "name": "circlelinkhealth/cpm-admin-module",
+            "version": "dev-vaporizing-admin",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
+                "reference": "e36f635ab8ecf00012029fdb08d0ef25b5f963e2"
+            },
+            "require": {
+                "circlelinkhealth/core-module": "*",
+                "circlelinkhealth/customer-module": "*",
+                "circlelinkhealth/raygun-module": "*",
+                "circlelinkhealth/shared-models-module": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CpmAdmin\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "",
+                    "email": ""
+                }
+            ],
+            "time": "2020-09-28T23:09:14+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-billing-shenanigans",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "c92f5fddd12e25e776341ee626f2fad321f83c44"
+                "reference": "02702286b15141a63cc03522b17322261dc32b29"
             },
             "type": "laravel-module",
             "extra": {
@@ -1262,30 +1083,30 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-28T22:27:30+00:00"
+            "time": "2020-09-20T01:57:06+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-ROAD-288-billing-new-schema-models",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "56d82925131a0a4eeaddbece030e65138c40c2cc"
+                "reference": "57a727d92f50a0859b64b7a13a67708ad9e9c0c2"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
                 "circlelinkhealth/core-module": "*",
+                "circlelinkhealth/twofa-module": "*",
                 "fico7489/laravel-pivot": "^3.0",
-                "laravel/passport": "^8.0",
+                "lab404/laravel-impersonate": "^1.2",
                 "laravel/scout": "^7.1|^8.0",
+                "propaganistas/laravel-phone": "^4.2.2",
                 "spatie/laravel-medialibrary": "^7.0.0"
             },
             "type": "laravel-module",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\Customer\\Providers\\CustomerServiceProvider"
-                    ],
+                    "providers": [],
                     "aliases": []
                 }
             },
@@ -1304,15 +1125,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-28T22:13:35+00:00"
+            "time": "2020-09-28T23:20:45+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-billing_revamp",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "293bf79e09ad901295f8eb702d4f6e8464bd9e73"
+                "reference": "c8d7b7c58ec8c7dcc761877cfef303342778a7ab"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1338,197 +1159,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-28T22:27:03+00:00"
-        },
-        {
-            "name": "circlelinkhealth/enrollment-invites",
-            "version": "dev-Road_222_phone_type_on_call_page",
-            "dist": {
-                "type": "path",
-                "url": "./nova-components/EnrollmentInvites",
-                "reference": "b6cf4442f05d1bf70a7740842be0523456f73b14"
-            },
-            "require": {
-                "anaseqal/nova-import": "^0.0.3",
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Circlelinkhealth\\EnrollmentInvites\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Circlelinkhealth\\EnrollmentInvites\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova card.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-Road_222_phone_type_on_call_page",
-            "dist": {
-                "type": "path",
-                "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "bd5f5af9bff0a3e12ab6dd3ecf2ba68ab0929a88"
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\GeneratePatientCallDataCsv\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\GeneratePatientCallDataCsv\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova card.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-Road_222_phone_type_on_call_page",
-            "dist": {
-                "type": "path",
-                "url": "./nova-components/GenerateSuccessStoriesReport",
-                "reference": "8d2f73917c098fb67e5c3e1d4e957838b1ce33a4"
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Circlelinkhealth\\GenerateSuccessStoriesReport\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Circlelinkhealth\\GenerateSuccessStoriesReport\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova card.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-Road_222_phone_type_on_call_page",
-            "dist": {
-                "type": "path",
-                "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "6faa8301ceb8b7fb3ff64fa5d7c616f279ab8fe2"
-            },
-            "require": {
-                "php": ">=7.1.0",
-                "sparclex/nova-import-card": "^7.0.1"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\ImportPracticeStaffCsv\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\ImportPracticeStaffCsv\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova card.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "circlelinkhealth/invoices-download",
-            "version": "dev-Road_222_phone_type_on_call_page",
-            "dist": {
-                "type": "path",
-                "url": "./nova-components/InvoicesDownload",
-                "reference": "7b4fcc04ab2b3522353cc2707bafc9452ac690b1"
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Circlelinkhealth\\InvoicesDownload\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Circlelinkhealth\\InvoicesDownload\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova card.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
+            "time": "2020-09-21T23:55:48+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.6.1",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "dae1b16ab232a5efb25dc62f4fa61babd7d17b0f"
+                "reference": "16662452193d47689c97b3ae3508b517f0f81d7e"
             },
             "type": "laravel-module",
             "extra": {
@@ -1550,15 +1189,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:07:42+00:00"
+            "time": "2020-09-22T15:05:33+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.3.6",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "7cbe0341391e792925cdae60a5dcfe559d436f0f"
+                "reference": "04294958b1ec111c557657ed753706f030b12212"
             },
             "type": "laravel-module",
             "extra": {
@@ -1580,7 +1219,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T14:59:12+00:00"
+            "time": "2020-09-21T23:55:48+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1702,11 +1341,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-ROAD-288-billing-revamp",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "ed8480efd56240829f0e2b0e0b8c1c31ab0ed25c"
+                "reference": "46bd3f8bff15121ddd8cceeb0b1dc96c05ace65d"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1720,15 +1359,43 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-28T22:13:35+00:00"
+            "time": "2020-09-28T23:20:45+00:00"
+        },
+        {
+            "name": "circlelinkhealth/sharedvuecomponents-module",
+            "version": "dev-vaporizing-admin",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
+                "reference": "e171f8ae694364f45bd02c36be4835efa659f63b"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\Sharedvuecomponents\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "",
+                    "email": ""
+                }
+            ],
+            "time": "2020-09-28T23:02:06+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "dev-ROAD-288-billing-revamp",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "d3078bce93c7cbf7131f8fd79684893ee06291a4"
+                "reference": "9cbe555e66cb29551dfcef47e5aa9ef6bd93658b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1753,15 +1420,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-25T15:07:58+00:00"
+            "time": "2020-09-28T23:18:29+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "dev-ROAD-288-billing-new-schema-models",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "b6ba2c55b0936f7d88ce4a664dd9971fd5b81fb2"
+                "reference": "fac5e67e923f86e22d918d8a2e719047e923616a"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1786,15 +1453,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-23T21:43:26+00:00"
+            "time": "2020-09-28T23:17:09+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
-            "version": "v1.2.3",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "0a76dcd482d9b5dc9277a46113fec7eeefa4b7d4"
+                "reference": "b45d64871a97a557c9371301aaec7bbe771758e7"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1821,7 +1488,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T20:08:19+00:00"
+            "time": "2020-09-21T15:12:00+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -2302,46 +1969,6 @@
                 "symmetric key cryptography"
             ],
             "time": "2018-07-24T23:27:56+00:00"
-        },
-        {
-            "name": "dillingham/nova-button",
-            "version": "1.0.11",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dillingham/nova-button.git",
-                "reference": "a4dbcdebc9e1fd667c38e12df6be74cebd772b02"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dillingham/nova-button/zipball/a4dbcdebc9e1fd667c38e12df6be74cebd772b02",
-                "reference": "a4dbcdebc9e1fd667c38e12df6be74cebd772b02",
-                "shasum": ""
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "NovaButton\\Providers\\FieldServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "NovaButton\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Brian Dillingham",
-                    "email": "bdillingham88@gmail.com"
-                }
-            ],
-            "description": "Nova button package",
-            "time": "2020-09-16T21:46:40+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -2924,47 +2551,6 @@
             "time": "2020-09-26T15:48:38+00:00"
         },
         {
-            "name": "epartment/nova-dependency-container",
-            "version": "1.2.11",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/epartment/nova-dependency-container.git",
-                "reference": "b29aa381673a397878652525dea366aebda33455"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/epartment/nova-dependency-container/zipball/b29aa381673a397878652525dea366aebda33455",
-                "reference": "b29aa381673a397878652525dea366aebda33455",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Epartment\\NovaDependencyContainer\\FieldServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Epartment\\NovaDependencyContainer\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova field container allowing to depend on other fields values",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "time": "2020-05-17T03:35:34+00:00"
-        },
-        {
             "name": "fico7489/laravel-pivot",
             "version": "3.0.6",
             "source": {
@@ -3117,52 +2703,6 @@
                 "php"
             ],
             "time": "2020-03-25T18:49:23+00:00"
-        },
-        {
-            "name": "fourstacks/nova-checkboxes",
-            "version": "v0.1.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fourstacks/nova-checkboxes.git",
-                "reference": "73de263bfb500e5ab9159dba120818995f4605dc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fourstacks/nova-checkboxes/zipball/73de263bfb500e5ab9159dba120818995f4605dc",
-                "reference": "73de263bfb500e5ab9159dba120818995f4605dc",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "require-dev": {
-                "laravel/nova": "^1.0",
-                "orchestra/testbench": "3.7.*",
-                "phpunit/phpunit": "^7.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Fourstacks\\NovaCheckboxes\\FieldServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Fourstacks\\NovaCheckboxes\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova field.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "time": "2019-12-17T14:42:38+00:00"
         },
         {
             "name": "fruitcake/laravel-cors",
@@ -3873,6 +3413,71 @@
             "time": "2019-04-03T13:40:29+00:00"
         },
         {
+            "name": "hollodotme/fast-cgi-client",
+            "version": "v3.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hollodotme/fast-cgi-client.git",
+                "reference": "8eb9d5c3b2685d9e16904c1229d455b42f0b9377"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hollodotme/fast-cgi-client/zipball/8eb9d5c3b2685d9e16904c1229d455b42f0b9377",
+                "reference": "8eb9d5c3b2685d9e16904c1229d455b42f0b9377",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "tm/tooly-composer-script": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "tools": {
+                    "phpunit7": {
+                        "url": "https://phar.phpunit.de/phpunit-7.phar",
+                        "replace": true,
+                        "only-dev": true
+                    },
+                    "phpunit8": {
+                        "url": "https://phar.phpunit.de/phpunit-8.phar",
+                        "replace": true,
+                        "only-dev": true
+                    },
+                    "phpunit9": {
+                        "url": "https://phar.phpunit.de/phpunit-9.phar",
+                        "replace": true,
+                        "only-dev": true
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "hollodotme\\FastCGI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Holger Woltersdorf",
+                    "email": "hw@hollo.me"
+                }
+            ],
+            "description": "A PHP fast CGI client to send requests (a)synchronously to PHP-FPM.",
+            "keywords": [
+                "Socket",
+                "async",
+                "fastcgi",
+                "php-fpm"
+            ],
+            "time": "2020-08-13T09:09:20+00:00"
+        },
+        {
             "name": "http-interop/http-factory-guzzle",
             "version": "1.0.0",
             "source": {
@@ -3921,47 +3526,6 @@
                 "psr-7"
             ],
             "time": "2018-07-31T19:32:56+00:00"
-        },
-        {
-            "name": "hubertnnn/laravel-nova-field-dynamic-select",
-            "version": "0.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hubertnnn/laravel-nova-field-dynamic-select.git",
-                "reference": "5deb4142725fe7be7947d45a6fb4d70b64c7f660"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hubertnnn/laravel-nova-field-dynamic-select/zipball/5deb4142725fe7be7947d45a6fb4d70b64c7f660",
-                "reference": "5deb4142725fe7be7947d45a6fb4d70b64c7f660",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Hubertnnn\\LaravelNova\\Fields\\DynamicSelect\\FieldServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Hubertnnn\\LaravelNova\\Fields\\DynamicSelect\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova field.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "time": "2019-03-14T12:01:21+00:00"
         },
         {
             "name": "intervention/image",
@@ -4393,47 +3957,6 @@
             "time": "2020-01-16T16:56:46+00:00"
         },
         {
-            "name": "jubeki/nova-card-linkable",
-            "version": "v1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Jubeki/Nova-Card-Linkable.git",
-                "reference": "2b71925efe1cab207bcc235ffc8214d1a383ecbe"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Jubeki/Nova-Card-Linkable/zipball/2b71925efe1cab207bcc235ffc8214d1a383ecbe",
-                "reference": "2b71925efe1cab207bcc235ffc8214d1a383ecbe",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Jubeki\\Nova\\Cards\\Linkable\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Jubeki\\Nova\\Cards\\Linkable\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova card, which has a link",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "time": "2020-02-14T10:20:16+00:00"
-        },
-        {
             "name": "knplabs/knp-snappy",
             "version": "v1.2.1",
             "source": {
@@ -4498,47 +4021,6 @@
                 "wkhtmltopdf"
             ],
             "time": "2020-01-20T08:30:30+00:00"
-        },
-        {
-            "name": "kreitje/nova-horizon-stats",
-            "version": "v0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/kreitje/nova-horizon-stats.git",
-                "reference": "22cc6ace3e4c1e111edb9dd5b7b819d6e2d9776c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/kreitje/nova-horizon-stats/zipball/22cc6ace3e4c1e111edb9dd5b7b819d6e2d9776c",
-                "reference": "22cc6ace3e4c1e111edb9dd5b7b819d6e2d9776c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Kreitje\\NovaHorizonStats\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Kreitje\\NovaHorizonStats\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova card.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "time": "2018-08-25T13:27:43+00:00"
         },
         {
             "name": "lab404/laravel-impersonate",
@@ -5154,81 +4636,6 @@
             "time": "2020-09-08T13:19:23+00:00"
         },
         {
-            "name": "laravel/nova",
-            "version": "v3.10.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:laravel/nova.git",
-                "reference": "5ccdcc817b190505d21cd4ca1a75cf1ca113238f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-5ccdcc817b190505d21cd4ca1a75cf1ca113238f-zip-179efb.zip",
-                "reference": "5ccdcc817b190505d21cd4ca1a75cf1ca113238f",
-                "shasum": "4eb7f94a130999d70ca04fae4d89bcabbc4e2b18"
-            },
-            "require": {
-                "brick/money": "^0.5.0",
-                "cakephp/chronos": "^1.0|^2.0",
-                "doctrine/dbal": "^2.9",
-                "illuminate/support": "^7.0|^8.0",
-                "laravel/ui": "^2.0|^3.0",
-                "moontoast/math": "^1.1",
-                "php": "^7.2.5",
-                "spatie/once": "^1.1 | ^2.0",
-                "symfony/console": "^5.0",
-                "symfony/finder": "^5.0",
-                "symfony/intl": "^5.0",
-                "symfony/process": "^5.0"
-            },
-            "require-dev": {
-                "laravel/legacy-factories": "^1.0",
-                "mockery/mockery": "^1.0",
-                "orchestra/testbench": "^6.0",
-                "phpunit/phpunit": "^8.4",
-                "predis/predis": "^1.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.x-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "Laravel\\Nova\\NovaCoreServiceProvider"
-                    ],
-                    "aliases": {
-                        "Nova": "Laravel\\Nova\\Nova"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laravel\\Nova\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Laravel\\Nova\\Tests\\": "tests/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "A wonderful administration interface for Laravel.",
-            "keywords": [
-                "admin",
-                "laravel"
-            ],
-            "time": "2020-09-15T15:34:07+00:00"
-        },
-        {
             "name": "laravel/passport",
             "version": "v8.5.0",
             "source": {
@@ -5486,6 +4893,136 @@
                 "ui"
             ],
             "time": "2020-09-22T16:51:51+00:00"
+        },
+        {
+            "name": "laravel/vapor-core",
+            "version": "v2.9.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/vapor-core.git",
+                "reference": "f982e953bcd6dcb9d762be826faf3d15bd53bc18"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/vapor-core/zipball/f982e953bcd6dcb9d762be826faf3d15bd53bc18",
+                "reference": "f982e953bcd6dcb9d762be826faf3d15bd53bc18",
+                "shasum": ""
+            },
+            "require": {
+                "aws/aws-sdk-php": "^3.80",
+                "guzzlehttp/guzzle": "^6.3|^7.0",
+                "hollodotme/fast-cgi-client": "^3.0",
+                "illuminate/container": "^6.0|^7.0|^8.0",
+                "illuminate/http": "^6.0|^7.0|^8.0",
+                "illuminate/queue": "^6.0|^7.0|^8.0",
+                "illuminate/support": "^6.0|^7.0|^8.0",
+                "monolog/monolog": "^1.12|^2.0",
+                "nyholm/psr7": "^1.0",
+                "php": "^7.2",
+                "riverline/multipart-parser": "^2.0",
+                "symfony/process": "^4.3|^5.0",
+                "symfony/psr-http-message-bridge": "^1.0|^2.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.2",
+                "orchestra/testbench": "^4.0|^5.0|^6.0",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Vapor\\VaporServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Vapor\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "The kernel and invokation handlers for Laravel Vapor",
+            "homepage": "https://github.com/laravel/vapor-core",
+            "keywords": [
+                "laravel",
+                "vapor"
+            ],
+            "time": "2020-09-23T12:49:33+00:00"
+        },
+        {
+            "name": "laravel/vapor-ui",
+            "version": "v0.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/vapor-ui.git",
+                "reference": "f241e5ecada57f7c44886cba8d82bf6694279c97"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/vapor-ui/zipball/f241e5ecada57f7c44886cba8d82bf6694279c97",
+                "reference": "f241e5ecada57f7c44886cba8d82bf6694279c97",
+                "shasum": ""
+            },
+            "require": {
+                "aws/aws-sdk-php": "^3.148.3",
+                "laravel/framework": "^6.0|^7.0|^8.0",
+                "php": "^7.3"
+            },
+            "require-dev": {
+                "nunomaduro/larastan": "^0.6.4",
+                "orchestra/testbench": "^5.0|^6.0",
+                "pestphp/pest": "^0.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Laravel\\VaporUi\\VaporUiServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\VaporUi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                },
+                {
+                    "name": "Nuno Maduro",
+                    "email": "enunomaduro@gmail.com"
+                }
+            ],
+            "description": "The Laravel Vapor UI.",
+            "homepage": "https://github.com/laravel/vapor-ui",
+            "keywords": [
+                "laravel",
+                "vapor"
+            ],
+            "time": "2020-09-03T11:11:06+00:00"
         },
         {
             "name": "laravelcollective/html",
@@ -6318,59 +5855,6 @@
                 }
             ],
             "time": "2020-02-28T15:47:45+00:00"
-        },
-        {
-            "name": "maatwebsite/laravel-nova-excel",
-            "version": "1.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Maatwebsite/Laravel-Nova-Excel.git",
-                "reference": "d3c17f7b0add0cf3fbf115e19acb101a65be5cc1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Nova-Excel/zipball/d3c17f7b0add0cf3fbf115e19acb101a65be5cc1",
-                "reference": "d3c17f7b0add0cf3fbf115e19acb101a65be5cc1",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/nova": "*",
-                "maatwebsite/excel": "^3.1",
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Maatwebsite\\LaravelNovaExcel\\LaravelNovaExcelServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Maatwebsite\\LaravelNovaExcel\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Patrick Brouwers",
-                    "email": "patrick@maatwebsite.nl"
-                }
-            ],
-            "description": "Supercharged Excel exports for Laravel Nova Resources",
-            "keywords": [
-                "PHPExcel",
-                "actions",
-                "laravel",
-                "laravel-nova",
-                "nova",
-                "phpspreadsheet"
-            ],
-            "time": "2020-02-28T15:41:43+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
@@ -9138,6 +8622,58 @@
             "time": "2018-07-03T12:46:23+00:00"
         },
         {
+            "name": "riverline/multipart-parser",
+            "version": "2.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Riverline/multipart-parser.git",
+                "reference": "2fe9026789754c1ff07c06047f0acc113e90933a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Riverline/multipart-parser/zipball/2fe9026789754c1ff07c06047f0acc113e90933a",
+                "reference": "2fe9026789754c1ff07c06047f0acc113e90933a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "laminas/laminas-diactoros": "^1.8.7",
+                "phpunit/phpunit": "^5.2 || ^6.0 || ^7.0",
+                "psr/http-message": "^1.0",
+                "symfony/psr-http-message-bridge": "^1.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Riverline\\MultiPartParser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Romain Cambien",
+                    "email": "romain@cambien.net"
+                },
+                {
+                    "name": "Riverline",
+                    "homepage": "http://www.riverline.fr"
+                }
+            ],
+            "description": "One class library to parse multipart content with encoding and charset support.",
+            "keywords": [
+                "http",
+                "multipart",
+                "parser"
+            ],
+            "time": "2020-01-24T09:39:24+00:00"
+        },
+        {
             "name": "robrichards/xmlseclibs",
             "version": "3.1.1",
             "source": {
@@ -9651,59 +9187,6 @@
             "time": "2020-01-04T12:32:35+00:00"
         },
         {
-            "name": "sparclex/nova-import-card",
-            "version": "v7.0.1",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/nova-import-card.git",
-                "reference": "55a73eeaa2a7529b97323f786cdf414371768fc7"
-            },
-            "require": {
-                "illuminate/support": "^5.6|^6.0|^7.0",
-                "laravel/nova": "~2.0|~3.0",
-                "maatwebsite/excel": "^3.1",
-                "php": ">=7.1"
-            },
-            "require-dev": {
-                "mockery/mockery": "~1.0",
-                "orchestra/database": "^3.8|^4.0",
-                "orchestra/testbench": "^3.8|^4.0",
-                "phpunit/phpunit": "^8.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Sparclex\\NovaImportCard\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Sparclex\\NovaImportCard\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Sparclex\\NovaImportCard\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/phpunit"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A card which lets you batch import resources",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "time": "2020-04-21T06:14:47+00:00"
-        },
-        {
             "name": "spatie/image",
             "version": "1.7.6",
             "source": {
@@ -10153,59 +9636,6 @@
             "time": "2020-09-08T20:46:01+00:00"
         },
         {
-            "name": "spatie/once",
-            "version": "2.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/once.git",
-                "reference": "6d4a379546684043c225b9a96d8ced7b8a84b889"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/once/zipball/6d4a379546684043c225b9a96d8ced7b8a84b889",
-                "reference": "6d4a379546684043c225b9a96d8ced7b8a84b889",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2"
-            },
-            "require-dev": {
-                "larapack/dd": "^1.1",
-                "phpunit/phpunit": "^8.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\Once\\": "src"
-                },
-                "files": [
-                    "src/functions.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A magic memoization function",
-            "homepage": "https://github.com/spatie/once",
-            "keywords": [
-                "cache",
-                "callable",
-                "memozation",
-                "once",
-                "spatie"
-            ],
-            "time": "2020-02-18T15:10:38+00:00"
-        },
-        {
             "name": "spatie/pdf-to-image",
             "version": "2.0.1",
             "source": {
@@ -10359,49 +9789,6 @@
                 "temporary-directory"
             ],
             "time": "2020-09-07T20:41:15+00:00"
-        },
-        {
-            "name": "suenerds/nova-searchable-belongs-to-filter",
-            "version": "v1.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/suenerds/nova-searchable-belongs-to-filter.git",
-                "reference": "2a7fe5096c3d9fcd7625dd31b969338700fb8467"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/suenerds/nova-searchable-belongs-to-filter/zipball/2a7fe5096c3d9fcd7625dd31b969338700fb8467",
-                "reference": "2a7fe5096c3d9fcd7625dd31b969338700fb8467",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Suenerds\\NovaSearchableBelongsToFilter\\FilterServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Suenerds\\NovaSearchableBelongsToFilter\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Searchable Nova filter for belongsTo relationships.",
-            "keywords": [
-                "belongs-to",
-                "filter",
-                "laravel",
-                "nova"
-            ],
-            "time": "2020-01-22T10:11:43+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -11337,96 +10724,6 @@
             "time": "2020-09-27T04:33:19+00:00"
         },
         {
-            "name": "symfony/intl",
-            "version": "v5.1.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/intl.git",
-                "reference": "9381fd69ce6407041185aa6f1bafbf7d65f0e66a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/intl/zipball/9381fd69ce6407041185aa6f1bafbf7d65f0e66a",
-                "reference": "9381fd69ce6407041185aa6f1bafbf7d65f0e66a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.2.5",
-                "symfony/polyfill-intl-icu": "~1.0",
-                "symfony/polyfill-php80": "^1.15"
-            },
-            "require-dev": {
-                "symfony/filesystem": "^4.4|^5.0"
-            },
-            "suggest": {
-                "ext-intl": "to use the component with locales other than \"en\""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.1-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Intl\\": ""
-                },
-                "classmap": [
-                    "Resources/stubs"
-                ],
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bernhard Schussek",
-                    "email": "bschussek@gmail.com"
-                },
-                {
-                    "name": "Eriksen Costa",
-                    "email": "eriksen.costa@infranology.com.br"
-                },
-                {
-                    "name": "Igor Wiedler",
-                    "email": "igor@wiedler.ch"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "A PHP replacement layer for the C intl extension that includes additional data from the ICU library.",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "i18n",
-                "icu",
-                "internationalization",
-                "intl",
-                "l10n",
-                "localization"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2020-09-27T03:44:28+00:00"
-        },
-        {
             "name": "symfony/mime",
             "version": "v5.1.6",
             "source": {
@@ -11783,82 +11080,6 @@
             "keywords": [
                 "compatibility",
                 "grapheme",
-                "intl",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2020-07-14T12:35:20+00:00"
-        },
-        {
-            "name": "symfony/polyfill-intl-icu",
-            "version": "v1.18.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-intl-icu.git",
-                "reference": "4e45a6e39041a9cc78835b11abc47874ae302a55"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-icu/zipball/4e45a6e39041a9cc78835b11abc47874ae302a55",
-                "reference": "4e45a6e39041a9cc78835b11abc47874ae302a55",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3",
-                "symfony/intl": "~2.3|~3.0|~4.0|~5.0"
-            },
-            "suggest": {
-                "ext-intl": "For best performance"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.18-dev"
-                },
-                "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill for intl's ICU-related data and classes",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "icu",
                 "intl",
                 "polyfill",
                 "portable",
@@ -13294,59 +12515,6 @@
             "time": "2020-02-05T19:55:13+00:00"
         },
         {
-            "name": "vink/nova-cache-card",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dannyvink/nova-cache-card.git",
-                "reference": "dd2a5225b5e698958c7e2d7e0753c398c91116a0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dannyvink/nova-cache-card/zipball/dd2a5225b5e698958c7e2d7e0753c398c91116a0",
-                "reference": "dd2a5225b5e698958c7e2d7e0753c398c91116a0",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/nova": "*",
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Vink\\NovaCacheCard\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Vink\\NovaCacheCard\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Danny Vink",
-                    "email": "danny@dannyvink.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Manage your application's cache from a handy Laravel Nova dashboard card.",
-            "homepage": "https://github.com/dannyvink/nova-cache-card",
-            "keywords": [
-                "cache",
-                "file",
-                "laravel",
-                "nova",
-                "redis"
-            ],
-            "time": "2019-02-16T21:11:08+00:00"
-        },
-        {
             "name": "vlucas/phpdotenv",
             "version": "v4.1.8",
             "source": {
@@ -13489,54 +12657,6 @@
                 }
             ],
             "time": "2020-07-22T23:32:04+00:00"
-        },
-        {
-            "name": "waynestate/nova-ckeditor4-field",
-            "version": "0.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/waynestate/nova-ckeditor4-field.git",
-                "reference": "fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/waynestate/nova-ckeditor4-field/zipball/fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27",
-                "reference": "fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Waynestate\\Nova\\CKEditorFieldServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Waynestate\\Nova\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Web Communications",
-                    "email": "web@wayne.edu"
-                }
-            ],
-            "description": "This nova package allows you to use CKEditor 4 for text areas.",
-            "keywords": [
-                "CKEditor",
-                "laravel",
-                "nova"
-            ],
-            "time": "2019-07-25T15:45:09+00:00"
         },
         {
             "name": "wildbit/swiftmailer-postmark",
@@ -18120,12 +17240,18 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccm-billing-module": 20,
+        "circlelinkhealth/sharedvuecomponents-module": 20,
+        "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
+        "circlelinkhealth/patientapi-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/sqlviews-module": 20,
         "circlelinkhealth/timetracking-module": 20,
+        "circlelinkhealth/twofa-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20

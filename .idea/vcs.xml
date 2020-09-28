@@ -17,7 +17,7 @@
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Revisionable" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SamlSp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SharedModels" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SharedVueComponents" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Sharedvuecomponents" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Sqlviews" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Timetracking" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Twofa" vcs="Git" />
