@@ -11,6 +11,7 @@ use App\Jobs\ProcessMonthltyPatientTime;
 use App\Jobs\ProcessNurseMonthlyLogs;
 use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
@@ -28,7 +29,7 @@ class StoreTimeTracking implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
+    
     /**
      * Do not count time for these routes
      * force_skip is set in {@link ProviderUITimerComposer}.
@@ -38,23 +39,23 @@ class StoreTimeTracking implements ShouldQueue
         'patient.activity.providerUIIndex',
         'patient.reports.progress',
     ];
-
+    
     /**
      * The number of times the job may be attempted.
      *
      * @var int
      */
     public $tries = 3;
-
+    
     /**
      * @var ParameterBag
      */
     protected $params;
-
+    
     private ActivityService $activityService;
-
+    
     private ?bool $isPatientBhi = null;
-
+    
     /**
      * Create a new job instance.
      */
@@ -62,37 +63,37 @@ class StoreTimeTracking implements ShouldQueue
     {
         $this->params = $params;
     }
-
+    
     /**
      * Execute the job.
      */
     public function handle()
     {
         $this->activityService = app(ActivityService::class);
-
+        
         /** @var User $provider */
         $provider = User::findOrFail($this->params->get('providerId', null));
-
+        
         $patientId = $this->params->get('patientId', 0);
         $patient   = $this->getPatient($patientId);
-
+        
         foreach ($this->params->get('activities', []) as $activity) {
             $isBehavioral = isset($activity['is_behavioral'])
                 ? (bool) $activity['is_behavioral'] && $this->isPatientBhi($patient)
                 : false;
-
+            
             $pageTimer = $this->createPageTimer($activity);
-
+            
             if ($this->isBillableActivity($pageTimer, $activity, $provider) && ! is_null($patient)) {
                 $this->processBillableActivity($patient, $pageTimer, $isBehavioral);
             }
-
+            
             if ($this->isProcessableCareAmbassadorActivity($activity, $provider)) {
                 ProcessCareAmbassadorTime::dispatchNow($provider->id, $activity);
             }
         }
     }
-
+    
     /**
      * Get the tags that should be assigned to the job.
      *
@@ -106,7 +107,7 @@ class StoreTimeTracking implements ShouldQueue
             'provider:'.$this->params->get('providerId', null),
         ];
     }
-
+    
     /**
      * Create a PageTimer.
      *
@@ -117,7 +118,7 @@ class StoreTimeTracking implements ShouldQueue
     private function createPageTimer(array $activity)
     {
         $duration = $activity['duration'];
-
+        
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['start_time']);
         $endTime   = $startTime->copy()->addSeconds($duration);
         if (isset($activity['end_time'])) {
@@ -127,7 +128,7 @@ class StoreTimeTracking implements ShouldQueue
                 Log::warning('Could not read activity[end_time]: '.$e->getMessage());
             }
         }
-
+        
         $pageTimer                    = new PageTimer();
         $pageTimer->redirect_to       = $this->params->get('redirectLocation', null);
         $pageTimer->billable_duration = $duration;
@@ -146,16 +147,16 @@ class StoreTimeTracking implements ShouldQueue
         $pageTimer->title             = $activity['title'];
         $pageTimer->user_agent        = $this->params->get('userAgent', null);
         $pageTimer->save();
-
+        
         return $pageTimer;
     }
-
+    
     private function getPatient($patientUserId): ?User
     {
         if (empty($patientUserId)) {
             return null;
         }
-
+        
         return User::without(['roles', 'perms'])
             ->with([
                 'ccdProblems.cpmProblem',
@@ -163,7 +164,7 @@ class StoreTimeTracking implements ShouldQueue
             ])
             ->find($patientUserId);
     }
-
+    
     /**
      * Returns true if an activity should be created, and false if it should not.
      *
@@ -172,24 +173,24 @@ class StoreTimeTracking implements ShouldQueue
     private function isBillableActivity(PageTimer $pageTimer, array $activity, User $provider)
     {
         $forceSkip = $activity['force_skip'] ?? false;
-
+        
         return ! ( ! (bool) $provider->isCCMCountable()
-                   || 0 == $pageTimer->patient_id
-                   || in_array($pageTimer->title, self::UNTRACKED_ROUTES)
-                   || $forceSkip);
+            || 0 == $pageTimer->patient_id
+            || in_array($pageTimer->title, self::UNTRACKED_ROUTES)
+            || $forceSkip);
     }
-
+    
     private function isPatientBhi(User $patient = null): bool
     {
         if ( ! is_null($this->isPatientBhi)) {
             return $this->isPatientBhi;
         }
-
+        
         $this->isPatientBhi = ! empty($patient) && $patient->isBhi();
-
+        
         return $this->isPatientBhi;
     }
-
+    
     /**
      * If user is a care ambassador, then we should process their time in CA logs.
      * Unless activity is marked in {@link UNTRACKED_CA_ACTIVITIES}.
@@ -199,10 +200,10 @@ class StoreTimeTracking implements ShouldQueue
     private function isProcessableCareAmbassadorActivity(array $activity, User $provider)
     {
         $forceSkip = $activity['force_skip'] ?? false;
-
+        
         return ! $forceSkip && $provider->isCareAmbassador();
     }
-
+    
     /**
      * Create an Activity.
      *
@@ -231,6 +232,7 @@ class StoreTimeTracking implements ShouldQueue
             );
             ProcessMonthltyPatientTime::dispatchNow($patient->id);
             ProcessNurseMonthlyLogs::dispatchNow($activity);
+            event(new PatientActivityCreated($patient->id));
         }
     }
 }
