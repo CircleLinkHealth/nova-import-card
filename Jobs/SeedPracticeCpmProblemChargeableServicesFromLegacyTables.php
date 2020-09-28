@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository;
+use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -69,6 +70,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
         $practice
             ->locations
             ->each(function (Location $location) use (&$toCreate, $practicePcmProblems) {
+                LocationProblemService::where('location_id', $location->id)->delete();
                 foreach ($this->cpmProblems as $problem) {
                     $isDementia = 'Dementia' === $problem->name;
                     $isDepression = 'Depression' === $problem->name;
