@@ -6,7 +6,16 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
+use CircleLinkHealth\CcmBilling\Processors\Patient\AWV1;
+use CircleLinkHealth\CcmBilling\Processors\Patient\AWV2;
+use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
+use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
+use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
+use CircleLinkHealth\CcmBilling\Processors\Patient\CCM60;
+use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * CircleLinkHealth\Customer\Entities\ChargeableService.
@@ -31,21 +40,22 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereId($value)
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableService whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property int|null $patient_summaries_count
- * @property int|null $practices_count
- * @property int|null $providers_count
- * @property int|null $revision_history_count
- * @property int|null $order
- * @property int      $is_enabled
- * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereIsEnabled($value)
- * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereOrder($value)
- * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvInitial()
- * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvSubsequent()
- * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService bhi()
- * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService ccm()
- * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService generalCareManagement()
- * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService pcm()
- * @method   static   \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService softwareOnly()
+ * @property int|null    $patient_summaries_count
+ * @property int|null    $practices_count
+ * @property int|null    $providers_count
+ * @property int|null    $revision_history_count
+ * @property int|null    $order
+ * @property int         $is_enabled
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereIsEnabled($value)
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereOrder($value)
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvInitial()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService awvSubsequent()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService bhi()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService ccm()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService generalCareManagement()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService pcm()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService softwareOnly()
+ * @property string|null $display_name
  */
 class ChargeableService extends BaseModel
 {
@@ -65,11 +75,13 @@ class ChargeableService extends BaseModel
         self::CCM,
         'CPT 99487',
         'CPT 99489',
-        'G0511',
+        self::GENERAL_CARE_MANAGEMENT,
     ];
+
     const GENERAL_CARE_MANAGEMENT = 'G0511';
-    const PCM                     = 'G2065';
-    const SOFTWARE_ONLY           = 'Software-Only';
+
+    const PCM           = 'G2065';
+    const SOFTWARE_ONLY = 'Software-Only';
 
     protected $fillable = [
         'code',
@@ -82,6 +94,14 @@ class ChargeableService extends BaseModel
         return self::whereIn('code', self::DEFAULT_CHARGEABLE_SERVICE_CODES)->get();
     }
 
+    public static function getChargeableServiceIdUsingCode(string $code): int
+    {
+        return Cache::remember("name:chargeable_service_$code", 2, function () use ($code) {
+            return ChargeableService::where('code', $code)
+                ->value('id');
+        });
+    }
+
     public function patientSummaries()
     {
         return $this->morphedByMany(PatientMonthlySummary::class, 'chargeable')
@@ -92,6 +112,24 @@ class ChargeableService extends BaseModel
     {
         return $this->morphedByMany(Practice::class, 'chargeable')
             ->withTimestamps();
+    }
+
+    public function processor(): PatientServiceProcessor
+    {
+        return $this->processorClassMap()[$this->code];
+    }
+
+    public function processorClassMap(): array
+    {
+        return [
+            self::CCM            => new CCM(),
+            self::BHI            => new BHI(),
+            self::CCM_PLUS_40    => new CCM40(),
+            self::CCM_PLUS_60    => new CCM60(),
+            self::PCM            => new PCM(),
+            self::AWV_INITIAL    => new AWV1(),
+            self::AWV_SUBSEQUENT => new AWV2(),
+        ];
     }
 
     public function providers()

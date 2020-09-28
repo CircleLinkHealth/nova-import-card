@@ -17,6 +17,7 @@ use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
 use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
+use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -136,6 +137,10 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                                 $all_chargeable_services_count
  * @property \CircleLinkHealth\Customer\Entities\CustomerNotificationContactTimePreference[]|\Illuminate\Database\Eloquent\Collection $notificationContactPreferences
  * @property int|null                                                                                                                 $notification_contact_preferences_count
+ * @property string|null                                                                                                              $default_user_scope
+ * @property \Illuminate\Database\Eloquent\Collection|PcmProblem[]                                                                    $pcmProblems
+ * @property int|null                                                                                                                 $pcm_problems_count
+ * @method   static                                                                                                                   \Illuminate\Database\Eloquent\Builder|Practice hasImportingHookEnabled($hook, $listener)
  */
 class Practice extends BaseModel implements HasMedia
 {
@@ -507,6 +512,11 @@ class Practice extends BaseModel implements HasMedia
     public function patients()
     {
         return $this->users()->ofType('participant')->whereHas('patientInfo');
+    }
+
+    public function pcmProblems()
+    {
+        return $this->hasMany(PcmProblem::class, 'practice_id');
     }
 
     public function pcp()

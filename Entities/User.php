@@ -16,6 +16,11 @@ use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
@@ -305,6 +310,18 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                $assigned_enrollees_count
  * @property \CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision[]|\Illuminate\Database\Eloquent\Collection $patientCcmStatusRevisions
  * @property int|null                                                                                                $patient_ccm_status_revisions_count
+ * @property string|null                                                                                             $scope
+ * @property AttestedProblem[]|EloquentCollection                                                                    $attestedProblems
+ * @property int|null                                                                                                $attested_problems_count
+ * @property ChargeablePatientMonthlySummary[]|EloquentCollection                                                    $chargeableMonthlySummaries
+ * @property int|null                                                                                                $chargeable_monthly_summaries_count
+ * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLog
+ * @property int|null                                                                                                $end_of_month_ccm_status_log_count
+ * @property ChargeablePatientMonthlySummaryView[]|EloquentCollection                                                $chargeableMonthlySummariesView
+ * @property int|null                                                                                                $chargeable_monthly_summaries_view_count
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User hasBhiConsent()
+ * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLogs
+ * @property int|null                                                                                                $end_of_month_ccm_status_logs_count
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -619,6 +636,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return false;
     }
 
+    public function attestedProblems()
+    {
+        return $this->hasMany(AttestedProblem::class, 'patient_user_id');
+    }
+
     public function authyUser()
     {
         return $this->hasOne(AuthyUser::class);
@@ -863,6 +885,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(Problem::class, 'patient_id');
     }
 
+    public function chargeableMonthlySummaries()
+    {
+        return $this->hasMany(ChargeablePatientMonthlySummary::class, 'patient_user_id');
+    }
+
+    public function chargeableMonthlySummariesView()
+    {
+        return $this->hasMany(ChargeablePatientMonthlySummaryView::class, 'patient_user_id');
+    }
+
     public function chargeableServices()
     {
         return $this->morphToMany(ChargeableService::class, 'chargeable')
@@ -1046,6 +1078,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function emailSettings()
     {
         return $this->hasOne(EmailSettings::class);
+    }
+
+    public function endOfMonthCcmStatusLogs()
+    {
+        return $this->hasMany(EndOfMonthCcmStatusLog::class, 'patient_user_id');
     }
 
     public function enrollee()
@@ -1754,11 +1791,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'gender'                  => 'required',
             'mrn_number'              => 'required',
             'birth_date'              => 'required',
-            'home_phone_number'       => 'required',
-            'consent_date'            => 'required',
-            'ccm_status'              => 'required',
-            'program_id'              => 'required',
-            'email'                   => [
+            'home_phone_number'       => [
+                Rule::requiredIf($this->relationLoaded('phoneNumbers')
+                    ? $this->phoneNumbers->isEmpty()
+                    : $this->phoneNumbers()->doesntExist()),
+            ],
+            'consent_date' => 'required',
+            'ccm_status'   => 'required',
+            'program_id'   => 'required',
+            'email'        => [
                 'sometimes',
                 Rule::unique('users', 'email')->ignore($this),
             ],
@@ -2531,6 +2572,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(PatientNurse::class, 'patient_user_id');
     }
 
+    public function patientProblemsForBillingProcessing(): Collection
+    {
+        if ( ! $this->relationLoaded('ccdProblems')) {
+            $this->load(['ccdProblems' => function ($problems) {
+                $problems->isBillable();
+            }]);
+        }
+
+        return  $this->ccdProblems->map(function (Problem $p) {
+            return (new PatientProblemForProcessing())
+                ->setId($p->id)
+                ->setCode($p->icd10Code())
+                ->setServiceCodes($p->chargeableServiceCodesForLocation($this->patientInfo->preferred_contact_location));
+        });
+    }
+
     public function patientSummaries()
     {
         return $this->hasMany(PatientMonthlySummary::class, 'patient_id');
@@ -2840,6 +2897,30 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
+    public function scopeHasBhiConsent($builder)
+    {
+        return $builder->where(
+            function ($q) {
+                $q->where(function ($q) {
+                    $q->notOfPracticeRequiringSpecialBhiConsent()
+                        ->whereHas(
+                            'patientInfo',
+                            function ($q) {
+                                $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
+                            }
+                        );
+                })->orWhere(function ($q) {
+                    $q->whereHas(
+                        'notes',
+                        function ($q) {
+                            $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
+                        }
+                    );
+                });
+            }
+        );
+    }
+
     public function scopeHasBillingProvider(
         $query,
         $billing_provider_id
@@ -2982,18 +3063,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function scopeIsBhiChargeable($builder)
     {
-        return $builder
-            ->whereHas(
-                'primaryPractice',
-                function ($q) {
-                    $q->hasServiceCode('CPT 99484');
-                }
-            )->whereHas(
-                'patientInfo',
-                function ($q) {
+        return $builder->whereHas(
+            'primaryPractice',
+            function ($q) {
+                $q->hasServiceCode('CPT 99484');
+            }
+        )->whereHas(
+            'patientInfo',
+            function ($q) {
                     $q->enrolled();
                 }
-            )
+        )
             ->whereHas(
                 'ccdProblems.cpmProblem',
                 function ($q) {
@@ -3010,14 +3090,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                     $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
                                 }
                             );
-                    })->orWhere(function ($q) {
-                        $q->orWhereHas(
-                            'notes',
-                            function ($q) {
-                                $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
-                            }
-                        );
-                    });
+                    })
+                        ->orWhere(function ($q) {
+                            $q->orWhereHas(
+                                'notes',
+                                function ($q) {
+                                    $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
+                                }
+                            );
+                        });
                 }
             );
     }

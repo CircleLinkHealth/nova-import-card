@@ -9,7 +9,6 @@ use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Database\Seeder;
 use Illuminate\Validation\ValidationException;
-use App\Traits\Tests\PracticeLocation as PracticeLocationHelpers;
 
 class NekatostrasClinicSeeder extends Seeder
 {

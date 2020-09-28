@@ -146,11 +146,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null                                                                                                        $notifications_about_this_patient_count
  * @property \CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision[]|\Illuminate\Database\Eloquent\Collection         $patientCcmStatusRevisions
  * @property int|null                                                                                                        $patient_ccm_status_revisions_count
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Patient intersectLocationsWith($user)
+ * @property string|null                                                                                                     $last_contact_time
  */
 class Patient extends BaseModel
 {
     use Filterable;
     use SoftDeletes;
+    const AGENT                   = 'alternate';
     const BHI_CONSENT_NOTE_TYPE   = 'Consented to BHI';
     const BHI_REJECTION_NOTE_TYPE = 'Did Not Consent to BHI';
 

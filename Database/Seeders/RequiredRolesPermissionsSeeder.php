@@ -1135,6 +1135,9 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'has-schedule',
                     'vitals-survey-complete',
                     'phi.read',
+                    'phoneNumber.create',
+                    'phoneNumber.update',
+                    'phoneNumber.delete',
                 ],
             ],
             [
