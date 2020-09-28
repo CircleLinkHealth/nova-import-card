@@ -111,7 +111,7 @@ class SamlSpTest extends CustomerTestCase
 
         $repo->shouldReceive('acs')
             ->andReturnNull();
-        
+
         $repo->shouldReceive('sls')
             ->andReturnNull();
 
