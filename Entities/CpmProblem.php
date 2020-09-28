@@ -67,6 +67,8 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
  * @property ChargeableService[]|\Illuminate\Database\Eloquent\Collection $locationChargeableServices
  * @property int|null                                                     $location_chargeable_services_count
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem withChargeableServicesForLocation($locationId)
+ * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem hasChargeableServiceCodeForLocation($chargeableServiceCode, $locationId)
+ * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem notGenericDiabetes()
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -75,7 +77,7 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     const DIABETES_TYPE_1 = 'Diabetes Type 1';
 
     const DIABETES_TYPE_2 = 'Diabetes Type 2';
-    
+
     const GENERIC_DIABETES = 'Diabetes';
 
     protected $guarded = [];
@@ -185,18 +187,24 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->belongsToMany(User::class, 'cpm_problems_users', 'patient_id');
     }
 
+    public function scopeHasChargeableServiceCodeForLocation($query, string $chargeableServiceCode, int $locationId)
+    {
+        return $query->whereHas('locationChargeableServices', function ($lcs) use ($chargeableServiceCode, $locationId) {
+            $lcs->where('location_id', $locationId)
+                ->where('code', $chargeableServiceCode);
+        });
+    }
+
+    public function scopeNotGenericDiabetes($query)
+    {
+        return $query->where('name', '!=', self::GENERIC_DIABETES);
+    }
+
     public function scopeWithChargeableServicesForLocation($query, int $locationId)
     {
         return $query->with(['locationChargeableServices' => function ($lps) use ($locationId) {
             $lps->where('location_id', $locationId);
         }]);
-    }
-    
-    public function scopeHasChargeableServiceCodeForLocation($query, string $chargeableServiceCode, int $locationId){
-        return $query->whereHas('locationChargeableServices', function ($lcs) use ($chargeableServiceCode, $locationId){
-            $lcs->where('location_id', $locationId)
-                ->where('code', $chargeableServiceCode);
-        });
     }
 
     public function scopeWithIcd10Codes($builder)
@@ -221,10 +229,5 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     public function user()
     {
         return $this->hasMany(CpmProblemUser::class, 'cpm_problem_id');
-    }
-    
-    public function scopeNotGenericDiabetes($query)
-    {
-        return $query->where('name', '!=', self::GENERIC_DIABETES);
     }
 }

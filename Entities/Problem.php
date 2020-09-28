@@ -59,6 +59,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method   static                                                                                               \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Problem withTrashed()
  * @method   static                                                                                               \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Problem withoutTrashed()
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Problem isBillable($ignoreWith = false)
+ * @method static \Illuminate\Database\Eloquent\Builder|Problem isMonitored()
  */
 class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contracts\Problem
 {
