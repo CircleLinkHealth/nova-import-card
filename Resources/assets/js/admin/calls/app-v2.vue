@@ -14,6 +14,10 @@
                     <span v-if="showPatientNames">Hide Patient Names</span>
                     <span v-else>Show Patient Names</span>
                 </button>
+                <button class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
+                    <span v-if="includeDemoPatients">Exclude Demo Patients</span>
+                    <span v-else>Include Demo Patients</span>
+                </button>
                 <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
                 <label class="btn btn-gray btn-xs">
                     <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
@@ -209,6 +213,7 @@
                 showOnlyUnassigned: false,
                 showOnlyCompletedTasks: false,
                 showPatientNames: !this.isAdmin,
+                includeDemoPatients: false,
 
                 selectedPatients: [],
                 selectedPatientsNew: [],
@@ -269,6 +274,10 @@
             },
             changeShowPatientNames() {
                 this.showPatientNames = !this.showPatientNames;
+            },
+            changeIncludeDemoPatients() {
+                this.includeDemoPatients = !this.includeDemoPatients;
+                return this.activateFilters();
             },
             changeShowOnlyCompletedTasks(e) {
                 this.showOnlyCompletedTasks = !this.showOnlyCompletedTasks;
@@ -338,8 +347,9 @@
                     const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : '';
                     const unassigned = this.showOnlyUnassigned ? `&unassigned` : '';
                     const completedTasks = this.showOnlyCompletedTasks ? `&completed_tasks` : '&scheduled';
+                    const demoPatients = this.includeDemoPatients ? '' : '&demo=0';
                     console.log('sort:column', sortColumn);
-                    return `${filters}${sortColumn}${unassigned}${completedTasks}`;
+                    return `${filters}${sortColumn}${unassigned}${completedTasks}${demoPatients}`;
                 }
                 return ''
             },
