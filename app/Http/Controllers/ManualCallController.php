@@ -30,7 +30,6 @@ class ManualCallController extends Controller
 
     public function create(ShowCreateManualCallForm $request)
     {
-        // 4. I wanna test that ccm_above = true if $nextCallSuggestion->ccmTimeInSeconds > 1199 or if $nextCallSuggestion->ccmTimeInSeconds > 3599
         $message = \Session::pull(self::SESSION_KEY);
 
         if ( ! $message instanceof CreateManualCallAfterNote) {
