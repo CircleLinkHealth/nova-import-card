@@ -36,7 +36,7 @@ trait PostmarkCallbackHelpers
 
         if ($requestsToWithdraw) {
             $withdrawReasonText = 'Cancel/Withdraw Reason:| I want to Cancel |';
-            $extraValues        = "\n".$withdrawReasonText;
+            $extraValues        = "\n".' '.$withdrawReasonText;
             $callbackMailData   = $callbackMailData.$extraValues;
         }
 

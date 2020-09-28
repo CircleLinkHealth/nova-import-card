@@ -107,7 +107,7 @@ class GenerateInboundCallbackDataForTesting extends Command
             $inboundData = $this->createUsersOfTypeNotResolvableMultiMatches(2);
         }
 
-        $this->info(json_encode($inboundData));
+        $this->info(implode(", \n", $inboundData));
     }
 
     /**
