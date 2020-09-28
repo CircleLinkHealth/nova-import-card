@@ -38,6 +38,9 @@ abstract class BaseSqlView implements SqlViewInterface
     public static function run(): bool
     {
         $obj = new static();
+        if ( ! $obj->shouldRun()) {
+            return false;
+        }
 
         $dropped = $obj->dropSqlView();
         if ( ! $dropped) {
@@ -49,5 +52,10 @@ abstract class BaseSqlView implements SqlViewInterface
         }
 
         return (bool) $created && (bool) $dropped;
+    }
+
+    public function shouldRun(): bool
+    {
+        return true;
     }
 }

@@ -59,8 +59,8 @@ class MigrateSqlViews extends Command
 
             if (class_implements($class, SqlViewInterface::class)) {
                 $this->warn("Running $filePath");
-                $class::run();
-                $this->line("Ran $filePath");
+                $ran = $class::run();
+                $this->line(($ran ? 'Ran ' : 'Did not ran ').$filePath);
             }
         });
     }
