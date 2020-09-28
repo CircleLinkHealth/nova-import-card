@@ -8,6 +8,7 @@ namespace App\Jobs;
 
 use App\Services\ActivityService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
@@ -228,6 +229,7 @@ class StoreTimeTracking implements ShouldQueue
             );
             ProcessMonthltyPatientTime::dispatchNow($patient->id);
             ProcessNurseMonthlyLogs::dispatchNow($activity);
+            event(new PatientActivityCreated($patient->id));
         }
     }
 }

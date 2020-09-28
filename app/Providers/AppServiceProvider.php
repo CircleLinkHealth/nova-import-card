@@ -6,6 +6,7 @@
 
 namespace App\Providers;
 
+use App\Contracts\ChunksEloquentBuilder;
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use App\Notifications\Channels\FaxChannel;
@@ -14,11 +15,22 @@ use App\Services\AWV\DirectPatientDocument;
 use App\Services\AWV\EmailPatientDocument;
 use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
+use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository as PatientProcessorEloquentRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
+use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\Core\Notifications\Channels\CustomMailChannel;
 use CircleLinkHealth\Core\Notifications\Channels\CustomTwilioChannel;
 use CircleLinkHealth\Core\Providers\GoogleDriveServiceProvider;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Schema\Blueprint;
@@ -105,6 +117,26 @@ class AppServiceProvider extends ServiceProvider
             'toRawSql',
             function () {
                 return $this->getQuery()->toRawSql();
+            }
+        );
+
+        EloquentBuilder::macro(
+            'chunkIntoJobs',
+            function (int $limit, ShouldQueue $job) {
+                if ( ! $job instanceof ChunksEloquentBuilder) {
+                    throw new \Exception('The Query Builder macro "chunkIntoJobs" can only be called with jobs that implement the ChunksEloquentBuilder interface.');
+                }
+
+                $count = $this->count();
+                $offset = 0;
+
+                while ($offset < $count) {
+                    dispatch(
+                        $job->setOffset($offset)
+                            ->setLimit($limit)
+                    );
+                    $offset = $offset + $limit;
+                }
             }
         );
 
