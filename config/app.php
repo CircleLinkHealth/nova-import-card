@@ -226,6 +226,7 @@ return [
         CpmArtisanServiceProvider::class,
         CoreServiceProvider::class,
         CoreDeferredBindingsServiceProvider::class,
+        \CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider::class,
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
         CustomerAuthServiceProvider::class,

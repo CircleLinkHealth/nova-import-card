@@ -34,10 +34,16 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands\SendSelfEnrollmentReminders;
-use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
 use App\Jobs\OverwritePatientMrnsFromSupplementalData;
 use App\Jobs\RemoveScheduledCallsForUnenrolledPatients;
 use App\Notifications\NurseDailyReport;
+use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Jobs\CheckLocationSummariesHaveBeenCreated;
+use CircleLinkHealth\CcmBilling\Jobs\CheckPatientEndOfMonthCcmStatusLogsExistForMonth;
+use CircleLinkHealth\CcmBilling\Jobs\CheckPatientSummariesHaveBeenCreated;
+use CircleLinkHealth\CcmBilling\Jobs\GenerateEndOfMonthCcmStatusLogs;
+use CircleLinkHealth\CcmBilling\Jobs\GenerateServiceSummariesForAllPracticeLocations;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -183,6 +189,24 @@ class Kernel extends ConsoleKernel
             ->dailyAt('01:10')
             ->onOneServer();
 
+        $schedule->job(CheckLocationSummariesHaveBeenCreated::class, [
+            Carbon::now()->startOfMonth()->toDateString(),
+        ])
+            ->monthlyOn(1, '02:20')
+            ->onOneServer();
+
+        $schedule->job(CheckPatientSummariesHaveBeenCreated::class, [
+            Carbon::now()->startOfMonth()->toDateString(),
+        ])
+            ->monthlyOn(1, '02:30')
+            ->onOneServer();
+
+        $schedule->job(CheckPatientEndOfMonthCcmStatusLogsExistForMonth::class, [
+            Carbon::now()->subMonth()->startOfMonth()->toDateString(),
+        ])
+            ->monthlyOn(1, '02:45')
+            ->onOneServer();
+
         $schedule->command(GetCcds::class)
             ->dailyAt('03:00')
             ->onOneServer();
@@ -250,16 +274,20 @@ class Kernel extends ConsoleKernel
             })
             ->onOneServer();
 
-        $schedule->command(SendUnsuccessfulCallPatientsReminderNotification::class)
-            ->dailyAt('10:00')
-            ->onOneServer();
-
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
             ->weeklyOn(1, '10:00')
             ->onOneServer();
 
         $schedule->command(SendSelfEnrollmentReminders::class, ['--enrollees'])
             ->dailyAt('10:27');
+
+        $schedule->job(GenerateServiceSummariesForAllPracticeLocations::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
+            ->monthlyOn(date('t'), '22:00')
+            ->onOneServer();
+
+        $schedule->job(ProcessAllPracticePatientMonthlyServices::class, [Carbon::now()->addMonth()->startOfMonth()->toDateString()])
+            ->monthlyOn(date('t'), '22:10')
+            ->onOneServer();
 
         $schedule->command(GetAppointmentsForTomorrowFromAthena::class)
             ->dailyAt('22:30')
@@ -288,6 +316,10 @@ class Kernel extends ConsoleKernel
         $schedule->command(QueueGenerateNurseDailyReport::class)
             ->dailyAt('23:45')
             ->withoutOverlapping()
+            ->onOneServer();
+
+        $schedule->job(GenerateEndOfMonthCcmStatusLogs::class, [now()->startOfMonth()->toDateString()])
+            ->monthlyOn(date('t'), '23:50')
             ->onOneServer();
     }
 }

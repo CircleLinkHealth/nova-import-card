@@ -12,6 +12,7 @@ use CircleLinkHealth\CpmAdmin\Notifications\PatientUnsuccessfulCallNotification;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\Patient;
 
@@ -62,6 +63,7 @@ class PatientObserver
     {
         if ($this->statusChangedToEnrolled($patient)) {
             $patient->no_call_attempts_since_last_success = 0;
+            ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
         }
     }
 

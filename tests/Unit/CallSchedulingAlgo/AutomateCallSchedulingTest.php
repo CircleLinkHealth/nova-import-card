@@ -21,7 +21,7 @@ use Tests\TestCase;
 
 class AutomateCallSchedulingTest extends TestCase
 {
-    use \App\Traits\Tests\UserHelpers;
+    use \CircleLinkHealth\Customer\Traits\UserHelpers;
     use CarePlanHelpers;
 
     /** @var SchedulerService */

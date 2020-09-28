@@ -212,23 +212,32 @@ namespace App;
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\App\User whereZip($value)
  * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withCareTeamOfType($type)
  * @mixin \Eloquent
- * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                       $enrollmentInvitationLinks
- * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                             $enrollableInfoRequest
- * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                                             $loginEvents
- * @property int|null                                                                                                $login_events_count
- * @property \CircleLinkHealth\SharedModels\Entities\Enrollee|null                                                    $enrollee
- * @property int|null                                                                                                $enrollment_invitation_links_count
- * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
- * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInviteReminder(\Carbon\Carbon $date = null, $has = true)
- * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
- * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingCLHApproval(\CircleLinkHealth\Customer\Entities\User $approver)
- * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingProviderApproval(\CircleLinkHealth\Customer\Entities\User $approver)
- * @property \CircleLinkHealth\SharedModels\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection              $assignedEnrollees
- * @property int|null                                                                                                $assigned_enrollees_count
- * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withDownloadableInvoices(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate)
- * @property \CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision[]|\Illuminate\Database\Eloquent\Collection $patientCcmStatusRevisions
- * @property int|null                                                                                                $patient_ccm_status_revisions_count
- * @property string|null                                                                                             $scope
+ * @property \CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink|null                                    $enrollmentInvitationLinks
+ * @property \CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo|null                                          $enrollableInfoRequest
+ * @property \App\LoginLogout[]|\Illuminate\Database\Eloquent\Collection                                                          $loginEvents
+ * @property int|null                                                                                                             $login_events_count
+ * @property \CircleLinkHealth\SharedModels\Entities\Enrollee|null                                                                 $enrollee
+ * @property int|null                                                                                                             $enrollment_invitation_links_count
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInvite()
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User hasSelfEnrollmentInviteReminder(\Carbon\Carbon $date = null, $has = true)
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User haveEnrollableInvitationDontHaveReminder(\Carbon\Carbon $dateInviteSent = null)
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingCLHApproval(\CircleLinkHealth\Customer\Entities\User $approver)
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User patientsPendingProviderApproval(\CircleLinkHealth\Customer\Entities\User $approver)
+ * @property \CircleLinkHealth\SharedModels\Entities\Enrollee[]|\Illuminate\Database\Eloquent\Collection                           $assignedEnrollees
+ * @property int|null                                                                                                             $assigned_enrollees_count
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withDownloadableInvoices(\Carbon\Carbon $startDate, \Carbon\Carbon $endDate)
+ * @property \CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision[]|\Illuminate\Database\Eloquent\Collection              $patientCcmStatusRevisions
+ * @property int|null                                                                                                             $patient_ccm_status_revisions_count
+ * @property string|null                                                                                                          $scope
+ * @property \CircleLinkHealth\CcmBilling\Entities\AttestedProblem[]|\Illuminate\Database\Eloquent\Collection                     $attestedProblems
+ * @property int|null                                                                                                             $attested_problems_count
+ * @property \CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary[]|\Illuminate\Database\Eloquent\Collection     $chargeableMonthlySummaries
+ * @property int|null                                                                                                             $chargeable_monthly_summaries_count
+ * @property \CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView[]|\Illuminate\Database\Eloquent\Collection $chargeableMonthlySummariesView
+ * @property int|null                                                                                                             $chargeable_monthly_summaries_view_count
+ * @property \CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog[]|\Illuminate\Database\Eloquent\Collection              $endOfMonthCcmStatusLogs
+ * @property int|null                                                                                                             $end_of_month_ccm_status_logs_count
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User hasBhiConsent()
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

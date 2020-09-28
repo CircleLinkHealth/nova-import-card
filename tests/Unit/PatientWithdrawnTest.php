@@ -8,12 +8,12 @@ namespace Tests\Unit;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Http\Controllers\NotesController;
-use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Tests\Helpers\CarePlanHelpers;

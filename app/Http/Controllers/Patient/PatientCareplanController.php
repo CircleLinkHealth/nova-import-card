@@ -12,6 +12,9 @@ use CircleLinkHealth\Customer\CpmConstants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
+use App\Http\Requests\DeleteAlternateContactRequest;
+use App\Http\Requests\DeletePatientPhoneRequest;
+use App\Http\Requests\PatientPhonesRequest;
 use App\Relationships\PatientCareplanRelations;
 use CircleLinkHealth\Customer\Services\PatientReadRepository;
 use App\Services\CareplanService;
@@ -21,6 +24,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -55,6 +59,85 @@ class PatientCareplanController extends Controller
     public function createPatientDemographics(Request $request)
     {
         return $this->editOrCreateDemographics($request);
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteAlternateContact(DeleteAlternateContactRequest $request)
+    {
+        $valuesToDelete = [
+            'agent_telephone' => null,
+        ];
+
+        if ( ! $request->input('deleteOnlyPhone')) {
+            $valuesToDelete = [
+                'agent_telephone'    => null,
+                'agent_name'         => null,
+                'agent_relationship' => null,
+                'agent_email'        => null,
+            ];
+        }
+
+        $request->get('patient')->update($valuesToDelete);
+
+        return response()->json([
+            'message' => 'Alternate Contact has been deleted',
+        ], 200);
+    }
+
+    public function deletePhoneNumber(DeletePatientPhoneRequest $request)
+    {
+        $phoneNumber = $request->get('phoneNumber');
+
+        $phoneNumber->delete();
+
+        return response()->json([
+            'message' => 'Phone Number Has Been Deleted',
+        ], 200);
+    }
+
+    public function getPatientAlternateContact(PatientPhonesRequest $request)
+    {
+        /** @var User $patient */
+        $patient            = $request->get('patientUser');
+        $agentContactFields = $this->getAlternateContactData($patient);
+
+        return response()->json([
+            'agentContactFields' => $agentContactFields,
+        ], 200);
+    }
+
+    public function getPatientPhoneNumbers(PatientPhonesRequest $request)
+    {
+        $isRequestFromCallPage = $request->input('requestIsFromCallPage');
+        $patient               = $request->get('patientUser');
+
+        $phoneNumbers = PatientController::phoneNumbersFor($patient)->transform(function ($phone) {
+            return [
+                'phoneNumberId' => $phone->id,
+                'number'        => ! empty($phone->number)
+                    ? substr(formatPhoneNumberE164($phone->number), 2)
+                    : '',
+                'type'      => ucfirst($phone->type),
+                'isPrimary' => boolval($phone->is_primary),
+            ];
+        });
+
+        $agentContactFields = $this->getAlternateContactData($patient)->first();
+
+        if ($isRequestFromCallPage && ! empty($agentContactFields)
+            && ! empty($agentContactFields['agentTelephone']['number'])) {
+            $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields['agentTelephone']]);
+        }
+
+        $phoneTypes = $this->getPhoneTypes();
+
+        return response()->json([
+            'phoneNumbers'       => $phoneNumbers,
+            'phoneTypes'         => $phoneTypes,
+            'agentContactFields' => $agentContactFields,
+        ], 200);
     }
 
     public function index()
@@ -424,13 +507,26 @@ class PatientCareplanController extends Controller
 
         $billingProviderUserId = $patient->getBillingProviderId();
 
+        $phoneNumbers = PatientController::phoneNumbersFor($patient)->transform(function ($phone) {
+            return [
+                'phoneNumberId' => $phone->id,
+                'number'        => substr(formatPhoneNumberE164($phone->number), 2),
+                'type'          => ucfirst($phone->type),
+                'inputDisabled' => true,
+            ];
+        });
+
+        $phoneTypes = getPhoneTypes();
+
         return view(
             'wpUsers.patient.careplan.patient',
             compact(
                 [
+                    'phoneNumbers',
                     'providers',
                     'locations',
                     'billingProviderUserId',
+                    'phoneTypes',
                     'patient',
                     'states',
                     'timezones',
@@ -447,6 +543,44 @@ class PatientCareplanController extends Controller
                 ]
             )
         );
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    private function getAlternateContactData(User $patient)
+    {
+        return $patient
+            ->patientInfo()
+            ->select('agent_email', 'agent_relationship', 'agent_telephone', 'agent_name')
+            ->get()
+            ->transform(function ($patient) {
+                $alternatePhone = ! empty($patient->agent_telephone)
+                    ? substr(formatPhoneNumberE164($patient->agent_telephone), 2)
+                    : '';
+
+                return [
+                    'agentEmail'        => $patient->agent_email ?? '',
+                    'agentRelationship' => $patient->agent_relationship ?? '',
+                    'agentName'         => $patient->agent_name ?? '',
+                    'agentTelephone'    => [
+                        'isPrimary' => false,
+                        'number'    => $alternatePhone,
+                        'type'      => ucwords(Patient::AGENT),
+                    ],
+                ];
+            });
+    }
+
+    /**
+     * @return array
+     */
+    private function getPhoneTypes()
+    {
+        return [
+            ucfirst(PhoneNumber::MOBILE),
+            ucfirst(PhoneNumber::HOME),
+        ];
     }
 
     //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
@@ -538,6 +672,7 @@ class PatientCareplanController extends Controller
                 'required'                   => 'The :attribute field is required.',
                 'home_phone_number.required' => 'The patient phone number field is required.',
             ];
+
             $v = Validator::make($params->all(), $user->getPatientRules(), $messages);
             if ($v->fails()) {
                 return redirect()->back()->withErrors($v->errors())->withInput($request->input());

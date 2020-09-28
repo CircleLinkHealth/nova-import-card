@@ -72,6 +72,13 @@ class Kernel extends HttpKernel
             'throttle:60,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+        'saml' => [
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
+            LogoutIfAccessDisabled::class,
+        ],
     ];
 
     /**

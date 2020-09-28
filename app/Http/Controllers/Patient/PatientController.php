@@ -10,15 +10,24 @@ use App\Contracts\ReportFormatter;
 use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CallPatientRequest;
+use App\Http\Requests\ContactDetailsRequest;
+use App\Http\Requests\MarkPrimaryPhoneRequest;
 use App\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class PatientController extends Controller
 {
@@ -46,9 +55,46 @@ class PatientController extends Controller
         return view('patient.create-test-patients');
     }
 
+    public function markAsPrimaryPhone(MarkPrimaryPhoneRequest $request)
+    {
+        $newPrimaryPhoneId = $request->input('phoneId');
+
+        /** @var User $patientUser */
+        $patientUser = $request->get('patientUser');
+
+        /** @var PhoneNumber $currentPrimaryPhone */
+        $currentPrimaryPhone = $patientUser->phoneNumbers
+            ->where('is_primary', true)
+            ->first();
+
+        if ( ! empty($currentPrimaryPhone)) {
+            $this->unsetCurrentPrimaryNumber($currentPrimaryPhone);
+        }
+
+        $patientUser->phoneNumbers()
+            ->where('id', $newPrimaryPhoneId)->update(
+                [
+                    'is_primary' => true,
+                ]
+            );
+
+        return $this->ok();
+    }
+
     public function patientAjaxSearch(Request $request)
     {
         return view('wpUsers.patient.select');
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function phoneNumbersFor(User $user)
+    {
+        return $user->phoneNumbers
+            ->filter(function ($phone) {
+                return ! empty($phone->number);
+            });
     }
 
     /**
@@ -121,21 +167,72 @@ class PatientController extends Controller
         return response()->json($patients);
     }
 
+    public function saveNewAlternatePhoneNumber(ContactDetailsRequest $request)
+    {
+        $altPhoneNumber = $request->input('phoneNumber');
+        $altPhoneNumber = formatPhoneNumberE164($altPhoneNumber);
+        /** @var User $patientUser */
+        $patientUser = $request->get('patientUser');
+
+        $patientUser->patientInfo->update(
+            [
+                'agent_name'         => $request->input('agentName'),
+                'agent_email'        => $request->input('agentEmail'),
+                'agent_telephone'    => strtolower($altPhoneNumber),
+                'agent_relationship' => $request->input('agentRelationship'),
+            ]
+        );
+
+        return response()->json([
+            'message' => 'Alternate phone number has been saved!',
+        ], 200);
+    }
+
+    public function saveNewPhoneNumber(ContactDetailsRequest $request)
+    {
+        $phoneType   = $request->input('phoneType');
+        $phoneNumber = $request->input('phoneNumber');
+        $userId      = $request->input('patientUserId');
+
+        $phoneNumber = formatPhoneNumberE164($phoneNumber);
+        /** @var User $patientUser */
+        $patientUser = $request->get('patientUser');
+        $locationId  = $request->get('locationId');
+
+        $existingPrimaryNumber = $patientUser->phoneNumbers
+            ->where('is_primary', '=', true)
+            ->first();
+
+        if ($request->input('makePrimary') && ! empty($existingPrimaryNumber)) {
+            $this->unsetCurrentPrimaryNumber($existingPrimaryNumber);
+        }
+
+        /** @var PhoneNumber $newPhoneNumber */
+        $newPhoneNumber = $patientUser->phoneNumbers()->updateOrCreate(
+            [
+                'user_id' => $userId,
+                'type'    => strtolower($phoneType),
+            ],
+            [
+                'number'      => $phoneNumber,
+                'is_primary'  => $request->input('makePrimary'),
+                'location_id' => $locationId,
+            ]
+        );
+
+        return response()->json([
+            'message' => 'Phone number has been saved!',
+        ], 200);
+    }
+
     public function showCallPatientPage(CallPatientRequest $request, $patientId)
     {
+        /** @var User $user */
         $user = User::with('phoneNumbers')
             ->with('patientInfo.location')
             ->with('primaryPractice.locations')
             ->where('id', $patientId)
             ->firstOrFail();
-
-        $phoneNumbers = $user->phoneNumbers
-            ->filter(function ($p) {
-                return ! empty($p->number);
-            })
-            ->mapWithKeys(function ($p) {
-                return [$p->type => $p->number];
-            });
 
         $clinicalEscalationNumber = null;
         if (optional($user->patientInfo->location)->clinical_escalation_phone) {
@@ -155,7 +252,6 @@ class PatientController extends Controller
         return view('wpUsers.patient.calls.index')
             ->with([
                 'patient'                  => $user,
-                'phoneNumbers'             => $phoneNumbers,
                 'clinicalEscalationNumber' => $clinicalEscalationNumber,
                 'cpmToken'                 => $cpmToken,
             ]);
@@ -231,7 +327,7 @@ class PatientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @return Response
+     * @return Application|Factory|Response|View
      */
     public function showPatientListing()
     {
@@ -242,24 +338,17 @@ class PatientController extends Controller
         return view('wpUsers.patient.listing');
     }
 
-    public function showPatientListingPdf(Request $request, PdfService $pdfService)
+    public function showPatientListingPdf(PdfService $pdfService)
     {
         if (auth()->user()->isCareCoach()) {
             abort(403);
-        }
-
-        $showPracticePatientsInput = $request->input('showPracticePatients', null);
-        $isProvider                = auth()->user()->isProvider();
-        $showPracticePatients      = true;
-        if ($isProvider && (User::SCOPE_LOCATION === auth()->user()->scope || 'false' === $showPracticePatientsInput)) {
-            $showPracticePatients = false;
         }
 
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
         $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';
         $file             = $pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
-            'patients' => $this->formatter->patients(null, $showPracticePatients),
+            'patients' => $this->formatter->patients(),
         ], null, [
             'orientation'  => 'Landscape',
             'margin-left'  => '3',
@@ -272,7 +361,7 @@ class PatientController extends Controller
     /**
      * Display Notes.
      *
-     * @param int $patientId
+     * @param bool $patientId
      *
      * @return Response
      */
@@ -334,7 +423,7 @@ class PatientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @return Response
+     * @return Application|Factory|Response|View
      */
     public function showPatientSelect(Request $request)
     {
@@ -404,9 +493,9 @@ class PatientController extends Controller
                     break;
                 case 'Cigarettes':
                 case ObservationConstants::CIGARETTE_COUNT:
-                if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
-                    $observation['description'] = $description;
-                }
+                    if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                        $observation['description'] = $description;
+                    }
                     $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case 'Blood_Pressure':
@@ -414,7 +503,7 @@ class PatientController extends Controller
                 case ObservationConstants::BLOOD_PRESSURE:
                 case ObservationConstants::BLOOD_SUGAR:
                 case ObservationConstants::WEIGHT:
-                $observation['description']         = $observation['obs_key'];
+                    $observation['description']     = $observation['obs_key'];
                     $obs_by_pcp['obs_biometrics'][] = $this->prepareForWebix($observation);
                     break;
                 case ObservationConstants::MEDICATIONS_ADHERENCE_OBSERVATION_TYPE:
@@ -432,11 +521,11 @@ class PatientController extends Controller
                     break;
                 case 'Other':
                 case ObservationConstants::LIFESTYLE_OBSERVATION_TYPE:
-                if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
-                    $observation['description'] = $description;
-                }
-                $obs_by_pcp['obs_lifestyle'][] = $this->prepareForWebix($observation);
-                break;
+                    if ($description = ObservationConstants::ACCEPTED_OBSERVATION_TYPES[$observation->obs_message_id]['display_name'] ?? null) {
+                        $observation['description'] = $description;
+                    }
+                    $obs_by_pcp['obs_lifestyle'][] = $this->prepareForWebix($observation);
+                    break;
                 default:
                     break;
             }
@@ -488,9 +577,9 @@ class PatientController extends Controller
     /**
      * Select Program.
      *
-     * @param int $patientId
+     * @param bool $patientId
      *
-     * @return Response
+     * @return Application|Response|ResponseFactory
      */
     public function showSelectProgram(
         Request $request,
@@ -529,6 +618,11 @@ class PatientController extends Controller
         return redirect()->back();
     }
 
+    private function getAllNumbersOfPatient(int $patientUserId)
+    {
+        return PhoneNumber::whereUserId($patientUserId)->get();
+    }
+
     private function prepareForWebix($observation)
     {
         return [
@@ -544,5 +638,11 @@ class PatientController extends Controller
             'obs_message_id' => $observation->obs_message_id,
             'comment_date'   => Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A'),
         ];
+    }
+
+    private function unsetCurrentPrimaryNumber(PhoneNumber $currentPrimaryPhone)
+    {
+        $currentPrimaryPhone->is_primary = false;
+        $currentPrimaryPhone->save();
     }
 }

@@ -11,6 +11,8 @@ use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
 use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\QueryException;
@@ -194,6 +196,8 @@ if ( ! function_exists('sendSlackMessage')) {
      */
     function sendSlackMessage($to, $message, $force = false)
     {
+        Log::warning("$to: $message");
+
         if ( ! $force && ! isProductionEnv()) {
             return;
         }
@@ -721,6 +725,16 @@ if ( ! function_exists('generateRandomString')) {
     }
 }
 
+if ( ! function_exists('generateRandomIntegerOfDigitSize')) {
+    /**
+     * @param mixed $digits
+     */
+    function generateRandomIntegerOfDigitSize($digits = 5): int
+    {
+        return rand(pow(10, $digits - 1), pow(10, $digits) - 1);
+    }
+}
+
 if ( ! function_exists('clhWindowToTimestamps')) {
     /**
      * Convert timestamps to a Contact Window.
@@ -1243,6 +1257,19 @@ if ( ! function_exists('read_file_using_generator')) {
         }
 
         fclose($handle);
+    }
+}
+
+if ( ! function_exists('getPhoneTypes')) {
+    /**
+     * @return array
+     */
+    function getPhoneTypes()
+    {
+        return [
+            ucfirst(PhoneNumber::MOBILE),
+            ucfirst(PhoneNumber::HOME),
+        ];
     }
 }
 

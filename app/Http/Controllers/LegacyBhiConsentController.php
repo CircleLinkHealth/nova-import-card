@@ -10,8 +10,10 @@ use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Events\PatientConsentedToService;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Support\Facades\Cache;
 
@@ -37,9 +39,12 @@ class LegacyBhiConsentController extends Controller
         }
         $consenderName = auth()->user()->display_name;
 
-        $body = Patient::BHI_CONSENT_NOTE_TYPE == $type
-            ? "The patient consented to receiving BHI services. \n 'Consented action taken by: $consenderName'"
-            : "The patient did not consent to receiving BHI services. \n 'Not consented action taken by: $consenderName'";
+        if (Patient::BHI_CONSENT_NOTE_TYPE == $type) {
+            event(new PatientConsentedToService($patientId, ChargeableService::BHI));
+            $body = "The patient consented to receiving BHI services. \n 'Consented action taken by: $consenderName'";
+        } else {
+            $body = "The patient did not consent to receiving BHI services. \n 'Not consented action taken by: $consenderName'";
+        }
 
         return Note::create([
             'patient_id'   => $patientId,

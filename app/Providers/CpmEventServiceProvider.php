@@ -39,6 +39,13 @@ use App\Listeners\UPG0506DirectMailListener;
 use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
+use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
+use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
+use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
+use CircleLinkHealth\CcmBilling\Events\PatientSuccessfulCallCreated;
+use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationPatientServices;
+use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationProblemServices;
+use CircleLinkHealth\CcmBilling\Listeners\ProcessPatientServices;
 use CircleLinkHealth\Core\Listeners\LogFailedNotification;
 use CircleLinkHealth\Core\Listeners\LogMailSmtpId;
 use CircleLinkHealth\Core\Listeners\LogSentMailNotification;
@@ -140,6 +147,19 @@ class CpmEventServiceProvider extends ServiceProvider
         MigrationsEnded::class => [
             RunComposerIde::class,
         ],
+        LocationServicesAttached::class => [
+            ProcessLocationPatientServices::class,
+            ProcessLocationProblemServices::class,
+        ],
+        PatientProblemsChanged::class => [
+            ProcessPatientServices::class,
+        ],
+        PatientActivityCreated::class => [
+            ProcessPatientServices::class,
+        ],
+        PatientSuccessfulCallCreated::class => [
+            ProcessPatientServices::class,
+        ],
     ];
 
     /**
@@ -153,6 +173,7 @@ class CpmEventServiceProvider extends ServiceProvider
 
         /** @var MailManager $manager */
         $manager = app(MailManager::class);
+
         try {
             $pmMailer = $manager->mailer('postmark');
             if ($pmMailer) {

@@ -6,11 +6,11 @@
 
 namespace Tests;
 
-use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Illuminate\Foundation\Testing\WithFaker;
 use ReflectionObject;
 
