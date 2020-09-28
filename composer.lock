@@ -1345,7 +1345,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "46bd3f8bff15121ddd8cceeb0b1dc96c05ace65d"
+                "reference": "71299ec8159b56b85d47703e50e0d47c5d0bf1a7"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1359,7 +1359,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-28T23:20:45+00:00"
+            "time": "2020-09-28T23:26:13+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1395,7 +1395,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "9cbe555e66cb29551dfcef47e5aa9ef6bd93658b"
+                "reference": "054424c9d043b3c8ab52b8b9b7f11f763f321821"
             },
             "type": "laravel-module",
             "extra": {
@@ -1420,7 +1420,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-28T23:18:29+00:00"
+            "time": "2020-09-28T23:25:10+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
