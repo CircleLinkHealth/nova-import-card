@@ -186,4 +186,16 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
     {
         return $query->where('is_monitored', true);
     }
+
+    public function scopeOfService($query, string $service)
+    {
+        return $query->join('patient_info', 'patient_info.user_id', '=', 'ccd_problems.patient_id')
+            ->whereHas('cpmProblem', function ($cpmProblem) use ($service) {
+                $cpmProblem->notGenericDiabetes()
+                    ->whereHas('locationChargeableServices', function ($lcs) use ($service) {
+                        $lcs->whereRaw('location_problem_services.location_id = patient_info.preferred_contact_location')
+                            ->where('code', $service);
+                    });
+            });
+    }
 }
