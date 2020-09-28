@@ -6,11 +6,6 @@
 
 namespace CircleLinkHealth\NurseInvoices\Providers;
 
-use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
-use CircleLinkHealth\NurseInvoices\Console\Commands\ManualInvoiceDownloadCommand;
-use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
-use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
-use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,7 +19,6 @@ class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider imple
     public function provides()
     {
         return [
-        
         ];
     }
 
@@ -33,6 +27,5 @@ class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider imple
      */
     public function register()
     {
-    
     }
 }

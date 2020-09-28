@@ -38,9 +38,9 @@ class NurseInvoicesServiceProvider extends ServiceProvider
     {
         $this->registerViews();
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-        
+
         $this->app->register(RouteServiceProvider::class);
-    
+
         $this->commands(
             [
                 GenerateMonthlyInvoicesForNonDemoNurses::class,
