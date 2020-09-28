@@ -61,7 +61,7 @@ trait PostmarkCallbackHelpers
 
     private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf)
     {
-        return  PostmarkInboundMail::create(
+        return  $this->postmarkRecord = PostmarkInboundMail::create(
             [
                 'data' => json_encode(
                     [

@@ -18,6 +18,7 @@ use App\UnresolvedPostmarkCallback;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -86,10 +87,11 @@ class AutoAssignCallbackTest extends TestCase
             'config_value' => $standByNurse->id,
         ]);
 
-        $this->createPatientData(Enrollee::ENROLLED, false, true);
-        $patient1        = $this->patient;
-        $postmarkRecord1 = $this->postmarkRecord;
-        $phone1          = $this->phone;
+        $this->createPatientData(Enrollee::ENROLLED);
+        $this->createPostmarkCallbackData(false, true);
+        $patient1 = $this->patient;
+        /** @var PhoneNumber $phone */
+        $phone = $this->phone;
 
         $this->createPatientData(Enrollee::ENROLLED);
         $patient2 = $this->patient;
@@ -97,19 +99,20 @@ class AutoAssignCallbackTest extends TestCase
             ->first()
             ->update(
                 [
-                    'number' => $phone1->number,
+                    'number' => $phone->number,
                 ]
             );
 
         $patient2->phoneNumbers->fresh();
 
-        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
+        $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
         $this->assertCallbackExists($patient1->id);
     }
 
     public function test_it_saves_as_unresolved_callback_if_patient_is_not_enrolled()
     {
         $this->createPatientData(Patient::PAUSED);
+        $this->createPostmarkCallbackData(false, true);
         $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
         $this->assertMissingCallBack($this->patient->id);
         $this->assertDatabaseHas('unresolved_postmark_callbacks', [
@@ -122,6 +125,7 @@ class AutoAssignCallbackTest extends TestCase
     public function test_it_saves_as_unresolved_if_its_unresolved_multi_match_patients()
     {
         $this->createPatientData(Enrollee::ENROLLED);
+        $this->createPostmarkCallbackData(false, false);
 
         $patient1         = $this->patient;
         $patientEnrollee1 = $this->patientEnrollee;
@@ -129,7 +133,7 @@ class AutoAssignCallbackTest extends TestCase
         $phone1           = $this->phone;
 
         $this->createPatientData(Enrollee::ENROLLED);
-
+        $this->createPostmarkCallbackData(false, false);
         $patient2         = $this->patient;
         $patientEnrollee2 = $this->patientEnrollee;
 
@@ -180,14 +184,15 @@ class AutoAssignCallbackTest extends TestCase
 
     public function test_it_saves_as_unresolved_if_name_is_self_and_multiple_match_is_not_resolved()
     {
-        $this->createPatientData(Enrollee::ENROLLED, '', true);
-
+        $this->createPatientData(Enrollee::ENROLLED);
+        $this->createPostmarkCallbackData(false, true);
         $patient1        = $this->patient;
         $postmarkRecord1 = $this->postmarkRecord;
-        $phone1          = $this->phone;
+        /** @var PhoneNumber $phone1 */
+        $phone1 = $this->phone;
 
         $this->createPatientData(Enrollee::ENROLLED);
-
+        $this->createPostmarkCallbackData(false, true);
         $patient2 = $this->patient;
 
         $patient2->phoneNumbers
@@ -214,6 +219,7 @@ class AutoAssignCallbackTest extends TestCase
     public function test_it_saves_as_unresolved_if_patient_is_auto_enroll_and_has_unassigned_care_ambassador()
     {
         $this->createPatientData(Enrollee::QUEUE_AUTO_ENROLLMENT);
+        $this->createPostmarkCallbackData(false, false);
 
         $this->patientEnrollee->update(
             [
@@ -236,7 +242,8 @@ class AutoAssignCallbackTest extends TestCase
 
     public function test_it_saves_as_unresolved_if_patient_requested_to_withdraw()
     {
-        $this->createPatientData(Patient::ENROLLED, true);
+        $this->createPatientData(Patient::ENROLLED);
+        $this->createPostmarkCallbackData(true, false);
         $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
         $this->assertMissingCallBack($this->patient->id);
         $this->assertDatabaseHas('unresolved_postmark_callbacks', [
@@ -249,10 +256,12 @@ class AutoAssignCallbackTest extends TestCase
     public function test_it_will_create_callback_if_multiple_match_is_resolved_to_single_match()
     {
         $this->createPatientData(Enrollee::ENROLLED);
+        $this->createPostmarkCallbackData(false, false);
         $patient1        = $this->patient;
         $postmarkRecord1 = $this->postmarkRecord;
 
         $this->createPatientData(Enrollee::ENROLLED);
+        $this->createPostmarkCallbackData(false, false);
         $patient2 = $this->patient;
 
         $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
