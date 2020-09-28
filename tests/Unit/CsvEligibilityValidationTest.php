@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class CsvEligibilityValidationTest extends TestCase
 {
-    use \App\Traits\Tests\UserHelpers;
+    use \CircleLinkHealth\Customer\Traits\UserHelpers;
 
     private $practice;
 
