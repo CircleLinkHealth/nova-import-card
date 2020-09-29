@@ -30,7 +30,8 @@ class CompareCurrentAndLegacyBillingDataForPractice extends Job
 
     public static function fromParameters(...$parameters)
     {
-        return new self((int) $parameters[0], Carbon::parse($parameters[1]));
+        $date = isset($parameters[1]) ? Carbon::parse($parameters[1]) : null;
+        return new self((int) $parameters[0], $date);
     }
 
     public function getMonth(): Carbon
@@ -68,6 +69,12 @@ class CompareCurrentAndLegacyBillingDataForPractice extends Job
                     return;
                 }
 
+                if ($patient->chargeableMonthlySummariesView->isEmpty()) {
+                    $this->idsToInvestigate[] = $patient->id;
+
+                    return;
+                }
+
                 $pms->allChargeableServices->each(function (ChargeableService $cs) use ($patient) {
                     /** @var ChargeablePatientMonthlySummaryView */
                     $csSummary = $patient->chargeableMonthlySummariesView->firstWhere('chargeable_service_id', $cs->id);
@@ -98,13 +105,14 @@ class CompareCurrentAndLegacyBillingDataForPractice extends Job
                 }
             });
 
+        $env = app()->environment();
         if (empty($this->idsToInvestigate)) {
-            sendSlackMessage('#billing_alerts', "No issues found while comparing billing data for Practice: {$this->practiceId}");
+            sendSlackMessage('#billing_alerts', "ENV: {$env}. No issues found while comparing billing data for Practice: {$this->practiceId}", true);
 
             return;
         }
 
         $ids = collect($this->idsToInvestigate)->unique()->implode(',');
-        sendSlackMessage('#billing_alerts', "Legacy and Revamped billing data for the following patients of Practice: {$this->practiceId} do not match. Please Investigate: {$ids}");
+        sendSlackMessage('#billing_alerts', "ENV: {$env}. Legacy and Revamped billing data for the following patients of Practice: {$this->practiceId} do not match. Please Investigate: {$ids}", true);
     }
 }

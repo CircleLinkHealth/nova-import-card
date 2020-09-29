@@ -16,6 +16,8 @@ interface LocationProcessorRepository
 {
     public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth): AvailableServiceProcessors;
 
+    public function hasServicesForMonth(int $locationId, Carbon $month): bool;
+
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
     public function pastMonthSummaries(int $locationId, Carbon $month): Collection;
@@ -29,6 +31,4 @@ interface LocationProcessorRepository
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
 
     public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
-    
-    public function hasServicesForMonth(int $locationId, Carbon $month): bool;
 }
