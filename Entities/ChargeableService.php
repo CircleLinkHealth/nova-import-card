@@ -115,9 +115,9 @@ class ChargeableService extends BaseModel
             ->withTimestamps();
     }
 
-    public function processor(): PatientServiceProcessor
+    public function processor(): ?PatientServiceProcessor
     {
-        return $this->processorClassMap()[$this->code];
+        return $this->processorClassMap()[$this->code] ?? null;
     }
 
     public function processorClassMap(): array
