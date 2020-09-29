@@ -3072,8 +3072,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         )->whereHas(
             'patientInfo',
             function ($q) {
-                    $q->enrolled();
-                }
+                $q->enrolled();
+            }
         )
             ->whereHas(
                 'ccdProblems.cpmProblem',
