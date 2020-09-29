@@ -211,6 +211,12 @@ class CcdaImporterWrapper
         if ($this->ccda->location_id) {
             return $this;
         }
+    
+        $this->setLocationFromDocumentCustodianName();
+    
+        if ($this->ccda->location_id) {
+            return $this;
+        }
 
         //As a last result check if we have other ccdas
         $this->ccda->queryForOtherCcdasForTheSamePatient()->chunkById(5, function ($otherCcdas) use (&$deptId) {
@@ -559,5 +565,14 @@ class CcdaImporterWrapper
             $ccda->location_id     = $location->id;
             $enrollee->location_id = $location->id;
         }
+    }
+    
+    private function setLocationFromDocumentCustodianName()
+    {
+        if ( ! empty($this->ccda->practice_id) && $custodianName = $this->ccda->bluebuttonJson()->document->custodian->name) {
+            return Location::where('name', $custodianName)->where('practice_id', $this->ccda->practice_id)->value('id');
+        }
+    
+        return null;
     }
 }
