@@ -194,7 +194,7 @@ class PatientController extends Controller
         $phoneNumber = $request->input('phoneNumber');
         $userId      = $request->input('patientUserId');
 
-        if (isProductionEnv()) {
+        if (! allowNonUsPhones()) {
             $phoneNumber = formatPhoneNumberE164($phoneNumber);
         }
 
