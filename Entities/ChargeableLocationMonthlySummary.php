@@ -67,7 +67,7 @@ class ChargeableLocationMonthlySummary extends BaseModel
         return optional($this->chargeableService)->code;
     }
 
-    public function getServiceProcessor(): PatientServiceProcessor
+    public function getServiceProcessor(): ?PatientServiceProcessor
     {
         return $this->chargeableService->processor();
     }

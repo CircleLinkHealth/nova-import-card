@@ -113,6 +113,7 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
         return $this->servicesForMonth($locationId, $chargeableMonth)
             ->get()
             ->map(fn (ChargeableLocationMonthlySummary $summary) => $summary->getServiceProcessor())
+            ->filter()
             ->values()
             ->toArray();
     }
