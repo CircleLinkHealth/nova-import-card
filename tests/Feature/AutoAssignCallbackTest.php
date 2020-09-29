@@ -14,7 +14,6 @@ use App\Services\Calls\SchedulerService;
 use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use App\Traits\Tests\PostmarkCallbackHelpers;
 use App\Traits\Tests\PracticeHelpers;
-use App\Traits\Tests\UserHelpers;
 use App\UnresolvedPostmarkCallback;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
@@ -22,6 +21,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Tests\TestCase;
 
@@ -61,7 +61,7 @@ class AutoAssignCallbackTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->practice       = $this->setupPractice();
+        $this->practice             = $this->nekatostrasPractice();
         $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
 //        $this->standByNurse   = $this->createUser($this->practice->id, 'care-center');
 //        AppConfig::create(

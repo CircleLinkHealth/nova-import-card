@@ -7,9 +7,9 @@
 use App\PostmarkInboundMail;
 use App\Traits\Tests\PostmarkCallbackHelpers;
 use App\Traits\Tests\PracticeHelpers;
-use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Seeder;
 
@@ -39,7 +39,7 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
      */
     public function __construct()
     {
-        $this->practice       = $this->setupPractice();
+        $this->practice             = $this->nekatostrasPractice();
         $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
     }
 

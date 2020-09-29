@@ -8,6 +8,7 @@ namespace App\Traits\Tests;
 
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
@@ -81,5 +82,11 @@ trait PostmarkCallbackHelpers
     private function generatePostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf)
     {
         $this->postmarkRecord = $this->getCallbackMailData($this->patient, $requestToWithdraw, $nameIsSelf);
+    }
+    
+    
+    public function nekatostrasPractice()
+    {
+        return Practice::where('name',  '=', \NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->firstOrFail();
     }
 }

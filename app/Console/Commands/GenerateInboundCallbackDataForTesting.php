@@ -61,7 +61,7 @@ class GenerateInboundCallbackDataForTesting extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->practice       = $this->setupPractice();
+        $this->practice             = $this->nekatostrasPractice();
         $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
     }
 
