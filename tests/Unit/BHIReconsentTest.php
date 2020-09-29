@@ -10,6 +10,8 @@ use App\Call;
 use App\Services\Calls\SchedulerService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -89,6 +91,8 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, true);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
+        ProcessSinglePatientMonthlyServices::dispatch($bhiPatient->id);
+        
         $this->assertTrue($bhiPatient->isBhi());
     }
 
@@ -232,6 +236,7 @@ class BHIReconsentTest extends CustomerTestCase
                 ->create([
                     'cpm_problem_id' => $bhiProblem->id,
                     'name'           => $bhiProblem->name,
+                    'is_monitored'   => true,
                 ]);
         }
 
@@ -242,7 +247,7 @@ class BHIReconsentTest extends CustomerTestCase
     {
         if ($bhi) {
             $this->practice()->chargeableServices()
-                ->attach(ChargeableService::whereCode('CPT 99484')->firstOrFail()->id);
+                ->syncWithoutDetaching([ChargeableService::whereCode('CPT 99484')->firstOrFail()->id]);
         }
 
         return $this->practice();
