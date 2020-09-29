@@ -1,0 +1,24 @@
+{
+    "name": "circlelinkhealth/synonyms",
+    "description": "Add synonyms for a specific Model and Field.",
+    "authors": [
+        {
+            "name": "Michalis Antoniou",
+            "email": "mantoniou@circlelinkhealth.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "CircleLinkHealth\\Synonyms\\": ""
+        }
+    },
+    "type": "laravel-module"
+}

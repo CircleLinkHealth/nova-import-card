@@ -1,0 +1,13 @@
+{
+    "name": "Synonyms",
+    "alias": "synonyms",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "CircleLinkHealth\\Synonyms\\Providers\\SynonymsServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
