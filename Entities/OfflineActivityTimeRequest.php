@@ -171,7 +171,7 @@ class OfflineActivityTimeRequest extends Model
         }
 
         $nurse = optional($this->requester)->nurseInfo;
-    
+
         event(new PatientActivityCreated($this->patient_id));
         $activityService->processMonthlyActivityTime($this->patient_id, $this->performed_at);
 
