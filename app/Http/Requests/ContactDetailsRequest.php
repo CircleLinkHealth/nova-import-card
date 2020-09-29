@@ -76,7 +76,7 @@ class ContactDetailsRequest extends FormRequest
                 $validator->errors()->add('phoneNumber', "Phone type '$phoneType' already exists for patient");
             }
 
-            if ( ! ImportPhones::validatePhoneNumber($input['phoneNumber'])) {
+            if ( ! allowNonUsPhones() && ! ImportPhones::validatePhoneNumber($input['phoneNumber'])) {
                 $validator->errors()->add('phoneNumber', 'Phone number is not a valid US number');
             }
 
