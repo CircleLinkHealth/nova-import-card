@@ -6,8 +6,10 @@
 
 namespace Tests\Unit;
 
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Tests\CustomerTestCase;
@@ -19,11 +21,11 @@ class IsPcmTest extends CustomerTestCase
 
     public function test_is_pcm()
     {
-        $this->assertFalse($this->patient()->isPcm());
+        $this->assertFalse(PatientIsOfServiceCode::execute($this->patient()->id, ChargeableService::PCM));
 
         /** @var Problem $problem */
         $problem = $this->attachValidPcmProblem($this->patient());
 
-        $this->assertTrue($this->patient()->isPcm());
+        $this->assertTrue(PatientIsOfServiceCode::execute($this->patient()->id, ChargeableService::PCM));
     }
 }
