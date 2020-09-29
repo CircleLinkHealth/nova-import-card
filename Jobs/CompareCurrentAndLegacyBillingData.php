@@ -24,7 +24,8 @@ class CompareCurrentAndLegacyBillingData extends Job
 
     public static function fromParameters(...$parameters)
     {
-        return new self(Carbon::parse($parameters[0]));
+        $date = isset($parameters[0]) ? Carbon::parse($parameters[0]) : null;
+        return new self($date);
     }
 
     public function getMonth(): Carbon

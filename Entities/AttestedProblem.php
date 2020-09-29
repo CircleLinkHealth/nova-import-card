@@ -38,6 +38,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdThisMonth($field = 'created_at')
  * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdToday($field = 'created_at')
  * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdYesterday($field = 'created_at')
+ * @property int|null $attestor_id
  */
 class AttestedProblem extends Pivot
 {

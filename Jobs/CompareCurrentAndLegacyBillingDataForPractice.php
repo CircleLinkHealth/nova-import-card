@@ -30,7 +30,8 @@ class CompareCurrentAndLegacyBillingDataForPractice extends Job
 
     public static function fromParameters(...$parameters)
     {
-        return new self((int) $parameters[0], Carbon::parse($parameters[1]));
+        $date = isset($parameters[1]) ? Carbon::parse($parameters[1]) : null;
+        return new self((int) $parameters[0], $date);
     }
 
     public function getMonth(): Carbon
@@ -65,6 +66,12 @@ class CompareCurrentAndLegacyBillingDataForPractice extends Job
                 $pms = $patient->patientSummaries->first();
 
                 if ( ! $pms) {
+                    return;
+                }
+
+                if ($patient->chargeableMonthlySummariesView->isEmpty()) {
+                    $this->idsToInvestigate[] = $patient->id;
+
                     return;
                 }
 
