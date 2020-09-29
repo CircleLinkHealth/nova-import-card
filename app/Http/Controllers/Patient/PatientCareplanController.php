@@ -21,6 +21,7 @@ use App\Services\CareplanService;
 use App\Services\PatientService;
 use Auth;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
@@ -518,6 +519,8 @@ class PatientCareplanController extends Controller
 
         $phoneTypes = getPhoneTypes();
 
+        $allowNonUsPhones = boolval(AppConfig::pull('allow_non_us_phone', false));
+
         return view(
             'wpUsers.patient.careplan.patient',
             compact(
@@ -540,6 +543,7 @@ class PatientCareplanController extends Controller
                     'contactWindows',
                     'withdrawnReasons',
                     'patientWithdrawnReason',
+                    'allowNonUsPhones',
                 ]
             )
         );
