@@ -19,6 +19,7 @@ use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Customer\LocationServices;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
@@ -2192,10 +2193,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     /**
      * Determine whether the User is BHI chargeable (ie. eligible and enrolled).
-     *
-     * @return bool
      */
-    public function isBhi():bool
+    public function isBhi(): bool
     {
         return \Cache::remember("user:$this->id:is_bhi", 5, function () {
             return PatientIsOfServiceCode::execute($this->id, ChargeableService::BHI);
@@ -2254,7 +2253,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function isCcmPlus()
     {
-        return $this->isCcm() && $this->primaryPractice->hasCCMPlusServiceCode();
+        return $this->isCcm() && LocationServices::hasCCMPlusServiceCode($this->getPreferredContactLocation(), true);
     }
 
     /**
@@ -2297,9 +2296,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole('participant');
     }
 
-    public function isPcm() : bool
+    public function isPcm(): bool
     {
-        return PatientIsOfServiceCode::execute($this->id, ChargeableService::PCM);
+        return \Cache::remember("user:$this->id:is_pcm", 5, function () {
+            return PatientIsOfServiceCode::execute($this->id, ChargeableService::PCM);
+        });
     }
 
     public function isPracticeStaff(): bool
@@ -3035,17 +3036,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function scopeIsBhiChargeable($builder)
     {
+        //todo:deprecate
         return $builder->whereHas(
             'primaryPractice',
             function ($q) {
-                    $q->hasServiceCode('CPT 99484');
-                }
+                $q->hasServiceCode('CPT 99484');
+            }
         )->whereHas(
-                'patientInfo',
-                function ($q) {
+            'patientInfo',
+            function ($q) {
                     $q->enrolled();
                 }
-            )
+        )
             ->whereHas(
                 'ccdProblems.cpmProblem',
                 function ($q) {

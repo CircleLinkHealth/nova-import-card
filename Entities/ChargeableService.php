@@ -82,6 +82,11 @@ class ChargeableService extends BaseModel
 
     const PCM           = 'G2065';
     const SOFTWARE_ONLY = 'Software-Only';
+    
+    const CCM_PLUS_CODES = [
+        self::CCM_PLUS_40,
+        self::CCM_PLUS_60
+    ];
 
     protected $fillable = [
         'code',
