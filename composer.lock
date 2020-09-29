@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "43e3c1880e981f9cde77f71731e8e857",
+    "content-hash": "987a0a8e5a6d774f70069845cd15e780",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1187,11 +1187,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.7.7",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "c9543418178a31e942cf90540b12ccc4e3ae2983"
+                "reference": "6b6907d2886ace9d697968fdba1b40700a41274d"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1220,7 +1220,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-23T17:16:11+00:00"
+            "time": "2020-09-29T14:11:59+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -16998,6 +16998,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccm-billing-module": 20,
+        "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
