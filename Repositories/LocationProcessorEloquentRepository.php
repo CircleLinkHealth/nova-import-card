@@ -40,7 +40,7 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
     {
         return $this->servicesForLocation($locationId)
             ->createdOn($month, 'chargeable_month')
-            ->exist();
+            ->exists();
     }
 
     public function paginatePatients(int $locationId, Carbon $chargeableMonth, int $pageSize): LengthAwarePaginator
@@ -53,13 +53,6 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
         return $this->servicesForLocation($locationId)
             ->where('chargeable_month', '<', $month)
             ->get();
-    }
-    
-    public function hasServicesForMonth(int $locationId, Carbon $month): bool
-    {
-        return $this->servicesForLocation($locationId)
-            ->where('chargeable_month', $month)
-            ->exists();
     }
 
     public function patients(int $locationId, Carbon $monthYear): Collection
