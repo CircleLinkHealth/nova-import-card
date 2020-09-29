@@ -9,6 +9,7 @@ namespace Tests\Unit;
 use App\Call;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
@@ -63,7 +64,7 @@ class BHIReconsentTest extends CustomerTestCase
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, false);
-
+        
         $this->assertTrue($bhiPatient->isBhi());
     }
 
@@ -72,7 +73,7 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, false);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
-
+        
         $this->assertTrue($bhiPatient->isBhi());
     }
 
@@ -100,7 +101,10 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, false);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
-
+        
+        //todo next iteration: is this a realistic scenario to happen say in the middle of the month? I think not, still try and cleanup either code or test
+        $bhiPatient->chargeableMonthlySummaries()->delete();
+        ProcessSinglePatientMonthlyServices::dispatch($bhiPatient->id);
         $this->assertFalse($bhiPatient->isBhi());
     }
 
@@ -149,7 +153,9 @@ class BHIReconsentTest extends CustomerTestCase
     {
         $bhiPractice = $this->createPractice(false);
         $bhiPatient  = $this->createPatient($bhiPractice->id);
-
+    
+        $bhiPatient->chargeableMonthlySummaries()->delete();
+        ProcessSinglePatientMonthlyServices::dispatch($bhiPatient->id);
         $this->assertFalse($bhiPatient->isBhi());
     }
 
@@ -238,6 +244,8 @@ class BHIReconsentTest extends CustomerTestCase
                     'is_monitored'   => true,
                 ]);
         }
+        
+        ProcessSinglePatientMonthlyServices::dispatch($patient->id);
 
         return $patient;
     }
@@ -246,8 +254,12 @@ class BHIReconsentTest extends CustomerTestCase
     {
         if ($bhi) {
             $this->practice()->chargeableServices()
-                ->syncWithoutDetaching([ChargeableService::whereCode('CPT 99484')->firstOrFail()->id]);
+                ->sync([ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI)]);
+        } else {
+            $this->practice()->chargeableServices()
+                ->sync([ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::CCM)]);
         }
+        SetupPracticeBillingData::sync($this->practice()->id);
 
         return $this->practice();
     }
