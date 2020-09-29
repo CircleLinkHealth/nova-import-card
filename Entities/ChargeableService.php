@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM60;
+use CircleLinkHealth\CcmBilling\Processors\Patient\G0511;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Support\Facades\Cache;
@@ -122,13 +123,14 @@ class ChargeableService extends BaseModel
     public function processorClassMap(): array
     {
         return [
-            self::CCM            => new CCM(),
-            self::BHI            => new BHI(),
-            self::CCM_PLUS_40    => new CCM40(),
-            self::CCM_PLUS_60    => new CCM60(),
-            self::PCM            => new PCM(),
-            self::AWV_INITIAL    => new AWV1(),
-            self::AWV_SUBSEQUENT => new AWV2(),
+            self::CCM                     => new CCM(),
+            self::BHI                     => new BHI(),
+            self::CCM_PLUS_40             => new CCM40(),
+            self::CCM_PLUS_60             => new CCM60(),
+            self::PCM                     => new PCM(),
+            self::AWV_INITIAL             => new AWV1(),
+            self::AWV_SUBSEQUENT          => new AWV2(),
+            self::GENERAL_CARE_MANAGEMENT => new G0511(),
         ];
     }
 
