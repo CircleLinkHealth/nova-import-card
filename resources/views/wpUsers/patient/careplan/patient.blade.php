@@ -131,41 +131,41 @@ $user_info = [];
                                                 <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                             </div>
                                             <div class="form-item col-sm-12">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group {{ $errors->first('home_phone_number') ? 'has-error' : '' }}">
-                                                            <label class="sr-only" for="telephone">Phone</label>
-                                                            <input type="tel" @if (isProductionEnv()) pattern='\d{3}[\-]\d{3}[\-]\d{4}' @endif
-                                                                   class="form-control" name="home_phone_number"
-                                                                   id="home_phone_number" placeholder="Telephone *"
-                                                                   title="Please write a phone number in the format 123-345-7890"
-                                                                   @if (isProductionEnv())
-                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}"
-                                                                   @else
-                                                                   value="{{ old('home_phone_number') ?? $patient->getHomePhoneNumber() }}"
-                                                                   @endif>
+                                                @if(empty($patient->id))
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group {{ $errors->first('home_phone_number') ? 'has-error' : '' }}">
+                                                                <label class="sr-only" for="telephone">Phone</label>
+                                                                <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                                       class="form-control" name="home_phone_number"
+                                                                       id="home_phone_number" placeholder="Telephone *"
+                                                                       title="Please write a phone number in the format 123-345-7890"
+                                                                       value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}">
+                                                                <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group {{ $errors->first('mobile_phone_number') ? 'has-error' : '' }}">
+                                                                <label class="sr-only"
+                                                                       for="mobile_phone_number">Phone</label>
+                                                                <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                                       class="form-control" name="mobile_phone_number"
+                                                                       id="mobile_phone_number"
+                                                                       placeholder="Mobile Telephone *"
+                                                                       title="Please write a phone number in the format 123-345-7890"
+                                                                       value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}">
+                                                                <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <edit-patient-number
+                                                            :user-id="{{$patient->id}}"
+                                                            :call-enabled=false
+                                                             error="{{$errors->first()}}">
+                                                    </edit-patient-number>
+                                                @endif
 
-                                                            <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group {{ $errors->first('mobile_phone_number') ? 'has-error' : '' }}">
-                                                            <label class="sr-only"
-                                                                   for="mobile_phone_number">Phone</label>
-                                                            <input type="tel" @if (isProductionEnv()) pattern='\d{3}[\-]\d{3}[\-]\d{4}' @endif
-                                                                   class="form-control" name="mobile_phone_number"
-                                                                   id="mobile_phone_number"
-                                                                   placeholder="Mobile Telephone *"
-                                                                   title="Please write a phone number in the format 123-345-7890"
-                                                                   @if (isProductionEnv())
-                                                                       value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}"
-                                                                   @else
-                                                                       value="{{ old('mobile_phone_number') ?? $patient->getMobilePhoneNumber() }}"
-                                                                   @endif>
-                                                            <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('email') ? 'has-error' : '' }}">
                                                 <label class="sr-only" for="lastName">Email Address</label>
@@ -199,50 +199,59 @@ $user_info = [];
                                                        value="{{ (old('zip') ? old('zip') : ($patient->zip ? $patient->zip : '')) }}">
                                                 <span class="help-block">{{ $errors->first('zip') }}</span>
                                             </div>
-                                            <div class="form-item col-sm-12">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group {{ $errors->first('agent_name') ? 'has-error' : '' }}">
-                                                            <input type="text" class="form-control" name="agent_name"
-                                                                   id="agent_name" placeholder="Agent Name"
-                                                                   value="{{ (old('agent_name') ? old('agent_name') : ($patient->getAgentName() ? $patient->getAgentName() : '')) }}">
-                                                            <span class="help-block">{{ $errors->first('agent_name') }}</span>
+
+
+                                                <div class="form-item col-sm-12">
+                                                    @if(empty($patient->id))
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group {{ $errors->first('agent_name') ? 'has-error' : '' }}">
+                                                                <input type="text" class="form-control" name="agent_name"
+                                                                       id="agent_name" placeholder="Agent Name"
+                                                                       value="{{ (old('agent_name') ? old('agent_name') : ($patient->getAgentName() ? $patient->getAgentName() : '')) }}">
+                                                                <span class="help-block">{{ $errors->first('agent_name') }}</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group {{ $errors->first('agent_telephone') ? 'has-error' : '' }}">
-                                                            <label class="sr-only" for="agent_telephone">Agent
-                                                                Telephone</label>
-                                                            <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
-                                                                   class="form-control" name="agent_telephone"
-                                                                   id="agent_telephone" placeholder="Agent Telephone"
-                                                                   value="{{ (old('agent_telephone') ? old('agent_telephone') : ($patient->getAgentTelephone() ? $patient->getAgentTelephone() : '')) }}">
-                                                            <span class="help-block">{{ $errors->first('agent_telephone') }}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-item col-sm-12">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group {{ $errors->first('agent_relationship') ? 'has-error' : '' }}">
-                                                            <input type="text" class="form-control"
-                                                                   name="agent_relationship"
-                                                                   id="agent_relationship"
-                                                                   placeholder="Agent Relationship"
-                                                                   value="{{ (old('agent_relationship') ? old('agent_relationship') : ($patient->getAgentRelationship() ? $patient->getAgentRelationship() : '')) }}">
-                                                            <span class="help-block">{{ $errors->first('agent_relationship') }}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group {{ $errors->first('agent_email') ? 'has-error' : '' }}">
-                                                            <input type="text" class="form-control" name="agent_email"
-                                                                   id="agent_email" placeholder="Agent Email"
-                                                                   value="{{ (old('agent_email') ? old('agent_email') : ($patient->getAgentEmail() ? $patient->getAgentEmail() : '')) }}">
-                                                            <span class="help-block">{{ $errors->first('agent_email') }}</span>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group {{ $errors->first('agent_telephone') ? 'has-error' : '' }}">
+                                                                <label class="sr-only" for="agent_telephone">Agent
+                                                                    Telephone</label>
+                                                                <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                                       class="form-control" name="agent_telephone"
+                                                                       id="agent_telephone" placeholder="Agent Telephone"
+                                                                       value="{{ (old('agent_telephone') ? old('agent_telephone') : ($patient->getAgentTelephone() ? $patient->getAgentTelephone() : '')) }}">
+                                                                <span class="help-block">{{ $errors->first('agent_telephone') }}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="form-item col-sm-12">
+                                                <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group {{ $errors->first('agent_relationship') ? 'has-error' : '' }}">
+                                                                <input type="text" class="form-control"
+                                                                       name="agent_relationship"
+                                                                       id="agent_relationship"
+                                                                       placeholder="Agent Relationship"
+                                                                       value="{{ (old('agent_relationship') ? old('agent_relationship') : ($patient->getAgentRelationship() ? $patient->getAgentRelationship() : '')) }}">
+                                                                <span class="help-block">{{ $errors->first('agent_relationship') }}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group {{ $errors->first('agent_email') ? 'has-error' : '' }}">
+                                                                <input type="text" class="form-control" name="agent_email"
+                                                                       id="agent_email" placeholder="Agent Email"
+                                                                       value="{{ (old('agent_email') ? old('agent_email') : ($patient->getAgentEmail() ? $patient->getAgentEmail() : '')) }}">
+                                                                <span class="help-block">{{ $errors->first('agent_email') }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                <edit-patient-alternate-contact
+                                                        :user-id="{{$patient->id}}"
+                                                        :call-enabled="false">
+                                                </edit-patient-alternate-contact>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>

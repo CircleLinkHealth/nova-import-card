@@ -10,6 +10,7 @@ $opcacheUrl = str_replace('${HEROKU_APP_NAME}', getenv('HEROKU_APP_NAME'), $opca
 
 return [
     'url'         => $opcacheUrl,
+    'disable'     => env('OPCACHE_DISABLE', false),
     'prefix'      => 'opcache-api',
     'verify'      => true,
     'headers'     => [],
@@ -26,6 +27,7 @@ return [
         base_path('vendor/circlelinkhealth/'),
     ],
     'exclude' => [
+        'Autoload',
         'test',
         'Test',
         'tests',
