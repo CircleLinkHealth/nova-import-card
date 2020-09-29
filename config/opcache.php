@@ -26,6 +26,7 @@ return [
         base_path('vendor/circlelinkhealth/'),
     ],
     'exclude' => [
+        'Autoload',
         'test',
         'Test',
         'tests',
