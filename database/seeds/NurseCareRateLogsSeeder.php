@@ -7,7 +7,7 @@
 use App\Call;
 use App\Jobs\StoreTimeTracking;
 use App\Note;
-use App\Traits\Tests\UserHelpers;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;

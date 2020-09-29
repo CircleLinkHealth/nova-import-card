@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -1326,6 +1328,19 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
 //        }
 //
 //        return "https://drive.google.com/drive/folders/{$dir['path']}";
+    }
+}
+
+if ( ! function_exists('getPhoneTypes')) {
+    /**
+     * @return array
+     */
+    function getPhoneTypes()
+    {
+        return [
+            ucfirst(PhoneNumber::MOBILE),
+            ucfirst(PhoneNumber::HOME),
+        ];
     }
 }
 
