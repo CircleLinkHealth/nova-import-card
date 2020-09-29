@@ -85,6 +85,8 @@ use Laravel\Scout\Searchable;
  * @property int|null                                                                                                        $user_count
  * @property ChargeableLocationMonthlySummary[]|\Illuminate\Database\Eloquent\Collection                                     $chargeableServiceSummaries
  * @property int|null                                                                                                        $chargeable_service_summaries_count
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection                $cpmProblemServices
+ * @property int|null                                                                                                        $cpm_problem_services_count
  */
 class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -145,6 +147,13 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->morphToMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
             ->withTimestamps();
+    }
+
+    public function cpmProblemServices()
+    {
+        return $this->belongsToMany(ChargeableService::class, 'location_problem_services')
+            ->using(LocationProblemService::class)
+            ->withPivot(['cpm_problem_id']);
     }
 
     public static function getAllNodes()
@@ -302,11 +311,5 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     public function user()
     {
         return $this->belongsToMany(User::class);
-    }
-    
-    public function cpmProblemServices(){
-        return $this->belongsToMany(ChargeableService::class, 'location_problem_services')
-            ->using(LocationProblemService::class)
-            ->withPivot(['cpm_problem_id']);
     }
 }

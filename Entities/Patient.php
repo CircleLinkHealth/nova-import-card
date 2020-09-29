@@ -153,6 +153,7 @@ class Patient extends BaseModel
 {
     use Filterable;
     use SoftDeletes;
+    const AGENT                   = 'alternate';
     const BHI_CONSENT_NOTE_TYPE   = 'Consented to BHI';
     const BHI_REJECTION_NOTE_TYPE = 'Did Not Consent to BHI';
 
