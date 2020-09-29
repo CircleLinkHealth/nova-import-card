@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class NurseScheduleTest extends TestCase
 {
-    use \App\Traits\Tests\UserHelpers;
+    use \CircleLinkHealth\Customer\Traits\UserHelpers;
 
     private $nurse;
 
