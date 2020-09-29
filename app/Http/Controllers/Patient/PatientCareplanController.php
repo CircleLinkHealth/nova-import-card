@@ -519,7 +519,7 @@ class PatientCareplanController extends Controller
 
         $phoneTypes = getPhoneTypes();
 
-        $allowNonUsPhones = boolval(AppConfig::pull('allow_non_us_phone', false));
+        $allowNonUsPhones = allowNonUsPhones();
 
         return view(
             'wpUsers.patient.careplan.patient',

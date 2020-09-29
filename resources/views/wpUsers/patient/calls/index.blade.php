@@ -58,7 +58,7 @@
 
                             <div class="col-sm-12">
                                 <call-number
-                                        :debug="@json(!isProductionEnv())"
+                                        :debug="@json($allowNonUsPhones)"
                                         cpm-caller-url="{{config('services.twilio.cpm-caller-url')}}"
                                         cpm-token="{{$cpmToken}}"
                                         from-number="{{$patient->primaryProgramPhoneE164()}}"

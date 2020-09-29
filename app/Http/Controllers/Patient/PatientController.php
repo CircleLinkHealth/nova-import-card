@@ -15,7 +15,6 @@ use App\Http\Requests\MarkPrimaryPhoneRequest;
 use App\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -195,7 +194,7 @@ class PatientController extends Controller
         $phoneNumber = $request->input('phoneNumber');
         $userId      = $request->input('patientUserId');
 
-        if ( ! boolval(AppConfig::pull('allow_non_us_phone', false))) {
+        if (isProductionEnv()) {
             $phoneNumber = formatPhoneNumberE164($phoneNumber);
         }
 
@@ -258,6 +257,7 @@ class PatientController extends Controller
                 'patient'                  => $user,
                 'clinicalEscalationNumber' => $clinicalEscalationNumber,
                 'cpmToken'                 => $cpmToken,
+                'allowNonUsPhones'         => allowNonUsPhones(),
             ]);
     }
 

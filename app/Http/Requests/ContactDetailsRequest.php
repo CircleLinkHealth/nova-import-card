@@ -57,8 +57,7 @@ class ContactDetailsRequest extends FormRequest
      */
     public function withValidator($validator)
     {
-        $allowNonUsPhones = boolval(AppConfig::pull('allow_non_us_phone', false));
-        $validator->after(function ($validator) use ($allowNonUsPhones) {
+        $validator->after(function ($validator) {
             $input = $validator->getData();
             $userId = $input['patientUserId'];
             $phoneType = isset($input['phoneType']) ? $input['phoneType'] : null;
@@ -78,7 +77,7 @@ class ContactDetailsRequest extends FormRequest
                 $validator->errors()->add('phoneNumber', "Phone type '$phoneType' already exists for patient");
             }
 
-            if ( ! $allowNonUsPhones && ! ImportPhones::validatePhoneNumber($input['phoneNumber'])) {
+            if (! allowNonUsPhones() && ! ImportPhones::validatePhoneNumber($input['phoneNumber'])) {
                 $validator->errors()->add('phoneNumber', 'Phone number is not a valid US number');
             }
 
