@@ -326,6 +326,8 @@
       <path value="$PROJECT_DIR$/vendor/php-http/guzzle6-adapter" />
       <path value="$PROJECT_DIR$/vendor/mpbarlow/laravel-queue-debouncer" />
       <path value="$PROJECT_DIR$/vendor/mxl/laravel-job" />
+      <path value="$PROJECT_DIR$/vendor/spatie/laravel-schedule-monitor" />
+      <path value="$PROJECT_DIR$/vendor/lorisleiva/cron-translator" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
