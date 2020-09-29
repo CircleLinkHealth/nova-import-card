@@ -44,13 +44,13 @@ class PostDeploymentTasks extends Command
 
             return;
         }
-        echo \Config::get('opcache.url');
+        echo config('opcache.url');
         $arr = [
             'view:clear',
             'route:clear',
             'config:clear',
         ];
-        if ( ! app()->environment(['review'])) {
+        if ( ! app()->environment(['review']) && ! config('opcache.disable', false)) {
             $arr[] = 'opcache:clear';
             $arr[] = 'opcache:compile';
         }
