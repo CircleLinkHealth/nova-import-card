@@ -12,6 +12,28 @@ use Illuminate\Support\Str;
 
 class PostmarkInboundCallbackRequest
 {
+    /**
+     * @return string[]
+     */
+    public function getKeys()
+    {
+        return [
+            'For:',
+            'From:',
+            'Phone:',
+            'Ptn:',
+            'Cancel/Withdraw Reason:',
+            'Msg:',
+            'Primary:',
+            'Msg ID:',
+            'IS Rec #:',
+            'Clr ID:',
+            'Taken:',
+            'Cancel/Withdraw Reason:',
+            'Msg:',
+        ];
+    }
+
     public function run(string $inboundCallback, int $postmarkId)
     {
         $stringToArray = $this->getArrayFromStringWithBreaks($inboundCallback, $postmarkId);
@@ -55,27 +77,5 @@ class PostmarkInboundCallbackRequest
 
             return;
         }
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getKeys()
-    {
-        return [
-            'For:',
-            'From:',
-            'Phone:',
-            'Ptn:',
-            'Cancel/Withdraw Reason:',
-            'Msg:',
-            'Primary:',
-            'Msg ID:',
-            'IS Rec #:',
-            'Clr ID:',
-            'Taken:',
-            'Cancel/Withdraw Reason:',
-            'Msg:',
-        ];
     }
 }

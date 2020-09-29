@@ -166,9 +166,9 @@ class PostmarkInboundCallbackMatchResults
             $matchedPatient     = $patientsMatchedByCallerFieldName->first();
             $isCallbackEligible = $this->patientIsCallbackEligible($matchedPatient, $this->postmarkCallbackData);
 
-          return $this->singleMatchResult($matchedPatient, $isCallbackEligible);
+            return $this->singleMatchResult($matchedPatient, $isCallbackEligible);
         }
-        
+
         return $this->multimatchResult($patientsMatchedByCallerFieldName, false, self::NO_NAME_MATCH_SELF);
     }
 
@@ -178,6 +178,16 @@ class PostmarkInboundCallbackMatchResults
     private function multiMatch(Builder $postmarkInboundPatientsMatched)
     {
         return $postmarkInboundPatientsMatched->count() > 1;
+    }
+
+    private function multimatchResult(Collection $patientsMatched, bool $createCallback, string $reasoning)
+    {
+        return (new MatchedData(
+            $patientsMatched,
+            $createCallback,
+            $reasoning
+        ))
+            ->getArray();
     }
 
     /**
@@ -248,16 +258,6 @@ class PostmarkInboundCallbackMatchResults
             $matchedPatient,
             $isCallbackEligible,
             $this->noCallbackReasoning($matchedPatient, $isCallbackEligible)
-        ))
-            ->getArray();
-    }
-    
-    private function multimatchResult(Collection $patientsMatched, bool $createCallback, string $reasoning)
-    {
-        return (new MatchedData(
-            $patientsMatched,
-            $createCallback,
-            $reasoning
         ))
             ->getArray();
     }

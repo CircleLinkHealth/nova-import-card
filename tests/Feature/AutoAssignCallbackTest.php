@@ -124,7 +124,7 @@ class AutoAssignCallbackTest extends TestCase
         $inboundDataArray = (new PostmarkInboundCallbackRequest())->run($textBodyData, $postmarkRecord->id);
 
         assert(is_array($inboundDataArray));
-        assert(! isset($inboundDataArray['Cancel/Withdraw Reason']));
+        assert( ! isset($inboundDataArray['Cancel/Withdraw Reason']));
         $keys = (new PostmarkInboundCallbackRequest())->getKeys();
 
         foreach ($keys as $key) {
