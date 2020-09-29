@@ -107,12 +107,12 @@ class CompareCurrentAndLegacyBillingDataForPractice extends Job
 
         $env = app()->environment();
         if (empty($this->idsToInvestigate)) {
-            sendSlackMessage('#billing_alerts', "ENV: {$env}. No issues found while comparing billing data for Practice: {$this->practiceId}");
+            sendSlackMessage('#billing_alerts', "ENV: {$env}. No issues found while comparing billing data for Practice: {$this->practiceId}", true);
 
             return;
         }
 
         $ids = collect($this->idsToInvestigate)->unique()->implode(',');
-        sendSlackMessage('#billing_alerts', "ENV: {$env}. Legacy and Revamped billing data for the following patients of Practice: {$this->practiceId} do not match. Please Investigate: {$ids}");
+        sendSlackMessage('#billing_alerts', "ENV: {$env}. Legacy and Revamped billing data for the following patients of Practice: {$this->practiceId} do not match. Please Investigate: {$ids}", true);
     }
 }
