@@ -10,7 +10,6 @@ use App\Call;
 use App\Services\Calls\SchedulerService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
@@ -92,7 +91,7 @@ class BHIReconsentTest extends CustomerTestCase
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         ProcessSinglePatientMonthlyServices::dispatch($bhiPatient->id);
-        
+
         $this->assertTrue($bhiPatient->isBhi());
     }
 
