@@ -61,6 +61,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @mixin \Eloquent
  * @method static \Illuminate\Database\Eloquent\Builder|Problem isBillable($ignoreWith = false)
  * @method static \Illuminate\Database\Eloquent\Builder|Problem isMonitored()
+ * @method static \Illuminate\Database\Eloquent\Builder|Problem ofService($service)
  */
 class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contracts\Problem
 {
