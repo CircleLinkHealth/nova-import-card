@@ -2200,6 +2200,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function isBhi(): bool
     {
+        if (is_null($this->id)) {
+            return false;
+        }
+
         return \Cache::remember("user:$this->id:is_bhi", 5, function () {
             return PatientIsOfServiceCode::execute($this->id, ChargeableService::BHI);
         });
@@ -2302,6 +2306,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function isPcm(): bool
     {
+        if (is_null($this->id)) {
+            return false;
+        }
+
         return \Cache::remember("user:$this->id:is_pcm", 5, function () {
             return PatientIsOfServiceCode::execute($this->id, ChargeableService::PCM);
         });
