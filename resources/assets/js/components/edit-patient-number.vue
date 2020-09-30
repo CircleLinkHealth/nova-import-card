@@ -103,8 +103,7 @@
 
             <button class="glyphicon glyphicon-plus-sign add-new-number"
                title="Add Phone Number"
-               @click="addPhoneField()"
-               :disabled="!allowAddingNewNumber">
+               @click="addPhoneField()">
                 Add phone number
             </button>
 
@@ -356,6 +355,11 @@
             },
 
             addPhoneField(){
+                if (! this.allowAddingNewNumber){
+                    alert('Please remove one phone number in order to add a new one');
+                    return;
+                }
+
                 if (this.newInputs.length > 0) {
                     alert('Please save the existing field first');
                     return;
