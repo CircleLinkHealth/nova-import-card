@@ -1331,16 +1331,13 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
     }
 }
 
-if ( ! function_exists('getPhoneTypes')) {
+if ( ! function_exists('allowNonUsPhones')) {
     /**
-     * @return array
+     * @return bool
      */
-    function getPhoneTypes()
+    function allowNonUsPhones()
     {
-        return [
-            ucfirst(PhoneNumber::MOBILE),
-            ucfirst(PhoneNumber::HOME),
-        ];
+        return ! isProductionEnv() && boolval(AppConfig::pull('allow_non_us_phone', false));
     }
 }
 

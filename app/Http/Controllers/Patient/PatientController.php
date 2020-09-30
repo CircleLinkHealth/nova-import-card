@@ -167,7 +167,7 @@ class PatientController extends Controller
         return response()->json($patients);
     }
 
-    public function saveNewAlternatePhoneNumber(ContactDetailsRequest $request)
+    public function saveNewAgentPhoneNumber(ContactDetailsRequest $request)
     {
         $altPhoneNumber = $request->input('phoneNumber');
         $altPhoneNumber = formatPhoneNumberE164($altPhoneNumber);
@@ -194,7 +194,10 @@ class PatientController extends Controller
         $phoneNumber = $request->input('phoneNumber');
         $userId      = $request->input('patientUserId');
 
-        $phoneNumber = formatPhoneNumberE164($phoneNumber);
+        if ( ! allowNonUsPhones()) {
+            $phoneNumber = formatPhoneNumberE164($phoneNumber);
+        }
+
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
         $locationId  = $request->get('locationId');
@@ -254,6 +257,7 @@ class PatientController extends Controller
                 'patient'                  => $user,
                 'clinicalEscalationNumber' => $clinicalEscalationNumber,
                 'cpmToken'                 => $cpmToken,
+                'allowNonUsPhones'         => allowNonUsPhones(),
             ]);
     }
 

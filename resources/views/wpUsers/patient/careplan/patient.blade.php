@@ -162,7 +162,8 @@ $user_info = [];
                                                     <edit-patient-number
                                                             :user-id="{{$patient->id}}"
                                                             :call-enabled=false
-                                                             error="{{$errors->first()}}">
+                                                            :allow-non-us-phones="@json($allowNonUsPhones)"
+                                                            error="{{$errors->first()}}">
                                                     </edit-patient-number>
                                                 @endif
 

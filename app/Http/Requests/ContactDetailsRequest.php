@@ -36,8 +36,8 @@ class ContactDetailsRequest extends FormRequest
         return [
             'patientUserId'     => 'required',
             'phoneNumber'       => 'required|numeric',
-            'agentRelationship' => 'sometimes|alpha',
-            'agentName'         => 'sometimes|alpha',
+            'agentRelationship' => 'sometimes|regex:/^[\pL\s\-]+$/u',
+            'agentName'         => 'sometimes|regex:/^[\pL\s\-]+$/u',
             'agentEmail'        => 'sometimes|email',
             'phoneType'         => 'sometimes|required',
         ];
@@ -76,7 +76,7 @@ class ContactDetailsRequest extends FormRequest
                 $validator->errors()->add('phoneNumber', "Phone type '$phoneType' already exists for patient");
             }
 
-            if ( ! ImportPhones::validatePhoneNumber($input['phoneNumber'])) {
+            if ( ! allowNonUsPhones() && ! ImportPhones::validatePhoneNumber($input['phoneNumber'])) {
                 $validator->errors()->add('phoneNumber', 'Phone number is not a valid US number');
             }
 
