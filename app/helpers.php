@@ -1331,19 +1331,6 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
     }
 }
 
-if ( ! function_exists('getPhoneTypes')) {
-    /**
-     * @return array
-     */
-    function getPhoneTypes()
-    {
-        return [
-            ucfirst(PhoneNumber::MOBILE),
-            ucfirst(PhoneNumber::HOME),
-        ];
-    }
-}
-
 if ( ! function_exists('allowNonUsPhones')) {
     /**
      * @return bool

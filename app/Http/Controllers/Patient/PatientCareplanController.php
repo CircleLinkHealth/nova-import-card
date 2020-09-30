@@ -517,7 +517,7 @@ class PatientCareplanController extends Controller
             ];
         });
 
-        $phoneTypes = getPhoneTypes();
+        $phoneTypes = $this->getPhoneTypes();
 
         $allowNonUsPhones = allowNonUsPhones();
 
@@ -584,7 +584,7 @@ class PatientCareplanController extends Controller
         return [
             ucfirst(PhoneNumber::MOBILE),
             ucfirst(PhoneNumber::HOME),
-            ucfirst(PhoneNumber::WORK),
+            ucfirst(PhoneNumber::ALTERNATE),
         ];
     }
 
