@@ -25,7 +25,7 @@ class RenamePhoneNumberWorkType extends Migration
      */
     public function up()
     {
-        DB::table('phone_numbers')->where('type', '=', PhoneNumber::WORK)->update(
+        DB::table('phone_numbers')->where('type', '=', 'work')->update(
             [
                 'type' => PhoneNumber::ALTERNATE,
             ]
