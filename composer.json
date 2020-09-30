@@ -36,5 +36,7 @@
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/synonyms.git"
     }
-  ]
+  ],
+  "prefer-stable": true,
+  "minimum-stability": "dev"
 }
