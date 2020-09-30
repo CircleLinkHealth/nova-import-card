@@ -11,8 +11,7 @@
                                style="margin-left: 20px;"
                                @click="selectedNumber(number.number)"
                                type="radio"
-                               v-model="selectedNumberToCall"
-                               :checked="numberIsPrimary(number)">
+                               v-model="selectedNumberToCall">
                     </div>
 
                     <div v-if="number.number.length !== 0" style="display: inline-flex;">
