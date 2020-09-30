@@ -74,7 +74,7 @@
                 <span class="input-group-addon" style="padding-right: 26px; padding-top: 10px;">+1</span>
                 <input name="number"
                        class="form-control phone-number"
-                       maxlength="10"
+                       :maxlength="maxNumberLength()"
                        type="tel"
                        title="10-digit US Phone Number"
                        :placeholder="input.placeholder"
@@ -150,6 +150,7 @@
         props: [
             'userId',
             'callEnabled',
+            'allowNonUsPhones',
             'error',
         ],
 
@@ -203,7 +204,7 @@
                 return this.loading
                     || this.newPhoneType === null
                     || isNaN(this.newPhoneNumber.toString())
-                    || this.newPhoneNumber.toString().length !== 10;
+                    || this.newPhoneNumber.toString().length !== this.maxNumberLength();
 
             },
 
@@ -241,11 +242,19 @@
         },
 
         methods: {
+            maxNumberLength(){
+                if (this.allowNonUsPhones){
+                    return 12;
+                }
+
+                return 10;
+            },
+
             phoneTypeIsRequired(){
                 if (this.newPhoneType === null){
                     return true;
                 }
-                return this.newPhoneNumber.length === 10 && this.newPhoneType.length === 0;
+                return this.newPhoneNumber.length === this.maxNumberLength() && this.newPhoneType.length === 0;
             },
             shouldShowMakePrimary(number){
                 return number.type.toLowerCase() !== alternate;
@@ -348,7 +357,7 @@
                 this.filterOutSavedPhoneTypes();
 
                 const arr = {
-                  placeholder: '5417543120'
+                  placeholder: '1234567890'
                 };
 
                 this.newInputs.push(arr);

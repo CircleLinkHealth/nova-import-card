@@ -1342,6 +1342,16 @@ if ( ! function_exists('getPhoneTypes')) {
     }
 }
 
+if ( ! function_exists('allowNonUsPhones')) {
+    /**
+     * @return bool
+     */
+    function allowNonUsPhones()
+    {
+        return ! isProductionEnv() && boolval(AppConfig::pull('allow_non_us_phone', false));
+    }
+}
+
 if ( ! function_exists('getGoogleDirectoryByName')) {
     function getGoogleDirectoryByName($name)
     {

@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "a17c5435ae3438cc64a34437d9fd574eb4602523"
+                "reference": "678992d92aad41396a943768a2703673f31924e2"
             },
             "type": "laravel-module",
             "extra": {
@@ -992,7 +992,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-09-28T22:13:35+00:00"
+            "time": "2020-09-29T17:59:33+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1001,6 +1001,12 @@
                 "type": "git",
                 "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
                 "reference": "384cc9561cfc4c694f72b6ec9762b8eef70c9ddc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/384cc9561cfc4c694f72b6ec9762b8eef70c9ddc",
+                "reference": "384cc9561cfc4c694f72b6ec9762b8eef70c9ddc",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "~5.0|~6.0|~7.0",
@@ -1081,8 +1087,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "bb869cb6bb70b2c7cc2844ff44a4f88c7cc45e08",
-                "shasum": null
+                "reference": "bb869cb6bb70b2c7cc2844ff44a4f88c7cc45e08"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1118,8 +1123,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
-                "reference": "1bbdc8741c1bce578b353148a21acb8186232dbe",
-                "shasum": null
+                "reference": "1bbdc8741c1bce578b353148a21acb8186232dbe"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1258,7 +1262,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "eb96e0a8dc8845c48b4119b2442d4a1ffefa4856"
+                "reference": "21e1ca849219e7ac8ca0554c201d8ae0a34606e0"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1292,7 +1296,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-29T06:09:24+00:00"
+            "time": "2020-09-29T17:59:34+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1334,8 +1338,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
-                "reference": "b6cf4442f05d1bf70a7740842be0523456f73b14",
-                "shasum": null
+                "reference": "b6cf4442f05d1bf70a7740842be0523456f73b14"
             },
             "require": {
                 "anaseqal/nova-import": "^0.0.3",
@@ -1372,8 +1375,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "bd5f5af9bff0a3e12ab6dd3ecf2ba68ab0929a88",
-                "shasum": null
+                "reference": "bd5f5af9bff0a3e12ab6dd3ecf2ba68ab0929a88"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1409,8 +1411,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
-                "reference": "8d2f73917c098fb67e5c3e1d4e957838b1ce33a4",
-                "shasum": null
+                "reference": "8d2f73917c098fb67e5c3e1d4e957838b1ce33a4"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1446,8 +1447,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "6faa8301ceb8b7fb3ff64fa5d7c616f279ab8fe2",
-                "shasum": null
+                "reference": "6faa8301ceb8b7fb3ff64fa5d7c616f279ab8fe2"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -1484,8 +1484,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
-                "reference": "7b4fcc04ab2b3522353cc2707bafc9452ac690b1",
-                "shasum": null
+                "reference": "7b4fcc04ab2b3522353cc2707bafc9452ac690b1"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1699,7 +1698,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "f97ff85f15f141c2ca2d283d10ae7c9f804a2e95"
+                "reference": "5f31a59eef076336a3be6715a707b160114b7813"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1713,7 +1712,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-28T22:51:42+00:00"
+            "time": "2020-09-29T15:07:09+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1754,7 +1753,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "23c2f27577eb38fc536183fb05bbfc0a0e514d6e"
+                "reference": "0cc9c2345147059d3fd99d3ac3d7f864814e1bb5"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1779,7 +1778,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-29T00:09:23+00:00"
+            "time": "2020-09-29T15:07:09+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -5023,17 +5022,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.10.0",
+            "version": "v3.11.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "5ccdcc817b190505d21cd4ca1a75cf1ca113238f"
+                "reference": "829c3f40348435dff5b2a802d2f3fc2f6a8ed59b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-5ccdcc817b190505d21cd4ca1a75cf1ca113238f-zip-179efb.zip",
-                "reference": "5ccdcc817b190505d21cd4ca1a75cf1ca113238f",
-                "shasum": "4eb7f94a130999d70ca04fae4d89bcabbc4e2b18"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-829c3f40348435dff5b2a802d2f3fc2f6a8ed59b-zip-97176c.zip",
+                "reference": "829c3f40348435dff5b2a802d2f3fc2f6a8ed59b",
+                "shasum": "7f984f64ffa6eb493c13242139098c19dc1f83a6"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5094,7 +5093,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-09-15T15:34:07+00:00"
+            "time": "2020-09-29T16:02:37+00:00"
         },
         {
             "name": "laravel/passport",
@@ -11842,16 +11841,16 @@
         },
         {
             "name": "symfony/psr-http-message-bridge",
-            "version": "v2.0.1",
+            "version": "v2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/psr-http-message-bridge.git",
-                "reference": "e44f249afab496b4e8c0f7461fb8140eaa4b24d2"
+                "reference": "51a21cb3ba3927d4b4bf8f25cc55763351af5f2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/psr-http-message-bridge/zipball/e44f249afab496b4e8c0f7461fb8140eaa4b24d2",
-                "reference": "e44f249afab496b4e8c0f7461fb8140eaa4b24d2",
+                "url": "https://api.github.com/repos/symfony/psr-http-message-bridge/zipball/51a21cb3ba3927d4b4bf8f25cc55763351af5f2e",
+                "reference": "51a21cb3ba3927d4b4bf8f25cc55763351af5f2e",
                 "shasum": ""
             },
             "require": {
@@ -11902,7 +11901,21 @@
                 "psr-17",
                 "psr-7"
             ],
-            "time": "2020-06-25T08:21:47+00:00"
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-09-29T08:17:46+00:00"
         },
         {
             "name": "symfony/routing",
@@ -15148,16 +15161,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.12.0",
+            "version": "1.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "765cd5d5d237525f8bbadaec5dc161c83a369119"
+                "reference": "8ce87516be71aae9b956f81906aaf0338e0d8a2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/765cd5d5d237525f8bbadaec5dc161c83a369119",
-                "reference": "765cd5d5d237525f8bbadaec5dc161c83a369119",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/8ce87516be71aae9b956f81906aaf0338e0d8a2d",
+                "reference": "8ce87516be71aae9b956f81906aaf0338e0d8a2d",
                 "shasum": ""
             },
             "require": {
@@ -15207,20 +15220,20 @@
                 "spy",
                 "stub"
             ],
-            "time": "2020-09-28T12:23:07+00:00"
+            "time": "2020-09-29T09:10:42+00:00"
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.46",
+            "version": "0.12.47",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "9419738e20f0c49757be05d22969c1c44c1dff3b"
+                "reference": "74325a6ae15378db0df71b969ded245378d2e058"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9419738e20f0c49757be05d22969c1c44c1dff3b",
-                "reference": "9419738e20f0c49757be05d22969c1c44c1dff3b",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/74325a6ae15378db0df71b969ded245378d2e058",
+                "reference": "74325a6ae15378db0df71b969ded245378d2e058",
                 "shasum": ""
             },
             "require": {
@@ -15249,7 +15262,21 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-09-28T09:48:55+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/ondrejmirtes",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/phpstan",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-09-29T13:35:39+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -17024,5 +17051,6 @@
         "ext-simplexml": "*",
         "ext-zend-opcache": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

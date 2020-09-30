@@ -302,6 +302,9 @@
 
             patientNumberToCall() {
                 if (this.radioSelectedNumber.length !== 0) {
+                    if (this.debug){
+                        return "+" + this.radioSelectedNumber;
+                    }
                     return "+1" + this.radioSelectedNumber;
                 }
             },

@@ -194,7 +194,10 @@ class PatientController extends Controller
         $phoneNumber = $request->input('phoneNumber');
         $userId      = $request->input('patientUserId');
 
-        $phoneNumber = formatPhoneNumberE164($phoneNumber);
+        if (! allowNonUsPhones()) {
+            $phoneNumber = formatPhoneNumberE164($phoneNumber);
+        }
+
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
         $locationId  = $request->get('locationId');
@@ -254,6 +257,7 @@ class PatientController extends Controller
                 'patient'                  => $user,
                 'clinicalEscalationNumber' => $clinicalEscalationNumber,
                 'cpmToken'                 => $cpmToken,
+                'allowNonUsPhones'         => allowNonUsPhones(),
             ]);
     }
 
