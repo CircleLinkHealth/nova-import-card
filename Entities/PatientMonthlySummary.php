@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -122,6 +123,7 @@ use Illuminate\Support\Facades\DB;
 class PatientMonthlySummary extends BaseModel
 {
     use HasChargeableServices;
+    use DateScopesTrait;
 
     protected $dates = [
         'month_year',
