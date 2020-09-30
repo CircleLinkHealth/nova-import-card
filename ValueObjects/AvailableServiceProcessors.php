@@ -83,8 +83,11 @@ class AvailableServiceProcessors implements Arrayable
     {
         $self = new static();
         foreach ($serviceProcessors as $processor) {
-            $func = 'set'.ucwords(self::classMap()[get_class($processor)]);
-            $self->$func($processor);
+            $func = 'set'.ucwords(self::classMap()[get_class($processor)] ?? null);
+
+            if (method_exists($self, $func)) {
+                $self->$func($processor);
+            }
         }
 
         return $self;
