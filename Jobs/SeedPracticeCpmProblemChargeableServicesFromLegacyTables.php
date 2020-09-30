@@ -55,7 +55,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
     {
         /** @var Collection */
         $practice = Practice::with([
-            'locations.chargeableServiceSummaries' => fn ($s) => $s->createdOn(Carbon::now()->startOfMonth()),
+            'locations.chargeableServiceSummaries' => fn ($s) => $s->createdOn(Carbon::now()->startOfMonth(), 'chargeable_month'),
             'pcmProblems',
         ])
             ->findOrFail($this->practiceId);
