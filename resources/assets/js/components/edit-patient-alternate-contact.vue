@@ -5,15 +5,17 @@
             <loader v-if="loading"></loader>
         </div>
 
-        <div v-if="!loading" class="alternate-fields">
-            <span v-if="!loading && shouldDisplayHelpText"
-            class="help-block"
-            title="Missing alternate contact details(optional)."
-            style="color: #50b2e2; font-size: 15px; cursor: pointer"
-            @click="showAlternateFields">
+        <div>
+            <button v-if="!loading && shouldDisplayHelpText"
+                      class="help-block"
+                      title="Missing alternate contact details(optional)."
+                      style="color: #50b2e2; font-size: 15px; cursor: pointer"
+                      @click="showAlternateFields">
                 {{helperText}}
-            </span>
+            </button>
+        </div>
 
+        <div v-if="!loading" class="alternate-fields">
             <div v-if="enableAlternateFields">
                 <input name="alternativeContactName"
                        class="form-control alternative-field"
@@ -465,12 +467,17 @@ export default {
 }
 
     .alternate-fields{
-        margin-top: 15px;
         margin-bottom: 15px;
     }
 
     .alt-btns{
         max-width: 310px;
         min-width: 310px;
+    }
+
+    .help-block{
+        background: transparent;
+        border: solid 1px;
+        padding: 5px;
     }
 </style>
