@@ -230,8 +230,9 @@ trait UserHelpers
                 //phones
                 'home_phone_number' => $workPhone,
 
-                'ccm_status' => $ccmStatus,
-                'birth_date' => $faker->date('Y-m-d'),
+                'ccm_status'   => $ccmStatus,
+                'consent_date' => Patient::ENROLLED === $ccmStatus ? Carbon::now() : null,
+                'birth_date'   => $faker->date('Y-m-d'),
             ]
         );
 
