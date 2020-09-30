@@ -3,7 +3,7 @@
         <div class="input-group">
             <span v-if="this.error !== ''" class="help-block" style="color: red">{{this.error}}</span>
             <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Number<br>to Call</h5>
-            <template v-if="true" v-for="(number, index) in patientPhoneNumbers">
+            <template v-for="(number, index) in patientPhoneNumbers">
                 <div class="numbers">
                     <div v-if="callEnabled && number.number !== ''" style="margin-top: 7px;">
                         <input name="isPrimary"
@@ -15,8 +15,7 @@
                                :checked="numberIsPrimary(number)">
                     </div>
 
-                    <div v-if="number.number.length !== 0"
-                        style="display: inline-flex;">
+                    <div v-if="number.number.length !== 0" style="display: inline-flex;">
                         <div class="types">
                             <input name="type"
                                    class="form-control phone-type"
@@ -35,20 +34,23 @@
                                :disabled="true"/>
                     </div>
 
-                    <button v-if="!loading"
+                    <button v-if="shouldShowMakePrimary(number)"
                             class="btn btn-success btn-sm update-primaryNumber"
                             type="button"
                             style="display: inline;"
                             @click="updatePrimaryPhone(number.phoneNumberId)"
-                            :disabled="number.isPrimary || ! shouldShowMakePrimary(number)">
+                            :disabled="disableMakePrimary(number)">
                         Make primary
                     </button>
 
-                    <button v-if="!loading && number.isPrimary === false && number.number.length !== 0"
+                    <button v-if="number.isPrimary === false && number.number.length !== 0"
                             type="button"
                             class="btn btn-danger btn-sm remove-phone"
                             title="Delete Phone Number"
-                            @click="deletePhone(number)">Delete</button>
+                            @click="deletePhone(number)"
+                            :disabled="loading">
+                        Delete
+                    </button>
                 </div>
 
 
@@ -242,6 +244,10 @@
         },
 
         methods: {
+            disableMakePrimary(number){
+                return number.isPrimary || this.loading;
+            },
+
             maxNumberLength(){
                 if (this.allowNonUsPhones){
                     return 12;
@@ -256,8 +262,9 @@
                 }
                 return this.newPhoneNumber.length === this.maxNumberLength() && this.newPhoneType.length === 0;
             },
+
             shouldShowMakePrimary(number){
-                return number.type.toLowerCase() !== alternate;
+                return number.type.toLowerCase() !== alternate && number.isPrimary === false;
             },
 
             filterOutSavedPhoneTypes(){
@@ -428,6 +435,7 @@
             },
 
             deletePhone(number){
+                this.loading = true;
                 if (number.type.toLowerCase() === alternate){
                     this.$refs.editPatientAlternateContact.deleteAlternateContact(true);
                     return;
