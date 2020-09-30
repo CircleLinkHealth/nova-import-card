@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
+use CircleLinkHealth\Synonyms\Traits\Synonymable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 
@@ -86,6 +87,7 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     use Notifiable;
     use Searchable;
     use SoftDeletes;
+    use Synonymable;
 
     //Aprima's constant location id.
     const UPG_PARENT_LOCATION_ID = 26;
