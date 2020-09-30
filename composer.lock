@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "987a0a8e5a6d774f70069845cd15e780",
+    "content-hash": "b95e042504cde6731fbac5375893a378",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1236,11 +1236,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-billing-shenanigans",
+            "version": "dev-road_222_migrate",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "c92f5fddd12e25e776341ee626f2fad321f83c44"
+                "reference": "2015032e38d4072dbdf544d91911f49af750afe1"
             },
             "type": "laravel-module",
             "extra": {
@@ -1262,15 +1262,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-28T22:27:30+00:00"
+            "time": "2020-09-30T11:54:19+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-ROAD-288-billing-new-schema-models",
+            "version": "dev-Road-222_customer",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "21e1ca849219e7ac8ca0554c201d8ae0a34606e0"
+                "reference": "201380e9ef6feb5cedbd2e1f45cd0248eda60211"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1304,7 +1304,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-29T17:59:34+00:00"
+            "time": "2020-09-30T12:54:22+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",

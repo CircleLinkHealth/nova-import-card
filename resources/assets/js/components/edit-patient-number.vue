@@ -101,12 +101,12 @@
                 </div>
             </div>
 
-            <a v-if="allowAddingNewNumber"
-               class="glyphicon glyphicon-plus-sign add-new-number"
+            <button class="glyphicon glyphicon-plus-sign add-new-number"
                title="Add Phone Number"
-               @click="addPhoneField()">
+               @click="addPhoneField()"
+               :disabled="!allowAddingNewNumber">
                 Add phone number
-            </a>
+            </button>
 
             <div v-if="shouldShowAgentContactComponent">
                 <edit-patient-agent-contact ref="editPatientAgentContact"
@@ -531,6 +531,8 @@
         cursor: pointer;
         padding: 10px;
         margin-bottom: 15px;
+       background: transparent;
+       border: none;
     }
 
     .plus-one{
