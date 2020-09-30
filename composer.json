@@ -158,10 +158,6 @@
       "url": "./nova-components/EnrollmentInvites"
     },
     {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/synonyms.git"
-    },
-    {
       "type": "path",
       "url": "./nova-components/InvoicesDownload"
     }
@@ -195,7 +191,6 @@
     "circlelinkhealth/cpm-migrations-module": "2.5.2",
     "circlelinkhealth/customer-module": "3.3.8",
     "circlelinkhealth/eligibility-module": "dev-ROAD-351",
-    "circlelinkhealth/synonyms-module": "*",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
