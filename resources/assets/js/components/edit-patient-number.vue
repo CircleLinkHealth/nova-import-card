@@ -101,8 +101,9 @@
             </div>
 
             <button class="glyphicon glyphicon-plus-sign add-new-number"
-               title="Add Phone Number"
-               @click="addPhoneField()">
+                    title="Add Phone Number"
+                    type="button"
+                    @click="addPhoneField()">
                 Add phone number
             </button>
 
