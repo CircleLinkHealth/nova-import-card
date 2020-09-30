@@ -23,20 +23,13 @@
       "CircleLinkHealth\\Eligibility\\": ""
     }
   },
-  "require": {
-    "circlelinkhealth/customer-module": "*",
-    "circlelinkhealth/synonyms": "*"
-  },
   "repositories": [
     {
       "type": "git",
       "url": "git@github.com:circlelinkhealth/module-customer.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/synonyms.git"
     }
   ],
-  "prefer-stable": true,
-  "minimum-stability": "dev"
+  "require": {
+    "circlelinkhealth/customer-module": "*"
+  }
 }
