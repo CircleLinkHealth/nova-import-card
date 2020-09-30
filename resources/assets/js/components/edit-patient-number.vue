@@ -443,6 +443,7 @@
                 }
 
                 if (! confirm("Are you sure you want to delete this phone number")){
+                    this.loading = false;
                     return;
                 }
 
