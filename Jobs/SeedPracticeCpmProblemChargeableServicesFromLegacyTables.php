@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
+use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -53,7 +54,10 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
     public function handle()
     {
         /** @var Collection */
-        $practice = Practice::with(['locations', 'pcmProblems'])
+        $practice = Practice::with([
+            'locations.chargeableServiceSummaries' => fn ($s) => $s->createdOn(Carbon::now()->startOfMonth()),
+            'pcmProblems',
+        ])
             ->findOrFail($this->practiceId);
 
         $practicePcmProblems = $practice->pcmProblems;
@@ -71,6 +75,9 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
             ->locations
             ->each(function (Location $location) use (&$toCreate, $practicePcmProblems) {
                 LocationProblemService::where('location_id', $location->id)->delete();
+                $locationHasCcm = $location->chargeableServiceSummaries->firstWhere('chargeable_service_id', $this->ccmCodeId);
+                $locationHasBhi = $location->chargeableServiceSummaries->firstWhere('chargeable_service_id', $this->bhiCodeId);
+                $locationHasPcm = $location->chargeableServiceSummaries->firstWhere('chargeable_service_id', $this->pcmCodeId);
                 foreach ($this->cpmProblems as $problem) {
                     $isDementia = 'Dementia' === $problem->name;
                     $isDepression = 'Depression' === $problem->name;
@@ -83,15 +90,15 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                         }
                     )->count() > 0;
 
-                    if ($isBhi || $isDementia || $isDementia) {
+                    if (($isBhi || $isDementia || $isDementia) && $locationHasBhi) {
                         $this->repo()->store($location->id, $problem->id, $this->bhiCodeId);
                     }
 
-                    if ($isPcm) {
+                    if ($isPcm && $locationHasPcm) {
                         $this->repo()->store($location->id, $problem->id, $this->pcmCodeId);
                     }
 
-                    if ( ! $isBhi || $isDementia || $isDepression) {
+                    if (( ! $isBhi || $isDementia || $isDepression) && $locationHasCcm) {
                         $this->repo()->store($location->id, $problem->id, $this->ccmCodeId);
                     }
                 }
