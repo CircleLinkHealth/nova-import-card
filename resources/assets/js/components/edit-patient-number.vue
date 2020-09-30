@@ -2,8 +2,8 @@
     <div class="phone-numbers">
         <div class="input-group">
             <span v-if="this.error !== ''" class="help-block" style="color: red">{{this.error}}</span>
-            <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Number<br>to Call</h5>
-            <template v-if="true" v-for="(number, index) in patientPhoneNumbers">
+            <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Select a number<br>to call</h5>
+            <template v-for="(number, index) in patientPhoneNumbers">
                 <div class="numbers">
                     <div v-if="callEnabled && number.number !== ''" style="margin-top: 7px;">
                         <input name="isPrimary"
@@ -11,12 +11,10 @@
                                style="margin-left: 20px;"
                                @click="selectedNumber(number.number)"
                                type="radio"
-                               v-model="selectedNumberToCall"
-                               :checked="numberIsPrimary(number)">
+                               v-model="selectedNumberToCall">
                     </div>
 
-                    <div v-if="number.number.length !== 0"
-                        style="display: inline-flex;">
+                    <div v-if="number.number.length !== 0" style="display: inline-flex;">
                         <div class="types">
                             <input name="type"
                                    class="form-control phone-type"
@@ -35,20 +33,23 @@
                                :disabled="true"/>
                     </div>
 
-                    <button v-if="!loading"
+                    <button v-if="shouldShowMakePrimary(number)"
                             class="btn btn-success btn-sm update-primaryNumber"
                             type="button"
                             style="display: inline;"
                             @click="updatePrimaryPhone(number.phoneNumberId)"
-                            :disabled="number.isPrimary || ! shouldShowMakePrimary(number)">
+                            :disabled="disableMakePrimary(number)">
                         Make primary
                     </button>
 
-                    <button v-if="!loading && number.isPrimary === false && number.number.length !== 0"
+                    <button v-if="number.isPrimary === false && number.number.length !== 0"
                             type="button"
                             class="btn btn-danger btn-sm remove-phone"
                             title="Delete Phone Number"
-                            @click="deletePhone(number)">Delete</button>
+                            @click="deletePhone(number)"
+                            :disabled="loading">
+                        Delete
+                    </button>
                 </div>
 
 
@@ -99,24 +100,24 @@
                 </div>
             </div>
 
-            <a v-if="allowAddingNewNumber"
-               class="glyphicon glyphicon-plus-sign add-new-number"
+            <button class="glyphicon glyphicon-plus-sign add-new-number"
                title="Add Phone Number"
                @click="addPhoneField()">
                 Add phone number
-            </a>
-            <div v-if="shouldShowAlternateContactComponent">
-                <edit-patient-alternate-contact ref="editPatientAlternateContact"
+            </button>
+
+            <div v-if="shouldShowAgentContactComponent">
+                <edit-patient-agent-contact ref="editPatientAgentContact"
                                                 :user-id="userId"
                                                 :call-enabled="callEnabled"
-                                                :alt-contact="alternateContactDetails[0]">
-                </edit-patient-alternate-contact>
+                                                :alt-contact="agentContactDetails[0]">
+                </edit-patient-agent-contact>
             </div>
         </div>
 
         <div v-if="phoneTypeIsRequired()">
                     <span class="help-block"
-                          title="Missing alternate phone number type"
+                          title="Missing agent phone number type"
                           style="color: #ff6565; font-size: 15px; cursor: pointer">
                Please choose phone number type
             </span>
@@ -132,10 +133,10 @@
     import axios from "../bootstrap-axios";
     import EventBus from '../admin/time-tracker/comps/event-bus'
     import CallNumber from "./call-number";
-    import EditPatientAlternateContact from "./edit-patient-alternate-contact";
+    import EditPatientAgentContact from "./edit-patient-agent-contact";
     import VueSelect from "vue-select";
 
-    const alternate = 'alternate';
+    const agent = 'agent';
 
     export default {
         name: "edit-patient-number",
@@ -143,7 +144,7 @@
         components: {
             'loader': LoaderComponent,
             'call-number':CallNumber,
-            'edit-patient-alternate-contact':EditPatientAlternateContact,
+            'edit-patient-agent-contact':EditPatientAgentContact,
             'v-select': VueSelect
         },
 
@@ -166,7 +167,7 @@
                 primaryNumber:'',
                 selectedNumberToCall:'',
                 phoneTypesFiltered:[],
-                alternateContactDetails:[
+                agentContactDetails:[
                     {
                         agentEmail:'',
                         agentName:'',
@@ -178,14 +179,14 @@
         },
 
         computed:{
-            shouldShowAlternateContactComponent(){
-                return this.alternateNumberIsSet || (!this.loading && this.callEnabled);
+            shouldShowAgentContactComponent(){
+                return this.agentNumberIsSet || (!this.loading && this.callEnabled);
             },
 
-            shouldDisplayAlternateDetailsText(){
+            shouldDisplayAgentDetailsText(){
                  return this.callEnabled
-                     && this.alternateContactDetails[0].agentRelationship.length !==0
-                     && this.alternateContactDetails[0].agentName.length !==0;
+                     && this.agentContactDetails[0].agentRelationship.length !==0
+                     && this.agentContactDetails[0].agentName.length !==0;
             },
 
             shouldDisplayNumberToCallText(){
@@ -194,7 +195,7 @@
 
             allowAddingNewNumber(){
                 const existingNumbers = this.patientPhoneNumbers.filter(number=>number.number.length !== 0
-                && number.type !== 'Alternate');
+                && number.type !== 'Agent');
 
                 return !this.loading && this.newInputs.length === 0
                     && existingNumbers.length < this.phoneTypes.length;
@@ -217,31 +218,35 @@
                     return'Save & Make Primary';
                 }
 
-                if (this.newNumberIsAlternate){
-                    return "Save alternate number";
+                if (this.newNumberIsAgent){
+                    return "Save agent number";
                 }
 
                 return "Add Number";
             },
 
-            newNumberIsAlternate(){
+            newNumberIsAgent(){
                 if (this.newPhoneType === null){
                     return false;
                 }
-                return this.newPhoneType.toLowerCase() === alternate;
+                return this.newPhoneType.toLowerCase() === agent;
             },
 
             addNewFieldClicked(){
                 return this.newInputs.length > 0;
             },
 
-            alternateNumberIsSet(){
+            agentNumberIsSet(){
                 return this.patientPhoneNumbers.filter(number=>number.number.length !== 0
-                    && number.type.toLowerCase() === alternate).length !== 0;
+                    && number.type.toLowerCase() === agent).length !== 0;
             },
         },
 
         methods: {
+            disableMakePrimary(number){
+                return number.isPrimary || this.loading;
+            },
+
             maxNumberLength(){
                 if (this.allowNonUsPhones){
                     return 12;
@@ -256,8 +261,9 @@
                 }
                 return this.newPhoneNumber.length === this.maxNumberLength() && this.newPhoneType.length === 0;
             },
+
             shouldShowMakePrimary(number){
-                return number.type.toLowerCase() !== alternate;
+                return number.type.toLowerCase() !== agent && number.isPrimary === false;
             },
 
             filterOutSavedPhoneTypes(){
@@ -330,14 +336,14 @@
                         this.phoneTypes.push(...response.data.phoneTypes);
                         if (response.data.agentContactFields.length !== 0){
                             const agentDetails = response.data.agentContactFields;
-                            this.alternateContactDetails[0].agentEmail = agentDetails.agentEmail;
-                            this.alternateContactDetails[0].agentName = agentDetails.agentName;
-                            this.alternateContactDetails[0].agentRelationship = agentDetails.agentRelationship;
-                            this.alternateContactDetails[0].agentTelephone = agentDetails.agentTelephone;
-                            this.initialAlternatePhoneSavedInDB = agentDetails.agentTelephone.number;
-                            this.initialAlternateEmailSavedInDB = agentDetails.agentEmail;
-                            this.initialAlternateRelationshipSavedInDB = agentDetails.agentRelationship;
-                            this.initialAlternateNameSavedInDB = agentDetails.agentName;
+                            this.agentContactDetails[0].agentEmail = agentDetails.agentEmail;
+                            this.agentContactDetails[0].agentName = agentDetails.agentName;
+                            this.agentContactDetails[0].agentRelationship = agentDetails.agentRelationship;
+                            this.agentContactDetails[0].agentTelephone = agentDetails.agentTelephone;
+                            this.initialAgentPhoneSavedInDB = agentDetails.agentTelephone.number;
+                            this.initialAgentEmailSavedInDB = agentDetails.agentEmail;
+                            this.initialAgentRelationshipSavedInDB = agentDetails.agentRelationship;
+                            this.initialAgentNameSavedInDB = agentDetails.agentName;
                         }
                         this.emitPrimaryNumber();
                         this.loading = false;
@@ -348,6 +354,11 @@
             },
 
             addPhoneField(){
+                if (! this.allowAddingNewNumber){
+                    alert('Please remove one phone number in order to add a new one');
+                    return;
+                }
+
                 if (this.newInputs.length > 0) {
                     alert('Please save the existing field first');
                     return;
@@ -364,8 +375,8 @@
             },
 
             addNewNumber(){
-                if (this.newNumberIsAlternate){
-                    this.saveNewAlternateNumberAndContactDetails();
+                if (this.newNumberIsAgent){
+                    this.saveNewAgentNumberAndContactDetails();
                 }else{
                     this.saveNewNumber();
                 }
@@ -428,12 +439,14 @@
             },
 
             deletePhone(number){
-                if (number.type.toLowerCase() === alternate){
-                    this.$refs.editPatientAlternateContact.deleteAlternateContact(true);
+                this.loading = true;
+                if (number.type.toLowerCase() === agent){
+                    this.$refs.editPatientAgentContact.deleteAgentContact(true);
                     return;
                 }
 
                 if (! confirm("Are you sure you want to delete this phone number")){
+                    this.loading = false;
                     return;
                 }
 
@@ -521,6 +534,8 @@
         cursor: pointer;
         padding: 10px;
         margin-bottom: 15px;
+       background: transparent;
+       border: none;
     }
 
     .plus-one{
