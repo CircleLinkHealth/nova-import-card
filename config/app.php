@@ -12,6 +12,7 @@ use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
+use CircleLinkHealth\Synonyms\Providers\SynonymsServiceProvider;
 use Illuminate\Support\Arr;
 
 $appUrl = env('APP_URL', 'http://cpm.dev');
@@ -226,6 +227,7 @@ return [
         \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
+        SynonymsServiceProvider::class,
     ],
 
     /*
