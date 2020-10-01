@@ -12,21 +12,22 @@ use CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision;
 
 class LogPatientCcmStatusForEndOfMonth
 {
+    const CCM_STATUS_NOT_SET = 'not set';
     const HOUR_WINDOW_FOR_CURRENT_CCM_STATUS_UPDATE_ON_NEW_MONTH = 6;
     const HOUR_WINDOW_FOR_LAST_HOURS_OF_MONTH                    = 2;
 
-    protected string $ccmStatus;
+    protected ?string $ccmStatus;
     protected Carbon $month;
     protected int $patientUserId;
 
-    public function __construct(int $patientUserId, string $ccmStatus, Carbon $month)
+    public function __construct(int $patientUserId, ?string $ccmStatus, Carbon $month)
     {
         $this->patientUserId = $patientUserId;
         $this->ccmStatus     = $ccmStatus;
         $this->month         = $month;
     }
 
-    public static function create(int $patientUserId, string $ccmStatus, Carbon $month): void
+    public static function create(int $patientUserId, ?string $ccmStatus, Carbon $month): void
     {
         (new static($patientUserId, $ccmStatus, $month))->log();
     }
@@ -34,7 +35,7 @@ class LogPatientCcmStatusForEndOfMonth
     public function log(): void
     {
         if ($this->shouldLogCurrentStatus()) {
-            $this->logStatus($this->ccmStatus);
+            $this->logStatus($this->getCurrentCcmStatus());
 
             return;
         }
@@ -54,10 +55,15 @@ class LogPatientCcmStatusForEndOfMonth
             ->get();
 
         if ($revisions->isEmpty()) {
-            return $this->ccmStatus;
+            return $this->getCurrentCcmStatus();
         }
 
         return $revisions->first()->old_value;
+    }
+    
+    private function getCurrentCcmStatus():string
+    {
+        return $this->ccmStatus ?? self::CCM_STATUS_NOT_SET;
     }
 
     private function logStatus(string $ccmStatus): void
