@@ -31,6 +31,7 @@ class CompareCurrentAndLegacyBillingDataForPractice extends Job
     public static function fromParameters(...$parameters)
     {
         $date = isset($parameters[1]) ? Carbon::parse($parameters[1]) : null;
+
         return new self((int) $parameters[0], $date);
     }
 
