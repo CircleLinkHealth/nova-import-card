@@ -27,7 +27,8 @@
                        v-model="agentContactDetails[0].agentName"
                        :disabled="loading"/>
 
-                <input name="alternativeEmail"
+                <input v-if="shouldDisplayThisAgentField()"
+                       name="alternativeEmail"
                        class="form-control alternative-field"
                        type="text"
                        title="Type agent contact email"
@@ -35,7 +36,8 @@
                        v-model="agentContactDetails[0].agentEmail"
                        :disabled="loading"/>
                 <br>
-                <input name="alternativeRelationship"
+                <input v-if="shouldDisplayThisAgentField()"
+                       name="alternativeRelationship"
                        class="form-control alternative-field"
                        maxlength="20"
                        minlength="3"
@@ -262,6 +264,21 @@ export default {
     },
 
     methods:{
+        shouldDisplayThisAgentField(){
+            if(! this.callEnabled){
+                return true;
+            }
+
+            if(this.callEnabled
+            && (this.initialAgentEmailSavedInDB.length === 0
+                    || this.initialAgentRelationshipSavedInDB.length === 0)){
+                return true;
+            }
+
+            return false;
+        },
+
+
         deleteAgentContact(deleteAgentPhoneOnly){
             if (! confirm("Are you sure you want to delete agent phone?")){
                 return;
