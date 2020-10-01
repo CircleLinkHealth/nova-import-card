@@ -51,14 +51,8 @@
                         Delete
                     </button>
                 </div>
-
-
-
                 <br>
             </template>
-            <div>
-                <loader v-if="loading"></loader>
-            </div>
 
             <div v-for="(input, index) in newInputs"
                  :class="paddingLeft">
@@ -104,7 +98,7 @@
                 </div>
             </div>
 
-            <button v-if="this.newInputs.length === 0"
+            <button v-if="!loading && this.newInputs.length === 0"
                     class="add-new-number"
                     title="Add Phone Number"
                     type="button"
@@ -129,7 +123,9 @@
                Please choose phone number type
             </span>
         </div>
-
+        <div style="margin-left: 7px;">
+            <loader v-if="loading"></loader>
+        </div>
     </div>
 
 </template>
@@ -187,7 +183,7 @@
 
         computed:{
             paddingLeft(){
-                return this.callEnabled ? 'extraInputs' : 'kolos';
+                return this.callEnabled ? 'extraInputs' : 'shortPadding';
             },
 
             shouldShowAgentContactComponent(){
@@ -321,7 +317,6 @@
                     patientUserId:this.userId,
                 }).then((response => {
                         this.getPatientPhoneNumbers();
-                        this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
                     this.responseErrorMessage(error.response);
@@ -432,7 +427,6 @@
                         if (response.data.hasOwnProperty('message')){
                             console.log(response.data.message);
                         }
-                        this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
                     this.responseErrorMessage(error.response)
@@ -472,7 +466,6 @@
                 })
                     .then((response => {
                         this.getPatientPhoneNumbers();
-                        this.loading = false;
                         if (response.data.hasOwnProperty('message')){
                             console.log(response.data.message);
                         }
@@ -511,8 +504,8 @@
 
     .extraInputs{
         display: inline-flex;
-       padding-bottom: 10px;
-       white-space: nowrap;
+        padding-bottom: 10px;
+        white-space: nowrap;
         padding-left: 53px;
     }
     .phone-type{
@@ -597,7 +590,7 @@
         margin-bottom: -15px;
     }
 
-    .kolos{
+    .shortPadding{
         padding-left: 10px;
     }
 </style>
