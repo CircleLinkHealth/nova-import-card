@@ -1,5 +1,5 @@
 <template>
-    <div class="phone-numbers">
+    <div class="phone-numbers col-sm-12">
         <div class="input-group">
             <span v-if="this.error !== ''" class="help-block" style="color: red">{{this.error}}</span>
             <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Select a number to call</h5>
@@ -51,16 +51,11 @@
                         Delete
                     </button>
                 </div>
-
-
-
                 <br>
             </template>
-            <div>
-                <loader v-if="loading"></loader>
-            </div>
 
-            <div v-for="(input, index) in newInputs" class="extra-inputs">
+            <div v-for="(input, index) in newInputs"
+                 :class="paddingLeft">
                 <div style="padding-right: 14px; margin-left: -10px;">
                     <div class="numbers">
                         <div class="types">
@@ -103,7 +98,7 @@
                 </div>
             </div>
 
-            <button v-if="this.newInputs.length === 0"
+            <button v-if="!loading && this.newInputs.length === 0"
                     class="add-new-number"
                     title="Add Phone Number"
                     type="button"
@@ -128,7 +123,9 @@
                Please choose phone number type
             </span>
         </div>
-
+        <div style="margin-left: 7px;">
+            <loader v-if="loading"></loader>
+        </div>
     </div>
 
 </template>
@@ -185,6 +182,10 @@
         },
 
         computed:{
+            paddingLeft(){
+                return this.callEnabled ? 'extraInputs' : 'shortPadding';
+            },
+
             shouldShowAgentContactComponent(){
                 return this.agentNumberIsSet || (!this.loading && this.callEnabled);
             },
@@ -316,7 +317,6 @@
                     patientUserId:this.userId,
                 }).then((response => {
                         this.getPatientPhoneNumbers();
-                        this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
                     this.responseErrorMessage(error.response);
@@ -427,7 +427,6 @@
                         if (response.data.hasOwnProperty('message')){
                             console.log(response.data.message);
                         }
-                        this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
                     this.responseErrorMessage(error.response)
@@ -467,7 +466,6 @@
                 })
                     .then((response => {
                         this.getPatientPhoneNumbers();
-                        this.loading = false;
                         if (response.data.hasOwnProperty('message')){
                             console.log(response.data.message);
                         }
@@ -494,8 +492,9 @@
 <style scoped>
 
 #numberType{
-    width: 91px;
-}
+       min-width: 91px;
+   }
+
     .borderColor{
      border: #f62056 solid 1px;
     }
@@ -503,10 +502,10 @@
         float: left;
     }
 
-    .extra-inputs{
+    .extraInputs{
         display: inline-flex;
-       padding-bottom: 10px;
-       white-space: nowrap;
+        padding-bottom: 10px;
+        white-space: nowrap;
         padding-left: 53px;
     }
     .phone-type{
@@ -589,5 +588,9 @@
     .alt-contact-block{
         margin-top: 30px;
         margin-bottom: -15px;
+    }
+
+    .shortPadding{
+        padding-left: 10px;
     }
 </style>
