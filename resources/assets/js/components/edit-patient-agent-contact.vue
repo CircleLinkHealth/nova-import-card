@@ -496,5 +496,6 @@ export default {
         background: transparent;
         border: solid 1px;
         padding: 5px;
+        margin-left: 10px;
     }
 </style>
