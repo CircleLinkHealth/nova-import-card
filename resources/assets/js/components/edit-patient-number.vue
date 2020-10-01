@@ -1,5 +1,5 @@
 <template>
-    <div class="phone-numbers">
+    <div class="phone-numbers col-sm-12">
         <div class="input-group">
             <span v-if="this.error !== ''" class="help-block" style="color: red">{{this.error}}</span>
             <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Select a number to call</h5>
@@ -60,7 +60,8 @@
                 <loader v-if="loading"></loader>
             </div>
 
-            <div v-for="(input, index) in newInputs" class="extra-inputs">
+            <div v-for="(input, index) in newInputs"
+                 :class="paddingLeft">
                 <div style="padding-right: 14px; margin-left: -10px;">
                     <div class="numbers">
                         <div class="types">
@@ -185,6 +186,10 @@
         },
 
         computed:{
+            paddingLeft(){
+                return this.callEnabled ? 'extraInputs' : 'kolos';
+            },
+
             shouldShowAgentContactComponent(){
                 return this.agentNumberIsSet || (!this.loading && this.callEnabled);
             },
@@ -494,8 +499,9 @@
 <style scoped>
 
 #numberType{
-    width: 91px;
-}
+       min-width: 91px;
+   }
+
     .borderColor{
      border: #f62056 solid 1px;
     }
@@ -503,7 +509,7 @@
         float: left;
     }
 
-    .extra-inputs{
+    .extraInputs{
         display: inline-flex;
        padding-bottom: 10px;
        white-space: nowrap;
@@ -589,5 +595,9 @@
     .alt-contact-block{
         margin-top: 30px;
         margin-bottom: -15px;
+    }
+
+    .kolos{
+        padding-left: 10px;
     }
 </style>
