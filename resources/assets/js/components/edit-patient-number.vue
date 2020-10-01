@@ -2,7 +2,7 @@
     <div class="phone-numbers">
         <div class="input-group">
             <span v-if="this.error !== ''" class="help-block" style="color: red">{{this.error}}</span>
-            <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Select a number<br>to call</h5>
+            <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Select a number to call</h5>
             <template v-for="(number, index) in patientPhoneNumbers">
                 <div class="numbers">
                     <div v-if="callEnabled && number.number !== ''" style="margin-top: 7px;">
@@ -82,10 +82,13 @@
                        v-model="newPhoneNumber"
                        :disabled="loading"/>
 
-                <i v-if="!loading"
-                   class="glyphicon glyphicon-minus remove-input"
-                   title="Remove extra field"
-                   @click="removeInputField(index)"></i>
+                <button v-if="!loading"
+                   class="btn btn-sm remove-input"
+                        type="button"
+                        title="Remove extra field"
+                        @click="removeInputField(index)">
+                    Cancel
+                </button>
 
 
                         <button v-if="addNewFieldClicked"
@@ -100,10 +103,12 @@
                 </div>
             </div>
 
-            <button class="glyphicon glyphicon-plus-sign add-new-number"
+            <button v-if="this.newInputs.length === 0"
+                    class="add-new-number"
                     title="Add Phone Number"
                     type="button"
                     @click="addPhoneField()">
+                <i class="fa fa-fw fa-plus"></i>
                 Add phone number
             </button>
 
@@ -488,6 +493,9 @@
 
 <style scoped>
 
+#numberType{
+    width: 91px;
+}
     .borderColor{
      border: #f62056 solid 1px;
     }
@@ -498,8 +506,8 @@
     .extra-inputs{
         display: inline-flex;
        padding-bottom: 10px;
-       padding-left: 10px;
        white-space: nowrap;
+        padding-left: 53px;
     }
     .phone-type{
         min-width:  90px;
@@ -509,16 +517,14 @@
     }
     .remove-phone{
         cursor: pointer;
-        margin-left: 10px;
         height: 29px;
-        }
+    }
 
     .remove-input{
-        margin-left: 19px;
-        padding-top: 5px;
-        color: red;
-        cursor: pointer;
-        background-color: transparent;
+        margin-left: 15px;
+        height: 29px;
+        padding: 5px;
+        color: #50b2e2;
     }
 
    .save-number{
@@ -529,9 +535,8 @@
     }
 
    .add-new-number{
-        word-spacing: -10px;
         color: #50b2e2;
-        font-size: 20px;
+        font-size: 15px;
         cursor: pointer;
         padding: 10px;
         margin-bottom: 15px;
@@ -572,6 +577,7 @@
     .update-primaryNumber{
         height: 29px;
         padding: 5px;
+        margin-right: 5px;
         background-color: #5cb85c;
         color: white;
     }
