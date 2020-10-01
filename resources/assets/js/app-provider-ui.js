@@ -91,7 +91,7 @@ const SendEmailToPatientComponent = () => import('./components/send-email-to-pat
 const AttestCallConditionsModalComponent = () => import(/* webpackChunkName: "chunk-attest-call-conditions" */  './components/attest-call-conditions.modal');
 const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarDailyReport');
 const EditPatientNumber = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-number');
-const EditPatientAlternateContact = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-alternate-contact');
+const EditPatientAlternateContact = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-agent-contact');
 
 
 Vue.component('attest-call-conditions-modal', AttestCallConditionsModalComponent);
