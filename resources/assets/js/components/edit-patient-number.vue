@@ -500,6 +500,7 @@
     }
     .phone-numbers{
         float: left;
+        margin-left: -24px;
     }
 
     .extraInputs{
@@ -520,14 +521,14 @@
     }
 
     .remove-input{
-        margin-left: 15px;
+        margin-left: 10px;
         height: 29px;
         padding: 5px;
         color: #50b2e2;
     }
 
    .save-number{
-        margin-left: 15px;
+        margin-left: 5px;
         height: 29px;
         padding: 5px;
         color: #50b2e2;
@@ -592,5 +593,9 @@
 
     .shortPadding{
         padding-left: 10px;
+    }
+
+    .add-agent{
+        margin-left: 10px;
     }
 </style>
