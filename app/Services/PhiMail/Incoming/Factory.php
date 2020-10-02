@@ -11,7 +11,7 @@ use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\Services\PhiMail\Incoming\Handlers\Plain;
 use App\Services\PhiMail\Incoming\Handlers\Unknown;
 use App\Services\PhiMail\Incoming\Handlers\XML;
-use App\Services\PhiMail\ShowResult;
+use App\Services\PhiMail\Incoming\Handlers\Zip;
 use Illuminate\Support\Str;
 
 class Factory
@@ -25,6 +25,7 @@ class Factory
         'plain',
         'xml',
         'pdf',
+        'zip',
     ];
 
     /**
@@ -37,11 +38,11 @@ class Factory
      *
      * @return
      */
-    public static function create(DirectMailMessage &$dm, ShowResult $showRes): IncomingDMMimeHandlerInterface
+    public static function create(DirectMailMessage &$dm, string $mimeType, string $attachment): IncomingDMMimeHandlerInterface
     {
         $static = new static();
 
-        return $static->{$static->getHandlerMethodName($showRes->mimeType)}($dm, $showRes->data);
+        return $static->{$static->getHandlerMethodName($mimeType)}($dm, $attachment);
     }
 
     private function getHandlerMethodName(string $mimeType)
@@ -75,5 +76,10 @@ class Factory
     private function handleXmlMimeType(DirectMailMessage &$dm, string $attachmentData): IncomingDMMimeHandlerInterface
     {
         return new XML($dm, $attachmentData);
+    }
+
+    private function handleZipMimeType(DirectMailMessage &$dm, string $attachmentData): IncomingDMMimeHandlerInterface
+    {
+        return new Zip($dm, $attachmentData);
     }
 }
