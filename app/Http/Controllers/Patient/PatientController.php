@@ -342,17 +342,24 @@ class PatientController extends Controller
         return view('wpUsers.patient.listing');
     }
 
-    public function showPatientListingPdf(PdfService $pdfService)
+    public function showPatientListingPdf(Request $request, PdfService $pdfService)
     {
         if (auth()->user()->isCareCoach()) {
             abort(403);
+        }
+
+        $showPracticePatientsInput = $request->input('showPracticePatients', null);
+        $isProvider                = auth()->user()->isProvider();
+        $showPracticePatients      = true;
+        if ($isProvider && (User::SCOPE_LOCATION === auth()->user()->scope || 'false' === $showPracticePatientsInput)) {
+            $showPracticePatients = false;
         }
 
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
         $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';
         $file             = $pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
-            'patients' => $this->formatter->patients(),
+            'patients' => $this->formatter->patients(null, $showPracticePatients),
         ], null, [
             'orientation'  => 'Landscape',
             'margin-left'  => '3',
