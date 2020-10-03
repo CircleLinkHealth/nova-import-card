@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8598ec664ac5e6dd16145dc14098dd13",
+    "content-hash": "952366c0c4de53c778502201ae8e1e03",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.158.0",
+            "version": "3.158.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "59345aa45161a8f83c3a0027a7df9567ae72cc85"
+                "reference": "55ae8bdf2eb2f9774193fa79c6fc436835c42db4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/59345aa45161a8f83c3a0027a7df9567ae72cc85",
-                "reference": "59345aa45161a8f83c3a0027a7df9567ae72cc85",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/55ae8bdf2eb2f9774193fa79c6fc436835c42db4",
+                "reference": "55ae8bdf2eb2f9774193fa79c6fc436835c42db4",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-10-01T18:41:53+00:00"
+            "time": "2020-10-02T18:16:40+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1190,11 +1190,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.5.2",
+            "version": "v2.5.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "65d625ff77d3a2f2e9271bc55a11e9bb45bc587f"
+                "reference": "200b188a861c8ea9988c1a9b69e666abc1e87a95"
             },
             "type": "laravel-module",
             "extra": {
@@ -1216,15 +1216,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-23T17:17:44+00:00"
+            "time": "2020-10-03T04:02:35+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-ROAD-351",
+            "version": "v3.3.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "2c0419049e732b120218134227f59ff888c2301a"
+                "reference": "43607782203405dfd875283a4b5cd65a61e19e5c"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1258,15 +1258,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-30T13:48:52+00:00"
+            "time": "2020-10-03T04:00:56+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-ROAD-351",
+            "version": "v3.4.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "fdeb466cf654ec22a7944403d5189aaf4e44d14c"
+                "reference": "4fb388a785df117c0c64303b6f1723390bec107f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1293,7 +1293,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-30T16:02:26+00:00"
+            "time": "2020-10-03T04:03:33+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1657,11 +1657,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-ROAD-351",
+            "version": "v1.7.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "bf7a399630781f77f7522beb0d82ba732a528fb3"
+                "reference": "a5085b2b7f83e35dff56c73b1e50579ae3750430"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1675,7 +1675,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-01T23:46:29+00:00"
+            "time": "2020-10-03T04:01:49+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -3560,16 +3560,16 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.13.0",
+            "version": "v1.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "173191f5defd1d9ae8bdfc28da31b63eb73dd34e"
+                "reference": "95c23ebd89a0a4d1b511aed81426f57388ab7268"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/173191f5defd1d9ae8bdfc28da31b63eb73dd34e",
-                "reference": "173191f5defd1d9ae8bdfc28da31b63eb73dd34e",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/95c23ebd89a0a4d1b511aed81426f57388ab7268",
+                "reference": "95c23ebd89a0a4d1b511aed81426f57388ab7268",
                 "shasum": ""
             },
             "require": {
@@ -3608,7 +3608,7 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2020-09-18T20:03:05+00:00"
+            "time": "2020-10-02T22:20:36+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -18067,9 +18067,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/eligibility-module": 20,
-        "circlelinkhealth/shared-models-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
