@@ -34,7 +34,7 @@ class Zip extends BaseHandler implements Mediable
     {
         file_put_contents($path = $this->fullPath(), $this->attachmentData);
 
-        if ( ! \ZanySoft\Zip\Zip::check($path)) {
+        if ( ! \Macellan\Zip\Zip::check($path)) {
             throw new InvalidArgumentException("$path is not a valid zip file");
         }
 
@@ -42,7 +42,7 @@ class Zip extends BaseHandler implements Mediable
             $this->storeAsMedia();
         }
 
-        $zip = \ZanySoft\Zip\Zip::open($path);
+        $zip = \Macellan\Zip\Zip::open($path);
 
         collect($zip->listFiles())
             ->each(function ($fileName) use ($zip) {

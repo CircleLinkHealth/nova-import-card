@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "952366c0c4de53c778502201ae8e1e03",
+    "content-hash": "cd03b82389b9f2def126bc98785be486",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1045,7 +1045,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-master",
+            "version": "dev-ROAD-351",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -1081,7 +1081,7 @@
         },
         {
             "name": "circlelinkhealth/clh-nova-theme",
-            "version": "dev-master",
+            "version": "dev-ROAD-351",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
@@ -1297,7 +1297,7 @@
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
-            "version": "dev-master",
+            "version": "dev-ROAD-351",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
@@ -1334,7 +1334,7 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-master",
+            "version": "dev-ROAD-351",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -1370,7 +1370,7 @@
         },
         {
             "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-master",
+            "version": "dev-ROAD-351",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
@@ -1406,7 +1406,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-ROAD-351",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -1443,7 +1443,7 @@
         },
         {
             "name": "circlelinkhealth/invoices-download",
-            "version": "dev-master",
+            "version": "dev-ROAD-351",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
@@ -6362,6 +6362,76 @@
                 "phpspreadsheet"
             ],
             "time": "2020-02-28T15:41:43+00:00"
+        },
+        {
+            "name": "macellan/laravel-zip",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/macellan/laravel-zip.git",
+                "reference": "02752709ba03c0238b13e3d810322321dc3db2d1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/macellan/laravel-zip/zipball/02752709ba03c0238b13e3d810322321dc3db2d1",
+                "reference": "02752709ba03c0238b13e3d810322321dc3db2d1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zip": "*",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0|^5.0",
+                "scrutinizer/ocular": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Macellan\\Zip\\ZipServiceProvider"
+                    ],
+                    "aliases": {
+                        "Zip": "Macellan\\Zip\\ZipFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Macellan\\Zip\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Zany Soft",
+                    "email": "info@zanysoft.co",
+                    "homepage": "http://www.zanysoft.co"
+                },
+                {
+                    "name": "Fatih Aytekin",
+                    "email": "fatih.aytekin@macellan.net",
+                    "homepage": "https://macellan.net"
+                }
+            ],
+            "description": "laravel-zip is the world's leading zip utility for file compression and backup.",
+            "homepage": "https://macellan.net",
+            "keywords": [
+                "backup",
+                "extract",
+                "laravel",
+                "laravel-zip",
+                "laravel5",
+                "merge",
+                "multiple",
+                "unzip",
+                "zip",
+                "ziparchive"
+            ],
+            "time": "2020-08-26T09:25:54+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
@@ -13595,65 +13665,6 @@
                 }
             ],
             "time": "2020-09-09T02:36:16+00:00"
-        },
-        {
-            "name": "zanysoft/laravel-zip",
-            "version": "1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zanysoft/laravel-zip.git",
-                "reference": "466663746c92154c48a2d490efc6724f9f6e9652"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zanysoft/laravel-zip/zipball/466663746c92154c48a2d490efc6724f9f6e9652",
-                "reference": "466663746c92154c48a2d490efc6724f9f6e9652",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.6.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.0|^5.0",
-                "scrutinizer/ocular": "^1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "ZanySoft\\Zip\\ZipServiceProvider"
-                    ],
-                    "aliases": {
-                        "Zip": "ZanySoft\\Zip\\ZipFacade"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "ZanySoft\\Zip\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Zany Soft",
-                    "email": "info@zanysoft.co",
-                    "homepage": "http://www.zanysoft.co"
-                }
-            ],
-            "description": "ZipArchive toolbox",
-            "homepage": "http://www.zanysoft.co",
-            "keywords": [
-                "merge",
-                "multiple",
-                "unzip",
-                "zip",
-                "ziparchive"
-            ],
-            "time": "2017-10-10T03:22:41+00:00"
         }
     ],
     "packages-dev": [

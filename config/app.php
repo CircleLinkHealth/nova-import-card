@@ -228,7 +228,7 @@ return [
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
         SynonymsServiceProvider::class,
-        ZanySoft\Zip\ZipServiceProvider::class,
+        Macellan\Zip\ZipServiceProvider::class,
     ],
 
     /*
