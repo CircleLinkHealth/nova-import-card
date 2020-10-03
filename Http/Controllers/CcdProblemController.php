@@ -8,6 +8,11 @@ namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
 use App\Http\Requests\SafeRequest;
 use App\Services\CCD\CcdProblemService;
+use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use Illuminate\Routing\Controller;
 
 class CcdProblemController extends Controller
@@ -67,15 +72,20 @@ class CcdProblemController extends Controller
      */
     public function store($userId, SafeRequest $request)
     {
-        $ccdProblem = [
-            'name'           => $request->inputSafe('name'),
-            'cpm_problem_id' => $request->inputSafe('cpm_problem_id'),
-            'userId'         => $userId,
-            'is_monitored'   => $request->inputSafe('is_monitored'),
-            'icd10'          => $request->inputSafe('icd10'),
-        ];
+        //todo: performance?
+        $problem = $this->ccdProblemService->addPatientCcdProblem(
+            (new CcdProblemInput())
+                ->fromRequest($request->input())
+                ->setUserId($userId)
+        );
 
-        return \response()->json($this->ccdProblemService->addPatientCcdProblem($ccdProblem));
+        (app(ProcessPatientSummaries::class))->execute($userId, Carbon::now()->startOfMonth());
+
+        return \response()->json([
+            'problem'        => $problem,
+            'patient_is_bhi' => PatientIsOfServiceCode::execute($userId, ChargeableService::BHI),
+            'patient_is_ccm' => PatientIsOfServiceCode::execute($userId, ChargeableService::CCM),
+        ]);
     }
 
     /**
