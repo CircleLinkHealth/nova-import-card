@@ -73,6 +73,7 @@ class Zip extends BaseHandler implements Mediable
         file_put_contents($path, $this->attachmentData);
 
         $this->dm->addMedia($path)
+            ->preservingOriginal()
             ->toMediaCollection($this->mediaCollectionName());
     }
 }
