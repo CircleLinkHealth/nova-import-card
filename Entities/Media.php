@@ -9,7 +9,6 @@ namespace CircleLinkHealth\Customer\Entities;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\Models\Media as SpatieMedia;
-use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
 
 /**
  * CircleLinkHealth\Customer\Entities\Media.
@@ -89,35 +88,5 @@ class Media extends SpatieMedia
     public function getFile()
     {
         return Storage::disk($this->disk)->get($this->getPath());
-    }
-
-    /**
-     * Returns the file extension.
-     *
-     * It is extracted from the original file name, so it should not be considered as a safe value.
-     *
-     * @return string The extension
-     */
-    public function getFileExtension()
-    {
-        return pathinfo($this->file_name, PATHINFO_EXTENSION);
-    }
-
-    /**
-     * Returns the extension based on the mime type.
-     *
-     * If the mime type is unknown, returns null.
-     *
-     * @return string|null The guessed extension or null if it cannot be guessed
-     *
-     * @see guessExtension()
-     * @see getClientMimeType()
-     */
-    public function guessFileExtension()
-    {
-        $type    = $this->mime_type;
-        $guesser = ExtensionGuesser::getInstance();
-
-        return $guesser->guess($type);
     }
 }
