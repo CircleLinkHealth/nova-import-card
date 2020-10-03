@@ -159,6 +159,7 @@ class Ccda extends BaseModel implements HasMedia, MedicalRecord
         'status',
         'duplicate_id',
         'validation_checks',
+        'hash',
     ];
 
     /**
