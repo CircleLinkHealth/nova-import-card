@@ -138,6 +138,10 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:CircleLinkHealth/synonyms.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/nova-import-card.git"
     },
     {
@@ -241,6 +245,7 @@
     "league/flysystem-aws-s3-v3": "^1.0",
     "maatwebsite/excel": "^3.1.19",
     "maatwebsite/laravel-nova-excel": "^1.2",
+    "macellan/laravel-zip": "^1.0",
     "moontoast/math": "1.1.2 as 1.999.999",
     "mpbarlow/laravel-queue-debouncer": "^2.0",
     "mxl/laravel-job": "^1.2",
@@ -267,7 +272,9 @@
     "waynestate/nova-ckeditor4-field": "^0.4.0",
     "wildbit/swiftmailer-postmark": "^3.1",
     "willdurand/email-reply-parser": "^2.9",
-    "yajra/laravel-datatables-oracle": "~9.0"
+    "yajra/laravel-datatables-oracle": "~9.0",
+    "circlelinkhealth/synonyms-module": "*"
+
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
