@@ -3,13 +3,11 @@ import BasePage from '../../page-objects/BasePage';
 import {
 	PROVIDER_USERNAME,
 	PROVIDER_PASSWORD,
-	TESTER_PROVIDER,
-} from '../../support/config';
+	} from '../../support/config';
 import PatientList from '../../page-objects/pages/PatientList';
 import ViewCareplan from '../../page-objects/pages/ViewCareplan';
 import DataGenerator from '../../fixtures/data-generator';
 import Floater from '../../page-objects/components/Floater';
-import Navbar from '../../page-objects/components/Navbar';
 
 describe('Tests Care Plan Setup by Provider', () => {
 	const data = new DataGenerator();
@@ -18,7 +16,6 @@ describe('Tests Care Plan Setup by Provider', () => {
 	const patientList = new PatientList();
 	const viewCareplan = new ViewCareplan();
 	const floater = new Floater();
-	const navbar = new Navbar();
 
 	beforeEach(function () {
 		basePage.setLargeDesktopViewport();
@@ -82,7 +79,7 @@ describe('Tests Care Plan Setup by Provider', () => {
 		cy.contains('Logout').click();
 	});
 
-	it('Should add and delete Social Services ', () => {
+	/*it('Should add and delete Social Services ', () => {
 		patientList.selectPatient('7');
 		viewCareplan.clickOnSocialServices();
 		viewCareplan.addSocialServices('SOCIAL SERVICES');
@@ -91,7 +88,7 @@ describe('Tests Care Plan Setup by Provider', () => {
 		cy.get(':nth-child(5) > .dropdown-toggle').click();
 		cy.contains('Logout').click();
 	});
-
+*/
 	it('Should add Appointment ', () => {
 		patientList.selectPatient('6');
 		viewCareplan.clickOnAddAppointment();

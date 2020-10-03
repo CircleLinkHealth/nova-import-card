@@ -72,7 +72,7 @@ export default class ViewCareplan extends BasePage {
 		cy.get('form > :nth-child(1) > .form-control').focus().type(`${text}`);
 		cy.contains('Save').click();
 		cy.reload();
-		cy.get(':nth-child(14) > .gutter > .col-xs-12 > ul').should(
+		cy.get(':nth-child(14) > .gutter > .col-xs-12 > ul > li > p').should(
 			'contain',
 			`${text}`
 		);
@@ -118,9 +118,9 @@ export default class ViewCareplan extends BasePage {
 	}
 	addSocialServices(text) {
 		cy.get('form > :nth-child(1) > .form-control').type(`${text}`);
-		cy.contains('Save').click({ force: true });
+		cy.get('input[value="Save"]').click({ force: true });
 		cy.reload();
-		cy.get(':nth-child(11) > .gutter > .col-xs-12 > ul').should(
+		cy.get('li > p', { timeout: 10000 }).should('be.visible').should(
 			'contain',
 			`${text}`
 		);
