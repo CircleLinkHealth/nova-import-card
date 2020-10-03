@@ -26,7 +26,7 @@ class AddHashToCcda extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasColumn('hash', 'ccdas')) {
+        if ( ! Schema::hasColumn('ccdas', 'hash')) {
             Schema::table('ccdas', function (Blueprint $table) {
                 $table->string('hash')
                     ->nullable()
