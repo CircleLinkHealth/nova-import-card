@@ -31,7 +31,7 @@ class ReprocessDirectMailAttachments
             ->each(function (Media $media) use ($dm) {
                 $this->handler->handleMessageAttachment($dm, $media->mime_type, $media->getFile());
             });
-    
+
         $this->handler->processCcdas($dm);
     }
 
