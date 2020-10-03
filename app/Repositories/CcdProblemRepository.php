@@ -7,6 +7,7 @@
 namespace App\Repositories;
 
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
+use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
 use Illuminate\Support\Facades\DB;
 
@@ -21,18 +22,15 @@ class CcdProblemRepository
      *    icd10
      * ]} $ccdProblem
      */
-    public function addPatientCcdProblem($ccdProblem)
+    public function addPatientCcdProblem(CcdProblemInput $ccdProblem)
     {
-        $problem = CcdProblem::firstOrCreate(['patient_id' => $ccdProblem['userId'], 'name' => $ccdProblem['name']], [
-            'patient_id'     => $ccdProblem['userId'],
-            'name'           => $ccdProblem['name'],
-            'cpm_problem_id' => $ccdProblem['cpm_problem_id'],
-            'is_monitored'   => $ccdProblem['is_monitored'],
+        return CcdProblem::firstOrCreate([
+            'patient_id' => $ccdProblem->getUserId(),
+            'name'       => $ccdProblem->getName(),
+        ], [
+            'cpm_problem_id' => $ccdProblem->getCpmProblemId(),
+            'is_monitored'   => $ccdProblem->getIsMonitored(),
         ]);
-
-        event(new PatientProblemsChanged($ccdProblem['userId']));
-
-        return $problem;
     }
 
     public function count()

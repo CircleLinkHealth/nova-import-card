@@ -9,6 +9,7 @@ namespace App\Services\CCD;
 use App\Repositories\CcdProblemRepository;
 use App\Services\CPM\CpmInstructionService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 
@@ -25,17 +26,17 @@ class CcdProblemService
         $this->instructionService = $instructionService;
     }
 
-    public function addPatientCcdProblem($ccdProblem)
+    public function addPatientCcdProblem(CcdProblemInput $ccdProblem)
     {
         if ($ccdProblem) {
-            if ($ccdProblem['userId'] && $ccdProblem['name'] && strlen($ccdProblem['name']) > 0) {
+            if ($ccdProblem->getUserId() && $ccdProblem->getName() && strlen($ccdProblem->getName()) > 0) {
                 $problem = $this->setupProblem($this->problemRepo->addPatientCcdProblem($ccdProblem));
 
-                if ($problem && $ccdProblem['icd10']) {
+                if ($problem && $ccdProblem->getIcd10()) {
                     $problemCode                         = new ProblemCode();
                     $problemCode->problem_id             = $problem['id'];
                     $problemCode->problem_code_system_id = 2;
-                    $problemCode->code                   = $ccdProblem['icd10'];
+                    $problemCode->code                   = $ccdProblem->getIcd10();
                     $problemCode->resolve();
                     $problemCode->save();
 
@@ -43,9 +44,12 @@ class CcdProblemService
                 }
 
                 return $problem;
+                //save problem and return, processing happens elsewhere
             }
+            //perform validation before here
             throw new \Exception('$ccdProblem needs "userId" and "name" parameters');
         }
+        //if we pass value object it wouldn't be exception
         throw new \Exception('$ccdProblem should not be null');
     }
 

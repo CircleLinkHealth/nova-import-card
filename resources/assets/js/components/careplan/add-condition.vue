@@ -172,16 +172,23 @@
                     is_monitored: this.newProblem.is_monitored,
                     icd10: this.newProblem.icd10
                 }).then(response => {
+                    let responseData = response.data
                     this.loaders.addProblem = false
                     Event.$emit('problems:updated', {})
 
                     //If another condition is created and is attested for the patient from admin/billing/index.vue,
                     //we need patient id to add it to the patient's existing problems in the client table
-                    response.data.patient_id = this.patient_id;
-                    Event.$emit('full-conditions:add', response.data)
+                    //todo: test in attestation
+                    responseData.problem.patient_id = this.patient_id;
+                    Event.$emit('full-conditions:add', responseData.problem)
 
                     this.reset()
-                    this.selectedProblem = response.data
+                    this.selectedProblem = responseData.problem
+                    Event.$emit('careplan:bhi', {
+                        hasCcm: responseData.patient_is_ccm,
+                        hasBehavioral: responseData.patient_is_bhi
+                    })
+                    //TODO: deprecate
                     setImmediate(() => this.checkPatientBehavioralStatus())
                 }).catch(err => {
                     console.error('full-conditions:add', err)
