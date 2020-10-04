@@ -18,6 +18,8 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
 {
     protected Collection $cache;
 
+    protected array $queriedPatients = [];
+
     protected PatientServiceProcessorRepository $repo;
 
     public function __construct()
@@ -26,19 +28,14 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         $this->repo  = new PatientServiceProcessorRepository();
     }
 
-    //todo: implement before each method, to make sure data are loaded and to avoid cluttering in all methods
-//    public function __call($method,$arguments) {
-//        if(method_exists($this, $method)) {
-//            $this->getPatientWithBillingDataForMonth();
-//            return call_user_func_array(array($this,$method),$arguments);
-//        }
-//    }
-
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         $summary = $this->repo->fulfill($patientId, $chargeableServiceCode, $month);
 
-        $this->cache->firstWhere('id', $patientId)->chargeableMonthlySummaries->firstWhere('id', $summary->id)->is_fulfilled = true;
+        $this->getPatientFromCache($patientId)
+            ->chargeableMonthlySummaries
+            ->firstWhere('id', $summary->id)
+            ->is_fulfilled = true;
 
         return $summary;
     }
@@ -46,10 +43,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection
     {
         //Carbon month, use filter for correct results?
-        return $this->cache
-            ->firstWhere('id', $patientId)
-            ->chargeableMonthlySummaries->where('chargeable_month', $month)
-            ->get();
+        return $this->getPatientFromCache($patientId)
+            ->chargeableMonthlySummaries
+            ->where('chargeable_month', $month);
     }
 
     public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView
@@ -59,30 +55,24 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         //views are tricky because, I don't think we can update their data in cache.
         //do not use views on this repository?
         //find way to create fake view records?
-        return $this->cache
-            ->firstWhere('id', $patientId)
+        return $this->getPatientFromCache($patientId)
             ->chargeableMonthlySummariesView
             ->where('chargeable_service_code', $chargeableServiceCode)
             ->where('chargeable_month', $month)
             ->first();
     }
 
-    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month): ?User
+    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User
     {
         //is it realistic that multiple months are going to be queried by this?
         //really have to account for other months as well. Maybe don't load only for specific month from the original repo and load everything?
-        if (is_null($patient = $this->cache->firstWhere('id', $patientId))) {
-            $this->cache->push($patient = $this->repo->getPatientWithBillingDataForMonth($patientId, $month));
-        }
-
-        return $patient;
+        //also if we load all, we have to specify summary access for other cases
+        return $this->getPatientFromCache($patientId);
     }
 
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        //todo private method to get patient from cache
-        return $this->cache
-            ->firstWhere('id', $patientId)
+        return $this->getPatientFromCache($patientId)
             ->chargeableMonthlySummariesView
             ->where('chargeable_service_code', $chargeableServiceCode)
             ->where('chargeable_month', $month)
@@ -91,9 +81,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
 
     public function isChargeableServiceEnabledForLocationForMonth(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        //todo: load location data on patient
-        return $this->cache
-            ->firstWhere('id', $patientId)
+        return $this->getPatientFromCache($patientId)
             ->patientInfo
             ->location
             ->chargeableMonthlySummaries
@@ -104,8 +92,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
 
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return $this->cache
-            ->firstWhere('id', $patientId)
+        return $this->getPatientFromCache($patientId)
             ->chargeableMonthlySummariesView
             ->where('chargeable_service_code', $chargeableServiceCode)
             ->where('chargeable_month', $month)
@@ -117,7 +104,11 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $summary = $this->repo->setPatientConsented($patientId, $chargeableServiceCode, $month);
 
-        $this->cache->firstWhere('id', $patientId)->chargeableMonthlySummaries->firstWhere('id', $summary->id)->requires_patient_consent = false;
+        $this->getPatientFromCache($patientId)
+            ->firstWhere('id', $patientId)
+            ->chargeableMonthlySummaries
+            ->firstWhere('id', $summary->id)
+            ->requires_patient_consent = false;
 
         return $summary;
     }
@@ -126,8 +117,38 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $summary = $this->repo->store($patientId, $chargeableServiceCode, $month, $requiresPatientConsent);
 
-        $this->cache->firstWhere('id', $patientId)->chargeableMonthlySummaries->push($summary);
+        $this->getPatientFromCache($patientId)
+            ->chargeableMonthlySummaries->push($summary);
 
         return $summary;
+    }
+
+    private function getPatientFromCache(int $patientId): User
+    {
+        $this->retrievePatientDataIfYouMust($patientId);
+
+        $patient = $this->cache->firstWhere('id', $patientId);
+
+        if (is_null($patient)) {
+            throw new \Exception("Could not find Patient with id: $patientId");
+        }
+
+        return $patient;
+    }
+
+    private function queryPatientData(int $patientId)
+    {
+        $this->cache->push($this->repo->getPatientWithBillingDataForMonth($patientId));
+
+        $this->queriedPatients[] = $patientId;
+    }
+
+    private function retrievePatientDataIfYouMust(int $patientId): void
+    {
+        if (in_array($patientId, $this->queriedPatients)) {
+            return;
+        }
+
+        $this->queryPatientData($patientId);
     }
 }

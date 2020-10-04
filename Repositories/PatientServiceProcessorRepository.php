@@ -48,7 +48,7 @@ class PatientServiceProcessorRepository implements Repository
             ->first();
     }
 
-    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month): ?User
+    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User
     {
         return $this
             ->approvablePatientUserQuery($patientId, $month)

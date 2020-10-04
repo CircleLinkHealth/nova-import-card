@@ -30,5 +30,5 @@ interface PatientServiceProcessorRepository
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary;
     
-    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month): ?User;
+    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User;
 }
