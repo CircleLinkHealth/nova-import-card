@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Contracts;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection;
 
 interface PatientServiceProcessorRepository
@@ -28,4 +29,6 @@ interface PatientServiceProcessorRepository
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary;
+    
+    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month): ?User;
 }

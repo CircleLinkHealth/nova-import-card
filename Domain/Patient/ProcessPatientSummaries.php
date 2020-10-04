@@ -8,7 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
-use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -23,14 +23,14 @@ class ProcessPatientSummaries
     protected User $patientUser;
     protected PatientMonthlyBillingProcessor $processor;
 
-    protected PatientProcessorEloquentRepository $repo;
+    protected PatientServiceProcessorRepository $repo;
 
-    public function __construct(PatientMonthlyBillingProcessor $processor, PatientProcessorEloquentRepository $repo)
+    public function __construct(PatientMonthlyBillingProcessor $processor, PatientServiceProcessorRepository $repo)
     {
         $this->processor = $processor;
         $this->repo      = $repo;
     }
-    
+
     public function execute(int $patientId, Carbon $month): void
     {
         $this->setPatientId($patientId)
@@ -68,7 +68,7 @@ class ProcessPatientSummaries
         }
 
         if (is_null($this->patientUser)) {
-            sendSlackMessage('#billing_alerts', "Patient ({$this->patientId}) does not have location attached. Cannot Process Billing, please investigate");
+            sendSlackMessage('#billing_alerts', "Patient ({$this->patientId}) does not exist. Please investigate");
 
             return $this;
         }
@@ -80,9 +80,11 @@ class ProcessPatientSummaries
         }
 
         $this->patientDTO = (new PatientMonthlyBillingDTO())
+            //todo: preload available service processors on repo property? or will hey exist in patientWithBilling Data array
             ->subscribe($this->patientUser->patientInfo->location->availableServiceProcessors($this->month))
             ->forPatient($this->patientUser->id)
             ->forMonth($this->month)
+            //todo: get these from repo
             ->withProblems(...$this->patientUser->patientProblemsForBillingProcessing()->toArray());
 
         return $this;
@@ -97,8 +99,9 @@ class ProcessPatientSummaries
 
     private function setPatientUser(): self
     {
+        //if in request lifecycle cache all info, along with problems
         $this->patientUser = $this->repo
-            ->patientWithBillingDataForMonth($this->patientId, $this->month)
+            ->getPatientWithBillingDataForMonth($this->patientId, $this->month)
             ->first();
 
         return $this;

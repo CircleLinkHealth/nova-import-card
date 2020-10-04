@@ -15,6 +15,7 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\Patient as PatientModel;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection;
 
 class PatientServiceProcessorRepository implements Repository
@@ -44,6 +45,17 @@ class PatientServiceProcessorRepository implements Repository
         return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
             ->where('chargeable_service_code', $chargeableServiceCode)
+            ->first();
+    }
+
+    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month): ?User
+    {
+        return $this
+            ->approvablePatientUserQuery($patientId, $month)
+            ->with(['patientInfo.location.chargeableServiceSummaries' => function ($summary) use ($month) {
+                $summary->with(['chargeableService'])
+                    ->createdOn($month, 'chargeable_month');
+            }])
             ->first();
     }
 

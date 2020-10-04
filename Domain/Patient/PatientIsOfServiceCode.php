@@ -43,6 +43,7 @@ class PatientIsOfServiceCode
 
     private function hasSummary(): bool
     {
+        //use repo method to be able to get from cache - along with patient processing
         return ChargeablePatientMonthlySummaryView::where('patient_user_id', $this->patientId)
             ->where('chargeable_service_code', $this->serviceCode)
             ->where('chargeable_month', Carbon::now()->startOfMonth())
@@ -66,6 +67,7 @@ class PatientIsOfServiceCode
 
     private function problemsOfServiceCount(): int
     {
+        //use repo
         return Problem::wherePatientId($this->patientId)
             ->isBillable()
             ->ofService($this->serviceCode)

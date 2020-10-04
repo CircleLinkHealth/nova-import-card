@@ -12,11 +12,13 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository as PatientProcessorEloquentRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
+use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use Illuminate\Contracts\Support\DeferrableProvider;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class CcmBillingServiceProvider extends ServiceProvider implements DeferrableProvider
@@ -44,7 +46,14 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
     {
         $this->app->bind(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
 
-        $this->app->singleton(PatientServiceRepositoryInterface::class, PatientServiceProcessorRepository::class);
+        $this->app->singleton(PatientServiceRepositoryInterface::class, function ($app) {
+            //todo: help. The idea is that if this is called in a request, used cached, otherwise if in job use normal
+            if (Auth::check()) {
+                return $app->make(CachedPatientServiceProcessorRepository::class);
+            }
+
+            return $app->make(PatientServiceProcessorRepository::class);
+        });
         $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
         $this->app->singleton(LocationProcessorRepository::class, LocationProcessorEloquentRepository::class);
         $this->app->singleton(PatientProcessorEloquentRepositoryInterface::class, PatientProcessorEloquentRepository::class);
