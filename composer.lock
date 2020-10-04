@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "38595fa9e5aeb24ebf8b5343d76df4dd",
+    "content-hash": "78376bf4c815130905fb94d96335c6b5",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "6b0c85ee5021bca4b6e84413722052bee95ae454"
+                "reference": "f95fc69b9bffc507dbc4d95477fe5b8adcd503a9"
             },
             "type": "laravel-module",
             "extra": {
@@ -992,7 +992,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-04T18:24:57+00:00"
+            "time": "2020-10-04T18:38:19+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1749,11 +1749,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "dev-ROAD-288-billing-new-schema-models",
+            "version": "dev-ROAD-346-billing-revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "0cc9c2345147059d3fd99d3ac3d7f864814e1bb5"
+                "reference": "b14d6a838474b5db8c0e3f6777281319af9bbccb"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1778,7 +1778,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-29T15:07:09+00:00"
+            "time": "2020-10-04T18:38:19+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
