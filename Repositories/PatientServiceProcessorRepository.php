@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
+use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as Repository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class PatientServiceProcessorRepository implements Repository
 {
+    use ApprovablePatientUsersQuery;
     use ApprovablePatientServicesQuery;
 
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary

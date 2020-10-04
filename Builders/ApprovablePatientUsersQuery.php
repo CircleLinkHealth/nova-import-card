@@ -12,20 +12,20 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait ApprovablePatientUsersQuery
 {
-    public function approvablePatientUserQuery(int $patientId, Carbon $monthYear): Builder
+    public function approvablePatientUserQuery(int $patientId, Carbon $monthYear = null): Builder
     {
         return $this->approvablePatientUsersQuery($monthYear)
             ->where('id', $patientId);
     }
 
-    public function approvablePatientUsersQuery(Carbon $monthYear): Builder
+    public function approvablePatientUsersQuery(Carbon $monthYear = null): Builder
     {
         return User::with([
             'endOfMonthCcmStatusLogs' => function ($q) use ($monthYear) {
-                $q->createdOn($monthYear, 'chargeable_month');
+                $q->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
             'attestedProblems' => function ($q) use ($monthYear) {
-                $q->createdOn($monthYear, 'chargeable_month');
+                $q->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
             'billingProvider.user',
             'patientInfo',
@@ -34,7 +34,10 @@ trait ApprovablePatientUsersQuery
             },
             'chargeableMonthlySummaries' => function ($q) use ($monthYear) {
                 $q->with(['chargeableService'])
-                    ->createdOn($monthYear, 'chargeable_month');
+                    ->createdOnIfNotNull($monthYear, 'chargeable_month');
+            },
+            'chargeableMonthlySummariesView' => function ($q) use ($monthYear) {
+                $q->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
         ]);
     }
