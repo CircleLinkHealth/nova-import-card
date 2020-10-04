@@ -57,6 +57,25 @@ trait DateScopesTrait
     }
 
     /**
+     * Wrapper for createdOn Scope for null dates.
+     *
+     * @param $builder
+     * @param Carbon $date
+     * @param string $field
+     */
+    public function scopeCreatedOnIfNotNull(
+        $builder,
+        Carbon $date = null,
+        $field = 'created_at'
+    ) {
+        $builder->when( ! is_null($date), function ($sq) use (
+            $date, $field
+        ) {
+            $sq->createdOn($date, $field);
+        });
+    }
+
+    /**
      * Scope a query to only include activities created this month. Defaults to created_at field, but a different field
      * may be specified.
      *
