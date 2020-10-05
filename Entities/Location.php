@@ -6,6 +6,10 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
+use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Synonyms\Traits\Synonymable;
@@ -80,6 +84,10 @@ use Laravel\Scout\Searchable;
  * @property int|null                                                                                                        $providers_count
  * @property int|null                                                                                                        $revision_history_count
  * @property int|null                                                                                                        $user_count
+ * @property ChargeableLocationMonthlySummary[]|\Illuminate\Database\Eloquent\Collection                                     $chargeableServiceSummaries
+ * @property int|null                                                                                                        $chargeable_service_summaries_count
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection                $cpmProblemServices
+ * @property int|null                                                                                                        $cpm_problem_services_count
  */
 class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -88,9 +96,6 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     use Searchable;
     use SoftDeletes;
     use Synonymable;
-
-    //Aprima's constant location id.
-    const UPG_PARENT_LOCATION_ID = 26;
 
     /**
      * Mass assignable attributes.
@@ -120,11 +125,37 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         'ehr_password',
     ];
 
+    public function availableServiceProcessors(?Carbon $month = null): AvailableServiceProcessors
+    {
+        $month ??= Carbon::now()->startOfMonth()->startOfDay();
+
+        return AvailableServiceProcessors::push(
+            $this->chargeableServiceSummaries
+                ->where('chargeable_month', $month)
+                ->map(function (ChargeableLocationMonthlySummary $summary) {
+                    return $summary->chargeableService->processor();
+                })
+                ->toArray()
+        );
+    }
+
+    public function chargeableServiceSummaries()
+    {
+        return $this->hasMany(ChargeableLocationMonthlySummary::class, 'location_id');
+    }
+
     public function clinicalEmergencyContact()
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
             ->withPivot('name')
             ->withTimestamps();
+    }
+
+    public function cpmProblemServices()
+    {
+        return $this->belongsToMany(ChargeableService::class, 'location_problem_services')
+            ->using(LocationProblemService::class)
+            ->withPivot(['cpm_problem_id']);
     }
 
     public static function getAllNodes()
