@@ -43,7 +43,7 @@ class ContactDetailsRequest extends FormRequest
         ];
     }
 
-    public static function validateUser(User $patientUser, Validator $validator)
+    public static function validateUser(?User $patientUser, Validator $validator)
     {
         if (empty($patientUser)) {
             Log::error("User [$patientUser->id] not found");
