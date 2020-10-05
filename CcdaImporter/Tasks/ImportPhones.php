@@ -101,13 +101,13 @@ class ImportPhones extends BaseCcdaImportTask
             if (self::validatePhoneNumber($mobileNumber)) {
                 $number = formatPhoneNumberE164($workNumber);
 
-                $makePrimary = PhoneNumber::WORK == $primaryPhone || $primaryPhone == $number || ! $primaryPhone;
+                $makePrimary = PhoneNumber::ALTERNATE == $primaryPhone || $primaryPhone == $number || ! $primaryPhone;
 
                 $workPhone = PhoneNumber::updateOrCreate(
                     [
                         'user_id' => $this->patient->id,
                         'number'  => $number,
-                        'type'    => PhoneNumber::WORK,
+                        'type'    => PhoneNumber::ALTERNATE,
                     ],
                     [
                         'is_primary' => $makePrimary,
@@ -150,7 +150,7 @@ class ImportPhones extends BaseCcdaImportTask
                     [
                         PhoneNumber::HOME => $homePhone,
                         PhoneNumber::MOBILE => $mobilePhone,
-                        PhoneNumber::WORK => $workPhone,
+                        PhoneNumber::ALTERNATE => $workPhone,
                     ] as $type => $phone
                 ) {
                     if ( ! $phone) {
