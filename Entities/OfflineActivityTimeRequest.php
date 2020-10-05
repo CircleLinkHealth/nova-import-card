@@ -8,6 +8,7 @@ namespace CircleLinkHealth\TimeTracking\Entities;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Services\ActivityService;
+use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
@@ -171,6 +172,7 @@ class OfflineActivityTimeRequest extends Model
 
         $nurse = optional($this->requester)->nurseInfo;
 
+        event(new PatientActivityCreated($this->patient_id));
         $activityService->processMonthlyActivityTime($this->patient_id, $this->performed_at);
 
         if ($nurse) {

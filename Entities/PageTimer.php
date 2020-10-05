@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\TimeTracking\Entities;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -87,9 +88,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null                                                                     $revision_history_count
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
  * @property int|null                                                                     $actions_count
- * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
- * @property int|null                                                                     $actions_count
  * @method   static                                                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer whereEnrolleeId($value)
+ * @property int|null                                                                     $chargeable_service_id
+ * @property ChargeableService|null                                                       $chargeableService
  */
 class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -110,6 +111,7 @@ class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
         'duration_unit',
         'patient_id',
         'provider_id',
+        'chargeable_service_id',
         'start_time',
         'end_time',
         'redirect_to',
@@ -135,6 +137,11 @@ class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
     public function activity()
     {
         return $this->belongsTo('CircleLinkHealth\TimeTracking\Entities\Activity', 'id', 'page_timer_id');
+    }
+
+    public function chargeableService()
+    {
+        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
     }
 
     public function logger()

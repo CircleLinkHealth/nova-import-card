@@ -9,6 +9,7 @@ namespace CircleLinkHealth\TimeTracking\Entities;
 use App\CcmTimeApiLog;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -77,10 +78,11 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
  *     whereIsBehavioral($value)
- * @property int|null $care_rate_logs_count
- * @property int|null $meta_count
- * @property int|null $revision_history_count
- * @property int|null $chargeable_service_id
+ * @property int|null               $care_rate_logs_count
+ * @property int|null               $meta_count
+ * @property int|null               $revision_history_count
+ * @property int|null               $chargeable_service_id
+ * @property ChargeableService|null $chargeableService
  */
 class Activity extends BaseModel
 {
@@ -103,13 +105,13 @@ class Activity extends BaseModel
         'provider_id',
         'logger_id',
         'comment_id',
+        'chargeable_service_id',
         'is_behavioral',
         'logged_from',
         'performed_at',
         'performed_at_gmt',
         'page_timer_id',
         'created_at',
-        'chargeable_service_id',
     ];
 
     /**
@@ -127,6 +129,11 @@ class Activity extends BaseModel
     public function ccmApiTimeSentLog()
     {
         return $this->hasOne(CcmTimeApiLog::class);
+    }
+
+    public function chargeableService()
+    {
+        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
     }
 
     /**

@@ -12,6 +12,7 @@ use App\Http\Requests\ShowPatientActivities;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -376,6 +377,7 @@ class ActivityController extends Controller
         $performedAt = Carbon::parse($activity->performed_at);
 
         $this->activityService->processMonthlyActivityTime($input['patient_id'], $performedAt);
+        event(new PatientActivityCreated($input['patient_id'], false));
 
         if ($nurse) {
             (new AlternativeCareTimePayableCalculator($nurse))
