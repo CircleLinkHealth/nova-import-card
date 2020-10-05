@@ -100,7 +100,6 @@
 
         components: {
             'loader': LoaderComponent,
-            'addNotification': addNotification,
         },
 
         name: "nurseInvoiceDailyDispute",
