@@ -22,14 +22,17 @@ class CallsDashboardController extends Controller
     public function create(Request $request)
     {
         /** @var Note $note */
-        $note = Note::with(['patient', 'author', 'call'])
-            ->whereHas('call', function ($q) {
+        $note = Note::with([
+            'patient',
+            'author',
+            'call' => function ($q) {
                 $q->where(function ($q2) {
                     $q2->whereNull('type')
                         ->orWhere('type', '=', 'call')
                         ->orWhere('sub_type', '=', 'Call Back');
                 });
-            })
+            },
+        ])
             ->where('id', $request['noteId'])
             ->first();
 
@@ -56,15 +59,14 @@ class CallsDashboardController extends Controller
                     ->with(['patientInfo']);
             },
             'author',
-            'call',
-        ])
-            ->whereHas('call', function ($q) {
+            'call' => function ($q) {
                 $q->where(function ($q2) {
                     $q2->whereNull('type')
                         ->orWhere('type', '=', 'call')
                         ->orWhere('sub_type', '=', 'Call Back');
                 });
-            })
+            },
+        ])
             ->where('id', $request['noteId'])
             ->first();
         $call = $note->call;
