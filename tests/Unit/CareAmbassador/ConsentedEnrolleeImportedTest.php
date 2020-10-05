@@ -16,7 +16,7 @@ use Tests\TestCase;
 
 class ConsentedEnrolleeImportedTest extends TestCase
 {
-    use \App\Traits\Tests\UserHelpers;
+    use \CircleLinkHealth\Customer\Traits\UserHelpers;
     use CareAmbassadorHelpers;
 
     protected $careAmbassadorUser;

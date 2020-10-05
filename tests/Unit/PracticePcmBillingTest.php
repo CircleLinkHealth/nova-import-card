@@ -10,8 +10,8 @@ use App\Http\Resources\ApprovableBillablePatient;
 use App\Services\ApproveBillablePatientsService;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
-use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Tests\TestCase;
 
 class PracticePcmBillingTest extends TestCase
