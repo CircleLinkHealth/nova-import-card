@@ -59,6 +59,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method   static                                                                                               \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Problem withTrashed()
  * @method   static                                                                                               \Illuminate\Database\Query\Builder|\CircleLinkHealth\SharedModels\Entities\Problem withoutTrashed()
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Problem isBillable($ignoreWith = false)
+ * @method static \Illuminate\Database\Eloquent\Builder|Problem isMonitored()
+ * @method static \Illuminate\Database\Eloquent\Builder|Problem ofService($service)
  */
 class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contracts\Problem
 {
@@ -85,6 +88,27 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
     ];
 
     protected $table = 'ccd_problems';
+
+    public function chargeableServiceCodesForLocation(?int $locationId = null): array
+    {
+        if ( ! $cpmProblem = $this->cpmProblem) {
+            return [];
+        }
+
+        if (is_null($this->patient->patientInfo)) {
+            sendSlackMessage('#billing_alerts', "Patient ({$this->patient->id}) does not have patientInfo attached.");
+
+            return [];
+        }
+
+        $locationId ??= $this->patient->patientInfo->preferred_contact_location;
+
+        if (is_null($locationId)) {
+            return [];
+        }
+
+        return $cpmProblem->getChargeableServiceCodesForLocation($locationId);
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -146,5 +170,33 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
         return $this->belongsToMany(PatientMonthlySummary::class, 'patient_summary_problems', 'problem_id')
             ->withPivot('name', 'icd_10_code')
             ->withTimestamps();
+    }
+
+    public function scopeIsBillable($query, $ignoreWith = false)
+    {
+        return $query->when( ! $ignoreWith, function ($q) {
+            $q->with(['cpmProblem.locationChargeableServices', 'codes', 'icd10Codes']);
+        })
+            ->whereHas('cpmProblem', function ($cpmProblem) {
+                $cpmProblem->notGenericDiabetes();
+            })
+            ->isMonitored();
+    }
+
+    public function scopeIsMonitored($query)
+    {
+        return $query->where('is_monitored', true);
+    }
+
+    public function scopeOfService($query, string $service)
+    {
+        return $query->join('patient_info', 'patient_info.user_id', '=', 'ccd_problems.patient_id')
+            ->whereHas('cpmProblem', function ($cpmProblem) use ($service) {
+                $cpmProblem->notGenericDiabetes()
+                    ->whereHas('locationChargeableServices', function ($lcs) use ($service) {
+                        $lcs->whereRaw('location_problem_services.location_id = patient_info.preferred_contact_location')
+                            ->where('code', $service);
+                    });
+            });
     }
 }

@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 
@@ -63,6 +64,11 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
  * @method   static                                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmProblem withIcd10Codes()
  * @method   static                                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmProblem withLatestCpmInstruction()
  * @mixin \Eloquent
+ * @property ChargeableService[]|\Illuminate\Database\Eloquent\Collection $locationChargeableServices
+ * @property int|null                                                     $location_chargeable_services_count
+ * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem withChargeableServicesForLocation($locationId)
+ * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem hasChargeableServiceCodeForLocation($chargeableServiceCode, $locationId)
+ * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem notGenericDiabetes()
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -71,6 +77,8 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     const DIABETES_TYPE_1 = 'Diabetes Type 1';
 
     const DIABETES_TYPE_2 = 'Diabetes Type 2';
+
+    const GENERIC_DIABETES = 'Diabetes';
 
     protected $guarded = [];
 
@@ -136,6 +144,15 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
             ->withTimestamps();
     }
 
+    public function getChargeableServiceCodesForLocation(int $locationId): array
+    {
+        return $this->locationChargeableServices
+            ->where('pivot.location_id', $locationId)
+            ->pluck('code')
+            ->values()
+            ->toArray();
+    }
+
     public function instructable()
     {
         return $this->hasOne(CpmInstructable::class, 'instructable_id');
@@ -156,12 +173,38 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->where('contains', 'LIKE', "%${name}%");
     }
 
+    public function locationChargeableServices()
+    {
+        return $this->belongsToMany(ChargeableService::class, 'location_problem_services', 'cpm_problem_id', 'chargeable_service_id')
+            ->withPivot(['location_id']);
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_problems_users', 'patient_id');
+    }
+
+    public function scopeHasChargeableServiceCodeForLocation($query, string $chargeableServiceCode, int $locationId)
+    {
+        return $query->whereHas('locationChargeableServices', function ($lcs) use ($chargeableServiceCode, $locationId) {
+            $lcs->where('location_id', $locationId)
+                ->where('code', $chargeableServiceCode);
+        });
+    }
+
+    public function scopeNotGenericDiabetes($query)
+    {
+        return $query->where('name', '!=', self::GENERIC_DIABETES);
+    }
+
+    public function scopeWithChargeableServicesForLocation($query, int $locationId)
+    {
+        return $query->with(['locationChargeableServices' => function ($lps) use ($locationId) {
+            $lps->where('location_id', $locationId);
+        }]);
     }
 
     public function scopeWithIcd10Codes($builder)
