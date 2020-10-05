@@ -24,9 +24,11 @@ class CallsDashboardController extends Controller
         /** @var Note $note */
         $note = Note::with(['patient', 'author', 'call'])
             ->whereHas('call', function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', 'call')
-                    ->orWhere('sub_type', '=', 'Call Back');
+                $q->where(function ($q2) {
+                    $q2->whereNull('type')
+                        ->orWhere('type', '=', 'call')
+                        ->orWhere('sub_type', '=', 'Call Back');
+                });
             })
             ->where('id', $request['noteId'])
             ->first();
@@ -57,9 +59,11 @@ class CallsDashboardController extends Controller
             'call',
         ])
             ->whereHas('call', function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', 'call')
-                    ->orWhere('sub_type', '=', 'Call Back');
+                $q->where(function ($q2) {
+                    $q2->whereNull('type')
+                        ->orWhere('type', '=', 'call')
+                        ->orWhere('sub_type', '=', 'Call Back');
+                });
             })
             ->where('id', $request['noteId'])
             ->first();
