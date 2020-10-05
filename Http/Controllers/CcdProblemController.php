@@ -72,7 +72,6 @@ class CcdProblemController extends Controller
      */
     public function store($userId, SafeRequest $request)
     {
-        //todo: performance?
         $problem = $this->ccdProblemService->addPatientCcdProblem(
             (new CcdProblemInput())
                 ->fromRequest($request->input())
