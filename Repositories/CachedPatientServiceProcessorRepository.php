@@ -73,8 +73,8 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         return $this->getPatientFromCache($patientId)
-            ->chargeableMonthlySummariesView
-            ->where('chargeable_service_code', $chargeableServiceCode)
+            ->chargeableMonthlySummaries
+            ->where('chargeableService.code', $chargeableServiceCode)
             ->where('chargeable_month', $month)
             ->count() > 0;
     }
@@ -84,7 +84,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         return $this->getPatientFromCache($patientId)
             ->patientInfo
             ->location
-            ->chargeableMonthlySummaries
+            ->chargeableServiceSummaries
             ->where('chargeableService.code', $chargeableServiceCode)
             ->where('chargeable_month', $month)
             ->count() > 0;
@@ -93,8 +93,8 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         return $this->getPatientFromCache($patientId)
-            ->chargeableMonthlySummariesView
-            ->where('chargeable_service_code', $chargeableServiceCode)
+            ->chargeableMonthlySummaries
+            ->where('chargeableService.code', $chargeableServiceCode)
             ->where('chargeable_month', $month)
             ->where('is_fulfilled', true)
             ->count() > 0;
@@ -105,8 +105,12 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         $summary = $this->repo->setPatientConsented($patientId, $chargeableServiceCode, $month);
 
         $this->getPatientFromCache($patientId)
-            ->firstWhere('id', $patientId)
             ->chargeableMonthlySummaries
+            ->firstWhere('id', $summary->id)
+            ->requires_patient_consent = false;
+
+        $this->getPatientFromCache($patientId)
+            ->chargeableMonthlySummariesView
             ->firstWhere('id', $summary->id)
             ->requires_patient_consent = false;
 
@@ -117,6 +121,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $summary = $this->repo->store($patientId, $chargeableServiceCode, $month, $requiresPatientConsent);
 
+        //make sure these changes are stored - push back into cache in every method just to make sure?
+        //always store in cache by ID and forget? or don't even make a collection?
+        //unresolved ->is user in cache updated?
         $this->getPatientFromCache($patientId)
             ->chargeableMonthlySummaries->push($summary);
 
@@ -130,7 +137,16 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         $patient = $this->cache->firstWhere('id', $patientId);
 
         if (is_null($patient)) {
-            throw new \Exception("Could not find Patient with id: $patientId");
+            throw new \Exception("Could not find Patient with id: $patientId. Billing Processing aborted.");
+        }
+
+        if (is_null($patient->patientInfo)) {
+            throw new \Exception("Patient with id: $patientId does not have patient info attached. Billing Processing aborted.");
+        }
+
+        //todo: help - not sure if we should enforce location check, however billing is now impossible if patient does not have location
+        if (is_null($patient->patientInfo->location)) {
+            throw new \Exception("Patient with id: $patientId does not have a preferred location attached. Billing Processing aborted.");
         }
 
         return $patient;

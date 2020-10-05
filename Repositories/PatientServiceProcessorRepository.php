@@ -54,10 +54,11 @@ class PatientServiceProcessorRepository implements Repository
     {
         return $this
             ->approvablePatientUserQuery($patientId, $month)
-            ->with(['patientInfo.location.chargeableServiceSummaries' => function ($summary) use ($month) {
-                $summary->with(['chargeableService'])
-                    ->createdOn($month, 'chargeable_month');
-            }])
+            //todo: check breaking points or if this should be here instead of elsewhere
+//            ->with(['patientInfo.location.chargeableServiceSummaries' => function ($summary) use ($month) {
+//                $summary->with(['chargeableService'])
+//                    ->createdOn($month, 'chargeable_month');
+//            }])
             ->first();
     }
 
