@@ -411,9 +411,12 @@ export default {
 
         responseErrorMessage(exception){
             if (exception.status === 422) {
-                const e = exception.data;
-                alert(e);
+                if (e.hasOwnProperty('message')){
+                    alert(e.message);
+                }
             }
+
+            console.log(e);
         },
 
     },

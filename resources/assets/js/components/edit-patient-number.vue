@@ -392,7 +392,9 @@
             responseErrorMessage(exception){
                 const e = exception.data;
                 if (exception.status === 422) {
-                    alert(e);
+                    if (e.hasOwnProperty('message')){
+                        alert(e.message);
+                    }
                 }
 
                 console.log(e);

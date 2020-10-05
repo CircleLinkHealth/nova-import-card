@@ -73,16 +73,16 @@ class ContactDetailsRequest extends FormRequest
                 ?? null;
 
             if ( ! is_null($phoneType) && $patientUser->phoneNumbers()->where('type', $phoneType)->whereNotNull('number')->exists()) {
-                $validator->errors()->add('phoneNumber', "Phone type '$phoneType' already exists for patient");
+                $validator->errors()->add('message', "Phone type '$phoneType' already exists for patient");
             }
 
             if ( ! allowNonUsPhones() && ! ImportPhones::validatePhoneNumber($input['phoneNumber'])) {
-                $validator->errors()->add('phoneNumber', 'Phone number is not a valid US number');
+                $validator->errors()->add('message', 'Phone number is not a valid US number');
             }
 
             if (is_null($userLocation)) {
                 Log::error("Location for patient with user id: {$userId} not found");
-                $validator->errors()->add('patientUserId', 'User location is missing');
+                $validator->errors()->add('message', 'User location is missing');
             }
 
             $this->request->add([
@@ -94,6 +94,6 @@ class ContactDetailsRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->json($validator->errors()->first(), 422));
+        throw new HttpResponseException(response()->json($validator->errors()->getMessages(), 422));
     }
 }
