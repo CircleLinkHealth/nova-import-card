@@ -60,7 +60,13 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
             ->patientWithBillingDataForMonth($this->getPatientId(), $this->getMonth())
             ->first();
 
-        if (is_null($patient->patientInfo->location)) {
+        if (is_null($patient)) {
+            sendSlackMessage('#billing_alerts', "Patient ({$this->getPatientId()}) was not found. Cannot Process Billing, please investigate");
+
+            return;
+        }
+
+        if (is_null(optional($patient->patientInfo)->location)) {
             sendSlackMessage('#billing_alerts', "Patient ({$patient->id}) does not have location attached. Cannot Process Billing, please investigate");
 
             return;
