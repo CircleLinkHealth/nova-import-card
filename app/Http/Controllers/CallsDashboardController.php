@@ -21,10 +21,23 @@ class CallsDashboardController extends Controller
 {
     public function create(Request $request)
     {
-        $note = Note::with(['patient', 'author'])->where('id', $request['noteId'])->first();
+        /** @var Note $note */
+        $note = Note::with([
+            'patient',
+            'author',
+            'call' => function ($q) {
+                $q->where(function ($q2) {
+                    $q2->whereNull('type')
+                        ->orWhere('type', '=', 'call')
+                        ->orWhere('sub_type', '=', 'Call Back');
+                });
+            },
+        ])
+            ->where('id', $request['noteId'])
+            ->first();
 
         if ($note) {
-            $call = $note->call()->first();
+            $call = $note->call;
             if ($call) {
                 return view('admin.CallsDashboard.edit', compact(['note', 'call']));
             }
@@ -46,7 +59,13 @@ class CallsDashboardController extends Controller
                     ->with(['patientInfo']);
             },
             'author',
-            'call',
+            'call' => function ($q) {
+                $q->where(function ($q2) {
+                    $q2->whereNull('type')
+                        ->orWhere('type', '=', 'call')
+                        ->orWhere('sub_type', '=', 'Call Back');
+                });
+            },
         ])
             ->where('id', $request['noteId'])
             ->first();
