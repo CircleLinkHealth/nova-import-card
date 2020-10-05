@@ -8,12 +8,12 @@ namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use App\Constants;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
-use CircleLinkHealth\CcmBilling\Traits\PropagatesSequence;
+use CircleLinkHealth\CcmBilling\Traits\IsPartOfSequence;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class CCM extends AbstractProcessor
 {
-    use PropagatesSequence;
+    use IsPartOfSequence;
 
     public function code(): string
     {
@@ -35,8 +35,18 @@ class CCM extends AbstractProcessor
         return Constants::TWENTY_MINUTES_IN_SECONDS;
     }
 
-    public function next(): PatientServiceProcessor
+    public function next(): ?PatientServiceProcessor
     {
         return new CCM40();
+    }
+
+    public function previous(): ?PatientServiceProcessor
+    {
+        return null;
+    }
+
+    public function requiresPatientConsent(int $patientId): bool
+    {
+        return false;
     }
 }

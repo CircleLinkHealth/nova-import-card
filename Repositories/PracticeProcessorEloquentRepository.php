@@ -9,11 +9,11 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
-use CircleLinkHealth\CcmBilling\Contracts\CustomerProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PracticeProcessorRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class PracticeProcessorEloquentRepository implements CustomerProcessorRepository
+class PracticeProcessorEloquentRepository implements PracticeProcessorRepository
 {
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
@@ -29,16 +29,20 @@ class PracticeProcessorEloquentRepository implements CustomerProcessorRepository
         return $this->patientsQuery($customerModelId, $monthYear)->get();
     }
 
-    public function patientServices(int $customerModelId, Carbon $monthYear): Builder
+    public function patientServices(int $practiceId, Carbon $monthYear): Builder
     {
-        //todo: fix relationship name
         return $this->approvablePatientServicesQuery($monthYear)
-            ->whereHas('patient', fn ($q) => $q->ofPractice($customerModelId));
+            ->whereHas('patient', fn ($q) => $q->ofPractice($practiceId));
     }
 
     public function patientsQuery(int $customerModelId, Carbon $monthYear): Builder
     {
         return $this->approvablePatientUsersQuery($monthYear)
             ->ofPractice($customerModelId);
+    }
+
+    public function practiceWithLocationsWithSummaries(int $practiceId, ?Carbon $month = null): Builder
+    {
+        //todo: to deprecate - was initially added for auto-assign CS to newly created Location which is an idea we're probably scrapping
     }
 }

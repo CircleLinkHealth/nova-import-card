@@ -6,9 +6,11 @@
 
 namespace CircleLinkHealth\CcmBilling\Entities;
 
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 
 /**
  * CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary.
@@ -29,9 +31,17 @@ use CircleLinkHealth\Customer\Entities\Location;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary query()
  * @mixin \Eloquent
+ * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdThisMonth($field = 'created_at')
+ * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdToday($field = 'created_at')
+ * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdYesterday($field = 'created_at')
+ * @property string|null $status
  */
 class ChargeableLocationMonthlySummary extends BaseModel
 {
+    use DateScopesTrait;
+
     protected $casts = [
         'is_locked' => 'boolean',
     ];
@@ -47,15 +57,19 @@ class ChargeableLocationMonthlySummary extends BaseModel
         'is_locked',
     ];
 
-    //todo: placeholder for now, maybe move in trait
     public function chargeableService()
     {
-        return $this->hasOne(ChargeableService::class, 'chargeable_service_id');
+        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
     }
 
-    public function getServiceCode()
+    public function getServiceCode(): ?string
     {
         return optional($this->chargeableService)->code;
+    }
+
+    public function getServiceProcessor(): ?PatientServiceProcessor
+    {
+        return $this->chargeableService->processor();
     }
 
     public function location()

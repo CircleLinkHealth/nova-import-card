@@ -46,45 +46,48 @@ class AvailableServiceProcessors implements Arrayable
 
     public function getAwv1(): ?AWV1
     {
-        return $this->awv1;
+        return $this->awv1 ?? null;
     }
 
     public function getAwv2(): ?AWV2
     {
-        return $this->awv2;
+        return $this->awv2 ?? null;
     }
 
     public function getBhi(): ?BHI
     {
-        return $this->bhi;
+        return $this->bhi ?? null;
     }
 
     public function getCcm(): ?CCM
     {
-        return $this->ccm;
+        return $this->ccm ?? null;
     }
 
     public function getCcm40(): ?CCM40
     {
-        return $this->ccm40;
+        return $this->ccm40 ?? null;
     }
 
     public function getCcm60(): ?CCM60
     {
-        return $this->ccm60;
+        return $this->ccm60 ?? null;
     }
 
     public function getPcm(): ?PCM
     {
-        return $this->pcm;
+        return $this->pcm ?? null;
     }
 
     public static function push(array $serviceProcessors)
     {
         $self = new static();
         foreach ($serviceProcessors as $processor) {
-            $func = 'set'.ucwords(self::classMap()[get_class($processor)]);
-            $self->$func($processor);
+            $func = 'set'.ucwords(self::classMap()[get_class($processor)] ?? null);
+
+            if (method_exists($self, $func)) {
+                $self->$func($processor);
+            }
         }
 
         return $self;

@@ -17,16 +17,21 @@ class AWV2 extends AbstractProcessor
 
     public function minimumNumberOfCalls(): int
     {
-        // TODO: Implement minimumNumberOfCalls() method.
+        return 0;
     }
 
     public function minimumNumberOfProblems(): int
     {
-        // TODO: Implement minimumNumberOfProblems() method.
+        return 0;
     }
 
     public function minimumTimeInSeconds(): int
     {
-        // TODO: Implement minimumTimeInSeconds() method.
+        return 0;
+    }
+
+    public function requiresPatientConsent(int $patientId): bool
+    {
+        return false;
     }
 }

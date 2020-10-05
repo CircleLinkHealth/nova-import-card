@@ -8,32 +8,30 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use MichaelLedin\LaravelJob\Job;
 
-class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
+class ProcessAllPracticePatientMonthlyServices extends Job
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    protected Carbon $chargeableMonth;
-
-    protected bool $fulfill;
+    protected Carbon $month;
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
-    public function __construct(Carbon $chargeableMonth, bool $fulfill)
+    public function __construct(Carbon $month = null)
     {
-        $this->chargeableMonth = $chargeableMonth;
-        $this->fulfill         = $fulfill;
+        $this->month = $month ?? Carbon::now()->startOfMonth()->startOfDay();
+    }
+
+    public static function fromParameters(string ...$parameters)
+    {
+        $date = isset($parameters[0]) ? Carbon::parse($parameters[0]) : null;
+
+        return new static($date);
+    }
+
+    public function getMonth(): Carbon
+    {
+        return $this->month;
     }
 
     /**
@@ -43,11 +41,6 @@ class ProcessAllPracticePatientMonthlyServices implements ShouldQueue
      */
     public function handle()
     {
-        Practice::activeBillable()
-            ->chunk(10, function ($practices) {
-                foreach ($practices as $practice) {
-                    ProcessPracticePatientMonthlyServices::dispatch($practice->id, $this->chargeableMonth, $this->fulfill);
-                }
-            });
+        Practice::each(fn (Practice $p) => ProcessPracticePatientMonthlyServices::dispatch($p->id, $this->getMonth()));
     }
 }

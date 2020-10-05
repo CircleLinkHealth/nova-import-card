@@ -4,24 +4,26 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient;
+namespace CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use Illuminate\Contracts\Support\Arrayable;
 
-class IsAttachedStub implements Arrayable
+class ChargeablePatientMonthlySummaryStub implements Arrayable
 {
     public string $chargeableServiceCode;
     public Carbon $month;
     public int $patientId;
-    public bool $shouldBeAttached;
 
-    public function __construct(int $patientId, string $chargeableServiceCode, Carbon $month, bool $shouldBeAttached)
+    private ChargeablePatientMonthlySummary $summary;
+
+    public function __construct(int $patientId, string $chargeableServiceCode, Carbon $month, ChargeablePatientMonthlySummary $summary)
     {
         $this->patientId             = $patientId;
         $this->chargeableServiceCode = $chargeableServiceCode;
         $this->month                 = $month;
-        $this->shouldBeAttached      = $shouldBeAttached;
+        $this->summary               = $summary;
     }
 
     /**
@@ -35,7 +37,7 @@ class IsAttachedStub implements Arrayable
             'chargeableServiceCode' => $this->chargeableServiceCode,
             'month'                 => $this->month,
             'patientId'             => $this->patientId,
-            'shouldBeAttached'      => $this->shouldBeAttached,
+            'summary'               => $this->summary,
         ];
     }
 }

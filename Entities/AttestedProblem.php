@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Entities;
 use App\Call;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
@@ -31,9 +32,18 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem newQuery()
  * @method   static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem query()
  * @mixin \Eloquent
+ * @property int|null $addendum_id
+ * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdThisMonth($field = 'created_at')
+ * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdToday($field = 'created_at')
+ * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdYesterday($field = 'created_at')
+ * @property int|null $attestor_id
  */
 class AttestedProblem extends Pivot
 {
+    use DateScopesTrait;
+
     protected $fillable = [
         'patient_user_id',
         'ccd_problem_id',
@@ -41,7 +51,6 @@ class AttestedProblem extends Pivot
         'ccd_problem_name',
         'ccd_problem_icd_10_code',
         'chargeable_month',
-        //todo: deprecate
         'patient_monthly_summary_id',
     ];
 

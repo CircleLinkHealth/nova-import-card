@@ -23,8 +23,6 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
 
     protected Carbon $chargeableMonth;
 
-    protected bool $fulfill;
-
     protected int $locationId;
 
     protected Location $processor;
@@ -34,12 +32,26 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(int $locationId, Carbon $chargeableMonth, bool $fulfill)
+    public function __construct(int $locationId, Carbon $chargeableMonth = null)
     {
         $this->locationId      = $locationId;
-        $this->chargeableMonth = $chargeableMonth;
-        $this->fulfill         = $fulfill;
+        $this->chargeableMonth = $chargeableMonth ?? Carbon::now()->startOfMonth()->startOfDay();
         $this->processor       = app(Location::class);
+    }
+
+    public function getChargeableMonth(): Carbon
+    {
+        return $this->chargeableMonth;
+    }
+
+    public function getLocationId(): int
+    {
+        return $this->locationId;
+    }
+
+    public function getProcessor(): Location
+    {
+        return $this->processor;
     }
 
     /**
@@ -49,6 +61,6 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
      */
     public function handle()
     {
-        $this->processor->processServicesForAllPatients($this->locationId, $this->chargeableMonth, $this->fulfill);
+        $this->getProcessor()->processServicesForAllPatients($this->getLocationId(), $this->getChargeableMonth());
     }
 }

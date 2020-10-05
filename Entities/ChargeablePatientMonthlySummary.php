@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Entities;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 
 /**
  * CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary.
@@ -29,11 +30,20 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary newQuery()
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary query()
  * @mixin \Eloquent
+ * @property int    $requires_patient_consent
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdThisMonth($field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdToday($field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdYesterday($field = 'created_at')
  */
 class ChargeablePatientMonthlySummary extends BaseModel
 {
+    use DateScopesTrait;
+
     protected $casts = [
-        'is_fulfilled' => 'boolean',
+        'is_fulfilled'             => 'boolean',
+        'requires_patient_consent' => 'boolean',
     ];
 
     protected $dates = [
@@ -45,12 +55,12 @@ class ChargeablePatientMonthlySummary extends BaseModel
         'chargeable_month',
         'actor_id',
         'is_fulfilled',
+        'requires_patient_consent',
     ];
 
-    //todo: placeholder for now, maybe move in trait
     public function chargeableService()
     {
-        return $this->hasOne(ChargeableService::class, 'chargeable_service_id');
+        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
     }
 
     public function patient()
