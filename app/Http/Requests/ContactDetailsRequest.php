@@ -36,7 +36,7 @@ class ContactDetailsRequest extends FormRequest
         return [
             'patientUserId'     => 'required',
             'phoneNumber'       => 'required|numeric',
-            'agentRelationship' => 'sometimes|regex:/^[\pL\s\-]+$/u',
+            'agentRelationship' => 'sometimes|regex:/^[\pL\s\-]+$/u', // allow only text-letters with spaces
             'agentName'         => 'sometimes|regex:/^[\pL\s\-]+$/u',
             'agentEmail'        => 'sometimes|email',
             'phoneType'         => 'sometimes|required',
