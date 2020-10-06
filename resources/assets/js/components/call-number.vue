@@ -1,5 +1,6 @@
 <template>
     <div>
+        <notifications ref="call-number-notifications"></notifications>
         <loader v-if="waiting && device === null"></loader>
         <div v-if="debug">
             <button class="btn btn-circle" @click="togglePatientCallMessage('debug', true)"
@@ -205,7 +206,6 @@
     import {Logger} from '../logger-logdna';
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
-    import axios from "../bootstrap-axios";
     import {mapActions} from 'vuex';
     import {addNotification} from '../../../../resources/assets/js/store/actions.js';
 
@@ -887,14 +887,13 @@
             },
 
             emitMessageNotification(messageData){
-                this.addNotification({
+                self.addNotification({
                     title: messageData.title,
                     text: messageData.message,
                     type: messageData.type,
                     timeout: true
                 });
-
-            }
+            },
         }),
 
 
