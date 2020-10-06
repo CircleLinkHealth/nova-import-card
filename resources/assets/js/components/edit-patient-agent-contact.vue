@@ -90,6 +90,8 @@
 import axios from "../bootstrap-axios";
 import LoaderComponent from "./loader";
 import EventBus from '../admin/time-tracker/comps/event-bus';
+import {mapActions} from 'vuex';
+import {addNotification} from '../../../../resources/assets/js/store/actions.js';
 
 export default {
 
@@ -263,14 +265,14 @@ export default {
         },
     },
 
-    methods:{
+    methods: Object.assign(mapActions(['addNotification']), {
         shouldDisplayThisAgentField(){
             if(! this.callEnabled){
                 return true;
             }
 
             if(this.callEnabled
-            && (this.initialAgentEmailSavedInDB.length === 0
+                && (this.initialAgentEmailSavedInDB.length === 0
                     || this.initialAgentRelationshipSavedInDB.length === 0)){
                 return true;
             }
@@ -291,15 +293,23 @@ export default {
                 if (this.callEnabled){
                     EventBus.$emit("refresh:phoneData");
                 }
-                if (response.data.hasOwnProperty('message')){
-                    console.log(response.data.message);
-                }
+                this.successFlashNotification(response.data.message);
                 this.loading = false;
             })).catch((error) => {
                 this.loading = false;
                 this.responseErrorMessage(error.message);
             });
         },
+
+        successFlashNotification(message){
+            this.addNotification({
+                title: "Success!",
+                text:  message,
+                type: "success",
+                timeout: true
+            });
+        },
+
 
         saveNewAgentNumberAndContactDetails(){
             this.loading = true;
@@ -347,18 +357,16 @@ export default {
                 agentRelationship:agentNewRelationship,
                 agentEmail:agentNewEmail,
             }).then((response => {
-                    this.getAgentContactData();
+                this.getAgentContactData();
 
-                    if (this.callEnabled){
-                        EventBus.$emit("refresh:phoneData");
-                    }
+                if (this.callEnabled){
+                    EventBus.$emit("refresh:phoneData");
+                }
 
-                    if (response.data.hasOwnProperty('message')){
-                        console.log(response.data.message);
-                    }
+                this.successFlashNotification(response.data.message);
 
-                    this.loading = false;
-                })).catch((error) => {
+                this.loading = false;
+            })).catch((error) => {
                 this.loading = false;
                 this.responseErrorMessage(error.response)
             });
@@ -411,15 +419,15 @@ export default {
 
         responseErrorMessage(exception){
             if (exception.status === 422) {
-                if (e.hasOwnProperty('message')){
-                    alert(e.message);
+                if (exception.hasOwnProperty('message')){
+                    alert(exception.message);
                 }
             }
 
             console.log(e);
         },
 
-    },
+    }),
 
     created() {
         this.getAgentContactData();
