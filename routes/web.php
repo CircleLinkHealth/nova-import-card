@@ -771,7 +771,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('get-agent-contact', [
             'uses' => 'Patient\PatientCareplanController@getPatientAgentContact',
             'as'   => 'patient.get.agent.contact',
-        ])->middleware('permission:patient.create,patient.update,careplan.update,practice.read');
+        ])->middleware('permission:patient.read');
 
         Route::post('get-phones', [
             'uses' => 'Patient\PatientCareplanController@getPatientPhoneNumbers',
