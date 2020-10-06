@@ -206,8 +206,6 @@
     import {Logger} from '../logger-logdna';
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
-    import {mapActions} from 'vuex';
-    import {addNotification} from '../store/actions';
 
     let self;
 
