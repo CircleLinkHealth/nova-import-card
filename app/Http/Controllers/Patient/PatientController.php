@@ -184,7 +184,7 @@ class PatientController extends Controller
         );
 
         return response()->json([
-            'message' => 'Alternate phone number has been saved!',
+            'message' => 'Agent phone number has been saved!',
         ], 200);
     }
 

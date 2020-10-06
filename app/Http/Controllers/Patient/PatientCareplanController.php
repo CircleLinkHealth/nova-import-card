@@ -93,7 +93,7 @@ class PatientCareplanController extends Controller
         $phoneNumber->delete();
 
         return response()->json([
-            'message' => 'Phone Number Has Been Deleted',
+            'message' => 'Phone Number Has Been Deleted!',
         ], 200);
     }
 

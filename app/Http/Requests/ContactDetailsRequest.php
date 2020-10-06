@@ -36,14 +36,14 @@ class ContactDetailsRequest extends FormRequest
         return [
             'patientUserId'     => 'required',
             'phoneNumber'       => 'required|numeric',
-            'agentRelationship' => 'sometimes|regex:/^[\pL\s\-]+$/u',
+            'agentRelationship' => 'sometimes|regex:/^[\pL\s\-]+$/u', // allow only text-letters with spaces
             'agentName'         => 'sometimes|regex:/^[\pL\s\-]+$/u',
             'agentEmail'        => 'sometimes|email',
             'phoneType'         => 'sometimes|required',
         ];
     }
 
-    public static function validateUser(User $patientUser, Validator $validator)
+    public static function validateUser(?User $patientUser, Validator $validator)
     {
         if (empty($patientUser)) {
             Log::error("User [$patientUser->id] not found");
@@ -94,6 +94,6 @@ class ContactDetailsRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->json($validator->errors()->first(), 422));
+        throw new HttpResponseException(response()->json($validator->errors()->getMessages(), 422));
     }
 }
