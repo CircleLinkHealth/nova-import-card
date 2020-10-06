@@ -54,7 +54,7 @@ class MarkPrimaryPhoneRequest extends FormRequest
 
             if (empty($patientUser)) {
                 Log::error("User [$userId] not found");
-                $validator->errors()->add('message', "User [$userId] not found");
+                $validator->errors()->add('patientUserId', "User [$userId] not found");
             }
 
             $this->request->add([
