@@ -801,7 +801,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('new/phone', [
             'uses' => 'Patient\PatientController@saveNewPhoneNumber',
             'as'   => 'patient.phone.create',
-        ])->middleware('permission:phoneNumber.create,phoneNumber.update,practice.read');
+        ])->middleware('permission:phoneNumber.create,phoneNumber.update');
 
         Route::post('new/agent/phone', [
             'uses' => 'Patient\PatientController@saveNewAgentPhoneNumber',
@@ -811,7 +811,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('mark/primary-phone', [
             'uses' => 'Patient\PatientController@markAsPrimaryPhone',
             'as'   => 'primary.phone.mark',
-        ])->middleware('permission:phoneNumber.create,phoneNumber.update,practice.read');
+        ])->middleware('permission:phoneNumber.update');
 
         Route::get('listing/pdf', [
             'uses' => 'Patient\PatientController@showPatientListingPdf',
