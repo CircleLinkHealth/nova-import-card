@@ -405,15 +405,6 @@
             },
 
             warningFlashNotification(error){
-                if (this.callEnabled){
-                    EventBus.$emit("emit:message", {
-                        title:"Warning!",
-                        type:"danger",
-                        message: error
-                    });
-                    return;
-                }
-
                 this.addNotification({
                     title: "Warning!",
                     text: error,

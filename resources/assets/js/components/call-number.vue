@@ -207,7 +207,7 @@
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
     import {mapActions} from 'vuex';
-    import {addNotification} from '../../../../resources/assets/js/store/actions.js';
+    import {addNotification} from '../store/actions';
 
     let self;
 
@@ -314,8 +314,7 @@
                 }
             },
         },
-        methods:Object.assign(mapActions(['addNotification']), {
-
+        methods: {
             getUrl: function (path) {
                 if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
                     if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
@@ -886,15 +885,7 @@
                 registerHandler("unmute_call", muteHandler);
             },
 
-            emitMessageNotification(messageData){
-                self.addNotification({
-                    title: messageData.title,
-                    text: messageData.message,
-                    type: messageData.type,
-                    timeout: true
-                });
-            },
-        }),
+        },
 
 
         created() {
@@ -936,10 +927,6 @@
             self.initTwilio();
             EventBus.$on("selectedNumber:toCall", function (number) {
                 self.radioSelectedNumber = number;
-            });
-
-            EventBus.$on("emit:message", function (messageData) {
-                self.emitMessageNotification(messageData);
             });
         }
     }
