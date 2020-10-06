@@ -1840,6 +1840,38 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
+        /** @var PhoneNumber $primary */
+        $primary       = $this->phoneNumbers->where('is_primary', '=', 1)->first();
+        $primaryResult = $this->getIfValidForSms($primary);
+        if ( ! empty($primaryResult)) {
+            return $primaryResult;
+        }
+
+        /** @var PhoneNumber $primary */
+        $mobile       = $this->phoneNumbers->where('type', '=', PhoneNumber::MOBILE)->first();
+        $mobileResult = $this->getIfValidForSms($mobile);
+        if ( ! empty($mobileResult)) {
+            return $mobileResult;
+        }
+
+        $validCellNumbers = $this->phoneNumbers
+            ->whereNotNull('number')->where('number', '!=', '')
+            ->map(function ($phone) {
+                return $this->getIfValidForSms($phone);
+            })
+            ->filter()
+            ->unique()
+            ->values();
+
+        return $validCellNumbers->first() ?? '';
+    }
+
+    public function getPhoneNumberForSms_old(): string
+    {
+        if ( ! $this->phoneNumbers) {
+            return '';
+        }
+
         $validCellNumbers = $this->phoneNumbers
             ->whereNotNull('number')->where('number', '!=', '')
             ->map(function ($phone) {
@@ -4281,6 +4313,30 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 return $number;
             }
         }
+    }
+
+    private function getIfValidForSms(PhoneNumber $number = null)
+    {
+        if (is_null($number)) {
+            return false;
+        }
+        $phoneNumber = \Propaganistas\LaravelPhone\PhoneNumber::make($number->number, ['US', 'CY']);
+        try {
+            //isOfType might throw, in that case we do not use the number
+            if ( ! isProductionEnv() || $phoneNumber->isOfType('mobile')) {
+                if ($this->isCypriotNumber($phoneNumber)) {
+                    return $number->number;
+                }
+
+                return formatPhoneNumberE164($number->number);
+            }
+        } catch (NumberParseException $e) {
+            Log::warning($e->getMessage());
+
+            return false;
+        }
+
+        return false;
     }
 
     private function isCypriotNumber(\Propaganistas\LaravelPhone\PhoneNumber $phoneNumber)
