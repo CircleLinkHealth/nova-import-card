@@ -50,6 +50,10 @@
                         <td>{{$call->id}}</td>
                     </tr>
                     <tr>
+                        <td>Call Type:</td>
+                        <td>{{is_null($call->type) ? $call->sub_type : $call->type}}</td>
+                    </tr>
+                    <tr>
                         <td>Call time:</td>
                         <td>{{$call->call_time}}</td>
                     </tr>
