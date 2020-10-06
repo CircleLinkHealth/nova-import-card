@@ -17,10 +17,10 @@ use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
@@ -184,7 +184,7 @@ class PatientController extends Controller
         );
 
         return response()->json([
-            'message' => 'Alternate phone number has been saved!',
+            'message' => 'Agent phone number has been saved!',
         ], 200);
     }
 
@@ -342,17 +342,29 @@ class PatientController extends Controller
         return view('wpUsers.patient.listing');
     }
 
-    public function showPatientListingPdf(PdfService $pdfService)
+    public function showPatientListingPdf(Request $request, PdfService $pdfService)
     {
         if (auth()->user()->isCareCoach()) {
             abort(403);
+        }
+
+        $showPracticePatientsInput = $request->input('showPracticePatients', null);
+        $isProvider                = auth()->user()->isProvider();
+        $showPracticePatients      = true;
+        $carePlanStatus            = null;
+        if ($isProvider) {
+            // CPM-1790, non-admins should only see rn_approved, and provider_approved
+            $carePlanStatus = [CarePlan::PROVIDER_APPROVED, CarePlan::RN_APPROVED];
+            if (User::SCOPE_LOCATION === auth()->user()->scope || 'false' === $showPracticePatientsInput) {
+                $showPracticePatients = false;
+            }
         }
 
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
         $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';
         $file             = $pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
-            'patients' => $this->formatter->patients(),
+            'patients' => $this->formatter->patients(null, $showPracticePatients, $carePlanStatus),
         ], null, [
             'orientation'  => 'Landscape',
             'margin-left'  => '3',

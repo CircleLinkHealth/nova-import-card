@@ -21,7 +21,6 @@ use App\Services\CareplanService;
 use App\Services\PatientService;
 use Auth;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
@@ -94,7 +93,7 @@ class PatientCareplanController extends Controller
         $phoneNumber->delete();
 
         return response()->json([
-            'message' => 'Phone Number Has Been Deleted',
+            'message' => 'Phone Number Has Been Deleted!',
         ], 200);
     }
 

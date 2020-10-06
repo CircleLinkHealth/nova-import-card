@@ -133,7 +133,6 @@ class InboundSmsAndMailTest extends CustomerTestCase
 
     public function test_should_create_one_asap_task_from_phone_that_belongs_to_two_patients()
     {
-        //todo: fixme, increasingly randomly failing
 //        /** @var Collection $patients */
 //        $aPatient = $this->createUsersOfType('participant', 1);
 //        $bPatient = $this->patient();
@@ -156,8 +155,8 @@ class InboundSmsAndMailTest extends CustomerTestCase
 //        self::assertTrue(1 === $calls->first()->asap);
 //        self::assertStringContainsString('test', $calls->first()->attempt_note);
 //
-//        Notification::assertSentTo($aPatient, PatientUnsuccessfulCallReplyNotification::class);
 //        Notification::assertNotSentTo($bPatient, PatientUnsuccessfulCallReplyNotification::class);
+//        Notification::assertSentTo($aPatient, PatientUnsuccessfulCallReplyNotification::class);
     }
 
     public function test_should_not_create_more_than_one_asap_task_with_multiple_sms()

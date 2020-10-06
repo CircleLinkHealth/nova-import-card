@@ -1,8 +1,8 @@
 <template>
-    <div class="phone-numbers">
+    <div class="phone-numbers col-sm-12">
         <div class="input-group">
             <span v-if="this.error !== ''" class="help-block" style="color: red">{{this.error}}</span>
-            <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Select a number<br>to call</h5>
+            <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Select a number to call</h5>
             <template v-for="(number, index) in patientPhoneNumbers">
                 <div class="numbers">
                     <div v-if="callEnabled && number.number !== ''" style="margin-top: 7px;">
@@ -51,16 +51,11 @@
                         Delete
                     </button>
                 </div>
-
-
-
                 <br>
             </template>
-            <div>
-                <loader v-if="loading"></loader>
-            </div>
 
-            <div v-for="(input, index) in newInputs" class="extra-inputs">
+            <div v-for="(input, index) in newInputs"
+                 :class="paddingLeft">
                 <div style="padding-right: 14px; margin-left: -10px;">
                     <div class="numbers">
                         <div class="types">
@@ -82,10 +77,13 @@
                        v-model="newPhoneNumber"
                        :disabled="loading"/>
 
-                <i v-if="!loading"
-                   class="glyphicon glyphicon-minus remove-input"
-                   title="Remove extra field"
-                   @click="removeInputField(index)"></i>
+                <button v-if="!loading"
+                   class="btn btn-sm remove-input"
+                        type="button"
+                        title="Remove extra field"
+                        @click="removeInputField(index)">
+                    Cancel
+                </button>
 
 
                         <button v-if="addNewFieldClicked"
@@ -100,9 +98,12 @@
                 </div>
             </div>
 
-            <button class="glyphicon glyphicon-plus-sign add-new-number"
-               title="Add Phone Number"
-               @click="addPhoneField()">
+            <button v-if="!loading && this.newInputs.length === 0"
+                    class="add-new-number"
+                    title="Add Phone Number"
+                    type="button"
+                    @click="addPhoneField()">
+                <i class="fa fa-fw fa-plus"></i>
                 Add phone number
             </button>
 
@@ -122,7 +123,9 @@
                Please choose phone number type
             </span>
         </div>
-
+        <div style="margin-left: 7px;">
+            <loader v-if="loading"></loader>
+        </div>
     </div>
 
 </template>
@@ -135,6 +138,8 @@
     import CallNumber from "./call-number";
     import EditPatientAgentContact from "./edit-patient-agent-contact";
     import VueSelect from "vue-select";
+    import {mapActions} from 'vuex';
+    import {addNotification} from '../../../../resources/assets/js/store/actions.js';
 
     const agent = 'agent';
 
@@ -179,6 +184,10 @@
         },
 
         computed:{
+            paddingLeft(){
+                return this.callEnabled ? 'extraInputs' : 'shortPadding';
+            },
+
             shouldShowAgentContactComponent(){
                 return this.agentNumberIsSet || (!this.loading && this.callEnabled);
             },
@@ -242,7 +251,7 @@
             },
         },
 
-        methods: {
+        methods: Object.assign(mapActions(['addNotification']), {
             disableMakePrimary(number){
                 return number.isPrimary || this.loading;
             },
@@ -296,7 +305,7 @@
             },
 
             selectedNumber(number){
-               EventBus.$emit("selectedNumber:toCall", number);
+                EventBus.$emit("selectedNumber:toCall", number);
             },
 
             numberIsPrimary(number){
@@ -309,9 +318,8 @@
                     phoneId:phoneNumberId,
                     patientUserId:this.userId,
                 }).then((response => {
-                        this.getPatientPhoneNumbers();
-                        this.loading = false;
-                    })).catch((error) => {
+                    this.getPatientPhoneNumbers();
+                })).catch((error) => {
                     this.loading = false;
                     this.responseErrorMessage(error.response);
                 });
@@ -355,12 +363,12 @@
 
             addPhoneField(){
                 if (! this.allowAddingNewNumber){
-                    alert('Please remove one phone number in order to add a new one');
+                    this.warningFlashNotification("Please remove one phone number in order to add a new one");
                     return;
                 }
 
                 if (this.newInputs.length > 0) {
-                    alert('Please save the existing field first');
+                    this.warningFlashNotification("Please save the existing field first");
                     return;
                 }
                 this.newPhoneNumber = '';
@@ -368,7 +376,7 @@
                 this.filterOutSavedPhoneTypes();
 
                 const arr = {
-                  placeholder: '1234567890'
+                    placeholder: '1234567890'
                 };
 
                 this.newInputs.push(arr);
@@ -384,24 +392,37 @@
             },
 
             responseErrorMessage(exception){
-                const e = exception.data;
                 if (exception.status === 422) {
-                    alert(e);
+                    Object.keys(exception.data).forEach(numberKey => {
+                        const array = exception.data[numberKey];
+                        array.forEach(error => {
+                            return this.warningFlashNotification(error);
+                        });
+                    });
                 }
 
-                console.log(e);
+                console.log(exception);
+            },
+
+            warningFlashNotification(error){
+                this.addNotification({
+                    title: "Warning!",
+                    text: error,
+                    type: "danger",
+                    timeout: true
+                });
             },
 
             saveNewNumber(){
                 this.loading = true;
                 if (this.newPhoneType.length === 0){
-                    alert("Please choose phone number type");
+                    this.warningFlashNotification("Please choose phone number type");
                     this.loading = false;
                     return;
                 }
 
                 if (this.newPhoneNumber.length === 0){
-                    alert("Phone number is required.");
+                    this.warningFlashNotification("Phone number is required.");
                     this.loading = false;
                     return;
                 }
@@ -419,15 +440,22 @@
                     .then((response => {
                         this.getPatientPhoneNumbers();
                         if (response.data.hasOwnProperty('message')){
-                            console.log(response.data.message);
+                            this.successFlashNotification(response.data.message);
                         }
-                        this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
                     this.responseErrorMessage(error.response)
                 });
             },
 
+            successFlashNotification(message){
+                this.addNotification({
+                    title: "Success!",
+                    text: message,
+                    type: "success",
+                    timeout: true
+                });
+            },
             removeInputField(index){
                 this.loading = true;
                 this.newPhoneType = '';
@@ -451,8 +479,8 @@
                 }
 
                 const phoneNumberId = number.hasOwnProperty('phoneNumberId')
-                ? number.phoneNumberId
-                : '';
+                    ? number.phoneNumberId
+                    : '';
 
                 this.loading = true;
                 axios.post('/manage-patients/delete-phone', {
@@ -461,16 +489,15 @@
                 })
                     .then((response => {
                         this.getPatientPhoneNumbers();
-                        this.loading = false;
                         if (response.data.hasOwnProperty('message')){
-                            console.log(response.data.message);
+                            this.successFlashNotification(response.data.message);
                         }
                     })).catch((error) => {
                     this.loading = false;
                     this.responseErrorMessage(error.response);
                 });
             },
-        },
+        }),
 
         created() {
             this.getPatientPhoneNumbers();
@@ -487,18 +514,23 @@
 
 <style scoped>
 
+#numberType{
+       min-width: 91px;
+   }
+
     .borderColor{
      border: #f62056 solid 1px;
     }
     .phone-numbers{
         float: left;
+        margin-left: -24px;
     }
 
-    .extra-inputs{
+    .extraInputs{
         display: inline-flex;
-       padding-bottom: 10px;
-       padding-left: 10px;
-       white-space: nowrap;
+        padding-bottom: 10px;
+        white-space: nowrap;
+        padding-left: 53px;
     }
     .phone-type{
         min-width:  90px;
@@ -508,29 +540,26 @@
     }
     .remove-phone{
         cursor: pointer;
-        margin-left: 10px;
         height: 29px;
-        }
+    }
 
     .remove-input{
-        margin-left: 19px;
-        padding-top: 5px;
-        color: red;
-        cursor: pointer;
-        background-color: transparent;
+        margin-left: 10px;
+        height: 29px;
+        padding: 5px;
+        color: #50b2e2;
     }
 
    .save-number{
-        margin-left: 15px;
+        margin-left: 5px;
         height: 29px;
         padding: 5px;
         color: #50b2e2;
     }
 
    .add-new-number{
-        word-spacing: -10px;
         color: #50b2e2;
-        font-size: 20px;
+        font-size: 15px;
         cursor: pointer;
         padding: 10px;
         margin-bottom: 15px;
@@ -571,6 +600,7 @@
     .update-primaryNumber{
         height: 29px;
         padding: 5px;
+        margin-right: 5px;
         background-color: #5cb85c;
         color: white;
     }
@@ -582,5 +612,13 @@
     .alt-contact-block{
         margin-top: 30px;
         margin-bottom: -15px;
+    }
+
+    .shortPadding{
+        padding-left: 10px;
+    }
+
+    .add-agent{
+        margin-left: 10px;
     }
 </style>

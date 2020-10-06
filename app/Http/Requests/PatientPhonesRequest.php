@@ -58,6 +58,6 @@ class PatientPhonesRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->json($validator->errors()->first(), 422));
+        throw new HttpResponseException(response()->json($validator->errors()->getMessages(), 422));
     }
 }
