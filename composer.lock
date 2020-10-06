@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3461eb1bd7b7dbe88afba82761b54f6c",
+    "content-hash": "96afef13e60bed9c5970629ba6c646ed",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -950,11 +950,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v1.0.0",
+            "version": "dev-ROAD-346-billing-revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "c33ae83952f84e8508ebf7570743908a2db4c8f6"
+                "reference": "9e876ea564b72522914bad5c47df5ad167b26ac0"
             },
             "type": "laravel-module",
             "extra": {
@@ -992,7 +992,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-05T21:11:33+00:00"
+            "time": "2020-10-05T14:21:16+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1001,6 +1001,12 @@
                 "type": "git",
                 "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
                 "reference": "384cc9561cfc4c694f72b6ec9762b8eef70c9ddc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/384cc9561cfc4c694f72b6ec9762b8eef70c9ddc",
+                "reference": "384cc9561cfc4c694f72b6ec9762b8eef70c9ddc",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "~5.0|~6.0|~7.0",
@@ -1033,11 +1039,7 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1081,8 +1083,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "bb869cb6bb70b2c7cc2844ff44a4f88c7cc45e08",
-                "shasum": null
+                "reference": "bb869cb6bb70b2c7cc2844ff44a4f88c7cc45e08"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1118,8 +1119,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
-                "reference": "1bbdc8741c1bce578b353148a21acb8186232dbe",
-                "shasum": null
+                "reference": "1bbdc8741c1bce578b353148a21acb8186232dbe"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1224,11 +1224,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.5.5",
+            "version": "dev-ROAD-346-billing-revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "72e01d87400f9c7d7583faad3e1307e53b03f225"
+                "reference": "7540c1c0aa50e7f050d16fba4f3008a940697685"
             },
             "type": "laravel-module",
             "extra": {
@@ -1250,15 +1250,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-06T12:09:17+00:00"
+            "time": "2020-09-30T17:05:11+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.4.3",
+            "version": "dev-ROAD-346-billing-revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "b1149ea2c8aa605e78b3ba289cf5648b369afc5e"
+                "reference": "15fbdfe0089a2a01983185306f871856f55c4bd1"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1292,7 +1292,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-06T12:10:02+00:00"
+            "time": "2020-09-30T19:29:24+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1331,12 +1331,11 @@
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
-            "version": "dev-ROAD-351",
+            "version": "dev-Road_222_phone_type_on_call_page",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
-                "reference": "b6cf4442f05d1bf70a7740842be0523456f73b14",
-                "shasum": null
+                "reference": "b6cf4442f05d1bf70a7740842be0523456f73b14"
             },
             "require": {
                 "anaseqal/nova-import": "^0.0.3",
@@ -1369,12 +1368,11 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-ROAD-351",
+            "version": "dev-Road_222_phone_type_on_call_page",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "bd5f5af9bff0a3e12ab6dd3ecf2ba68ab0929a88",
-                "shasum": null
+                "reference": "bd5f5af9bff0a3e12ab6dd3ecf2ba68ab0929a88"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1406,12 +1404,11 @@
         },
         {
             "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-ROAD-351",
+            "version": "dev-Road_222_phone_type_on_call_page",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
-                "reference": "8d2f73917c098fb67e5c3e1d4e957838b1ce33a4",
-                "shasum": null
+                "reference": "8d2f73917c098fb67e5c3e1d4e957838b1ce33a4"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1443,12 +1440,11 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-ROAD-351",
+            "version": "dev-Road_222_phone_type_on_call_page",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "6faa8301ceb8b7fb3ff64fa5d7c616f279ab8fe2",
-                "shasum": null
+                "reference": "6faa8301ceb8b7fb3ff64fa5d7c616f279ab8fe2"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -1481,12 +1477,11 @@
         },
         {
             "name": "circlelinkhealth/invoices-download",
-            "version": "dev-ROAD-351",
+            "version": "dev-Road_222_phone_type_on_call_page",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
-                "reference": "7b4fcc04ab2b3522353cc2707bafc9452ac690b1",
-                "shasum": null
+                "reference": "7b4fcc04ab2b3522353cc2707bafc9452ac690b1"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -1780,11 +1775,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.3.0",
+            "version": "dev-ROAD-346-billing-revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "b17fbd612df1b1f154a4c8abfe1ebba59bf2e92b"
+                "reference": "b14d6a838474b5db8c0e3f6777281319af9bbccb"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1809,7 +1804,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-05T21:19:05+00:00"
+            "time": "2020-10-04T18:38:19+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -1895,6 +1890,16 @@
                 "stream",
                 "stream_filter_append",
                 "stream_filter_register"
+            ],
+            "funding": [
+                {
+                    "url": "https://clue.engineering/support",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/clue",
+                    "type": "github"
+                }
             ],
             "time": "2020-10-02T12:38:20+00:00"
         },
@@ -4769,16 +4774,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.28.3",
+            "version": "v7.28.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "b0942c391975972b1a54b2dc983e33a239f169a9"
+                "reference": "de187e9200948bab6975167e480950abcd5efdac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/b0942c391975972b1a54b2dc983e33a239f169a9",
-                "reference": "b0942c391975972b1a54b2dc983e33a239f169a9",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/de187e9200948bab6975167e480950abcd5efdac",
+                "reference": "de187e9200948bab6975167e480950abcd5efdac",
                 "shasum": ""
             },
             "require": {
@@ -4923,7 +4928,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-09-17T14:23:26+00:00"
+            "time": "2020-10-06T14:22:09+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -6144,6 +6149,16 @@
                 "php",
                 "phpspreadsheet"
             ],
+            "funding": [
+                {
+                    "url": "https://laravel-excel.com/commercial-support",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/patrickbrouwers",
+                    "type": "github"
+                }
+            ],
             "time": "2020-09-29T07:30:12+00:00"
         },
         {
@@ -6327,6 +6342,12 @@
             "keywords": [
                 "stream",
                 "zip"
+            ],
+            "funding": [
+                {
+                    "url": "https://opencollective.com/zipstream",
+                    "type": "open_collective"
+                }
             ],
             "time": "2020-05-30T13:11:16+00:00"
         },
@@ -7111,6 +7132,16 @@
                 "date",
                 "datetime",
                 "time"
+            ],
+            "funding": [
+                {
+                    "url": "https://opencollective.com/Carbon",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/nesbot/carbon",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-10-04T09:11:05+00:00"
         },
@@ -9679,6 +9710,16 @@
                 "media",
                 "spatie"
             ],
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
             "time": "2020-09-30T21:19:21+00:00"
         },
         {
@@ -10290,6 +10331,20 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-18T14:27:32+00:00"
         },
         {
@@ -10343,6 +10398,20 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-07-05T09:39:30+00:00"
         },
         {
@@ -10450,6 +10519,20 @@
             ],
             "description": "Symfony ErrorHandler Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-10-02T08:49:02+00:00"
         },
         {
@@ -10523,6 +10606,20 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-18T14:27:32+00:00"
         },
         {
@@ -10634,6 +10731,20 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-02T16:23:27+00:00"
         },
         {
@@ -10706,6 +10817,20 @@
             ],
             "description": "Symfony HttpClient component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-10-02T14:24:03+00:00"
         },
         {
@@ -10828,6 +10953,20 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-27T14:14:57+00:00"
         },
         {
@@ -10928,6 +11067,20 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-10-04T07:57:28+00:00"
         },
         {
@@ -11004,6 +11157,20 @@
                 "l10n",
                 "localization"
             ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-27T03:44:28+00:00"
         },
         {
@@ -11067,6 +11234,20 @@
                 "mime",
                 "mime-type"
             ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-02T16:23:27+00:00"
         },
         {
@@ -11122,6 +11303,20 @@
                 "config",
                 "configuration",
                 "options"
+            ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-09-27T03:44:28+00:00"
         },
@@ -11938,6 +12133,20 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-02T16:23:27+00:00"
         },
         {
@@ -12001,6 +12210,20 @@
                 "http-message",
                 "psr-17",
                 "psr-7"
+            ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-09-29T08:17:46+00:00"
         },
@@ -12079,6 +12302,20 @@
                 "routing",
                 "uri",
                 "url"
+            ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-10-02T13:05:43+00:00"
         },
@@ -12213,6 +12450,20 @@
                 "utf-8",
                 "utf8"
             ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-15T12:23:47+00:00"
         },
         {
@@ -12291,6 +12542,20 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-27T03:44:28+00:00"
         },
         {
@@ -12351,6 +12616,20 @@
                 "interfaces",
                 "interoperability",
                 "standards"
+            ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-09-28T13:05:58+00:00"
         },
@@ -12427,6 +12706,20 @@
             "keywords": [
                 "debug",
                 "dump"
+            ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-09-18T14:27:32+00:00"
         },
@@ -12934,6 +13227,16 @@
                 "datatables",
                 "jquery",
                 "laravel"
+            ],
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/yajra",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/yajra",
+                    "type": "patreon"
+                }
             ],
             "time": "2020-10-06T03:24:30+00:00"
         }
@@ -14758,12 +15061,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "b72c414bf873e6ce5a261df8d2c91f4bae39cbe6"
+                "reference": "4cee9b9cae6169665113553c060c045a6b6218cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/b72c414bf873e6ce5a261df8d2c91f4bae39cbe6",
-                "reference": "b72c414bf873e6ce5a261df8d2c91f4bae39cbe6",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/4cee9b9cae6169665113553c060c045a6b6218cc",
+                "reference": "4cee9b9cae6169665113553c060c045a6b6218cc",
                 "shasum": ""
             },
             "require": {
@@ -14774,7 +15077,7 @@
                 "friendsofphp/php-cs-fixer": "^2.16",
                 "laravel/framework": "^8.0",
                 "mockery/mockery": "~1.0",
-                "orchestra/testbench": "^6.0",
+                "orchestra/testbench": "^6.2",
                 "phpstan/phpstan": "^0.12.14",
                 "phpunit/phpunit": "^8.5",
                 "spatie/phpunit-snapshot-assertions": "^2.1.0"
@@ -14821,7 +15124,13 @@
                 "nwidart",
                 "rad"
             ],
-            "time": "2020-10-03T15:07:06+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/nwidart",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-10-06T11:00:45+00:00"
         },
         {
             "name": "orangehill/iseed",
@@ -15349,6 +15658,20 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
+            "funding": [
+                {
+                    "url": "https://github.com/ondrejmirtes",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/phpstan",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-10-01T13:20:16+00:00"
         },
         {
@@ -16717,6 +17040,20 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-09T05:20:36+00:00"
         },
         {
@@ -16778,6 +17115,20 @@
             ],
             "description": "Symfony DomCrawler Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-10-02T07:34:48+00:00"
         },
         {
@@ -16828,6 +17179,20 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-27T14:02:37+00:00"
         },
         {
@@ -16878,6 +17243,20 @@
             ],
             "description": "Symfony Stopwatch Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-05-20T17:43:50+00:00"
         },
         {
@@ -16941,6 +17320,20 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-27T03:44:28+00:00"
         },
         {
@@ -17097,6 +17490,10 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/ccm-billing-module": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/timetracking-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
@@ -17116,5 +17513,6 @@
         "ext-simplexml": "*",
         "ext-zend-opcache": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }
