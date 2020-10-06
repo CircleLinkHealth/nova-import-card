@@ -39,12 +39,6 @@
                                         <li><span> <b>Regular Dr.</b>: {{$regularDoctor->getFullName()}}  </span></li>
                                     @endif
                                     <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} </span></li>
-                                    @if($patient->getAgentName())
-                                        <li class="inline-block"><b>Alternate Contact</b>: <span
-                                                    title="{{$patient->getAgentEmail()}}">({{$patient->getAgentRelationship()}}
-                                                ) {{$patient->getAgentName()}} {{$patient->getAgentPhone()}}</span></li>
-                                        <li class="inline-block"></li>
-                                    @endif
                                 </ul>
                             </div>
 
@@ -64,15 +58,14 @@
 
                             <div class="col-sm-12">
                                 <call-number
-                                        :debug="{{json_encode(!isProductionEnv())}}"
+                                        :debug="@json($allowNonUsPhones)"
                                         cpm-caller-url="{{config('services.twilio.cpm-caller-url')}}"
                                         cpm-token="{{$cpmToken}}"
                                         from-number="{{$patient->primaryProgramPhoneE164()}}"
-                                        :allow-conference="{{json_encode(config('services.twilio.allow-conference'))}}"
+                                        :allow-conference="@json(config('services.twilio.allow-conference'))"
                                         inbound-user-id="{{$patient->id}}"
                                         outbound-user-id="{{auth()->id()}}"
                                         source="patient-call-page"
-                                        :patient-numbers="{{$phoneNumbers}}"
                                         clinical-escalation-number="{{$clinicalEscalationNumber}}">
                                 </call-number>
                             </div>

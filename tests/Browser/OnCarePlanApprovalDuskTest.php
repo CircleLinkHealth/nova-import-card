@@ -6,11 +6,11 @@
 
 namespace Tests\Browser;
 
-use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;

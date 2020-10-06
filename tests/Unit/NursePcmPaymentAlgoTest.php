@@ -9,8 +9,8 @@ namespace Tests\Unit;
 use App\Jobs\CreateNurseInvoices;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
-use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Tests\TestCase;
 

@@ -13,6 +13,7 @@ use App\Note;
 use App\Policies\CreateNoteForPatient;
 use App\Services\NoteService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Events\PatientSuccessfulCallCreated;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\Family;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -715,6 +716,10 @@ class SchedulerService
         //So we are dispatching an event with a delayed job to make sure that the summary will be created before we attach the problems
         if ($attestedProblems) {
             event(new CallIsReadyForAttestedProblemsAttachment($call, $attestedProblems));
+        }
+
+        if (Call::REACHED === $call->status) {
+            event(new PatientSuccessfulCallCreated($note->patient_id));
         }
 
         return $call;

@@ -1,4 +1,4 @@
-<div class="flow-text" style="max-height: 590px; overflow-y: scroll;">
+<div class="flow-text" style="max-height: 590px;">
     <div style="display: inline-flex">
         <div class="header">
             {{$signatoryNameForHeader}}
@@ -37,6 +37,16 @@
         margin-top: -22px;
     }
 
+    .logo{
+        opacity: 90%;
+        margin-top: 15px;
+    }
+
+    @media (max-width: 490px) {
+        .logo{
+            margin-left: 50px;
+        }
+    }
     @media (max-width: 490px) {
         .header{
             padding-right: 18px;
