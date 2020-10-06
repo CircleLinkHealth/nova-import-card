@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "96afef13e60bed9c5970629ba6c646ed",
+    "content-hash": "7bd31e92674f44346c3e9b6173d78a57",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1543,11 +1543,11 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.3.6",
+            "version": "dev-billing-staging-fixes",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "7cbe0341391e792925cdae60a5dcfe559d436f0f"
+                "reference": "38b018637244ee749187ef5082405760ac71a775"
             },
             "type": "laravel-module",
             "extra": {
@@ -1569,7 +1569,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T14:59:12+00:00"
+            "time": "2020-10-05T14:21:17+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -17497,6 +17497,7 @@
         "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/patientapi-module": 20,
         "circlelinkhealth/timetracking-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
