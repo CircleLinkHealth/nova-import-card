@@ -47,8 +47,8 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
         $this->app->bind(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
 
         $this->app->singleton(PatientServiceRepositoryInterface::class, function ($app) {
-            //todo: help. The idea is that if this is called in a request, used cached, otherwise if in job use normal
-            //Check global Request Object
+            
+            //todo: check global request object too?
             if (Auth::check()) {
                 return $app->make(CachedPatientServiceProcessorRepository::class);
             }

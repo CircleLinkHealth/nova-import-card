@@ -32,8 +32,15 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $summary = $this->repo->fulfill($patientId, $chargeableServiceCode, $month);
 
-        $this->getPatientFromCache($patientId)
+        $patient = $this->getPatientFromCache($patientId);
+
+        $patient
             ->chargeableMonthlySummaries
+            ->firstWhere('id', $summary->id)
+            ->is_fulfilled = true;
+
+        $patient
+            ->chargeableMonthlySummariesView
             ->firstWhere('id', $summary->id)
             ->is_fulfilled = true;
 
@@ -42,7 +49,6 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
 
     public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection
     {
-        //Carbon month, use filter for correct results?
         return $this->getPatientFromCache($patientId)
             ->chargeableMonthlySummaries
             ->where('chargeable_month', $month);
@@ -50,11 +56,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
 
     public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView
     {
-        // TODO: Implement getChargeablePatientSummary() method.
-        //load views on billing data as well?
-        //views are tricky because, I don't think we can update their data in cache.
-        //do not use views on this repository?
-        //find way to create fake view records?
+        //todo: query for view if you should
         return $this->getPatientFromCache($patientId)
             ->chargeableMonthlySummariesView
             ->where('chargeable_service_code', $chargeableServiceCode)
@@ -104,13 +106,13 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $summary = $this->repo->setPatientConsented($patientId, $chargeableServiceCode, $month);
 
-        $this->getPatientFromCache($patientId)
-            ->chargeableMonthlySummaries
+        $patient = $this->getPatientFromCache($patientId);
+
+        $patient->chargeableMonthlySummaries
             ->firstWhere('id', $summary->id)
             ->requires_patient_consent = false;
 
-        $this->getPatientFromCache($patientId)
-            ->chargeableMonthlySummariesView
+        $patient->chargeableMonthlySummariesView
             ->firstWhere('id', $summary->id)
             ->requires_patient_consent = false;
 
@@ -121,9 +123,6 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $summary = $this->repo->store($patientId, $chargeableServiceCode, $month, $requiresPatientConsent);
 
-        //make sure these changes are stored - push back into cache in every method just to make sure?
-        //always store in cache by ID and forget? or don't even make a collection?
-        //unresolved ->is user in cache updated?
         $this->getPatientFromCache($patientId)
             ->chargeableMonthlySummaries->push($summary);
 
