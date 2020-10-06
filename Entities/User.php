@@ -2532,7 +2532,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return true;
     }
 
-    public function patientList(bool $showPracticePatients = true)
+    public function patientList(bool $showPracticePatients = true, array $carePlanStatus = null)
     {
         return User::intersectPracticesWith($this)
             ->ofType('participant')
@@ -2563,6 +2563,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                             'type',
                             [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
                         );
+                });
+            })
+            ->when( ! is_null($carePlanStatus), function ($query) use ($carePlanStatus) {
+                $query->whereHas('carePlan', function ($subQuery) use ($carePlanStatus) {
+                    $subQuery->whereIn('status', $carePlanStatus);
                 });
             })
             ->get();
