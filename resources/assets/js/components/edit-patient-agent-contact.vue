@@ -293,7 +293,7 @@ export default {
                 if (this.callEnabled){
                     EventBus.$emit("refresh:phoneData");
                 }
-                this.successFlashNotification(response.data.message);
+                this.successAgentFlashNotification(response.data.message);
                 this.loading = false;
             })).catch((error) => {
                 this.loading = false;
@@ -301,7 +301,7 @@ export default {
             });
         },
 
-        successFlashNotification(message){
+        successAgentFlashNotification(message){
             this.addNotification({
                 title: "Success!",
                 text:  message,
@@ -363,7 +363,7 @@ export default {
                     EventBus.$emit("refresh:phoneData");
                 }
 
-                this.successFlashNotification(response.data.message);
+                this.successAgentFlashNotification(response.data.message);
 
                 this.loading = false;
             })).catch((error) => {
@@ -417,11 +417,23 @@ export default {
             }
         },
 
+        warningAgentFlashNotification(error){
+            this.addNotification({
+                title: "Warning!",
+                text: error,
+                type: "danger",
+                timeout: true
+            });
+        },
+        
         responseErrorMessage(exception){
             if (exception.status === 422) {
-                if (exception.hasOwnProperty('message')){
-                    alert(exception.message);
-                }
+                Object.keys(exception.data).forEach(numberKey => {
+                    const array = exception.data[numberKey];
+                    array.forEach(error => {
+                        return this.warningAgentFlashNotification(error);
+                    });
+                });
             }
 
             console.log(exception);
