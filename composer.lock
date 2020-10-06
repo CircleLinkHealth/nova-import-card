@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.158.2",
+            "version": "3.158.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b80957465d94c127254e36061dd3d0c3ccc94cc1"
+                "reference": "ac883fef515dc92785136f251a8337b33bff1d54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b80957465d94c127254e36061dd3d0c3ccc94cc1",
-                "reference": "b80957465d94c127254e36061dd3d0c3ccc94cc1",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ac883fef515dc92785136f251a8337b33bff1d54",
+                "reference": "ac883fef515dc92785136f251a8337b33bff1d54",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-10-05T18:13:27+00:00"
+            "time": "2020-10-06T18:16:08+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "9e876ea564b72522914bad5c47df5ad167b26ac0"
+                "reference": "2bcf3f52f9ff8a4c52343a1ac2e5ea0c9d163000"
             },
             "type": "laravel-module",
             "extra": {
@@ -992,7 +992,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-05T14:21:16+00:00"
+            "time": "2020-10-06T21:40:28+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -3482,16 +3482,16 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.14.0",
+            "version": "v1.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "95c23ebd89a0a4d1b511aed81426f57388ab7268"
+                "reference": "2df57c61c2fd739a15a81f792b1ccedc3e06d2b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/95c23ebd89a0a4d1b511aed81426f57388ab7268",
-                "reference": "95c23ebd89a0a4d1b511aed81426f57388ab7268",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/2df57c61c2fd739a15a81f792b1ccedc3e06d2b6",
+                "reference": "2df57c61c2fd739a15a81f792b1ccedc3e06d2b6",
                 "shasum": ""
             },
             "require": {
@@ -3530,7 +3530,7 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2020-10-02T22:20:36+00:00"
+            "time": "2020-10-06T18:10:43+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -5058,17 +5058,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.11.1",
+            "version": "v3.12.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "57c67c5da3bfc9e499a81b288ab47919bfb14b4c"
+                "reference": "196b229cf6c07f889d344db9fb255496ea61c738"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-57c67c5da3bfc9e499a81b288ab47919bfb14b4c-zip-a2ec0b.zip",
-                "reference": "57c67c5da3bfc9e499a81b288ab47919bfb14b4c",
-                "shasum": "105f97de110ea795d9ec643252cd27fbc893c93e"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-196b229cf6c07f889d344db9fb255496ea61c738-zip-924cae.zip",
+                "reference": "196b229cf6c07f889d344db9fb255496ea61c738",
+                "shasum": "73fedbd73c064089eb8a8a84a492b014a5bf9aed"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5129,7 +5129,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-09-29T20:34:45+00:00"
+            "time": "2020-10-06T17:10:54+00:00"
         },
         {
             "name": "laravel/passport",
@@ -15346,16 +15346,16 @@
         },
         {
             "name": "php-webdriver/webdriver",
-            "version": "1.8.2",
+            "version": "1.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-webdriver/php-webdriver.git",
-                "reference": "3308a70be084d6d7fd1ee5787b4c2e6eb4b70aab"
+                "reference": "fb0fc4cb01c70a7790a5fcc91d461b88c83174a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/3308a70be084d6d7fd1ee5787b4c2e6eb4b70aab",
-                "reference": "3308a70be084d6d7fd1ee5787b4c2e6eb4b70aab",
+                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/fb0fc4cb01c70a7790a5fcc91d461b88c83174a2",
+                "reference": "fb0fc4cb01c70a7790a5fcc91d461b88c83174a2",
                 "shasum": ""
             },
             "require": {
@@ -15366,11 +15366,15 @@
                 "symfony/polyfill-mbstring": "^1.12",
                 "symfony/process": "^2.8 || ^3.1 || ^4.0 || ^5.0"
             },
+            "replace": {
+                "facebook/webdriver": "*"
+            },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "jakub-onderka/php-parallel-lint": "^1.0",
+                "ondram/ci-detector": "^2.1 || ^3.5",
                 "php-coveralls/php-coveralls": "^2.0",
                 "php-mock/php-mock-phpunit": "^1.1",
+                "php-parallel-lint/php-parallel-lint": "^1.2",
                 "phpunit/phpunit": "^5.7",
                 "sebastian/environment": "^1.3.4 || ^2.0 || ^3.0",
                 "sminnee/phpunit-mock-objects": "^3.4",
@@ -15383,7 +15387,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8.x-dev"
+                    "dev-main": "1.8.x-dev"
                 }
             },
             "autoload": {
@@ -15407,7 +15411,7 @@
                 "selenium",
                 "webdriver"
             ],
-            "time": "2020-03-04T14:40:12+00:00"
+            "time": "2020-10-06T19:10:04+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
