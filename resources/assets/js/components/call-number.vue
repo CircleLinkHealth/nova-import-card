@@ -206,6 +206,8 @@
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
     import axios from "../bootstrap-axios";
+    import {mapActions} from 'vuex';
+    import {addNotification} from '../../../../resources/assets/js/store/actions.js';
 
     let self;
 
@@ -312,7 +314,8 @@
                 }
             },
         },
-        methods:{
+        methods:Object.assign(mapActions(['addNotification']), {
+
             getUrl: function (path) {
                 if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
                     if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
@@ -454,10 +457,10 @@
                         if (isCurrentlyOnConference) {
                             this.log = `Hanging up call to ${number}`;
                             this.axios.post(this.getUrl(`twilio/call/end?cpm-token=${this.cpmToken}`), {
-                                    CallSid: this.callSids[number],
-                                    InboundUserId: this.inboundUserId,
-                                    OutboundUserId: this.outboundUserId,
-                                }, {withCredentials: true})
+                                CallSid: this.callSids[number],
+                                InboundUserId: this.inboundUserId,
+                                OutboundUserId: this.outboundUserId,
+                            }, {withCredentials: true})
                                 .then(resp => {
 
                                 })
@@ -822,6 +825,7 @@
                     });
                 }
             },
+
             registerBroadcastChannelHandlers: function () {
                 registerHandler("call_status", (msg) => {
                     let status = null;
@@ -881,7 +885,19 @@
                 registerHandler("mute_call", muteHandler);
                 registerHandler("unmute_call", muteHandler);
             },
-        },
+
+            emitMessageNotification(messageData){
+                this.addNotification({
+                    title: messageData.title,
+                    text: messageData.message,
+                    type: messageData.type,
+                    timeout: true
+                });
+
+            }
+        }),
+
+
         created() {
             self = this;
             this.resetPhoneState();
@@ -921,6 +937,10 @@
             self.initTwilio();
             EventBus.$on("selectedNumber:toCall", function (number) {
                 self.radioSelectedNumber = number;
+            });
+
+            EventBus.$on("emit:message", function (messageData) {
+                self.emitMessageNotification(messageData);
             });
         }
     }
