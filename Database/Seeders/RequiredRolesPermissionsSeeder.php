@@ -885,6 +885,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'change-patient-enrollment-status',
                     'vitals-survey-complete',
                     'phi.read',
+                    'phoneNumber.create',
+                    'phoneNumber.update',
+                    'phoneNumber.delete',
+                    'phoneNumber.read',
                 ],
             ],
             [
@@ -1012,6 +1016,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'attestedProblems.create',
                     'attestedProblems.read',
                     'attestedProblems.update',
+                    'phoneNumber.create',
+                    'phoneNumber.update',
+                    'phoneNumber.delete',
+                    'phoneNumber.read',
                 ],
             ],
             [
@@ -1138,6 +1146,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'phoneNumber.create',
                     'phoneNumber.update',
                     'phoneNumber.delete',
+                    'phoneNumber.read',
                 ],
             ],
             [
