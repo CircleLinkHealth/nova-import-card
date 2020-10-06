@@ -138,6 +138,8 @@
     import CallNumber from "./call-number";
     import EditPatientAgentContact from "./edit-patient-agent-contact";
     import VueSelect from "vue-select";
+    import {mapActions} from 'vuex';
+    import {addNotification} from '../../../../resources/assets/js/store/actions.js';
 
     const agent = 'agent';
 
@@ -249,7 +251,7 @@
             },
         },
 
-        methods: {
+        methods: Object.assign(mapActions(['addNotification']), {
             disableMakePrimary(number){
                 return number.isPrimary || this.loading;
             },
@@ -303,7 +305,7 @@
             },
 
             selectedNumber(number){
-               EventBus.$emit("selectedNumber:toCall", number);
+                EventBus.$emit("selectedNumber:toCall", number);
             },
 
             numberIsPrimary(number){
@@ -316,8 +318,8 @@
                     phoneId:phoneNumberId,
                     patientUserId:this.userId,
                 }).then((response => {
-                        this.getPatientPhoneNumbers();
-                    })).catch((error) => {
+                    this.getPatientPhoneNumbers();
+                })).catch((error) => {
                     this.loading = false;
                     this.responseErrorMessage(error.response);
                 });
@@ -361,12 +363,12 @@
 
             addPhoneField(){
                 if (! this.allowAddingNewNumber){
-                    alert('Please remove one phone number in order to add a new one');
+                    this.warningFlashNotification("Please remove one phone number in order to add a new one");
                     return;
                 }
 
                 if (this.newInputs.length > 0) {
-                    alert('Please save the existing field first');
+                    this.warningFlashNotification("Please save the existing field first");
                     return;
                 }
                 this.newPhoneNumber = '';
@@ -374,7 +376,7 @@
                 this.filterOutSavedPhoneTypes();
 
                 const arr = {
-                  placeholder: '1234567890'
+                    placeholder: '1234567890'
                 };
 
                 this.newInputs.push(arr);
@@ -390,24 +392,37 @@
             },
 
             responseErrorMessage(exception){
-                const e = exception.data;
                 if (exception.status === 422) {
-                    alert(e);
+                    Object.keys(exception.data).forEach(numberKey => {
+                        const array = exception.data[numberKey];
+                        array.forEach(error => {
+                            return this.warningFlashNotification(error);
+                        });
+                    });
                 }
 
-                console.log(e);
+                console.log(exception);
+            },
+
+            warningFlashNotification(error){
+                this.addNotification({
+                    title: "Warning!",
+                    text: error,
+                    type: "danger",
+                    timeout: true
+                });
             },
 
             saveNewNumber(){
                 this.loading = true;
                 if (this.newPhoneType.length === 0){
-                    alert("Please choose phone number type");
+                    this.warningFlashNotification("Please choose phone number type");
                     this.loading = false;
                     return;
                 }
 
                 if (this.newPhoneNumber.length === 0){
-                    alert("Phone number is required.");
+                    this.warningFlashNotification("Phone number is required.");
                     this.loading = false;
                     return;
                 }
@@ -425,7 +440,7 @@
                     .then((response => {
                         this.getPatientPhoneNumbers();
                         if (response.data.hasOwnProperty('message')){
-                            console.log(response.data.message);
+                            this.successFlashNotification(response.data.message);
                         }
                     })).catch((error) => {
                     this.loading = false;
@@ -433,6 +448,14 @@
                 });
             },
 
+            successFlashNotification(message){
+                this.addNotification({
+                    title: "Success!",
+                    text: message,
+                    type: "success",
+                    timeout: true
+                });
+            },
             removeInputField(index){
                 this.loading = true;
                 this.newPhoneType = '';
@@ -456,8 +479,8 @@
                 }
 
                 const phoneNumberId = number.hasOwnProperty('phoneNumberId')
-                ? number.phoneNumberId
-                : '';
+                    ? number.phoneNumberId
+                    : '';
 
                 this.loading = true;
                 axios.post('/manage-patients/delete-phone', {
@@ -467,14 +490,14 @@
                     .then((response => {
                         this.getPatientPhoneNumbers();
                         if (response.data.hasOwnProperty('message')){
-                            console.log(response.data.message);
+                            this.successFlashNotification(response.data.message);
                         }
                     })).catch((error) => {
                     this.loading = false;
                     this.responseErrorMessage(error.response);
                 });
             },
-        },
+        }),
 
         created() {
             this.getPatientPhoneNumbers();

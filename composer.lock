@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "125f06e5bffe7dfda4673d487fd3158c",
+    "content-hash": "3461eb1bd7b7dbe88afba82761b54f6c",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1224,11 +1224,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.5.4",
+            "version": "v2.5.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "0e4eae151cfbf7926ebef252580f5bdc7dfd9b98"
+                "reference": "72e01d87400f9c7d7583faad3e1307e53b03f225"
             },
             "type": "laravel-module",
             "extra": {
@@ -1250,15 +1250,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-05T21:12:31+00:00"
+            "time": "2020-10-06T12:09:17+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.4.1",
+            "version": "v3.4.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "517c2145b506e1e78556c4a31871b84918d2c7e5"
+                "reference": "b1149ea2c8aa605e78b3ba289cf5648b369afc5e"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1292,7 +1292,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-06T09:37:10+00:00"
+            "time": "2020-10-06T12:10:02+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1518,11 +1518,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.6.1",
+            "version": "v1.6.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "dae1b16ab232a5efb25dc62f4fa61babd7d17b0f"
+                "reference": "0d2fbb265a8f04bc61fcb154b117bca8677ce199"
             },
             "type": "laravel-module",
             "extra": {
@@ -1544,7 +1544,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-04T15:07:42+00:00"
+            "time": "2020-10-06T10:38:56+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -12868,16 +12868,16 @@
         },
         {
             "name": "yajra/laravel-datatables-oracle",
-            "version": "v9.11.0",
+            "version": "v9.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-datatables.git",
-                "reference": "fb12721a46dd9071236d7e7e6de440413bc69087"
+                "reference": "d85285c87cd9c02dfaee2a1201a05e002e148e1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/fb12721a46dd9071236d7e7e6de440413bc69087",
-                "reference": "fb12721a46dd9071236d7e7e6de440413bc69087",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/d85285c87cd9c02dfaee2a1201a05e002e148e1a",
+                "reference": "d85285c87cd9c02dfaee2a1201a05e002e148e1a",
                 "shasum": ""
             },
             "require": {
@@ -12935,7 +12935,7 @@
                 "jquery",
                 "laravel"
             ],
-            "time": "2020-09-09T02:36:16+00:00"
+            "time": "2020-10-06T03:24:30+00:00"
         }
     ],
     "packages-dev": [
