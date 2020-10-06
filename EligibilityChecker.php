@@ -750,8 +750,8 @@ class EligibilityChecker
             $args
         ) && ! empty($args['primary_insurance']))) {
             $insurances = is_array($args['insurances'])
-                ? collect($args['insurances'])
-                : $args['insurances'];
+                ? collect($args['insurances'])->toArray()
+                : (array) $args['insurances'];
 
             if (array_key_exists(0, $insurances) && array_keys_exist(
                 ['insurancetype', 'insuranceplanname'],
