@@ -84,10 +84,10 @@ class CcdToLogTranformer
      */
     public function getAllPhoneNumbers($phones = [])
     {
-        $home    = [];
-        $mobile  = [];
-        $work    = [];
-        $primary = [];
+        $home      = [];
+        $mobile    = [];
+        $alternate = [];
+        $primary   = [];
 
         foreach ($phones as $phone) {
             if ( ! isset($phone->number)) {
@@ -110,7 +110,8 @@ class CcdToLogTranformer
                     array_push($mobile, $number);
                     break;
                 case PhoneNumber::ALTERNATE:
-                    array_push($work, $number);
+                case 'work':
+                    array_push($alternate, $number);
                     break;
                 case 'primary_phone':
                     array_push($primary, $number);
