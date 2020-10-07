@@ -362,7 +362,7 @@
                 this.makeNewNumberPrimary = false;
             },
 
-            patientManyPrimaryNumbers(phoneNumbers){
+            patientHasManyPrimaryNumbers(phoneNumbers){
                 let primaryNumbersCount = 0;
 
                  Object.keys(phoneNumbers).forEach(function (index){
@@ -400,6 +400,7 @@
                         this.loading = false;
                     })).catch((error) => {
                     this.loading = false;
+                    debugger;
                     this.responseErrorMessage(error.response);
                 });
             },
