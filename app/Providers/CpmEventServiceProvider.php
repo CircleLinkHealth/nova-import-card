@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Events\CarePlanWasApproved;
 use App\Events\CarePlanWasProviderApproved;
 use App\Events\CarePlanWasQAApproved;
@@ -17,7 +16,6 @@ use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
 use App\Listeners\AddPatientConsentNote;
-use App\Listeners\AttachAttestedProblemsToCall;
 use App\Listeners\AttachUPG0506CarePlanToPatientUser;
 use App\Listeners\AutoApproveCarePlan;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
@@ -183,6 +181,8 @@ class CpmEventServiceProvider extends ServiceProvider
             }
         } catch (InvalidArgumentException $e) {
             // no need to do anything. we do not have config for postmark mailer
+        } catch ( \Throwable $throwable){
+            //do nothing
         }
     }
 }

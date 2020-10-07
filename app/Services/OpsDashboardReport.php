@@ -8,7 +8,6 @@ namespace App\Services;
 
 use App\Reports\OpsDashboardPracticeReportData;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;

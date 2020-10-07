@@ -7,10 +7,7 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
-use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
-use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Tests\CustomerTestCase;
 use Tests\Helpers\Users\Patient\Problems;

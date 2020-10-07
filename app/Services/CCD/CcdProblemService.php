@@ -28,27 +28,28 @@ class CcdProblemService
 
     public function addPatientCcdProblem(CcdProblemInput $ccdProblem)
     {
-        if ($ccdProblem) {
-            if ($ccdProblem->getUserId() && $ccdProblem->getName() && strlen($ccdProblem->getName()) > 0) {
-                $problem = $this->setupProblem($this->problemRepo->addPatientCcdProblem($ccdProblem));
+        //todo: cleanup
+//        if ($ccdProblem) {
+        if ($ccdProblem->getUserId() && $ccdProblem->getName() && strlen($ccdProblem->getName()) > 0) {
+            $problem = $this->setupProblem($this->problemRepo->addPatientCcdProblem($ccdProblem));
 
-                if ($problem && $ccdProblem->getIcd10()) {
-                    $problemCode                         = new ProblemCode();
-                    $problemCode->problem_id             = $problem['id'];
-                    $problemCode->problem_code_system_id = 2;
-                    $problemCode->code                   = $ccdProblem->getIcd10();
-                    $problemCode->resolve();
-                    $problemCode->save();
+            if ($problem && $ccdProblem->getIcd10()) {
+                $problemCode                         = new ProblemCode();
+                $problemCode->problem_id             = $problem['id'];
+                $problemCode->problem_code_system_id = 2;
+                $problemCode->code                   = $ccdProblem->getIcd10();
+                $problemCode->resolve();
+                $problemCode->save();
 
-                    return $this->problem($problem['id']);
-                }
-
-                return $problem;
-                //save problem and return, processing happens elsewhere
+                return $this->problem($problem['id']);
             }
-            //perform validation before here
-            throw new \Exception('$ccdProblem needs "userId" and "name" parameters');
+
+            return $problem;
+            //save problem and return, processing happens elsewhere
         }
+        //perform validation before here
+        throw new \Exception('$ccdProblem needs "userId" and "name" parameters');
+//        }
         //if we pass value object it wouldn't be exception
         throw new \Exception('$ccdProblem should not be null');
     }
