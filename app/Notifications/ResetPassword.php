@@ -15,6 +15,8 @@ class ResetPassword extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    public $queue = 'high';
+
     /**
      * The password reset token.
      *
@@ -79,6 +81,13 @@ class ResetPassword extends Notification implements ShouldQueue
     public function via($notifiable)
     {
         return ['mail'];
+    }
+
+    public function viaQueues()
+    {
+        return [
+            'mail' => 'high',
+        ];
     }
 
     /**

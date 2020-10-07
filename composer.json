@@ -198,7 +198,7 @@
     "circlelinkhealth/core-module": "1.7.8",
     "circlelinkhealth/cpm-migrations-module": "2.5.5",
     "circlelinkhealth/customer-module": "3.4.3",
-    "circlelinkhealth/eligibility-module": "3.4.9",
+    "circlelinkhealth/eligibility-module": "3.5.1",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
@@ -274,7 +274,6 @@
     "willdurand/email-reply-parser": "^2.9",
     "yajra/laravel-datatables-oracle": "~9.0",
     "circlelinkhealth/synonyms-module": "*"
-
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
