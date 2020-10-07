@@ -343,7 +343,7 @@ class CareTeamController extends Controller
                 } else {
                     $phone = PhoneNumber::updateOrCreate([
                         'user_id' => $providerUser->id,
-                        'type'    => 'work',
+                        'type'    => PhoneNumber::ALTERNATE,
                         'number'  => (new StringManipulation())->formatPhoneNumber($phone['number']),
                     ]);
                 }
