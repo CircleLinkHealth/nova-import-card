@@ -135,6 +135,7 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
                 ->map(function (ChargeableLocationMonthlySummary $summary) {
                     return $summary->chargeableService->processor();
                 })
+                ->filter()
                 ->toArray()
         );
     }
