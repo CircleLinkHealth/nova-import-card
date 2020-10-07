@@ -59,6 +59,7 @@ class MedicalHistoryFromAthena implements MedicalRecordDecorator
                 ];
             }
         );
+        $data['problems'] = collect($data['problems'] ?? [])->unique('name')->toArray();
         $eligibilityJob->data = $data;
 
         if ($eligibilityJob->isDirty()) {
