@@ -5,7 +5,7 @@
             <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Select a number to call</h5>
 
             <div v-if="hasManyPrimaryNumbers" class="alert alert-warning" role="alert">
-                It seems that there are more than one primary numbers. Please choose the correct one.
+                It seems that there are more than one primary number. Please choose the correct one.
             </div>
 
             <template v-for="(number, index) in patientPhoneNumbers">
