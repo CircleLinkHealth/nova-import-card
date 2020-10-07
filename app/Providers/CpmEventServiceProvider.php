@@ -181,8 +181,6 @@ class CpmEventServiceProvider extends ServiceProvider
             }
         } catch (InvalidArgumentException $e) {
             // no need to do anything. we do not have config for postmark mailer
-        } catch ( \Throwable $throwable){
-            //do nothing
         }
     }
 }
