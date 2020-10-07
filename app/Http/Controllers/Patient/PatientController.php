@@ -61,15 +61,8 @@ class PatientController extends Controller
 
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
-
-        /** @var PhoneNumber $currentPrimaryPhone */
-        $currentPrimaryPhone = $patientUser->phoneNumbers
-            ->where('is_primary', true)
-            ->first();
-
-        if ( ! empty($currentPrimaryPhone)) {
-            $this->unsetCurrentPrimaryNumber($currentPrimaryPhone);
-        }
+        
+        $this->unsetCurrentPrimaryNumbers($patientUser);
 
         $patientUser->phoneNumbers()
             ->where('id', $newPrimaryPhoneId)->update(
@@ -202,12 +195,8 @@ class PatientController extends Controller
         $patientUser = $request->get('patientUser');
         $locationId  = $request->get('locationId');
 
-        $existingPrimaryNumber = $patientUser->phoneNumbers
-            ->where('is_primary', '=', true)
-            ->first();
-
-        if ($request->input('makePrimary') && ! empty($existingPrimaryNumber)) {
-            $this->unsetCurrentPrimaryNumber($existingPrimaryNumber);
+        if ($request->input('makePrimary')) {
+            $this->unsetCurrentPrimaryNumbers($patientUser);
         }
 
         /** @var PhoneNumber $newPhoneNumber */
@@ -639,6 +628,15 @@ class PatientController extends Controller
         return PhoneNumber::whereUserId($patientUserId)->get();
     }
 
+    /**
+     * @return bool
+     */
+    private function hasOtherPrimaryNumbers(User $patientUser)
+    {
+        return $patientUser->phoneNumbers()
+            ->where('is_primary', true)->count() > 0;
+    }
+
     private function prepareForWebix($observation)
     {
         return [
@@ -656,9 +654,14 @@ class PatientController extends Controller
         ];
     }
 
-    private function unsetCurrentPrimaryNumber(PhoneNumber $currentPrimaryPhone)
+    private function unsetCurrentPrimaryNumbers(User $patientUser)
     {
-        $currentPrimaryPhone->is_primary = false;
-        $currentPrimaryPhone->save();
+        $patientUser->phoneNumbers()
+            ->where('is_primary', true)
+            ->update(
+                [
+                    'is_primary' => false,
+                ]
+            );
     }
 }
