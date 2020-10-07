@@ -149,7 +149,7 @@
     import {mapActions} from 'vuex';
     import {addNotification} from '../../../../resources/assets/js/store/actions.js';
 
-    const agent = 'agent';
+    const AGENT = 'agent';
 
     export default {
         name: "edit-patient-number",
@@ -247,7 +247,7 @@
                 if (this.newPhoneType === null){
                     return false;
                 }
-                return this.newPhoneType.toLowerCase() === agent;
+                return this.newPhoneType.toLowerCase() === AGENT;
             },
 
             addNewFieldClicked(){
@@ -256,7 +256,7 @@
 
             agentNumberIsSet(){
                 return this.patientPhoneNumbers.filter(number=>number.number.length !== 0
-                    && number.type.toLowerCase() === agent).length !== 0;
+                    && number.type.toLowerCase() === AGENT).length !== 0;
             },
         },
 
@@ -302,7 +302,7 @@
                     return true;
                 }
 
-                return number.type.toLowerCase() !== agent && number.isPrimary === false;
+                return number.type.toLowerCase() !== AGENT && number.isPrimary === false;
             },
 
             filterOutSavedPhoneTypes(){
@@ -511,7 +511,7 @@
 
             deletePhone(number){
                 this.loading = true;
-                if (number.type.toLowerCase() === agent){
+                if (number.type.toLowerCase() === AGENT){
                     this.$refs.editPatientAgentContact.deleteAgentContact(true);
                     return;
                 }

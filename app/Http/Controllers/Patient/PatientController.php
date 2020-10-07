@@ -61,10 +61,8 @@ class PatientController extends Controller
 
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
-
-        if ($this->hasOtherPrimaryNumbers($patientUser)) {
-            $this->unsetCurrentPrimaryNumbers($patientUser);
-        }
+        
+        $this->unsetCurrentPrimaryNumbers($patientUser);
 
         $patientUser->phoneNumbers()
             ->where('id', $newPrimaryPhoneId)->update(
@@ -197,7 +195,7 @@ class PatientController extends Controller
         $patientUser = $request->get('patientUser');
         $locationId  = $request->get('locationId');
 
-        if ($request->input('makePrimary') && $this->hasOtherPrimaryNumbers($patientUser)) {
+        if ($request->input('makePrimary')) {
             $this->unsetCurrentPrimaryNumbers($patientUser);
         }
 
