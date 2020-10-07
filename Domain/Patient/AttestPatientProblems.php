@@ -172,7 +172,7 @@ class AttestPatientProblems
 
             return null;
         }
-        
+
         $this->chargeableMonth = $date;
 
         return $this->chargeableMonth;
