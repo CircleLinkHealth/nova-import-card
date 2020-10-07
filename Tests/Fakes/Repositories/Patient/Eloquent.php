@@ -14,6 +14,7 @@ use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\Chargeabl
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsAttachedStub;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Patient\Stubs\IsFulfilledStub;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Assert as PHPUnit;
@@ -74,6 +75,11 @@ class Eloquent implements PatientServiceProcessorRepository
             ->where('chargeable_month', $month)
             ->where('patient_id', $patientId)
             ->first());
+    }
+
+    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User
+    {
+        // TODO: Implement getPatientWithBillingDataForMonth() method.
     }
 
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool

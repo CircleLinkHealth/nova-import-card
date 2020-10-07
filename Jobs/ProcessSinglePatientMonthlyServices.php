@@ -9,8 +9,6 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 use App\Contracts\HasUniqueIdentifierForDebounce;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
-use CircleLinkHealth\Customer\Entities\User;
 use MichaelLedin\LaravelJob\Job;
 
 class ProcessSinglePatientMonthlyServices extends Job implements HasUniqueIdentifierForDebounce

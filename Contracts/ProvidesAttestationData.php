@@ -16,10 +16,10 @@ interface ProvidesAttestationData
 
     public function getCallId(): ?int;
 
+    public function getChargeableMonth(): ?Carbon;
+
     //todo:deprecate
     public function getPmsId(): ?int;
 
     public function getProblemIds(): array;
-    
-    public function getChargeableMonth() : ? Carbon;
 }

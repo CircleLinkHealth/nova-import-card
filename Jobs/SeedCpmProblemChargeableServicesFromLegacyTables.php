@@ -1,13 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use MichaelLedin\LaravelJob\Job;
 
 class SeedCpmProblemChargeableServicesFromLegacyTables extends Job
@@ -19,7 +18,6 @@ class SeedCpmProblemChargeableServicesFromLegacyTables extends Job
      */
     public function __construct()
     {
-        //
     }
 
     /**

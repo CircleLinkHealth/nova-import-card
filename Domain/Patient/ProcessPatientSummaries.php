@@ -101,8 +101,7 @@ class ProcessPatientSummaries
     {
         //if in request lifecycle cache all info, along with problems
         $this->patientUser = $this->repo
-            ->getPatientWithBillingDataForMonth($this->patientId, $this->month)
-            ->first();
+            ->getPatientWithBillingDataForMonth($this->patientId, $this->month);
 
         return $this;
     }

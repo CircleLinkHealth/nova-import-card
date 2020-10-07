@@ -21,8 +21,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 class PatientServiceProcessorRepository implements Repository
 {
-    use ApprovablePatientUsersQuery;
     use ApprovablePatientServicesQuery;
+    use ApprovablePatientUsersQuery;
 
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {

@@ -47,7 +47,6 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
         $this->app->bind(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
 
         $this->app->singleton(PatientServiceRepositoryInterface::class, function ($app) {
-            
             //todo: check global request object too?
             if (Auth::check()) {
                 return $app->make(CachedPatientServiceProcessorRepository::class);

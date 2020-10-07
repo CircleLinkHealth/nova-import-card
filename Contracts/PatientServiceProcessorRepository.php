@@ -20,6 +20,8 @@ interface PatientServiceProcessorRepository
 
     public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView;
 
+    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User;
+
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
 
     public function isChargeableServiceEnabledForLocationForMonth(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
@@ -29,6 +31,4 @@ interface PatientServiceProcessorRepository
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary;
-    
-    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User;
 }

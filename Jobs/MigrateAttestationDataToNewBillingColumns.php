@@ -1,13 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use MichaelLedin\LaravelJob\Job;
 
 class MigrateAttestationDataToNewBillingColumns extends Job
@@ -19,7 +18,6 @@ class MigrateAttestationDataToNewBillingColumns extends Job
      */
     public function __construct()
     {
-        //
     }
 
     /**

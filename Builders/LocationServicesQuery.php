@@ -18,7 +18,7 @@ trait LocationServicesQuery
             ->where('location_id', $locationId);
     }
 
-    public function servicesForMonth(int $locationId, Carbon $month ): Builder
+    public function servicesForMonth(int $locationId, Carbon $month): Builder
     {
         return $this->servicesForLocation($locationId)
             ->createdOn($month, 'chargeable_month');

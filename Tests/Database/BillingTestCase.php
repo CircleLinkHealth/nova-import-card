@@ -34,6 +34,18 @@ class BillingTestCase extends CustomerTestCase
         ;
     }
 
+    public function createPatientCcdProblemOfCode(User $patient, string $serviceCode)
+    {
+        $problem = CpmProblem::hasChargeableServiceCodeForLocation($serviceCode, $patient->patientInfo->location->id)
+            ->first();
+
+        $patient->ccdProblems()->create([
+            'name'           => str_random(8),
+            'cpm_problem_id' => $problem->id,
+            'is_monitored'   => true,
+        ]);
+    }
+
     public function getLocation(): Location
     {
         if ( ! isset($this->location)) {
@@ -66,7 +78,7 @@ class BillingTestCase extends CustomerTestCase
                 'code_type'   => 'ICD10',
                 'description' => $p->name,
             ]);
-        
+
         $this->getPractice()->pcmProblems()->createMany($pcmProblems->toArray());
 
         return $this;
@@ -104,16 +116,5 @@ class BillingTestCase extends CustomerTestCase
         ]);
 
         return $this;
-    }
-    
-    public function createPatientCcdProblemOfCode(User $patient, string $serviceCode){
-        $problem = CpmProblem::hasChargeableServiceCodeForLocation($serviceCode, $patient->patientInfo->location->id)
-            ->first();
-        
-        $patient->ccdProblems()->create([
-            'name'           => str_random(8),
-            'cpm_problem_id' => $problem->id,
-            'is_monitored'   => true,
-        ]);
     }
 }

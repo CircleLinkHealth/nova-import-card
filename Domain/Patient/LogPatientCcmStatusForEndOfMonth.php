@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision;
 
 class LogPatientCcmStatusForEndOfMonth
 {
-    const CCM_STATUS_NOT_SET = 'not set';
+    const CCM_STATUS_NOT_SET                                     = 'not set';
     const HOUR_WINDOW_FOR_CURRENT_CCM_STATUS_UPDATE_ON_NEW_MONTH = 6;
     const HOUR_WINDOW_FOR_LAST_HOURS_OF_MONTH                    = 2;
 
@@ -43,6 +43,11 @@ class LogPatientCcmStatusForEndOfMonth
         $this->logStatus($this->getStatusUsingRevisions());
     }
 
+    private function getCurrentCcmStatus(): string
+    {
+        return $this->ccmStatus ?? self::CCM_STATUS_NOT_SET;
+    }
+
     private function getStatusUsingRevisions(): string
     {
         $revisions = PatientCcmStatusRevision::whereBetween('created_at', [
@@ -59,11 +64,6 @@ class LogPatientCcmStatusForEndOfMonth
         }
 
         return $revisions->first()->old_value;
-    }
-    
-    private function getCurrentCcmStatus():string
-    {
-        return $this->ccmStatus ?? self::CCM_STATUS_NOT_SET;
     }
 
     private function logStatus(string $ccmStatus): void

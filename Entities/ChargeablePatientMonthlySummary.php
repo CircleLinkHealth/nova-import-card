@@ -36,6 +36,7 @@ use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
  * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdThisMonth($field = 'created_at')
  * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdToday($field = 'created_at')
  * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdYesterday($field = 'created_at')
+ * @method   static \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  */
 class ChargeablePatientMonthlySummary extends BaseModel
 {
