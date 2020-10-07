@@ -294,7 +294,7 @@
             },
 
             shouldShowMakePrimary(number){
-                if(number.type === "Agent"){
+                if(number.type.toLowerCase() === AGENT){
                     return false;
                 }
 
