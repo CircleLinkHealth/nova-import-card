@@ -24,6 +24,7 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -62,13 +63,12 @@ class PatientController extends Controller
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
 
-        /** @var PhoneNumber $currentPrimaryPhone */
-        $currentPrimaryPhone = $patientUser->phoneNumbers
-            ->where('is_primary', true)
-            ->first();
+        /** @var Collection $currentPrimaryPhone */
+        $currentPrimaryPhones = $patientUser->phoneNumbers
+            ->where('is_primary', true);
 
-        if ( ! empty($currentPrimaryPhone)) {
-            $this->unsetCurrentPrimaryNumber($currentPrimaryPhone);
+        if ( ! empty($currentPrimaryPhones)) {
+            $this->unsetCurrentPrimaryNumber($currentPrimaryPhones);
         }
 
         $patientUser->phoneNumbers()
@@ -202,12 +202,11 @@ class PatientController extends Controller
         $patientUser = $request->get('patientUser');
         $locationId  = $request->get('locationId');
 
-        $existingPrimaryNumber = $patientUser->phoneNumbers
-            ->where('is_primary', '=', true)
-            ->first();
+        $existingPrimaryNumbers = $patientUser->phoneNumbers
+            ->where('is_primary', '=', true);
 
-        if ($request->input('makePrimary') && ! empty($existingPrimaryNumber)) {
-            $this->unsetCurrentPrimaryNumber($existingPrimaryNumber);
+        if ($request->input('makePrimary') && ! empty($existingPrimaryNumbers)) {
+            $this->unsetCurrentPrimaryNumber($existingPrimaryNumbers);
         }
 
         /** @var PhoneNumber $newPhoneNumber */
@@ -656,9 +655,11 @@ class PatientController extends Controller
         ];
     }
 
-    private function unsetCurrentPrimaryNumber(PhoneNumber $currentPrimaryPhone)
+    private function unsetCurrentPrimaryNumber(Collection $currentPrimaryPhones)
     {
-        $currentPrimaryPhone->is_primary = false;
-        $currentPrimaryPhone->save();
+        foreach ($currentPrimaryPhones as $phone) {
+            $phone->is_primary = false;
+            $phone->save();
+        }
     }
 }
