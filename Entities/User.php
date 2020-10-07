@@ -2121,7 +2121,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->phoneNumbers) {
             return '';
         }
-        $phoneNumber = $this->phoneNumbers->where('type', 'work')->first();
+        $phoneNumber = $this->phoneNumbers->where('type', PhoneNumber::ALTERNATE)->first();
         if ($phoneNumber) {
             return $phoneNumber->number;
         }
@@ -4084,14 +4084,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->phoneNumbers) {
             return '';
         }
-        $phoneNumber = $this->phoneNumbers->where('type', 'work')->first();
+        $phoneNumber = $this->phoneNumbers->where('type', PhoneNumber::ALTERNATE)->first();
         if ($phoneNumber) {
             $phoneNumber->number = $value;
         } else {
             $phoneNumber          = new PhoneNumber();
             $phoneNumber->user_id = $this->id;
             $phoneNumber->number  = $value;
-            $phoneNumber->type    = 'work';
+            $phoneNumber->type    = PhoneNumber::ALTERNATE;
         }
         $phoneNumber->save();
 
