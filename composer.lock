@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.158.3",
+            "version": "3.158.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ac883fef515dc92785136f251a8337b33bff1d54"
+                "reference": "c0c0df79edc0a646a7ccd6b2e8d1723ff4ba88e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ac883fef515dc92785136f251a8337b33bff1d54",
-                "reference": "ac883fef515dc92785136f251a8337b33bff1d54",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c0c0df79edc0a646a7ccd6b2e8d1723ff4ba88e2",
+                "reference": "c0c0df79edc0a646a7ccd6b2e8d1723ff4ba88e2",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-10-06T18:16:08+00:00"
+            "time": "2020-10-07T18:12:22+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "2bcf3f52f9ff8a4c52343a1ac2e5ea0c9d163000"
+                "reference": "7e4402d9ef854317e880062cb2ed19bfc739d6e0"
             },
             "type": "laravel-module",
             "extra": {
@@ -992,7 +992,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-06T21:40:28+00:00"
+            "time": "2020-10-07T18:51:11+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1258,7 +1258,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "15fbdfe0089a2a01983185306f871856f55c4bd1"
+                "reference": "1a03608300e1bd82d8125044d84eaa8361411664"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1292,7 +1292,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-30T19:29:24+00:00"
+            "time": "2020-10-07T18:51:11+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1779,7 +1779,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "b14d6a838474b5db8c0e3f6777281319af9bbccb"
+                "reference": "788b40d362e8641791a79e28449e66ea0d4679af"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1804,7 +1804,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-04T18:38:19+00:00"
+            "time": "2020-10-07T18:51:10+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -5058,17 +5058,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.12.0",
+            "version": "v3.12.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "196b229cf6c07f889d344db9fb255496ea61c738"
+                "reference": "f5f695960e6fd6219d7b9352dc2b77c63c48c70b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-196b229cf6c07f889d344db9fb255496ea61c738-zip-924cae.zip",
-                "reference": "196b229cf6c07f889d344db9fb255496ea61c738",
-                "shasum": "73fedbd73c064089eb8a8a84a492b014a5bf9aed"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-f5f695960e6fd6219d7b9352dc2b77c63c48c70b-zip-efab90.zip",
+                "reference": "f5f695960e6fd6219d7b9352dc2b77c63c48c70b",
+                "shasum": "75d6230097f01143f24ed6a595906c371de9a9ca"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5129,7 +5129,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-10-06T17:10:54+00:00"
+            "time": "2020-10-07T18:10:57+00:00"
         },
         {
             "name": "laravel/passport",
@@ -10260,12 +10260,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "04c3a31fe8ea94b42c9e2d1acc93d19782133b00"
+                "reference": "ae789a8a2ad189ce7e8216942cdb9b77319f5eb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/04c3a31fe8ea94b42c9e2d1acc93d19782133b00",
-                "reference": "04c3a31fe8ea94b42c9e2d1acc93d19782133b00",
+                "url": "https://api.github.com/repos/symfony/console/zipball/ae789a8a2ad189ce7e8216942cdb9b77319f5eb8",
+                "reference": "ae789a8a2ad189ce7e8216942cdb9b77319f5eb8",
                 "shasum": ""
             },
             "require": {
