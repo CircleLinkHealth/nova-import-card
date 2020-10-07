@@ -444,8 +444,10 @@ class Calls implements AthenaApiImplementation
      */
     public function getMedicalHistory(int $patientId, int $practiceId, int $departmentId)
     {
+        $this->api()->setPracticeId($practiceId);
+    
         $response = $this->api()->GET(
-            "${practiceId}/chart/${patientId}/medicalhistory",
+            "chart/${patientId}/medicalhistory",
             [
                 'departmentid' => $departmentId,
                 'patientid'    => $patientId,
