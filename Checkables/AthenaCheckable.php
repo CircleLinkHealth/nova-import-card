@@ -12,9 +12,15 @@ use CircleLinkHealth\Eligibility\Adapters\AddDemographicsFromAthena;
 use CircleLinkHealth\Eligibility\Adapters\AddInsurancesFromAthena;
 use CircleLinkHealth\Eligibility\Adapters\CcdaToEligibilityJobAdapter;
 use CircleLinkHealth\Eligibility\Contracts\Checkable;
+use CircleLinkHealth\Eligibility\Decorators\DemographicsFromAthena;
+use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
+use CircleLinkHealth\Eligibility\Decorators\MedicalHistoryFromAthena;
+use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
@@ -56,10 +62,16 @@ class AthenaCheckable implements Checkable
     public function createAndProcessEligibilityJobFromMedicalRecord(): EligibilityJob
     {
         if ( ! $this->eligibilityJob) {
-            //@todo: below is for a bug fix but is inefficient. look into improving
-            $this->targetPatient->eligibility_job_id = (new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch))->adaptToEligibilityJob()->id;
+            $eJ = (new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch))->adaptToEligibilityJob();
+
+            $this->targetPatient->eligibility_job_id = $eJ->id;
+
             if ($this->targetPatient->isDirty('eligibility_job_id')) {
                 $this->targetPatient->save();
+            }
+
+            if ('commonwealth-pain-associates-pllc' === $this->practice->name) {
+                $this->commonwealthAdapter($this->ccda, $eJ);
             }
 
             //We are "decorating" existing Ccda adapter to add insurance we will get from Athena API
@@ -101,5 +113,27 @@ class AthenaCheckable implements Checkable
     public function getTargetPatient(): TargetPatient
     {
         return $this->targetPatient;
+    }
+
+    private function commonwealthAdapter(Ccda &$ccda, EligibilityJob &$eJ)
+    {
+        $mr = new CommonwealthMedicalRecord(
+            app(PcmChargeableServices::class)->decorate(
+                app(MedicalHistoryFromAthena::class)->decorate(
+                    app(InsuranceFromAthena::class)->decorate(
+                        app(DemographicsFromAthena::class)->decorate(
+                            $eJ
+                        )
+                    )
+                )
+            )->data,
+            new CcdaMedicalRecord(optional($ccda)->bluebuttonJson())
+        );
+        
+        if ($mr) {
+            $ccda->json = $mr->toJson();
+            $ccda->save();
+            
+        }
     }
 }
