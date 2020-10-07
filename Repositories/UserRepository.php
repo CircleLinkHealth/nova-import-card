@@ -428,13 +428,13 @@ class UserRepository
             $phoneNumber->save();
         }
         if ($params->has('work_phone_number')) {
-            $phoneNumber = $user->phoneNumbers()->where('type', 'work')->first();
+            $phoneNumber = $user->phoneNumbers()->where('type', PhoneNumber::ALTERNATE)->first();
             if ( ! $phoneNumber) {
                 $phoneNumber = new PhoneNumber();
             }
             $phoneNumber->user_id = $user->id;
             $phoneNumber->number  = $params->get('work_phone_number');
-            $phoneNumber->type    = 'work';
+            $phoneNumber->type    = PhoneNumber::ALTERNATE;
             $phoneNumber->save();
         }
 
