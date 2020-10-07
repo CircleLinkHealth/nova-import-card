@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers;
 
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 
 class CcdToLogTranformer
 {
@@ -51,7 +52,7 @@ class CcdToLogTranformer
             'zip'           => $demographics->address->zip,
             'cell_phone'    => $phones['mobile'][0],
             'home_phone'    => $phones['home'][0],
-            'work_phone'    => $phones['work'][0],
+            'work_phone'    => $phones['alternate'][0],
             'primary_phone' => $phones['primary'][0],
             'email'         => $demographics->email,
             'language'      => $demographics->language,
@@ -102,13 +103,13 @@ class CcdToLogTranformer
             }
 
             switch ($type) {
-                case 'home':
+                case PhoneNumber::HOME:
                     array_push($home, $number);
                     break;
-                case 'mobile':
+                case PhoneNumber::MOBILE:
                     array_push($mobile, $number);
                     break;
-                case 'work':
+                case PhoneNumber::ALTERNATE:
                     array_push($work, $number);
                     break;
                 case 'primary_phone':
@@ -117,7 +118,7 @@ class CcdToLogTranformer
             }
         }
 
-        $phoneCollections = compact('home', 'mobile', 'work', 'primary');
+        $phoneCollections = compact(PhoneNumber::HOME, PhoneNumber::MOBILE, PhoneNumber::ALTERNATE, 'primary');
 
         foreach ($phoneCollections as $key => $phoneCollection) {
             if (empty($phoneCollection)) {
@@ -302,7 +303,7 @@ class CcdToLogTranformer
             'zip'        => $provider->address->zip,
             'cell_phone' => $phones['mobile'][0],
             'home_phone' => $phones['home'][0],
-            'work_phone' => $phones['work'][0],
+            'work_phone' => $phones['alternate'][0],
         ];
     }
 }
