@@ -362,8 +362,16 @@
                 this.makeNewNumberPrimary = false;
             },
 
-            setHasManyPrimaryNumbers(primaryNumbersCount){
-                return primaryNumbersCount > 1;
+            setHasManyPrimaryNumbers(phoneNumbers){
+                let primaryNumbersCount = 0;
+
+                 Object.keys(phoneNumbers).forEach(function (index){
+                    if (phoneNumbers[index].isPrimary){
+                        primaryNumbersCount = primaryNumbersCount + 1;
+                    }
+                });
+
+              return primaryNumbersCount > 1;
             },
 
             getPatientPhoneNumbers(){
@@ -376,7 +384,7 @@
                     .then((response => {
                         this.patientPhoneNumbers.push(...response.data.phoneNumbers);
                         this.phoneTypes.push(...response.data.phoneTypes);
-                        this.hasManyPrimaryNumbers = this.setHasManyPrimaryNumbers(response.data.primaryPhoneNumbersCount)
+                        this.hasManyPrimaryNumbers = this.setHasManyPrimaryNumbers(response.data.phoneNumbers)
                         if (response.data.agentContactFields.length !== 0){
                             const agentDetails = response.data.agentContactFields;
                             this.agentContactDetails[0].agentEmail = agentDetails.agentEmail;

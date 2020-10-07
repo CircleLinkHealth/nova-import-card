@@ -131,9 +131,9 @@ class PatientCareplanController extends Controller
             $phoneNumbers = collect($phoneNumbers)->merge([$agentContactFields['agentTelephone']]);
         }
 
-        $primaryPhoneNumbersCount = $phoneNumbers->filter(function ($phone) {
-            return $phone['isPrimary'];
-        })->count();
+//        $primaryPhoneNumbersCount = $phoneNumbers->filter(function ($phone) {
+//            return $phone['isPrimary'];
+//        })->count();
 
         $phoneTypes = $this->getPhoneTypes();
 
@@ -141,7 +141,7 @@ class PatientCareplanController extends Controller
             'phoneNumbers'             => $phoneNumbers->values()->toArray(),
             'phoneTypes'               => $phoneTypes,
             'agentContactFields'       => $agentContactFields,
-            'primaryPhoneNumbersCount' => $primaryPhoneNumbersCount,
+//            'primaryPhoneNumbersCount' => $primaryPhoneNumbersCount,
         ], 200);
     }
 

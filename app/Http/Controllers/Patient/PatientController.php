@@ -24,7 +24,7 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -63,11 +63,11 @@ class PatientController extends Controller
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
 
-        /** @var Collection $currentPrimaryPhone */
-        $currentPrimaryPhones = $patientUser->phoneNumbers
+        /** @var Relation $currentPrimaryPhone */
+        $currentPrimaryPhones = $patientUser->phoneNumbers()
             ->where('is_primary', true);
 
-        if ( ! empty($currentPrimaryPhones)) {
+        if ($currentPrimaryPhones->count() > 0) {
             $this->unsetCurrentPrimaryNumber($currentPrimaryPhones);
         }
 
@@ -202,10 +202,11 @@ class PatientController extends Controller
         $patientUser = $request->get('patientUser');
         $locationId  = $request->get('locationId');
 
-        $existingPrimaryNumbers = $patientUser->phoneNumbers
+        /** @var Relation $existingPrimaryNumbers */
+        $existingPrimaryNumbers = $patientUser->phoneNumbers()
             ->where('is_primary', '=', true);
 
-        if ($request->input('makePrimary') && ! empty($existingPrimaryNumbers)) {
+        if ($request->input('makePrimary') && $existingPrimaryNumbers->count() > 0) {
             $this->unsetCurrentPrimaryNumber($existingPrimaryNumbers);
         }
 
@@ -655,11 +656,12 @@ class PatientController extends Controller
         ];
     }
 
-    private function unsetCurrentPrimaryNumber(Collection $currentPrimaryPhones)
+    private function unsetCurrentPrimaryNumber(Relation $currentPrimaryPhones)
     {
-        foreach ($currentPrimaryPhones as $phone) {
-            $phone->is_primary = false;
-            $phone->save();
-        }
+        $currentPrimaryPhones->update(
+            [
+                'is_primary' => false,
+            ]
+        );
     }
 }
