@@ -362,7 +362,7 @@
                 this.makeNewNumberPrimary = false;
             },
 
-            setHasManyPrimaryNumbers(phoneNumbers){
+            patientManyPrimaryNumbers(phoneNumbers){
                 let primaryNumbersCount = 0;
 
                  Object.keys(phoneNumbers).forEach(function (index){
@@ -384,7 +384,7 @@
                     .then((response => {
                         this.patientPhoneNumbers.push(...response.data.phoneNumbers);
                         this.phoneTypes.push(...response.data.phoneTypes);
-                        this.hasManyPrimaryNumbers = this.setHasManyPrimaryNumbers(response.data.phoneNumbers)
+                        this.hasManyPrimaryNumbers = this.patientHasManyPrimaryNumbers(response.data.phoneNumbers)
                         if (response.data.agentContactFields.length !== 0){
                             const agentDetails = response.data.agentContactFields;
                             this.agentContactDetails[0].agentEmail = agentDetails.agentEmail;
