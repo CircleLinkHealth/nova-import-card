@@ -24,7 +24,6 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -63,12 +62,8 @@ class PatientController extends Controller
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
 
-        /** @var Relation $currentPrimaryPhone */
-        $currentPrimaryPhones = $patientUser->phoneNumbers()
-            ->where('is_primary', true);
-
-        if ($currentPrimaryPhones->count() > 0) {
-            $this->unsetCurrentPrimaryNumber($currentPrimaryPhones);
+        if ($this->hasOtherPrimaryNumbers($patientUser)) {
+            $this->unsetCurrentPrimaryNumbers($patientUser);
         }
 
         $patientUser->phoneNumbers()
@@ -202,12 +197,8 @@ class PatientController extends Controller
         $patientUser = $request->get('patientUser');
         $locationId  = $request->get('locationId');
 
-        /** @var Relation $existingPrimaryNumbers */
-        $existingPrimaryNumbers = $patientUser->phoneNumbers()
-            ->where('is_primary', '=', true);
-
-        if ($request->input('makePrimary') && $existingPrimaryNumbers->count() > 0) {
-            $this->unsetCurrentPrimaryNumber($existingPrimaryNumbers);
+        if ($request->input('makePrimary') && $this->hasOtherPrimaryNumbers($patientUser)) {
+            $this->unsetCurrentPrimaryNumbers($patientUser);
         }
 
         /** @var PhoneNumber $newPhoneNumber */
@@ -639,6 +630,15 @@ class PatientController extends Controller
         return PhoneNumber::whereUserId($patientUserId)->get();
     }
 
+    /**
+     * @return bool
+     */
+    private function hasOtherPrimaryNumbers(User $patientUser)
+    {
+        return $patientUser->phoneNumbers()
+            ->where('is_primary', true)->count() > 0;
+    }
+
     private function prepareForWebix($observation)
     {
         return [
@@ -656,12 +656,14 @@ class PatientController extends Controller
         ];
     }
 
-    private function unsetCurrentPrimaryNumber(Relation $currentPrimaryPhones)
+    private function unsetCurrentPrimaryNumbers(User $patientUser)
     {
-        $currentPrimaryPhones->update(
-            [
-                'is_primary' => false,
-            ]
-        );
+        $patientUser->phoneNumbers()
+            ->where('is_primary', true)
+            ->update(
+                [
+                    'is_primary' => false,
+                ]
+            );
     }
 }
