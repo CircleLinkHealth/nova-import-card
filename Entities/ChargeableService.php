@@ -66,6 +66,11 @@ class ChargeableService extends BaseModel
     const CCM            = 'CPT 99490';
     const CCM_PLUS_40    = 'G2058(>40mins)';
     const CCM_PLUS_60    = 'G2058(>60mins)';
+
+    const CCM_PLUS_CODES = [
+        self::CCM_PLUS_40,
+        self::CCM_PLUS_60,
+    ];
     /**
      * When a Patient consents to receive Care from CLH, they consent to these Chargeable Services, if consent date is
      * after 7/23/2018. If consent date is before 7/23/2018, patient was consented to the same services except for 'CPT
@@ -83,11 +88,6 @@ class ChargeableService extends BaseModel
 
     const PCM           = 'G2065';
     const SOFTWARE_ONLY = 'Software-Only';
-    
-    const CCM_PLUS_CODES = [
-        self::CCM_PLUS_40,
-        self::CCM_PLUS_60
-    ];
 
     protected $fillable = [
         'code',

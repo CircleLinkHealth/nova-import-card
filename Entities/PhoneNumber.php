@@ -42,10 +42,10 @@ use CircleLinkHealth\Core\StringManipulation;
  */
 class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
 {
+    const ALTERNATE = 'alternate';
     //types
     const HOME   = 'home';
     const MOBILE = 'mobile';
-    const ALTERNATE   = 'alternate';
     const WORK   = 'work';
 
     public $phi = [
