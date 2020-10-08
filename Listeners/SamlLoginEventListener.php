@@ -14,6 +14,7 @@ use CircleLinkHealth\SamlSp\Exceptions\SamlAuthenticationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class SamlLoginEventListener
@@ -76,13 +77,24 @@ class SamlLoginEventListener
 
             $cpmPatientUrl = config('services.cpm.url_patient');
             if ( ! empty($idpAttributes->patientId) && ! empty($cpmPatientUrl)) {
-                /** @var SamlUser $samlPatient */
-                $samlPatient = SamlUser::where('idp', '=', $idp)
-                    ->where('idp_user_id', '=', $idpAttributes->patientId)
+                $ehr = DB::table('ehrs')
+                    ->where('name', '=', $idp)
                     ->first();
-                if ($samlPatient) {
-                    $cpmPatientUrl = str_replace('{USER_ID}', $samlPatient->cpm_user_id, $cpmPatientUrl);
-                    $cpmUrl .= $cpmPatientUrl;
+
+                if ($ehr) {
+                    $targetPatient = DB::table('target_patients')
+                        ->where('ehr_id', '=', $ehr->id)
+                        ->where('ehr_patient_id', '=', $idpAttributes->patientId)
+                        ->first();
+
+                    if ($targetPatient) {
+                        $cpmPatientUrl = str_replace('{USER_ID}', $targetPatient->user_id, $cpmPatientUrl);
+                        $cpmUrl .= $cpmPatientUrl;
+                    } else {
+                        Log::warning("Could not find cpm patient with id[$idpAttributes->patientId] from $idp");
+                    }
+                } else {
+                    Log::warning("Could not found $idp in ehrs table");
                 }
             }
 
@@ -91,12 +103,6 @@ class SamlLoginEventListener
             $request->merge([
                 'RelayState' => $cpmUrl,
             ]);
-
-            // if we have a Patient ID in the $attributes
-            // $patientId = $attributes['patientId'];
-            // /** @var Request $request */
-            // $request = app('request');
-            // $request->merge(['RelayState' => route('patient.note.index', ['patientId' => $patientId])]);
         }
     }
 
