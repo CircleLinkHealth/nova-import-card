@@ -305,6 +305,16 @@ class AutoAssignCallbackTest extends TestCase
         $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST);
     }
 
+    public function test_it_will_assign_to_care_ambassador_if_not_consented()
+    {
+        $this->createPatientData(Enrollee::ELIGIBLE);
+        $this->createPostmarkCallbackData(false, false);
+        $patient        = $this->patient;
+        $postmarkRecord1 = $this->postmarkRecord;
+        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
+
+    }
+
     public function test_it_will_create_callback_if_multiple_match_is_resolved_to_single_match()
     {
         $this->createPatientData(Enrollee::ENROLLED);

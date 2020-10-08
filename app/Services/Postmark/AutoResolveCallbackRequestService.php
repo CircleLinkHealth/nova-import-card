@@ -7,6 +7,7 @@
 namespace App\Services\Postmark;
 
 use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -28,7 +29,7 @@ class AutoResolveCallbackRequestService
                 return;
             }
 
-            if ($postmarkCallbackService->shouldCreateCallBackFromPostmarkInbound($matchedResultsFromDB)) {
+            if ($matchedResultsFromDB['createCallback']) {
                 /** @var SchedulerService $service */
                 $service = app(SchedulerService::class);
                 $service->scheduleAsapCallbackTask(
@@ -41,7 +42,10 @@ class AutoResolveCallbackRequestService
 
                 return;
             }
-
+// Use a flag to know when to aasign to CA or createUnresolvedInboundCallback.
+//            if ($postmarkCallbackService->shouldAssignToCareAmbassador($matchedResultsFromDB)) {
+//                $x = 1;
+//            }
             $this->createUnresolvedInboundCallback($matchedResultsFromDB, $recordId);
         } catch (\Exception $e) {
             if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {

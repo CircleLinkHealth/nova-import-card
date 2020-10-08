@@ -42,8 +42,7 @@ class PostmarkInboundCallbackMatchResults
         $postmarkInboundPatientsMatched = $this->getPostmarkInboundPatientsByPhone($this->postmarkCallbackData);
         if ($this->singleMatch($postmarkInboundPatientsMatched->get())) {
             $matchedPatient = $postmarkInboundPatientsMatched->first();
-
-            return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackCandidate($matchedPatient, $this->postmarkCallbackData);
+            return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackResult($matchedPatient, $this->postmarkCallbackData);
         }
 
         if ($this->multiMatch($postmarkInboundPatientsMatched)) {

@@ -7,7 +7,7 @@
 namespace App\Services\Postmark;
 
 use App\Traits\CallbackEligibilityMeter;
-use App\ValueObjects\PostmarkCallback\MatchedData;
+use App\ValueObjects\PostmarkCallback\MatchedDataPostmark;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -38,7 +38,7 @@ class InboundCallbackMultimatchService
 
     public function resolvedSingleMatchResult(User $matchedPatient, array $inboundPostmarkData)
     {
-        return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackCandidate($matchedPatient, $inboundPostmarkData);
+        return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackResult($matchedPatient, $inboundPostmarkData);
     }
 
     /**
@@ -69,12 +69,12 @@ class InboundCallbackMultimatchService
 
     private function multimatchResult(Collection $patientsMatched, bool $createCallback, string $reasoning)
     {
-        return (new MatchedData(
+        return (new MatchedDataPostmark(
             $patientsMatched,
             $createCallback,
             $reasoning
         ))
-            ->getArray();
+            ->getArrayMultimatch();
     }
 
     /**
