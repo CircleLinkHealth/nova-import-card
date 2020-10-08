@@ -21,6 +21,7 @@ use App\Services\UserService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Customer\LocationServices;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
@@ -1250,22 +1251,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->getAgentPhone();
     }
 
-    public function getBhiTime()
+    public function getBhiTime(): int
     {
-        if ($this->relationLoaded('patientSummaries')) {
-            $pms = $this->patientSummaries->where('month_year', '=', now()->startOfMonth())->first();
-            if ($pms) {
-                return $pms->bhi_time ?? 0;
-            }
-        }
-
-        return optional(
-            $this->patientSummaries()
-                ->select(['bhi_time', 'id'])
-                ->orderBy('id', 'desc')
-                ->whereMonthYear(now()->startOfMonth())
-                ->first()
-        )->bhi_time ?? 0;
+        return PatientMonthlyServiceTime::bhi($this->id, Carbon::now()->startOfMonth());
     }
 
     public function getBillingProviderId()
@@ -1487,22 +1475,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->patientInfo->ccm_status;
     }
 
-    public function getCcmTime()
+    public function getCcmTime(): int
     {
-        if ($this->relationLoaded('patientSummaries')) {
-            $pms = $this->patientSummaries->where('month_year', '=', now()->startOfMonth())->first();
-            if ($pms) {
-                return $pms->ccm_time ?? 0;
-            }
-        }
-
-        return optional(
-            $this->patientSummaries()
-                ->select(['ccm_time', 'id'])
-                ->orderBy('id', 'desc')
-                ->whereMonthYear(now()->startOfMonth())
-                ->first()
-        )->ccm_time ?? 0;
+        return PatientMonthlyServiceTime::allNonBhi($this->id, Carbon::now()->startOfMonth());
     }
 
     public function getConsentDate()
