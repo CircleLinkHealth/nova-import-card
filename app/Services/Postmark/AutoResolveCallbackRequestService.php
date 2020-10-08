@@ -7,7 +7,6 @@
 namespace App\Services\Postmark;
 
 use App\Services\Calls\SchedulerService;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -42,7 +41,7 @@ class AutoResolveCallbackRequestService
 
                 return;
             }
-// Use a flag to know when to aasign to CA or createUnresolvedInboundCallback.
+            // Use a flag to know when to aasign to CA or createUnresolvedInboundCallback.
 //            if ($postmarkCallbackService->shouldAssignToCareAmbassador($matchedResultsFromDB)) {
 //                $x = 1;
 //            }
