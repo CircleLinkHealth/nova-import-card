@@ -60,6 +60,8 @@ class SamlLoginEventListener
             ->first();
 
         if ( ! $samlUser) {
+            Log::warning("Could not find ehr user[$idpAttributes->userId] to cpm user mapping from $idp");
+
             throw new AuthenticationException('Could not find cpm user mapping', [], '/saml2/not-auth');
         }
 
