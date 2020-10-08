@@ -39,7 +39,7 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
      */
     public function __construct()
     {
-        $this->practice             = $this->nekatostrasPractice();
+        $this->practice       = $this->nekatostrasPractice();
         $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
     }
 

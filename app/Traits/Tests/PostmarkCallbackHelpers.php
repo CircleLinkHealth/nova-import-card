@@ -44,6 +44,11 @@ trait PostmarkCallbackHelpers
         return $callbackMailData;
     }
 
+    public function nekatostrasPractice()
+    {
+        return Practice::where('name', '=', \NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->firstOrFail();
+    }
+
     private function createEnrolleeWithStatus(User $patient, int $careAmbassadorId, string $status)
     {
         return Enrollee::firstOrCreate([
@@ -74,7 +79,7 @@ trait PostmarkCallbackHelpers
         );
     }
 
-    private function createUserWithPatientCcmStatus(\CircleLinkHealth\Customer\Entities\Practice $practice, string $status)
+    private function createUserWithPatientCcmStatus(Practice $practice, string $status)
     {
         return $this->createUser($practice->id, 'participant', $status);
     }
@@ -82,11 +87,5 @@ trait PostmarkCallbackHelpers
     private function generatePostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf)
     {
         $this->postmarkRecord = $this->getCallbackMailData($this->patient, $requestToWithdraw, $nameIsSelf);
-    }
-    
-    
-    public function nekatostrasPractice()
-    {
-        return Practice::where('name',  '=', \NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->firstOrFail();
     }
 }

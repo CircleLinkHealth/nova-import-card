@@ -61,7 +61,7 @@ class AutoAssignCallbackTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->practice             = $this->nekatostrasPractice();
+        $this->practice       = $this->nekatostrasPractice();
         $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
 //        $this->standByNurse   = $this->createUser($this->practice->id, 'care-center');
 //        AppConfig::create(
