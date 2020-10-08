@@ -7,13 +7,15 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 
 class PatientIsOfServiceCode
 {
     protected int $patientId;
+
+    protected PatientServiceProcessorRepository $repo;
 
     protected bool $requiresConsent;
 
@@ -38,17 +40,15 @@ class PatientIsOfServiceCode
 
     private function hasEnoughProblems(): bool
     {
-        return  $this->problemsOfServiceCount() >= $this->minimumProblemCountForService();
+        return $this->problemsOfServiceCount() >= $this->minimumProblemCountForService();
     }
 
     private function hasSummary(): bool
     {
-        //use repo method to be able to get from cache - along with patient processing
-        return ChargeablePatientMonthlySummaryView::where('patient_user_id', $this->patientId)
+        return $this->repo->getChargeablePatientSummaries($this->patientId, Carbon::now()->startOfMonth())
             ->where('chargeable_service_code', $this->serviceCode)
-            ->where('chargeable_month', Carbon::now()->startOfMonth())
             ->where('requires_patient_consent', $this->requiresConsent)
-            ->exists();
+            ->count() > 0;
     }
 
     private function minimumProblemCountForService(): int
@@ -72,5 +72,14 @@ class PatientIsOfServiceCode
             ->isBillable()
             ->ofService($this->serviceCode)
             ->count();
+    }
+
+    private function repo(): PatientServiceProcessorRepository
+    {
+        if ( ! isset($this->repo)) {
+            $this->repo = app(PatientServiceProcessorRepository::class);
+        }
+
+        return $this->repo;
     }
 }

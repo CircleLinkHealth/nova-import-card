@@ -50,7 +50,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection
     {
         return $this->getPatientFromCache($patientId)
-            ->chargeableMonthlySummaries
+            ->chargeableMonthlySummariesView
             ->where('chargeable_month', $month);
     }
 
