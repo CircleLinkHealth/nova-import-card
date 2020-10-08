@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.158.4",
+            "version": "3.158.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c0c0df79edc0a646a7ccd6b2e8d1723ff4ba88e2"
+                "reference": "dae8d62d976adc737d9daf4817ac36de6d53c3e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c0c0df79edc0a646a7ccd6b2e8d1723ff4ba88e2",
-                "reference": "c0c0df79edc0a646a7ccd6b2e8d1723ff4ba88e2",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/dae8d62d976adc737d9daf4817ac36de6d53c3e8",
+                "reference": "dae8d62d976adc737d9daf4817ac36de6d53c3e8",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-10-07T18:12:22+00:00"
+            "time": "2020-10-08T18:13:24+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "7e4402d9ef854317e880062cb2ed19bfc739d6e0"
+                "reference": "bafef1da92caee2c19b07fae5ff7c583ea845e76"
             },
             "type": "laravel-module",
             "extra": {
@@ -992,7 +992,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-07T18:51:11+00:00"
+            "time": "2020-10-08T21:23:03+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1228,7 +1228,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "7540c1c0aa50e7f050d16fba4f3008a940697685"
+                "reference": "35e73a8d8433b25793f068e9442446864e99155a"
             },
             "type": "laravel-module",
             "extra": {
@@ -1250,7 +1250,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-30T17:05:11+00:00"
+            "time": "2020-10-07T21:37:33+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -5459,6 +5459,62 @@
             "time": "2020-09-07T19:59:40+00:00"
         },
         {
+            "name": "laravie/serialize-queries",
+            "version": "v0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravie/serialize-queries.git",
+                "reference": "cb98fc941da65d3ee3cef32fb1599bbffa689138"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravie/serialize-queries/zipball/cb98fc941da65d3ee3cef32fb1599bbffa689138",
+                "reference": "cb98fc941da65d3ee3cef32fb1599bbffa689138",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^5.8 || ^6.0 || ^7.0 || ^8.0",
+                "illuminate/queue": "^5.8 || ^6.0 || ^7.0 || ^8.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.8 || ^4.0 || ^5.0 || ^6.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravie\\SerializesQuery\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mior Muhammad Zaki",
+                    "email": "crynobone@gmail.com"
+                }
+            ],
+            "description": "Serializable Laravel Query Builder",
+            "funding": [
+                {
+                    "url": "https://paypal.me/crynobone",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://liberapay.com/crynobone",
+                    "type": "liberapay"
+                }
+            ],
+            "time": "2020-10-03T13:06:07+00:00"
+        },
+        {
             "name": "lcobucci/jwt",
             "version": "3.3.3",
             "source": {
@@ -5719,16 +5775,16 @@
         },
         {
             "name": "league/flysystem-aws-s3-v3",
-            "version": "1.0.28",
+            "version": "1.0.29",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem-aws-s3-v3.git",
-                "reference": "af7384a12f7cd7d08183390d930c9d0ec629c990"
+                "reference": "4e25cc0582a36a786c31115e419c6e40498f6972"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-aws-s3-v3/zipball/af7384a12f7cd7d08183390d930c9d0ec629c990",
-                "reference": "af7384a12f7cd7d08183390d930c9d0ec629c990",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-aws-s3-v3/zipball/4e25cc0582a36a786c31115e419c6e40498f6972",
+                "reference": "4e25cc0582a36a786c31115e419c6e40498f6972",
                 "shasum": ""
             },
             "require": {
@@ -5762,7 +5818,7 @@
                 }
             ],
             "description": "Flysystem adapter for the AWS S3 SDK v3.x",
-            "time": "2020-08-22T08:43:01+00:00"
+            "time": "2020-10-08T18:58:37+00:00"
         },
         {
             "name": "league/flysystem-cached-adapter",
@@ -6163,20 +6219,21 @@
         },
         {
             "name": "maatwebsite/laravel-nova-excel",
-            "version": "1.2.1",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Maatwebsite/Laravel-Nova-Excel.git",
-                "reference": "d3c17f7b0add0cf3fbf115e19acb101a65be5cc1"
+                "reference": "12a696e53be79e0f212c089abaa5f248d74eeb13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Nova-Excel/zipball/d3c17f7b0add0cf3fbf115e19acb101a65be5cc1",
-                "reference": "d3c17f7b0add0cf3fbf115e19acb101a65be5cc1",
+                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Nova-Excel/zipball/12a696e53be79e0f212c089abaa5f248d74eeb13",
+                "reference": "12a696e53be79e0f212c089abaa5f248d74eeb13",
                 "shasum": ""
             },
             "require": {
                 "laravel/nova": "*",
+                "laravie/serialize-queries": "^0.2",
                 "maatwebsite/excel": "^3.1",
                 "php": ">=7.1.0"
             },
@@ -6212,7 +6269,7 @@
                 "nova",
                 "phpspreadsheet"
             ],
-            "time": "2020-02-28T15:41:43+00:00"
+            "time": "2020-10-08T14:10:40+00:00"
         },
         {
             "name": "macellan/laravel-zip",
@@ -15061,12 +15118,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "4cee9b9cae6169665113553c060c045a6b6218cc"
+                "reference": "91875a255f610cd186f3322e22db3876e9c57cd2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/4cee9b9cae6169665113553c060c045a6b6218cc",
-                "reference": "4cee9b9cae6169665113553c060c045a6b6218cc",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/91875a255f610cd186f3322e22db3876e9c57cd2",
+                "reference": "91875a255f610cd186f3322e22db3876e9c57cd2",
                 "shasum": ""
             },
             "require": {
@@ -15130,7 +15187,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-06T11:00:45+00:00"
+            "time": "2020-10-08T06:56:35+00:00"
         },
         {
             "name": "orangehill/iseed",
