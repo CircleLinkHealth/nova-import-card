@@ -64,7 +64,7 @@ class PatientCareplanController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteAlternateContact(DeleteAlternateContactRequest $request)
+    public function deleteAgentContact(DeleteAlternateContactRequest $request)
     {
         $valuesToDelete = [
             'agent_telephone' => null,
@@ -82,7 +82,7 @@ class PatientCareplanController extends Controller
         $request->get('patient')->update($valuesToDelete);
 
         return response()->json([
-            'message' => 'Alternate Contact has been deleted',
+            'message' => 'Agent Contact has been deleted',
         ], 200);
     }
 
@@ -93,15 +93,15 @@ class PatientCareplanController extends Controller
         $phoneNumber->delete();
 
         return response()->json([
-            'message' => 'Phone Number Has Been Deleted',
+            'message' => 'Phone Number Has Been Deleted!',
         ], 200);
     }
 
-    public function getPatientAlternateContact(PatientPhonesRequest $request)
+    public function getPatientAgentContact(PatientPhonesRequest $request)
     {
         /** @var User $patient */
         $patient            = $request->get('patientUser');
-        $agentContactFields = $this->getAlternateContactData($patient);
+        $agentContactFields = $this->getAgentContactData($patient);
 
         return response()->json([
             'agentContactFields' => $agentContactFields,
@@ -124,7 +124,7 @@ class PatientCareplanController extends Controller
             ];
         });
 
-        $agentContactFields = $this->getAlternateContactData($patient)->first();
+        $agentContactFields = $this->getAgentContactData($patient)->first();
 
         if ($isRequestFromCallPage && ! empty($agentContactFields)
             && ! empty($agentContactFields['agentTelephone']['number'])) {
@@ -134,7 +134,7 @@ class PatientCareplanController extends Controller
         $phoneTypes = $this->getPhoneTypes();
 
         return response()->json([
-            'phoneNumbers'       => $phoneNumbers,
+            'phoneNumbers'       => $phoneNumbers->values()->toArray(),
             'phoneTypes'         => $phoneTypes,
             'agentContactFields' => $agentContactFields,
         ], 200);
@@ -516,7 +516,9 @@ class PatientCareplanController extends Controller
             ];
         });
 
-        $phoneTypes = getPhoneTypes();
+        $phoneTypes = $this->getPhoneTypes();
+
+        $allowNonUsPhones = allowNonUsPhones();
 
         return view(
             'wpUsers.patient.careplan.patient',
@@ -540,6 +542,7 @@ class PatientCareplanController extends Controller
                     'contactWindows',
                     'withdrawnReasons',
                     'patientWithdrawnReason',
+                    'allowNonUsPhones',
                 ]
             )
         );
@@ -548,7 +551,7 @@ class PatientCareplanController extends Controller
     /**
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function getAlternateContactData(User $patient)
+    private function getAgentContactData(User $patient)
     {
         return $patient
             ->patientInfo()
@@ -580,6 +583,7 @@ class PatientCareplanController extends Controller
         return [
             ucfirst(PhoneNumber::MOBILE),
             ucfirst(PhoneNumber::HOME),
+            ucfirst(PhoneNumber::ALTERNATE),
         ];
     }
 

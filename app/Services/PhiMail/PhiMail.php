@@ -234,7 +234,7 @@ class PhiMail implements DirectMail
 
             $this
                 ->incomingMessageHandler
-                ->handleMessageAttachment($dm, $showRes);
+                ->handleMessageAttachment($dm, $showRes->mimeType, $showRes->data);
 
             // Store the list of attachments and associated info. This info is only
             // included with message part 0.

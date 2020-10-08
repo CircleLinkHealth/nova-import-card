@@ -1,5 +1,6 @@
 <template>
     <div>
+        <notifications ref="call-number-notifications"></notifications>
         <loader v-if="waiting && device === null"></loader>
         <div v-if="debug">
             <button class="btn btn-circle" @click="togglePatientCallMessage('debug', true)"
@@ -36,6 +37,40 @@
                                          :user-id="inboundUserId"
                                          :call-enabled=true>
                     </edit-patient-number>
+
+
+                    <div class="row" style="padding-top: 25px;">
+                        <div class="col-xs-12">
+                            <label>Selected Phone Number</label>
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="col-xs-9 no-padding">
+                                <input name="selected-number"
+                                       class="form-control selected-number"
+                                       style="width: 500px;"
+                                       :value="patientNumberToCall"
+                                       disabled/>
+                            </div>
+
+                            <div class="col-xs-3 no-padding">
+                                <button class="btn btn-circle" @click="togglePatientCallMessage(patientNumberToCall)"
+                                        :disabled="!ready || closeCountdown > 0 || (!onPhone[patientNumberToCall] && isCurrentlyOnPhone)"
+                                        :class="onPhone[patientNumberToCall] ? 'btn-danger': 'btn-success'">
+                                    <i class="fa fa-fw fa-phone"
+                                       :class="onPhone[patientNumberToCall] ? 'fa-close': 'fa-phone'"></i>
+                                </button>
+
+                                <loader v-if="saving"></loader>
+                                <button id="callButton" class="btn btn-circle btn-default" v-if="onPhone[patientNumberToCall]"
+                                        @click="toggleMuteMessage(patientNumberToCall)">
+                                    <i class="fa fa-fw"
+                                       :class="muted[patientNumberToCall] ? 'fa-microphone-slash': 'fa-microphone'"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+
 
                     <div class="row" style="margin-top: 5px">
                         <div class="col-xs-12">
@@ -127,37 +162,6 @@
                     </div>
                 </div>
             </div>
-            <div class="row" style="padding-top: 25px;">
-            <div class="col-xs-12">
-                <label>Selected Phone Number</label>
-            </div>
-            <div class="col-xs-12">
-                <div class="col-xs-9 no-padding">
-                    <input name="selected-number"
-                           class="form-control selected-number"
-                           style="width: 500px;"
-                           :value="patientNumberToCall"
-                           disabled/>
-                </div>
-
-                <div class="col-xs-3 no-padding">
-                        <button class="btn btn-circle" @click="togglePatientCallMessage(patientNumberToCall)"
-                                :disabled="!ready || closeCountdown > 0 || (!onPhone[patientNumberToCall] && isCurrentlyOnPhone)"
-                                :class="onPhone[patientNumberToCall] ? 'btn-danger': 'btn-success'">
-                            <i class="fa fa-fw fa-phone"
-                               :class="onPhone[patientNumberToCall] ? 'fa-close': 'fa-phone'"></i>
-                        </button>
-
-                        <loader v-if="saving"></loader>
-                        <button id="callButton" class="btn btn-circle btn-default" v-if="onPhone[patientNumberToCall]"
-                                @click="toggleMuteMessage(patientNumberToCall)">
-                            <i class="fa fa-fw"
-                               :class="muted[patientNumberToCall] ? 'fa-microphone-slash': 'fa-microphone'"></i>
-                        </button>
-                    </div>
-            </div>
-            </div>
-            <br/>
 
             <div class="row" style="margin-top: 5px">
 
@@ -202,7 +206,6 @@
     import {Logger} from '../logger-logdna';
     import CallNumpad from './call-numpad';
     import {Device} from 'twilio-client';
-    import axios from "../bootstrap-axios";
 
     let self;
 
@@ -302,11 +305,14 @@
 
             patientNumberToCall() {
                 if (this.radioSelectedNumber.length !== 0) {
+                    if (this.debug){
+                        return "+" + this.radioSelectedNumber;
+                    }
                     return "+1" + this.radioSelectedNumber;
                 }
             },
         },
-        methods:{
+        methods: {
             getUrl: function (path) {
                 if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
                     if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
@@ -448,10 +454,10 @@
                         if (isCurrentlyOnConference) {
                             this.log = `Hanging up call to ${number}`;
                             this.axios.post(this.getUrl(`twilio/call/end?cpm-token=${this.cpmToken}`), {
-                                    CallSid: this.callSids[number],
-                                    InboundUserId: this.inboundUserId,
-                                    OutboundUserId: this.outboundUserId,
-                                }, {withCredentials: true})
+                                CallSid: this.callSids[number],
+                                InboundUserId: this.inboundUserId,
+                                OutboundUserId: this.outboundUserId,
+                            }, {withCredentials: true})
                                 .then(resp => {
 
                                 })
@@ -816,6 +822,7 @@
                     });
                 }
             },
+
             registerBroadcastChannelHandlers: function () {
                 registerHandler("call_status", (msg) => {
                     let status = null;
@@ -875,7 +882,10 @@
                 registerHandler("mute_call", muteHandler);
                 registerHandler("unmute_call", muteHandler);
             },
+
         },
+
+
         created() {
             self = this;
             this.resetPhoneState();

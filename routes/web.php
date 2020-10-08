@@ -761,22 +761,22 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('delete-phone', [
             'uses' => 'Patient\PatientCareplanController@deletePhoneNumber',
             'as'   => 'patient.phone.delete',
-        ])->middleware('permission:phoneNumber.create,phoneNumber.update,careplan.update,practice.read');
+        ])->middleware('permission:phoneNumber.update');
 
-        Route::post('delete-alternate-contact', [
-            'uses' => 'Patient\PatientCareplanController@deleteAlternateContact',
-            'as'   => 'patient.alternate.contact.delete',
-        ])->middleware('permission:patient.create,patient.update,careplan.update,practice.read');
+        Route::post('delete-agent-contact', [
+            'uses' => 'Patient\PatientCareplanController@deleteAgentContact',
+            'as'   => 'patient.agent.contact.delete',
+        ])->middleware('permission:patient.update');
 
-        Route::post('get-alternate-contact', [
-            'uses' => 'Patient\PatientCareplanController@getPatientAlternateContact',
-            'as'   => 'patient.get.alternate.contact',
-        ])->middleware('permission:patient.create,patient.update,careplan.update,practice.read');
+        Route::post('get-agent-contact', [
+            'uses' => 'Patient\PatientCareplanController@getPatientAgentContact',
+            'as'   => 'patient.get.agent.contact',
+        ])->middleware('permission:patient.read');
 
         Route::post('get-phones', [
             'uses' => 'Patient\PatientCareplanController@getPatientPhoneNumbers',
             'as'   => 'patient.get.phones',
-        ])->middleware('permission:phoneNumber.create,phoneNumber.update,practice.read');
+        ])->middleware('permission:phoneNumber.read');
 
         Route::get('dashboard', [
             'uses' => 'Patient\PatientController@showDashboard',
@@ -801,17 +801,17 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('new/phone', [
             'uses' => 'Patient\PatientController@saveNewPhoneNumber',
             'as'   => 'patient.phone.create',
-        ])->middleware('permission:phoneNumber.create,phoneNumber.update,practice.read');
+        ])->middleware('permission:phoneNumber.create,phoneNumber.update');
 
-        Route::post('new/alternate/phone', [
-            'uses' => 'Patient\PatientController@saveNewAlternatePhoneNumber',
-            'as'   => 'patient.alternate.phone.create',
+        Route::post('new/agent/phone', [
+            'uses' => 'Patient\PatientController@saveNewAgentPhoneNumber',
+            'as'   => 'patient.agent.phone.create',
         ])->middleware('permission:patient.create,patient.update,practice.read');
 
         Route::post('mark/primary-phone', [
             'uses' => 'Patient\PatientController@markAsPrimaryPhone',
             'as'   => 'primary.phone.mark',
-        ])->middleware('permission:phoneNumber.create,phoneNumber.update,practice.read');
+        ])->middleware('permission:phoneNumber.update');
 
         Route::get('listing/pdf', [
             'uses' => 'Patient\PatientController@showPatientListingPdf',
