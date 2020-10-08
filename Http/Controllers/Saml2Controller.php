@@ -13,11 +13,13 @@ class Saml2Controller extends \Aacotroneo\Saml2\Http\Controllers\Saml2Controller
 {
     public function acs(Saml2Auth $saml2Auth, $idpName)
     {
+        /*
         if (app()->environment('staging') && isset($_POST['SAMLResponse'])) {
             if (app()->bound('sentry')) {
                 app('sentry')->captureMessage($_POST['SAMLResponse']);
             }
         }
+        */
 
         return parent::acs($saml2Auth, $idpName);
     }
@@ -45,6 +47,11 @@ class Saml2Controller extends \Aacotroneo\Saml2\Http\Controllers\Saml2Controller
     public function showLogoutSuccess(Request $request)
     {
         return view('samlsp::logout-success');
+    }
+
+    public function showNotAuth(Request $request)
+    {
+        return view('samlsp::not-auth');
     }
 
     public function sls(Saml2Auth $saml2Auth, $idpName)
