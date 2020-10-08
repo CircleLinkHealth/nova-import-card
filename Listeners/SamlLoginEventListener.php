@@ -8,6 +8,7 @@ namespace CircleLinkHealth\SamlSp\Listeners;
 
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -29,6 +30,7 @@ class SamlLoginEventListener
      * Handle the event.
      *
      * @return void
+     * @throws AuthenticationException
      */
     public function handle(Saml2LoginEvent $event)
     {
@@ -36,9 +38,9 @@ class SamlLoginEventListener
         $idp        = $event->getSaml2Idp();
         $attributes = $event->getSaml2User()->getAttributesWithFriendlyName();
         if ( ! isset($attributes['uid'])) {
-            Log::warning('Could not find uid in attributes of Saml2User');
+            Log::warning('Could not find uid in attributes of Saml2User. Attributes: '.implode(',', $attributes));
 
-            return;
+            throw new AuthenticationException('Could not find user from saml attributes');
         }
 
         $idpUserId = $attributes['uid'];
@@ -48,6 +50,10 @@ class SamlLoginEventListener
             ->where('idp', '=', $idp)
             ->where('idp_user_id', '=', $idpUserId)
             ->first();
+
+        if ( ! $samlUser) {
+            throw new AuthenticationException('Could not find cpm user mapping');
+        }
 
         if ($samlUser && $samlUser->cpmUser && ! $samlUser->cpmUser->isParticipant()) {
             Auth::login($samlUser->cpmUser);
