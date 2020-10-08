@@ -10,7 +10,6 @@ use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use Aacotroneo\Saml2\Saml2User;
 use CircleLinkHealth\SamlSp\Entities\SamlResponseAttributes;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
-use CircleLinkHealth\SamlSp\Exceptions\SamlAuthenticationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +26,7 @@ class SamlLoginEventListener
         ],
         'athena' => [
             'use_friendly' => false,
-            'user_id'      => 'subject',
+            'user_id'      => 'name_id',
             'patient_id'   => 'patientid',
         ],
     ];
@@ -61,7 +60,7 @@ class SamlLoginEventListener
             ->first();
 
         if ( ! $samlUser) {
-            throw new SamlAuthenticationException('Could not find cpm user mapping');
+            throw new AuthenticationException('Could not find cpm user mapping', [], '/saml2/not-auth');
         }
 
         if ($samlUser && $samlUser->cpmUser && ! $samlUser->cpmUser->isParticipant()) {
@@ -110,8 +109,10 @@ class SamlLoginEventListener
     {
         if (isset(self::IDP_KEY_MAPPINGS[$idpName])) {
             $attributes = $saml2User->getAttributes();
+            $attributes = array_merge($attributes, ['name_id' => $saml2User->getNameId()]);
+
             Log::warning("Could not parse from idp[$idpName]. Attributes: ".json_encode($attributes));
-            throw new SamlAuthenticationException("Could not parse attributes from idp[$idpName]");
+            throw new AuthenticationException("Could not parse attributes from idp[$idpName]", [], '/saml2/not-auth');
         }
 
         $mapping          = self::IDP_KEY_MAPPINGS[$idpName];
@@ -121,7 +122,7 @@ class SamlLoginEventListener
         if ( ! isset($attributes[$userIdMapping])) {
             Log::warning("Could not find user id[$userIdMapping] in attributes of Saml2User. Attributes: ".json_encode($attributes));
 
-            throw new SamlAuthenticationException('Could not find user from saml attributes');
+            throw new AuthenticationException('Could not find user from saml attributes', [], '/saml2/not-auth');
         }
 
         return new SamlResponseAttributes($attributes[$userIdMapping], $attributes[$patientIdMapping] ?? null);
