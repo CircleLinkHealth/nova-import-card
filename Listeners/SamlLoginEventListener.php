@@ -107,10 +107,10 @@ class SamlLoginEventListener
 
     private function getSamlAttributes(string $idpName, Saml2User $saml2User): SamlResponseAttributes
     {
-        if (isset(self::IDP_KEY_MAPPINGS[$idpName])) {
-            $attributes = $saml2User->getAttributes();
-            $attributes = array_merge($attributes, ['name_id' => $saml2User->getNameId()]);
+        $attributes = $saml2User->getAttributes();
+        $attributes = array_merge($attributes, ['name_id' => $saml2User->getNameId()]);
 
+        if ( ! isset(self::IDP_KEY_MAPPINGS[$idpName])) {
             Log::warning("Could not parse from idp[$idpName]. Attributes: ".json_encode($attributes));
             throw new AuthenticationException("Could not parse attributes from idp[$idpName]", [], '/saml2/not-auth');
         }
@@ -121,7 +121,6 @@ class SamlLoginEventListener
         $patientIdMapping = $mapping['patient_id'];
         if ( ! isset($attributes[$userIdMapping])) {
             Log::warning("Could not find user id[$userIdMapping] in attributes of Saml2User. Attributes: ".json_encode($attributes));
-
             throw new AuthenticationException('Could not find user from saml attributes', [], '/saml2/not-auth');
         }
 
