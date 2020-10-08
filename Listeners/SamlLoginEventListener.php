@@ -54,7 +54,7 @@ class SamlLoginEventListener
             session()->put(self::SESSION_IDP_NAME_KEY, $idp);
 
             $cpmUrl = config('services.cpm.url', null);
-            if (!empty($cpmUrl)) {
+            if ( ! empty($cpmUrl)) {
                 /** @var Request $request */
                 $request = app('request');
                 $request->merge([

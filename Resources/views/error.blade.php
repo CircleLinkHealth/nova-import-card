@@ -34,11 +34,7 @@
 <body>
 <div class="container">
     <div class="content">
-        <img
-                src="{{mix('/img/logos/LogoHorizontal_Color.svg')}}"
-                alt="Care Plan Manager"
-                style="margin-bottom: 1%;"
-                width="180"/>
+        <h4>Care Plan Manager</h4>
 
         <h1><b><u>Apologies</u>, there's been a an issue.</b></h1>
 
