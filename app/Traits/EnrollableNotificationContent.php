@@ -26,13 +26,14 @@ trait EnrollableNotificationContent
         $practiceName           = $enrollableEmailContent['practiceName'];
         $line2                  = $enrollableEmailContent['line2'];
         $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
+        $providerSpecialty      = $enrollableEmailContent['providerSpecialty'];
 
         if (empty($practiceName)) {
             Log::warning("Practice name not found for user $notifiable->id");
             $practiceName = '???';
         }
 
-        $line1 = "Hi, it's Dr. $providerName's office at $practiceName! ";
+        $line1 = "Hi, it's $providerSpecialty $providerName's office at $practiceName! ";
 
         if (empty($providerName)) {
             $line1 = "Hi, it's your Provider's office at $practiceName! ";
@@ -68,17 +69,20 @@ trait EnrollableNotificationContent
             throw new \InvalidArgumentException("User[$notifiable->id] does not have a billing provider.");
         }
 
+        $providerSpecialty = $this->providerSpecialty($provider);
+
         $providerLastName = ucwords($provider->last_name);
 
         $line2 = $isReminder
-            ? "Just circling back on Dr. $providerLastName's new Personalized Care program. Please enroll or get more info here: "
-            : "Dr. $providerLastName has invested in a new wellness program for you. Please enroll or get more info here: ";
+            ? "Just circling back on $providerSpecialty $providerLastName's new Personalized Care program. Please enroll or get more info here: "
+            : "$providerSpecialty $providerLastName has invested in a new wellness program for you. Please enroll or get more info here: ";
 
         return [
-            'providerLastName' => $providerLastName,
-            'practiceName'     => ucwords($notifiable->primaryPractice->display_name),
-            'line2'            => $line2,
-            'isSurveyOnly'     => true,
+            'providerLastName'  => $providerLastName,
+            'practiceName'      => ucwords($notifiable->primaryPractice->display_name),
+            'line2'             => $line2,
+            'isSurveyOnly'      => true,
+            'providerSpecialty' => $providerSpecialty,
         ];
     }
 
@@ -140,5 +144,18 @@ trait EnrollableNotificationContent
             'line2'            => $line2,
             'isSurveyOnly'     => false,
         ];
+    }
+
+    /**
+     * @return string
+     */
+    private function providerSpecialty(User $provider)
+    {
+        $providerSpecialty = 'Dr.';
+        if ($provider->isCareCoach()) {
+            $providerSpecialty = 'Nurse Practitioner';
+        }
+
+        return $providerSpecialty;
     }
 }
