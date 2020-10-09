@@ -8,6 +8,7 @@ namespace App\Nova\Actions;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -94,6 +95,63 @@ class ModifyTimeTracker extends Action implements ShouldQueue
     /**
      * @throws Exception
      */
+    private function getBillableActivity(PageTimer $pageTimer, int $duration): ?Activity
+    {
+        $hasBillable = $pageTimer->activities->isNotEmpty();
+        foreach ($pageTimer->activities as $activity) {
+            if ($activity->duration >= $duration) {
+                return $activity;
+            }
+        }
+
+        if ($hasBillable) {
+            $msg = "Cannot modify time tracker entry[$pageTimer->id]. Could not find activity with higher duration than $duration.";
+            throw new Exception($msg);
+        }
+
+        return null;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getCareRateLog(int $activityId, int $duration, bool $allowAccruedTowards = false): NurseCareRateLog
+    {
+        $careRateLogQuery = NurseCareRateLog::whereActivityId($activityId);
+        if ( ! $allowAccruedTowards) {
+            $careRateLogQuery->where('ccm_type', '=', 'accrued_after_ccm');
+        }
+
+        $careRateLogs = $careRateLogQuery->get();
+        if ($careRateLogs->isEmpty()) {
+            //some more validation here, simply because the current implementation supports simple use cases
+            $msg = "Cannot modify activity[$activityId]. Could not find nurse care rate logs. Please choose a different one.";
+            if ( ! $allowAccruedTowards) {
+                $msg .= ' [no accrued_after_ccm]';
+            }
+            throw new Exception($msg);
+        }
+
+        /** @var NurseCareRateLog $careRateLog */
+        $careRateLog = null;
+        $careRateLogs->each(function (NurseCareRateLog $entry) use ($duration, &$careRateLog) {
+            if ($careRateLog->increment >= $duration) {
+                $careRateLog = $entry;
+            }
+        });
+
+        if ( ! $careRateLog) {
+            /** @var NurseCareRateLog $firstCareRateLog */
+            $firstCareRateLog = $careRateLogs->first();
+            throw new Exception("Cannot modify activity[$activityId]. Please lower duration to at least {$firstCareRateLog->increment}[{$firstCareRateLog->id}]. [duration > care rate log]");
+        }
+
+        return $careRateLog;
+    }
+
+    /**
+     * @throws Exception
+     */
     private function modifyRecords(PageTimer $timeRecord, int $duration, bool $allowAccruedTowards = false)
     {
         $entriesToSave = collect();
@@ -102,41 +160,18 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         $timeRecord->duration = $duration;
         $entriesToSave->push($timeRecord);
 
-        $hasBillableActivity = false;
-        if ($timeRecord->activity) {
-            $hasBillableActivity = true;
-            //lv_activities table
-            $timeRecord->activity->duration = $duration;
-            $entriesToSave->push($timeRecord->activity);
+        /** @var NurseCareRateLog $careRateLog */
+        $careRateLog      = null;
+        $billableActivity = $this->getBillableActivity($timeRecord, $duration);
+        if ($billableActivity) {
+            $billableActivity->duration = $duration;
+            $entriesToSave->push($billableActivity);
 
-            $careRateLogQuery = NurseCareRateLog::whereActivityId($timeRecord->activity->id);
-            if ( ! $allowAccruedTowards) {
-                $careRateLogQuery->where('ccm_type', '=', 'accrued_after_ccm');
-            }
+            $careRateLog = $this->getCareRateLog($billableActivity->id, $duration, $allowAccruedTowards);
+        }
 
-            $careRateLogs = $careRateLogQuery->get();
-
-            //some more validation here, simply because the current implementation supports simple use cases
-            if ($careRateLogs->isEmpty()) {
-                $msg = 'Cannot modify activity. Please choose a different one.';
-                if ( ! $allowAccruedTowards) {
-                    $msg .= ' [no accrued_after_ccm]';
-                }
-                throw new Exception($msg);
-            }
-
-            /** @var NurseCareRateLog $careRateLog */
-            $careRateLog = null;
-            $careRateLogs->each(function (NurseCareRateLog $entry) use ($duration, &$careRateLog) {
-                if ($duration <= $careRateLog->increment) {
-                    $careRateLog = $entry;
-                }
-            });
-
-            if ( ! $careRateLog) {
-                $firstIncrement = $careRateLogs->first()->increment;
-                throw new Exception("Cannot modify activity. Please lower duration to at least $firstIncrement. [duration > care rate log]");
-            }
+        if ($billableActivity && ! $careRateLog) {
+            throw new Exception("Something's wrong. Should not reach here.");
         }
 
         //now, that all validation passes, save pending entries
@@ -145,7 +180,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         });
 
         $startTime = Carbon::parse($timeRecord->start_time);
-        if ($hasBillableActivity) {
+        if ($billableActivity) {
             //adjust nurse care rate logs
             \Artisan::call('nursecareratelogs:remove-time', [
                 'fromId'              => $careRateLog->id,

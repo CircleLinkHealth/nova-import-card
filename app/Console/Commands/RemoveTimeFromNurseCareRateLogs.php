@@ -54,24 +54,23 @@ class RemoveTimeFromNurseCareRateLogs extends Command
             return;
         }
 
-        /** @var NurseCareRateLog $careRateLog */
         $careRateLogQuery = NurseCareRateLog::whereId($id);
         if ( ! $allowAccruedTowards) {
             $careRateLogQuery->where('ccm_type', '=', 'accrued_after_ccm');
         }
 
+        /** @var NurseCareRateLog $careRateLog */
         $careRateLog = $careRateLogQuery->first();
-
         if ( ! $careRateLog) {
             $msg = 'Cannot modify activity. Please choose a different one.';
             if ( ! $allowAccruedTowards) {
-                $msg .= ' [no accrued_after_ccm]';
+                $msg .= ' [no accrued_after_ccm] (in command)';
             }
             $this->error($msg);
         }
 
         if ($careRateLog->increment < $duration) {
-            $this->error("Cannot modify activity. Please lower duration to at least $careRateLog->increment. [duration > care rate log]");
+            $this->error("Cannot modify activity. Please lower duration to at least $careRateLog->increment. [duration > care rate log] (in command)");
 
             return;
         }
