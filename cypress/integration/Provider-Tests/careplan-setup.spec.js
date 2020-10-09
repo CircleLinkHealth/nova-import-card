@@ -98,7 +98,7 @@ describe('Tests Care Plan Setup by Provider', () => {
 		cy.contains('Logout').click();
 	});
 
-	it('Should add and delete Other Notes ', () => {
+	/*it('Should add and delete Other Notes ', () => {
 		patientList.selectPatient('5');
 		viewCareplan.addOtherNotes('THIS IS A NOTE');
 		viewCareplan.deleteOtherNotes();
@@ -106,7 +106,7 @@ describe('Tests Care Plan Setup by Provider', () => {
 		cy.get(':nth-child(5) > .dropdown-toggle').click();
 		cy.contains('Logout').click();
 	});
-
+*/
 	it('Should verify floating "+" button functionality', () => {
 		patientList.selectPatient('9');
 		floater.triggerHoverOnFloater();
