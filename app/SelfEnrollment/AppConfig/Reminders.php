@@ -14,7 +14,7 @@ class Reminders
     
     public static function areEnabledFor($practiceName): bool
     {
-        return in_array($practiceName, (new static())->getAndCachePracticeNames());
+        return ! in_array($practiceName, (new static())->getAndCachePracticeNames());
     }
     
     public static function names()
