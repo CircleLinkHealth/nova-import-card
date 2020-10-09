@@ -39,7 +39,7 @@ class AutoResolveCallbackRequestService
                     $postmarkCallbackData['Msg'],
                     'postmark_inbound_mail',
                     null,
-                    SchedulerService::CALL_BACK_TYPE
+                    SchedulerService::CALL_BACK_TYPE,
                 );
 
                 return;
