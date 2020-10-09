@@ -5,6 +5,7 @@ import {
 	ADMIN_PASSWORD,
 	TESTER_PRACTICE_ID,
 	TESTER_PROVIDER,
+	TESTER_ADMIN,
 } from '../../support/config';
 import faker from 'faker';
 
@@ -24,6 +25,10 @@ describe('Tests admin can create new patient', () => {
 		cy.visit('/');
 		loginPage.Uilogin(ADMIN_USERNAME, ADMIN_PASSWORD);
 	});
+	afterEach(function () {
+		cy.contains(TESTER_ADMIN).click()
+		cy.contains('Logout').click()
+	})
 
 	it('Should fill out form and save profile', () => {
 		cy.visit('/manage-patients/demographics/create');

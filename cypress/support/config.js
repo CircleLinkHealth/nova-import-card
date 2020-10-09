@@ -17,3 +17,4 @@ export const TESTER_PROVIDER = Cypress.env("testerProvider");
 export const TESTER_CA = Cypress.env("testerCareAmbassador");
 export const TESTER_PRACTICE_ID = Cypress.env("testerPracticeId");
 export const PRACTICE_SLUG = Cypress.env("practiceSlug");
+export const TESTER_ADMIN = Cypress.env("testerAdmin");
