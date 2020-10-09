@@ -77,7 +77,7 @@ trait EnrollableNotificationContent
         }
 
         $providerLastName  = ucwords($provider->last_name);
-        $providerSpecialty = Helpers::providerMedicalTitle($provider->suffix);
+        $providerSpecialty = Helpers::providerMedicalType($provider->suffix);
 
         if ( ! empty($providerSpecialty)) {
             $providerNameAndType = "$providerSpecialty $providerLastName's";

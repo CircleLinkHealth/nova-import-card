@@ -6,7 +6,7 @@
 
 namespace App\SelfEnrollment;
 
-use App\Constants\ProviderClinicalTypes\ProviderClinicalTypes;
+use App\Constants\ProviderClinicalTypes;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -126,7 +126,7 @@ class Helpers
     /**
      * @return string
      */
-    public static function providerMedicalTitle(?string $providerSuffix)
+    public static function providerMedicalType(?string $providerSuffix)
     {
         $map = [
             ProviderClinicalTypes::DO_SUFFIX  => ProviderClinicalTypes::DR,
