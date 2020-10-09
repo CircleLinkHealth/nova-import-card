@@ -52,12 +52,24 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
     {
         $this->createUsersOfTypeEnrolled(3);
         $this->createUsersOfTypeConsentedNotEnrolled(3);
+        $this->createUsersOfTypeNotConsentedAssignedToCa(3);
         $this->createUsersOfTypeQueuedForEnrolmentButNotCAassigned(3);
         $this->createUsersOfTypeNameIsSelf(3);
         $this->createUsersOfTypeRequestedToWithdraw(3);
         $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf(3);
         $this->createUsersOfTypeResolvableMultiMatches(3);
         $this->createUsersOfTypeNotResolvableMultiMatches(3);
+    }
+
+    private function createUsersOfTypeConsentedNotEnrolled(int $limit)
+    {
+        $n = 1;
+        while ($n <= $limit) {
+            $this->createPatientData(Enrollee::CONSENTED);
+            $this->createPostmarkCallbackData(false, false);
+            $this->command->info("Generated $n users out of $limit of type:[NOT ENROLLED.]");
+            ++$n;
+        }
     }
 
     private function createUsersOfTypeEnrolled(int $limit)
@@ -82,13 +94,13 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
         }
     }
 
-    private function createUsersOfTypeConsentedNotEnrolled(int $limit)
+    private function createUsersOfTypeNotConsentedAssignedToCa(int $limit)
     {
         $n = 1;
         while ($n <= $limit) {
-            $this->createPatientData(Enrollee::CONSENTED);
+            $this->createPatientData(Enrollee::ELIGIBLE);
             $this->createPostmarkCallbackData(false, false);
-            $this->command->info("Generated $n users out of $limit of type:[NOT ENROLLED.]");
+            $this->command->info("Generated $n users out of $limit of type:[NOT CONSENTED BUT CA ASSIGNED.]");
             ++$n;
         }
     }

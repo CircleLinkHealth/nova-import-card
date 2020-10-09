@@ -48,12 +48,7 @@ class InboundCallbackSingleMatchService
 
         return PostmarkInboundCallbackMatchResults::CREATE_CALLBACK;
     }
-
-    public function careAmbassadorExistsForPatient(?int $careAmbassadorId)
-    {
-        return isset($careAmbassadorId);
-    }
-
+    
     /**
      * @return bool
      */
@@ -79,16 +74,7 @@ class InboundCallbackSingleMatchService
         return isset($postmarkData['Cancel/Withdraw Reason'])
             || Str::contains(Str::of($postmarkData['Msg'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
     }
-
-    /**
-     * @return bool
-     */
-    public function shouldAssignToCareAmbassador(array $matchedResults)
-    {
-        return $this->careAmbassadorExistsForPatient($matchedResults['careAmbassadorId'])
-            && $this->patientHasConsented($matchedResults['enrolleeStatus']);
-    }
-
+    
     /**
      * @param $patientUser
      * @return array
@@ -108,6 +94,6 @@ class InboundCallbackSingleMatchService
         return (new MatchedDataPostmark(
             $matchedPatient,
             $callBackEligibleReason
-        ))->getArraySingleMatch();
+        ))->getMatchedData();
     }
 }

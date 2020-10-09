@@ -15,7 +15,7 @@ use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 
-class GenerateInboundCallbackDataForTesting extends Command
+class GenerateInboundCallbackDataFeedbackToTester extends Command
 {
     use PostmarkCallbackHelpers;
     use PracticeHelpers;
@@ -61,7 +61,7 @@ class GenerateInboundCallbackDataForTesting extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->practice             = $this->nekatostrasPractice();
+        $this->practice       = $this->nekatostrasPractice();
         $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
     }
 
@@ -79,8 +79,8 @@ class GenerateInboundCallbackDataForTesting extends Command
             $inboundData = $this->createUsersOfTypeEnrolled(2);
         }
 
-        if ($this->isTrue(Patient::PAUSED)) {
-            $inboundData = $this->createUsersOfTypeNotEnrolled(2);
+        if ($this->isTrue('not_enrolled_consented')) {
+            $inboundData = $this->createUsersOfTypeConsentedNotEnrolled(2);
         }
 
         if ($this->isTrue('queued_ca_unassigned')) {
@@ -109,7 +109,17 @@ class GenerateInboundCallbackDataForTesting extends Command
 
         $this->info(implode(", \n", $inboundData));
     }
-
+    
+    private function createUsersOfTypeConsentedNotEnrolled(int $limit)
+    {
+        $n = 1;
+        while ($n <= $limit) {
+            $this->createPatientData(Enrollee::CONSENTED);
+            $this->createPostmarkCallbackData(false, false);
+            $this->info("Generated $n users out of $limit of type:[CONSENTED BUT NOT ENROLLED.]");
+            ++$n;
+        }
+    }
     /**
      * @return array
      */

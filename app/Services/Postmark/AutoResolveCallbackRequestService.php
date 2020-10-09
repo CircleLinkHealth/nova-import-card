@@ -7,6 +7,9 @@
 namespace App\Services\Postmark;
 
 use App\Services\Calls\SchedulerService;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -41,10 +44,11 @@ class AutoResolveCallbackRequestService
 
                 return;
             }
-            // Use a flag to know when to aasign to CA or createUnresolvedInboundCallback.
-//            if ($postmarkCallbackService->shouldAssignToCareAmbassador($matchedResultsFromDB)) {
-//                $x = 1;
-//            }
+
+            if (PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_ASSIGNED === $matchedResultsFromDB['reasoning']) {
+                $this->assignCallbackToCareAmbassador($matchedResultsFromDB['matchUsersResult'], $recordId);
+                // Will createUnresolvedInboundCallback even if NOT_CONSENTED_CA_ASSIGNED is true. We ll decide to show in view_table.
+            }
             $this->createUnresolvedInboundCallback($matchedResultsFromDB, $recordId);
         } catch (\Exception $e) {
             if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {
@@ -58,6 +62,24 @@ class AutoResolveCallbackRequestService
         }
 
         Log::error('Place error here');
+    }
+
+    private function assignCallbackToCareAmbassador(User $user, int $recordId)
+    {
+        /** @var Enrollee $enrollee */
+        $enrollee = $user->enrollee;
+
+        if ( ! $enrollee) {
+            Log::critical("Enrollee for postmark inbound data rec_id: $recordId not found");
+            return;
+        }
+
+        $enrollee->update([
+            'status'                  => Enrollee::TO_CALL,
+            'care_ambassador_user_id' => $enrollee->care_ambassador_user_id,
+            'requested_callback'      => Carbon::now()->toDate(),
+            'callback_note'           => htmlspecialchars('Callback automatically scheduled by the system - patient requested callback', ENT_NOQUOTES),
+        ]);
     }
 
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)

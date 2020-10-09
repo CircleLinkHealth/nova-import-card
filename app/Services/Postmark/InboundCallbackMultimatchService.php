@@ -73,7 +73,7 @@ class InboundCallbackMultimatchService
             $patientsMatched,
             $reasoning
         ))
-            ->getArrayMultimatch();
+            ->getMatchedData();
     }
 
     /**

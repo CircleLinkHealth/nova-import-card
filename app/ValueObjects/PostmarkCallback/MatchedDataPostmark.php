@@ -6,7 +6,6 @@
 
 namespace App\ValueObjects\PostmarkCallback;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 class MatchedDataPostmark
 {
@@ -27,30 +26,15 @@ class MatchedDataPostmark
         $this->matchedData = $matchedData;
         $this->reasoning   = $reasoning;
     }
-
-    public function getArrayMultimatch()
-    {
-        return [
-            'matchUsersResult' => $this->matchedData,
-            'reasoning'        => $this->reasoning,
-        ];
-    }
-
-    public function getArraySingleMatch()
-    {
-        return $this->data($this->matchedData->enrollee);
-    }
-
+    
     /**
      * @return array
      */
-    private function data(Enrollee $enrollee)
+    public function getMatchedData()
     {
         return [
             'matchUsersResult' => $this->matchedData,
             'reasoning'        => $this->reasoning,
-            'enrolleeStatus'   => $enrollee->status,
-            'careAmbassadorId' => $enrollee->care_ambassador_user_id,
         ];
     }
 }
