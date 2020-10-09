@@ -45,7 +45,7 @@ class PatientIsOfServiceCode
 
     private function hasSummary(): bool
     {
-        return $this->repo->getChargeablePatientSummaries($this->patientId, Carbon::now()->startOfMonth())
+        return $this->repo()->getChargeablePatientSummaries($this->patientId, Carbon::now()->startOfMonth())
             ->where('chargeable_service_code', $this->serviceCode)
             ->where('requires_patient_consent', $this->requiresConsent)
             ->count() > 0;
