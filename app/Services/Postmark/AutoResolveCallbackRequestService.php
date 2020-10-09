@@ -28,7 +28,7 @@ class AutoResolveCallbackRequestService
                 return;
             }
 
-            if ($matchedResultsFromDB['createCallback']) {
+            if (PostmarkInboundCallbackMatchResults::CREATE_CALLBACK === $matchedResultsFromDB['reasoning']) {
                 /** @var SchedulerService $service */
                 $service = app(SchedulerService::class);
                 $service->scheduleAsapCallbackTask(
@@ -56,6 +56,8 @@ class AutoResolveCallbackRequestService
             Log::error($e->getMessage());
             sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See inbound_postmark_mail id [$recordId]");
         }
+
+        Log::error('Place error here');
     }
 
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)

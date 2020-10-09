@@ -30,7 +30,7 @@ class InboundCallbackMultimatchService
         if ($patientsMatchWithInboundName->isEmpty() || 1 !== $patientsMatchWithInboundName->count()) {
             sendSlackMessage('#carecoach_ops_alerts', "Inbound callback with record id:$recordId was matched with phone but failed to match with user name.");
 
-            return $this->multimatchResult($patientsMatchedByPhone, false, PostmarkInboundCallbackMatchResults::NO_NAME_MATCH);
+            return $this->multimatchResult($patientsMatchedByPhone, PostmarkInboundCallbackMatchResults::NO_NAME_MATCH);
         }
 
         return $this->resolvedSingleMatchResult($patientsMatchWithInboundName->first(), $inboundPostmarkData);
@@ -64,14 +64,13 @@ class InboundCallbackMultimatchService
             return $this->resolvedSingleMatchResult($patientsMatchedByCallerFieldName->first(), $inboundPostmarkData);
         }
 
-        return $this->multimatchResult($patientsMatchedByCallerFieldName, false, PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF);
+        return $this->multimatchResult($patientsMatchedByCallerFieldName, PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF);
     }
 
-    private function multimatchResult(Collection $patientsMatched, bool $createCallback, string $reasoning)
+    private function multimatchResult(Collection $patientsMatched, string $reasoning)
     {
         return (new MatchedDataPostmark(
             $patientsMatched,
-            $createCallback,
             $reasoning
         ))
             ->getArrayMultimatch();

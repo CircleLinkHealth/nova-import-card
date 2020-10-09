@@ -161,9 +161,9 @@ class AutoAssignCallbackTest extends TestCase
         }
     }
 
-    public function test_it_saves_as_unresolved_callback_if_patient_is_not_enrolled()
+    public function test_it_saves_as_unresolved_callback_if_patient_consented_but_not_enrolled()
     {
-        $this->createPatientData(Patient::PAUSED);
+        $this->createPatientData(Enrollee::CONSENTED);
         $this->createPostmarkCallbackData(false, true);
         $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
         $this->assertMissingCallBack($this->patient->id);
@@ -305,14 +305,13 @@ class AutoAssignCallbackTest extends TestCase
         $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST);
     }
 
-    public function test_it_will_assign_to_care_ambassador_if_not_consented()
+    public function test_it_will_assign_to_care_ambassador_if_patient_not_consented_and_has_care_ambassador()
     {
         $this->createPatientData(Enrollee::ELIGIBLE);
         $this->createPostmarkCallbackData(false, false);
-        $patient        = $this->patient;
+        $patient         = $this->patient;
         $postmarkRecord1 = $this->postmarkRecord;
         $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
-
     }
 
     public function test_it_will_create_callback_if_multiple_match_is_resolved_to_single_match()

@@ -20,7 +20,10 @@ class PostmarkInboundCallbackMatchResults
     const QUEUED_AND_UNASSIGNED = 'queue_auto_enrollment_and_unassigned';
     const SELF                  = 'SELF';
     const WITHDRAW_REQUEST      = 'withdraw_request';
-
+    const NOT_CONSENTED_CA_UNASSIGNED = 'non_consented_ca_unassigned';
+    const CREATE_CALLBACK = 'create_callback';
+    const NOT_CONSENTED_CA_ASSIGNED = 'non_consented_ca_assigned';
+    
     private array $postmarkCallbackData;
     private int $recordId;
 
@@ -41,6 +44,7 @@ class PostmarkInboundCallbackMatchResults
         /** @var Builder $postmarkInboundPatientsMatched */
         $postmarkInboundPatientsMatched = $this->getPostmarkInboundPatientsByPhone($this->postmarkCallbackData);
         if ($this->singleMatch($postmarkInboundPatientsMatched->get())) {
+            /** @var User $matchedPatient */
             $matchedPatient = $postmarkInboundPatientsMatched->first();
             return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackResult($matchedPatient, $this->postmarkCallbackData);
         }

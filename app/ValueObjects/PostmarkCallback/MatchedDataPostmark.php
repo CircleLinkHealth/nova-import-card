@@ -22,18 +22,16 @@ class MatchedDataPostmark
      * @param $matchedData
      * @param string $reasoning
      */
-    public function __construct($matchedData, bool $shouldCreateCallback, $reasoning = '')
+    public function __construct($matchedData, ?string $reasoning)
     {
-        $this->matchedData          = $matchedData;
-        $this->shouldCreateCallback = $shouldCreateCallback;
-        $this->reasoning            = $reasoning;
+        $this->matchedData = $matchedData;
+        $this->reasoning   = $reasoning;
     }
 
     public function getArrayMultimatch()
     {
         return [
             'matchUsersResult' => $this->matchedData,
-            'createCallback'   => $this->shouldCreateCallback,
             'reasoning'        => $this->reasoning,
         ];
     }
@@ -50,7 +48,6 @@ class MatchedDataPostmark
     {
         return [
             'matchUsersResult' => $this->matchedData,
-            'createCallback'   => $this->shouldCreateCallback,
             'reasoning'        => $this->reasoning,
             'enrolleeStatus'   => $enrollee->status,
             'careAmbassadorId' => $enrollee->care_ambassador_user_id,

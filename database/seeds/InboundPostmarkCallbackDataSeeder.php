@@ -51,7 +51,7 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
     public function run()
     {
         $this->createUsersOfTypeEnrolled(3);
-        $this->createUsersOfTypeNotEnrolled(3);
+        $this->createUsersOfTypeConsentedNotEnrolled(3);
         $this->createUsersOfTypeQueuedForEnrolmentButNotCAassigned(3);
         $this->createUsersOfTypeNameIsSelf(3);
         $this->createUsersOfTypeRequestedToWithdraw(3);
@@ -82,11 +82,11 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
         }
     }
 
-    private function createUsersOfTypeNotEnrolled(int $limit)
+    private function createUsersOfTypeConsentedNotEnrolled(int $limit)
     {
         $n = 1;
         while ($n <= $limit) {
-            $this->createPatientData(Patient::PAUSED);
+            $this->createPatientData(Enrollee::CONSENTED);
             $this->createPostmarkCallbackData(false, false);
             $this->command->info("Generated $n users out of $limit of type:[NOT ENROLLED.]");
             ++$n;
