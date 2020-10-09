@@ -7,6 +7,7 @@
 namespace App\SelfEnrollment\Jobs;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\SelfEnrollment\AppConfig\Reminders;
 use App\SelfEnrollment\Helpers;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -148,6 +149,10 @@ class SendInvitation implements ShouldQueue
 
     private function shouldRun(): bool
     {
+        if ( ! Reminders::areEnabledFor($this->user->primaryPractice->name)) {
+            return false;
+        }
+
         if (Patient::UNREACHABLE !== $this->user->getCcmStatus()) {
             return false;
         }
