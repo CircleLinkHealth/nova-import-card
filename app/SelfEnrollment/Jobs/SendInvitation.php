@@ -149,7 +149,7 @@ class SendInvitation implements ShouldQueue
 
     private function shouldRun(): bool
     {
-        $dontSendReminder = AppConfig::pull('no_enrolment_reminders', null);
+        $dontSendReminder = AppConfig::pull('no_enrolment_invites', null);
 
         if ($dontSendReminder === $this->user->primaryPractice->name) {
             return false;

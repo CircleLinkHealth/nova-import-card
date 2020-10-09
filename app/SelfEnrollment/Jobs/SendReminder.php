@@ -58,7 +58,7 @@ class SendReminder implements ShouldQueue
 
     public function shouldRun(): bool
     {
-        $dontSendReminder = AppConfig::pull('no_enrolment_reminders', null);
+        $dontSendReminder = AppConfig::pull('no_enrolment_invites', null);
     
         if ($dontSendReminder === $this->patient->primaryPractice->name) {
             return false;
