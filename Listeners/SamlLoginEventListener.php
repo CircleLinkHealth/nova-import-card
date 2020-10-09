@@ -124,6 +124,11 @@ class SamlLoginEventListener
             throw new AuthenticationException('Could not find user from saml attributes', [], '/saml2/not-auth');
         }
 
-        return new SamlResponseAttributes($attributes[$userIdMapping], $attributes[$patientIdMapping] ?? null);
+        $patientId = $attributes[$patientIdMapping] ?? null;
+        if (is_array($patientId)) {
+            $patientId = reset($patientId);
+        }
+
+        return new SamlResponseAttributes($attributes[$userIdMapping], $patientId);
     }
 }
