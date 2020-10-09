@@ -7,6 +7,7 @@
 namespace App\SelfEnrollment;
 
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\ProvidersSuffixesHelper;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Query\Builder;
@@ -120,5 +121,25 @@ class Helpers
         return self::awvUserSurveyQuery($user, $surveyInstance)
             ->where('status', '=', 'completed')
             ->exists();
+    }
+
+    /**
+     * @return string
+     */
+    public static function providerMedicalTitle(?string $providerSuffix)
+    {
+        $map = [
+            'DO'  => ProvidersSuffixesHelper::DR,
+            'MD'  => ProvidersSuffixesHelper::DR,
+            'NP'  => ProvidersSuffixesHelper::NP,
+            'PA'  => ProvidersSuffixesHelper::PA,
+            'RN'  => ProvidersSuffixesHelper::RN,
+            'LPN' => ProvidersSuffixesHelper::LPN,
+            'PN'  => ProvidersSuffixesHelper::PN,
+            'CNA' => ProvidersSuffixesHelper::CNA,
+            'MA'  => ProvidersSuffixesHelper::MD,
+        ];
+
+        return $map[$providerSuffix] ?? '';
     }
 }
