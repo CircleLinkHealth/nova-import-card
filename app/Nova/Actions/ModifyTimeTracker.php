@@ -109,16 +109,15 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             $timeRecord->activity->duration = $duration;
             $entriesToSave->push($timeRecord->activity);
 
-            /** @var NurseCareRateLog $careRateLog */
             $careRateLogQuery = NurseCareRateLog::whereActivityId($timeRecord->activity->id);
             if ( ! $allowAccruedTowards) {
                 $careRateLogQuery->where('ccm_type', '=', 'accrued_after_ccm');
             }
 
-            $careRateLog = $careRateLogQuery->first();
+            $careRateLogs = $careRateLogQuery->get();
 
             //some more validation here, simply because the current implementation supports simple use cases
-            if ( ! $careRateLog) {
+            if ($careRateLogs->isEmpty()) {
                 $msg = 'Cannot modify activity. Please choose a different one.';
                 if ( ! $allowAccruedTowards) {
                     $msg .= ' [no accrued_after_ccm]';
@@ -126,8 +125,17 @@ class ModifyTimeTracker extends Action implements ShouldQueue
                 throw new Exception($msg);
             }
 
-            if ($duration > $careRateLog->increment) {
-                throw new Exception("Cannot modify activity. Please lower duration to at least $careRateLog->increment. [duration > care rate log]");
+            /** @var NurseCareRateLog $careRateLog */
+            $careRateLog = null;
+            $careRateLogs->each(function (NurseCareRateLog $entry) use ($duration, &$careRateLog) {
+                if ($duration <= $careRateLog->increment) {
+                    $careRateLog = $entry;
+                }
+            });
+
+            if ( ! $careRateLog) {
+                $firstIncrement = $careRateLogs->first()->increment;
+                throw new Exception("Cannot modify activity. Please lower duration to at least $firstIncrement. [duration > care rate log]");
             }
         }
 
