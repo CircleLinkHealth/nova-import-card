@@ -15,6 +15,7 @@ use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use App\Traits\Tests\PostmarkCallbackHelpers;
 use App\Traits\Tests\PracticeHelpers;
 use App\UnresolvedPostmarkCallback;
+use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -292,6 +293,25 @@ class AutoAssignCallbackTest extends TestCase
         $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED);
     }
 
+    public function test_it_saves_as_unresolved_if_patient_not_consented_and_has_no_care_ambassador_id()
+    {
+        $this->createPatientData(Enrollee::ELIGIBLE);
+        $this->createPostmarkCallbackData(false, false);
+        $postmarkRecord1 = $this->postmarkRecord;
+
+        $this->patientEnrollee->update(
+            [
+                'care_ambassador_user_id' => null,
+            ]
+        );
+
+        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
+        $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_UNASSIGNED);
+        $this->assertDatabaseHas('unresolved_postmark_callbacks', [
+            'postmark_id' => $this->postmarkRecord->id,
+        ]);
+    }
+
     public function test_it_saves_as_unresolved_if_patient_requested_to_withdraw()
     {
         $this->createPatientData(Patient::ENROLLED);
@@ -305,13 +325,21 @@ class AutoAssignCallbackTest extends TestCase
         $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST);
     }
 
-    public function test_it_will_assign_to_care_ambassador_if_patient_not_consented_and_has_care_ambassador()
+    public function test_it_will_assign_to_care_ambassador_if_patient_not_consented_and_has_care_ambassador_id()
     {
         $this->createPatientData(Enrollee::ELIGIBLE);
         $this->createPostmarkCallbackData(false, false);
-        $patient         = $this->patient;
-        $postmarkRecord1 = $this->postmarkRecord;
-        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
+
+        $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
+        $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_ASSIGNED);
+
+        $this->assertDatabaseHas('enrollees', [
+            'id'                      => $this->patientEnrollee->id,
+            'status'                  => Enrollee::TO_CALL,
+            'care_ambassador_user_id' => $this->patientEnrollee->care_ambassador_user_id,
+            'requested_callback'      => Carbon::now()->toDateString(),
+            'callback_note'           => 'Callback automatically scheduled by the system - patient requested callback',
+        ]);
     }
 
     public function test_it_will_create_callback_if_multiple_match_is_resolved_to_single_match()
@@ -348,8 +376,9 @@ class AutoAssignCallbackTest extends TestCase
 
     private function assertUnresolvedReason(string $reason)
     {
-        $unresolvedPostmarkRecord = UnresolvedPostmarkCallback::where('postmark_id', $this->postmarkRecord->id)
-            ->firstOrFail();
+        $unresolvedPostmarkRecord = UnresolvedPostmarkCallback::where('postmark_id', $this->postmarkRecord->id)->first();
+
+        assert( ! is_null($unresolvedPostmarkRecord));
 
         assert($unresolvedPostmarkRecord->unresolved_reason === $reason);
     }
