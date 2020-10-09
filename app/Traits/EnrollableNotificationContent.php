@@ -27,7 +27,7 @@ trait EnrollableNotificationContent
         $practiceName           = $enrollableEmailContent['practiceName'];
         $line2                  = $enrollableEmailContent['line2'];
         $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
-        $providerNameAndType        = $enrollableEmailContent['providerNameAndType'];
+        $providerNameAndType    = $enrollableEmailContent['providerNameAndType'];
 
         if (empty($practiceName)) {
             Log::warning("Practice name not found for user $notifiable->id");
@@ -88,11 +88,11 @@ trait EnrollableNotificationContent
             : "$providerNameAndType has invested in a new wellness program for you. Please enroll or get more info here: ";
 
         return [
-            'providerLastName' => $providerLastName,
-            'practiceName'     => ucwords($notifiable->primaryPractice->display_name),
-            'line2'            => $line2,
-            'isSurveyOnly'     => true,
-            'providerNameAndType'  => $providerNameAndType,
+            'providerLastName'    => $providerLastName,
+            'practiceName'        => ucwords($notifiable->primaryPractice->display_name),
+            'line2'               => $line2,
+            'isSurveyOnly'        => true,
+            'providerNameAndType' => $providerNameAndType,
         ];
     }
 
