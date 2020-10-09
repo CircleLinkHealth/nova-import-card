@@ -135,7 +135,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         /** @var NurseCareRateLog $careRateLog */
         $careRateLog = null;
         $careRateLogs->each(function (NurseCareRateLog $entry) use ($duration, &$careRateLog) {
-            if ($careRateLog->increment >= $duration) {
+            if ($entry->increment >= $duration) {
                 $careRateLog = $entry;
             }
         });
