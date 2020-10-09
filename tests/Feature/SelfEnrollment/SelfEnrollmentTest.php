@@ -236,7 +236,7 @@ class SelfEnrollmentTest extends TestCase
         $this->assertFalse(in_array('mail', (new SelfEnrollmentInviteNotification('hello'))->via($enrollee->user)));
     }
 
-    public function test_it_returns_false_at_should_run_if_key_practice_disable_self_enrolment_reminders_added()
+    public function test_it_returns_false_if_key_practice_disable_self_enrolment_reminders_set()
     {
         $enrollee = $this->createEnrollees($number = 1);
         /** @var User $patient */
