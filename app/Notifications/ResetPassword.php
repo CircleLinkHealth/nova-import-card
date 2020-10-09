@@ -81,6 +81,13 @@ class ResetPassword extends Notification implements ShouldQueue
         return ['mail'];
     }
 
+    public function viaQueues()
+    {
+        return [
+            'mail' => 'high',
+        ];
+    }
+
     /**
      * Send email so we prefill email-input
      * If notifiable is patient, sent practice ID so we can replace CLH logo with Practice Name.

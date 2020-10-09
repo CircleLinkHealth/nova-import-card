@@ -3,6 +3,11 @@
         <div class="input-group">
             <span v-if="this.error !== ''" class="help-block" style="color: red">{{this.error}}</span>
             <h5 v-if="!loading && shouldDisplayNumberToCallText" style="padding-left: 4px; color: #50b2e2;">Select a number to call</h5>
+
+            <div v-if="hasManyPrimaryNumbers" class="alert alert-warning" role="alert">
+                It seems that there is more than one primary number. Please choose the correct one.
+            </div>
+
             <template v-for="(number, index) in patientPhoneNumbers">
                 <div class="numbers">
                     <div v-if="callEnabled && number.number !== ''" style="margin-top: 7px;">
@@ -14,7 +19,7 @@
                                v-model="selectedNumberToCall">
                     </div>
 
-                    <div v-if="number.number.length !== 0" style="display: inline-flex;">
+                    <div v-if="shouldShowPhoneTextBox(number)" style="display: inline-flex;">
                         <div class="types">
                             <input name="type"
                                    class="form-control phone-type"
@@ -98,6 +103,16 @@
                 </div>
             </div>
 
+            <div v-if="! loading" class="helpers">
+                <div v-if="phoneTypeIsRequired()">
+                    <span class="help-block"
+                          title="Missing agent phone number type"
+                          style="color: #ff6565; font-size: 15px; cursor: pointer">
+               Please choose phone number type.
+            </span>
+                </div>
+            </div>
+
             <button v-if="!loading && this.newInputs.length === 0"
                     class="add-new-number"
                     title="Add Phone Number"
@@ -116,13 +131,6 @@
             </div>
         </div>
 
-        <div v-if="phoneTypeIsRequired()">
-                    <span class="help-block"
-                          title="Missing agent phone number type"
-                          style="color: #ff6565; font-size: 15px; cursor: pointer">
-               Please choose phone number type
-            </span>
-        </div>
         <div style="margin-left: 7px;">
             <loader v-if="loading"></loader>
         </div>
@@ -138,8 +146,10 @@
     import CallNumber from "./call-number";
     import EditPatientAgentContact from "./edit-patient-agent-contact";
     import VueSelect from "vue-select";
+    import {mapActions} from 'vuex';
+    import {addNotification} from '../../../../resources/assets/js/store/actions.js';
 
-    const agent = 'agent';
+    const AGENT = 'agent';
 
     export default {
         name: "edit-patient-number",
@@ -160,6 +170,7 @@
 
         data(){
             return {
+                hasManyPrimaryNumbers:false,
                 loading:false,
                 patientPhoneNumbers:[],
                 newPhoneType:'',
@@ -236,7 +247,7 @@
                 if (this.newPhoneType === null){
                     return false;
                 }
-                return this.newPhoneType.toLowerCase() === agent;
+                return this.newPhoneType.toLowerCase() === AGENT;
             },
 
             addNewFieldClicked(){
@@ -245,12 +256,25 @@
 
             agentNumberIsSet(){
                 return this.patientPhoneNumbers.filter(number=>number.number.length !== 0
-                    && number.type.toLowerCase() === agent).length !== 0;
+                    && number.type.toLowerCase() === AGENT).length !== 0;
             },
         },
 
-        methods: {
+        methods: Object.assign(mapActions(['addNotification']), {
+
+            shouldShowPhoneTextBox(number){
+                if(this.hasManyPrimaryNumbers){
+                    return true;
+                }
+
+                return number.number.length !== 0;
+            },
+
             disableMakePrimary(number){
+                if(this.hasManyPrimaryNumbers){
+                    return false;
+                }
+
                 return number.isPrimary || this.loading;
             },
 
@@ -270,7 +294,15 @@
             },
 
             shouldShowMakePrimary(number){
-                return number.type.toLowerCase() !== agent && number.isPrimary === false;
+                if(number.type.toLowerCase() === AGENT){
+                    return false;
+                }
+
+                if(this.hasManyPrimaryNumbers){
+                    return true;
+                }
+
+                return number.type.toLowerCase() !== AGENT && number.isPrimary === false;
             },
 
             filterOutSavedPhoneTypes(){
@@ -303,7 +335,7 @@
             },
 
             selectedNumber(number){
-               EventBus.$emit("selectedNumber:toCall", number);
+                EventBus.$emit("selectedNumber:toCall", number);
             },
 
             numberIsPrimary(number){
@@ -316,8 +348,8 @@
                     phoneId:phoneNumberId,
                     patientUserId:this.userId,
                 }).then((response => {
-                        this.getPatientPhoneNumbers();
-                    })).catch((error) => {
+                    this.getPatientPhoneNumbers();
+                })).catch((error) => {
                     this.loading = false;
                     this.responseErrorMessage(error.response);
                 });
@@ -330,6 +362,18 @@
                 this.makeNewNumberPrimary = false;
             },
 
+            patientHasManyPrimaryNumbers(phoneNumbers){
+                let primaryNumbersCount = 0;
+
+                 Object.keys(phoneNumbers).forEach(function (index){
+                    if (phoneNumbers[index].isPrimary){
+                        primaryNumbersCount = primaryNumbersCount + 1;
+                    }
+                });
+
+              return primaryNumbersCount > 1;
+            },
+
             getPatientPhoneNumbers(){
                 this.loading = true;
                 this.resetData();
@@ -340,6 +384,7 @@
                     .then((response => {
                         this.patientPhoneNumbers.push(...response.data.phoneNumbers);
                         this.phoneTypes.push(...response.data.phoneTypes);
+                        this.hasManyPrimaryNumbers = this.patientHasManyPrimaryNumbers(response.data.phoneNumbers)
                         if (response.data.agentContactFields.length !== 0){
                             const agentDetails = response.data.agentContactFields;
                             this.agentContactDetails[0].agentEmail = agentDetails.agentEmail;
@@ -361,12 +406,12 @@
 
             addPhoneField(){
                 if (! this.allowAddingNewNumber){
-                    alert('Please remove one phone number in order to add a new one');
+                    this.warningFlashNotification("Please remove one phone number in order to add a new one");
                     return;
                 }
 
                 if (this.newInputs.length > 0) {
-                    alert('Please save the existing field first');
+                    this.warningFlashNotification("Please save the existing field first");
                     return;
                 }
                 this.newPhoneNumber = '';
@@ -374,7 +419,7 @@
                 this.filterOutSavedPhoneTypes();
 
                 const arr = {
-                  placeholder: '1234567890'
+                    placeholder: '1234567890'
                 };
 
                 this.newInputs.push(arr);
@@ -390,24 +435,37 @@
             },
 
             responseErrorMessage(exception){
-                const e = exception.data;
                 if (exception.status === 422) {
-                    alert(e);
+                    Object.keys(exception.data).forEach(numberKey => {
+                        const array = exception.data[numberKey];
+                        array.forEach(error => {
+                            return this.warningFlashNotification(error);
+                        });
+                    });
                 }
 
-                console.log(e);
+                console.log(exception);
+            },
+
+            warningFlashNotification(error){
+                this.addNotification({
+                    title: "Warning!",
+                    text: error,
+                    type: "danger",
+                    timeout: true
+                });
             },
 
             saveNewNumber(){
                 this.loading = true;
                 if (this.newPhoneType.length === 0){
-                    alert("Please choose phone number type");
+                    this.warningFlashNotification("Please choose phone number type");
                     this.loading = false;
                     return;
                 }
 
                 if (this.newPhoneNumber.length === 0){
-                    alert("Phone number is required.");
+                    this.warningFlashNotification("Phone number is required.");
                     this.loading = false;
                     return;
                 }
@@ -425,7 +483,7 @@
                     .then((response => {
                         this.getPatientPhoneNumbers();
                         if (response.data.hasOwnProperty('message')){
-                            console.log(response.data.message);
+                            this.successFlashNotification(response.data.message);
                         }
                     })).catch((error) => {
                     this.loading = false;
@@ -433,6 +491,14 @@
                 });
             },
 
+            successFlashNotification(message){
+                this.addNotification({
+                    title: "Success!",
+                    text: message,
+                    type: "success",
+                    timeout: true
+                });
+            },
             removeInputField(index){
                 this.loading = true;
                 this.newPhoneType = '';
@@ -445,7 +511,7 @@
 
             deletePhone(number){
                 this.loading = true;
-                if (number.type.toLowerCase() === agent){
+                if (number.type.toLowerCase() === AGENT){
                     this.$refs.editPatientAgentContact.deleteAgentContact(true);
                     return;
                 }
@@ -456,8 +522,8 @@
                 }
 
                 const phoneNumberId = number.hasOwnProperty('phoneNumberId')
-                ? number.phoneNumberId
-                : '';
+                    ? number.phoneNumberId
+                    : '';
 
                 this.loading = true;
                 axios.post('/manage-patients/delete-phone', {
@@ -467,14 +533,14 @@
                     .then((response => {
                         this.getPatientPhoneNumbers();
                         if (response.data.hasOwnProperty('message')){
-                            console.log(response.data.message);
+                            this.successFlashNotification(response.data.message);
                         }
                     })).catch((error) => {
                     this.loading = false;
                     this.responseErrorMessage(error.response);
                 });
             },
-        },
+        }),
 
         created() {
             this.getPatientPhoneNumbers();

@@ -7,6 +7,7 @@
         <option value="$PROJECT_DIR$/CircleLinkHealth/Eligibility/Tests" />
         <option value="$PROJECT_DIR$/CircleLinkHealth/Nurseinvoices/Tests" />
         <option value="$PROJECT_DIR$/CircleLinkHealth/SamlSp/Tests" />
+        <option value="$PROJECT_DIR$/CircleLinkHealth/CcmBilling/Tests" />
       </list>
     </option>
   </component>

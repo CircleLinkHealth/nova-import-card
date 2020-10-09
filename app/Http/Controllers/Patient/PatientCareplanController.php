@@ -93,7 +93,7 @@ class PatientCareplanController extends Controller
         $phoneNumber->delete();
 
         return response()->json([
-            'message' => 'Phone Number Has Been Deleted',
+            'message' => 'Phone Number Has Been Deleted!',
         ], 200);
     }
 
@@ -134,7 +134,7 @@ class PatientCareplanController extends Controller
         $phoneTypes = $this->getPhoneTypes();
 
         return response()->json([
-            'phoneNumbers'       => $phoneNumbers,
+            'phoneNumbers'       => $phoneNumbers->values()->toArray(),
             'phoneTypes'         => $phoneTypes,
             'agentContactFields' => $agentContactFields,
         ], 200);

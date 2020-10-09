@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\Exceptions\InvalidConversion;
+use Spatie\MediaLibrary\Models\Media;
 
 class PracticeReportsService
 {
@@ -62,11 +63,14 @@ class PracticeReportsService
                 $saasAccount = $practice->saasAccount;
             }
 
+            $patientReport = $this->generatePatientReportCsv($practice, $date);
+            $link = shortenUrl($patientReport->getUrl());
+
             if ('practice' == $practice->cpmSettings()->bill_to || empty($practice->cpmSettings()->bill_to)) {
                 $chargeableServices = $this->getChargeableServices($practice);
 
                 foreach ($chargeableServices as $service) {
-                    $row = $this->makeRow($practice, $date, $service);
+                    $row = $this->makeRow($practice, $date, $service, $link);
 
                     if (null == ! $row) {
                         $data[] = $row->toArray();
@@ -79,7 +83,7 @@ class PracticeReportsService
                     $chargeableServices = $this->getChargeableServices($provider);
 
                     foreach ($chargeableServices as $service) {
-                        $row = $this->makeRow($practice, $date, $service, $provider);
+                        $row = $this->makeRow($practice, $date, $service, $link, $provider);
                         if (null == ! $row) {
                             $data[] = $row->toArray();
                         }
@@ -93,6 +97,15 @@ class PracticeReportsService
         }
 
         return $this->makeQuickbookReport($data, $format, $date, $saasAccount);
+    }
+
+    private function generatePatientReportCsv(Practice $practice, Carbon $date): Media
+    {
+        $generator = new PracticeInvoiceGenerator($practice, $date);
+
+        $reportName = $practice->name.'-'.$date->format('Y-m').'-patients';
+
+        return $generator->makePatientReportCsv($reportName);
     }
 
     /**
@@ -141,16 +154,9 @@ class PracticeReportsService
         Practice $practice,
         Carbon $date,
         ChargeableService $chargeableService,
+        string $link,
         User $provider = null
     ) {
-        $generator = new PracticeInvoiceGenerator($practice, $date);
-
-        $reportName = $practice->name.'-'.$date->format('Y-m').'-patients';
-
-        $patientReport = $generator->makePatientReportCsv($reportName);
-
-        $link = shortenUrl($patientReport->getUrl());
-
         $data = $practice->getInvoiceData($date->copy()->firstOfMonth(), $chargeableService->id);
 
         if (0 == $data['billable']) {
