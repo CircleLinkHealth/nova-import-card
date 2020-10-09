@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "0ea5a75d6b43f9608c64b9adcef7a01fd0bcf7e5"
+                "reference": "d2f2e804e64285bfdd62d5cc4b46eda47d99e5ef"
             },
             "type": "laravel-module",
             "extra": {
@@ -992,7 +992,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-08T22:28:10+00:00"
+            "time": "2020-10-09T15:34:29+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -3266,16 +3266,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.10",
+            "version": "8.12.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "befffd590d1e2333bbb6d712541ccccf5fc08f1f"
+                "reference": "a3e8c9c832b3c40d69b477b2a96b252d03fbf274"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/befffd590d1e2333bbb6d712541ccccf5fc08f1f",
-                "reference": "befffd590d1e2333bbb6d712541ccccf5fc08f1f",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/a3e8c9c832b3c40d69b477b2a96b252d03fbf274",
+                "reference": "a3e8c9c832b3c40d69b477b2a96b252d03fbf274",
                 "shasum": ""
             },
             "require": {
@@ -3330,7 +3330,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-09-22T07:23:22+00:00"
+            "time": "2020-10-09T15:01:50+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -12831,16 +12831,16 @@
         },
         {
             "name": "titasgailius/search-relations",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TitasGailius/nova-search-relations.git",
-                "reference": "dc043261b954fca72b85ae208d52b27276385c30"
+                "reference": "ac999c8d3230573fe5bb81f50cbabfaa62da26c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TitasGailius/nova-search-relations/zipball/dc043261b954fca72b85ae208d52b27276385c30",
-                "reference": "dc043261b954fca72b85ae208d52b27276385c30",
+                "url": "https://api.github.com/repos/TitasGailius/nova-search-relations/zipball/ac999c8d3230573fe5bb81f50cbabfaa62da26c0",
+                "reference": "ac999c8d3230573fe5bb81f50cbabfaa62da26c0",
                 "shasum": ""
             },
             "require": {
@@ -12863,7 +12863,7 @@
                 "relations",
                 "search"
             ],
-            "time": "2019-03-15T08:17:44+00:00"
+            "time": "2020-10-09T09:25:10+00:00"
         },
         {
             "name": "twilio/sdk",
@@ -15118,12 +15118,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "91875a255f610cd186f3322e22db3876e9c57cd2"
+                "reference": "3086dd4bdc816836486e026fc1a73622cfbe8d95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/91875a255f610cd186f3322e22db3876e9c57cd2",
-                "reference": "91875a255f610cd186f3322e22db3876e9c57cd2",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/3086dd4bdc816836486e026fc1a73622cfbe8d95",
+                "reference": "3086dd4bdc816836486e026fc1a73622cfbe8d95",
                 "shasum": ""
             },
             "require": {
@@ -15187,7 +15187,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-08T06:56:35+00:00"
+            "time": "2020-10-09T07:17:35+00:00"
         },
         {
             "name": "orangehill/iseed",
