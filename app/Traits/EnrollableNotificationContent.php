@@ -100,7 +100,7 @@ trait EnrollableNotificationContent
                 return $q->select(['id', 'display_name', 'is_demo']);
             },
         ]);
-
+$x = $this->getEnrolleeMessageContent($notifiable, $isReminder);
         return $notifiable->isSurveyOnly()
             ? $this->getEnrolleeMessageContent($notifiable, $isReminder)
             : $this->getUnreachablePatientMessageContent($notifiable, $isReminder);
@@ -153,7 +153,7 @@ trait EnrollableNotificationContent
     {
         $providerSpecialty = 'Dr.';
         if ($provider->isCareCoach()) {
-            $providerSpecialty = 'Nurse Practitioner';
+            $providerSpecialty = 'Nurse';
         }
 
         return $providerSpecialty;
