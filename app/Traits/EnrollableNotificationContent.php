@@ -27,17 +27,17 @@ trait EnrollableNotificationContent
         $practiceName           = $enrollableEmailContent['practiceName'];
         $line2                  = $enrollableEmailContent['line2'];
         $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
-        $replaceableText        = $enrollableEmailContent['replaceableText'];
+        $providerNameAndType        = $enrollableEmailContent['providerNameAndType'];
 
         if (empty($practiceName)) {
             Log::warning("Practice name not found for user $notifiable->id");
             $practiceName = '???';
         }
 
-        $line1 = "Hi, it's $replaceableText office at $practiceName! ";
+        $line1 = "Hi, it's $providerNameAndType office at $practiceName! ";
 
-        if ($replaceableText === $practiceName) {
-            $line1 = "Hi, it's $replaceableText office! ";
+        if ($providerNameAndType === $practiceName) {
+            $line1 = "Hi, it's $providerNameAndType office! ";
         }
 
         if (empty($providerName)) {
@@ -70,7 +70,7 @@ trait EnrollableNotificationContent
     {
         $provider = $notifiable->billingProviderUser();
 
-        $replaceableText = $provider->primaryPractice->display_name;
+        $providerNameAndType = $provider->primaryPractice->display_name;
 
         if (empty($provider)) {
             throw new \InvalidArgumentException("User[$notifiable->id] does not have a billing provider.");
@@ -80,19 +80,19 @@ trait EnrollableNotificationContent
         $providerSpecialty = Helpers::providerMedicalTitle($provider->suffix);
 
         if ( ! empty($providerSpecialty)) {
-            $replaceableText = "$providerSpecialty $providerLastName's";
+            $providerNameAndType = "$providerSpecialty $providerLastName's";
         }
 
         $line2 = $isReminder
-            ? "Just circling back on $replaceableText new Personalized Care program. Please enroll or get more info here: "
-            : "$replaceableText has invested in a new wellness program for you. Please enroll or get more info here: ";
+            ? "Just circling back on $providerNameAndType new Personalized Care program. Please enroll or get more info here: "
+            : "$providerNameAndType has invested in a new wellness program for you. Please enroll or get more info here: ";
 
         return [
             'providerLastName' => $providerLastName,
             'practiceName'     => ucwords($notifiable->primaryPractice->display_name),
             'line2'            => $line2,
             'isSurveyOnly'     => true,
-            'replaceableText'  => $replaceableText,
+            'providerNameAndType'  => $providerNameAndType,
         ];
     }
 

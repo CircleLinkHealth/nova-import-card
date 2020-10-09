@@ -6,8 +6,8 @@
 
 namespace App\SelfEnrollment;
 
+use App\Constants\ProviderClinicalTypes\ProviderClinicalTypes;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
-use App\ProvidersSuffixesHelper;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Query\Builder;
@@ -129,15 +129,15 @@ class Helpers
     public static function providerMedicalTitle(?string $providerSuffix)
     {
         $map = [
-            'DO'  => ProvidersSuffixesHelper::DR,
-            'MD'  => ProvidersSuffixesHelper::DR,
-            'NP'  => ProvidersSuffixesHelper::NP,
-            'PA'  => ProvidersSuffixesHelper::PA,
-            'RN'  => ProvidersSuffixesHelper::RN,
-            'LPN' => ProvidersSuffixesHelper::LPN,
-            'PN'  => ProvidersSuffixesHelper::PN,
-            'CNA' => ProvidersSuffixesHelper::CNA,
-            'MA'  => ProvidersSuffixesHelper::MD,
+            ProviderClinicalTypes::DO_SUFFIX  => ProviderClinicalTypes::DR,
+            ProviderClinicalTypes::MD_SUFFIX  => ProviderClinicalTypes::DR,
+            ProviderClinicalTypes::NP_SUFFIX  => ProviderClinicalTypes::NP,
+            ProviderClinicalTypes::PA_SUFFIX  => ProviderClinicalTypes::PA,
+            ProviderClinicalTypes::RN_SUFFIX  => ProviderClinicalTypes::RN,
+            ProviderClinicalTypes::LPN_SUFFIX => ProviderClinicalTypes::LPN,
+            ProviderClinicalTypes::PN_SUFFIX  => ProviderClinicalTypes::PN,
+            ProviderClinicalTypes::CNA_SUFFIX => ProviderClinicalTypes::CNA,
+            ProviderClinicalTypes::MA_SUFFIX  => ProviderClinicalTypes::MD,
         ];
 
         return $map[$providerSuffix] ?? '';
