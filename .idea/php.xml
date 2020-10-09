@@ -329,7 +329,6 @@
       <path value="$PROJECT_DIR$/vendor/lorisleiva/cron-translator" />
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <path value="$PROJECT_DIR$/vendor/macellan/laravel-zip" />
-      <path value="$PROJECT_DIR$/vendor/laravie/serialize-queries" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
