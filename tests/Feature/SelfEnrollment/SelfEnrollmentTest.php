@@ -615,16 +615,6 @@ class SelfEnrollmentTest extends TestCase
         self::assertTrue(optional($enrollee->enrollmentInvitationLinks())->where('manually_expired', true)->exists());
     }
 
-    private function disableReminders(string $practiceName)
-    {
-        AppConfig::create(
-            [
-                'config_key'   => 'practice_disable_self_enrolment_reminders',
-                'config_value' => $practiceName,
-            ]
-        );
-    }
-
     private function createEnrollees(int $number = 1)
     {
         if (1 === $number) {
@@ -665,6 +655,16 @@ class SelfEnrollmentTest extends TestCase
         self::createSurveyConditions($userId, $surveyInstanceId, $surveyId, $status);
 
         return DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
+    }
+
+    private function disableReminders(string $practiceName)
+    {
+        AppConfig::create(
+            [
+                'config_key'   => 'practice_disable_self_enrolment_reminders',
+                'config_value' => $practiceName,
+            ]
+        );
     }
 
     private function factory()
