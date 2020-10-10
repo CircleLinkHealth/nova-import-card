@@ -342,11 +342,6 @@ class Call extends BaseModel implements AttachableToNotification
             && 'addendum_response' !== $this->sub_type;
     }
     
-    private function isIncomingFromPostmark()
-    {
-        return ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL === $this->scheduler;
-    }
-    
     public function voiceCalls()
     {
         return $this->hasMany(VoiceCall::class, 'call_id', 'id');
