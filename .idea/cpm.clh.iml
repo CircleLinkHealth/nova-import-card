@@ -10,6 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/CircleLinkHealth/Nurseinvoices/Tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/CircleLinkHealth/SamlSp/Tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/app" isTestSource="false" packagePrefix="App\" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/laravie/serialize-queries" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
