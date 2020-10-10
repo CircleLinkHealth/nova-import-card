@@ -6,6 +6,7 @@
 
 namespace App\SelfEnrollment;
 
+use App\Constants\ProviderClinicalTypes;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -120,5 +121,25 @@ class Helpers
         return self::awvUserSurveyQuery($user, $surveyInstance)
             ->where('status', '=', 'completed')
             ->exists();
+    }
+
+    /**
+     * @return string
+     */
+    public static function providerMedicalType(?string $providerSuffix)
+    {
+        $map = [
+            ProviderClinicalTypes::DO_SUFFIX  => ProviderClinicalTypes::DR,
+            ProviderClinicalTypes::MD_SUFFIX  => ProviderClinicalTypes::DR,
+            ProviderClinicalTypes::NP_SUFFIX  => ProviderClinicalTypes::NP,
+            ProviderClinicalTypes::PA_SUFFIX  => ProviderClinicalTypes::PA,
+            ProviderClinicalTypes::RN_SUFFIX  => ProviderClinicalTypes::RN,
+            ProviderClinicalTypes::LPN_SUFFIX => ProviderClinicalTypes::LPN,
+            ProviderClinicalTypes::PN_SUFFIX  => ProviderClinicalTypes::PN,
+            ProviderClinicalTypes::CNA_SUFFIX => ProviderClinicalTypes::CNA,
+            ProviderClinicalTypes::MA_SUFFIX  => ProviderClinicalTypes::MD,
+        ];
+
+        return $map[$providerSuffix] ?? '';
     }
 }
