@@ -242,7 +242,7 @@ class SelfEnrollmentTest extends TestCase
         /** @var User $patient */
         $patient  = $enrollee->user;
         $practice = $patient->primaryPractice;
-        $this->createConfigApp(Reminders::DISABLE, $practice->name);
+        $this->disableReminders($practice->name);
         self::assertFalse(Reminders::areEnabledFor($practice->name));
     }
 
@@ -454,7 +454,7 @@ class SelfEnrollmentTest extends TestCase
         /** @var User $patient */
         $patient  = $enrollee->user;
         $practice = $patient->primaryPractice;
-        $this->createConfigApp(Reminders::DISABLE, $practice->name);
+        $this->disableReminders($practice->name);
         self::assertFalse((new SendReminder($patient))->shouldRun());
         self::assertFalse(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
     }
@@ -465,7 +465,7 @@ class SelfEnrollmentTest extends TestCase
         /** @var User $patient */
         $patient  = $enrollee->user;
         $practice = $patient->primaryPractice;
-        $this->createConfigApp(Reminders::DISABLE, $practice->name);
+        $this->disableReminders($practice->name);
 
         SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
             $enrollee->practice_id,
@@ -615,7 +615,7 @@ class SelfEnrollmentTest extends TestCase
         self::assertTrue(optional($enrollee->enrollmentInvitationLinks())->where('manually_expired', true)->exists());
     }
 
-    private function createConfigApp(string $DISABLE, string $practiceName)
+    private function disableReminders(string $practiceName)
     {
         AppConfig::create(
             [
