@@ -8,6 +8,7 @@ namespace App\SelfEnrollment\Jobs;
 
 use App\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use App\SelfEnrollment\AppConfig\Reminders;
 use App\SelfEnrollment\Helpers;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\EnrollableRequestInfo\EnrollableRequestInfo;
@@ -57,6 +58,10 @@ class SendReminder implements ShouldQueue
 
     public function shouldRun(): bool
     {
+        if ( ! Reminders::areEnabledFor($this->patient->primaryPractice->name)) {
+            return false;
+        }
+
         if (Helpers::hasCompletedSelfEnrollmentSurvey($this->patient)) {
             return false;
         }
