@@ -6,6 +6,7 @@
 
 namespace App\Services\Postmark;
 
+use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -37,7 +38,7 @@ class AutoResolveCallbackRequestService
                 $service->scheduleAsapCallbackTask(
                     $matchedResultsFromDB['matchUsersResult'],
                     $postmarkCallbackData['Msg'],
-                    'postmark_inbound_mail',
+                    ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
                     null,
                     SchedulerService::CALL_BACK_TYPE,
                 );
@@ -47,7 +48,7 @@ class AutoResolveCallbackRequestService
 
             if (PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_ASSIGNED === $matchedResultsFromDB['reasoning']) {
                 $this->assignCallbackToCareAmbassador($matchedResultsFromDB['matchUsersResult'], $recordId);
-                // Will createUnresolvedInboundCallback even if NOT_CONSENTED_CA_ASSIGNED is true. We ll decide to show in view_table.
+                // Will createUnresolvedInboundCallback even if NOT_CONSENTED_CA_ASSIGNED is true. We ll decide what to show in view_table.
             }
             $this->createUnresolvedInboundCallback($matchedResultsFromDB, $recordId);
         } catch (\Exception $e) {

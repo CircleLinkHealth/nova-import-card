@@ -79,7 +79,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
             $inboundData = $this->createUsersOfTypeEnrolled(2);
         }
 
-        if ($this->isTrue('not_enrolled_consented')) {
+        if ($this->isTrue('not_enrolled')) {
             $inboundData = $this->createUsersOfTypeConsentedNotEnrolled(2);
         }
 
@@ -107,19 +107,31 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
             $inboundData = $this->createUsersOfTypeNotResolvableMultiMatches(2);
         }
 
+        if ($this->isTrue('not_consented_ca_assigned')) {
+            $inboundData = $this->createUsersOfTypeNotConsentedAssignedToCa(2);
+        }
+
+        if ($this->isTrue('not_consented_ca_unassigned')) {
+            $inboundData = $this->createUsersOfTypeNotConsentedUnassignedCa(2);
+        }
+
         $this->info(implode(", \n", $inboundData));
     }
-    
+
     private function createUsersOfTypeConsentedNotEnrolled(int $limit)
     {
-        $n = 1;
+        $n           = 1;
+        $inboundData = collect();
         while ($n <= $limit) {
             $this->createPatientData(Enrollee::CONSENTED);
-            $this->createPostmarkCallbackData(false, false);
+            $this->generatePostmarkCallbackData(false, false);
             $this->info("Generated $n users out of $limit of type:[CONSENTED BUT NOT ENROLLED.]");
+            $inboundData->push($this->postmarkRecord);
             ++$n;
         }
+        return $inboundData->toArray();
     }
+
     /**
      * @return array
      */
@@ -150,6 +162,42 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
             ++$n;
         }
 
+        return $inboundData->toArray();
+    }
+
+    private function createUsersOfTypeNotConsentedAssignedToCa(int $limit)
+    {
+        $n           = 1;
+        $inboundData = collect();
+        while ($n <= $limit) {
+            $this->createPatientData(Enrollee::ELIGIBLE);
+            $this->generatePostmarkCallbackData(false, false);
+            $this->info("Generated $n users out of $limit of type:[NOT CONSENTED BUT CA ASSIGNED.]");
+            $inboundData->push($this->postmarkRecord);
+            ++$n;
+        }
+        return $inboundData->toArray();
+    }
+
+    private function createUsersOfTypeNotConsentedUnassignedCa(int $limit)
+    {
+        $n           = 1;
+        $inboundData = collect();
+        while ($n <= $limit) {
+            $this->createPatientData(Enrollee::ELIGIBLE);
+
+            $this->patientEnrollee->update(
+                [
+                    'care_ambassador_user_id' => null,
+                ]
+            );
+
+            $this->generatePostmarkCallbackData(false, false);
+            $this->info("Generated $n users out of $limit of type:[NOT CONSENTED AND CA UNASSIGNED.]");
+            $inboundData->push($this->postmarkRecord);
+            ++$n;
+        }
+        
         return $inboundData->toArray();
     }
 

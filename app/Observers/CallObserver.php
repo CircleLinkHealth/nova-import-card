@@ -39,14 +39,17 @@ class CallObserver
     /**
      * @param $call
      */
-    public function createNotificationAndSendToPusher($call)
+    public function createNotificationAndSendToPusher(Call $call)
     {
-        if ( ! auth()->check()) {
+        /** @var User $notifiable */
+        $notifiable = auth()->user() ?? User::find($call->outbound_cpm_id);
+    
+        if ( ! $notifiable) {
             return;
         }
-
+    
         $notify = $call->outboundUser;
-        Notification::send($notify, new CallCreated($call, auth()->user()));
+        Notification::send($notify, new CallCreated($call, $notifiable));
     }
 
     public function saved(Call $call)

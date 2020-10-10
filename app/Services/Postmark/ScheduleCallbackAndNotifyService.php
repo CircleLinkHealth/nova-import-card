@@ -8,6 +8,7 @@ namespace App\Services\Postmark;
 
 use App\Entities\EmailAddressParts;
 use App\Entities\PostmarkInboundMailRequest;
+use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Notifications\PatientUnsuccessfulCallNotification;
 use App\Notifications\PatientUnsuccessfulCallReplyNotification;
 use App\Services\Calls\SchedulerService;
@@ -16,6 +17,8 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class ScheduleCallbackAndNotifyService
 {
+  
+    
     public function processCallbackAndNotify(EmailAddressParts $emailParts, ?int $recordId, ?int $dbRecordId, PostmarkInboundMailRequest $input)
     {
         $users = User::where('email', 'REGEXP', '^'.$emailParts->username.'[+|@]')
@@ -56,7 +59,7 @@ class ScheduleCallbackAndNotifyService
             $task    = $service->scheduleAsapCallbackTask(
                 $user,
                 $this->filterEmailBody($input->TextBody),
-                'postmark_inbound_mail',
+                ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
                 null,
                 SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS
             );

@@ -60,7 +60,24 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
         $this->createUsersOfTypeResolvableMultiMatches(3);
         $this->createUsersOfTypeNotResolvableMultiMatches(3);
     }
-
+    private function createUsersOfTypeNotConsentedUnassignedCa(int $limit)
+    {
+        $n = 1;
+        while ($n <= $limit) {
+            $this->createPatientData(Enrollee::ELIGIBLE);
+            
+            $this->patientEnrollee->update(
+                [
+                    'care_ambassador_user_id' => null,
+                ]
+            );
+            
+            $this->createPostmarkCallbackData(false, false);
+            $this->command->info("Generated $n users out of $limit of type:[NOT CONSENTED AND CA UNASSIGNED.]");
+            ++$n;
+        }
+    }
+    
     private function createUsersOfTypeConsentedNotEnrolled(int $limit)
     {
         $n = 1;
@@ -104,7 +121,8 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
             ++$n;
         }
     }
-
+  
+    
     private function createUsersOfTypeNotResolvableMultiMatches(int $limit)
     {
         $n = 1;
