@@ -7,7 +7,6 @@
 namespace App;
 
 use App\Contracts\AttachableToNotification;
-use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
@@ -341,7 +340,7 @@ class Call extends BaseModel implements AttachableToNotification
             && true === $this->asap
             && 'addendum_response' !== $this->sub_type;
     }
-    
+
     public function voiceCalls()
     {
         return $this->hasMany(VoiceCall::class, 'call_id', 'id');
