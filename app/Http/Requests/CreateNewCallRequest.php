@@ -25,6 +25,9 @@ class CreateNewCallRequest extends FormRequest
         if (auth()->user()->isAdmin()) {
             return true;
         }
+        if (auth()->user()->isPracticeStaff()) {
+            return true;
+        }
         if ( ! auth()->user()->isCareCoach()) {
             return false;
         }
