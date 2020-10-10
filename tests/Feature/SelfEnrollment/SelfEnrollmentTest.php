@@ -243,7 +243,7 @@ class SelfEnrollmentTest extends TestCase
         $patient  = $enrollee->user;
         $practice = $patient->primaryPractice;
         $this->createConfigApp(Reminders::DISABLE, $practice->name);
-        assert( ! Reminders::areEnabledFor($practice->name));
+        self::assertFalse(Reminders::areEnabledFor($practice->name));
     }
 
     public function test_it_saves_different_enrollment_link_in_db_when_sending_reminder()
@@ -455,8 +455,7 @@ class SelfEnrollmentTest extends TestCase
         $patient  = $enrollee->user;
         $practice = $patient->primaryPractice;
         $this->createConfigApp(Reminders::DISABLE, $practice->name);
-        assert( ! (new SendReminder($patient))->shouldRun());
-
+        self::assertFalse((new SendReminder($patient))->shouldRun());
         self::assertFalse(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
     }
 

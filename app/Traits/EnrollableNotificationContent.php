@@ -130,6 +130,14 @@ trait EnrollableNotificationContent
             ? ucwords($lastNurseThatPerformedActivity->user->display_name)
             : '';
 
+        $providerLastName    = ucwords($provider->last_name);
+        $providerNameAndType = $provider->primaryPractice->display_name;
+        $providerSpecialty   = Helpers::providerMedicalType($provider->suffix);
+
+        if ( ! empty($providerSpecialty)) {
+            $providerNameAndType = "$providerSpecialty $providerLastName's";
+        }
+
         if ( ! empty($nurseFirstName)) {
             $line2 = $isReminder
                 ? "Just circling back because $nurseFirstName, our telephone nurse was unable to reach you this month. Please re-start calls in this link: "
@@ -148,11 +156,12 @@ trait EnrollableNotificationContent
         }
 
         return [
-            'providerLastName' => ucwords($providerLastName),
-            'nurseFirstName'   => $nurseFirstName,
-            'practiceName'     => ucwords($notifiable->getPrimaryPracticeName()),
-            'line2'            => $line2,
-            'isSurveyOnly'     => false,
+            'providerLastName'    => ucwords($providerLastName),
+            'nurseFirstName'      => $nurseFirstName,
+            'practiceName'        => ucwords($notifiable->getPrimaryPracticeName()),
+            'line2'               => $line2,
+            'isSurveyOnly'        => false,
+            'providerNameAndType' => $providerNameAndType,
         ];
     }
 }
