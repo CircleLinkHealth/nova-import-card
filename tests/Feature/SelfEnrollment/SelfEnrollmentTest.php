@@ -659,6 +659,8 @@ class SelfEnrollmentTest extends TestCase
 
     private function disableReminders(string $practiceName)
     {
+        AppConfig::clearCache();
+        
         AppConfig::create(
             [
                 'config_key'   => 'practice_disable_self_enrolment_reminders',
