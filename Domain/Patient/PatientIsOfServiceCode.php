@@ -9,7 +9,6 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\SharedModels\Entities\Problem;
 
 class PatientIsOfServiceCode
 {
@@ -67,11 +66,7 @@ class PatientIsOfServiceCode
 
     private function problemsOfServiceCount(): int
     {
-        //use repo
-        return Problem::wherePatientId($this->patientId)
-            ->isBillable()
-            ->ofService($this->serviceCode)
-            ->count();
+        return $this->repo()->patientProblemsOfServiceCode($this->patientId, $this->serviceCode)->count();
     }
 
     private function repo(): PatientServiceProcessorRepository

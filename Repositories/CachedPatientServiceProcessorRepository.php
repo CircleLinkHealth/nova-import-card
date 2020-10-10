@@ -166,4 +166,11 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
 
         $this->queryPatientData($patientId);
     }
+    
+    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode) : EloquentCollection
+    {
+        return $this->getPatientFromCache($patientId)
+            ->ccdProblems
+            ->where('cpmProblem.locationProblemServices.code', $chargeableServiceCode);
+    }
 }
