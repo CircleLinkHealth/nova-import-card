@@ -36,6 +36,19 @@ class InboundCallbackMultimatchService
         return $this->resolvedSingleMatchResult($patientsMatchWithInboundName->first(), $inboundPostmarkData);
     }
 
+    /**
+     * @return string[]
+     */
+    public function parseNameFromCallerField(string $callerField)
+    {
+        $patientNameArray = $this->parsePostmarkInboundField($callerField);
+
+        return [
+            'firstName' => isset($patientNameArray[1]) ? $patientNameArray[1] : '',
+            'lastName'  => isset($patientNameArray[2]) ? $patientNameArray[2] : '',
+        ];
+    }
+
     public function resolvedSingleMatchResult(User $matchedPatient, array $inboundPostmarkData)
     {
         return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackResult($matchedPatient, $inboundPostmarkData);
@@ -46,7 +59,7 @@ class InboundCallbackMultimatchService
      */
     private function matchByCallerField(Collection $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId)
     {
-        $fullName = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID']);
+        $fullName  = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID']);
         $firstName = $fullName['firstName'];
         $lastName  = $fullName['lastName'];
 
@@ -75,19 +88,6 @@ class InboundCallbackMultimatchService
             $reasoning
         ))
             ->getMatchedData();
-    }
-
-    /**
-     * @return string[]
-     */
-    public function parseNameFromCallerField(string $callerField)
-    {
-        $patientNameArray = $this->parsePostmarkInboundField($callerField);
-
-        return [
-            'firstName' => isset($patientNameArray[1]) ? $patientNameArray[1] : '',
-            'lastName'  => isset($patientNameArray[2]) ? $patientNameArray[2] : '',
-        ];
     }
 
     /**
