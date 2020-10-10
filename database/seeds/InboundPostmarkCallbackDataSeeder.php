@@ -59,10 +59,12 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
         $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf(3);
         $this->createUsersOfTypeResolvableMultiMatches(3);
         $this->createUsersOfTypeNotResolvableMultiMatches(3);
+        $this->createUsersOfTypeNotConsentedUnassignedCa(3);
     }
+    
     private function createUsersOfTypeNotConsentedUnassignedCa(int $limit)
     {
-        $n = 1;
+        $n           = 1;
         while ($n <= $limit) {
             $this->createPatientData(Enrollee::ELIGIBLE);
             
@@ -72,7 +74,7 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
                 ]
             );
             
-            $this->createPostmarkCallbackData(false, false);
+            $this->generatePostmarkCallbackData(false, false);
             $this->command->info("Generated $n users out of $limit of type:[NOT CONSENTED AND CA UNASSIGNED.]");
             ++$n;
         }
@@ -121,7 +123,6 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
             ++$n;
         }
     }
-  
     
     private function createUsersOfTypeNotResolvableMultiMatches(int $limit)
     {

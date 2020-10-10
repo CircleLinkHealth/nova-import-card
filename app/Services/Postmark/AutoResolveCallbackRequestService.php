@@ -31,7 +31,7 @@ class AutoResolveCallbackRequestService
 
                 return;
             }
-            
+
             if (PostmarkInboundCallbackMatchResults::CREATE_CALLBACK === $matchedResultsFromDB['reasoning']) {
                 /** @var SchedulerService $service */
                 $service = app(SchedulerService::class);
@@ -94,9 +94,9 @@ class AutoResolveCallbackRequestService
         $phoneFormatted = formatPhoneNumberE164($phone);
         $from           = $postmarkCallbackData['From'];
         $message        = $postmarkCallbackData['Msg'];
-        $now = Carbon::now();
+        $now            = Carbon::now();
 
-        return $now->toDateString(). ' ' . $now->format('g:i A') .' '.'From'.' '."[$phoneFormatted $firstName $lastName]: $message.".' '."Callback Number: $phone";
+        return $now->toDateString().' '.$now->format('g:i A').' '.'From'.' '."[$phoneFormatted $firstName $lastName]: $message.".' '."Callback Number: $phone";
     }
 
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)
