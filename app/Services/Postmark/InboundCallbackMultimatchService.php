@@ -46,8 +46,9 @@ class InboundCallbackMultimatchService
      */
     private function matchByCallerField(Collection $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId)
     {
-        $firstName = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID'])['firstName'];
-        $lastName  = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID'])['lastName'];
+        $fullName = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID']);
+        $firstName = $fullName['firstName'];
+        $lastName  = $fullName['lastName'];
 
         $patientsMatchedByCallerFieldName = $patientsMatchedByPhone
             ->where('first_name', '=', $firstName)
@@ -79,7 +80,7 @@ class InboundCallbackMultimatchService
     /**
      * @return string[]
      */
-    private function parseNameFromCallerField(string $callerField)
+    public function parseNameFromCallerField(string $callerField)
     {
         $patientNameArray = $this->parsePostmarkInboundField($callerField);
 

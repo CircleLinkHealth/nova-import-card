@@ -31,13 +31,13 @@ class AutoResolveCallbackRequestService
 
                 return;
             }
-
+            
             if (PostmarkInboundCallbackMatchResults::CREATE_CALLBACK === $matchedResultsFromDB['reasoning']) {
                 /** @var SchedulerService $service */
                 $service = app(SchedulerService::class);
                 $service->scheduleAsapCallbackTask(
                     $matchedResultsFromDB['matchUsersResult'],
-                    $postmarkCallbackData['Msg'],
+                    $this->constructCallbackMessage($postmarkCallbackData),
                     ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
                     null,
                     SchedulerService::CALL_BACK_TYPE,
@@ -72,6 +72,7 @@ class AutoResolveCallbackRequestService
 
         if ( ! $enrollee) {
             Log::critical("Enrollee for postmark inbound data rec_id: $recordId not found");
+
             return;
         }
 
@@ -81,6 +82,21 @@ class AutoResolveCallbackRequestService
             'requested_callback'      => Carbon::now()->toDate(),
             'callback_note'           => htmlspecialchars('Callback automatically scheduled by the system - patient requested callback', ENT_NOQUOTES),
         ]);
+    }
+
+    private function constructCallbackMessage(array $postmarkCallbackData)
+    {
+        $callerId       = $postmarkCallbackData['Clr ID'];
+        $fullName       = app(InboundCallbackMultimatchService::class)->parseNameFromCallerField($callerId);
+        $firstName      = $fullName['firstName'];
+        $lastName       = $fullName['lastName'];
+        $phone          = $postmarkCallbackData['Phone'];
+        $phoneFormatted = formatPhoneNumberE164($phone);
+        $from           = $postmarkCallbackData['From'];
+        $message        = $postmarkCallbackData['Msg'];
+        $now = Carbon::now();
+
+        return $now->toDateString(). ' ' . $now->format('g:i A') .' '.'From'.' '."[$phoneFormatted $firstName $lastName]: $message.".' '."Callback Number: $phone";
     }
 
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)
