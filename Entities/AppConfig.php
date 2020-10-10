@@ -143,4 +143,8 @@ class AppConfig extends BaseModel
 
         return null;
     }
+    
+    public static function clearCache() {
+        static::$config = null;
+    }
 }
