@@ -199,4 +199,12 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
                     });
             });
     }
+
+    public function scopeWithPatientLocationProblemChargeableServices($query)
+    {
+        return $query->join('patient_info', 'patient_info.user_id', '=', 'ccd_problems.patient_id')
+            ->with('cpmProblem.locationChargeableServices', function ($lcs) {
+                $lcs->whereRaw('location_problem_services.location_id = patient_info.preferred_contact_location');
+            });
+    }
 }
