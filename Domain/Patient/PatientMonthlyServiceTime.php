@@ -31,6 +31,7 @@ class PatientMonthlyServiceTime
     public static function bhi(int $patientId, Carbon $month): int
     {
         return (new static(app(PatientServiceProcessorRepository::class)))
+            ->setSummaries($patientId, $month)
             ->forServices([ChargeableService::BHI]);
     }
 
@@ -38,12 +39,12 @@ class PatientMonthlyServiceTime
     {
         if ($include) {
             return $this->summaries->whereIn('chargeable_service_code', $chargeableServiceCodes)
-                ->sum('total_time');
+                ->sum('total_time') ?? 0;
         }
 
         return $this->summaries
             ->whereNotIn('chargeable_service_code', $chargeableServiceCodes)
-            ->sum('total_time');
+            ->sum('total_time') ?? 0;
     }
 
     private function setSummaries(int $patientId, Carbon $month): self

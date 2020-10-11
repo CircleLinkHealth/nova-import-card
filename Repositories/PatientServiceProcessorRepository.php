@@ -127,4 +127,9 @@ class PatientServiceProcessorRepository implements Repository
             ]
         );
     }
+    
+    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): Collection
+    {
+        // TODO: Implement patientProblemsOfServiceCode() method.
+    }
 }
