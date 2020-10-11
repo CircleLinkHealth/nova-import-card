@@ -7,7 +7,6 @@
 namespace App\Nova;
 
 use App\UnresolvedCallbacksResourceModel;
-use Circlelinkhealth\DatesInput\RangeInput;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
@@ -80,7 +79,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
     public function cards(Request $request)
     {
         return [
-            (new RangeInput()),
+            //            (new RangeInput())
         ];
     }
 
@@ -117,7 +116,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
      */
     public static function label()
     {
-        return 'Unresolved Callback Notifications';
+        return 'Unresolved Inbound Callbacks';
     }
 
     /**

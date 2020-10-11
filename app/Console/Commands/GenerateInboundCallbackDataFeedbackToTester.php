@@ -317,7 +317,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         if ($this->isTrue('phone_number_will_not_match_but_will_match_by_name')) {
             $inboundData = $this->multiMatchPhone();
         }
-        
+
         if ($this->isTrue('not_consented_ca_assigned')) {
             $inboundData = $this->createUsersOfTypeNotConsentedAssignedToCa();
         }
@@ -341,7 +341,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
      */
     private function createUsersOfTypeConsentedButNotEnrolled()
     {
-        $limit = self::LIMIT;
+        $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::CONSENTED, false, false);
         $this->info("Generated $limit patients of type:[CONSENTED BUT NOT ENROLLED].");
 
@@ -353,7 +353,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
      */
     private function createUsersOfTypeEnrolled()
     {
-        $limit = self::LIMIT;
+        $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::ENROLLED, false, false);
         $this->info("Generated $limit patients of type:[ENROLLED].");
 
@@ -365,7 +365,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
      */
     private function createUsersOfTypeNameIsSelf()
     {
-        $limit = self::LIMIT;
+        $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::ENROLLED, false, true);
         $this->info("Generated $limit patients of type:[Name Is SELF].");
 
@@ -377,7 +377,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
      */
     private function createUsersOfTypeNotConsentedAssignedToCa()
     {
-        $limit = self::LIMIT;
+        $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::ELIGIBLE, false, false);
         $this->info("Generated $limit patients of type:[NOT CONSENTED BUT CA ASSIGNED.]");
 
@@ -389,7 +389,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
      */
     private function createUsersOfTypeNotConsentedUnassignedCa()
     {
-        $limit = self::LIMIT;
+        $limit       = self::LIMIT;
         $inboundData = $this->dataOfTypeNotConsentedCaUnassigned(Enrollee::ELIGIBLE, false, false);
         $this->info("Generated $limit patients of type:[NOT CONSENTED AND CA NOT ASSIGNED.]");
 
@@ -401,7 +401,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
      */
     private function createUsersOfTypeQueuedForEnrolmentButNotCAssigned()
     {
-        $limit = self::LIMIT;
+        $limit       = self::LIMIT;
         $inboundData = $this->dataOfTypeSelfEnrollableCaUnassigned(Enrollee::QUEUE_AUTO_ENROLLMENT, false, false);
         $this->info("Generated $limit patients of type:[Queued for self enrolment but not CA assigned].");
 
@@ -413,7 +413,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
      */
     private function createUsersOfTypeRequestedToWithdraw()
     {
-        $limit = self::LIMIT;
+        $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::ENROLLED, true, false);
         $this->info("Generated $limit patients of type:[Requested To Withdraw].");
 
@@ -425,7 +425,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
      */
     private function createUsersOfTypeRequestedToWithdrawAndNameIsSelf()
     {
-        $limit = self::LIMIT;
+        $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::ENROLLED, true, true);
         $this->info("Generated $limit patients of type [Requested To Withdraw And Name Is SELF]");
 
@@ -457,9 +457,18 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
      */
     private function multiMatchPhone()
     {
-        $limit = self::LIMIT;
+        $limit       = self::LIMIT;
         $inboundData = $this->dataOfTypeSameNumber(Enrollee::ENROLLED, false, false);
         $this->info("Generated $limit patient of type:[Patients with same number different name].");
+
+        return $inboundData;
+    }
+
+    private function noMatch()
+    {
+        $limit       = self::LIMIT;
+        $inboundData = $this->dataOfTypeUnmatchable(Enrollee::ENROLLED, false, false);
+        $this->info("Generated $limit patient of type:[Patients that will not result in any match. Will post to #carecoach_ops_alerts].");
 
         return $inboundData;
     }
@@ -483,14 +492,5 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         $generatedPostmarkIds->push(...collect($this->noMatch())->pluck('id'));
 
         return $generatedPostmarkIds;
-    }
-    
-    private function noMatch()
-    {
-        $limit = self::LIMIT;
-        $inboundData = $this->dataOfTypeUnmatchable(Enrollee::ENROLLED, false, false);
-        $this->info("Generated $limit patient of type:[Patients that will not result in any match. Will post to #carecoach_ops_alerts].");
-    
-        return $inboundData;
     }
 }

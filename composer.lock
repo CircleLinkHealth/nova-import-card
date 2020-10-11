@@ -1307,42 +1307,6 @@
             "time": "2020-10-07T21:26:43+00:00"
         },
         {
-            "name": "circlelinkhealth/dates-input",
-            "version": "dev-road-340_ui_unresolved_callbacks",
-            "dist": {
-                "type": "path",
-                "url": "./nova-components/DatesInput",
-                "reference": "3f6b15d281032847db09fc8c90e0e801bf63e947"
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Circlelinkhealth\\DatesInput\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Circlelinkhealth\\DatesInput\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova card.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
             "name": "circlelinkhealth/eligibility-module",
             "version": "v3.5.3",
             "source": {

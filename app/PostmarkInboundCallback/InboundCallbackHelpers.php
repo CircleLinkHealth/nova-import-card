@@ -11,8 +11,8 @@ use Illuminate\Support\Collection;
 class InboundCallbackHelpers
 {
 //    Maybe this helper is not necessary
+
     /**
-     * @param Collection $postmarkInboundPatientsMatched
      * @return bool
      */
     public static function multiMatch(Collection $postmarkInboundPatientsMatched)
