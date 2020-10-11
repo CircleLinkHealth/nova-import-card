@@ -103,12 +103,48 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['card' // The following props are only available on resource detail cards...
   // 'resource',
   // 'resourceId',
   // 'resourceName',
   ],
+  data: function data() {
+    return {
+      startDate: '',
+      endDate: ''
+    };
+  },
   mounted: function mounted() {//
   }
 });
@@ -135,8 +171,98 @@ var render = function() {
     { staticClass: "flex flex-col items-center justify-center" },
     [
       _c("div", { staticClass: "px-3 py-3" }, [
-        _c("h1", { staticClass: "text-center text-3xl text-80 font-light" }, [
-          _vm._v("Unresolved Callback")
+        _c("span", { staticClass: "text-center text-3sm text-80 font-light" }, [
+          _vm._v("Select Range")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "py-4" }, [
+          _c("span", { staticClass: "flex " }, [
+            _c("label", { attrs: { for: "start" } }, [
+              _vm._v(
+                "\n                        " +
+                  _vm._s(_vm.__("Start Date: ")) +
+                  "\n                    "
+              )
+            ]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.startDate,
+                  expression: "startDate"
+                }
+              ],
+              staticClass: "form-block",
+              attrs: { id: "start", type: "date" },
+              domProps: { value: _vm.startDate },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.startDate = $event.target.value
+                }
+              }
+            })
+          ]),
+          _vm._v(" "),
+          _c("span", { staticClass: "flex " }, [
+            _c("label", { attrs: { for: "end" } }, [
+              _vm._v(
+                "\n                        " +
+                  _vm._s(_vm.__("End Date: ")) +
+                  "\n                    "
+              )
+            ]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.endDate,
+                  expression: "endDate"
+                }
+              ],
+              staticClass: "form-block",
+              attrs: { id: "end", type: "date" },
+              domProps: { value: _vm.endDate },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.endDate = $event.target.value
+                }
+              }
+            })
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "flex" }, [
+          _vm.errors
+            ? _c(
+                "div",
+                _vm._l(_vm.errors, function(error) {
+                  return _c("p", { staticClass: "text-danger mb-1" }, [
+                    _vm._v(_vm._s(error))
+                  ])
+                }),
+                0
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _c(
+            "a",
+            {
+              staticClass: "btn btn-default btn-primary ml-auto mt-auto",
+              staticStyle: { cursor: "pointer" },
+              on: { click: function($event) {} }
+            },
+            [_vm._v("Submit")]
+          )
         ])
       ])
     ]

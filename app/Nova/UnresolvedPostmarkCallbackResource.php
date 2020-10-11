@@ -80,7 +80,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
     public function cards(Request $request)
     {
         return [
-                        (new UnresolvedCallback())
+            (new UnresolvedCallback())
         ];
     }
 
