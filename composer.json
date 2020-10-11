@@ -168,11 +168,8 @@
         {
             "type": "path",
             "url": "./nova-components/InvoicesDownload"
-        },
-        {
-            "type": "path",
-            "url": "nova-components/RangeInput"
         }
+
     ],
     "require": {
         "php": "^7.4",

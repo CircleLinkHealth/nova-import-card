@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "24508f59091ecce1fd0b00673ac5a49e",
+    "content-hash": "96b6628bee50cf899c33a9ffecd5bae5",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
