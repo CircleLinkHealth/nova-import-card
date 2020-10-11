@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 class PostmarkInboundCallbackMatchResults
 {
     const CREATE_CALLBACK             = 'create_callback';
-    const NO_NAME_MATCH               = 'no_name_match';
+    const MULTIPLE_MATCHES            = 'no_name_match';
     const NO_NAME_MATCH_SELF          = 'no_name_match_self';
     const NOT_CONSENTED_CA_ASSIGNED   = 'non_consented_ca_assigned';
     const NOT_CONSENTED_CA_UNASSIGNED = 'non_consented_ca_unassigned';
@@ -54,20 +54,10 @@ class PostmarkInboundCallbackMatchResults
                 ->tryToMatchByName($postmarkInboundPatientsMatched->get(), $this->postmarkCallbackData, $this->recordId);
         }
 
-        // I kept this last cause i think is an expnsive query, i think it will happen rarely.
+        // I kept this last cause i think is an expensive query, i think it will happen rarely.
         // This step is not required in the ticket. Evala to pou tin pougka.
         if ($postmarkInboundPatientsMatched->get()->isEmpty()) {
-            $possibleMatchedData = $this->tryToMatchByNameFromDb($this->postmarkCallbackData);
-
-            if (InboundCallbackHelpers::singleMatch($possibleMatchedData)) {
-                return app(InboundCallbackSingleMatchService::class)
-                    ->singleMatchCallbackResult($possibleMatchedData->first(), $this->postmarkCallbackData);
-            }
-
-            if (InboundCallbackHelpers::multiMatch($possibleMatchedData)) {
-                return app(InboundCallbackMultimatchService::class)
-                    ->multimatchResult($possibleMatchedData, 'need a reason name');
-            }
+            $this->tryToResolveUsingNameFormDb();
         }
     }
 
@@ -97,5 +87,23 @@ class PostmarkInboundCallbackMatchResults
             ->whereHas('phoneNumbers', function ($phoneNumber) use ($inboundPostmarkData) {
                 $phoneNumber->where('number', $inboundPostmarkData['Phone']);
             });
+    }
+
+    /**
+     * @return array|void
+     */
+    private function tryToResolveUsingNameFormDb()
+    {
+        $possibleMatchedData = $this->tryToMatchByNameFromDb($this->postmarkCallbackData);
+
+        if (InboundCallbackHelpers::singleMatch($possibleMatchedData)) {
+            return app(InboundCallbackSingleMatchService::class)
+                ->singleMatchCallbackResult($possibleMatchedData->first(), $this->postmarkCallbackData);
+        }
+
+        if (InboundCallbackHelpers::multiMatch($possibleMatchedData)) {
+            return app(InboundCallbackMultimatchService::class)
+                ->multimatchResult($possibleMatchedData, self::MULTIPLE_MATCHES);
+        }
     }
 }

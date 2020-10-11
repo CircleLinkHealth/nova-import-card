@@ -53,7 +53,7 @@ class InboundCallbackMultimatchService
         $patientsMatchWithInboundName = $patientsMatchedByPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
 
         if ($patientsMatchWithInboundName->isEmpty() || 1 !== $patientsMatchWithInboundName->count()) {
-            return $this->multimatchResult($patientsMatchedByPhone, PostmarkInboundCallbackMatchResults::NO_NAME_MATCH);
+            return $this->multimatchResult($patientsMatchedByPhone, PostmarkInboundCallbackMatchResults::MULTIPLE_MATCHES);
         }
 
         return $this->resolveSingleMatchResult($patientsMatchWithInboundName->first(), $inboundPostmarkData);
