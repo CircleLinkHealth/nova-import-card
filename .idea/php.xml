@@ -330,6 +330,7 @@
       <path value="$PROJECT_DIR$/vendor/spatie/laravel-schedule-monitor" />
       <path value="$PROJECT_DIR$/vendor/macellan/laravel-zip" />
       <path value="$PROJECT_DIR$/vendor/laravie/serialize-queries" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/dates-input" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

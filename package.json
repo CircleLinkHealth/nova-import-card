@@ -30,8 +30,8 @@
         "build-invoices-download": "cd nova-components/InvoicesDownload && npm run dev",
         "build-invoices-download-prod": "cd nova-components/InvoicesDownload && npm install && npm run prod",
         "startare": "pack build cpm-web --builder heroku/buildpacks:18 -b heroku/php -b heroku/nodejs --env-file=.env",
-        "build-dates-input": "cd nova-components/DatesInput && npm run dev",
-        "build-dates-input-prod": "cd nova-components/DatesInput && npm run prod"
+        "build-dates-input": "cd nova-components/RangeInput && npm run dev",
+        "build-dates-input-prod": "cd nova-components/RangeInput && npm run prod"
     },
     "jest": {
         "verbose": true,
