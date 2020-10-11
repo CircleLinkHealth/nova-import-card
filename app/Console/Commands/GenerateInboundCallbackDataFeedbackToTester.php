@@ -28,13 +28,15 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
      *
      * @var string
      */
-    protected $description = 'Creates data and returns json field arrays to console for tester to work with';
+    protected $description = 'If {--userType} is set it will create data given the userType and return them to console for tester to work with.
+    If {--userType} {--save} is set it will create data given the userType and save them to postmark_inbound_mail.
+    If {--runAll} is set it will create data for all userTypes and save them to postmark_inbound_mail';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'create:inboundCallbackData {userType} {--save}';
+    protected $signature = 'create:inboundCallbackData {--userType=} {--save} {--runAll}';
     private \CircleLinkHealth\Customer\Entities\User $careAmbassador;
     /**
      * @var User
@@ -50,6 +52,10 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
      */
     private $postmarkRecord;
     private \CircleLinkHealth\Customer\Entities\Practice $practice;
+    /**
+     * @var array|bool|string|null
+     */
+    private $runAll;
     /**
      * @var array|bool|string|null
      */
@@ -90,8 +96,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
 
         return $inboundData->toArray();
     }
-    
-    
+
     /**
      * @return array
      */
@@ -240,17 +245,33 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         return $inboundData->toArray();
     }
 
-    /**
-     * /**
-     *
-     */
     public function handle()
     {
-        $this->userType = $this->argument('userType');
+        $this->userType = $this->option('userType');
         $this->save     = $this->option('save');
+        $this->runAll   = $this->option('runAll');
 
-        if ( ! $this->userType) {
-            $this->error('Please enter user type.');
+        if ( ! $this->userType && ! $this->runAll) {
+            $this->warn('Please enter user type.');
+
+            return;
+        }
+
+        if ($this->runAll) {
+            $this->save               = true;
+            $postmarkGeneratedDataIds = $this->runAllFunctions();
+            
+            $this->info('Data for all patient types migrated in:
+            [postmark_inbound_mail, calls, and unresolved_postmark_callbacks]');
+
+            if ($this->confirm('Do you wish to process the generated data?
+            This will run ProcessPostmarkInboundMailJob foreach generated data.')) {
+                \Artisan::call('process:postmark-inbound-mail', [
+                    'recordsId' => $postmarkGeneratedDataIds->toArray(),
+                ]);
+            }
+
+            return;
         }
 
         $inboundData = ['No callback data'];
@@ -311,7 +332,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     private function createUsersOfTypeConsentedNotEnrolled(int $limit)
     {
         $inboundData = $this->dataOfStatusType(Enrollee::CONSENTED, false, false);
-        $this->info("$limit created of type:[CONSENTED BUT NOT ENROLLED.].");
+        $this->info("Generated $limit patients of type:[CONSENTED BUT NOT ENROLLED].");
 
         return $inboundData;
     }
@@ -322,7 +343,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     private function createUsersOfTypeEnrolled(int $limit)
     {
         $inboundData = $this->dataOfStatusType(Enrollee::ENROLLED, false, false);
-        $this->info("$limit patients created of type:[ENROLLED].");
+        $this->info("Generated $limit patients of type:[ENROLLED].");
 
         return $inboundData;
     }
@@ -432,5 +453,26 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         $this->info("Generated $limit patients of type:[Same name and number].");
 
         return $inboundData;
+    }
+
+    /**
+     * @return \Collection|\Illuminate\Support\Collection
+     */
+    private function runAllFunctions()
+    {
+        $generatedPostmarkIds = collect();
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeEnrolled(2))->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeConsentedNotEnrolled(2))->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeQueuedForEnrolmentButNotCAssigned(2))->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNameIsSelf(2))->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdraw(2))->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf(2))->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->matchableByNameNotPhone(2))->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotResolvableMultiMatches(2))->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedAssignedToCa(2))->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedUnassignedCa(2))->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->matchedPatientsSameNumberName(2))->pluck('id'));
+
+        return $generatedPostmarkIds;
     }
 }

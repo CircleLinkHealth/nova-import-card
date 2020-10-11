@@ -24,7 +24,7 @@ class ProcessPostmarkInboundMailCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'process:postmark-inbound-mail {recordId}';
+    protected $signature = 'process:postmark-inbound-mail {recordsId}';
 
     /**
      * Create a new command instance.
@@ -43,25 +43,29 @@ class ProcessPostmarkInboundMailCommand extends Command
      */
     public function handle()
     {
-//        $item = PostmarkInboundMail::findOrFail($this->argument('recordId'));
-//        ProcessPostmarkInboundMailJob::dispatch(new PostmarkInboundMailRequest([
-//            'From'     => $item->from,
-//            'TextBody' => $item->body,
-//        ]), $item->id);
-//
-//        return 0;
-
-        $all = PostmarkInboundMail::where('from', ProcessPostmarkInboundMailJob::FROM_CALLBACK_MAIL)->get();
-
-        foreach ($all as $item) {
-            ProcessPostmarkInboundMailJob::dispatchNow(new PostmarkInboundMailRequest(
-                [
-                    'From'     => $item->from,
-                    'TextBody' => $item->body,
-                ]
-            ), $item->id);
+        $recordsId = $this->argument('recordsId');
+        if (is_array($recordsId)){
+            $items = PostmarkInboundMail::whereIn('id', $recordsId)->get();
+            foreach ($items as $item){
+                $this->processData($item);
+            }
         }
-
+        
+        if (is_int($recordsId)){
+            $item = PostmarkInboundMail::findOrFail($recordsId);
+            $this->processData($item);
+        }
+        
         return 0;
+    }
+
+    private function processData(PostmarkInboundMail $item)
+    {
+        ProcessPostmarkInboundMailJob::dispatch(new PostmarkInboundMailRequest([
+            'From'     => $item->from,
+            'TextBody' => $item->body,
+        ]), $item->id);
+    
+        $this->info("Postmark Record $item->id processed");
     }
 }
