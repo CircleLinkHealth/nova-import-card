@@ -9,7 +9,6 @@ namespace App\View\Composers;
 use App\Constants;
 use App\Jobs\StoreTimeTracking;
 use App\Policies\CreateNoteForPatient;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -28,7 +27,7 @@ class ProviderUITimerComposer extends ServiceProvider
         View::composer(['partials.providerUItimer'], function ($view) {
             $ccm_time = 0;
             $bhi_time = 0;
-
+            
             if ( ! isset($activity)) {
                 $activity = 'Undefined';
             }
@@ -82,15 +81,15 @@ class ProviderUITimerComposer extends ServiceProvider
                 $bhi_time = $patient->user->getBhiTime();
                 $monthlyTime = $patient->user->formattedTime($ccm_time);
                 $monthlyBhiTime = $patient->user->formattedTime($bhi_time);
-                //also, do NOT show BHI switch if user's primary practice is not being charged for CPT 99484
-                $noBhiSwitch = $noBhiSwitch || ! optional($patient->user->primaryPractice)->hasServiceCode('CPT 99484');
+                
+                $noBhiSwitch = $noBhiSwitch || $patient->user->isBhi();
             } else {
                 $monthlyTime = '';
                 $monthlyBhiTime = '';
                 $patientId = '';
                 $patientProgramId = '';
             }
-
+            
             $view->with(compact([
                 'patientId',
                 'patientProgramId',
@@ -109,15 +108,14 @@ class ProviderUITimerComposer extends ServiceProvider
 
         View::composer(['partials.userheader', 'wpUsers.patient.careplan.print', 'wpUsers.patient.calls.index'], function ($view) {
             // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
+            
+            /**
+             * @var User
+             */
             $patient = $view->patient;
 
             if ($patient) {
                 $patient->load([
-                    'patientSummaries' => function ($pms) {
-                        $pms->select(['bhi_time', 'ccm_time', 'id'])
-                            ->orderBy('id', 'desc')
-                            ->whereMonthYear(Carbon::now()->startOfMonth());
-                    },
                     'careTeamMembers.user',
                     'patientInfo.location',
                 ]);
@@ -125,10 +123,8 @@ class ProviderUITimerComposer extends ServiceProvider
                 $isAdminOrPatientsAssignedNurse = auth()->user()->isAdmin()
                     || auth()->user()->isCareCoach() && app(CreateNoteForPatient::class)->can(auth()->id(), $patient->id);
 
-                $currentPms = $patient->patientSummaries->first();
-
-                $ccmSeconds = $currentPms->ccm_time ?? 0;
-                $bhiSeconds = $currentPms->bhi_time ?? 0;
+                $ccmSeconds = $patient->getCcmTime();
+                $bhiSeconds = $patient->getBhiTime();
                 $monthlyTime = $patient->formattedTime($ccmSeconds);
                 $monthlyBhiTime = $patient->formattedTime($bhiSeconds);
 
@@ -147,7 +143,7 @@ class ProviderUITimerComposer extends ServiceProvider
                     ? 'Not Set'
                     : $preferredLocationName;
 
-                $patientIsBhiEligible = optional($patient->primaryPractice)->hasServiceCode('CPT 99484') && ($bhiSeconds || $patient->isBhi());
+                $patientIsBhiEligible = $patient->isBhi();
             } else {
                 $ccm_above = false;
                 $location = 'N/A';
