@@ -53,4 +53,14 @@ class PatientBillingHelpersTest extends BillingTestCase
 
         self::assertTrue($patient->isPcm());
     }
+    
+    public function test_patient_ccm_time_helper_uses_new_summaries()
+    {
+    
+    }
+    
+    public function test_patient_bhi_time_helper_uses_new_summaries()
+    {
+    
+    }
 }
