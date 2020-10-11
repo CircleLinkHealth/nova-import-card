@@ -90,7 +90,8 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
 
         return $inboundData->toArray();
     }
-
+    
+    
     /**
      * @return array
      */
