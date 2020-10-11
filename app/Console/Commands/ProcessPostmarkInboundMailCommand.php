@@ -44,18 +44,18 @@ class ProcessPostmarkInboundMailCommand extends Command
     public function handle()
     {
         $recordsId = $this->argument('recordsId');
-        if (is_array($recordsId)){
+        if (is_array($recordsId)) {
             $items = PostmarkInboundMail::whereIn('id', $recordsId)->get();
-            foreach ($items as $item){
+            foreach ($items as $item) {
                 $this->processData($item);
             }
         }
-        
-        if (is_int($recordsId)){
+
+        if (is_int($recordsId)) {
             $item = PostmarkInboundMail::findOrFail($recordsId);
             $this->processData($item);
         }
-        
+
         return 0;
     }
 
@@ -65,7 +65,5 @@ class ProcessPostmarkInboundMailCommand extends Command
             'From'     => $item->from,
             'TextBody' => $item->body,
         ]), $item->id);
-    
-        $this->info("Postmark Record $item->id processed");
     }
 }

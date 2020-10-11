@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 class PostmarkInboundCallbackMatchResults
 {
     const CREATE_CALLBACK             = 'create_callback';
-    const MULTIPLE_MATCHES            = 'no_name_match';
+    const MULTIPLE_MATCHES            = 'multiple_match';
     const NO_NAME_MATCH_SELF          = 'no_name_match_self';
     const NOT_CONSENTED_CA_ASSIGNED   = 'non_consented_ca_assigned';
     const NOT_CONSENTED_CA_UNASSIGNED = 'non_consented_ca_unassigned';
