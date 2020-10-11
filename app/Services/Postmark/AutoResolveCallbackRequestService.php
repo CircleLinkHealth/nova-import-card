@@ -48,8 +48,10 @@ class AutoResolveCallbackRequestService
 
             if (PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_ASSIGNED === $matchedResultsFromDB['reasoning']) {
                 $this->assignCallbackToCareAmbassador($matchedResultsFromDB['matchUsersResult'], $recordId);
-                // Will createUnresolvedInboundCallback even if NOT_CONSENTED_CA_ASSIGNED is true. We ll decide what to show in view_table.
+
+                return;
             }
+
             $this->createUnresolvedInboundCallback($matchedResultsFromDB, $recordId);
         } catch (\Exception $e) {
             if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {

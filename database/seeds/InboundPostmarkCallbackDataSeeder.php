@@ -15,6 +15,11 @@ use Illuminate\Database\Seeder;
 
 class InboundPostmarkCallbackDataSeeder extends Seeder
 {
+//    @todo: antonis reminder.
+//    ** This seeder is really similar to GenerateInboundCallbackDataFeedbackToTester command.
+//    ** This seeder should share logic with the command.
+//    ** This seeder is outdated compare to the command.
+ 
     use PostmarkCallbackHelpers;
     use PracticeHelpers;
     use UserHelpers;
@@ -141,7 +146,7 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
             $this->patient->first_name   = 'Hambis';
             $this->patient->last_name    = 'Flouretzou';
             $this->patient->save();
-            $this->command->info("Generated $n users out of $limit of type:[NOT Eligible Multi Matches].");
+            $this->command->info("Generated $n users out of $limit of type:[NOT Resolvable Multi Matches].");
             ++$n;
         }
     }
@@ -197,7 +202,7 @@ class InboundPostmarkCallbackDataSeeder extends Seeder
                         'number' => 1234567890,
                     ]
                 );
-            $this->command->info("Generated $n users out of $limit of type:[Eligible Multi Matches].");
+            $this->command->info("Generated $n users out of $limit of type:[Resolvable Multi Matches].");
             ++$n;
         }
     }

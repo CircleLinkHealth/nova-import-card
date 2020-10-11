@@ -6,7 +6,6 @@
 
 namespace App\ValueObjects\PostmarkCallback;
 
-
 class MatchedDataPostmark
 {
     private $matchedData;
@@ -26,7 +25,7 @@ class MatchedDataPostmark
         $this->matchedData = $matchedData;
         $this->reasoning   = $reasoning;
     }
-    
+
     /**
      * @return array
      */

@@ -46,13 +46,14 @@ class ProcessUnresolvedPostmarkCallback
         return $suggestions;
     }
 
+    /**
+     * @return |null
+     */
     public function getUserIdIfMatched()
     {
         if ($this->matchedWithUniqueUser()) {
             return isset($this->matchedData['matchUsersResult']->id) ? $this->matchedData['matchUsersResult']->id : null;
         }
-
-        //todo:        Here Check if suggestions exists. If not then its an error
 
         return null;
     }
@@ -86,11 +87,18 @@ class ProcessUnresolvedPostmarkCallback
         }
     }
 
+    /**
+     * @return bool
+     */
     private function matchedWithMultipleUsers()
     {
-        return $this->isMultiMatch = $this->matchedData['matchUsersResult'] instanceof Collection;
+        return $this->isMultiMatch = $this->matchedData['matchUsersResult'] instanceof Collection
+            || $this->matchedData['matchUsersResult'] instanceof \Illuminate\Support\Collection;
     }
 
+    /**
+     * @return bool
+     */
     private function matchedWithUniqueUser()
     {
         return $this->matchedData['matchUsersResult'] instanceof User;

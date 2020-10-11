@@ -75,7 +75,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
 
         $inboundData = ['No callback data'];
 
-        if ($this->isTrue(Enrollee::ENROLLED)) {
+        if ($this->isTrue('enrolled')) {
             $inboundData = $this->createUsersOfTypeEnrolled(2);
         }
 
@@ -83,27 +83,27 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
             $inboundData = $this->createUsersOfTypeConsentedNotEnrolled(2);
         }
 
-        if ($this->isTrue('queued_ca_unassigned')) {
+        if ($this->isTrue('queued_for_self_enrolment_but_ca_unassigned')) {
             $inboundData = $this->createUsersOfTypeQueuedForEnrolmentButNotCAassigned(2);
         }
 
-        if ($this->isTrue('callback_name_self')) {
+        if ($this->isTrue('inbound_callback_name_is_self')) {
             $inboundData = $this->createUsersOfTypeNameIsSelf(2);
         }
 
-        if ($this->isTrue('withdraw_request')) {
+        if ($this->isTrue('patient_requests_to_withdraw')) {
             $inboundData = $this->createUsersOfTypeRequestedToWithdraw(2);
         }
 
-        if ($this->isTrue('requests_withdraw_name_self')) {
+        if ($this->isTrue('patient_requests_to_withdraw_and_name_is_self')) {
             $inboundData = $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf(2);
         }
 
-        if ($this->isTrue('resolvable_multimatch')) {
-            $inboundData = $this->createUsersOfTypeResolvableMultiMatches(2);
+        if ($this->isTrue('phone_number_will_not_match_but_will_match_by_name')) {
+            $inboundData = $this->matchableByNameNotPhone(2);
         }
 
-        if ($this->isTrue('unresolvable_multimatch')) {
+        if ($this->isTrue('phone_number_and_name_will_not_match')) { // will send slack
             $inboundData = $this->createUsersOfTypeNotResolvableMultiMatches(2);
         }
 
@@ -113,6 +113,10 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
 
         if ($this->isTrue('not_consented_ca_unassigned')) {
             $inboundData = $this->createUsersOfTypeNotConsentedUnassignedCa(2);
+        }
+
+        if ($this->isTrue('patients_have_same_number_same_phone')) {
+            $inboundData = $this->matchedPatientsSameNumberName(2);
         }
 
         $this->info(implode(", \n", $inboundData));
@@ -129,6 +133,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
             $inboundData->push($this->postmarkRecord);
             ++$n;
         }
+
         return $inboundData->toArray();
     }
 
@@ -176,6 +181,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
             $inboundData->push($this->postmarkRecord);
             ++$n;
         }
+
         return $inboundData->toArray();
     }
 
@@ -197,21 +203,6 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
             $inboundData->push($this->postmarkRecord);
             ++$n;
         }
-        
-        return $inboundData->toArray();
-    }
-
-    private function createUsersOfTypeNotEnrolled(int $limit)
-    {
-        $inboundData = collect();
-        $n           = 1;
-        while ($n <= $limit) {
-            $this->createPatientData(Patient::PAUSED);
-            $this->generatePostmarkCallbackData(false, false);
-            $this->info("Generated $n users out of $limit of type:[NOT ENROLLED.]");
-            $inboundData->push($this->postmarkRecord);
-            ++$n;
-        }
 
         return $inboundData->toArray();
     }
@@ -223,6 +214,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         while ($n <= $limit) {
             $this->createPatientData(Patient::ENROLLED);
             $this->generatePostmarkCallbackData(false, false);
+//            Changing the phone number and names to cause not finding results
             $this->patient->phoneNumbers
                 ->first()
                 ->update(
@@ -230,10 +222,13 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
                         'number' => 1234567890,
                     ]
                 );
-            $this->patient->display_name = 'Hambis Flouretzou';
-            $this->patient->first_name   = 'Hambis';
-            $this->patient->last_name    = 'Flouretzou';
-            $this->patient->save();
+            
+            $this->patient->update([
+                'display_name' => 'Mario Yianouko',
+                'first_name'   => 'Mario',
+                'last_name'    => 'Yianouko',
+            ]);
+            
             $this->info("Generated $n users out of $limit of type:[NOT Eligible Multi Matches].");
             $inboundData->push($this->postmarkRecord);
             ++$n;
@@ -292,13 +287,22 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         return $inboundData->toArray();
     }
 
-    private function createUsersOfTypeResolvableMultiMatches(int $limit)
+    /**
+     * @return bool
+     */
+    private function isTrue(string $constType)
+    {
+        return $this->userType === $constType;
+    }
+
+    private function matchableByNameNotPhone(int $limit)
     {
         $n           = 1;
         $inboundData = collect();
         while ($n <= $limit) {
             $this->createPatientData(Patient::ENROLLED);
             $this->generatePostmarkCallbackData(false, false);
+
             $this->patient->phoneNumbers
                 ->first()
                 ->update(
@@ -314,11 +318,36 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         return $inboundData->toArray();
     }
 
-    /**
-     * @return bool
-     */
-    private function isTrue(string $constType)
+    private function matchedPatientsSameNumberName(int $limit)
     {
-        return $this->userType === $constType;
+        $n           = 1;
+        $inboundData = collect();
+        while ($n <= $limit) {
+            $newNumber = '1234567890';
+
+            $this->createPatientData(Patient::ENROLLED);
+            $this->patient->phoneNumbers
+                ->first()
+                ->update(
+                    [
+                        'number' => $newNumber,
+                    ]
+                );
+
+            $this->patient->update([
+                'display_name' => 'Mario Yianouko',
+                'first_name'   => 'Mario',
+                'last_name'    => 'Yianouko',
+            ]);
+
+            $this->patient->fresh();
+            $this->generatePostmarkCallbackData(false, false);
+
+            $this->info("Generated $n users out of $limit of type:[NOT Eligible Multi Matches].");
+            $inboundData->push($this->postmarkRecord);
+            ++$n;
+        }
+
+        return $inboundData->toArray();
     }
 }

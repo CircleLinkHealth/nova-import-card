@@ -6,7 +6,7 @@
 
 namespace App\Services\Postmark;
 
-use App\Traits\CallbackEligibilityMeter;
+use App\PostmarkInboundCallback\InboundCallbackHelpers;
 use App\ValueObjects\PostmarkCallback\MatchedDataPostmark;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
@@ -14,26 +14,13 @@ use Illuminate\Support\Facades\Log;
 
 class InboundCallbackMultimatchService
 {
-    use CallbackEligibilityMeter;
-
-    /**
-     * @return array|Builder|void
-     */
-    public function filterPostmarkInboundPatientsByName(Collection $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId)
+    public function multimatchResult(Collection $patientsMatched, string $reasoning)
     {
-        if (PostmarkInboundCallbackMatchResults::SELF === $inboundPostmarkData['Ptn']) {
-            return $this->matchByCallerField($patientsMatchedByPhone, $inboundPostmarkData, $recordId);
-        }
-
-        $patientsMatchWithInboundName = $patientsMatchedByPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
-
-        if ($patientsMatchWithInboundName->isEmpty() || 1 !== $patientsMatchWithInboundName->count()) {
-            sendSlackMessage('#carecoach_ops_alerts', "Inbound callback with record id:$recordId was matched with phone but failed to match with user name.");
-
-            return $this->multimatchResult($patientsMatchedByPhone, PostmarkInboundCallbackMatchResults::NO_NAME_MATCH);
-        }
-
-        return $this->resolvedSingleMatchResult($patientsMatchWithInboundName->first(), $inboundPostmarkData);
+        return (new MatchedDataPostmark(
+            $patientsMatched,
+            $reasoning
+        ))
+            ->getMatchedData();
     }
 
     /**
@@ -49,9 +36,27 @@ class InboundCallbackMultimatchService
         ];
     }
 
-    public function resolvedSingleMatchResult(User $matchedPatient, array $inboundPostmarkData)
+    public function resolveSingleMatchResult(User $matchedPatient, array $inboundPostmarkData)
     {
         return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackResult($matchedPatient, $inboundPostmarkData);
+    }
+
+    /**
+     * @return array|Builder|void
+     */
+    public function tryToMatchByName(Collection $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId)
+    {
+        if (PostmarkInboundCallbackMatchResults::SELF === $inboundPostmarkData['Ptn']) {
+            return $this->matchByCallerField($patientsMatchedByPhone, $inboundPostmarkData, $recordId);
+        }
+
+        $patientsMatchWithInboundName = $patientsMatchedByPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
+
+        if ($patientsMatchWithInboundName->isEmpty() || 1 !== $patientsMatchWithInboundName->count()) {
+            return $this->multimatchResult($patientsMatchedByPhone, PostmarkInboundCallbackMatchResults::NO_NAME_MATCH);
+        }
+
+        return $this->resolveSingleMatchResult($patientsMatchWithInboundName->first(), $inboundPostmarkData);
     }
 
     /**
@@ -74,20 +79,11 @@ class InboundCallbackMultimatchService
             return;
         }
 
-        if ($this->singleMatch($patientsMatchedByCallerFieldName)) {
-            return $this->resolvedSingleMatchResult($patientsMatchedByCallerFieldName->first(), $inboundPostmarkData);
+        if (InboundCallbackHelpers::singleMatch($patientsMatchedByCallerFieldName)) {
+            return $this->resolveSingleMatchResult($patientsMatchedByCallerFieldName->first(), $inboundPostmarkData);
         }
 
         return $this->multimatchResult($patientsMatchedByCallerFieldName, PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF);
-    }
-
-    private function multimatchResult(Collection $patientsMatched, string $reasoning)
-    {
-        return (new MatchedDataPostmark(
-            $patientsMatched,
-            $reasoning
-        ))
-            ->getMatchedData();
     }
 
     /**

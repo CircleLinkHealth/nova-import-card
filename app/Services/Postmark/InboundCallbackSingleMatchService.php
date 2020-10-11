@@ -6,7 +6,6 @@
 
 namespace App\Services\Postmark;
 
-use App\Traits\CallbackEligibilityMeter;
 use App\ValueObjects\PostmarkCallback\MatchedDataPostmark;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -16,8 +15,6 @@ use Illuminate\Support\Str;
 
 class InboundCallbackSingleMatchService
 {
-    use CallbackEligibilityMeter;
-
     /**
      * @return string
      */
@@ -48,7 +45,7 @@ class InboundCallbackSingleMatchService
 
         return PostmarkInboundCallbackMatchResults::CREATE_CALLBACK;
     }
-    
+
     /**
      * @return bool
      */
@@ -74,7 +71,7 @@ class InboundCallbackSingleMatchService
         return isset($postmarkData['Cancel/Withdraw Reason'])
             || Str::contains(Str::of($postmarkData['Msg'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
     }
-    
+
     /**
      * @param $patientUser
      * @return array

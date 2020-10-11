@@ -29,7 +29,7 @@ trait PostmarkCallbackHelpers
         Phone:| $number |
         Ptn:| $name  |
         Primary:| $primary |
-        Msg:| REQUEST TO BE REMOVED OFF ALL LISTS  |
+        Msg:| titolos pomolos lorem calypsum |
         Msg ID: Not relevant
         IS Rec #: Not relevant
         Clr ID: $clrId
