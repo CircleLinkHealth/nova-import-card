@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\SqlViews\BaseSqlView;
 
 class UnresolvedPostmarkCallbackView extends BaseSqlView
@@ -13,11 +14,11 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
      */
     public function createSqlView(): bool
     {
-        $notEnrolled         = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::NOT_ENROLLED;
-        $queuedAndUnassigned = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED;
-        $withdrawRequest     = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST;
-        $noNameMatch         = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::NO_NAME_MATCH;
-        $noNameSelfMatch     = \App\Services\Postmark\PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
+        $notEnrolled         = PostmarkInboundCallbackMatchResults::NOT_ENROLLED;
+        $queuedAndUnassigned = PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED;
+        $withdrawRequest     = PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST;
+        $noNameMatch         = PostmarkInboundCallbackMatchResults::NO_NAME_MATCH;
+        $noNameSelfMatch     = PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
 
         return \DB::statement("
         CREATE VIEW {$this->getViewName()} AS
