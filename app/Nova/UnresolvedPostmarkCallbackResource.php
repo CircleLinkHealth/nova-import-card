@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\UnresolvedCallbacksResourceModel;
+use Circlelinkhealth\DatesInput\DatesInput;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
@@ -78,7 +79,9 @@ class UnresolvedPostmarkCallbackResource extends Resource
      */
     public function cards(Request $request)
     {
-        return [];
+        return [
+            (new DatesInput()),
+        ];
     }
 
     /**
@@ -92,7 +95,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
             Text::make('inbound id', 'postmark_id')->sortable(),
             Text::make('matched user', 'matched_user_id')->sortable(),
             Text::make('reason', 'unresolved_reason')->sortable(),
-            Text::make('possible matches', 'other_possible_matches')->sortable(),
+            Text::make('possible matches', 'other_possible_matches')->sortable(), // Need to stringify this json
             Textarea::make('inbound callback', 'inbound_data')->hideFromIndex(),
             Boolean::make('resolved', 'resolved')->sortable(),
             Text::make('resolved callback id', 'call_id'),
