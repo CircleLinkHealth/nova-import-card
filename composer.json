@@ -168,8 +168,11 @@
         {
             "type": "path",
             "url": "./nova-components/InvoicesDownload"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/UnresolvedCallback"
         }
-
     ],
     "require": {
         "php": "^7.4",
@@ -275,7 +278,8 @@
         "wildbit/swiftmailer-postmark": "^3.1",
         "willdurand/email-reply-parser": "^2.9",
         "yajra/laravel-datatables-oracle": "~9.0",
-        "circlelinkhealth/synonyms-module": "*"
+        "circlelinkhealth/synonyms-module": "*",
+        "circlelinkhealth/unresolved-callback": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "*",

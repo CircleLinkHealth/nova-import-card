@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "96b6628bee50cf899c33a9ffecd5bae5",
+    "content-hash": "e6d1202e325fedd2c68b12e428aebbd0",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1852,6 +1852,42 @@
                 }
             ],
             "time": "2020-09-04T20:08:19+00:00"
+        },
+        {
+            "name": "circlelinkhealth/unresolved-callback",
+            "version": "dev-road-340_ui_unresolved_callbacks",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/UnresolvedCallback",
+                "reference": "53172fe2be343e740a1c9aa90063fd21c7410bda"
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Circlelinkhealth\\UnresolvedCallback\\CardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Circlelinkhealth\\UnresolvedCallback\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova card.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "clue/stream-filter",
