@@ -462,16 +462,16 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $generatedPostmarkIds = collect();
         $generatedPostmarkIds->push(...collect($this->createUsersOfTypeEnrolled(2))->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeConsentedNotEnrolled(2))->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeQueuedForEnrolmentButNotCAssigned(2))->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNameIsSelf(2))->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdraw(2))->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf(2))->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->matchableByNameNotPhone(2))->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotResolvableMultiMatches(2))->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedAssignedToCa(2))->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedUnassignedCa(2))->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->matchedPatientsSameNumberName(2))->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeConsentedNotEnrolled(2))->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeQueuedForEnrolmentButNotCAssigned(2))->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNameIsSelf(2))->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdraw(2))->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf(2))->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->matchableByNameNotPhone(2))->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotResolvableMultiMatches(2))->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedAssignedToCa(2))->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedUnassignedCa(2))->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->matchedPatientsSameNumberName(2))->pluck('id'));
 
         return $generatedPostmarkIds;
     }
