@@ -17,7 +17,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         $notEnrolled         = PostmarkInboundCallbackMatchResults::NOT_ENROLLED;
         $queuedAndUnassigned = PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED;
         $withdrawRequest     = PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST;
-        $noNameMatch         = PostmarkInboundCallbackMatchResults::NO_NAME_MATCH;
+        $noNameMatch         = PostmarkInboundCallbackMatchResults::MULTIPLE_MATCHES;
         $noNameSelfMatch     = PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
 
         return \DB::statement("
