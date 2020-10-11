@@ -14,11 +14,15 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
      */
     public function createSqlView(): bool
     {
-        $notEnrolled         = PostmarkInboundCallbackMatchResults::NOT_ENROLLED;
-        $queuedAndUnassigned = PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED;
-        $withdrawRequest     = PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST;
-        $noNameMatch         = PostmarkInboundCallbackMatchResults::MULTIPLE_MATCHES;
-        $noNameSelfMatch     = PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
+        $notEnrolled                 = PostmarkInboundCallbackMatchResults::NOT_ENROLLED;
+        $queuedAndUnassigned         = PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED;
+        $withdrawRequest             = PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST;
+        $noNameMatch                 = PostmarkInboundCallbackMatchResults::MULTIPLE_MATCHES;
+        $noNameSelfMatch             = PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
+        $notConsentedAndCAUnassigned = PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_UNASSIGNED;
+
+        $startDate = \Carbon\Carbon::now()->startOfMonth();
+        $endDate   = $startDate->copy()->endOfMonth();
 
         return \DB::statement("
         CREATE VIEW {$this->getViewName()} AS
@@ -27,11 +31,12 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         upc.user_id as matched_user_id,
         p.body as inbound_data,
         
-        CASE WHEN upc.unresolved_reason = '$notEnrolled' THEN 'Not Enrolled'
-        WHEN upc.unresolved_reason = '$queuedAndUnassigned' THEN 'Enrollment Queue / CA unassigned'
-        WHEN upc.unresolved_reason = '$withdrawRequest' THEN 'Withdraw Request'
-        WHEN upc.unresolved_reason = '$noNameMatch' THEN 'Name not matched'
+        CASE WHEN upc.unresolved_reason = '$notEnrolled' THEN 'Not enrolled'
+        WHEN upc.unresolved_reason = '$queuedAndUnassigned' THEN 'Self enrollment queue - CA unassigned'
+        WHEN upc.unresolved_reason = '$withdrawRequest' THEN 'Withdraw request'
+        WHEN upc.unresolved_reason = '$noNameMatch' THEN 'Multiple patients matched'
         WHEN upc.unresolved_reason = '$noNameSelfMatch' THEN 'Pt. SELF not matched'
+        WHEN upc.unresolved_reason = '$notConsentedAndCAUnassigned' THEN 'Not consented - CA unassigned'
         END as unresolved_reason,
         
         upc.suggestions as other_possible_matches,
