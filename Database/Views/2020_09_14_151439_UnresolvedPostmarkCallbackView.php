@@ -17,7 +17,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         $notEnrolled                 = PostmarkInboundCallbackMatchResults::NOT_ENROLLED;
         $queuedAndUnassigned         = PostmarkInboundCallbackMatchResults::QUEUED_AND_UNASSIGNED;
         $withdrawRequest             = PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST;
-        $noNameMatch                 = PostmarkInboundCallbackMatchResults::MULTIPLE_MATCHES;
+        $multiplePatientsMatched     = PostmarkInboundCallbackMatchResults::MULTIPLE_PATIENT_MATCHES;
         $noNameSelfMatch             = PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
         $notConsentedAndCAUnassigned = PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_UNASSIGNED;
 
@@ -33,7 +33,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         CASE WHEN upc.unresolved_reason = '$notEnrolled' THEN 'Not enrolled'
         WHEN upc.unresolved_reason = '$queuedAndUnassigned' THEN 'Self enrollment queue - CA unassigned'
         WHEN upc.unresolved_reason = '$withdrawRequest' THEN 'Withdraw request'
-        WHEN upc.unresolved_reason = '$noNameMatch' THEN 'Multiple patients matched'
+        WHEN upc.unresolved_reason = '$multiplePatientsMatched' THEN 'Multiple patients matched'
         WHEN upc.unresolved_reason = '$noNameSelfMatch' THEN 'Pt. SELF not matched'
         WHEN upc.unresolved_reason = '$notConsentedAndCAUnassigned' THEN 'Not consented - CA unassigned'
         END as unresolved_reason,
