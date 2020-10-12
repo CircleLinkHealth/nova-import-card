@@ -6,7 +6,6 @@
 
 namespace App\Services\Postmark;
 
-use App\PostmarkInboundCallback\InboundCallbackHelpers;
 use App\ValueObjects\PostmarkCallback\MatchedDataPostmark;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
@@ -51,7 +50,7 @@ class InboundCallbackMultimatchService
         }
 
         $matchedWithInboundName = $matchedWithPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
-        
+
         if ($matchedWithInboundName->isEmpty() || 1 !== $matchedWithInboundName->count()) {
             return $this->multimatchResult($matchedWithPhone, PostmarkInboundCallbackMatchResults::MULTIPLE_PATIENT_MATCHES);
         }
@@ -79,7 +78,7 @@ class InboundCallbackMultimatchService
             return;
         }
 
-        if (InboundCallbackHelpers::singleMatch($patientsMatchedByCallerFieldName)) {
+        if (1 === $patientsMatchedByCallerFieldName->count()) {
             return $this->resolveSingleMatchResult($patientsMatchedByCallerFieldName->first(), $inboundPostmarkData);
         }
 

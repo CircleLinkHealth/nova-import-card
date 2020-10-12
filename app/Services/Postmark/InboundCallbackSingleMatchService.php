@@ -54,7 +54,7 @@ class InboundCallbackSingleMatchService
         /** @var Enrollee $enrollee */
         /** @var User $patientUser */
         $enrollee = $patientUser->enrollee;
-        if ( ! $enrollee->exists()) {
+        if ( ! $enrollee) {
             return false;
         }
 

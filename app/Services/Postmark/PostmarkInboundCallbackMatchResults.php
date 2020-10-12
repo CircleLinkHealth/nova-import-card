@@ -6,7 +6,6 @@
 
 namespace App\Services\Postmark;
 
-use App\PostmarkInboundCallback\InboundCallbackHelpers;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -44,14 +43,14 @@ class PostmarkInboundCallbackMatchResults
         /** @var Builder $inboundDataMatchedWithPhone */
         $inboundDataMatchedWithPhone = $this->matchByPhone($this->postmarkCallbackData);
 
-        if (InboundCallbackHelpers::singleMatch($inboundDataMatchedWithPhone->get())) {
+        if (1 === $inboundDataMatchedWithPhone->count()) {
             /** @var User $matchedPatient */
             $matchedPatient = $inboundDataMatchedWithPhone->first();
 
             return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackResult($matchedPatient, $this->postmarkCallbackData);
         }
 
-        if (InboundCallbackHelpers::multiMatch($inboundDataMatchedWithPhone->get())) {
+        if ($inboundDataMatchedWithPhone->count() > 1) {
             return app(InboundCallbackMultimatchService::class)
                 ->tryToMatchByName($inboundDataMatchedWithPhone->get(), $this->postmarkCallbackData, $this->recordId);
         }
@@ -63,7 +62,17 @@ class PostmarkInboundCallbackMatchResults
     private function matchByPhone(array $inboundPostmarkData)
     {
         return User::ofType('participant')
-            ->with('patientInfo', 'enrollee', 'phoneNumbers') //Get only what you need from each relationship mate.
+            ->with([
+                'patientInfo' => function ($q) {
+                    return $q->select(['id', 'ccm_status', 'user_id']);
+                },
+
+                'enrollee',
+
+                'phoneNumbers' => function ($q) {
+                    return $q->select(['id', 'user_id', 'number']);
+                },
+            ])
             ->whereHas('phoneNumbers', function ($phoneNumber) use ($inboundPostmarkData) {
                 $phoneNumber->where('number', $inboundPostmarkData['Phone']);
             });
