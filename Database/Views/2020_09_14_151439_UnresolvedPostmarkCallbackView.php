@@ -21,10 +21,6 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         $noNameSelfMatch             = PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
         $notConsentedAndCAUnassigned = PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_UNASSIGNED;
 
-        $startDate = \Carbon\Carbon::now()->startOfMonth();
-        
-        $endDate   = $startDate->copy()->endOfMonth();
-
         return \DB::statement("
         CREATE VIEW {$this->getViewName()} AS
         SELECT
@@ -32,6 +28,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         upc.user_id as matched_user_id,
         p.body as inbound_data,
         upc.created_at as date,
+        upc.manually_resolved,
         
         CASE WHEN upc.unresolved_reason = '$notEnrolled' THEN 'Not enrolled'
         WHEN upc.unresolved_reason = '$queuedAndUnassigned' THEN 'Self enrollment queue - CA unassigned'
