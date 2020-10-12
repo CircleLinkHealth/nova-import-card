@@ -63,7 +63,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
 
         $emailParts = $this->splitEmail($email);
 
-        if (self::FROM_CALLBACK_EMAIL_DOMAIN === $emailParts->domain/* || 'kountouris7@gmail.com' === $email*/) {
+        if (self::FROM_CALLBACK_EMAIL_DOMAIN === $emailParts->domain) {
             $autoScheduleCallbackService = app(AutoResolveCallbackRequestService::class);
             $autoScheduleCallbackService->processCreateCallback($recordId);
 

@@ -44,19 +44,19 @@ class InboundCallbackMultimatchService
     /**
      * @return array|Builder|void
      */
-    public function tryToMatchByName(Collection $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId)
+    public function tryToMatchByName(Collection $matchedWithPhone, array $inboundPostmarkData, int $recordId)
     {
         if (PostmarkInboundCallbackMatchResults::SELF === $inboundPostmarkData['Ptn']) {
-            return $this->matchByCallerField($patientsMatchedByPhone, $inboundPostmarkData, $recordId);
+            return $this->matchByCallerField($matchedWithPhone, $inboundPostmarkData, $recordId);
         }
 
-        $patientsMatchWithInboundName = $patientsMatchedByPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
-
-        if ($patientsMatchWithInboundName->isEmpty() || 1 !== $patientsMatchWithInboundName->count()) {
-            return $this->multimatchResult($patientsMatchedByPhone, PostmarkInboundCallbackMatchResults::MULTIPLE_MATCHES);
+        $matchedWithInboundName = $matchedWithPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
+        
+        if ($matchedWithInboundName->isEmpty() || 1 !== $matchedWithInboundName->count()) {
+            return $this->multimatchResult($matchedWithPhone, PostmarkInboundCallbackMatchResults::MULTIPLE_PATIENT_MATCHES);
         }
 
-        return $this->resolveSingleMatchResult($patientsMatchWithInboundName->first(), $inboundPostmarkData);
+        return $this->resolveSingleMatchResult($matchedWithInboundName->first(), $inboundPostmarkData);
     }
 
     /**

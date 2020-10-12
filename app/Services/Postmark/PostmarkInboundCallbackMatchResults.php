@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 class PostmarkInboundCallbackMatchResults
 {
     const CREATE_CALLBACK             = 'create_callback';
-    const MULTIPLE_MATCHES            = 'multiple_match';
+    const MULTIPLE_PATIENT_MATCHES    = 'multiple_patient_matches';
     const NO_NAME_MATCH_SELF          = 'no_name_match_self';
     const NOT_CONSENTED_CA_ASSIGNED   = 'non_consented_ca_assigned';
     const NOT_CONSENTED_CA_UNASSIGNED = 'non_consented_ca_unassigned';
@@ -35,29 +35,29 @@ class PostmarkInboundCallbackMatchResults
     }
 
     /**
+     * Doing the checks separately.
+     *
      * @return array|Builder|void
      */
     public function matchedPatientsData()
     {
-        /** @var Builder $postmarkInboundPatientsMatched */
-        $postmarkInboundPatientsMatched = $this->tryToMatchByPhone($this->postmarkCallbackData);
+        /** @var Builder $inboundDataMatchedWithPhone */
+        $inboundDataMatchedWithPhone = $this->tryToMatchByPhone($this->postmarkCallbackData);
 
-        if (InboundCallbackHelpers::singleMatch($postmarkInboundPatientsMatched->get())) {
+        if (InboundCallbackHelpers::singleMatch($inboundDataMatchedWithPhone->get())) {
             /** @var User $matchedPatient */
-            $matchedPatient = $postmarkInboundPatientsMatched->first();
+            $matchedPatient = $inboundDataMatchedWithPhone->first();
 
             return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackResult($matchedPatient, $this->postmarkCallbackData);
         }
 
-        if (InboundCallbackHelpers::multiMatch($postmarkInboundPatientsMatched->get())) {
+        if (InboundCallbackHelpers::multiMatch($inboundDataMatchedWithPhone->get())) {
             return app(InboundCallbackMultimatchService::class)
-                ->tryToMatchByName($postmarkInboundPatientsMatched->get(), $this->postmarkCallbackData, $this->recordId);
+                ->tryToMatchByName($inboundDataMatchedWithPhone->get(), $this->postmarkCallbackData, $this->recordId);
         }
 
-        // I kept this last cause i think is an expensive query, i think it will happen rarely.
-        // This step is not required in the ticket. Evala to pou tin pougka.
-        if ($postmarkInboundPatientsMatched->get()->isEmpty()) {
-            $this->tryToResolveUsingNameFormDb();
+        if ($inboundDataMatchedWithPhone->get()->isEmpty()) {
+            return $this->tryToResolveUsingNameFormDb();
         }
     }
 
@@ -103,7 +103,7 @@ class PostmarkInboundCallbackMatchResults
 
         if (InboundCallbackHelpers::multiMatch($possibleMatchedData)) {
             return app(InboundCallbackMultimatchService::class)
-                ->multimatchResult($possibleMatchedData, self::MULTIPLE_MATCHES);
+                ->multimatchResult($possibleMatchedData, self::MULTIPLE_PATIENT_MATCHES);
         }
     }
 }
