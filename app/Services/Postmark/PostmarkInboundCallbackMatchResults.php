@@ -42,7 +42,7 @@ class PostmarkInboundCallbackMatchResults
     public function matchedPatientsData()
     {
         /** @var Builder $inboundDataMatchedWithPhone */
-        $inboundDataMatchedWithPhone = $this->tryToMatchByPhone($this->postmarkCallbackData);
+        $inboundDataMatchedWithPhone = $this->matchByPhone($this->postmarkCallbackData);
 
         if (InboundCallbackHelpers::singleMatch($inboundDataMatchedWithPhone->get())) {
             /** @var User $matchedPatient */
@@ -56,11 +56,11 @@ class PostmarkInboundCallbackMatchResults
                 ->tryToMatchByName($inboundDataMatchedWithPhone->get(), $this->postmarkCallbackData, $this->recordId);
         }
     }
-    
+
     /**
      * @return Builder|User
      */
-    private function tryToMatchByPhone(array $inboundPostmarkData)
+    private function matchByPhone(array $inboundPostmarkData)
     {
         return User::ofType('participant')
             ->with('patientInfo', 'enrollee', 'phoneNumbers') //Get only what you need from each relationship mate.
