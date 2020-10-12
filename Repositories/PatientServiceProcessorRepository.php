@@ -17,6 +17,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\Patient as PatientModel;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Database\Eloquent\Collection;
 
 class PatientServiceProcessorRepository implements Repository
@@ -130,6 +131,9 @@ class PatientServiceProcessorRepository implements Repository
     
     public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): Collection
     {
-        // TODO: Implement patientProblemsOfServiceCode() method.
+        return Problem::wherePatientId($patientId)
+            ->isBillable()
+            ->ofService($chargeableServiceCode)
+            ->get();
     }
 }
