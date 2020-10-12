@@ -1043,10 +1043,6 @@ class NotesController extends Controller
             $patient->timezone
         )->setTimezone(config('app.timezone'))->toDateTimeString() : now()->toDateTimeString();
 
-        $input['isTCM'] = isset($input['tcm'])
-            ? 'true' === $input['tcm']
-            : 0;
-
         if ($noteId) {
             $note = Note::find($noteId);
             if ( ! $note) {
@@ -1055,15 +1051,14 @@ class NotesController extends Controller
             if (Note::STATUS_COMPLETE === $note->status) {
                 throw new \Exception('Cannot edit note. Please use create addendum to make corrections.');
             }
-            $note = $this->service->editNote($note, $input);
         } else {
             if (isset($input['call_status']) && Call::REACHED === $input['call_status']) {
                 $input['successful_clinical_call'] = 1;
             }
-            $note = Note::create($input);
+            $note = new Note($input);
         }
 
-        return $note;
+        return $this->service->editNote($note, $input);
     }
 
     private function sendPatientEmail($input, $patient, $note)
