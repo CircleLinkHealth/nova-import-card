@@ -1043,6 +1043,10 @@ class NotesController extends Controller
             $patient->timezone
         )->setTimezone(config('app.timezone'))->toDateTimeString() : now()->toDateTimeString();
 
+        $input['isTCM'] = isset($input['tcm'])
+            ? 'true' === $input['tcm']
+            : 0;
+
         if ($noteId) {
             $note = Note::find($noteId);
             if ( ! $note) {
