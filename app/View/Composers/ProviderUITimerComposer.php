@@ -82,7 +82,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $monthlyTime = $patient->user->formattedTime($ccm_time);
                 $monthlyBhiTime = $patient->user->formattedTime($bhi_time);
                 
-                $noBhiSwitch = $noBhiSwitch || $patient->user->isBhi();
+                $noBhiSwitch = $noBhiSwitch || ! $patient->user->isBhi();
             } else {
                 $monthlyTime = '';
                 $monthlyBhiTime = '';
