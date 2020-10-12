@@ -127,7 +127,7 @@ class AutoAssignCallbackTest extends TestCase
 
         $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::NOT_ENROLLED);
     }
-    
+
     public function test_it_saves_as_unresolved_if_multiple_patients_matched_and_have_same_number_and_name()
     {
         $this->createPatientData(Enrollee::ENROLLED);

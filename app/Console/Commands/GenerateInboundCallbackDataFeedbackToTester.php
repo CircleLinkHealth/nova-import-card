@@ -284,7 +284,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         if ($this->isTrue('patient_requests_to_withdraw_and_name_is_self')) {
             $inboundData = $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf();
         }
-        
+
         if ($this->isTrue('not_consented_ca_assigned')) {
             $inboundData = $this->createUsersOfTypeNotConsentedAssignedToCa();
         }

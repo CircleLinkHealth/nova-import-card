@@ -8,8 +8,6 @@ namespace App\Services\Postmark;
 
 use App\Entities\PostmarkInboundCallbackRequest;
 use App\PostmarkInboundMail;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 class PostmarkCallbackMailService

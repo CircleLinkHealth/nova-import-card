@@ -23,6 +23,7 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @mixin \Eloquent
  * @property string|null                     $inbound_data
  * @property \Illuminate\Support\Carbon|null $date
+ * @property int                             $manually_resolved
  */
 class UnresolvedCallbacksResourceModel extends SqlViewModel
 {

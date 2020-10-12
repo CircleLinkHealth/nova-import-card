@@ -144,7 +144,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
     {
         return [
             new UnresolvedCallbacksRangeFilter(),
-            new UnresolvedCallbacksFilter()
+            new UnresolvedCallbacksFilter(),
         ];
     }
 
