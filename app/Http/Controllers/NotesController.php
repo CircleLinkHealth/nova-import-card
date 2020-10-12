@@ -1043,10 +1043,6 @@ class NotesController extends Controller
             $patient->timezone
         )->setTimezone(config('app.timezone'))->toDateTimeString() : now()->toDateTimeString();
 
-        $input['isTCM'] = isset($input['tcm'])
-            ? 'true' === $input['tcm']
-            : 0;
-
         if ($noteId) {
             $note = Note::find($noteId);
             if ( ! $note) {
@@ -1060,7 +1056,7 @@ class NotesController extends Controller
             if (isset($input['call_status']) && Call::REACHED === $input['call_status']) {
                 $input['successful_clinical_call'] = 1;
             }
-            $note = Note::create($input);
+            $note = $this->service->editNote(new Note($input), $input);
         }
 
         return $note;
