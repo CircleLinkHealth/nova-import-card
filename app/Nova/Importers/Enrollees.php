@@ -6,6 +6,7 @@
 
 namespace App\Nova\Importers;
 
+use App\Nova\Actions\ImportEnrollees;
 use App\Search\ProviderByName;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
@@ -64,6 +65,22 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
         return 100;
     }
 
+    public function markAsIneligible(array $row)
+    {
+        $enrollee = Enrollee::where('mrn', $row['mrn'])
+            ->where('practice_id', $this->practiceId)
+            ->first();
+
+        if (is_null($enrollee)) {
+            Log::channel('database')->critical("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
+
+            return;
+        }
+
+        $enrollee->satus = Enrollee::INELIGIBLE;
+        $enrollee->save();
+    }
+
     public function message(): string
     {
         return 'File queued for importing.';
@@ -73,11 +90,14 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
     {
         $row = $row->toArray();
 
-        if ('mark_for_auto_enrollment' == $this->actionType) {
+        if (ImportEnrollees::ACTION_MARK_INELIGIBLE == $this->actionType) {
+            $this->markAsIneligible($row);
+        }
+        if (ImportEnrollees::ACTION_MARK_AUTO_ENROLLMENT == $this->actionType) {
             $this->markForAutoEnrollment($row);
         }
 
-        if ('create_enrollees' == $this->actionType) {
+        if (ImportEnrollees::ACTION_CREATE_ENROLLEES == $this->actionType) {
             $this->updateOrCreateEnrolleeFromCsv($row);
         }
         ++$this->rowNumber;
@@ -158,7 +178,6 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
     private function updateOrCreateEnrolleeFromCsv(array $row)
     {
-        //also, still proceed with Enrollee creation if dob fails validation, e.g false ?
         if ($row['dob']) {
             if (is_numeric($row['dob'])) {
                 $row['dob'] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['dob']);
@@ -188,8 +207,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
         Enrollee::updateOrCreate(
             [
-                'mrn' => $row['mrn'],
-                //adding this as extra validation
+                'mrn'         => $row['mrn'],
                 'practice_id' => $this->practiceId,
             ],
             [
