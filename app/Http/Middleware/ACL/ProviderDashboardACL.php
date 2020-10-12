@@ -25,13 +25,13 @@ class ProviderDashboardACL
         Closure $next,
         $role
     ) {
-        $practiceSlug = Route::current()->parameter('practiceSlug');
-        $practice     = Practice::whereName($practiceSlug)->first();
-
         //CLH Admins can see everything
         if (auth()->user()->hasRole(['administrator', 'saas-admin', 'saas-admin-view-only'])) {
             return $next($request);
         }
+
+        $practiceSlug = Route::current()->parameter('practiceSlug');
+        $practice     = Practice::whereName($practiceSlug)->first();
 
         $practice = auth()->user()->practice($practiceSlug);
 
