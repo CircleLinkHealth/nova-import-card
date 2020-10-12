@@ -1051,15 +1051,14 @@ class NotesController extends Controller
             if (Note::STATUS_COMPLETE === $note->status) {
                 throw new \Exception('Cannot edit note. Please use create addendum to make corrections.');
             }
-            $note = $this->service->editNote($note, $input);
         } else {
             if (isset($input['call_status']) && Call::REACHED === $input['call_status']) {
                 $input['successful_clinical_call'] = 1;
             }
-            $note = $this->service->editNote(new Note($input), $input);
+            $note = new Note($input);
         }
 
-        return $note;
+        return $this->service->editNote($note, $input);
     }
 
     private function sendPatientEmail($input, $patient, $note)
