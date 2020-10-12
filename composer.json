@@ -195,10 +195,10 @@
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.6",
-    "circlelinkhealth/core-module": "1.7.8",
+    "circlelinkhealth/core-module": "dev-road-336",
     "circlelinkhealth/cpm-migrations-module": "dev-ROAD-346-billing-revamp",
     "circlelinkhealth/customer-module": "dev-ROAD-346-billing-revamp",
-    "circlelinkhealth/eligibility-module": "3.4.9",
+    "circlelinkhealth/eligibility-module": "3.5.3",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/generate-success-stories-report": "*",
@@ -274,7 +274,6 @@
     "willdurand/email-reply-parser": "^2.9",
     "yajra/laravel-datatables-oracle": "~9.0",
     "circlelinkhealth/synonyms-module": "*"
-
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
@@ -354,6 +353,13 @@
       "php artisan --env=testing migrate:fresh",
       "php artisan --env=testing migrate:views",
       "php artisan --env=testing db:seed --class=TestSuiteSeeder",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=SamlSpModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=NurseInvoicesModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=EligibilityModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=Feature --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --colors --testdox"
+    ],
+    "run-tests": [
       "./vendor/phpunit/phpunit/phpunit --testsuite=SamlSpModule --colors --testdox",
       "./vendor/phpunit/phpunit/phpunit --testsuite=NurseInvoicesModule --colors --testdox",
       "./vendor/phpunit/phpunit/phpunit --testsuite=EligibilityModule --colors --testdox",

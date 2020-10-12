@@ -144,7 +144,7 @@ class SyncExistingUnreachablePatientWithEnrollmentData
                     'type'    => PhoneNumber::ALTERNATE,
                 ],
                 [
-                    'is_primary' => 'work' === $preferredPhoneType,
+                    'is_primary' => PhoneNumber::ALTERNATE === $preferredPhoneType,
                 ]
             );
         }
