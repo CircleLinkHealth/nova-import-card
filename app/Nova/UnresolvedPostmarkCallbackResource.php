@@ -6,10 +6,12 @@
 
 namespace App\Nova;
 
+use App\Nova\Filters\UnresolvedCallbacksFilter;
 use App\UnresolvedCallbacksResourceModel;
 use Circlelinkhealth\UnresolvedCallback\UnresolvedCallback;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 
@@ -80,7 +82,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
     public function cards(Request $request)
     {
         return [
-            (new UnresolvedCallback())
+            //            (new UnresolvedCallback()),
         ];
     }
 
@@ -93,12 +95,13 @@ class UnresolvedPostmarkCallbackResource extends Resource
     {
         return [
             Text::make('inbound id', 'postmark_id')->sortable(),
+            Date::make('date', 'date')->sortable(),
             Text::make('matched user', 'matched_user_id')->sortable(),
             Text::make('reason', 'unresolved_reason')->sortable(),
-            Text::make('possible matches', 'other_possible_matches')->sortable(), // Need to stringify this json
+            Text::make('matches', 'other_possible_matches')->sortable(), // Need to stringify this json
             Textarea::make('inbound callback', 'inbound_data')->hideFromIndex(),
-            Boolean::make('resolved', 'resolved')->sortable(),
-            Text::make('resolved callback id', 'call_id'),
+            Boolean::make('resolved to callback', 'resolved')->sortable(),
+            Text::make('callback id', 'call_id')->sortable(),
         ];
     }
 
@@ -109,7 +112,9 @@ class UnresolvedPostmarkCallbackResource extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            new UnresolvedCallbacksFilter(),
+        ];
     }
 
     /**

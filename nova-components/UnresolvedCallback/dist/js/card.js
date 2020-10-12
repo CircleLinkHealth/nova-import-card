@@ -145,6 +145,33 @@ __webpack_require__.r(__webpack_exports__);
       endDate: ''
     };
   },
+  methods: {
+    downloadInvoices: function downloadInvoices() {
+      var _this = this;
+
+      this.loading = true;
+      Nova.request().post('/nova-vendor/invoices-download/download', {
+        downloadFormat: '',
+        date: ''
+      }).then(function (response) {
+        _this.$toasted.success(response.data.message);
+
+        _this.loading = false;
+      })["catch"](function (error) {
+        var _error$response, _error$response$data;
+
+        var msg = 'There has been an error.';
+
+        if ((_error$response = error.response) === null || _error$response === void 0 ? void 0 : (_error$response$data = _error$response.data) === null || _error$response$data === void 0 ? void 0 : _error$response$data.message) {
+          msg = error.response.data.message;
+        }
+
+        _this.$toasted.error(msg);
+
+        _this.loading = false;
+      });
+    }
+  },
   mounted: function mounted() {//
   }
 });
@@ -175,71 +202,7 @@ var render = function() {
           _vm._v("Select Range")
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "py-4" }, [
-          _c("span", { staticClass: "flex " }, [
-            _c("label", { attrs: { for: "start" } }, [
-              _vm._v(
-                "\n                        " +
-                  _vm._s(_vm.__("Start Date: ")) +
-                  "\n                    "
-              )
-            ]),
-            _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.startDate,
-                  expression: "startDate"
-                }
-              ],
-              staticClass: "form-block",
-              attrs: { id: "start", type: "date" },
-              domProps: { value: _vm.startDate },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.startDate = $event.target.value
-                }
-              }
-            })
-          ]),
-          _vm._v(" "),
-          _c("span", { staticClass: "flex " }, [
-            _c("label", { attrs: { for: "end" } }, [
-              _vm._v(
-                "\n                        " +
-                  _vm._s(_vm.__("End Date: ")) +
-                  "\n                    "
-              )
-            ]),
-            _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.endDate,
-                  expression: "endDate"
-                }
-              ],
-              staticClass: "form-block",
-              attrs: { id: "end", type: "date" },
-              domProps: { value: _vm.endDate },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.endDate = $event.target.value
-                }
-              }
-            })
-          ])
-        ]),
+        _c("div", { staticClass: "py-4" }),
         _vm._v(" "),
         _c("div", { staticClass: "flex" }, [
           _vm.errors
@@ -259,7 +222,11 @@ var render = function() {
             {
               staticClass: "btn btn-default btn-primary ml-auto mt-auto",
               staticStyle: { cursor: "pointer" },
-              on: { click: function($event) {} }
+              on: {
+                click: function($event) {
+                  return _vm.downloadInvoices()
+                }
+              }
             },
             [_vm._v("Submit")]
           )

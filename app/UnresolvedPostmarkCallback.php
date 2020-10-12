@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property mixed      $unresolved_reasons
  * @property mixed|null $unresolved_reason
+ * @property int        $manually_resolved
  */
 class UnresolvedPostmarkCallback extends Model
 {

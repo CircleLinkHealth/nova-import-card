@@ -21,10 +21,14 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @method   static      \Illuminate\Database\Eloquent\Builder|UnresolvedCallbacksResourceModel newQuery()
  * @method   static      \Illuminate\Database\Eloquent\Builder|UnresolvedCallbacksResourceModel query()
  * @mixin \Eloquent
- * @property string|null $inbound_data
+ * @property string|null                     $inbound_data
+ * @property \Illuminate\Support\Carbon|null $date
  */
 class UnresolvedCallbacksResourceModel extends SqlViewModel
 {
+    protected $dates = [
+        'date',
+    ];
     protected $primaryKey = 'postmark_id';
     protected $table      = 'unresolved_postmark_callback_view';
 }
