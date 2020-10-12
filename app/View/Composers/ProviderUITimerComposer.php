@@ -10,6 +10,7 @@ use App\Constants;
 use App\Jobs\StoreTimeTracking;
 use App\Policies\CreateNoteForPatient;
 use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Request;
@@ -27,7 +28,7 @@ class ProviderUITimerComposer extends ServiceProvider
         View::composer(['partials.providerUItimer'], function ($view) {
             $ccm_time = 0;
             $bhi_time = 0;
-            
+
             if ( ! isset($activity)) {
                 $activity = 'Undefined';
             }
@@ -53,12 +54,10 @@ class ProviderUITimerComposer extends ServiceProvider
 
             $enableTimeTracking = ! isset($disableTimeTracking);
 
-            // disable if login
             if (false !== strpos($requestUri, 'login')) {
                 $enableTimeTracking = false;
             }
 
-            // do NOT show BHI switch if user does not have care-center role
             $noBhiSwitch = ! auth()->user()->isCareCoach();
 
             $patient = $view->patient;
@@ -72,9 +71,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $monthlyTime = $patient->formattedTime($ccm_time);
                 $monthlyBhiTime = $patient->formattedTime($bhi_time);
 
-                //also, do NOT show BHI switch if user's primary practice is not being charged for CPT 99484
-                //todo: check location or patient
-                $noBhiSwitch = $noBhiSwitch || ! $patient->user->isBhi();
+                $noBhiSwitch = $noBhiSwitch || ! $patient->preferredContactLocationHasServices(ChargeableService::BHI);
             } elseif (isset($patient) || ! empty($patient) && is_a($patient, Patient::class)) {
                 $patientId = $patient->user_id;
                 $patientProgramId = $patient->user->program_id;
@@ -82,15 +79,15 @@ class ProviderUITimerComposer extends ServiceProvider
                 $bhi_time = $patient->user->getBhiTime();
                 $monthlyTime = $patient->user->formattedTime($ccm_time);
                 $monthlyBhiTime = $patient->user->formattedTime($bhi_time);
-                
-                $noBhiSwitch = $noBhiSwitch || ! $patient->user->isBhi();
+
+                $noBhiSwitch = $noBhiSwitch || ! $patient->locationHasServices(ChargeableService::BHI);
             } else {
                 $monthlyTime = '';
                 $monthlyBhiTime = '';
                 $patientId = '';
                 $patientProgramId = '';
             }
-            
+
             $view->with(compact([
                 'patientId',
                 'patientProgramId',
@@ -109,7 +106,7 @@ class ProviderUITimerComposer extends ServiceProvider
 
         View::composer(['partials.userheader', 'wpUsers.patient.careplan.print', 'wpUsers.patient.calls.index'], function ($view) {
             // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
-            
+
             /**
              * @var User
              */
