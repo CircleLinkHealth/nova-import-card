@@ -30,6 +30,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         upc.postmark_id as postmark_id,
         upc.user_id as matched_user_id,
         p.body as inbound_data,
+        upc.created_at as date,
         
         CASE WHEN upc.unresolved_reason = '$notEnrolled' THEN 'Not enrolled'
         WHEN upc.unresolved_reason = '$queuedAndUnassigned' THEN 'Self enrollment queue - CA unassigned'
@@ -41,13 +42,13 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         
         upc.suggestions as other_possible_matches,
         
-        CASE WHEN c.created_at > upc.created_at
+        CASE WHEN c.created_at >= upc.created_at
         AND c.sub_type = 'Call Back'
         THEN c.id
         END as call_id,
         
         CASE WHEN c.id IS NOT NULL
-        AND c.created_at > upc.created_at
+        AND c.created_at >= upc.created_at
         AND c.sub_type = 'Call Back'
         THEN true
         ELSE false
