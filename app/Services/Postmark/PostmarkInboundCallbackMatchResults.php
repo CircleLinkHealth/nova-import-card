@@ -55,28 +55,8 @@ class PostmarkInboundCallbackMatchResults
             return app(InboundCallbackMultimatchService::class)
                 ->tryToMatchByName($inboundDataMatchedWithPhone->get(), $this->postmarkCallbackData, $this->recordId);
         }
-
-        if ($inboundDataMatchedWithPhone->get()->isEmpty()) {
-            return $this->tryToResolveUsingNameFormDb();
-        }
     }
-
-    private function tryToMatchByNameFromDb(array $postmarkCallbackData)
-    {
-        $name = $postmarkCallbackData['Ptn'];
-
-        $possibleMatches = collect();
-        User::ofType('participant')
-            ->chunk(100, function ($users) use (&$possibleMatches, $name) {
-                $match = $users->where('display_name', $name)->first();
-                if ( ! is_null($match)) {
-                    $possibleMatches->push($match);
-                }
-            });
-
-        return $possibleMatches;
-    }
-
+    
     /**
      * @return Builder|User
      */
@@ -87,23 +67,5 @@ class PostmarkInboundCallbackMatchResults
             ->whereHas('phoneNumbers', function ($phoneNumber) use ($inboundPostmarkData) {
                 $phoneNumber->where('number', $inboundPostmarkData['Phone']);
             });
-    }
-
-    /**
-     * @return array|void
-     */
-    private function tryToResolveUsingNameFormDb()
-    {
-        $possibleMatchedData = $this->tryToMatchByNameFromDb($this->postmarkCallbackData);
-
-        if (InboundCallbackHelpers::singleMatch($possibleMatchedData)) {
-            return app(InboundCallbackSingleMatchService::class)
-                ->singleMatchCallbackResult($possibleMatchedData->first(), $this->postmarkCallbackData);
-        }
-
-        if (InboundCallbackHelpers::multiMatch($possibleMatchedData)) {
-            return app(InboundCallbackMultimatchService::class)
-                ->multimatchResult($possibleMatchedData, self::MULTIPLE_PATIENT_MATCHES);
-        }
     }
 }

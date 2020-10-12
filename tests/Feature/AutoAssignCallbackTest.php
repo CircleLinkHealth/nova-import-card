@@ -127,68 +127,7 @@ class AutoAssignCallbackTest extends TestCase
 
         $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::NOT_ENROLLED);
     }
-
-//    public function test_it_saves_as_unresolved_if_multi_patients_have_same_number_and_name()
-//    {
-//        $this->createPatientData(Enrollee::ENROLLED);
-//        $this->createPostmarkCallbackData(false, false);
-//
-//        $patient1         = $this->patient;
-//        $patientEnrollee1 = $this->patientEnrollee;
-//        $postmarkRecord1  = $this->postmarkRecord;
-//        /** @var PhoneNumber $phone1 */
-//        $phone1 = $this->phone;
-//
-//        $this->createPatientData(Enrollee::ENROLLED);
-//        $this->createPostmarkCallbackData(false, false);
-//        $patient2         = $this->patient;
-//        $patientEnrollee2 = $this->patientEnrollee;
-//
-//        $patient2->phoneNumbers
-//            ->first()
-//            ->update(
-//                [
-//                    'number' => $phone1->number,
-//                ]
-//            );
-//
-//        $patient2->display_name = $patient1->display_name;
-//        $patient2->save();
-//        $patient2->fresh();
-//
-//        $this->assertDatabaseHas('users', [
-//            'id' => $patient1->id,
-//        ]);
-//
-//        $this->assertDatabaseHas('users', [
-//            'id' => $patient2->id,
-//        ]);
-//
-//        $this->assertDatabaseHas('enrollees', [
-//            'id' => $patientEnrollee1->id,
-//        ]);
-//
-//        $this->assertDatabaseHas('enrollees', [
-//            'id' => $patientEnrollee2->id,
-//        ]);
-//
-//        $this->assertDatabaseHas('postmark_inbound_mail', [
-//            'id' => $postmarkRecord1->id,
-//        ]);
-//
-//        assert($patient1->display_name === $patient2->display_name);
-//
-//        $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord1->data))->toArray(), $postmarkRecord1->id);
-//
-//        $this->assertMissingCallBack($patient1->id);
-//
-//        $this->assertMissingCallBack($patient2->id);
-//
-//        $this->assertDatabaseHas('unresolved_postmark_callbacks', [
-//            'postmark_id' => $postmarkRecord1->id,
-//        ]);
-//    }
-
+    
     public function test_it_saves_as_unresolved_if_multiple_patients_matched_and_have_same_number_and_name()
     {
         $this->createPatientData(Enrollee::ENROLLED);

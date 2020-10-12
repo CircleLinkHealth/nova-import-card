@@ -314,7 +314,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         }
 
         if ($this->isTrue('phone_number_will_not_match_but_will_match_by_name')) {
-            $inboundData = $this->noPhoneMatchButWillMatchName();
+            $inboundData = $this->noNumberMatch();
         }
 
         if ($this->isTrue('not_consented_ca_assigned')) {
@@ -467,11 +467,11 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     /**
      * @return array
      */
-    private function noPhoneMatchButWillMatchName()
+    private function noNumberMatch()
     {
         $limit       = self::LIMIT;
         $inboundData = $this->dataOfTypeNoNumberMatch(Enrollee::ENROLLED, false, false);
-        $this->info("Generated $limit patient of type:[Patients with no number match different name].");
+        $this->info("Generated $limit patient of type:[Patients with no number match, will report to slack].");
 
         return $inboundData;
     }
@@ -488,7 +488,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
 //        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNameIsSelf())->pluck('id'));
 //        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdraw())->pluck('id'));
 //        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf())->pluck('id'));
-        $generatedPostmarkIds->push(...collect($this->noPhoneMatchButWillMatchName())->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->noNumberMatch())->pluck('id'));
 //        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedAssignedToCa())->pluck('id'));
 //        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedUnassignedCa())->pluck('id'));
 //        $generatedPostmarkIds->push(...collect($this->multiMatchPatientsWithSameNumberAndName())->pluck('id'));
