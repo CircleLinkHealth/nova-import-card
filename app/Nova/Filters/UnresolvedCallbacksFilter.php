@@ -6,7 +6,6 @@
 
 namespace App\Nova\Filters;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Nova\Filters\Filter;
 
@@ -28,7 +27,12 @@ class UnresolvedCallbacksFilter extends Filter
      */
     public function apply(Request $request, $query, $value)
     {
-        return $query->where('date', '>=', $value);
+        return $query->where('manually_resolved', $value);
+    }
+
+    public function default()
+    {
+        return 'Show Pending';
     }
 
     /**
@@ -38,19 +42,9 @@ class UnresolvedCallbacksFilter extends Filter
      */
     public function options(Request $request)
     {
-        $today = Carbon::now()->startOfDay();
-
         return [
-            'Today'        => $today,
-            '2 days ago'   => $today->copy()->subDays(2),
-            '4 days ago'   => $today->copy()->subDays(4),
-            '1 week ago'   => $today->copy()->subDays(7),
-            '2 weeks ago'  => $today->copy()->subDays(14),
-            'This month'   => $today->copy()->startOfMonth(),
-            '1 month ago'  => $today->copy()->startOfMonth()->subMonth(),
-            '3 months ago' => $today->copy()->startOfMonth()->subMonths(2),
-            '6 months ago' => $today->copy()->startOfMonth()->subMonths(5),
-            'This year'    => $today->copy()->startOfYear(),
+            'Show Pending'  => 0,
+            'Show Archived' => 1,
         ];
     }
 }

@@ -6,7 +6,9 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\ArchiveUnresolvedCallback;
 use App\Nova\Filters\UnresolvedCallbacksFilter;
+use App\Nova\Filters\UnresolvedCallbacksRangeFilter;
 use App\UnresolvedCallbacksResourceModel;
 use Circlelinkhealth\UnresolvedCallback\UnresolvedCallback;
 use Illuminate\Http\Request;
@@ -47,7 +49,9 @@ class UnresolvedPostmarkCallbackResource extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new ArchiveUnresolvedCallback(),
+        ];
     }
 
     /**
@@ -71,7 +75,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
      */
     public function authorizedToUpdate(Request $request)
     {
-        return false;
+        return true;
     }
 
     /**
@@ -94,14 +98,40 @@ class UnresolvedPostmarkCallbackResource extends Resource
     public function fields(Request $request)
     {
         return [
-            Text::make('inbound id', 'postmark_id')->sortable(),
-            Date::make('date', 'date')->sortable(),
-            Text::make('matched user', 'matched_user_id')->sortable(),
-            Text::make('reason', 'unresolved_reason')->sortable(),
-            Text::make('matches', 'other_possible_matches')->sortable(), // Need to stringify this json
-            Textarea::make('inbound callback', 'inbound_data')->hideFromIndex(),
-            Boolean::make('resolved to callback', 'resolved')->sortable(),
-            Text::make('callback id', 'call_id')->sortable(),
+            Text::make('inbound id', 'postmark_id')
+                ->readonly()
+                ->sortable(),
+
+            Date::make('date', 'date')
+                ->readonly()
+                ->sortable(),
+
+            Text::make('matched user', 'matched_user_id')
+                ->readonly()
+                ->sortable(),
+
+            Text::make('reason', 'unresolved_reason')
+                ->readonly()
+                ->sortable(),
+
+            Text::make('matches', 'other_possible_matches')
+                ->readonly()
+                ->sortable(), // Need to stringify this json
+
+            Textarea::make('inbound callback', 'inbound_data')
+                ->readonly()
+                ->hideFromIndex(),
+
+            Boolean::make('resolved to callback', 'resolved')
+                ->readonly()
+                ->sortable(),
+
+            Text::make('callback id', 'call_id')
+                ->readonly()
+                ->sortable(),
+
+            Boolean::make('archived', 'manually_resolved')
+                ->sortable(),
         ];
     }
 
@@ -113,7 +143,8 @@ class UnresolvedPostmarkCallbackResource extends Resource
     public function filters(Request $request)
     {
         return [
-            new UnresolvedCallbacksFilter(),
+            new UnresolvedCallbacksRangeFilter(),
+            new UnresolvedCallbacksFilter()
         ];
     }
 

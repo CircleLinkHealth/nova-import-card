@@ -37,6 +37,7 @@ class UnresolvedPostmarkCallback extends Model
         'user_id',
         'unresolved_reason',
         'suggestions',
+        'manually_resolved',
     ];
 
     public function inboundPostmark()
