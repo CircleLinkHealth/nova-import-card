@@ -22,6 +22,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         $notConsentedAndCAUnassigned = PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_UNASSIGNED;
 
         $startDate = \Carbon\Carbon::now()->startOfMonth();
+        
         $endDate   = $startDate->copy()->endOfMonth();
 
         return \DB::statement("
