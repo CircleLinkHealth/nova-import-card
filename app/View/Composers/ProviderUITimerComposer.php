@@ -73,6 +73,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $monthlyBhiTime = $patient->formattedTime($bhi_time);
 
                 //also, do NOT show BHI switch if user's primary practice is not being charged for CPT 99484
+                //todo: check location or patient
                 $noBhiSwitch = $noBhiSwitch || ! $patient->user->isBhi();
             } elseif (isset($patient) || ! empty($patient) && is_a($patient, Patient::class)) {
                 $patientId = $patient->user_id;
