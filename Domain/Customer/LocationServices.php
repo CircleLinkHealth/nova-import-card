@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Domain\Customer;
 
+use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Support\Facades\Cache;
@@ -25,6 +26,10 @@ class LocationServices
         }
 
         return self::queryCcmPlusCodeExists($locationId);
+    }
+
+    public static function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month = null): bool
+    {
     }
 
     public static function queryCcmPlusCodeExists(int $locationId): bool

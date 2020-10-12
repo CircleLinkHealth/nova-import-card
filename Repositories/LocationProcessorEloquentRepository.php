@@ -36,10 +36,11 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->get();
     }
 
-    public function hasServicesForMonth(int $locationId, Carbon $month): bool
+    public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
     {
-        return $this->servicesForLocation($locationId)
-            ->createdOn($month, 'chargeable_month')
+        //todo: add test
+        return $this->servicesForMonth($locationId, $month)
+            ->whereHas('chargeableService', fn ($cs) => $cs->whereIn('code', $chargeableServiceCodes))
             ->exists();
     }
 
@@ -78,6 +79,13 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
                         });
                 }
             );
+    }
+
+    public function servicesExistForMonth(int $locationId, Carbon $month): bool
+    {
+        return $this->servicesForLocation($locationId)
+            ->createdOn($month, 'chargeable_month')
+            ->exists();
     }
 
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
