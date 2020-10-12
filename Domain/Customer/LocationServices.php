@@ -42,7 +42,7 @@ class LocationServices
         return $static->hasCcmPlusCodes($locationId);
     }
 
-    public static function hasCodesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month = null)
+    public static function hasServiceCodesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month = null)
     {
         return (new static(app(LocationProcessorRepository::class)))
             ->hasServicesForMonth($locationId, $chargeableServiceCodes, $month);
