@@ -2669,6 +2669,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->primaryPractice->cpmSettings();
     }
 
+    public function preferredContactLocationHasServices($chargeableServiceCodes): bool
+    {
+        if ( ! $this->patientInfo) {
+            sendSlackMessage('#cpm_general_alerts', "Patient ({$this->id}) does not have patientInfo attached. Please Investigate");
+
+            return false;
+        }
+
+        return $this->patientInfo->locationHasServices($chargeableServiceCodes);
+    }
+
     public function primaryPractice()
     {
         return $this->belongsTo(Practice::class, 'program_id', 'id');
