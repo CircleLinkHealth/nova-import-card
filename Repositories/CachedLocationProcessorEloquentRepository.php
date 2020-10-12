@@ -11,57 +11,83 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class CachedLocationProcessorEloquentRepository implements LocationProcessorRepository
 {
+    protected array $cache = [];
+
+    protected array $queriedLocations = [];
+
+    protected LocationProcessorEloquentRepository $repo;
+
+    public function __construct()
+    {
+        $this->repo = new LocationProcessorEloquentRepository();
+    }
+
     public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth): AvailableServiceProcessors
     {
-        // TODO: Implement availableLocationServiceProcessors() method.
+        //query if you should
+        //get services
+        //get processors
+        //create value object and return
     }
 
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
     {
-        // TODO: Implement hasServicesForMonth() method.
+        //query if you should
+        //get services from cache
+        //return bool
     }
 
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        // TODO: Implement paginatePatients() method.
+        return $this->repo->paginatePatients($customerModelId, $monthYear, $pageSize);
     }
 
-    public function pastMonthSummaries(int $locationId, Carbon $month): Collection
+    public function pastMonthSummaries(int $locationId, Carbon $month): EloquentCollection
     {
-        // TODO: Implement pastMonthSummaries() method.
+        //specific key
+        //if queried
+        //query if you should
+        //check exists in array
+        //return
     }
 
-    public function patients(int $customerModelId, Carbon $monthYear): Collection
+    public function patients(int $customerModelId, Carbon $monthYear): EloquentCollection
     {
-        // TODO: Implement patients() method.
+        return $this->repo->patients($customerModelId, $monthYear);
     }
 
     public function patientServices(int $customerModelId, Carbon $monthYear): Builder
     {
-        // TODO: Implement patientServices() method.
+        return $this->repo->patientServices($customerModelId, $monthYear);
     }
 
     public function patientsQuery(int $customerModelId, Carbon $monthYear, ?string $ccmStatus = null): Builder
     {
-        // TODO: Implement patientsQuery() method.
+        return $this->repo->patientsQuery($customerModelId, $monthYear);
     }
 
     public function servicesExistForMonth(int $locationId, Carbon $month): bool
     {
-        // TODO: Implement servicesExistForMonth() method.
+        //check cache
+        //query if you should
+        //return summaries exist
     }
 
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
     {
-        // TODO: Implement store() method.
+        $summary = $this->repo->store($locationId, $chargeableServiceCode, $month, $amount);
+        //todo: update cache
+        return $summary;
     }
 
     public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
     {
-        // TODO: Implement storeUsingServiceId() method.
+        $summary = $this->repo->storeUsingServiceId($locationId, $chargeableServiceId, $month, $amount);
+        //todo: update cache
+        return $summary;
     }
 }
