@@ -97,7 +97,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
 
         return $inboundData->toArray();
     }
-    
+
     /**
      * @return array
      */
@@ -284,11 +284,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         if ($this->isTrue('patient_requests_to_withdraw_and_name_is_self')) {
             $inboundData = $this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf();
         }
-
-        if ($this->isTrue('phone_number_will_not_match_but_will_match_by_name')) {
-            $inboundData = $this->noNumberMatch();
-        }
-
+        
         if ($this->isTrue('not_consented_ca_assigned')) {
             $inboundData = $this->createUsersOfTypeNotConsentedAssignedToCa();
         }
@@ -435,7 +431,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
 
         return $inboundData;
     }
-    
+
     /**
      * @return \Collection|\Illuminate\Support\Collection
      */
