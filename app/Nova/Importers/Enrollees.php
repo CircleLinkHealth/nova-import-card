@@ -8,7 +8,7 @@ namespace App\Nova\Importers;
 
 use App\Nova\Actions\ImportEnrollees;
 use App\Search\ProviderByName;
-use App\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
+use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -64,7 +64,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
     public function chunkSize(): int
     {
-        return 50;
+        return 100;
     }
 
     public function markAsIneligible(array $row)
@@ -237,7 +237,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
         $user = $enrollee->user;
 
         if (is_null($user)) {
-            CreateSurveyOnlyUserFromEnrollee::execute($enrollee);
+            CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
 
             return;
         }
