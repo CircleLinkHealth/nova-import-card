@@ -116,7 +116,7 @@ class CreateAndPostPdfCareplan
                 if ($customField['customfieldid'] == $ccmEnabledFieldId
                     && Str::contains($customField['customfieldvalue'], ['Y', 'y'])
                 ) {
-                    $ccdaRequest = $this->ccdaRequests->create([
+                    $ccdaRequest = CcdaRequest::create([
                         'patient_id'    => $patientId,
                         'department_id' => $departmentId,
                         'vendor'        => 'athena',

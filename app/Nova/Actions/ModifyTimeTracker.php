@@ -95,58 +95,38 @@ class ModifyTimeTracker extends Action implements ShouldQueue
     /**
      * @throws Exception
      */
-    private function getBillableActivity(PageTimer $pageTimer, int $duration): ?Activity
+    private function getCareRateLogs(int $pageTimerId, Collection $activityIds, int $newDuration, bool $allowAccruedTowards)
     {
-        $hasBillable = $pageTimer->activities->isNotEmpty();
-        foreach ($pageTimer->activities as $activity) {
-            if ($activity->duration >= $duration) {
-                return $activity;
-            }
-        }
-
-        if ($hasBillable) {
-            $msg = "Cannot modify time tracker entry[$pageTimer->id]. Could not find activity with higher duration than $duration.";
-            throw new Exception($msg);
-        }
-
-        return null;
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function getCareRateLog(int $activityId, int $duration, bool $allowAccruedTowards = false): NurseCareRateLog
-    {
-        $careRateLogQuery = NurseCareRateLog::whereActivityId($activityId);
-        if ( ! $allowAccruedTowards) {
-            $careRateLogQuery->where('ccm_type', '=', 'accrued_after_ccm');
-        }
-
-        $careRateLogs = $careRateLogQuery->get();
+        /** @var Collection|NurseCareRateLog[] $careRateLogs */
+        $careRateLogs = NurseCareRateLog::whereIn('activity_id', $activityIds)
+            ->orderBy('id', 'asc')
+            ->get();
         if ($careRateLogs->isEmpty()) {
-            //some more validation here, simply because the current implementation supports simple use cases
-            $msg = "Cannot modify activity[$activityId]. Could not find nurse care rate logs. Please choose a different one.";
+            throw new Exception("Something's wrong. Should not reach here.");
+        }
+
+        if ( ! $allowAccruedTowards && 1 === $careRateLogs->count() && 'accrued_towards_ccm' === $careRateLogs->first()->ccm_type) {
+            $msg = "Cannot modify time tracker entry[$pageTimerId]. Could not find nurse care rate logs. Please choose a different one.";
             if ( ! $allowAccruedTowards) {
                 $msg .= ' [no accrued_after_ccm]';
             }
             throw new Exception($msg);
         }
 
-        /** @var NurseCareRateLog $careRateLog */
-        $careRateLog = null;
-        $careRateLogs->each(function (NurseCareRateLog $entry) use ($duration, &$careRateLog) {
-            if ($entry->increment >= $duration) {
-                $careRateLog = $entry;
+        $careRateLogsToModify = [];
+        $zeroOut              = false;
+        foreach ($careRateLogs as $careRateLog) {
+            if ($zeroOut) {
+                $careRateLogsToModify[$careRateLog->id] = 0;
+            } elseif ($careRateLog->increment >= $newDuration) {
+                $careRateLogsToModify[$careRateLog->id] = $newDuration;
+                $zeroOut                                = true;
+            } else {
+                $newDuration -= $careRateLog->increment;
             }
-        });
-
-        if ( ! $careRateLog) {
-            /** @var NurseCareRateLog $firstCareRateLog */
-            $firstCareRateLog = $careRateLogs->first();
-            throw new Exception("Cannot modify activity[$activityId]. Please lower duration to at least {$firstCareRateLog->increment}[{$firstCareRateLog->id}]. [duration > care rate log]");
         }
 
-        return $careRateLog;
+        return $careRateLogsToModify;
     }
 
     /**
@@ -156,37 +136,31 @@ class ModifyTimeTracker extends Action implements ShouldQueue
     {
         $entriesToSave = collect();
 
-        //lv_page_timer table
         $timeRecord->duration = $duration;
         $entriesToSave->push($timeRecord);
 
-        /** @var NurseCareRateLog $careRateLog */
-        $careRateLog      = null;
-        $billableActivity = $this->getBillableActivity($timeRecord, $duration);
-        if ($billableActivity) {
-            $billableActivity->duration = $duration;
-            $entriesToSave->push($billableActivity);
-
-            $careRateLog = $this->getCareRateLog($billableActivity->id, $duration, $allowAccruedTowards);
+        /** @var NurseCareRateLog[] $careRateLogsToModify */
+        $careRateLogsToModify = [];
+        /** @var Activity[]|Collection $activities */
+        $activities = $timeRecord->activities()->orderBy('id', 'asc')->get();
+        if ($activities->isNotEmpty()) {
+            $this->processActivities($activities, $duration, $entriesToSave);
+            $careRateLogsToModify = $this->getCareRateLogs($timeRecord->id, $activities->pluck('id'), $duration, $allowAccruedTowards);
         }
 
-        if ($billableActivity && ! $careRateLog) {
-            throw new Exception("Something's wrong. Should not reach here.");
-        }
-
-        //now, that all validation passes, save pending entries
         $entriesToSave->each(function (Model $item) {
             $item->save();
         });
 
         $startTime = Carbon::parse($timeRecord->start_time);
-        if ($billableActivity) {
-            //adjust nurse care rate logs
-            \Artisan::call('nursecareratelogs:remove-time', [
-                'fromId'              => $careRateLog->id,
-                'newDuration'         => $duration,
-                'allowAccruedTowards' => $allowAccruedTowards,
-            ]);
+        if ($activities->isNotEmpty()) {
+            foreach ($careRateLogsToModify as $careRateLogId => $careRateLogDuration) {
+                \Artisan::call('nursecareratelogs:remove-time', [
+                    'fromId'              => $careRateLogId,
+                    'newDuration'         => $careRateLogDuration,
+                    'allowAccruedTowards' => $allowAccruedTowards,
+                ]);
+            }
 
             //if this was a billable activity, we have to
             //recalculate ccm/bhi time for patient (patient_monthly_summaries table)
@@ -201,5 +175,22 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             'month'   => $startTime->copy()->startOfMonth()->toDateString(),
             'userIds' => $timeRecord->provider_id,
         ]);
+    }
+
+    private function processActivities(Collection $activities, int $newDuration, Collection $entriesToSave)
+    {
+        $zeroOut = false;
+        foreach ($activities as $activity) {
+            if ($zeroOut) {
+                $activity->duration = 0;
+                $entriesToSave->push($activity);
+            } elseif ($activity->duration >= $newDuration) {
+                $activity->duration = $newDuration;
+                $zeroOut            = true;
+                $entriesToSave->push($activity);
+            } else {
+                $newDuration -= $activity->duration;
+            }
+        }
     }
 }
