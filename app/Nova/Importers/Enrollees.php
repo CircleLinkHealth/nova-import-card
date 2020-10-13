@@ -8,8 +8,10 @@ namespace App\Nova\Importers;
 
 use App\Nova\Actions\ImportEnrollees;
 use App\Search\ProviderByName;
+use App\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -62,7 +64,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
     public function chunkSize(): int
     {
-        return 100;
+        return 50;
     }
 
     public function markAsIneligible(array $row)
@@ -205,7 +207,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
         $row['provider_id'] = $provider->id;
         $row['practice_id'] = $this->practiceId;
 
-        Enrollee::updateOrCreate(
+        $enrollee = Enrollee::updateOrCreate(
             [
                 'mrn'         => $row['mrn'],
                 'practice_id' => $this->practiceId,
@@ -214,7 +216,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
                 'first_name' => ucfirst(strtolower($row['first_name'])),
                 'last_name'  => ucfirst(strtolower($row['last_name'])),
 
-                'provider_id' => optional($provider)->id,
+                'provider_id' => $provider->id,
 
                 'address'   => ucwords(strtolower($row['address'])),
                 'address_2' => ucwords(strtolower($row['address_2'])),
@@ -229,6 +231,28 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
                 'status' => Enrollee::TO_CALL,
                 'source' => Enrollee::UPLOADED_CSV,
+            ]
+        );
+
+        $user = $enrollee->user;
+
+        if (is_null($user)) {
+            CreateSurveyOnlyUserFromEnrollee::execute($enrollee);
+
+            return;
+        }
+
+        if ( ! $user->isSurveyOnly()) {
+            return;
+        }
+
+        CarePerson::updateOrCreate(
+            [
+                'type'    => CarePerson::BILLING_PROVIDER,
+                'user_id' => $user->id,
+            ],
+            [
+                'member_user_id' => $provider->id,
             ]
         );
     }
