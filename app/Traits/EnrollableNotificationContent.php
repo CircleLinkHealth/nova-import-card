@@ -69,13 +69,13 @@ trait EnrollableNotificationContent
     private function getEnrolleeMessageContent(User $notifiable, bool $isReminder)
     {
         $provider = $notifiable->billingProviderUser();
-
-        $providerNameAndType = $provider->primaryPractice->display_name;
-
+        
         if (empty($provider)) {
             throw new \InvalidArgumentException("User[$notifiable->id] does not have a billing provider.");
         }
-
+        
+        $providerNameAndType = $provider->primaryPractice->display_name;
+        
         $providerLastName  = ucwords($provider->last_name);
         $providerSpecialty = Helpers::providerMedicalType($provider->suffix);
 
