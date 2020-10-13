@@ -156,37 +156,72 @@ class ModifyTimeTracker extends Action implements ShouldQueue
     {
         $entriesToSave = collect();
 
-        //lv_page_timer table
         $timeRecord->duration = $duration;
         $entriesToSave->push($timeRecord);
 
-        /** @var NurseCareRateLog $careRateLog */
-        $careRateLog      = null;
-        $billableActivity = $this->getBillableActivity($timeRecord, $duration);
-        if ($billableActivity) {
-            $billableActivity->duration = $duration;
-            $entriesToSave->push($billableActivity);
+        /** @var NurseCareRateLog[] $careRateLogsToModify */
+        $careRateLogsToModify = [];
+        /** @var Activity[]|Collection $activities */
+        $activities = $timeRecord->activities()->orderBy('id', 'asc')->get();
+        if ($activities->isNotEmpty()) {
+            $zeroOut      = false;
+            $durationCopy = $duration;
+            foreach ($activities as $activity) {
+                if ($zeroOut) {
+                    $activity->duration = 0;
+                    $entriesToSave->push($activity);
+                } elseif ($activity->duration >= $durationCopy) {
+                    $activity->duration = $durationCopy;
+                    $zeroOut            = true;
+                    $entriesToSave->push($activity);
+                } else {
+                    $durationCopy -= $activity->duration;
+                }
+            }
 
-            $careRateLog = $this->getCareRateLog($billableActivity->id, $duration, $allowAccruedTowards);
+            /** @var Collection|NurseCareRateLog[] $careRateLogs */
+            $careRateLogs = NurseCareRateLog::whereIn('activity_id', $activities->pluck('id'))
+                ->orderBy('id', 'asc')
+                ->get();
+            if ($careRateLogs->isEmpty()) {
+                throw new Exception("Something's wrong. Should not reach here.");
+            }
+
+            if ( ! $allowAccruedTowards && 1 === $careRateLogs->count() && 'accrued_towards_ccm' === $careRateLogs->first()->ccm_type) {
+                $msg = "Cannot modify time tracker entry[$timeRecord->id]. Could not find nurse care rate logs. Please choose a different one.";
+                if ( ! $allowAccruedTowards) {
+                    $msg .= ' [no accrued_after_ccm]';
+                }
+                throw new Exception($msg);
+            }
+
+            $zeroOut      = false;
+            $durationCopy = $duration;
+            foreach ($careRateLogs as $careRateLog) {
+                if ($zeroOut) {
+                    $careRateLogsToModify[$careRateLog->id] = 0;
+                } elseif ($careRateLog->increment >= $durationCopy) {
+                    $careRateLogsToModify[$careRateLog->id] = $durationCopy;
+                    $zeroOut                                = true;
+                } else {
+                    $durationCopy -= $careRateLog->increment;
+                }
+            }
         }
 
-        if ($billableActivity && ! $careRateLog) {
-            throw new Exception("Something's wrong. Should not reach here.");
-        }
-
-        //now, that all validation passes, save pending entries
         $entriesToSave->each(function (Model $item) {
             $item->save();
         });
 
         $startTime = Carbon::parse($timeRecord->start_time);
-        if ($billableActivity) {
-            //adjust nurse care rate logs
-            \Artisan::call('nursecareratelogs:remove-time', [
-                'fromId'              => $careRateLog->id,
-                'newDuration'         => $duration,
-                'allowAccruedTowards' => $allowAccruedTowards,
-            ]);
+        if ($activities->isNotEmpty()) {
+            foreach ($careRateLogsToModify as $careRateLogId => $careRateLogDuration) {
+                \Artisan::call('nursecareratelogs:remove-time', [
+                    'fromId'              => $careRateLogId,
+                    'newDuration'         => $careRateLogDuration,
+                    'allowAccruedTowards' => $allowAccruedTowards,
+                ]);
+            }
 
             //if this was a billable activity, we have to
             //recalculate ccm/bhi time for patient (patient_monthly_summaries table)
