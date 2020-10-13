@@ -542,14 +542,10 @@
                             <b>If Caller Reaches Machine, Leave Voice Message: </b><br>
                             Hi {{ name }}, this is {{ userFullName }} calling on behalf of {{ provider_full_name }} at
                             {{ practice_name }}.
-                            The reason for my call is that {{ provider_full_name }} has a new benefit they are offering
-                            patients,
-                            to improve access to your care team. You should have already received information about it
-                            in
-                            the mail.
+                            The reason for my call is that {{ provider_full_name }} has a new benefit that will increase access to your care team, and they would like for you to join.
+                            You should have already received an invitation from their office.
                             If you'd be kind enough to call us back at {{ practice_phone }} to walk you through it, that
-                            would
-                            be great.
+                            would be great. Thank you!
                         </blockquote>
 
                         <div class="row">
