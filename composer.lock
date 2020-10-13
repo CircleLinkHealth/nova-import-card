@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c28747acd58c97b02863498c3e7da3e",
+    "content-hash": "6b6670d05bb900cf3c7b245e4b356f7c",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1091,7 +1091,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-ROAD-351",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -1127,7 +1127,7 @@
         },
         {
             "name": "circlelinkhealth/clh-nova-theme",
-            "version": "dev-ROAD-351",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
@@ -1308,11 +1308,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.5.4",
+            "version": "v3.5.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "f188ca160b33309c1906fc009f10ddf2e8f34798"
+                "reference": "20a45c520ca5eb312839e88c5939ae7b19bc2638"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1339,11 +1339,11 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-13T00:22:31+00:00"
+            "time": "2020-10-13T18:03:25+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
-            "version": "dev-ROAD-351",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
@@ -1380,7 +1380,7 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-ROAD-351",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -1416,7 +1416,7 @@
         },
         {
             "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-ROAD-351",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
@@ -1452,7 +1452,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-ROAD-351",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -1489,7 +1489,7 @@
         },
         {
             "name": "circlelinkhealth/invoices-download",
-            "version": "dev-ROAD-351",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
@@ -2866,10 +2866,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0|^8.0"
+                "php": "^7.1|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
+                "phpunit/phpunit": "^6.4|^7.0"
             },
             "type": "library",
             "extra": {
@@ -2903,7 +2903,13 @@
                 "cron",
                 "schedule"
             ],
-            "time": "2020-10-13T00:52:37+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/dragonmantank",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-10-12T18:35:36+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -4782,6 +4788,12 @@
                 "laminas",
                 "zf"
             ],
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
             "time": "2020-09-14T14:23:00+00:00"
         },
         {
@@ -5777,6 +5789,32 @@
                 "md",
                 "parser"
             ],
+            "funding": [
+                {
+                    "url": "https://enjoy.gitstore.app/repositories/thephpleague/commonmark",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.colinodell.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.paypal.me/colinpodell/10.00",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/colinodell",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/colinodell",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/league/commonmark",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-13T14:44:46+00:00"
         },
         {
@@ -6168,6 +6206,16 @@
                 }
             ],
             "description": "Mime-type detection for Flysystem",
+            "funding": [
+                {
+                    "url": "https://github.com/frankdejonge",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/league/flysystem",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-21T18:10:53+00:00"
         },
         {
@@ -6358,6 +6406,16 @@
                 "php",
                 "phpspreadsheet"
             ],
+            "funding": [
+                {
+                    "url": "https://laravel-excel.com/commercial-support",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/patrickbrouwers",
+                    "type": "github"
+                }
+            ],
             "time": "2020-09-29T07:30:12+00:00"
         },
         {
@@ -6542,6 +6600,12 @@
             "keywords": [
                 "stream",
                 "zip"
+            ],
+            "funding": [
+                {
+                    "url": "https://opencollective.com/zipstream",
+                    "type": "open_collective"
+                }
             ],
             "time": "2020-05-30T13:11:16+00:00"
         },
@@ -7338,6 +7402,16 @@
                 "datetime",
                 "time"
             ],
+            "funding": [
+                {
+                    "url": "https://opencollective.com/Carbon",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/nesbot/carbon",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-10-12T20:36:09+00:00"
         },
         {
@@ -7499,6 +7573,16 @@
             "keywords": [
                 "psr-17",
                 "psr-7"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/Zegnat",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nyholm",
+                    "type": "github"
+                }
             ],
             "time": "2020-06-13T15:59:10+00:00"
         },
@@ -9087,6 +9171,12 @@
                 "queue",
                 "set"
             ],
+            "funding": [
+                {
+                    "url": "https://github.com/ramsey",
+                    "type": "github"
+                }
+            ],
             "time": "2020-09-10T20:58:17+00:00"
         },
         {
@@ -9981,6 +10071,16 @@
                 "media",
                 "spatie"
             ],
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
             "time": "2020-09-30T21:19:21+00:00"
         },
         {
@@ -10101,6 +10201,12 @@
             "keywords": [
                 "laravel-schedule-monitor",
                 "spatie"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
             ],
             "time": "2020-09-08T20:04:19+00:00"
         },
@@ -15324,6 +15430,16 @@
                 "laravel",
                 "nova",
                 "novaunit"
+            ],
+            "funding": [
+                {
+                    "url": "https://ko-fi.com/JoshGaber",
+                    "type": "ko_fi"
+                },
+                {
+                    "url": "https://www.patreon.com/joshgaber",
+                    "type": "patreon"
+                }
             ],
             "time": "2020-10-11T02:14:47+00:00"
         },
