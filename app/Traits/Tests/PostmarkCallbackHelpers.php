@@ -47,10 +47,10 @@ trait PostmarkCallbackHelpers
 
     public function nekatostrasPractice()
     {
-        if (isUnitTestingEnv() || App::environment('review')){
+        if (isUnitTestingEnv()) {
             return Practice::firstOrFail();
         }
-        
+
         return Practice::where('name', '=', \NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->firstOrFail();
     }
 
