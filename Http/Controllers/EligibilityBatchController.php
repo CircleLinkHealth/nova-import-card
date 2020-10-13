@@ -281,7 +281,7 @@ class EligibilityBatchController extends Controller
                     ->where('enrollees.batch_id', $batch->id)
                     ->whereNull('user_id')
                     ->chunk(
-                        500,
+                        200,
                         function ($enrollees) use ($handle, &$firstIteration) {
                             foreach ($enrollees as $enrollee) {
                                 $data = [
