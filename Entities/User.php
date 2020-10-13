@@ -4223,6 +4223,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     private function ccmNoOfMonitoredProblems()
     {
+        //todo: replace
         return $this->ccdProblems()
             ->where('is_monitored', 1)
             ->whereHas(
