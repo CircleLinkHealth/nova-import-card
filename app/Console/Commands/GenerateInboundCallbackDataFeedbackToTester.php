@@ -74,8 +74,6 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->practice       = $this->nekatostrasPractice();
-        $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
     }
 
     /**
@@ -232,6 +230,9 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
 
     public function handle()
     {
+        $this->practice       = $this->nekatostrasPractice();
+        $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
+        
         $this->userType = $this->option('userType');
         $this->save     = $this->option('save');
         $this->runAll   = $this->option('runAll');
