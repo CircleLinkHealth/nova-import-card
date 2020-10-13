@@ -225,6 +225,8 @@ class EligibilityBatchController extends Controller
 
     public function downloadEligibleCsv(EligibilityBatch $batch)
     {
+        ini_set('max_execution_time', 300);
+    
         $practice = Practice::findOrFail($batch->practice_id);
         $fileName = $practice->display_name.'_'.Carbon::now()->toAtomString();
 
