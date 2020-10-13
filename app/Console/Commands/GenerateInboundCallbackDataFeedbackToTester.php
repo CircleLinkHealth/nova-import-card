@@ -314,7 +314,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::CONSENTED, false, false);
-        $this->info("Generated $limit patients of type:[CONSENTED BUT NOT ENROLLED].");
+        $this->info("Generated $limit patients of type:[CONSENTED BUT NOT ENROLLED]. AVAILABLE ON DASHBOARD");
 
         return $inboundData;
     }
@@ -326,7 +326,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::ENROLLED, false, false);
-        $this->info("Generated $limit patients of type:[ENROLLED].");
+        $this->info("Generated $limit patients of type:[ENROLLED]. SHOULD ASSIGN CALLBACK");
 
         return $inboundData;
     }
@@ -338,7 +338,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::ENROLLED, false, true);
-        $this->info("Generated $limit patients of type:[Name Is SELF].");
+        $this->info("Generated $limit patients of type:[Name Is SELF]. SHOULD ASSIGN CALLBACK");
 
         return $inboundData;
     }
@@ -350,7 +350,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::ELIGIBLE, false, false);
-        $this->info("Generated $limit patients of type:[NOT CONSENTED BUT CA ASSIGNED.]");
+        $this->info("Generated $limit patients of type:[NOT CONSENTED BUT CA ASSIGNED.] SHOULD ASSIGN CALLBACK TO CA");
 
         return $inboundData;
     }
@@ -362,7 +362,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $limit       = self::LIMIT;
         $inboundData = $this->dataOfTypeNotConsentedCaUnassigned(Enrollee::ELIGIBLE, false, false);
-        $this->info("Generated $limit patients of type:[NOT CONSENTED AND CA NOT ASSIGNED.]");
+        $this->info("Generated $limit patients of type:[NOT CONSENTED AND CA NOT ASSIGNED.] AVAILABLE IN DASHBOARD");
 
         return $inboundData;
     }
@@ -374,7 +374,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $limit       = self::LIMIT;
         $inboundData = $this->dataOfTypeSelfEnrollableCaUnassigned(Enrollee::QUEUE_AUTO_ENROLLMENT, false, false);
-        $this->info("Generated $limit patients of type:[Queued for self enrolment but not CA assigned].");
+        $this->info("Generated $limit patients of type:[Queued for self enrolment but not CA assigned]. AVAILABLE IN DASHBOARD");
 
         return $inboundData;
     }
@@ -386,7 +386,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::ENROLLED, true, false);
-        $this->info("Generated $limit patients of type:[Requested To Withdraw].");
+        $this->info("Generated $limit patients of type:[Requested To Withdraw]. AVAILABLE IN DASHBOARD");
 
         return $inboundData;
     }
@@ -398,7 +398,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::ENROLLED, true, true);
-        $this->info("Generated $limit patients of type [Requested To Withdraw And Name Is SELF]");
+        $this->info("Generated $limit patients of type [Requested To Withdraw And Name Is SELF] AVAILABLE IN DASHBOARD");
 
         return $inboundData;
     }
@@ -418,7 +418,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $customLimit = 1;
         $inboundData = $this->dataOfTypeSamePhoneAndName(Enrollee::ENROLLED, false, false);
-        $this->info("Generated $customLimit patients of type:[Same name and number].");
+        $this->info("Generated $customLimit patients of type:[Same name and number]. AVAILABLE IN DASHBOARD");
 
         return $inboundData;
     }
