@@ -79,7 +79,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
             return;
         }
 
-        $enrollee->satus = Enrollee::INELIGIBLE;
+        $enrollee->status = Enrollee::INELIGIBLE;
         $enrollee->save();
     }
 
