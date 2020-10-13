@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ba8e435aeb88438dc71dbc4ffc2afecc",
+    "content-hash": "7b56377cc1959e8173847acc1f523ad4",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -15378,6 +15378,70 @@
                 }
             ],
             "time": "2020-06-17T08:25:38+00:00"
+        },
+        {
+            "name": "joshgaber/novaunit",
+            "version": "1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joshgaber/NovaUnit.git",
+                "reference": "ce1b24ccd6146f72a2ab6947e8bd8385e2818d04"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joshgaber/NovaUnit/zipball/ce1b24ccd6146f72a2ab6947e8bd8385e2818d04",
+                "reference": "ce1b24ccd6146f72a2ab6947e8bd8385e2818d04",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/chronos": ">=1.2.3",
+                "ext-mbstring": "*",
+                "illuminate/support": "^6.0|^7.0",
+                "laravel/nova": "^2.0|^3.0",
+                "php": "^7.2",
+                "phpunit/phpunit": "^8.5|^9.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "orchestra/testbench": "^5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "JoshGaber\\NovaUnit\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Josh Gaber",
+                    "email": "joshgaber@gmail.com",
+                    "homepage": "https://joshgaber.ca",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Unit testing suite for Laravel Nova, built to extend PHPUnit",
+            "homepage": "https://github.com/joshgaber/novaunit",
+            "keywords": [
+                "joshgaber",
+                "laravel",
+                "nova",
+                "novaunit"
+            ],
+            "funding": [
+                {
+                    "url": "https://ko-fi.com/JoshGaber",
+                    "type": "ko_fi"
+                },
+                {
+                    "url": "https://www.patreon.com/joshgaber",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2020-10-11T02:14:47+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
