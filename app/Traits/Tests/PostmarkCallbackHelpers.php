@@ -11,7 +11,6 @@ use App\PostmarkInboundMail;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Illuminate\Support\Facades\App;
 
 trait PostmarkCallbackHelpers
 {
@@ -50,6 +49,7 @@ trait PostmarkCallbackHelpers
         if (isUnitTestingEnv()) {
             return Practice::firstOrFail();
         }
+
         return Practice::where('name', '=', \NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->firstOrFail();
     }
 
