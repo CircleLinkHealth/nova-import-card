@@ -15,9 +15,11 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class CachedLocationProcessorEloquentRepository implements LocationProcessorRepository
 {
-    protected array $cache = [];
+    protected array $cachedLocationPatients  = [];
+    protected array $cachedLocationServices  = [];
+    protected array $queriedLocationPatients = [];
 
-    protected array $queriedLocations = [];
+    protected array $queriedLocationServices = [];
 
     protected LocationProcessorEloquentRepository $repo;
 
@@ -36,9 +38,10 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
 
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
     {
-        //query if you should
-        //get services from cache
-        //return bool
+        return $this->getLocationSummaries($locationId)
+            ->whereIn('chargeableService.code', $chargeableServiceCodes)
+            ->where('chargeable_month', $month)
+            ->isNotEmpty();
     }
 
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator
@@ -72,22 +75,34 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
 
     public function servicesExistForMonth(int $locationId, Carbon $month): bool
     {
-        //check cache
-        //query if you should
-        //return summaries exist
+        return $this->getLocationSummaries($locationId)
+            ->where('chargeable_month', $month)
+            ->isNotEmpty();
     }
 
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
     {
-        $summary = $this->repo->store($locationId, $chargeableServiceCode, $month, $amount);
+        return $this->repo->store($locationId, $chargeableServiceCode, $month, $amount);
         //todo: update cache
-        return $summary;
     }
 
     public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
     {
-        $summary = $this->repo->storeUsingServiceId($locationId, $chargeableServiceId, $month, $amount);
+        return $this->repo->storeUsingServiceId($locationId, $chargeableServiceId, $month, $amount);
         //todo: update cache
-        return $summary;
+    }
+
+    private function getLocationSummaries(int $locationId): ?EloquentCollection
+    {
+        if ( ! in_array($locationId, $this->queriedLocationServices)) {
+            $this->queryLocationServices($locationId);
+        }
+
+        return $this->cachedLocationServices[$locationId];
+    }
+
+    private function queryLocationServices(int $locationId)
+    {
+        $this->cachedLocationServices[$locationId] = $this->repo->servicesForLocation($locationId)->get();
     }
 }
