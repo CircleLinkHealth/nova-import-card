@@ -478,11 +478,11 @@ $user_info = [];
                                                                             value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED ? 'selected' : ''}}>
                                                                         Paused
                                                                     </option>
+                                                                    <option class="unreachable"
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE ? 'selected' : ''}}>
+                                                                        Unreachable
+                                                                    </option>
                                                                 @endif
-                                                                <option class="unreachable"
-                                                                        value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE ? 'selected' : ''}}>
-                                                                    Unreachable
-                                                                </option>
                                                             </select>
                                                         </div>
                                                     </div>
