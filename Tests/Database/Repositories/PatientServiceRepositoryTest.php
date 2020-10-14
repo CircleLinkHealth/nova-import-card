@@ -11,12 +11,13 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceProcessorRepositoryInterface;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Tests\CustomerTestCase;
 
 class PatientServiceRepositoryTest extends CustomerTestCase
 {
-    protected PatientServiceProcessorRepository $repo;
+    protected PatientServiceProcessorRepositoryInterface $repo;
 
     protected function setUp(): void
     {

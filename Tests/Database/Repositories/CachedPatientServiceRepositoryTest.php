@@ -7,12 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Tests\Database\Repositories;
 
 use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorRepository;
-use Tests\CustomerTestCase;
 
-class CachedPatientServiceRepositoryTest extends CustomerTestCase
+class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
 {
-    protected CachedPatientServiceProcessorRepository $repo;
-
     protected function setUp(): void
     {
         parent::setUp();
