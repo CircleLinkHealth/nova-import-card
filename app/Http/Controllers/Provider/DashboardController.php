@@ -129,7 +129,7 @@ class DashboardController extends Controller
 
     public function getCreateStaff()
     {
-        $practice = $this->primaryPractice->load('settings');
+        $practice = optional($this->primaryPractice)->load('settings');
 
         if ( ! $practice) {
             return response('Practice not found', 404);
@@ -225,7 +225,7 @@ class DashboardController extends Controller
             $route = route('provider.dashboard.manage.staff', ['practiceSlug' => $this->primaryPractice->name]);
 
             if ($providers->count() > 0) {
-                $errors->push("You have selected the option to send Care Plan Approval Reminders via DIRECT. 
+                $errors->push("You have selected the option to send Care Plan Approval Reminders via DIRECT.
 <br><br>The following Providers at {$this->primaryPractice->display_name} do not have DIRECT addresses on file: <br>{$providers->implode('display_name', ', <br>')}<br><br>
 Please update their profiles <a href='{$route}'>here</a>.");
             }

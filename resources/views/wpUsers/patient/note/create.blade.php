@@ -1199,7 +1199,6 @@
                                 note_id: noteId,
                                 type: $('#activityKey').val(),
                                 general_comment: $('#general_comment').val(),
-                                performed_at: $('#performed_at').val(),
                                 author_id: $('#author_id').val(),
                                 task_id: $('.tasks-radio:checked').val(),
                                 phone: $('.phone-radios:checked').val(),
