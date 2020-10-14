@@ -94,6 +94,10 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
             return $summary;
         }
 
+        if ($this->cachedLocationServices[$locationId]->contains('id', $summary->id)) {
+            $this->cachedLocationServices[$locationId]->forgetUsingModelKey('id', $summary->id);
+        }
+
         $this->cachedLocationServices[$locationId]->push($summary);
 
         return $summary;
@@ -102,15 +106,19 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
     public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
     {
         $summary = $this->repo->storeUsingServiceId($locationId, $chargeableServiceId, $month, $amount);
-    
+
         if ( ! in_array($locationId, $this->queriedLocationServices)) {
             $this->queryLocationServices($locationId);
-        
+
             return $summary;
         }
-    
+
+        if ($this->cachedLocationServices[$locationId]->contains('id', $summary->id)) {
+            $this->cachedLocationServices[$locationId]->forgetUsingModelKey('id', $summary->id);
+        }
+
         $this->cachedLocationServices[$locationId]->push($summary);
-    
+
         return $summary;
     }
 

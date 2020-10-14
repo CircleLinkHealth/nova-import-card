@@ -124,7 +124,8 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         $summary = $this->repo->store($patientId, $chargeableServiceCode, $month, $requiresPatientConsent);
 
         $this->getPatientFromCache($patientId)
-            ->chargeableMonthlySummaries->push($summary);
+            ->chargeableMonthlySummaries
+            ->push($summary);
 
         return $summary;
     }
