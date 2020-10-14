@@ -12,6 +12,7 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientProcessorEloquentRepository as PatientProcessorEloquentRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
+use CircleLinkHealth\CcmBilling\Repositories\CachedLocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
@@ -54,8 +55,16 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
 
             return $app->make(PatientServiceProcessorRepository::class);
         });
+
+        $this->app->singleton(LocationProcessorRepository::class, function ($app) {
+            if (Auth::check()) {
+                return $app->make(CachedLocationProcessorEloquentRepository::class);
+            }
+
+            return $app->make(LocationProcessorEloquentRepository::class);
+        });
+
         $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
-        $this->app->singleton(LocationProcessorRepository::class, LocationProcessorEloquentRepository::class);
         $this->app->singleton(PatientProcessorEloquentRepositoryInterface::class, PatientProcessorEloquentRepository::class);
     }
 }

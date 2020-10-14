@@ -30,10 +30,14 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
 
     public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth): AvailableServiceProcessors
     {
-        //query if you should
-        //get services
-        //get processors
-        //create value object and return
+        return AvailableServiceProcessors::push(
+            $this->getLocationSummaries($locationId)
+                ->where('chargeable_month', $chargeableMonth)
+                ->map(fn (ChargeableLocationMonthlySummary $summary) => $summary->getServiceProcessor())
+                ->filter()
+                ->values()
+                ->toArray()
+        );
     }
 
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
@@ -51,11 +55,8 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
 
     public function pastMonthSummaries(int $locationId, Carbon $month): EloquentCollection
     {
-        //specific key
-        //if queried
-        //query if you should
-        //check exists in array
-        //return
+        return $this->getLocationSummaries($locationId)
+            ->where('chargeable_month', '<', $month);
     }
 
     public function patients(int $customerModelId, Carbon $monthYear): EloquentCollection
@@ -82,8 +83,17 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
 
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
     {
-        return $this->repo->store($locationId, $chargeableServiceCode, $month, $amount);
-        //todo: update cache
+        $summary = $this->repo->store($locationId, $chargeableServiceCode, $month, $amount);
+
+        if ( ! in_array($locationId, $this->queriedLocationServices)) {
+            $this->queryLocationServices($locationId);
+
+            return $summary;
+        }
+
+        $this->cachedLocationServices[$locationId]->push($summary);
+
+        return $summary;
     }
 
     public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
