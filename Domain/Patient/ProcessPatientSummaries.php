@@ -16,11 +16,12 @@ class ProcessPatientSummaries
 {
     protected Carbon $month;
 
-    protected PatientMonthlyBillingDTO $patientDTO;
+    protected ?PatientMonthlyBillingDTO $patientDTO;
 
     protected int $patientId;
 
     protected User $patientUser;
+
     protected PatientMonthlyBillingProcessor $processor;
 
     protected PatientServiceProcessorRepository $repo;
@@ -49,6 +50,10 @@ class ProcessPatientSummaries
 
     private function process()
     {
+        if (! isset($this->patientDTO) || is_null($this->patientDTO)) {
+            sendSlackMessage('#billing_alerts', "Patient({$this->patientId}) Billing Data are invalid. Aborting Processing. Please investigate");
+            return;
+        }
         $this->processor->process($this->patientDTO);
     }
 

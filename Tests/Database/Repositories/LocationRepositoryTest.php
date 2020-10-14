@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Tests\Database\Repositories;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
@@ -21,7 +22,7 @@ use Tests\CustomerTestCase;
 
 class LocationRepositoryTest extends CustomerTestCase
 {
-    protected LocationProcessorEloquentRepository $repo;
+    protected LocationProcessorRepository $repo;
 
     protected function setUp(): void
     {
