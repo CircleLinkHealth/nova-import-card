@@ -6,9 +6,12 @@
 
 namespace App\Nova\Importers;
 
+use App\Nova\Actions\ImportEnrollees;
 use App\Search\ProviderByName;
+use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -64,6 +67,22 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
         return 100;
     }
 
+    public function markAsIneligible(array $row)
+    {
+        $enrollee = Enrollee::where('mrn', $row['mrn'])
+            ->where('practice_id', $this->practiceId)
+            ->first();
+
+        if (is_null($enrollee)) {
+            Log::channel('database')->critical("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
+
+            return;
+        }
+
+        $enrollee->status = Enrollee::INELIGIBLE;
+        $enrollee->save();
+    }
+
     public function message(): string
     {
         return 'File queued for importing.';
@@ -73,11 +92,14 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
     {
         $row = $row->toArray();
 
-        if ('mark_for_auto_enrollment' == $this->actionType) {
+        if (ImportEnrollees::ACTION_MARK_INELIGIBLE == $this->actionType) {
+            $this->markAsIneligible($row);
+        }
+        if (ImportEnrollees::ACTION_MARK_AUTO_ENROLLMENT == $this->actionType) {
             $this->markForAutoEnrollment($row);
         }
 
-        if ('create_enrollees' == $this->actionType) {
+        if (ImportEnrollees::ACTION_CREATE_ENROLLEES == $this->actionType) {
             $this->updateOrCreateEnrolleeFromCsv($row);
         }
         ++$this->rowNumber;
@@ -158,7 +180,6 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
     private function updateOrCreateEnrolleeFromCsv(array $row)
     {
-        //also, still proceed with Enrollee creation if dob fails validation, e.g false ?
         if ($row['dob']) {
             if (is_numeric($row['dob'])) {
                 $row['dob'] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['dob']);
@@ -178,7 +199,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
         $provider = ProviderByName::first($row['provider']);
 
         if ( ! $provider) {
-            Log::channel('database')->critical("Import for:{$this->fileName}, Provider not found for Enrollee at row: {$this->rowNumber}.");
+            Log::channel('database')->critical("Import for:{$this->fileName}, Provider ({$row['provider']}) not found for Enrollee at row: {$this->rowNumber}.");
 
             return;
         }
@@ -186,17 +207,16 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
         $row['provider_id'] = $provider->id;
         $row['practice_id'] = $this->practiceId;
 
-        Enrollee::updateOrCreate(
+        $enrollee = Enrollee::updateOrCreate(
             [
-                'mrn' => $row['mrn'],
-                //adding this as extra validation
+                'mrn'         => $row['mrn'],
                 'practice_id' => $this->practiceId,
             ],
             [
                 'first_name' => ucfirst(strtolower($row['first_name'])),
                 'last_name'  => ucfirst(strtolower($row['last_name'])),
 
-                'provider_id' => optional($provider)->id,
+                'provider_id' => $provider->id,
 
                 'address'   => ucwords(strtolower($row['address'])),
                 'address_2' => ucwords(strtolower($row['address_2'])),
@@ -211,6 +231,28 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
                 'status' => Enrollee::TO_CALL,
                 'source' => Enrollee::UPLOADED_CSV,
+            ]
+        );
+
+        $user = $enrollee->user;
+
+        if (is_null($user)) {
+            CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
+
+            return;
+        }
+
+        if ( ! $user->isSurveyOnly()) {
+            return;
+        }
+
+        CarePerson::updateOrCreate(
+            [
+                'type'    => CarePerson::BILLING_PROVIDER,
+                'user_id' => $user->id,
+            ],
+            [
+                'member_user_id' => $provider->id,
             ]
         );
     }
