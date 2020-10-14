@@ -21,7 +21,6 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-
 class CreateSurveyOnlyUserFromEnrollee
 {
     protected Enrollee $enrollee;

@@ -6,6 +6,7 @@
 
 namespace App\Traits;
 
+use App\SelfEnrollment\Helpers;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
 
@@ -26,13 +27,18 @@ trait EnrollableNotificationContent
         $practiceName           = $enrollableEmailContent['practiceName'];
         $line2                  = $enrollableEmailContent['line2'];
         $isSurveyOnly           = $enrollableEmailContent['isSurveyOnly'];
+        $providerNameAndType    = $enrollableEmailContent['providerNameAndType'];
 
         if (empty($practiceName)) {
             Log::warning("Practice name not found for user $notifiable->id");
             $practiceName = '???';
         }
 
-        $line1 = "Hi, it's Dr. $providerName's office at $practiceName! ";
+        $line1 = "Hi, it's $providerNameAndType's office at $practiceName! ";
+
+        if ($providerNameAndType === $practiceName) {
+            $line1 = "Hi, it's $providerNameAndType's office! ";
+        }
 
         if (empty($providerName)) {
             $line1 = "Hi, it's your Provider's office at $practiceName! ";
@@ -68,17 +74,25 @@ trait EnrollableNotificationContent
             throw new \InvalidArgumentException("User[$notifiable->id] does not have a billing provider.");
         }
 
-        $providerLastName = ucwords($provider->last_name);
+        $providerNameAndType = $provider->primaryPractice->display_name;
+
+        $providerLastName  = ucwords($provider->last_name);
+        $providerSpecialty = Helpers::providerMedicalType($provider->suffix);
+
+        if ( ! empty($providerSpecialty)) {
+            $providerNameAndType = "$providerSpecialty $providerLastName";
+        }
 
         $line2 = $isReminder
-            ? "Just circling back on Dr. $providerLastName's new Personalized Care program. Please enroll or get more info here: "
-            : "Dr. $providerLastName has invested in a new wellness program for you. Please enroll or get more info here: ";
+            ? "Just circling back on $providerNameAndType's new Personalized Care program. Please enroll or get more info here: "
+            : "$providerNameAndType has invested in a new wellness program for you. Please enroll or get more info here: ";
 
         return [
-            'providerLastName' => $providerLastName,
-            'practiceName'     => ucwords($notifiable->primaryPractice->display_name),
-            'line2'            => $line2,
-            'isSurveyOnly'     => true,
+            'providerLastName'    => $providerLastName,
+            'practiceName'        => ucwords($notifiable->primaryPractice->display_name),
+            'line2'               => $line2,
+            'isSurveyOnly'        => true,
+            'providerNameAndType' => $providerNameAndType,
         ];
     }
 
@@ -116,6 +130,14 @@ trait EnrollableNotificationContent
             ? ucwords($lastNurseThatPerformedActivity->user->display_name)
             : '';
 
+        $providerLastName    = ucwords($provider->last_name);
+        $providerNameAndType = $provider->primaryPractice->display_name;
+        $providerSpecialty   = Helpers::providerMedicalType($provider->suffix);
+
+        if ( ! empty($providerSpecialty)) {
+            $providerNameAndType = "$providerSpecialty $providerLastName's";
+        }
+
         if ( ! empty($nurseFirstName)) {
             $line2 = $isReminder
                 ? "Just circling back because $nurseFirstName, our telephone nurse was unable to reach you this month. Please re-start calls in this link: "
@@ -134,11 +156,12 @@ trait EnrollableNotificationContent
         }
 
         return [
-            'providerLastName' => ucwords($providerLastName),
-            'nurseFirstName'   => $nurseFirstName,
-            'practiceName'     => ucwords($notifiable->getPrimaryPracticeName()),
-            'line2'            => $line2,
-            'isSurveyOnly'     => false,
+            'providerLastName'    => ucwords($providerLastName),
+            'nurseFirstName'      => $nurseFirstName,
+            'practiceName'        => ucwords($notifiable->getPrimaryPracticeName()),
+            'line2'               => $line2,
+            'isSurveyOnly'        => false,
+            'providerNameAndType' => $providerNameAndType,
         ];
     }
 }
