@@ -232,7 +232,7 @@ trait UserHelpers
                 'home_phone_number' => $workPhone,
 
                 'ccm_status'                 => $ccmStatus,
-                'preferred_contact_location' => Location::wherePracticeId($practiceId)->first()->id ?? null,
+                'preferred_contact_location' => optional(Location::wherePracticeId($practiceId)->first())->id,
                 'consent_date'               => Patient::ENROLLED === $ccmStatus ? Carbon::now() : null,
                 'birth_date'                 => $faker->date('Y-m-d'),
             ]
