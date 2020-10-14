@@ -102,6 +102,13 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->count() > 0;
     }
 
+    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): EloquentCollection
+    {
+        return $this->getPatientFromCache($patientId)
+            ->ccdProblems
+            ->where('cpmProblem.locationProblemServices.code', $chargeableServiceCode);
+    }
+
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         $summary = $this->repo->setPatientConsented($patientId, $chargeableServiceCode, $month);
@@ -123,8 +130,12 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $summary = $this->repo->store($patientId, $chargeableServiceCode, $month, $requiresPatientConsent);
 
-        $this->getPatientFromCache($patientId)
-            ->chargeableMonthlySummaries
+        $patient = $this->getPatientFromCache($patientId);
+        if ($patient->chargeableMonthlySummaries->contains('id', $summary->id)) {
+            $patient->chargeableMonthlySummaries->forgetUsingModelKey('id', $summary->id);
+        }
+
+        $patient->chargeableMonthlySummaries
             ->push($summary);
 
         return $summary;
@@ -144,7 +155,6 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             throw new \Exception("Patient with id: $patientId does not have patient info attached. Billing Processing aborted.");
         }
 
-        //todo: help - not sure if we should enforce location check, however billing is now impossible if patient does not have location
         if (is_null($patient->patientInfo->location)) {
             throw new \Exception("Patient with id: $patientId does not have a preferred location attached. Billing Processing aborted.");
         }
@@ -166,12 +176,5 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         }
 
         $this->queryPatientData($patientId);
-    }
-    
-    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode) : EloquentCollection
-    {
-        return $this->getPatientFromCache($patientId)
-            ->ccdProblems
-            ->where('cpmProblem.locationProblemServices.code', $chargeableServiceCode);
     }
 }
