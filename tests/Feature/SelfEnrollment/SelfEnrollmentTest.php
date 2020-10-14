@@ -489,7 +489,7 @@ class SelfEnrollmentTest extends TestCase
 
         $emailContent     = $this->getEnrolleeMessageContent($patient, false);
         $providerLastName = $emailContent['providerLastName'];
-        $nameWithType     = "$specialty $providerLastName's";
+        $nameWithType     = "$specialty $providerLastName";
 
         self::assertTrue(Str::contains($emailContent['line2'], $nameWithType));
     }
@@ -507,7 +507,7 @@ class SelfEnrollmentTest extends TestCase
 
         $emailContent     = $this->getEnrolleeMessageContent($patient, false);
         $providerLastName = $emailContent['providerLastName'];
-        $nameWithType     = "$specialty $providerLastName's";
+        $nameWithType     = "$specialty $providerLastName";
 
         self::assertTrue(Str::contains($emailContent['line2'], $nameWithType));
     }
@@ -526,7 +526,7 @@ class SelfEnrollmentTest extends TestCase
 
         $emailContent     = $this->getEnrolleeMessageContent($patient, false);
         $providerLastName = $emailContent['providerLastName'];
-        $nameWithType     = "$specialty $providerLastName's";
+        $nameWithType     = "$specialty $providerLastName";
 
         self::assertTrue(Str::contains($emailContent['line2'], $nameWithType));
     }
@@ -544,7 +544,7 @@ class SelfEnrollmentTest extends TestCase
 
         $emailContent     = $this->getEnrolleeMessageContent($patient, false);
         $providerLastName = $emailContent['providerLastName'];
-        $nameWithType     = "$specialty $providerLastName's";
+        $nameWithType     = "$specialty $providerLastName";
 
         self::assertTrue(Str::contains($emailContent['line2'], $nameWithType));
     }
