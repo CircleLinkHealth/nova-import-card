@@ -12,6 +12,7 @@ use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -230,9 +231,10 @@ trait UserHelpers
                 //phones
                 'home_phone_number' => $workPhone,
 
-                'ccm_status'   => $ccmStatus,
-                'consent_date' => Patient::ENROLLED === $ccmStatus ? Carbon::now() : null,
-                'birth_date'   => $faker->date('Y-m-d'),
+                'ccm_status'                 => $ccmStatus,
+                'preferred_contact_location' => Location::wherePracticeId($practiceId)->first()->id ?? null,
+                'consent_date'               => Patient::ENROLLED === $ccmStatus ? Carbon::now() : null,
+                'birth_date'                 => $faker->date('Y-m-d'),
             ]
         );
 
