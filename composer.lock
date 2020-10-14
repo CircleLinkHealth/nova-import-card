@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "ed1c6482f8e0d4ebf7a60b10e877897d102e48fa"
+                "reference": "283c23d9b8a32febd18b27421116e82d96aad392"
             },
             "type": "laravel-module",
             "extra": {
@@ -992,7 +992,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-14T19:27:03+00:00"
+            "time": "2020-10-14T19:55:13+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
