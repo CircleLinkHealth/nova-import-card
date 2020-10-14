@@ -11,7 +11,9 @@ use App\Nova\Filters\BillableTimeFilter;
 use App\Nova\Filters\PageTimerDurationFilter;
 use App\Nova\Filters\TimestampFilter;
 use Carbon\Carbon;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
@@ -136,7 +138,11 @@ class TimeTracker extends Resource
      */
     public function fields(Request $request)
     {
-        return [
+        /** @var NovaRequest $req */
+        $req    = $request;
+        $fields = $req->isResourceDetailRequest() ? $this->getFieldsForActivities($this->resource) : [];
+
+        return array_merge([
             ID::make()->sortable(),
 
             BelongsTo::make('Logger', 'logger', User::class)
@@ -159,36 +165,14 @@ class TimeTracker extends Resource
                 ->sortable()
                 ->readonly(true),
 
-            Boolean::make(
-                'Is CCM',
-                function () {
-                    /** @var PageTimer $entry */
-                    $entry = $this->resource;
+            Boolean::make('Billable', function ($row) {
+                return $row->activities->isNotEmpty();
+            }),
 
-                    if ($entry->activity) {
-                        return ! $entry->activity->is_behavioral;
-                    }
-
-                    return false;
-                }
-            )
-                ->readonly(true),
-
-            Boolean::make(
-                'Is BHI',
-                function () {
-                    /** @var PageTimer $entry */
-                    $entry = $this->resource;
-
-                    if ($entry->activity) {
-                        return $entry->activity->is_behavioral;
-                    }
-
-                    return false;
-                }
-            )
-                ->readonly(true),
-        ];
+            Text::make('Service(s)', function ($row) {
+                return implode(', ', $row->activities->map(fn (Activity $a) => $a->chargeableService->code)->toArray());
+            }),
+        ], $fields);
     }
 
     /**
@@ -220,8 +204,11 @@ class TimeTracker extends Resource
                 $q->without(['roles', 'perms'])
                     ->select(['id', 'display_name']);
             },
-            'activity' => function ($q) {
-                $q->select(['id', 'page_timer_id', 'is_behavioral']);
+            'activities' => function ($q) {
+                $q->with([
+                    'chargeableService' => fn ($q) => $q->select(['id', 'code']),
+                ])
+                    ->select(['id', 'page_timer_id', 'chargeable_service_id']);
             },
         ]);
     }
@@ -239,5 +226,38 @@ class TimeTracker extends Resource
     public function lenses(Request $request)
     {
         return [];
+    }
+
+    private function getFieldsForActivities(PageTimer $pageTimer)
+    {
+        $fields = [];
+
+        /** @var \CircleLinkHealth\Customer\Entities\ChargeableService[]|Collection $chargeableServices */
+        $chargeableServices = \CircleLinkHealth\Customer\Entities\ChargeableService::whereIn('id', $pageTimer->activities
+            ->pluck('chargeable_service_id'))
+            ->get();
+
+        $len                = $pageTimer->activities->count();
+        $modifiableCsCode   = null;
+        $modifiableDuration = null;
+        for ($i = 0; $i < $len; ++$i) {
+            $activity = $pageTimer->activities[$i];
+            $csCode   = $chargeableServices->firstWhere('id', '=', $activity->chargeable_service_id)->code;
+            $fields[] = Text::make("Activity for $csCode", function () use ($activity) {
+                return $activity->duration;
+            });
+            if ($i === ($len - 1)) {
+                $modifiableCsCode   = $csCode;
+                $modifiableDuration = $activity->duration;
+            }
+        }
+
+        if (sizeof($fields) > 1) {
+            $fields[] = Text::make('NOTE', function () use ($modifiableCsCode, $modifiableDuration) {
+                return "This time tracker entry has activities for multiple chargeable services. You can only modify duration of $modifiableCsCode. Maximum $modifiableDuration seconds.";
+            });
+        }
+
+        return $fields;
     }
 }
