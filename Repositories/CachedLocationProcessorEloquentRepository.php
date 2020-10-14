@@ -15,9 +15,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class CachedLocationProcessorEloquentRepository implements LocationProcessorRepository
 {
-    protected array $cachedLocationPatients  = [];
-    protected array $cachedLocationServices  = [];
-    protected array $queriedLocationPatients = [];
+    protected array $cachedLocationServices = [];
 
     protected array $queriedLocationServices = [];
 
@@ -38,6 +36,11 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
                 ->values()
                 ->toArray()
         );
+    }
+
+    public function enrolledPatients(int $locationId, Carbon $monthYear): EloquentCollection
+    {
+        return $this->repo->enrolledPatients($locationId, $monthYear);
     }
 
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool

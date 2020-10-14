@@ -33,4 +33,6 @@ interface LocationProcessorRepository
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
 
     public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
+    
+    public function enrolledPatients(int $locationId, Carbon $monthYear): Collection;
 }
