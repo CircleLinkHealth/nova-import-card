@@ -1160,6 +1160,10 @@
                     */
 
                     function getNoteBodyExcludingMedications(noteBody) {
+                        if (!noteBody) {
+                            return noteBody;
+                        }
+
                         const medicationsIndex = noteBody.indexOf(MEDICATIONS_SEPARATOR);
 
                         if (medicationsIndex > -1) {
