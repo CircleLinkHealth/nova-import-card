@@ -101,8 +101,17 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
 
     public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
     {
-        return $this->repo->storeUsingServiceId($locationId, $chargeableServiceId, $month, $amount);
-        //todo: update cache
+        $summary = $this->repo->storeUsingServiceId($locationId, $chargeableServiceId, $month, $amount);
+    
+        if ( ! in_array($locationId, $this->queriedLocationServices)) {
+            $this->queryLocationServices($locationId);
+        
+            return $summary;
+        }
+    
+        $this->cachedLocationServices[$locationId]->push($summary);
+    
+        return $summary;
     }
 
     private function getLocationSummaries(int $locationId): ?EloquentCollection
