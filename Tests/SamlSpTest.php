@@ -118,6 +118,8 @@ class SamlSpTest extends CustomerTestCase
         $oneLoginAuth = Mockery::mock(OneLogin_Saml2_Auth::class);
         $oneLoginAuth->shouldReceive('getAttributesWithFriendlyName')
             ->andReturn(['uid' => 'testUser']);
+        $oneLoginAuth->shouldReceive('getNameId')
+            ->andReturn('testing');
         $repo->shouldReceive('getSaml2User')
             ->andReturn(new Saml2User($oneLoginAuth));
 

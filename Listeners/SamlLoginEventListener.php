@@ -19,6 +19,11 @@ use Illuminate\Support\Facades\Log;
 class SamlLoginEventListener
 {
     const IDP_KEY_MAPPINGS = [
+        'testing' => [
+            'use_friendly' => true,
+            'user_id'      => 'uid',
+            'patient_id'   => null,
+        ],
         'samltest' => [
             'use_friendly' => true,
             'user_id'      => 'uid',

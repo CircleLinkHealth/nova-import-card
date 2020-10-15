@@ -8,8 +8,8 @@ namespace CircleLinkHealth\SamlSp\Entities;
 
 class SamlResponseAttributes
 {
-    public string $userId;
     public ?string $patientId;
+    public string $userId;
 
     /**
      * SamlResponseAttributes constructor.
