@@ -63,7 +63,9 @@ class PatientObserver
     {
         if ($this->statusChangedToEnrolled($patient)) {
             $patient->no_call_attempts_since_last_success = 0;
-            ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
+            if ( ! is_null($patient->preferred_contact_location)) {
+                ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
+            }
         }
     }
 
