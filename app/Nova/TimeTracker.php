@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Constants;
+use App\Entities\PatientTime;
 use App\Nova\Filters\BillableTimeFilter;
 use App\Nova\Filters\PageTimerDurationFilter;
 use App\Nova\Filters\TimestampFilter;
@@ -170,7 +171,9 @@ class TimeTracker extends Resource
             }),
 
             Text::make('Service(s)', function ($row) {
-                return implode(', ', $row->activities->map(fn (Activity $a) => $a->chargeableService->code)->toArray());
+                $csCodes = $row->activities->map(fn (Activity $a) => $a->chargeableService->code)->toArray();
+
+                return implode(', ', $csCodes);
             }),
         ], $fields);
     }
@@ -233,10 +236,11 @@ class TimeTracker extends Resource
         $fields = [];
 
         /** @var \CircleLinkHealth\Customer\Entities\ChargeableService[]|Collection $chargeableServices */
-        $chargeableServices = \CircleLinkHealth\Customer\Entities\ChargeableService::whereIn('id', $pageTimer->activities
-            ->pluck('chargeable_service_id'))
-            ->get();
+        $chargeableServices = \CircleLinkHealth\Customer\Entities\ChargeableService
+            ::whereIn('id', $pageTimer->activities->pluck('chargeable_service_id'))
+                ->get();
 
+        $patientTime        = $this->getPatientTime($pageTimer->patient, $chargeableServices);
         $len                = $pageTimer->activities->count();
         $modifiableCsCode   = null;
         $modifiableDuration = null;
@@ -246,18 +250,84 @@ class TimeTracker extends Resource
             $fields[] = Text::make("Activity for $csCode", function () use ($activity) {
                 return $activity->duration;
             });
-            if ($i === ($len - 1)) {
+            if ($i === ($len - 1) && $this->isModifiable($patientTime, $csCode)) {
                 $modifiableCsCode   = $csCode;
                 $modifiableDuration = $activity->duration;
             }
         }
 
-        if (sizeof($fields) > 1) {
+        if ( ! $modifiableCsCode) {
+            $fields[] = Text::make('NOTE', function () use ($modifiableCsCode, $modifiableDuration) {
+                return 'You cannot modify this time tracker entry, because it has time tracked for already fulfilled chargeable services. Please try a more recent one for this patient.';
+            });
+        } elseif (sizeof($fields) > 1) {
             $fields[] = Text::make('NOTE', function () use ($modifiableCsCode, $modifiableDuration) {
                 return "This time tracker entry has activities for multiple chargeable services. You can only modify duration of $modifiableCsCode. Maximum $modifiableDuration seconds.";
             });
         }
 
         return $fields;
+    }
+
+    private function getPatientTime(\CircleLinkHealth\Customer\Entities\User $patient, Collection $chargeableServices): PatientTime
+    {
+        //todo: this should be done with the new ChargeablePatientMonthlySummaryView model
+        $result = new PatientTime();
+        if ( ! $patient) {
+            return $result;
+        }
+
+        $ccmTime = $patient->getCcmTime();
+        $bhiTime = $patient->getBhiTime();
+        if ($ccmTime > 0) {
+            if ($patient->isPcm()) {
+                /** @var \CircleLinkHealth\Customer\Entities\ChargeableService $ccmCs */
+                $pcmCs = $chargeableServices->firstWhere('code', '=', \CircleLinkHealth\Customer\Entities\ChargeableService::PCM);
+                if ($pcmCs) {
+                    $result->setTime($pcmCs->code, $ccmTime);
+                }
+            } else {
+                /** @var \CircleLinkHealth\Customer\Entities\ChargeableService $ccmCs */
+                $ccmCs = $chargeableServices->firstWhere('code', '=', \CircleLinkHealth\Customer\Entities\ChargeableService::CCM);
+                if ($ccmCs) {
+                    $result->setTime($ccmCs->code, $ccmTime > Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS ? Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS : $ccmTime);
+                }
+
+                if ($ccmTime > Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
+                    /** @var \CircleLinkHealth\Customer\Entities\ChargeableService $ccm40Cs */
+                    $ccm40Cs = $chargeableServices->firstWhere('code', '=', \CircleLinkHealth\Customer\Entities\ChargeableService::CCM_PLUS_40);
+                    if ($ccm40Cs) {
+                        $time = $ccmTime > Constants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS ? Constants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS : $ccmTime - Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+                        $result->setTime($ccm40Cs->code, $time);
+                    }
+                }
+                if ($ccmTime > Constants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS) {
+                    /** @var \CircleLinkHealth\Customer\Entities\ChargeableService $ccm60Cs */
+                    $ccm60Cs = $chargeableServices->firstWhere('code', '=', \CircleLinkHealth\Customer\Entities\ChargeableService::CCM_PLUS_60);
+                    if ($ccm60Cs) {
+                        $time = $ccmTime - Constants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS;
+                        $result->setTime($ccm60Cs->code, $time);
+                    }
+                }
+            }
+        }
+        if ($bhiTime > 0) {
+            /** @var \CircleLinkHealth\Customer\Entities\ChargeableService $bhiCs */
+            $bhiCs = $chargeableServices->firstWhere('code', '=', \CircleLinkHealth\Customer\Entities\ChargeableService::BHI);
+            if ($bhiCs) {
+                $result->setTime($bhiCs->code, $bhiTime);
+            }
+        }
+
+        return $result;
+    }
+
+    private function isModifiable(PatientTime $patientTime, string $csCode)
+    {
+        if (\CircleLinkHealth\Customer\Entities\ChargeableService::CCM_PLUS_60 === $csCode) {
+            return true;
+        }
+
+        return ! $patientTime->isFulFilled($csCode);
     }
 }

@@ -42,6 +42,7 @@ class Constants
     const ICD9_NAME                                      = ProblemCodeSystem::ICD9_NAME;
     const MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS = 2400;
     const MONTHLY_BILLABLE_CCM_60_TIME_TARGET_IN_SECONDS = 3600;
+    const MONTHLY_BILLABLE_PCM_TIME_TARGET_IN_SECONDS    = 1800;
 
     const MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS = 1200;
 
