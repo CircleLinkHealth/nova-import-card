@@ -44,6 +44,12 @@ class PatientTime
                 if ($pcmCs) {
                     $result->setTime($pcmCs->code, $ccmTime);
                 }
+            } elseif ( ! $patient->isCcmPlus()) {
+                /** @var ChargeableService $ccmCs */
+                $ccmCs = $chargeableServices->firstWhere('code', '=', ChargeableService::CCM);
+                if ($ccmCs) {
+                    $result->setTime($ccmCs->code, $ccmTime);
+                }
             } else {
                 /** @var ChargeableService $ccmCs */
                 $ccmCs = $chargeableServices->firstWhere('code', '=', ChargeableService::CCM);

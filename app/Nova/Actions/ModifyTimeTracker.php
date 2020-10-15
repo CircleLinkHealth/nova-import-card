@@ -113,10 +113,18 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             ::whereIn('id', $timeRecord->activities->pluck('chargeable_service_id'))
                 ->get();
 
+        if ($chargeableServices->isEmpty()) {
+            return false;
+        }
+
         $patientTime = PatientTime::getForPatient($timeRecord->patient, $chargeableServices);
         /** @var Activity $activity */
         $activity = $timeRecord->activities->sortBy('id')->last();
-        $csCode   = $chargeableServices->firstWhere('id', '=', $activity->chargeable_service_id)->code;
+        if ( ! $activity->chargeable_service_id) {
+            return false;
+        }
+
+        $csCode = $chargeableServices->firstWhere('id', '=', $activity->chargeable_service_id)->code;
 
         return $this->isModifiable($patientTime, $csCode);
     }
@@ -140,16 +148,14 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         $timeRecord->duration = $duration;
         $entriesToSave->push($timeRecord);
 
-        /** @var NurseCareRateLog[] $careRateLogsToModify */
-        $careRateLogsToModify = [];
         /** @var Activity $activity */
         $activity = $timeRecord->activities->sortBy('id')->last();
         if ($activity) {
             $activity->duration = $duration;
-            $entriesToSave->push($timeRecord->activity);
+            $entriesToSave->push($activity);
 
             /** @var NurseCareRateLog $careRateLog */
-            $careRateLogQuery = NurseCareRateLog::whereActivityId($timeRecord->activity->id);
+            $careRateLogQuery = NurseCareRateLog::whereActivityId($activity->id);
             if ( ! $allowAccruedTowards) {
                 $careRateLogQuery->where('ccm_type', '=', 'accrued_after_ccm');
             }
@@ -176,10 +182,10 @@ class ModifyTimeTracker extends Action implements ShouldQueue
 
         $startTime = Carbon::parse($timeRecord->start_time);
         if ($activity) {
-            foreach ($careRateLogsToModify as $careRateLogId => $careRateLogDuration) {
+            if ($careRateLog) {
                 \Artisan::call('nursecareratelogs:remove-time', [
-                    'fromId'              => $careRateLogId,
-                    'newDuration'         => $careRateLogDuration,
+                    'fromId'              => $careRateLog->id,
+                    'newDuration'         => $duration,
                     'allowAccruedTowards' => $allowAccruedTowards,
                 ]);
             }
