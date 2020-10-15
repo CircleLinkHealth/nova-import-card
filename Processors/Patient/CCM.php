@@ -49,4 +49,9 @@ class CCM extends AbstractProcessor
     {
         return false;
     }
+    
+    public function featureIsEnabled(): bool
+    {
+       return true;
+    }
 }

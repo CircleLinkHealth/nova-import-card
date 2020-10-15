@@ -34,4 +34,13 @@ class AWV2 extends AbstractProcessor
     {
         return false;
     }
+    
+    public function featureIsEnabled(): bool
+    {
+        if (isUnitTestingEnv()){
+            return true;
+        }
+        //todo: use feature toggling (package) in next iteration
+        return false;
+    }
 }

@@ -49,4 +49,9 @@ class CCM40 extends AbstractProcessor
     {
         return false;
     }
+    
+    public function featureIsEnabled(): bool
+    {
+        return true;
+    }
 }

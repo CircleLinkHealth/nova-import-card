@@ -38,4 +38,6 @@ interface PatientServiceProcessor
     public function shouldAttach(int $patientId, Carbon $monthYear, PatientProblemForProcessing ...$patientProblems): bool;
 
     public function shouldFulfill(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool;
+    
+    public function featureIsEnabled() : bool;
 }
