@@ -13,7 +13,9 @@ class Saml2Controller extends \Aacotroneo\Saml2\Http\Controllers\Saml2Controller
 {
     public function acs(Saml2Auth $saml2Auth, $idpName)
     {
-        if (app()->environment('staging') && isset($_POST['SAMLResponse'])) {
+        if (config('samlsp.dump_acs_saml_request', false)
+            && app()->environment('staging')
+            && isset($_POST['SAMLResponse'])) {
             if (app()->bound('sentry')) {
                 app('sentry')->captureMessage($_POST['SAMLResponse']);
             }
@@ -54,6 +56,14 @@ class Saml2Controller extends \Aacotroneo\Saml2\Http\Controllers\Saml2Controller
 
     public function sls(Saml2Auth $saml2Auth, $idpName)
     {
+        if (config('samlsp.dump_sls_saml_request', false)
+            && app()->environment('staging')
+            && isset($_GET['SAMLResponse'])) {
+            if (app()->bound('sentry')) {
+                app('sentry')->captureMessage($_GET['SAMLResponse']);
+            }
+        }
+
         return parent::sls($saml2Auth, $idpName);
     }
 }
