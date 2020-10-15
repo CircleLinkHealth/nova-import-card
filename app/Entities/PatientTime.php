@@ -11,10 +11,6 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 
-/**
- * todo: move from ValueObjects folder
- * Class PatientTime.
- */
 class PatientTime
 {
     private Collection $times;
