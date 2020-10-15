@@ -61,11 +61,21 @@ class PatientObserver
 
     public function saving(Patient $patient)
     {
+        $processPatientSummaries = false;
+
+        if ($this->locationChanged($patient)) {
+            $processPatientSummaries = true;
+        }
+
         if ($this->statusChangedToEnrolled($patient)) {
             $patient->no_call_attempts_since_last_success = 0;
             if ( ! is_null($patient->preferred_contact_location)) {
-                ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
+                $processPatientSummaries = true;
             }
+        }
+
+        if ($processPatientSummaries) {
+            ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
         }
     }
 
@@ -127,6 +137,18 @@ class PatientObserver
                 AssignPatientToStandByNurse::assign($patient->user);
             }
         }
+    }
+
+    private function locationChanged(Patient $patient): bool
+    {
+        $oldValue = $patient->getOriginal('preferred_contact_location');
+        $newValue = $patient->preferred_contact_location;
+
+        if ($oldValue != $newValue) {
+            return true;
+        }
+
+        return false;
     }
 
     private function sendUnsuccessfulCallNotificationToPatient(Patient $patient)
