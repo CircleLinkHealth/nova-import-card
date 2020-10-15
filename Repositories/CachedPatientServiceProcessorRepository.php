@@ -11,6 +11,7 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as R
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
@@ -106,7 +107,13 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         return $this->getPatientFromCache($patientId)
             ->ccdProblems
-            ->where('cpmProblem.locationProblemServices.code', $chargeableServiceCode);
+            ->filter(function (Problem $problem) use ($chargeableServiceCode) {
+                if (is_null($problem->cpmProblem)) {
+                    return false;
+                }
+
+                return $problem->cpmProblem->locationChargeableServices->contains('code', $chargeableServiceCode);
+            });
     }
 
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
