@@ -15,15 +15,12 @@ class PatientTime
 {
     private Collection $times;
 
-    /**
-     * PatientTime constructor.
-     */
     public function __construct()
     {
         $this->times = collect();
     }
 
-    public static function getForPatient(User $patient, \Illuminate\Database\Eloquent\Collection $chargeableServices): PatientTime
+    public static function getForPatient(User $patient, Collection $chargeableServices): PatientTime
     {
         //todo: this should be done with the new ChargeablePatientMonthlySummaryView model
         $result = new PatientTime();
