@@ -22,6 +22,11 @@ class G0511 extends AbstractProcessor
         return ChargeableService::GENERAL_CARE_MANAGEMENT;
     }
 
+    public function featureIsEnabled(): bool
+    {
+        return true;
+    }
+
     public function minimumNumberOfCalls(): int
     {
         return 1;
@@ -40,10 +45,5 @@ class G0511 extends AbstractProcessor
     public function requiresPatientConsent(int $patientId): bool
     {
         return false;
-    }
-    
-    public function featureIsEnabled(): bool
-    {
-        return true;
     }
 }

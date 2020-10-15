@@ -15,6 +15,15 @@ class AWV1 extends AbstractProcessor
         return ChargeableService::AWV_INITIAL;
     }
 
+    public function featureIsEnabled(): bool
+    {
+        if (isUnitTestingEnv()) {
+            return true;
+        }
+        //todo: use feature toggling (package) in next iteration
+        return false;
+    }
+
     public function minimumNumberOfCalls(): int
     {
         return 0;
@@ -32,15 +41,6 @@ class AWV1 extends AbstractProcessor
 
     public function requiresPatientConsent(int $patientId): bool
     {
-        return false;
-    }
-    
-    public function featureIsEnabled(): bool
-    {
-        if (isUnitTestingEnv()){
-            return true;
-        }
-        //todo: use feature toggling (package) in next iteration
         return false;
     }
 }
