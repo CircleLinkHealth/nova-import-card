@@ -61,11 +61,21 @@ class PatientObserver
 
     public function saving(Patient $patient)
     {
+        $processPatientSummaries = false;
+
+        if ($this->locationChanged($patient)) {
+            $processPatientSummaries = true;
+        }
+
         if ($this->statusChangedToEnrolled($patient)) {
             $patient->no_call_attempts_since_last_success = 0;
             if ( ! is_null($patient->preferred_contact_location)) {
-                ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
+                $processPatientSummaries = true;
             }
+        }
+
+        if ($processPatientSummaries) {
+            ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
         }
     }
 
@@ -165,6 +175,24 @@ class PatientObserver
             return false;
         }
 
+        return true;
+    }
+    
+    private function locationChanged(Patient $patient): bool
+    {
+        $oldValue = $patient->getOriginal('preferred_contact_location');
+        $newValue = $patient->preferred_contact_location;
+        
+        if (is_null($newValue)) {
+            sendSlackMessage('#billing_alerts', "Patient ({$patient->user_id}) does not have a preferred contact location, please investigate.");
+            
+            return false;
+        }
+        
+        if ($oldValue == $newValue) {
+            return false;
+        }
+        
         return true;
     }
 }
