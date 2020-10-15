@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Tests\Database\Repositories;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceProcessorRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
@@ -28,8 +29,9 @@ class PatientServiceRepositoryTest extends CustomerTestCase
 
     public function test_if_it_checks_if_service_is_available_for_location()
     {
+        ChargeableLocationMonthlySummary::where('location_id', $locationId = $this->patient()->getPreferredContactLocation())->delete();
         (new LocationProcessorEloquentRepository())->store(
-            $locationId = $this->patient()->getPreferredContactLocation(),
+            $locationId,
             $ccmCode = ChargeableService::CCM,
             $startOfMonth = Carbon::now()->startOfMonth()
         );
