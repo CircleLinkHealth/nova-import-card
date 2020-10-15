@@ -7,11 +7,11 @@
 namespace CircleLinkHealth\CcmBilling\Tests\Database\Repositories;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceProcessorRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
-use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceProcessorRepositoryInterface;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Tests\CustomerTestCase;
 
@@ -50,7 +50,6 @@ class PatientServiceRepositoryTest extends CustomerTestCase
         self::assertFalse($this->repo->requiresPatientConsent($patientId, $bhiCode, $startOfMonth));
     }
 
-    //todo: do we need an extended Customer Test case? an extended test case would include ability to pull month, all kinds of repos etc.
     public function test_it_checks_if_summary_is_attached()
     {
         $this->repo->store($patientId = $this->patient()->id, $ccmCode = ChargeableService::CCM, $startOfMonth = Carbon::now()->startOfMonth());

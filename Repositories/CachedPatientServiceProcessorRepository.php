@@ -109,6 +109,16 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->where('cpmProblem.locationProblemServices.code', $chargeableServiceCode);
     }
 
+    public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        return $this->getPatientFromCache($patientId)
+            ->chargeableMonthlySummaries
+            ->where('chargeableService.code', $chargeableServiceCode)
+            ->where('chargeable_month', $month)
+            ->where('requires_patient_consent', true)
+            ->count() > 0;
+    }
+
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         $summary = $this->repo->setPatientConsented($patientId, $chargeableServiceCode, $month);
@@ -131,12 +141,20 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         $summary = $this->repo->store($patientId, $chargeableServiceCode, $month, $requiresPatientConsent);
 
         $patient = $this->getPatientFromCache($patientId);
+
+        //todo: is the possibily of duplicates with different id real?
         if ($patient->chargeableMonthlySummaries->contains('id', $summary->id)) {
             $patient->chargeableMonthlySummaries->forgetUsingModelKey('id', $summary->id);
         }
 
         $patient->chargeableMonthlySummaries
             ->push($summary);
+
+        if ( ! $patient->chargeableMonthlySummariesView->contains('id', $summary->id)) {
+            $patient->chargeableMonthlySummariesView->push(
+                ChargeablePatientMonthlySummaryView::firstWhere('id', $summary->id)
+            );
+        }
 
         return $summary;
     }

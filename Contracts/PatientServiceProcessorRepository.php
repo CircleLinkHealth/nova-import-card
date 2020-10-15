@@ -33,4 +33,6 @@ interface PatientServiceProcessorRepository
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary;
     
     public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode) : Collection;
+    
+    public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
 }
