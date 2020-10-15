@@ -31,6 +31,10 @@ class Saml2Controller extends \Aacotroneo\Saml2\Http\Controllers\Saml2Controller
 
     public function logout(Saml2Auth $saml2Auth, Request $request)
     {
+        if (app()->bound('sentry')) {
+            app('sentry')->captureMessage('logout called'.json_encode(request()->all()));
+        }
+
         parent::logout($saml2Auth, $request);
     }
 
@@ -56,6 +60,10 @@ class Saml2Controller extends \Aacotroneo\Saml2\Http\Controllers\Saml2Controller
 
     public function sls(Saml2Auth $saml2Auth, $idpName)
     {
+        if (app()->bound('sentry')) {
+            app('sentry')->captureMessage('sls called'.json_encode(request()->all()));
+        }
+
         if (config('samlsp.dump_sls_saml_request', false)
             && app()->environment('staging')
             && isset($_GET['SAMLResponse'])) {
