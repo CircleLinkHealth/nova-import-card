@@ -4,12 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
+use Illuminate\Database\Migrations\Migration;
 
 class DeleteExistingAwvSummaries extends Migration
 {

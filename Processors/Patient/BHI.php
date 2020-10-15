@@ -17,6 +17,11 @@ class BHI extends AbstractProcessor
         return ChargeableService::BHI;
     }
 
+    public function featureIsEnabled(): bool
+    {
+        return true;
+    }
+
     public function minimumNumberOfCalls(): int
     {
         return 1;
@@ -37,10 +42,5 @@ class BHI extends AbstractProcessor
         return ! User::hasBhiConsent()
             ->where('id', $patientId)
             ->exists();
-    }
-    
-    public function featureIsEnabled(): bool
-    {
-        return true;
     }
 }

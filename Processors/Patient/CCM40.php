@@ -20,6 +20,11 @@ class CCM40 extends AbstractProcessor
         return ChargeableService::CCM_PLUS_40;
     }
 
+    public function featureIsEnabled(): bool
+    {
+        return true;
+    }
+
     public function minimumNumberOfCalls(): int
     {
         return 1;
@@ -48,10 +53,5 @@ class CCM40 extends AbstractProcessor
     public function requiresPatientConsent(int $patientId): bool
     {
         return false;
-    }
-    
-    public function featureIsEnabled(): bool
-    {
-        return true;
     }
 }

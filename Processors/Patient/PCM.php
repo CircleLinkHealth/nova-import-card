@@ -23,6 +23,11 @@ class PCM extends AbstractProcessor
         return ChargeableService::PCM;
     }
 
+    public function featureIsEnabled(): bool
+    {
+        return true;
+    }
+
     public function minimumNumberOfCalls(): int
     {
         return 1;
@@ -41,10 +46,5 @@ class PCM extends AbstractProcessor
     public function requiresPatientConsent(int $patientId): bool
     {
         return false;
-    }
-    
-    public function featureIsEnabled(): bool
-    {
-        return true;
     }
 }
