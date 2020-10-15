@@ -34,10 +34,10 @@ trait EnrollableNotificationContent
             $practiceName = '???';
         }
 
-        $line1 = "Hi, it's $providerNameAndType office at $practiceName! ";
+        $line1 = "Hi, it's $providerNameAndType's office at $practiceName! ";
 
         if ($providerNameAndType === $practiceName) {
-            $line1 = "Hi, it's $providerNameAndType office! ";
+            $line1 = "Hi, it's $providerNameAndType's office! ";
         }
 
         if (empty($providerName)) {
@@ -69,22 +69,22 @@ trait EnrollableNotificationContent
     private function getEnrolleeMessageContent(User $notifiable, bool $isReminder)
     {
         $provider = $notifiable->billingProviderUser();
-        
+
         if (empty($provider)) {
             throw new \InvalidArgumentException("User[$notifiable->id] does not have a billing provider.");
         }
-        
+
         $providerNameAndType = $provider->primaryPractice->display_name;
-        
+
         $providerLastName  = ucwords($provider->last_name);
         $providerSpecialty = Helpers::providerMedicalType($provider->suffix);
 
         if ( ! empty($providerSpecialty)) {
-            $providerNameAndType = "$providerSpecialty $providerLastName's";
+            $providerNameAndType = "$providerSpecialty $providerLastName";
         }
 
         $line2 = $isReminder
-            ? "Just circling back on $providerNameAndType new Personalized Care program. Please enroll or get more info here: "
+            ? "Just circling back on $providerNameAndType's new Personalized Care program. Please enroll or get more info here: "
             : "$providerNameAndType has invested in a new wellness program for you. Please enroll or get more info here: ";
 
         return [
