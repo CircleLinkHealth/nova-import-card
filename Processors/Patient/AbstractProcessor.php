@@ -85,6 +85,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
 
     public function shouldAttach(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
+        if ( ! $this->featureIsEnabled()) {
+            return false;
+        }
+
         if ($this->clashesWithHigherOrderServices($patientId, $chargeableMonth)) {
             return false;
         }

@@ -38,4 +38,9 @@ class BHI extends AbstractProcessor
             ->where('id', $patientId)
             ->exists();
     }
+    
+    public function featureIsEnabled(): bool
+    {
+        return true;
+    }
 }
