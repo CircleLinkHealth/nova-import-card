@@ -2217,9 +2217,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole(['care-center', 'care-center-external']);
     }
 
-    public function isCcm()
+    public function isCcm(): bool
     {
-        return $this->ccmNoOfMonitoredProblems() >= 1;
+        return PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM) || PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM);
     }
 
     public function isCCMCountable(): bool
