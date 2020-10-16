@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "54238c143257009493d33e52cc7400bf",
+    "content-hash": "ef86d5dda27d7d630d6a5f367eb01ddd",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1543,11 +1543,11 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "dev-billing-staging-fixes",
+            "version": "v1.3.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "38b018637244ee749187ef5082405760ac71a775"
+                "reference": "7cbe0341391e792925cdae60a5dcfe559d436f0f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1569,7 +1569,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-05T14:21:17+00:00"
+            "time": "2020-09-04T14:59:12+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1779,7 +1779,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "788b40d362e8641791a79e28449e66ea0d4679af"
+                "reference": "6e83c3698fdbd6258d8b7dfecc159834a2ff0ee1"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1804,7 +1804,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-07T18:51:10+00:00"
+            "time": "2020-10-16T12:01:03+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -17654,7 +17654,6 @@
         "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/patientapi-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/timetracking-module": 20,
         "heroku/heroku-buildpack-php": 20,
