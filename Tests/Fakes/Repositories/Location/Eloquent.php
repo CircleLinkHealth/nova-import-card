@@ -51,10 +51,10 @@ class Eloquent implements LocationProcessorRepository
         return $locationProcessorsForMonth['available_service_processors'] ?? new AvailableServiceProcessors();
     }
 
-    public function hasServicesForMonth(int $locationId, Carbon $month): bool
+    public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
     {
-        return $this->summaries
-            ->where('location_id', $locationId)
+        return $this->summaries->where('location_id', $locationId)
+            ->whereIn('chargeableService.code', $chargeableServiceCodes)
             ->where('chargeable_month', $month)
             ->isNotEmpty();
     }
@@ -157,5 +157,18 @@ class Eloquent implements LocationProcessorRepository
             })
             ->unique()
             ->count();
+    }
+    
+    public function servicesExistForMonth(int $locationId, Carbon $month): bool
+    {
+        return $this->summaries
+            ->where('location_id', $locationId)
+            ->where('chargeable_month', $month)
+            ->isNotEmpty();
+    }
+    
+    public function enrolledPatients(int $locationId, Carbon $monthYear): EloquentCollection
+    {
+        // TODO: Implement enrolledPatients() method.
     }
 }

@@ -200,4 +200,14 @@ class Eloquent implements PatientServiceProcessorRepository
             ->where('chargeable_month', $month)
             ->count();
     }
+    
+    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): EloquentCollection
+    {
+        // TODO: Implement patientProblemsOfServiceCode() method.
+    }
+    
+    public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        // TODO: Implement requiresPatientConsent() method.
+    }
 }
