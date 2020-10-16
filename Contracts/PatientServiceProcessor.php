@@ -19,6 +19,8 @@ interface PatientServiceProcessor
 
     public function code(): string;
 
+    public function featureIsEnabled(): bool;
+
     public function fulfill(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary;
 
     public function isAttached(int $patientId, Carbon $chargeableMonth): bool;

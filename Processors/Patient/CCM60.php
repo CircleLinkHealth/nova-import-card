@@ -20,6 +20,11 @@ class CCM60 extends AbstractProcessor
         return ChargeableService::CCM_PLUS_60;
     }
 
+    public function featureIsEnabled(): bool
+    {
+        return true;
+    }
+
     public function minimumNumberOfCalls(): int
     {
         return 1;

@@ -20,6 +20,11 @@ class CCM extends AbstractProcessor
         return ChargeableService::CCM;
     }
 
+    public function featureIsEnabled(): bool
+    {
+        return true;
+    }
+
     public function minimumNumberOfCalls(): int
     {
         return 1;

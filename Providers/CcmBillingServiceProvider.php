@@ -45,6 +45,7 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
      */
     public function register()
     {
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->app->bind(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
 
         $this->app->singleton(PatientServiceRepositoryInterface::class, function ($app) {
