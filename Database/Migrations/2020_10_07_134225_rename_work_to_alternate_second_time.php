@@ -7,7 +7,7 @@
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use Illuminate\Database\Migrations\Migration;
 
-class RenamePhoneNumberWorkType extends Migration
+class RenameWorkToAlternateSecondTime extends Migration
 {
     /**
      * Reverse the migrations.
