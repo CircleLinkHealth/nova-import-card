@@ -139,6 +139,24 @@ class PatientObserver
         }
     }
 
+    private function locationChanged(Patient $patient): bool
+    {
+        $oldValue = $patient->getOriginal('preferred_contact_location');
+        $newValue = $patient->preferred_contact_location;
+
+        if (is_null($newValue)) {
+            sendSlackMessage('#billing_alerts', "Patient ({$patient->user_id}) does not have a preferred contact location, please investigate.");
+
+            return false;
+        }
+
+        if ($oldValue == $newValue) {
+            return false;
+        }
+
+        return true;
+    }
+
     private function sendUnsuccessfulCallNotificationToPatient(Patient $patient)
     {
         if ( ! isUnsuccessfulCallPatientNotificationEnabled()) {
