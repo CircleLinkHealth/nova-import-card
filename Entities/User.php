@@ -1825,6 +1825,38 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
+        /** @var PhoneNumber $primary */
+        $primary       = $this->phoneNumbers->where('is_primary', '=', 1)->first();
+        $primaryResult = $this->getIfValidForSms($primary);
+        if ( ! empty($primaryResult)) {
+            return $primaryResult;
+        }
+
+        /** @var PhoneNumber $primary */
+        $mobile       = $this->phoneNumbers->where('type', '=', PhoneNumber::MOBILE)->first();
+        $mobileResult = $this->getIfValidForSms($mobile);
+        if ( ! empty($mobileResult)) {
+            return $mobileResult;
+        }
+
+        $validCellNumbers = $this->phoneNumbers
+            ->whereNotNull('number')->where('number', '!=', '')
+            ->map(function ($phone) {
+                return $this->getIfValidForSms($phone);
+            })
+            ->filter()
+            ->unique()
+            ->values();
+
+        return $validCellNumbers->first() ?? '';
+    }
+
+    public function getPhoneNumberForSms_old(): string
+    {
+        if ( ! $this->phoneNumbers) {
+            return '';
+        }
+
         $validCellNumbers = $this->phoneNumbers
             ->whereNotNull('number')->where('number', '!=', '')
             ->map(function ($phone) {
@@ -2074,7 +2106,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->phoneNumbers) {
             return '';
         }
-        $phoneNumber = $this->phoneNumbers->where('type', 'work')->first();
+        $phoneNumber = $this->phoneNumbers->where('type', PhoneNumber::ALTERNATE)->first();
         if ($phoneNumber) {
             return $phoneNumber->number;
         }
@@ -2499,7 +2531,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return true;
     }
 
-    public function patientList(bool $showPracticePatients = true)
+    public function patientList(bool $showPracticePatients = true, array $carePlanStatus = null)
     {
         return User::intersectPracticesWith($this)
             ->ofType('participant')
@@ -2530,6 +2562,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                             'type',
                             [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
                         );
+                });
+            })
+            ->when( ! is_null($carePlanStatus), function ($query) use ($carePlanStatus) {
+                $query->whereHas('carePlan', function ($subQuery) use ($carePlanStatus) {
+                    $subQuery->whereIn('status', $carePlanStatus);
                 });
             })
             ->get();
@@ -4026,14 +4063,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->phoneNumbers) {
             return '';
         }
-        $phoneNumber = $this->phoneNumbers->where('type', 'work')->first();
+        $phoneNumber = $this->phoneNumbers->where('type', PhoneNumber::ALTERNATE)->first();
         if ($phoneNumber) {
             $phoneNumber->number = $value;
         } else {
             $phoneNumber          = new PhoneNumber();
             $phoneNumber->user_id = $this->id;
             $phoneNumber->number  = $value;
-            $phoneNumber->type    = 'work';
+            $phoneNumber->type    = PhoneNumber::ALTERNATE;
         }
         $phoneNumber->save();
 
@@ -4256,6 +4293,30 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 return $number;
             }
         }
+    }
+
+    private function getIfValidForSms(PhoneNumber $number = null)
+    {
+        if (is_null($number)) {
+            return false;
+        }
+        $phoneNumber = \Propaganistas\LaravelPhone\PhoneNumber::make($number->number, ['US', 'CY']);
+        try {
+            //isOfType might throw, in that case we do not use the number
+            if ( ! isProductionEnv() || $phoneNumber->isOfType('mobile')) {
+                if ($this->isCypriotNumber($phoneNumber)) {
+                    return $number->number;
+                }
+
+                return formatPhoneNumberE164($number->number);
+            }
+        } catch (NumberParseException $e) {
+            Log::warning($e->getMessage());
+
+            return false;
+        }
+
+        return false;
     }
 
     private function isCypriotNumber(\Propaganistas\LaravelPhone\PhoneNumber $phoneNumber)

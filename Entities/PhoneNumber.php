@@ -95,7 +95,7 @@ class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
         return [
             1 => PhoneNumber::HOME,
             2 => PhoneNumber::MOBILE,
-            3 => PhoneNumber::WORK,
+            3 => PhoneNumber::ALTERNATE,
         ];
     }
 
