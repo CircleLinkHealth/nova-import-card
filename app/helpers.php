@@ -2153,33 +2153,6 @@ if ( ! function_exists('minDaysPastForCareAmbassadorNextAttempt')) {
         return (int) AppConfig::pull($key, 3);
     }
 }
-if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
-    /**
-     * @param mixed $practiceId
-     */
-    function complexAttestationRequirementsEnabledForPractice($practiceId): bool
-    {
-        $key = 'complex_attestation_requirements_for_practice';
-
-        $val = AppConfig::pull($key, null);
-        if (null === $val) {
-            AppConfig::set($key, '');
-
-            $practiceIds = [];
-        } else {
-            $practiceIds = explode(',', $val);
-        }
-
-        return in_array($practiceId, $practiceIds) || in_array('all', $practiceIds);
-    }
-}
-
-if ( ! function_exists('isCpm')) {
-    function isCpm()
-    {
-        return 'CarePlan Manager' === config('app.name');
-    }
-}
 
 if ( ! function_exists('opsDashboardAlertWatchers')) {
     function opsDashboardAlertWatchers()
