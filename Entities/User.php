@@ -2251,7 +2251,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function isCcm(): bool
     {
-        return PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM) || PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM);
+        return PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM) || PatientIsOfServiceCode::execute($this->id, ChargeableService::PCM);
     }
 
     public function isCCMCountable(): bool

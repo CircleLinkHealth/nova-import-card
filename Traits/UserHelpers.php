@@ -346,7 +346,7 @@ trait UserHelpers
 
         $patient->patientInfo->ccm_status = Patient::ENROLLED;
         $patient->patientInfo->save();
-        $cpmProblems = CpmProblem::get();
+        $cpmProblems = CpmProblem::notGenericDiabetes()->get();
 
         //$pcmOnly means one ccm condition only
         if ($pcmOnly) {
