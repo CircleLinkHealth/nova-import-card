@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.158.7",
+            "version": "3.158.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "9afc422ad4ef0f1de9fa2a0be4b856c1dfa31123"
+                "reference": "6f68f8f3b459166e96e2ba46cd720668f14255e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9afc422ad4ef0f1de9fa2a0be4b856c1dfa31123",
-                "reference": "9afc422ad4ef0f1de9fa2a0be4b856c1dfa31123",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6f68f8f3b459166e96e2ba46cd720668f14255e2",
+                "reference": "6f68f8f3b459166e96e2ba46cd720668f14255e2",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-10-15T18:16:19+00:00"
+            "time": "2020-10-16T18:15:17+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "cba195748c957645a82ea5b000dd7da479ec890f"
+                "reference": "d190f3890d35e2afe52818f3f432ea23562cedaa"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-16T17:54:28+00:00"
+            "time": "2020-10-17T12:23:30+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1265,7 +1265,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f690e9c4059366f022cf6dc0e7121c41dadfa73c"
+                "reference": "003a18ea166b9f2f5679c173fd2aa4ec7cc60652"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-16T11:56:29+00:00"
+            "time": "2020-10-17T12:23:09+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -3495,16 +3495,16 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.14.2",
+            "version": "v1.14.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "9d82b20a07ca560a5075e24ca8ac5721bc8c961d"
+                "reference": "c1503299c779af0cbc99b43788f75930988852cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/9d82b20a07ca560a5075e24ca8ac5721bc8c961d",
-                "reference": "9d82b20a07ca560a5075e24ca8ac5721bc8c961d",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/c1503299c779af0cbc99b43788f75930988852cf",
+                "reference": "c1503299c779af0cbc99b43788f75930988852cf",
                 "shasum": ""
             },
             "require": {
@@ -3543,7 +3543,7 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2020-10-14T16:58:18+00:00"
+            "time": "2020-10-16T21:33:48+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -14354,25 +14354,25 @@
         },
         {
             "name": "filp/whoops",
-            "version": "2.7.3",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "5d5fe9bb3d656b514d455645b3addc5f7ba7714d"
+                "reference": "fa50d9db1c0c2fae99cf988d27023effda5524a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/5d5fe9bb3d656b514d455645b3addc5f7ba7714d",
-                "reference": "5d5fe9bb3d656b514d455645b3addc5f7ba7714d",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/fa50d9db1c0c2fae99cf988d27023effda5524a3",
+                "reference": "fa50d9db1c0c2fae99cf988d27023effda5524a3",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.5.9 || ^7.0",
+                "php": "^5.5.9 || ^7.0 || ^8.0",
                 "psr/log": "^1.0.1"
             },
             "require-dev": {
                 "mockery/mockery": "^0.9 || ^1.0",
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0",
+                "phpunit/phpunit": "^4.8.36 || ^5.7.27 || ^6.5.14 || ^7.5.20 || ^8.5.8 || ^9.3.3",
                 "symfony/var-dumper": "^2.6 || ^3.0 || ^4.0 || ^5.0"
             },
             "suggest": {
@@ -14382,7 +14382,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.6-dev"
+                    "dev-master": "2.7-dev"
                 }
             },
             "autoload": {
@@ -14411,7 +14411,7 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2020-06-14T09:00:00+00:00"
+            "time": "2020-10-17T09:00:00+00:00"
         },
         {
             "name": "friendsofphp/php-cs-fixer",
