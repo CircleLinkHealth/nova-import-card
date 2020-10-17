@@ -50,8 +50,9 @@ class ProcessPatientSummaries
 
     private function process()
     {
-        if (! isset($this->patientDTO) || is_null($this->patientDTO)) {
+        if ( ! isset($this->patientDTO) || is_null($this->patientDTO)) {
             sendSlackMessage('#billing_alerts', "Patient({$this->patientId}) Billing Data are invalid. Aborting Processing. Please investigate");
+
             return;
         }
         $this->processor->process($this->patientDTO);
