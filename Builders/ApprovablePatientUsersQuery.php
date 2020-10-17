@@ -30,8 +30,8 @@ trait ApprovablePatientUsersQuery
             },
             'billingProvider.user',
             'patientInfo.location.chargeableServiceSummaries' => function ($q) use ($monthYear) {
-                $q->with('chargeableService')
-                    ->createdOnIfNotNull($monthYear);
+                $q->with(['chargeableService'])
+                    ->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
             'ccdProblems' => function ($problem) {
                 $problem->isBillable();
