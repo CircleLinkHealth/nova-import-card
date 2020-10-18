@@ -27,7 +27,7 @@ class AttestationRequirements
 
     public function execute(): AttestationRequirementsDTO
     {
-        $this->setPatient()
+        return $this->setPatient()
             ->isEnabled()
             ->hasCcm()
             ->hasPcm()
@@ -85,7 +85,7 @@ class AttestationRequirements
 
     private function hasPcm(): self
     {
-        $this->dto->setHasCcm(
+        $this->dto->setHasPcm(
             PatientIsOfServiceCode::execute($this->patientId, ChargeableService::PCM)
         );
 
