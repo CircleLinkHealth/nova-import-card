@@ -2223,6 +2223,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return false;
         }
 
+        if (empty($this->getPreferredContactLocation())) {
+            return false;
+        }
+
         return \Cache::remember("user:$this->id:is_bhi", 5, function () {
             return PatientIsOfServiceCode::execute($this->id, ChargeableService::BHI);
         });
@@ -2283,12 +2287,23 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     /**
      * Returns true if the patient has CCM and the patient's practice has G2058 chargeable service code enabled.
-     *
-     * @return bool
      */
-    public function isCcmPlus()
+    public function isCcmPlus(): bool
     {
-        return $this->isCcm() && LocationServices::hasCCMPlusServiceCode($this->getPreferredContactLocation(), true);
+        if (is_null($this->id)) {
+            return false;
+        }
+
+        if ( ! $this->isParticipant()) {
+            return false;
+        }
+
+        if (empty($this->getPreferredContactLocation())) {
+            return false;
+        }
+
+        return PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM)
+            && LocationServices::hasCCMPlusServiceCode($this->getPreferredContactLocation(), true);
     }
 
     /**
