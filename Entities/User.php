@@ -2604,22 +2604,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(PatientNurse::class, 'patient_user_id');
     }
 
-    public function patientProblemsForBillingProcessing(): Collection
-    {
-        if ( ! $this->relationLoaded('ccdProblems')) {
-            $this->load(['ccdProblems' => function ($problems) {
-                $problems->isBillable();
-            }]);
-        }
-
-        return  $this->ccdProblems->map(function (Problem $p) {
-            return (new PatientProblemForProcessing())
-                ->setId($p->id)
-                ->setCode($p->icd10Code())
-                ->setServiceCodes($p->chargeableServiceCodesForLocation($this->patientInfo->preferred_contact_location));
-        });
-    }
-
     public function patientSummaries()
     {
         return $this->hasMany(PatientMonthlySummary::class, 'patient_id');
