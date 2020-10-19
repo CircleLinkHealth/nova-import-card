@@ -32,6 +32,8 @@ class PatientObserver
 
     public function saved(Patient $patient)
     {
+        $this->processPatientSummariesIfYouShould($patient);
+
         if ($patient->isDirty('ccm_status')) {
             if (Patient::UNREACHABLE === $patient->ccm_status
                 && ! $patient->user->hasRole('survey-only')) {
@@ -61,21 +63,8 @@ class PatientObserver
 
     public function saving(Patient $patient)
     {
-        $processPatientSummaries = false;
-
-        if ($this->locationChanged($patient)) {
-            $processPatientSummaries = true;
-        }
-
         if ($this->statusChangedToEnrolled($patient)) {
             $patient->no_call_attempts_since_last_success = 0;
-            if ( ! is_null($patient->preferred_contact_location)) {
-                $processPatientSummaries = true;
-            }
-        }
-
-        if ($processPatientSummaries) {
-            ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
         }
     }
 
@@ -155,6 +144,17 @@ class PatientObserver
         }
 
         return true;
+    }
+
+    private function processPatientSummariesIfYouShould(Patient $patient): void
+    {
+        if (is_null($patient->preferred_contact_location)) {
+            return;
+        }
+
+        if ($this->locationChanged($patient) || $this->statusChangedToEnrolled($patient)) {
+            ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
+        }
     }
 
     private function sendUnsuccessfulCallNotificationToPatient(Patient $patient)
