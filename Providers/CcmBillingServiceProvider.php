@@ -39,6 +39,7 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
             LocationProcessorRepository::class,
             LocationProblemServiceRepositoryInterface::class,
             PatientProcessorEloquentRepositoryInterface::class,
+            BillingCache::class,
         ];
     }
 
@@ -50,23 +51,8 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->app->bind(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
 
-        $this->app->singleton(PatientServiceRepositoryInterface::class, function ($app) {
-            //todo: check global request object too?
-            if (Auth::check()) {
-                return $app->make(CachedPatientServiceProcessorRepository::class);
-            }
-
-            return $app->make(PatientServiceProcessorRepository::class);
-        });
-
-        $this->app->singleton(LocationProcessorRepository::class, function ($app) {
-            if (Auth::check()) {
-                return $app->make(CachedLocationProcessorEloquentRepository::class);
-            }
-
-            return $app->make(LocationProcessorEloquentRepository::class);
-        });
-
+        $this->app->singleton(PatientServiceRepositoryInterface::class, CachedPatientServiceProcessorRepository::class);
+        $this->app->singleton(LocationProcessorRepository::class, CachedLocationProcessorEloquentRepository::class);
         $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
         $this->app->singleton(PatientProcessorEloquentRepositoryInterface::class, PatientProcessorEloquentRepository::class);
         $this->app->singleton(BillingCache::class, BillingDataCache::class);
