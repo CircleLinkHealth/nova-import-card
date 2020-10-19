@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Traits;
 
 use App\Call;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -392,6 +393,7 @@ trait UserHelpers
             }
         }
 
+        app(PatientServiceProcessorRepository::class)->reloadPatientProblems($patient->id);
         ProcessSinglePatientMonthlyServices::dispatch($patient->id);
 
         return $patient;

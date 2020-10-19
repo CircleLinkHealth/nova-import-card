@@ -662,7 +662,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function billableProblems()
     {
         $genericDiabetes = \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', 'Diabetes')->firstOrFail();
-
+        //todo: use billing repo
         return $this->ccdProblems()
             ->whereNotNull('cpm_problem_id')
             ->when($genericDiabetes, function ($p) use ($genericDiabetes) {
@@ -2775,7 +2775,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function problemsWithIcd10Code()
     {
         $billableProblems = new Collection();
-
+        //todo: billing repo
         $ccdProblems = $this->ccdProblems()
             ->with('icd10Codes')
             ->with('cpmProblem')
