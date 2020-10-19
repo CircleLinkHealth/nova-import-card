@@ -36,4 +36,5 @@ interface PatientServiceProcessorRepository
     
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
     public function reloadPatientProblems(int $patientId): void;
+    public function reloadPatientSummaryViews(int $patientId, Carbon $month):void;
 }

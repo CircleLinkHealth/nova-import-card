@@ -141,4 +141,9 @@ class PatientServiceProcessorRepository implements Repository
     {
         // TODO: Implement reloadPatientProblems() method.
     }
+    
+    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
+    {
+        // TODO: Implement reloadPatientSummaryViews() method.
+    }
 }

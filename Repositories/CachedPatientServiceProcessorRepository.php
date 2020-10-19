@@ -7,25 +7,25 @@
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Caches\BillingCache;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as RepositoryInterface;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Collection;
 
 class CachedPatientServiceProcessorRepository implements RepositoryInterface
 {
-    protected Collection $cache;
+    protected BillingCache $cache;
 
     protected array $queriedPatients = [];
 
     protected PatientServiceProcessorRepository $repo;
 
-    public function __construct()
+    public function __construct(BillingCache $cache)
     {
-        $this->cache = collect([]);
+        $this->cache = $cache;
         $this->repo  = new PatientServiceProcessorRepository();
     }
 
@@ -116,6 +116,16 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             });
     }
 
+    public function reloadPatientProblems(int $patientId): void
+    {
+        $this->getPatientFromCache($patientId)
+            ->load(['ccdProblems' => function ($problem) {
+                $problem->isBillable()
+//                    ->withPatientLocationProblemChargeableServices()
+                ;
+            }]);
+    }
+
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         return $this->getPatientFromCache($patientId)
@@ -158,10 +168,12 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->push($summary);
 
         if ( ! $patient->chargeableMonthlySummariesView->contains('id', $summary->id)) {
-            $patient->chargeableMonthlySummariesView->push(
-                ChargeablePatientMonthlySummaryView::firstWhere('id', $summary->id)
-            );
+            $patient->chargeableMonthlySummariesView->forgetUsingModelKey('id', $summary->id);
         }
+
+        $patient->chargeableMonthlySummariesView->push(
+            ChargeablePatientMonthlySummaryView::firstWhere('id', $summary->id)
+        );
 
         return $summary;
     }
@@ -170,7 +182,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $this->retrievePatientDataIfYouMust($patientId);
 
-        $patient = $this->cache->firstWhere('id', $patientId);
+        $patient = $this->cache->getPatient($patientId);
 
         if (is_null($patient)) {
             throw new \Exception("Could not find Patient with id: $patientId. Billing Processing aborted.");
@@ -189,17 +201,25 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
 
     private function queryPatientData(int $patientId)
     {
-        $this->cache->push($this->repo->getPatientWithBillingDataForMonth($patientId));
+        $this->cache->setPatientInCache($this->repo->getPatientWithBillingDataForMonth($patientId));
 
-        $this->queriedPatients[] = $patientId;
+        $this->cache->setQueriedPatient($patientId);
     }
 
     private function retrievePatientDataIfYouMust(int $patientId): void
     {
-        if (in_array($patientId, $this->queriedPatients)) {
+        if ($this->cache->patientWasQueried($patientId)) {
             return;
         }
 
         $this->queryPatientData($patientId);
+    }
+    
+    public function reloadPatientSummaryViews(int $patientId, Carbon $month):void
+    {
+        $this->getPatientFromCache($patientId)
+            ->load(['chargeableMonthlySummariesView' => function ($q) use ($month) {
+                $q->createdOnIfNotNull($month, 'chargeable_month');
+        }]);
     }
 }

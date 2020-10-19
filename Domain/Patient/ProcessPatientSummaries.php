@@ -108,6 +108,10 @@ class ProcessPatientSummaries
         $this->patientUser = $this->repo
             ->getPatientWithBillingDataForMonth($this->patientId, $this->month);
 
+        if (isUnitTestingEnv()) {
+            $this->repo->reloadPatientSummaryViews($this->patientId, $this->month);
+        }
+
         return $this;
     }
 }

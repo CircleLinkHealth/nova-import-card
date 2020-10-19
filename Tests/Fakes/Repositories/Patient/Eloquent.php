@@ -215,4 +215,9 @@ class Eloquent implements PatientServiceProcessorRepository
     {
         // TODO: Implement reloadPatientProblems() method.
     }
+    
+    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
+    {
+        // TODO: Implement reloadPatientSummaryViews() method.
+    }
 }
