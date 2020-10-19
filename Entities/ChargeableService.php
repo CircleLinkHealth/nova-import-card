@@ -87,10 +87,13 @@ class ChargeableService extends BaseModel
     const GENERAL_CARE_MANAGEMENT = 'G0511';
 
     const PCM           = 'G2065';
+    const RPM           = 'CPT 99457';
+    const RPM40         = 'CPT 99458';
     const SOFTWARE_ONLY = 'Software-Only';
 
     protected $fillable = [
         'code',
+        'display_name',
         'description',
         'amount',
     ];
