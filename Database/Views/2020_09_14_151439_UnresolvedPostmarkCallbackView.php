@@ -5,6 +5,7 @@
  */
 
 use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SqlViews\BaseSqlView;
 
 class UnresolvedPostmarkCallbackView extends BaseSqlView
@@ -20,6 +21,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         $multiplePatientsMatched     = PostmarkInboundCallbackMatchResults::MULTIPLE_PATIENT_MATCHES;
         $noNameSelfMatch             = PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
         $notConsentedAndCAUnassigned = PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_UNASSIGNED;
+        $toCall = Enrollee::TO_CALL;
 
         return \DB::statement("
         CREATE VIEW {$this->getViewName()} AS
@@ -50,13 +52,19 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         AND c.sub_type = 'Call Back'
         THEN true
         ELSE false
-        END as resolved
+        END as resolved,
+        
+        CASE WHEN e.status = '$toCall' AND e.care_ambassador_user_id
+        THEN true
+        ELSE false
+        END as assigned_to_ca
         
         FROM
             unresolved_postmark_callbacks upc
            
             left join calls c on upc.user_id = c.inbound_cpm_id
             left join postmark_inbound_mail p on upc.postmark_id = p.id
+            left join enrollees e on upc.user_id = e.user_id
          
          WHERE 0 = (SELECT COUNT(c2.id)
              FROM calls c2
