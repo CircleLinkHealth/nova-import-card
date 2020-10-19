@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -63,7 +64,7 @@ class LocationProblemServiceDatabaseTest extends CustomerTestCase
 
         self::assertTrue(
             is_a(
-                $patientProblemForProcessing = $this->patient()->patientProblemsForBillingProcessing()->first(),
+                $patientProblemForProcessing = collect(PatientProblemsForBillingProcessing::get($this->patient()->id))->first(),
                 PatientProblemForProcessing::class
             )
         );

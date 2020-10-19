@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\User;
 
 class ProcessPatientSummaries
@@ -91,7 +92,7 @@ class ProcessPatientSummaries
             ->forPatient($this->patientUser->id)
             ->forMonth($this->month)
             //todo: get these from repo
-            ->withProblems(...$this->patientUser->patientProblemsForBillingProcessing()->toArray());
+            ->withProblems(...PatientProblemsForBillingProcessing::get($this->patientId));
 
         return $this;
     }

@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Tests\Database;
 use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
 use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
@@ -227,7 +228,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
                 ->subscribe($patient->patientInfo->location->availableServiceProcessors($startOfMonth))
                 ->forPatient($patient->id)
                 ->forMonth($startOfMonth)
-                ->withProblems(...$patient->patientProblemsForBillingProcessing()->toArray())
+                ->withProblems(...PatientProblemsForBillingProcessing::get($patient->id))
         );
 
         self::assertTrue(
