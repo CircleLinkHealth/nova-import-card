@@ -210,4 +210,9 @@ class Eloquent implements PatientServiceProcessorRepository
     {
         // TODO: Implement requiresPatientConsent() method.
     }
+    
+    public function reloadPatientProblems(int $patientId): void
+    {
+        // TODO: Implement reloadPatientProblems() method.
+    }
 }

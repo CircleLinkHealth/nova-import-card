@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\CcmBilling\Providers;
 
+use CircleLinkHealth\CcmBilling\Caches\BillingCache;
+use CircleLinkHealth\CcmBilling\Caches\BillingDataCache;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository as LocationProblemServiceRepositoryInterface;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
@@ -67,5 +69,6 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
 
         $this->app->singleton(LocationProblemServiceRepositoryInterface::class, LocationProblemServiceRepository::class);
         $this->app->singleton(PatientProcessorEloquentRepositoryInterface::class, PatientProcessorEloquentRepository::class);
+        $this->app->singleton(BillingCache::class, BillingDataCache::class);
     }
 }

@@ -136,4 +136,9 @@ class PatientServiceProcessorRepository implements Repository
             ->ofService($chargeableServiceCode)
             ->get();
     }
+    
+    public function reloadPatientProblems(int $patientId): void
+    {
+        // TODO: Implement reloadPatientProblems() method.
+    }
 }

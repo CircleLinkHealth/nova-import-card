@@ -35,4 +35,5 @@ interface PatientServiceProcessorRepository
     public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode) : Collection;
     
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
+    public function reloadPatientProblems(int $patientId): void;
 }

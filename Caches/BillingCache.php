@@ -1,0 +1,20 @@
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace CircleLinkHealth\CcmBilling\Caches;
+
+use CircleLinkHealth\Customer\Entities\User;
+
+interface BillingCache
+{
+    public function getPatient(int $patientId): User;
+
+    public function patientWasQueried(int $patientId): bool;
+
+    public function setPatientInCache(User $patientUser): void;
+
+    public function setQueriedPatient(int $patientId): void;
+}
