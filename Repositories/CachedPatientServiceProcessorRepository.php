@@ -7,25 +7,20 @@
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Caches\BillingCache;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as RepositoryInterface;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class CachedPatientServiceProcessorRepository implements RepositoryInterface
 {
-    protected BillingCache $cache;
-
-    protected array $queriedPatients = [];
-
     protected PatientServiceProcessorRepository $repo;
 
-    public function __construct(BillingCache $cache)
+    public function __construct()
     {
-        $this->cache = $cache;
         $this->repo  = new PatientServiceProcessorRepository();
     }
 
@@ -182,7 +177,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $this->retrievePatientDataIfYouMust($patientId);
 
-        $patient = $this->cache->getPatient($patientId);
+        $patient = BillingCache::getPatient($patientId);
 
         if (is_null($patient)) {
             throw new \Exception("Could not find Patient with id: $patientId. Billing Processing aborted.");
@@ -201,14 +196,14 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
 
     private function queryPatientData(int $patientId)
     {
-        $this->cache->setPatientInCache($this->repo->getPatientWithBillingDataForMonth($patientId));
+        BillingCache::setPatientInCache($this->repo->getPatientWithBillingDataForMonth($patientId));
 
-        $this->cache->setQueriedPatient($patientId);
+        BillingCache::setQueriedPatient($patientId);
     }
 
     private function retrievePatientDataIfYouMust(int $patientId): void
     {
-        if ($this->cache->patientWasQueried($patientId)) {
+        if (BillingCache::patientWasQueried($patientId)) {
             return;
         }
 
