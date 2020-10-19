@@ -24,6 +24,7 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @property string|null                     $inbound_data
  * @property \Illuminate\Support\Carbon|null $date
  * @property int                             $manually_resolved
+ * @property int                             $assigned_to_ca
  */
 class UnresolvedCallbacksResourceModel extends SqlViewModel
 {
