@@ -24,10 +24,10 @@ class PatientProblemsForBillingProcessing
 
     public static function get(int $patientId): array
     {
-        return (new static($patientId))->getProblemsDTO();
+        return (new static($patientId))->getProblems();
     }
 
-    private function getProblemsDTO(): array
+    private function getProblems(): array
     {
         $patient = $this->repo()
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth());
