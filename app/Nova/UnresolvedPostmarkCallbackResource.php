@@ -75,7 +75,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
      */
     public function authorizedToUpdate(Request $request)
     {
-        return true;
+        return false;
     }
 
     /**
@@ -99,35 +99,30 @@ class UnresolvedPostmarkCallbackResource extends Resource
     {
         return [
             Text::make('inbound id', 'postmark_id')
-                ->readonly()
                 ->sortable(),
 
             Date::make('date', 'date')
-                ->readonly()
                 ->sortable(),
 
             Text::make('matched user', 'matched_user_id')
-                ->readonly()
                 ->sortable(),
 
             Text::make('reason', 'unresolved_reason')
-                ->readonly()
                 ->sortable(),
 
             Text::make('matches', 'other_possible_matches')
-                ->readonly()
                 ->sortable(), // Need to stringify this json
 
             Textarea::make('inbound callback', 'inbound_data')
-                ->readonly()
                 ->hideFromIndex(),
 
             Boolean::make('resolved to callback', 'resolved')
-                ->readonly()
+                ->sortable(),
+
+            Boolean::make('manually assigned to ca', 'assigned_to_ca')
                 ->sortable(),
 
             Text::make('callback id', 'call_id')
-                ->readonly()
                 ->sortable(),
 
             Boolean::make('archived', 'manually_resolved')
