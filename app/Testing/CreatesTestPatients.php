@@ -121,6 +121,7 @@ abstract class CreatesTestPatients
                 'cpm_problem_id' => $problem->id,
             ];
         }
+        //todo: billing
         $user->ccdProblems()->createMany($ccdProblems);
     }
 

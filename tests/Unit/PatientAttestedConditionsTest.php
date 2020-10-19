@@ -99,6 +99,7 @@ class PatientAttestedConditionsTest extends TestCase
         ];
 
         (app(CcdProblemService::class))->addPatientCcdProblem($ccdProblem);
+        //todo: fix, also update cache, and also, see if we need to move processing from controller to service
 
         $responseData = $this->actingAs($this->nurse)->call('GET', url("/api/patients/{$this->patient->id}/problems/unique-to-attest"))
             ->assertOk()

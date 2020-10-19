@@ -95,6 +95,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
                 ['name' => 'test'.Str::random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
             ]
         );
+        //todo: update cache?
 
         foreach ($ccdProblems as $problem) {
             $problem->cpmProblem()->associate($cpmProblems->random());

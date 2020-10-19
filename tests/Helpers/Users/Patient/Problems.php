@@ -27,6 +27,7 @@ trait Problems
             'description' => $problem->name,
         ]);
 
+        //todo: billing, sync ? also, update cache?
         SetupPracticeBillingData::forPractice($patient->program_id);
 
         return $problem;

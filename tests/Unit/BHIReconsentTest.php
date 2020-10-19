@@ -243,6 +243,7 @@ class BHIReconsentTest extends CustomerTestCase
                     'name'           => $bhiProblem->name,
                     'is_monitored'   => true,
                 ]);
+            //todo: update cache
         }
 
         ProcessSinglePatientMonthlyServices::dispatch($patient->id);

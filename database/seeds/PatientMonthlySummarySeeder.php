@@ -24,6 +24,7 @@ class PatientMonthlySummarySeeder extends Seeder
      */
     public function run()
     {
+        //todo: revisit and clean/deprecate
         $practice = Practice::whereName('demo')
             ->where('is_demo', true)
             ->first();

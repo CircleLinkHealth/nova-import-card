@@ -9,32 +9,37 @@ namespace Tests\Unit\CallSchedulingAlgo;
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
 use App\Call;
+use App\Traits\Tests\PracticeHelpers;
+use App\Traits\Tests\TimeHelpers;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
+
 use Tests\TestCase;
 
 class SuccessfulCallHandlerTest extends TestCase
 {
     use \CircleLinkHealth\Customer\Traits\UserHelpers;
+    use PracticeHelpers;
+    use TimeHelpers;
+    protected $location;
+    protected $practice;
 
     /**
      * @var \CircleLinkHealth\Customer\Entities\User
      */
     private $nurse;
-    private $practice;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->practice = factory(Practice::class)->create();
+        $this->practice = $this->setupPractice(true, true, true, true);
         $this->nurse    = $this->createUser($this->practice->id, 'care-center');
         auth()->login($this->nurse);
     }
 
     public function fakePatient(Carbon $called)
     {
-        $patient = $this->createUser($this->practice->id, 'participant');
+        $patient = $this->setupPatient($this->practice);
 
         $patient->patientSummaries()->updateOrCreate([
             'month_year' => $called->copy()->startOfMonth(),
@@ -57,6 +62,8 @@ class SuccessfulCallHandlerTest extends TestCase
             'called_date'     => $called->toDateTimeString(),
             'outbound_cpm_id' => $this->nurse->id,
         ]);
+
+        $this->addTime($this->nurse, $patient, 22, true);
 
         $patient->patientInfo->attachNewOrDefaultCallWindows();
 
