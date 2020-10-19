@@ -281,6 +281,8 @@ return [
         'View'         => Illuminate\Support\Facades\View::class,
 
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
+        
+        'BillingCache' => \CircleLinkHealth\CcmBilling\Facades\BillingCache::class,
 
         'DataTables'   => Yajra\DataTables\Facades\DataTables::class,
         'Form'         => \Collective\Html\FormFacade::class,
