@@ -23,6 +23,12 @@ class ImportEnrollees extends Action
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    const ACTION_CREATE_ENROLLEES     = 'create_enrollees';
+    const ACTION_MARK_AUTO_ENROLLMENT = 'mark_for_auto_enrollment';
+    const ACTION_MARK_INELIGIBLE      = 'mark_as_ineligible';
+    const LABEL_CREATE_ENROLLEES      = 'Create Patients from CSV';
+    const LABEL_MARK_AUTO_ENROLLMENT  = 'Mark Patients for Auto Enrollment';
+    const LABEL_MARK_INELIGIBLE       = 'Mark Patients as Ineligible';
 
     /**
      * Indicates if this action is only available on the resource detail view.
@@ -55,8 +61,9 @@ class ImportEnrollees extends Action
 
         return [
             Select::make('Action Type', 'action_type')->options([
-                'create_enrollees'         => 'Create Patients from CSV',
-                'mark_for_auto_enrollment' => 'Mark Patients for Auto Enrollment',
+                self::ACTION_CREATE_ENROLLEES     => self::LABEL_CREATE_ENROLLEES,
+                self::ACTION_MARK_AUTO_ENROLLMENT => self::LABEL_MARK_AUTO_ENROLLMENT,
+                self::ACTION_MARK_INELIGIBLE      => self::LABEL_MARK_INELIGIBLE,
             ]),
             File::make('File')
                 ->rules('required'),

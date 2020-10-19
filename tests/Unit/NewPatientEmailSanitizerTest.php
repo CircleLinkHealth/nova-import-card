@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
+use App\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
 use Tests\TestCase;
 
 class NewPatientEmailSanitizerTest extends TestCase
