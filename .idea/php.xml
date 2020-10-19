@@ -331,6 +331,9 @@
       <path value="$PROJECT_DIR$/vendor/macellan/laravel-zip" />
       <path value="$PROJECT_DIR$/vendor/joshgaber/novaunit" />
       <path value="$PROJECT_DIR$/vendor/laravie/serialize-queries" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/dates-input" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/range-input" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/unresolved-callback" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
