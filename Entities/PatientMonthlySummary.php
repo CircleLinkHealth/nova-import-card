@@ -606,9 +606,10 @@ class PatientMonthlySummary extends BaseModel
 
     private function getBhiProblemsForAutoAttestation()
     {
+        $bhiProblem = $this->patientProblemsSortedByWeight()->filter(fn (Problem $p) => $p->isBehavioral())->first();
+
         return [
-            optional($this->patientProblemsSortedByWeight()
-                ->first())
+            optional($bhiProblem)
                 ->id,
         ];
     }
