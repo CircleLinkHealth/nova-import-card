@@ -23,6 +23,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Faker\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -483,7 +484,13 @@ class PatientAttestedConditionsTest extends TestCase
 
         $pms->load('attestedProblems');
 
-        $this->assertTrue($this->patient->ccdProblems()->count() == $pms->ccmAttestedProblems()->count());
+        $this->assertTrue(
+            $this->patient
+                ->ccdProblems()
+                ->get()
+                ->filter(fn (Problem $p) => ! $p->isBehavioral())
+                ->count() == $pms->ccmAttestedProblems()->count()
+        );
     }
 
     public function test_problems_are_automatically_attested_to_pms_if_they_should_pcm()
@@ -503,7 +510,13 @@ class PatientAttestedConditionsTest extends TestCase
 
         $pms->load('attestedProblems');
 
-        $this->assertTrue($this->patient->ccdProblems()->count() == $pms->ccmAttestedProblems()->count());
+        $this->assertTrue(
+            $this->patient
+                ->ccdProblems()
+                ->get()
+                ->filter(fn (Problem $p) => ! $p->isBehavioral())
+                ->count() == $pms->ccmAttestedProblems()->count()
+        );
     }
 
     /**
