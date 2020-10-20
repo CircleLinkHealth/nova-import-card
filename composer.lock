@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.158.9",
+            "version": "3.158.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "40bfb8c7bb2b105c32c7201b3c7fab681370d9ca"
+                "reference": "a492e9aac7cba87177c06095c4e5bc9adcb1e397"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/40bfb8c7bb2b105c32c7201b3c7fab681370d9ca",
-                "reference": "40bfb8c7bb2b105c32c7201b3c7fab681370d9ca",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a492e9aac7cba87177c06095c4e5bc9adcb1e397",
+                "reference": "a492e9aac7cba87177c06095c4e5bc9adcb1e397",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-10-19T18:14:24+00:00"
+            "time": "2020-10-20T18:11:49+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1729,7 +1729,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "55ecac99197a3a9a16551d2eda997f90ef8bd686"
+                "reference": "aae335cf9ee7b3d04e3babc67ec9afed23ff1022"
             },
             "type": "laravel-module",
             "extra": {
@@ -1754,7 +1754,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-19T22:57:03+00:00"
+            "time": "2020-10-20T21:07:22+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
@@ -5189,17 +5189,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.12.1",
+            "version": "v3.13.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "f5f695960e6fd6219d7b9352dc2b77c63c48c70b"
+                "reference": "b0a13f6c988b504275bbc82367f853bc78257256"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-f5f695960e6fd6219d7b9352dc2b77c63c48c70b-zip-efab90.zip",
-                "reference": "f5f695960e6fd6219d7b9352dc2b77c63c48c70b",
-                "shasum": "75d6230097f01143f24ed6a595906c371de9a9ca"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-b0a13f6c988b504275bbc82367f853bc78257256-zip-5aa88d.zip",
+                "reference": "b0a13f6c988b504275bbc82367f853bc78257256",
+                "shasum": "984f76ccf7b966250da9747f46db9dd2ab3fffe5"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5217,8 +5217,9 @@
             },
             "require-dev": {
                 "laravel/legacy-factories": "^1.0",
+                "laravel/nova-dusk-suite": "dev-master",
                 "mockery/mockery": "^1.0",
-                "orchestra/testbench": "^6.0",
+                "orchestra/testbench-dusk": "^6.1",
                 "phpunit/phpunit": "^8.4",
                 "predis/predis": "^1.1"
             },
@@ -5246,6 +5247,16 @@
                     "Laravel\\Nova\\Tests\\": "tests/"
                 }
             },
+            "scripts": {
+                "dusk:prepare": [
+                    "./vendor/bin/dusk-updater detect --auto-update",
+                    "@php -r \"file_exists('phpunit.dusk.xml') || copy('phpunit.dusk.xml.dist', 'phpunit.dusk.xml'); \"",
+                    "@php -r \"if (file_exists('.env.dusk')) { copy('.env.dusk', 'vendor/laravel/nova-dusk-suite/.env'); } else { copy('.env.dusk.example', 'vendor/laravel/nova-dusk-suite/.env'); }\""
+                ],
+                "dusk:test": [
+                    "./vendor/bin/phpunit -c phpunit.dusk.xml"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -5260,7 +5271,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-10-07T18:10:57+00:00"
+            "time": "2020-10-20T16:54:09+00:00"
         },
         {
             "name": "laravel/passport",
