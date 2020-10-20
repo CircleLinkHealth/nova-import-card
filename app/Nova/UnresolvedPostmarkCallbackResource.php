@@ -132,6 +132,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
 
             Text::make('callback id', 'call_id')
                 ->hideWhenUpdating()
+                ->hideFromIndex()
                 ->sortable(),
 
             Boolean::make('manually assigned callback to ca', 'assigned_to_ca')
