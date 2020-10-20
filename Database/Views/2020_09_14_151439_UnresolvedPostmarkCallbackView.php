@@ -42,7 +42,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         WHEN upc.unresolved_reason = '$notConsentedAndCAUnassigned' THEN 'Not consented - CA unassigned'
         END as unresolved_reason,
         
-        # upc.suggestions as other_possible_matches,
+ 
         CASE WHEN upc.user_id IS NULL THEN upc.suggestions ELSE NULL END as other_possible_matches,
  
         CASE WHEN c.created_at >= upc.created_at
