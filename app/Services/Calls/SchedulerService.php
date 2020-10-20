@@ -9,6 +9,7 @@ namespace App\Services\Calls;
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
+use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Note;
 use App\Policies\CreateNoteForPatient;
 use App\Services\NoteService;
@@ -404,9 +405,19 @@ class SchedulerService
             now()
         );
 
-        if ( ! $nurseId = app(NurseFinderEloquentRepository::class)->find($patient->id) ?? StandByNurseUser::id()) {
-            $message = self::NURSE_NOT_FOUND;
-            throw new \Exception("$message [$patient->id]");
+        $nurseId = app(NurseFinderEloquentRepository::class)->find($patient->id)->id;
+        if ( ! $nurseId) {
+            $standByNurseId = StandByNurseUser::id();
+            if ( ! $standByNurseId) {
+                $message = self::NURSE_NOT_FOUND;
+                throw new \Exception("$message [$patient->id]");
+            }
+            app(NurseFinderEloquentRepository::class)->assign($patient->id, $standByNurseId);
+            $nurseId = $standByNurseId;
+        }
+
+        if (ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL === $scheduler) {
+            $scheduler = $nurseId;
         }
 
         $nowString = now()->toDateTimeString();

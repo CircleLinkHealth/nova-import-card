@@ -6,6 +6,7 @@
 
 namespace App\Traits\Tests;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -85,7 +86,10 @@ trait PostmarkCallbackHelpers
 
     private function createUserWithPatientCcmStatus(Practice $practice, string $status)
     {
-        return $this->createUser($practice->id, 'participant', $status);
+        $user  = $this->createUser($practice->id, 'participant', $status);
+//        $nurse = $this->createUser($practice->id, 'care-center');
+//        app(NurseFinderEloquentRepository::class)->assign($user->id, $nurse->id);
+        return $user;
     }
 
     private function generatePostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf)
