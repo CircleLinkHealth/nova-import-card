@@ -405,19 +405,24 @@ class SchedulerService
             now()
         );
 
-        $nurseId = app(NurseFinderEloquentRepository::class)->find($patient->id)->id;
-        if ( ! $nurseId) {
+        $nurseId               = null;
+        $nurseFinderRepository = app(NurseFinderEloquentRepository::class);
+        $assignedNurse         = optional($nurseFinderRepository->assignedNurse($patient->id))->permanentNurse;
+
+        if ( ! $assignedNurse) {
             $standByNurseId = StandByNurseUser::id();
             if ( ! $standByNurseId) {
                 $message = self::NURSE_NOT_FOUND;
                 throw new \Exception("$message [$patient->id]");
             }
-            app(NurseFinderEloquentRepository::class)->assign($patient->id, $standByNurseId);
             $nurseId = $standByNurseId;
-        }
-
-        if (ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL === $scheduler) {
-            $scheduler = $nurseId;
+            // Should we always assign the stand by nurse as permanent nurse, instead of just this case?
+            if (ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL === $scheduler) {
+                app(NurseFinderEloquentRepository::class)->assign($patient->id, $standByNurseId);
+                $scheduler = $nurseId;
+            }
+        } else {
+            $nurseId = $assignedNurse->id;
         }
 
         $nowString = now()->toDateTimeString();
