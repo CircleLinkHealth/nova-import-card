@@ -21,16 +21,18 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         $multiplePatientsMatched     = PostmarkInboundCallbackMatchResults::MULTIPLE_PATIENT_MATCHES;
         $noNameSelfMatch             = PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF;
         $notConsentedAndCAUnassigned = PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_UNASSIGNED;
-        $toCall = Enrollee::TO_CALL;
+        $toCall                      = Enrollee::TO_CALL;
 
         return \DB::statement("
         CREATE VIEW {$this->getViewName()} AS
         SELECT
         upc.postmark_id as postmark_id,
         upc.user_id as matched_user_id,
+        u.display_name as matched_user_name,
         p.body as inbound_data,
         upc.created_at as date,
         upc.manually_resolved,
+       
         
         CASE WHEN upc.unresolved_reason = '$notEnrolled' THEN 'Not enrolled'
         WHEN upc.unresolved_reason = '$queuedAndUnassigned' THEN 'Self enrollment queue - CA unassigned'
@@ -41,7 +43,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
         END as unresolved_reason,
         
         upc.suggestions as other_possible_matches,
-        
+ 
         CASE WHEN c.created_at >= upc.created_at
         AND c.sub_type = 'Call Back'
         THEN c.id
@@ -65,6 +67,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
             left join calls c on upc.user_id = c.inbound_cpm_id
             left join postmark_inbound_mail p on upc.postmark_id = p.id
             left join enrollees e on upc.user_id = e.user_id
+            left join users u on upc.user_id = u.id
          
          WHERE 0 = (SELECT COUNT(c2.id)
              FROM calls c2
