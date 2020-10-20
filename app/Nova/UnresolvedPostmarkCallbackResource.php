@@ -106,7 +106,11 @@ class UnresolvedPostmarkCallbackResource extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
-            Text::make('matched user', 'matched_user_id')
+            Text::make('matched user id', 'matched_user_id')
+                ->hideWhenUpdating()
+                ->sortable(),
+
+            Text::make('matched patient name', 'matched_user_name')
                 ->hideWhenUpdating()
                 ->sortable(),
 
@@ -114,7 +118,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
-            Text::make('matches', 'other_possible_matches')
+            Text::make('patients match ids', 'other_possible_matches')
                 ->hideWhenUpdating()
                 ->sortable(), // Need to stringify this json
 
@@ -126,11 +130,11 @@ class UnresolvedPostmarkCallbackResource extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
-            Boolean::make('manually assigned to ca', 'assigned_to_ca')
+            Text::make('callback id', 'call_id')
                 ->hideWhenUpdating()
                 ->sortable(),
 
-            Text::make('callback id', 'call_id')
+            Boolean::make('manually assigned callback to ca', 'assigned_to_ca')
                 ->hideWhenUpdating()
                 ->sortable(),
 

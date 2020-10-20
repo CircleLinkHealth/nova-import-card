@@ -58,6 +58,8 @@ trait PostmarkCallbackHelpers
     {
         return Enrollee::firstOrCreate([
             'user_id'                 => $patient->id,
+            'first_name'              => $patient->first_name,
+            'last_name'               => $patient->last_name,
             'home_phone'              => formatPhoneNumberE164($patient->phoneNumbers->first()->number),
             'status'                  => $status,
             'care_ambassador_user_id' => $careAmbassadorId,
@@ -86,10 +88,9 @@ trait PostmarkCallbackHelpers
 
     private function createUserWithPatientCcmStatus(Practice $practice, string $status)
     {
-        $user  = $this->createUser($practice->id, 'participant', $status);
+        return $this->createUser($practice->id, 'participant', $status);
 //        $nurse = $this->createUser($practice->id, 'care-center');
 //        app(NurseFinderEloquentRepository::class)->assign($user->id, $nurse->id);
-        return $user;
     }
 
     private function generatePostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf)
