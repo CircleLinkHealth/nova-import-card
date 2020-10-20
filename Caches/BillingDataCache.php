@@ -37,4 +37,16 @@ class BillingDataCache implements BillingCache
     {
         $this->queriedPatients[] = $patientId;
     }
+    
+    public function clearPatients(): void
+    {
+        $this->patientCache = [];
+        $this->queriedPatients = [];
+    }
+    
+    public function forgetPatient(int $patientId): void
+    {
+        $this->patientCache = collect($this->patientCache)->filter(fn($p) => $p->id != $patientId)->toArray();
+        $this->queriedPatients = collect($this->patientCache)->filter(fn($id) => $id != $patientId)->toArray();
+    }
 }
