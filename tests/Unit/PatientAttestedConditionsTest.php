@@ -13,6 +13,8 @@ use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\CCD\CcdProblemService;
 use App\Traits\Tests\PracticeHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\AttestPatientProblems;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -29,8 +31,8 @@ use Tests\TestCase;
 class PatientAttestedConditionsTest extends TestCase
 {
     use CarePlanHelpers;
-    use UserHelpers;
     use PracticeHelpers;
+    use UserHelpers;
 
     /**
      * @var Factory
@@ -133,25 +135,27 @@ class PatientAttestedConditionsTest extends TestCase
 
     public function test_attest_bhi_problems_exist_in_ccm_column_if_practice_does_not_have_bhi_enabled()
     {
-        //todo: update for billing revamp
+        //todo: update case to include revamped code
         $ccmCsId       = ChargeableService::ccm()->first()->id;
         $pms           = $this->setupPms([$ccmCsId]);
         $pms->ccm_time = 1440;
         $pms->save();
 
+        self::assertTrue(($patientProblems = $this->patient->ccdProblems()->get())->where('cpmProblem.is_behavioral', true)->isNotEmpty());
+
         $this->setupPracticeServices([
             $ccmCsId,
         ]);
 
-        $this->assertTrue($pms->hasServiceCode(ChargeableService::CCM));
-        $this->assertEquals($pms->ccmAttestedProblems()->count(), 0);
-        $this->assertEquals($pms->ccmAttestedProblems()->count(), 0);
+        self::assertTrue($pms->hasServiceCode(ChargeableService::CCM));
+        self::assertEquals($pms->ccmAttestedProblems()->count(), 0);
+        self::assertEquals($pms->ccmAttestedProblems()->count(), 0);
 
-        $pms->syncAttestedProblems($this->patient->ccdProblems->pluck('id')->toArray());
+        $pms->syncAttestedProblems($patientProblems->pluck('id')->toArray());
 
         $pms->load('attestedProblems');
 
-        $this->assertTrue(10 == $pms->ccmAttestedProblems()->count());
+        self::assertTrue($patientProblems->count() == $pms->ccmAttestedProblems()->count());
     }
 
     public function test_attestation_validation_for_ccm_code()
@@ -202,27 +206,37 @@ class PatientAttestedConditionsTest extends TestCase
             ChargeableService::CCM,
         ])->pluck('id')->toArray();
 
-        $pms = $this->setupPms($charggeableServiceIds, Carbon::now()->startOfMonth(), true);
+        $pms = $this->setupPms($charggeableServiceIds, $month = Carbon::now()->startOfMonth(), true);
 
-        $problems = $this->patient->ccdProblems()->with(['cpmProblem'])->get();
+        $problems = $this->patient
+            ->ccdProblems()
+            //todo: add/fix comprehensive scope that loads using ccd_problem.patient_id join with patient info
+            ->with(['cpmProblem.locationChargeableServices' => fn ($lcs) => $lcs->where('location_problem_services.location_id', $this->patient->getPreferredContactLocation())])
+            ->get();
 
-        $attestedProblems = $problems->where('cpmProblem.is_behavioral', true)
-            ->take(1)
-            ->merge(
-                $problems->where('cpmProblem.is_behavioral', false)->take(2)
-            )
-            ->pluck('id')
-            ->toArray();
+        (new AttestPatientProblems())
+            ->problemsToAttest($problems->pluck('id')->toArray())
+            ->fromAttestor($this->nurse->id)
+            ->forCall($this->patient->inboundCalls->first()->id)
+            ->forAddendum(null)
+            ->forMonth($month)
+            ->forPms($pms->id)
+            ->createRecords();
 
-        $pms->syncAttestedProblems($attestedProblems);
+        BillingCache::clearPatients();
 
-        $responseData = $this->actingAs($this->nurse)->call('GET', route('patient.note.create', ['patientId' => $this->patient->id]))
+        $responseData = $this->actingAs($this->nurse)->call('GET', route('patient.note.create', ['patientId' => $this->patient->id]));
+        $responseData = $responseData
             ->assertOk()
-            ->getOriginalContent()->getData();
+            ->getOriginalContent()
+            ->getData();
+
+        $bhiProblems = $problems->filter(fn ($p) => $p->cpmProblem->locationChargeableServices->whereIn('code', ChargeableService::BHI)->isNotEmpty());
+        $ccmProblems = $problems->filter(fn ($p) => $p->cpmProblem->locationChargeableServices->whereIn('code', ChargeableService::CCM)->isNotEmpty());
 
         $this->assertFalse($responseData['attestationRequirements']['disabled']);
-        $this->assertTrue(1 === $responseData['attestationRequirements']['bhi_problems_attested']);
-        $this->assertTrue(2 === $responseData['attestationRequirements']['ccm_problems_attested']);
+        $this->assertTrue($bhiProblems->count() === $responseData['attestationRequirements']['bhi_problems_attested']);
+        $this->assertTrue($ccmProblems->count() === $responseData['attestationRequirements']['ccm_problems_attested']);
     }
 
     public function test_command_to_attest_problems_to_addendum()
