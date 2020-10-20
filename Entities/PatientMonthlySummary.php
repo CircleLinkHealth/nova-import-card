@@ -565,6 +565,7 @@ class PatientMonthlySummary extends BaseModel
 
     public function syncAttestedProblems(array $attestedProblems)
     {
+        //todo: deprecate
         $this->attestedProblems()->update(['call_problems.patient_monthly_summary_id' => null]);
 
         $this->attestedProblems()->attach($attestedProblems);
