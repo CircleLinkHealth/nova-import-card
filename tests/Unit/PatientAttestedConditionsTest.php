@@ -11,6 +11,7 @@ use App\Call;
 use App\Note;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\CCD\CcdProblemService;
+use App\Traits\Tests\PracticeHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -19,7 +20,6 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +30,7 @@ class PatientAttestedConditionsTest extends TestCase
 {
     use CarePlanHelpers;
     use UserHelpers;
+    use PracticeHelpers;
 
     /**
      * @var Factory
@@ -68,15 +69,12 @@ class PatientAttestedConditionsTest extends TestCase
 
         $this->faker = Factory::create();
 
-        $this->practice = Practice::first() ?? factory(Practice::class)->create();
-        $this->location = Location::firstOrCreate([
-            'practice_id' => $this->practice->id,
-        ]);
+        $this->practice = $this->setupPractice(true, true, true, true);
 
         $this->provider = $this->createUser($this->practice->id);
         $this->nurse    = $this->createUser($this->practice->id, 'care-center');
 
-        $this->setupPatient();
+        $this->setupPatientUser();
     }
 
     /**
@@ -135,6 +133,7 @@ class PatientAttestedConditionsTest extends TestCase
 
     public function test_attest_bhi_problems_exist_in_ccm_column_if_practice_does_not_have_bhi_enabled()
     {
+        //todo: update for billing revamp
         $ccmCsId       = ChargeableService::ccm()->first()->id;
         $pms           = $this->setupPms([$ccmCsId]);
         $pms->ccm_time = 1440;
@@ -532,26 +531,10 @@ class PatientAttestedConditionsTest extends TestCase
         );
     }
 
-    private function setupPatient()
+    private function setupPatientUser()
     {
-        $this->patient = $this->createUser($this->practice->id, 'participant');
-        $this->patient->setPreferredContactLocation($this->location->id);
-        $this->patient->patientInfo->save();
-        $this->repo = app(PatientSummaryEloquentRepository::class);
-
-        [$bhi, $ccm] = CpmProblem::get()->partition(function ($p) {
-            return $p->is_behavioral;
-        });
-
-        $problemsForPatient = $bhi->take(2)->merge($ccm->take(8));
-
-        foreach ($problemsForPatient as $problem) {
-            $this->patient->ccdProblems()->create([
-                'name'           => $problem->name,
-                'is_monitored'   => 1,
-                'cpm_problem_id' => $problem->id,
-            ]);
-        }
+        $this->patient = $this->setupPatient($this->practice, true);
+        $this->repo    = app(PatientSummaryEloquentRepository::class);
 
         app(NurseFinderEloquentRepository::class)->assign($this->patient->id, $this->nurse->id);
 
