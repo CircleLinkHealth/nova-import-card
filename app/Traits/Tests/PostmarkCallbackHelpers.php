@@ -56,14 +56,21 @@ trait PostmarkCallbackHelpers
 
     private function createEnrolleeWithStatus(User $patient, int $careAmbassadorId, string $status)
     {
-        return Enrollee::firstOrCreate([
+        $provider = $this->createUser($this->practice->id, 'provider');
+
+        $enrollee = Enrollee::create([
             'user_id'                 => $patient->id,
             'first_name'              => $patient->first_name,
             'last_name'               => $patient->last_name,
             'home_phone'              => formatPhoneNumberE164($patient->phoneNumbers->first()->number),
             'status'                  => $status,
             'care_ambassador_user_id' => $careAmbassadorId,
+            'practice_id'             => $this->practice->id,
         ]);
+        $enrollee->provider()->associate($provider);
+        $enrollee->save();
+
+        return $enrollee;
     }
 
     private function createPatientData(string $status)
@@ -89,7 +96,6 @@ trait PostmarkCallbackHelpers
     private function createUserWithPatientCcmStatus(Practice $practice, string $status)
     {
         $user = $this->createUser($practice->id, 'participant', $status);
-
         $user->patientSummaries()->update([
             'no_of_successful_calls' => 0,
         ]);
