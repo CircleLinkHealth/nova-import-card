@@ -388,9 +388,9 @@ trait UserHelpers
                     $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
                 } else {
                     $method = '';
-                    if ($i == 0){
+                    if (0 == $i) {
                         $method = 'first';
-                    }else{
+                    } else {
                         $method = 'last';
                     }
                     $problem->cpmProblem()->associate($cpmProblems->where('is_behavioral', '=', 0)->$method());
