@@ -1,14 +1,15 @@
-function TimeTrackerInfo (options = {}) {
+function TimeTrackerInfo(options = {}) {
 
     this.patientId = options.patientId || '344'
 
     this.providerId = options.providerId || '3864'
 
-    this.totalTime = (typeof(options.totalTime) != 'undefined') ? options.totalTime : 339
+    this.chargeableServices = options.chargeableServices || [
+        {total_time: 300, chargeable_service: {id: 1, code: 'CPT 99490', display_name: 'CCM'}},
+        {total_time: 39, chargeable_service: {id: 2, code: 'CPT 99484', display_name: 'BHI'}},
+    ];
 
-    this.totalCCMTime = (typeof(options.totalCCMTime) != 'undefined') ? options.totalCCMTime : 300
-
-    this.totalBHITime = (typeof(options.totalBHITime) != 'undefined') ? options.totalBHITime : 39
+    this.chargeableServiceId = options.chargeableServiceId || 1;
 
     this.wsUrl = options.wsUrl || 'ws://localhost:3000/time'
 
@@ -41,7 +42,6 @@ function TimeTrackerInfo (options = {}) {
     }
 
 }
-
 
 
 module.exports = TimeTrackerInfo

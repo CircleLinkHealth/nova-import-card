@@ -137,8 +137,22 @@ router.get('/active', function (req, res, next) {
         .map(x => {
             return {
                 report: x.report(),
-                totalCCMTime: x.totalCCMTime,
-                totalBHITime: x.totalBHITime,
+                totalSeconds: x.totalSeconds,
+                isActive: x.isActive
+            }
+        });
+    res.send(result);
+})
+
+router.get('/active-no-live-count', function (req, res, next) {
+    const timeTracker = app.timeTrackerNoLiveCount
+
+    const result = timeTracker.users()
+        .filter(x => x.totalSeconds > 0)
+        .map(x => {
+            return {
+                report: x.report(),
+                totalSeconds: x.totalSeconds,
                 isActive: x.isActive
             }
         });

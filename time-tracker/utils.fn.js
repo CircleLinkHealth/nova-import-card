@@ -17,6 +17,7 @@ const createActivity = (info) => {
         sockets: [],
         callMode: false,
         isBehavioral: info.isManualBehavioral || false,
+        chargeableServiceId: info.chargeableServiceId || -1,
         get isActive() {
             return this.sockets.some(socket => socket.active)
         },
