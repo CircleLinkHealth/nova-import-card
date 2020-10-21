@@ -35,8 +35,6 @@ function TimeTrackerInfo(options = {}) {
 
     this.initSeconds = options.initSeconds || 0
 
-    this.isManualBehavioral = options.isBehavioral || false
-
     this.createKey = function () {
         return `${this.patientId}-${this.providerId}`
     }

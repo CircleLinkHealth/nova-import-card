@@ -148,12 +148,12 @@ module.exports = app => {
                         break;
 
                     case 'client:enter':
-                    case 'client:bhi':
-                        user.closeOtherBehavioralActivity(info, ws);
+                    case 'client:chargeable-service-change':
+                        user.closeOtherSameActivityWithOtherChargeableServiceId(info, ws);
                         user.enter(info, ws);
                         user.sync();
-                        if (data.message === 'client:bhi') {
-                            user.switchBhi(info)
+                        if (data.message === 'client:chargeable-service-change') {
+                            user.changeChargeableService(info);
                         }
                         break;
 

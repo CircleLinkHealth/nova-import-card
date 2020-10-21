@@ -27,7 +27,6 @@ export interface TimeTrackerInfo {
     chargeableServices: PatientChargeableService[];
     noLiveCount: boolean;
     patientFamilyId: string | number;
-    isManualBehavioral: boolean;
     enrolleeId: string | number;
     initSeconds: number;
     chargeableServiceId: number;
@@ -37,7 +36,6 @@ export interface TimeTrackerInfo {
 
 export interface Activity {
     isActive: boolean;
-    isBehavioral: boolean;
     enrolleeId?: string | number;
     name: string;
     start_time: string;

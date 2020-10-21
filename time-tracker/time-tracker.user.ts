@@ -4,9 +4,9 @@ import {createActivity, formatTimeForServer, validateInfo} from './utils.fn';
 import axios from 'axios';
 import axiosRetry, {exponentialDelay} from "axios-retry";
 import {getErrorLogger} from '../logger';
-import {getTime, getTimeForCsId, storeTime, TimeEntity} from "../cache/user-time";
+import {getTime, getTimeForCsId, storeTime} from "../cache/user-time";
 import {ignorePatientTimeSync} from '../sockets/sync.with.cpm';
-import {Activity, PatientChargeableService, TimeoutOverrideOptions, TimeTrackerInfo} from "../types";
+import {Activity, PatientChargeableService, TimeEntity, TimeoutOverrideOptions, TimeTrackerInfo} from "../types";
 
 axiosRetry(axios, {retries: 3, retryDelay: exponentialDelay});
 
@@ -28,10 +28,10 @@ export default class TimeTrackerUser {
     private programId: string | number;
     private ipAddr: string;
     private chargeableServices: PatientChargeableService[];
+    private chargeableServiceId: number;
     private noLiveCount: boolean;
     private patientFamilyId: string | number;
     private isLoggingOut: boolean;
-    private isBehavioral: boolean;
 
     private $emitter: EventEmitter;
 
@@ -63,10 +63,11 @@ export default class TimeTrackerUser {
         this.programId = info.programId;
         this.ipAddr = info.ipAddr;
         this.chargeableServices = info.chargeableServices || [] as PatientChargeableService[];
+        this.chargeableServiceId = info.chargeableServiceId;
         this.noLiveCount = info.noLiveCount;
         this.patientFamilyId = info.patientFamilyId;
         this.isLoggingOut = null;
-        this.isBehavioral = false;
+
     }
 
     validateWebSocket(ws) {
@@ -175,29 +176,26 @@ export default class TimeTrackerUser {
         this.LOGOUT_TIMEOUT_CALL_MODE = Math.ceil(options.logoutTimeoutCallMode) || this.LOGOUT_TIMEOUT_CALL_MODE;
     }
 
-    findActivity(info: { isFromCaPanel?: boolean; activity: string; enrolleeId?: string | number; isManualBehavioral: boolean; chargeableServiceId: number }) {
+    findActivity(info: { isFromCaPanel?: boolean; activity: string; enrolleeId?: string | number; chargeableServiceId: number }) {
         if (info.isFromCaPanel) {
             return this.activities.find(item => item.name == info.activity && item.enrolleeId == info.enrolleeId);
         }
         return this.activities.find(item => {
             return (item.name == info.activity)
-                && (item.isBehavioral == info.isManualBehavioral)
                 && (item.chargeableServiceId === info.chargeableServiceId)
         });
     }
 
-    switchBhi(info) {
+    changeChargeableService(info) {
         this.broadcast({
-            message: 'server:bhi:switch',
-            mode: info.isManualBehavioral,
-            isCcm: info.isCcm,
-            isBehavioral: info.isBehavioral
+            message: 'server:chargeable-service:switch',
+            chargeableServiceId: info.chargeableServiceId
         });
-        this.isBehavioral = info.isManualBehavioral;
+        this.chargeableServiceId = info.chargeableServiceId;
     }
 
-    closeOtherBehavioralActivity(info, ws) {
-        const activity = this.activities.find(item => (item.name == info.activity) && (item.isBehavioral !== info.isManualBehavioral));
+    closeOtherSameActivityWithOtherChargeableServiceId(info, ws) {
+        const activity = this.activities.find(item => (item.name == info.activity) && (item.chargeableServiceId !== info.chargeableServiceId));
         if (activity) {
             activity.sockets.splice(activity.sockets.indexOf(ws), 1);
         }
@@ -282,8 +280,11 @@ export default class TimeTrackerUser {
         } else {
             ws.send(JSON.stringify({message: 'server:call-mode:exit'}));
         }
-        if (this.isBehavioral) {
-            ws.send(JSON.stringify({message: 'server:bhi:switch', mode: true}));
+        if (this.chargeableServiceId !== info.chargeableServiceId) {
+            ws.send(JSON.stringify({
+                message: 'server:chargeable-service:switch',
+                chargeableServiceId: this.chargeableServiceId
+            }));
         }
     }
 
@@ -512,12 +513,6 @@ export default class TimeTrackerUser {
             activity.duration = 0
         });
 
-        /*
-        this.totalTime += this.activities.reduce((a, b) => a + b.duration, 0)
-        this.totalCCMTime += this.activities.filter(activity => !activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
-        this.totalBHITime += this.activities.filter(activity => activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
-
-        */
         this.isLoggingOut = null
     }
 
@@ -545,7 +540,6 @@ export default class TimeTrackerUser {
             const activity = this.findActivity({
                 activity: info.modifyFilter,
                 enrolleeId: info.enrolleeId,
-                isManualBehavioral: info.isManualBehavioral,
                 chargeableServiceId: info.chargeableServiceId
             })
             if (activity) {
@@ -584,7 +578,6 @@ export default class TimeTrackerUser {
                     url_short: activity.url_short,
                     start_time: activity.start_time,
                     end_time: formatTimeForServer(new Date()),
-                    is_behavioral: activity.isBehavioral,
                     force_skip: activity.forceSkip,
                     chargeable_service_id: activity.chargeableServiceId
                 }))

@@ -60,10 +60,10 @@ class TimeTrackerUser {
         this.programId = info.programId;
         this.ipAddr = info.ipAddr;
         this.chargeableServices = info.chargeableServices || [];
+        this.chargeableServiceId = info.chargeableServiceId;
         this.noLiveCount = info.noLiveCount;
         this.patientFamilyId = info.patientFamilyId;
         this.isLoggingOut = null;
-        this.isBehavioral = false;
     }
     validateWebSocket(ws) {
         if (!ws)
@@ -161,21 +161,18 @@ class TimeTrackerUser {
         }
         return this.activities.find(item => {
             return (item.name == info.activity)
-                && (item.isBehavioral == info.isManualBehavioral)
                 && (item.chargeableServiceId === info.chargeableServiceId);
         });
     }
-    switchBhi(info) {
+    changeChargeableService(info) {
         this.broadcast({
-            message: 'server:bhi:switch',
-            mode: info.isManualBehavioral,
-            isCcm: info.isCcm,
-            isBehavioral: info.isBehavioral
+            message: 'server:chargeable-service:switch',
+            chargeableServiceId: info.chargeableServiceId
         });
-        this.isBehavioral = info.isManualBehavioral;
+        this.chargeableServiceId = info.chargeableServiceId;
     }
-    closeOtherBehavioralActivity(info, ws) {
-        const activity = this.activities.find(item => (item.name == info.activity) && (item.isBehavioral !== info.isManualBehavioral));
+    closeOtherSameActivityWithOtherChargeableServiceId(info, ws) {
+        const activity = this.activities.find(item => (item.name == info.activity) && (item.chargeableServiceId !== info.chargeableServiceId));
         if (activity) {
             activity.sockets.splice(activity.sockets.indexOf(ws), 1);
         }
@@ -255,8 +252,11 @@ class TimeTrackerUser {
         else {
             ws.send(JSON.stringify({ message: 'server:call-mode:exit' }));
         }
-        if (this.isBehavioral) {
-            ws.send(JSON.stringify({ message: 'server:bhi:switch', mode: true }));
+        if (this.chargeableServiceId !== info.chargeableServiceId) {
+            ws.send(JSON.stringify({
+                message: 'server:chargeable-service:switch',
+                chargeableServiceId: this.chargeableServiceId
+            }));
         }
     }
     enter(info, ws) {
@@ -462,12 +462,6 @@ class TimeTrackerUser {
         this.activities.forEach(activity => {
             activity.duration = 0;
         });
-        /*
-        this.totalTime += this.activities.reduce((a, b) => a + b.duration, 0)
-        this.totalCCMTime += this.activities.filter(activity => !activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
-        this.totalBHITime += this.activities.filter(activity => activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
-
-        */
         this.isLoggingOut = null;
     }
     report() {
@@ -493,7 +487,6 @@ class TimeTrackerUser {
             const activity = this.findActivity({
                 activity: info.modifyFilter,
                 enrolleeId: info.enrolleeId,
-                isManualBehavioral: info.isManualBehavioral,
                 chargeableServiceId: info.chargeableServiceId
             });
             if (activity) {
@@ -528,7 +521,6 @@ class TimeTrackerUser {
                 url_short: activity.url_short,
                 start_time: activity.start_time,
                 end_time: utils_fn_1.formatTimeForServer(new Date()),
-                is_behavioral: activity.isBehavioral,
                 force_skip: activity.forceSkip,
                 chargeable_service_id: activity.chargeableServiceId
             }))
