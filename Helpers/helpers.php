@@ -46,4 +46,3 @@ if ( ! function_exists('isCpm')) {
         return 'CarePlan Manager' === config('app.name');
     }
 }
-
