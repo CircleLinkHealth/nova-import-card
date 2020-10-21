@@ -520,9 +520,7 @@ class PatientAttestedConditionsTest extends TestCase
     }
 
     /**
-     * Meant to be needed to call NotesController->store
-     * Currently failing because of SafeRequest
-     * Todo: make tests able to call controller actions expecting SafeRequests.
+     *
      *
      * @return array
      */
