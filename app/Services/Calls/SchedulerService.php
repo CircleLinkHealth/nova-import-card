@@ -400,10 +400,16 @@ class SchedulerService
             return $existing;
         }
 
-        $scheduledDate = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
-            $patient->patientInfo,
-            now()
-        );
+        $scheduledDate = [
+            'day' => Carbon::now()->toDateTimeString(),
+        ];
+
+        if ( ! ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL === $scheduler) {
+            $scheduledDate = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
+                $patient->patientInfo,
+                now()
+            );
+        }
 
         $nurseId               = null;
         $nurseFinderRepository = app(NurseFinderEloquentRepository::class);
@@ -416,10 +422,11 @@ class SchedulerService
                 throw new \Exception("$message [$patient->id]");
             }
             $nurseId = $standByNurseId;
-            // Should we always assign the stand by nurse as permanent nurse, instead of just this case?
+            // Should we always assign the stand by nurse as permanent nurse, instead of just this case? We need to do
+            // this in order to show up in stanByNurse's Activities page.
             if (ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL === $scheduler) {
                 app(NurseFinderEloquentRepository::class)->assign($patient->id, $standByNurseId);
-                $scheduler = $nurseId;
+//                $scheduler = $nurseId;
             }
         } else {
             $nurseId = $assignedNurse->id;

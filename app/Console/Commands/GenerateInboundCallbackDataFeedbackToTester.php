@@ -327,7 +327,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $limit       = self::LIMIT;
         $inboundData = $this->dataOfStatusType(Enrollee::ENROLLED, false, false);
-        $this->info("Generated $limit patients of type:[ENROLLED]. SHOULD ASSIGN CALLBACK");
+        $this->info("Generated $limit patients of type:[ENROLLED]. SHOULD ASSIGN CALLBACK TO CARE COACH");
 
         return $inboundData;
     }
