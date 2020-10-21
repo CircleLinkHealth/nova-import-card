@@ -31,8 +31,7 @@ class BillingDataCache implements BillingCache
     {
         $this->patientCache[] = $patientUser;
     }
-
-    //todo: abstract methods to dynamic entities?
+    
     public function setQueriedPatient(int $patientId): void
     {
         $this->queriedPatients[] = $patientId;

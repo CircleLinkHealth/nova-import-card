@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientMonthlyBillingProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\User;
 
 class ProcessPatientSummaries
@@ -42,7 +41,6 @@ class ProcessPatientSummaries
             ->process();
     }
 
-    //maybe it can hold the value of summary and problem existence to assist with helper checks?
     public function fromDTO(PatientMonthlyBillingDTO $dto): void
     {
         $this->setPatientDto($dto)
@@ -91,7 +89,6 @@ class ProcessPatientSummaries
             ->subscribe($this->patientUser->patientInfo->location->availableServiceProcessors($this->month))
             ->forPatient($this->patientUser->id)
             ->forMonth($this->month)
-            //todo: get these from repo
             ->withProblems(...PatientProblemsForBillingProcessing::get($this->patientId));
 
         return $this;
