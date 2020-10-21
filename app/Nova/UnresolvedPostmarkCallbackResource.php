@@ -98,7 +98,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
     public function fields(Request $request)
     {
         return [
-            Text::make('inbound id', 'postmark_id')
+            Text::make('inbound callback id', 'postmark_id')
                 ->hideWhenUpdating()
                 ->sortable(),
 
@@ -126,7 +126,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
                 ->hideWhenUpdating()
                 ->hideFromIndex(),
 
-            Boolean::make('resolved to callback', 'resolved')
+            Boolean::make('resolved to CC callback', 'resolved')
                 ->hideWhenUpdating()
                 ->sortable(),
 
