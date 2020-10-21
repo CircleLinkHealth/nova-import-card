@@ -88,7 +88,15 @@ trait PostmarkCallbackHelpers
 
     private function createUserWithPatientCcmStatus(Practice $practice, string $status)
     {
-        return $this->createUser($practice->id, 'participant', $status);
+        $user = $this->createUser($practice->id, 'participant', $status);
+
+        $user->patientSummaries()->update([
+            'no_of_successful_calls' => 0,
+        ]);
+
+        $user->patientSummaries->fresh();
+
+        return $user;
 //        $nurse = $this->createUser($practice->id, 'care-center');
 //        app(NurseFinderEloquentRepository::class)->assign($user->id, $nurse->id);
     }
