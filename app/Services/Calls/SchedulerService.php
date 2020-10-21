@@ -374,12 +374,15 @@ class SchedulerService
             ->where('status', '=', 'scheduled')
             ->delete();
     }
-
+    
     /**
+     * @param User $patient
      * @param $taskNote
      * @param $scheduler
      * @param null $phoneNumber
      *
+     * @param string $taskSubType
+     * @return Call
      * @throws \Exception
      */
     public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null, string $taskSubType): Call
@@ -453,19 +456,20 @@ class SchedulerService
             ]
         );
     }
-
+    
     /**
+     * @param User $patient
      * @param $phoneNumber
      * @param $taskNote
      * @param $scheduler
      *
-     * @throws \Exception
-     *
+     * @param string $subType
      * @return Call|\Illuminate\Database\Eloquent\Model
+     * @throws \Exception
      */
-    public function scheduleAsapCallbackTaskFromSms(User $patient, $phoneNumber, $taskNote, $scheduler)
+    public function scheduleAsapCallbackTaskFromSms(User $patient, $phoneNumber, $taskNote, $scheduler, string $subType)
     {
-        return $this->scheduleAsapCallbackTask($patient, $taskNote, $scheduler, $phoneNumber);
+        return $this->scheduleAsapCallbackTask($patient, $taskNote, $scheduler, $phoneNumber, $subType);
     }
 
     public function scheduledCallQuery(User $patient)
