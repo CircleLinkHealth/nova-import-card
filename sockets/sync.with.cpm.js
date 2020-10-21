@@ -116,6 +116,9 @@ function syncWithCPMInternal(syncUrl, listOfPatients) {
         })
         .catch((err) => {
             console.error(err);
+            if (resultsCallback && err.response) {
+                resultsCallback(err.response);
+            }
         })
 }
 
