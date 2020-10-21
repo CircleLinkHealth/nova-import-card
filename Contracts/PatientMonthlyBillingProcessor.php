@@ -12,7 +12,5 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 
 interface PatientMonthlyBillingProcessor
 {
-    public function getServicesForTimeTracker(int $patientId, Carbon $month): PatientChargeableSummaryCollection;
-
     public function process(PatientMonthlyBillingDTO $patientStub): PatientMonthlyBillingDTO;
 }

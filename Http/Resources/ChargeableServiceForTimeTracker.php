@@ -13,8 +13,8 @@ class ChargeableServiceForTimeTracker extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'           => $this->id,
-            'display_name' => $this->display_name,
+            'id'           => $this->chargeable_service_id,
+            'display_name' => $this->chargeable_service_name,
         ];
     }
 }

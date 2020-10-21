@@ -14,12 +14,6 @@ use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 
 class MonthlyProcessor implements PatientMonthlyBillingProcessor
 {
-    public function getServicesForTimeTracker(int $patientId, Carbon $month): PatientChargeableSummaryCollection
-    {
-        //todo: summary repository (address this)
-        return new PatientChargeableSummaryCollection();
-    }
-
     public function process(PatientMonthlyBillingDTO $patient): PatientMonthlyBillingDTO
     {
         $patient->getAvailableServiceProcessors()
