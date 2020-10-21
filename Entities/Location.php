@@ -88,6 +88,9 @@ use Laravel\Scout\Searchable;
  * @property int|null                                                                                                        $chargeable_service_summaries_count
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection                $cpmProblemServices
  * @property int|null                                                                                                        $cpm_problem_services_count
+ * @property \CircleLinkHealth\Synonyms\Entities\Synonym[]|\Illuminate\Database\Eloquent\Collection                          $synonyms
+ * @property int|null                                                                                                        $synonyms_count
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Location whereColumnOrSynonym($column, $synonym)
  */
 class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {

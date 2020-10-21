@@ -26,7 +26,6 @@ use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
@@ -85,6 +84,7 @@ use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
 use Propaganistas\LaravelPhone\Exceptions\NumberParseException;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Symfony\Component\Intl\Exception\MethodNotImplementedException;
 
 /**
  * CircleLinkHealth\Customer\Entities\User.
@@ -2006,6 +2006,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getRegistrationDate()
     {
         return $this->user_registered;
+    }
+
+    public function getRpmTime(): int
+    {
+        throw new MethodNotImplementedException('getRpmTime');
     }
 
     public function getRules()
