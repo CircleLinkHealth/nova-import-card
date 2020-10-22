@@ -374,15 +374,12 @@ class SchedulerService
             ->where('status', '=', 'scheduled')
             ->delete();
     }
-    
+
     /**
-     * @param User $patient
      * @param $taskNote
      * @param $scheduler
      * @param null $phoneNumber
      *
-     * @param string $taskSubType
-     * @return Call
      * @throws \Exception
      */
     public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null, string $taskSubType): Call
@@ -429,20 +426,20 @@ class SchedulerService
             // this in order to show up in stanByNurse's Activities page.
             if (ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL === $scheduler) {
                 app(NurseFinderEloquentRepository::class)->assign($patient->id, $standByNurseId);
-//                $scheduler = $nurseId;
             }
         } else {
             $nurseId = $assignedNurse->id;
         }
 
-        $nowString = now()->toDateTimeString();
+        $now              = now();
+        $callbackDateTime = $now->toDateString().' '.$now->format('g:i A');
 
         return Call::create(
             [
                 'type'                  => SchedulerService::TASK_TYPE,
                 'sub_type'              => $taskSubType,
                 'status'                => Call::SCHEDULED,
-                'attempt_note'          => "Email/SMS Response at $nowString: $taskNote",
+                'attempt_note'          => "Email/SMS Response at $callbackDateTime: $taskNote",
                 'scheduler'             => $scheduler,
                 'is_manual'             => false,
                 'inbound_phone_number'  => $phoneNumber ?? '',
@@ -456,16 +453,14 @@ class SchedulerService
             ]
         );
     }
-    
+
     /**
-     * @param User $patient
      * @param $phoneNumber
      * @param $taskNote
      * @param $scheduler
      *
-     * @param string $subType
-     * @return Call|\Illuminate\Database\Eloquent\Model
      * @throws \Exception
+     * @return Call|\Illuminate\Database\Eloquent\Model
      */
     public function scheduleAsapCallbackTaskFromSms(User $patient, $phoneNumber, $taskNote, $scheduler, string $subType)
     {

@@ -7,6 +7,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\UnresolvedPostmarkCallback.
@@ -29,6 +30,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UnresolvedPostmarkCallback extends Model
 {
+    use SoftDeletes;
+
     protected $casts = [
         'suggestions' => 'array',
     ];

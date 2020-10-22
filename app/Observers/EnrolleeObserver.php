@@ -7,6 +7,7 @@
 namespace App\Observers;
 
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
+use App\UnresolvedPostmarkCallback;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 class EnrolleeObserver
@@ -49,6 +50,20 @@ class EnrolleeObserver
 
     public function saved(Enrollee $enrollee)
     {
+        if (Enrollee::TO_CALL === $enrollee->getOriginal('status')
+            && $enrollee->wasChanged('status')) {
+            $unresolvedCall = UnresolvedPostmarkCallback::where('user_id', $enrollee->user_id);
+            if ($unresolvedCall->exists()) {
+                try {
+                    $unresolvedCall->first()->delete();
+                } catch (\Exception $e) {
+                    \Log::warning("Failed to update unresolved_callbacks for user $enrollee->user_id");
+                    sendSlackMessage('#carecoach_ops_alerts', "Patient with id $enrollee->user_id status was updated by Care Ambassador,
+                    but CPM failed to update Unresolved Callback Dashboard. You can manually Archive this patient from the dashboard");
+                }
+            }
+        }
+
         if ($this->shouldCreateSurveyOnlyUser($enrollee)) {
             CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
         }

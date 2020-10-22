@@ -98,7 +98,7 @@ class AutoResolveCallbackRequestService
         $message        = $postmarkCallbackData['Msg'];
         $now            = Carbon::now();
 
-        return $now->toDateString().' '.$now->format('g:i A').' '.'From'.' '."[$phoneFormatted $firstName $lastName]: $message.".' '."Callback Number: $phone";
+        return 'From'.' '."[$phoneFormatted $firstName $lastName]: $message.".' '."Callback Number: $phone";
     }
 
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)
