@@ -9,14 +9,18 @@ namespace CircleLinkHealth\TimeTracking\Http\Controllers;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShowPatientActivities;
+use App\Jobs\ChargeableServiceDuration;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\ActivityMeta;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -337,20 +341,22 @@ class ActivityController extends Controller
             }
         }
 
+        $fakePageTimer                = new PageTimer();
+        $fakePageTimer->activity_type = $input['type'];
+        $fakePageTimer->provider_id   = $input['provider_id'];
+        $fakePageTimer->start_time    = $input['performed_at'];
+        $fakePageTimer->patient_id    = $input['patient_id'];
+
         $activity = null;
         if ($patient) {
-            /** @var ActivityService $activityService */
-            $activityService            = app(ActivityService::class);
-            $chargeableServicesDuration = $activityService->separateDurationForEachChargeableServiceId($patient, $input['duration'], $input['is_behavioral']);
+            $cs                         = ChargeableService::firstWhere('code', '=', $input['is_behavioral'] ? ChargeableService::BHI : ChargeableService::CCM);
+            $chargeableServicesDuration = app(ActivityService::class)->separateDurationForEachChargeableServiceId($patient, $input['duration'], $cs->id);
             foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
-                $merged = array_merge($input, [
-                    'duration'              => $chargeableServiceDuration->duration,
-                    'chargeable_service_id' => $chargeableServiceDuration->id,
-                ]);
-                $activity = Activity::create($merged);
+                $activity = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $fakePageTimer, $chargeableServiceDuration);
             }
         } else {
-            $activity = Activity::create($input);
+            $chargeableServiceDuration = new ChargeableServiceDuration(null, $input['duration'], false);
+            $activity                  = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $fakePageTimer, $chargeableServiceDuration);
         }
 
         /** @var Nurse $nurse */

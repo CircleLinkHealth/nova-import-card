@@ -8,7 +8,9 @@ namespace CircleLinkHealth\TimeTracking\Entities;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Services\ActivityService;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
@@ -150,24 +152,17 @@ class OfflineActivityTimeRequest extends Model
             Log::critical($ex);
         }
 
-        $activityService            = app(ActivityService::class);
-        $chargeableServicesDuration = $activityService->separateDurationForEachChargeableServiceId($this->patient, $this->duration_seconds, $this->is_behavioral);
-        foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
-            $activity = Activity::create(
-                [
-                    'type'          => $this->type,
-                    'duration'      => $chargeableServiceDuration->duration,
-                    'duration_unit' => 'seconds',
-                    'patient_id'    => $this->patient_id,
-                    'provider_id'   => $this->requester_id,
-                    'logger_id'     => auth()->id(),
+        $cs = ChargeableService::firstWhere('code', '=', $this->is_behavioral ? ChargeableService::BHI : ChargeableService::CCM);
 
-                    'is_behavioral'         => $this->is_behavioral,
-                    'logged_from'           => 'manual_input',
-                    'performed_at'          => $this->performed_at->toDateTimeString(),
-                    'chargeable_service_id' => $chargeableServiceDuration->id,
-                ]
-            );
+        $activityService            = app(ActivityService::class);
+        $chargeableServicesDuration = $activityService->separateDurationForEachChargeableServiceId($this->patient, $this->duration_seconds, $cs->id);
+        foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
+            $pageTimer                = new PageTimer();
+            $pageTimer->activity_type = $this->type;
+            $pageTimer->patient_id    = $this->patient_id;
+            $pageTimer->provider_id   = $this->requester_id;
+            $pageTimer->start_time    = $this->performed_at->toDateTimeString();
+            $activity                 = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $pageTimer, $chargeableServiceDuration);
         }
 
         $nurse = optional($this->requester)->nurseInfo;
