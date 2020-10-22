@@ -9,9 +9,8 @@ namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 use App\Http\Requests\SafeRequest;
 use App\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use Illuminate\Routing\Controller;
 
@@ -41,9 +40,10 @@ class CcdProblemController extends Controller
     public function destroy($userId, $ccdProblemId)
     {
         if ($userId && $ccdProblemId) {
-            return \response()->json(
-                \CircleLinkHealth\SharedModels\Entities\Problem::where(['patient_id' => $userId, 'id' => $ccdProblemId])->delete()
-            );
+            return \response()->json([
+                'success'             => \CircleLinkHealth\SharedModels\Entities\Problem::where(['patient_id' => $userId, 'id' => $ccdProblemId])->delete(),
+                'chargeable_services' => $this->getChargeableServices($userId),
+            ]);
         }
 
         return \response()->json('"userId" and "ccdProblemId" are important', 400);
@@ -81,9 +81,8 @@ class CcdProblemController extends Controller
         (app(ProcessPatientSummaries::class))->execute($userId, Carbon::now()->startOfMonth());
 
         return \response()->json([
-            'problem'        => $problem,
-            'patient_is_bhi' => PatientIsOfServiceCode::execute($userId, ChargeableService::BHI),
-            'patient_is_ccm' => PatientIsOfServiceCode::execute($userId, ChargeableService::CCM),
+            'problem'             => $problem,
+            'chargeable_services' => $this->getChargeableServices($userId),
         ]);
     }
 
@@ -102,9 +101,17 @@ class CcdProblemController extends Controller
         $icd10          = $request->inputSafe('icd10');
         $instruction    = $request->inputSafe('instruction');
         if ($ccdProblemId) {
-            return \response()->json($this->ccdProblemService->editPatientCcdProblem($userId, $ccdProblemId, $cpm_problem_id, $is_monitored, $icd10, $instruction));
+            return \response()->json([
+                'problem'             => $this->ccdProblemService->editPatientCcdProblem($userId, $ccdProblemId, $cpm_problem_id, $is_monitored, $icd10, $instruction),
+                'chargeable_services' => $this->getChargeableServices($userId),
+            ]);
         }
 
         return \response()->json('"userId" and "ccdProblemId" are important', 400);
+    }
+
+    private function getChargeableServices($patientId)
+    {
+        return (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
     }
 }
