@@ -1485,7 +1485,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return 0;
         }
 
-        return PatientMonthlyServiceTime::allNonBhi($this->id, Carbon::now()->startOfMonth());
+        return PatientMonthlyServiceTime::ccm($this->id, Carbon::now()->startOfMonth());
     }
 
     public function getConsentDate()
@@ -2010,7 +2010,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getRpmTime(): int
     {
-        throw new MethodNotImplementedException('getRpmTime');
+        if (is_null($this->id)) {
+            return 0;
+        }
+    
+        return PatientMonthlyServiceTime::rpm($this->id, Carbon::now()->startOfMonth());
     }
 
     public function getRules()

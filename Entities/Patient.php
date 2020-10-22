@@ -532,6 +532,21 @@ class Patient extends BaseModel
         return $this->belongsTo(Location::class, 'preferred_contact_location');
     }
 
+    public function locationHasServices($chargeableServiceCodes): bool
+    {
+        if (is_null($this->preferred_contact_location)) {
+            sendSlackMessage('#billing_alerts', "Patient ({$this->user_id}) does not have location attached. Please investigate");
+
+            return false;
+        }
+
+        if ( ! is_array($chargeableServiceCodes)) {
+            $chargeableServiceCodes = [$chargeableServiceCodes];
+        }
+
+        return LocationServices::hasServiceCodesForMonth($this->preferred_contact_location, $chargeableServiceCodes);
+    }
+
     public function notificationsAboutThisPatient()
     {
         return $this->hasMany(DatabaseNotification::class, 'patient_id', 'user_id');
@@ -780,19 +795,5 @@ class Patient extends BaseModel
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-    
-    public function locationHasServices($chargeableServiceCodes): bool
-    {
-        if (is_null($this->preferred_contact_location)){
-            sendSlackMessage('#billing_alerts', "Patient ({$this->user_id}) does not have location attached. Please investigate");
-            return false;
-        }
-    
-        if (! is_array($chargeableServiceCodes)){
-            $chargeableServiceCodes = [$chargeableServiceCodes];
-        }
-        
-        return LocationServices::hasServiceCodesForMonth($this->preferred_contact_location, $chargeableServiceCodes);
     }
 }
