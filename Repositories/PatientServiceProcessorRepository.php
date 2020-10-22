@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
+use App\Jobs\ChargeableServiceDuration;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
@@ -18,12 +19,40 @@ use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceMod
 use CircleLinkHealth\Customer\Entities\Patient as PatientModel;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Database\Eloquent\Collection;
 
 class PatientServiceProcessorRepository implements Repository
 {
     use ApprovablePatientServicesQuery;
     use ApprovablePatientUsersQuery;
+
+    /**
+     * @throws \Exception
+     */
+    public function createActivityForChargeableService(string $source, PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration): Activity
+    {
+        $activity = Activity::create(
+            [
+                'type'                  => $pageTimer->activity_type,
+                'provider_id'           => $pageTimer->provider_id,
+                'is_behavioral'         => $chargeableServiceDuration->isBehavioral,
+                'performed_at'          => $pageTimer->start_time,
+                'duration'              => $chargeableServiceDuration->duration,
+                'duration_unit'         => 'seconds',
+                'patient_id'            => $pageTimer->patient_id,
+                'logged_from'           => $source,
+                'logger_id'             => $pageTimer->provider_id,
+                'page_timer_id'         => $pageTimer->id,
+                'chargeable_service_id' => $chargeableServiceDuration->id,
+            ]
+        );
+
+        $this->reloadPatientSummaryViews($pageTimer->patient_id, Carbon::parse($pageTimer->start_time)->startOfMonth());
+
+        return $activity;
+    }
 
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {

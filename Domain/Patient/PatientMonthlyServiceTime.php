@@ -32,14 +32,14 @@ class PatientMonthlyServiceTime
     {
         return app(PatientMonthlyServiceTime::class)
             ->setSummaries($patientId, $month)
-            ->forServices([ChargeableService::CCM]);
+            ->forServices([ChargeableService::CCM, ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60]);
     }
     
     public static function rpm(int $patientId, Carbon $month): int
     {
         return app(PatientMonthlyServiceTime::class)
             ->setSummaries($patientId, $month)
-            ->forServices([ChargeableService::RPM]);
+            ->forServices([ChargeableService::RPM, ChargeableService::RPM40]);
     }
 
     public static function bhi(int $patientId, Carbon $month): int

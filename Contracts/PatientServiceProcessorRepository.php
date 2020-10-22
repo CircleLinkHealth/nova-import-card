@@ -6,10 +6,13 @@
 
 namespace CircleLinkHealth\CcmBilling\Contracts;
 
+use App\Jobs\ChargeableServiceDuration;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Database\Eloquent\Collection;
 
 interface PatientServiceProcessorRepository
@@ -29,9 +32,11 @@ interface PatientServiceProcessorRepository
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
 
     public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): Collection;
-
+    
+    //todo: make private
     public function reloadPatientProblems(int $patientId): void;
 
+    //todo: make private
     public function reloadPatientSummaryViews(int $patientId, Carbon $month): void;
 
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
@@ -39,4 +44,6 @@ interface PatientServiceProcessorRepository
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary;
+    
+    public function createActivityForChargeableService(string $source, PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration): Activity;
 }
