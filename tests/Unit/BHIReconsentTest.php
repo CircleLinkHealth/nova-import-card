@@ -10,6 +10,8 @@ use App\Call;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
+use CircleLinkHealth\CcmBilling\Events\PatientConsentedToService;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
@@ -231,6 +233,7 @@ class BHIReconsentTest extends CustomerTestCase
                     'type'         => Patient::BHI_CONSENT_NOTE_TYPE,
                     'performed_at' => $now->toDateTimeString(),
                 ]);
+            event(new PatientConsentedToService($patient->id, ChargeableService::BHI));
         }
 
         if ($hasBhiProblem) {
@@ -245,6 +248,8 @@ class BHIReconsentTest extends CustomerTestCase
                 ]);
             //todo: update cache
         }
+        
+        BillingCache::clearPatients();
 
         ProcessSinglePatientMonthlyServices::dispatch($patient->id);
 
