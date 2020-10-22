@@ -113,9 +113,15 @@ class NextCallSuggestorTest extends TestCase
         self::assertEquals($patient, $suggestion->patient);
         self::assertEquals($handler->createSchedulerInfoString($suggestion), $suggestion->predicament);
         self::assertEquals(true, $suggestion->successful);
-        self::assertEquals(Suggestor::DEFAULT_WINDOW_END, $suggestion->window_end);
+        self::assertEquals(
+            Carbon::parse(PatientContactWindow::DEFAULT_WINDOW_TIME_END)->format('H:i'),
+            Carbon::parse($suggestion->window_end)->format('H:i')
+        );
         self::assertEquals('This patient has no assigned nurse in CPM.', $suggestion->window_match);
-        self::assertEquals(Suggestor::DEFAULT_WINDOW_START, $suggestion->window_start);
+        self::assertEquals(
+            Carbon::parse(PatientContactWindow::DEFAULT_WINDOW_TIME_START)->format('H:i'),
+            Carbon::parse($suggestion->window_start)->format('H:i')
+        );
         self::assertEquals(0, $suggestion->ccm_time_in_seconds);
     }
 
@@ -141,9 +147,15 @@ class NextCallSuggestorTest extends TestCase
         self::assertEquals($patient, $suggestion->patient);
         self::assertEquals($handler->createSchedulerInfoString($suggestion), $suggestion->predicament);
         self::assertEquals(true, $suggestion->successful);
-        self::assertEquals(Suggestor::DEFAULT_WINDOW_END, $suggestion->window_end);
+        self::assertEquals(
+            Carbon::parse(PatientContactWindow::DEFAULT_WINDOW_TIME_END)->format('H:i'),
+            Carbon::parse($suggestion->window_end)->format('H:i')
+        );
         self::assertEquals("Assigning next call to $nurse->display_name.", $suggestion->window_match);
-        self::assertEquals(Suggestor::DEFAULT_WINDOW_START, $suggestion->window_start);
+        self::assertEquals(
+            Carbon::parse(PatientContactWindow::DEFAULT_WINDOW_TIME_START)->format('H:i'),
+            Carbon::parse($suggestion->window_start)->format('H:i')
+        );
         self::assertEquals(0, $suggestion->ccm_time_in_seconds);
     }
 
