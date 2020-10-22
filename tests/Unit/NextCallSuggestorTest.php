@@ -11,14 +11,32 @@ use App\Algorithms\Calls\NextCallSuggestor\Suggestion;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Contracts\CallHandler;
+use App\Traits\Tests\PracticeHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
+use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Mockery;
 use Tests\TestCase;
 
 class NextCallSuggestorTest extends TestCase
 {
+    use PracticeHelpers;
+    use UserHelpers;
+    protected $location;
+    protected $patient;
+
+    protected $practice;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->practice = $this->setupPractice(true, true, true, true);
+        $this->patient  = $this->setupPatient($this->practice, true);
+    }
+
     public function test_it_returns_patient_associated_nurse_in_1st_week_of_month()
     {
         Carbon::setTestNow(now()->startOfMonth());
@@ -45,9 +63,6 @@ class NextCallSuggestorTest extends TestCase
 
     public function test_it_returns_standby_nurse_if_patient_doesnt_have_associated_nurse_and_standby_nurse_is_set()
     {
-        $patient = factory(User::class)->make([
-            'id' => rand(1, 9999999),
-        ]);
         $nurse = factory(User::class)->make([
             'id'           => 123456789,
             'display_name' => 'Soulla Masoulla',
@@ -56,28 +71,25 @@ class NextCallSuggestorTest extends TestCase
             $mock->shouldReceive('user')->atLeast(1)->andReturn($nurse);
         });
 
-        $suggestion = (new Suggestor())->handle($patient, $handler = new SuccessfulCall());
+        $suggestion = (new Suggestor())->handle($this->patient, $handler = new SuccessfulCall());
 
-        self::assertValidNurseResponse($suggestion, $nurse, $patient, $handler);
+        self::assertValidNurseResponse($suggestion, $nurse, $this->patient, $handler);
     }
 
     public function test_nurse_is_null_if_patient_doesnt_have_associated_nurse_and_standby_nurse_is_not_set()
     {
-        $patient = factory(User::class)->make([
-            'id' => rand(1, 9999999),
-        ]);
         $repo = Mockery::mock(NurseFinderEloquentRepository::class);
 
         $repo->shouldReceive('find')
-            ->with($patient->id)
+            ->with($this->patient->id)
             ->once()
             ->andReturn(null);
 
         $this->instance(NurseFinderEloquentRepository::class, $repo);
 
-        $suggestion = (new Suggestor())->handle($patient, $handler = new SuccessfulCall());
+        $suggestion = (new Suggestor())->handle($this->patient, $handler = new SuccessfulCall());
 
-        self::assertNullResponse($suggestion, $patient, $handler);
+        self::assertNullResponse($suggestion, $this->patient, $handler);
     }
 
     private static function assertNullResponse(Suggestion $suggestion, User $patient, CallHandler $handler)
@@ -101,9 +113,15 @@ class NextCallSuggestorTest extends TestCase
         self::assertEquals($patient, $suggestion->patient);
         self::assertEquals($handler->createSchedulerInfoString($suggestion), $suggestion->predicament);
         self::assertEquals(true, $suggestion->successful);
-        self::assertEquals(Suggestor::DEFAULT_WINDOW_END, $suggestion->window_end);
+        self::assertEquals(
+            Carbon::parse(PatientContactWindow::DEFAULT_WINDOW_TIME_END)->format('H:i'),
+            Carbon::parse($suggestion->window_end)->format('H:i')
+        );
         self::assertEquals('This patient has no assigned nurse in CPM.', $suggestion->window_match);
-        self::assertEquals(Suggestor::DEFAULT_WINDOW_START, $suggestion->window_start);
+        self::assertEquals(
+            Carbon::parse(PatientContactWindow::DEFAULT_WINDOW_TIME_START)->format('H:i'),
+            Carbon::parse($suggestion->window_start)->format('H:i')
+        );
         self::assertEquals(0, $suggestion->ccm_time_in_seconds);
     }
 
@@ -129,31 +147,35 @@ class NextCallSuggestorTest extends TestCase
         self::assertEquals($patient, $suggestion->patient);
         self::assertEquals($handler->createSchedulerInfoString($suggestion), $suggestion->predicament);
         self::assertEquals(true, $suggestion->successful);
-        self::assertEquals(Suggestor::DEFAULT_WINDOW_END, $suggestion->window_end);
+        self::assertEquals(
+            Carbon::parse(PatientContactWindow::DEFAULT_WINDOW_TIME_END)->format('H:i'),
+            Carbon::parse($suggestion->window_end)->format('H:i')
+        );
         self::assertEquals("Assigning next call to $nurse->display_name.", $suggestion->window_match);
-        self::assertEquals(Suggestor::DEFAULT_WINDOW_START, $suggestion->window_start);
+        self::assertEquals(
+            Carbon::parse(PatientContactWindow::DEFAULT_WINDOW_TIME_START)->format('H:i'),
+            Carbon::parse($suggestion->window_start)->format('H:i')
+        );
         self::assertEquals(0, $suggestion->ccm_time_in_seconds);
     }
 
     private function itShouldReturnPatientAssociatedNurse()
     {
-        $patient = factory(User::class)->make([
-            'id' => rand(1, 9999999),
-        ]);
         $nurse = factory(User::class)->make([
             'id' => rand(1, 9999999),
         ]);
+
         $repo = Mockery::mock(NurseFinderEloquentRepository::class);
 
         $repo->shouldReceive('find')
-            ->with($patient->id)
+            ->with($this->patient->id)
             ->once()
             ->andReturn($nurse);
 
         $this->instance(NurseFinderEloquentRepository::class, $repo);
 
-        $suggestion = (new Suggestor())->handle($patient, $handler = new SuccessfulCall());
+        $suggestion = (new Suggestor())->handle($this->patient, $handler = new SuccessfulCall());
 
-        self::assertValidNurseResponse($suggestion, $nurse, $patient, $handler);
+        self::assertValidNurseResponse($suggestion, $nurse, $this->patient, $handler);
     }
 }
