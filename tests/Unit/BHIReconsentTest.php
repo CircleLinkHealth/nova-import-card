@@ -9,6 +9,7 @@ namespace Tests\Unit;
 use App\Call;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
 use CircleLinkHealth\CcmBilling\Events\PatientConsentedToService;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
@@ -246,10 +247,8 @@ class BHIReconsentTest extends CustomerTestCase
                     'name'           => $bhiProblem->name,
                     'is_monitored'   => true,
                 ]);
-            //todo: update cache
+            (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($patient->id);
         }
-        
-        BillingCache::clearPatients();
 
         ProcessSinglePatientMonthlyServices::dispatch($patient->id);
 
