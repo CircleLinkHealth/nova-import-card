@@ -95,6 +95,24 @@ class PatientServiceProcessorRepository implements Repository
             ->exists();
     }
 
+    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): Collection
+    {
+        return Problem::wherePatientId($patientId)
+            ->isBillable()
+            ->ofService($chargeableServiceCode)
+            ->get();
+    }
+
+    public function reloadPatientProblems(int $patientId): void
+    {
+        // TODO: Implement reloadPatientProblems() method.
+    }
+
+    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
+    {
+        // TODO: Implement reloadPatientSummaryViews() method.
+    }
+
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
@@ -127,23 +145,5 @@ class PatientServiceProcessorRepository implements Repository
                 'requires_patient_consent' => $requiresPatientConsent,
             ]
         );
-    }
-    
-    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): Collection
-    {
-        return Problem::wherePatientId($patientId)
-            ->isBillable()
-            ->ofService($chargeableServiceCode)
-            ->get();
-    }
-    
-    public function reloadPatientProblems(int $patientId): void
-    {
-        // TODO: Implement reloadPatientProblems() method.
-    }
-    
-    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
-    {
-        // TODO: Implement reloadPatientSummaryViews() method.
     }
 }

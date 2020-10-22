@@ -14,6 +14,7 @@ class ChargeableServiceForTimeTracker extends JsonResource
     {
         return [
             'id'           => $this->chargeable_service_id,
+            'code'         => $this->chargeable_service_code,
             'display_name' => $this->chargeable_service_name,
         ];
     }

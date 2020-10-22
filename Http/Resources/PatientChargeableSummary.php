@@ -14,6 +14,7 @@ class PatientChargeableSummary extends JsonResource
     {
         return [
             'patient_id'         => $this->patient_user_id,
+            'total_time'         => $this->total_time,
             'chargeable_service' => ChargeableServiceForTimeTracker::make($this),
         ];
     }

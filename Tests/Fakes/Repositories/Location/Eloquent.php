@@ -51,6 +51,11 @@ class Eloquent implements LocationProcessorRepository
         return $locationProcessorsForMonth['available_service_processors'] ?? new AvailableServiceProcessors();
     }
 
+    public function enrolledPatients(int $locationId, Carbon $monthYear): EloquentCollection
+    {
+        // TODO: Implement enrolledPatients() method.
+    }
+
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
     {
         return $this->summaries->where('location_id', $locationId)
@@ -85,6 +90,14 @@ class Eloquent implements LocationProcessorRepository
     public function patientsQuery(int $customerModelId, Carbon $monthYear, ?string $ccmStatus = null): Builder
     {
         return $this->builder;
+    }
+
+    public function servicesExistForMonth(int $locationId, Carbon $month): bool
+    {
+        return $this->summaries
+            ->where('location_id', $locationId)
+            ->where('chargeable_month', $month)
+            ->isNotEmpty();
     }
 
     public function setBuilder(Builder $builder)
@@ -157,18 +170,5 @@ class Eloquent implements LocationProcessorRepository
             })
             ->unique()
             ->count();
-    }
-    
-    public function servicesExistForMonth(int $locationId, Carbon $month): bool
-    {
-        return $this->summaries
-            ->where('location_id', $locationId)
-            ->where('chargeable_month', $month)
-            ->isNotEmpty();
-    }
-    
-    public function enrolledPatients(int $locationId, Carbon $monthYear): EloquentCollection
-    {
-        // TODO: Implement enrolledPatients() method.
     }
 }

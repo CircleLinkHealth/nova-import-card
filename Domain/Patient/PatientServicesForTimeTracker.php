@@ -11,7 +11,8 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
+use Illuminate\Support\Collection;
 
 class PatientServicesForTimeTracker
 {
@@ -20,7 +21,7 @@ class PatientServicesForTimeTracker
     protected int $patientId;
     protected PatientServiceProcessorRepository $repo;
 
-    protected EloquentCollection $summaries;
+    protected Collection $summaries;
 
     public function __construct(int $patientId, Carbon $month)
     {
@@ -31,7 +32,6 @@ class PatientServicesForTimeTracker
     public function get(): PatientChargeableSummaryCollection
     {
         return $this->setSummaries()
-            ->groupSimilarCodes()
             ->createAndReturnResource();
     }
 
@@ -44,11 +44,40 @@ class PatientServicesForTimeTracker
         );
     }
 
-    private function groupSimilarCodes(): self
+    private function groupSimilarCodes(Collection $summaries): Collection
     {
-        //todo: implement
+        /** @var ChargeablePatientMonthlySummaryView $ccmChargeableService */
+        $ccmChargeableService = $summaries->filter(function (ChargeablePatientMonthlySummaryView $entry) {
+            return ChargeableService::CCM === $entry->chargeable_service_code;
+        })->first();
 
-        return $this;
+        /** @var ChargeablePatientMonthlySummaryView $rpmChargeableService */
+        $rpmChargeableService = $summaries->filter(function (ChargeablePatientMonthlySummaryView $entry) {
+            return ChargeableService::RPM === $entry->chargeable_service_code;
+        })->first();
+
+        $patientChargeableSummaries = collect();
+        $summaries->each(function (ChargeablePatientMonthlySummaryView $entry) use ($patientChargeableSummaries, $ccmChargeableService, $rpmChargeableService) {
+            $code = $entry->chargeable_service_code;
+            if (in_array($code, [ChargeableService::CCM, ChargeableService::RPM])) {
+                return;
+            }
+            if ($ccmChargeableService && in_array($code, [ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60])) {
+                $ccmChargeableService->total_time += $entry->total_time;
+            } elseif ($rpmChargeableService && ChargeableService::RPM40 === $code) {
+                $rpmChargeableService->total_time += $entry->total_time;
+            } else {
+                $patientChargeableSummaries->push($entry);
+            }
+        });
+        if ($ccmChargeableService) {
+            $patientChargeableSummaries->push($ccmChargeableService);
+        }
+        if ($rpmChargeableService) {
+            $patientChargeableSummaries->push($rpmChargeableService);
+        }
+
+        return $patientChargeableSummaries;
     }
 
     private function newBillingIsEnabled(): bool
@@ -69,8 +98,9 @@ class PatientServicesForTimeTracker
     private function setSummaries(): self
     {
         if ($this->newBillingIsEnabled()) {
-            $this->summaries = $this->repo()->getChargeablePatientSummaries($this->patientId, $this->month);
-        }else{
+            $summaries = $this->repo()->getChargeablePatientSummaries($this->patientId, $this->month);
+        } else {
+            $summaries = collect();
             //todo: get by looking at PCM problems, just like legacy billing.
             //e.g. CCM,and CCM plus = patient has 2 non bhi problems and practice has CCM
             //PCM patient has 1 pcm problem (pcm_problems table) and practice has PCM
@@ -79,6 +109,8 @@ class PatientServicesForTimeTracker
             //until we make sure billing revamp works as intended
 //            $this->summaries = $this->createFromPatientProblems();
         }
+
+        $this->summaries = $this->groupSimilarCodes($summaries);
 
         return $this;
     }

@@ -10,6 +10,10 @@ use CircleLinkHealth\Customer\Entities\User;
 
 interface BillingCache
 {
+    public function clearPatients(): void;
+
+    public function forgetPatient(int $patientId): void;
+
     public function getPatient(int $patientId): User;
 
     public function patientWasQueried(int $patientId): bool;
@@ -17,8 +21,4 @@ interface BillingCache
     public function setPatientInCache(User $patientUser): void;
 
     public function setQueriedPatient(int $patientId): void;
-    
-    public function clearPatients():void;
-    
-    public function forgetPatient(int $patientId): void;
 }

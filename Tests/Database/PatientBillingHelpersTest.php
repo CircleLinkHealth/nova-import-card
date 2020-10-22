@@ -13,6 +13,14 @@ use CircleLinkHealth\Customer\Entities\Patient;
 
 class PatientBillingHelpersTest extends BillingTestCase
 {
+    public function test_patient_bhi_time_helper_uses_new_summaries()
+    {
+    }
+
+    public function test_patient_ccm_time_helper_uses_new_summaries()
+    {
+    }
+
     public function test_patient_is_bhi_helper_uses_new_summaries()
     {
         self::assertTrue(($patient = $this->patient())->ccdProblems->isEmpty());
@@ -52,15 +60,5 @@ class PatientBillingHelpersTest extends BillingTestCase
         ProcessSinglePatientMonthlyServices::dispatch($patient->id, Carbon::now()->startOfMonth());
 
         self::assertTrue($patient->isPcm());
-    }
-    
-    public function test_patient_ccm_time_helper_uses_new_summaries()
-    {
-    
-    }
-    
-    public function test_patient_bhi_time_helper_uses_new_summaries()
-    {
-    
     }
 }

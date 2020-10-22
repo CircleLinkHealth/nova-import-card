@@ -23,14 +23,28 @@ class PatientMonthlyServiceTime
 
     public static function allNonBhi(int $patientId, Carbon $month): int
     {
-        return (new static(app(PatientServiceProcessorRepository::class)))
+        return app(PatientMonthlyServiceTime::class)
             ->setSummaries($patientId, $month)
             ->forServices([ChargeableService::BHI], false);
+    }
+    
+    public static function ccm(int $patientId, Carbon $month): int
+    {
+        return app(PatientMonthlyServiceTime::class)
+            ->setSummaries($patientId, $month)
+            ->forServices([ChargeableService::CCM]);
+    }
+    
+    public static function rpm(int $patientId, Carbon $month): int
+    {
+        return app(PatientMonthlyServiceTime::class)
+            ->setSummaries($patientId, $month)
+            ->forServices([ChargeableService::RPM]);
     }
 
     public static function bhi(int $patientId, Carbon $month): int
     {
-        return (new static(app(PatientServiceProcessorRepository::class)))
+        return app(PatientMonthlyServiceTime::class)
             ->setSummaries($patientId, $month)
             ->forServices([ChargeableService::BHI]);
     }

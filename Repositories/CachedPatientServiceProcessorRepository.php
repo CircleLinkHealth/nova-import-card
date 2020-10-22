@@ -21,7 +21,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
 
     public function __construct()
     {
-        $this->repo  = new PatientServiceProcessorRepository();
+        $this->repo = new PatientServiceProcessorRepository();
     }
 
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
@@ -43,6 +43,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         return $summary;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection
     {
         return $this->getPatientFromCache($patientId)
@@ -50,6 +53,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->where('chargeable_month', $month);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView
     {
         //todo: query for view if you should
@@ -60,6 +66,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->first();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User
     {
         //is it realistic that multiple months are going to be queried by this?
@@ -68,6 +77,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         return $this->getPatientFromCache($patientId);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         return $this->getPatientFromCache($patientId)
@@ -77,6 +89,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->count() > 0;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function isChargeableServiceEnabledForLocationForMonth(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         return $this->getPatientFromCache($patientId)
@@ -88,6 +103,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->count() > 0;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         return $this->getPatientFromCache($patientId)
@@ -98,6 +116,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->count() > 0;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): EloquentCollection
     {
         return $this->getPatientFromCache($patientId)
@@ -111,6 +132,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             });
     }
 
+    /**
+     * @throws \Exception
+     */
     public function reloadPatientProblems(int $patientId): void
     {
         $this->getPatientFromCache($patientId)
@@ -121,6 +145,20 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             }]);
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
+    {
+        $this->getPatientFromCache($patientId)
+            ->load(['chargeableMonthlySummariesView' => function ($q) use ($month) {
+                $q->createdOnIfNotNull($month, 'chargeable_month');
+            }]);
+    }
+
+    /**
+     * @throws \Exception
+     */
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
         return $this->getPatientFromCache($patientId)
@@ -131,6 +169,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->count() > 0;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
         $summary = $this->repo->setPatientConsented($patientId, $chargeableServiceCode, $month);
@@ -148,6 +189,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         return $summary;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary
     {
         $summary = $this->repo->store($patientId, $chargeableServiceCode, $month, $requiresPatientConsent);
@@ -173,6 +217,9 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         return $summary;
     }
 
+    /**
+     * @throws \Exception
+     */
     private function getPatientFromCache(int $patientId): User
     {
         $this->retrievePatientDataIfYouMust($patientId);
@@ -208,13 +255,5 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         }
 
         $this->queryPatientData($patientId);
-    }
-    
-    public function reloadPatientSummaryViews(int $patientId, Carbon $month):void
-    {
-        $this->getPatientFromCache($patientId)
-            ->load(['chargeableMonthlySummariesView' => function ($q) use ($month) {
-                $q->createdOnIfNotNull($month, 'chargeable_month');
-        }]);
     }
 }

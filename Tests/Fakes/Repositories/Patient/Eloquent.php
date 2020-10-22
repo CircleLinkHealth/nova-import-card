@@ -63,7 +63,43 @@ class Eloquent implements PatientServiceProcessorRepository
 
     public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection
     {
-        // TODO: Implement getChargeablePatientSummaries() method.
+        $chargebleServices = ChargeableService::all();
+
+        /** @var ChargeableService $cs */
+        $cs = $chargebleServices->where('code', '=', ChargeableService::CCM)->first();
+
+        $record1                          = new ChargeablePatientMonthlySummaryView();
+        $record1->patient_user_id         = $patientId;
+        $record1->chargeable_service_id   = $cs->id;
+        $record1->chargeable_service_code = $cs->code;
+        $record1->chargeable_service_name = $cs->display_name;
+        $record1->total_time              = 2564;
+
+        /** @var ChargeableService $cs */
+        $cs = $chargebleServices->where('code', '=', ChargeableService::BHI)->first();
+
+        $record4                          = new ChargeablePatientMonthlySummaryView();
+        $record4->patient_user_id         = $patientId;
+        $record4->chargeable_service_id   = $cs->id;
+        $record4->chargeable_service_code = $cs->code;
+        $record4->chargeable_service_name = $cs->display_name;
+        $record4->total_time              = 124;
+
+        /** @var ChargeableService $cs */
+        $cs = $chargebleServices->where('code', '=', ChargeableService::RPM)->first();
+
+        $record5                          = new ChargeablePatientMonthlySummaryView();
+        $record5->patient_user_id         = $patientId;
+        $record5->chargeable_service_id   = $cs->id;
+        $record5->chargeable_service_code = $cs->code;
+        $record5->chargeable_service_name = $cs->display_name;
+        $record5->total_time              = 0;
+
+        return EloquentCollection::make([
+            $record1,
+            $record4,
+            $record5,
+        ]);
     }
 
     public function getChargeablePatientSummary(int $patientId, string $chargeableServiceCode, Carbon $month): ?ChargeablePatientMonthlySummaryView
@@ -109,6 +145,26 @@ class Eloquent implements PatientServiceProcessorRepository
             ->where('patientId', $patientId)
             ->pluck('showAsFulfilled')
             ->first();
+    }
+
+    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): EloquentCollection
+    {
+        // TODO: Implement patientProblemsOfServiceCode() method.
+    }
+
+    public function reloadPatientProblems(int $patientId): void
+    {
+        // TODO: Implement reloadPatientProblems() method.
+    }
+
+    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
+    {
+        // TODO: Implement reloadPatientSummaryViews() method.
+    }
+
+    public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
+    {
+        // TODO: Implement requiresPatientConsent() method.
     }
 
     /**
@@ -199,25 +255,5 @@ class Eloquent implements PatientServiceProcessorRepository
             ->where('chargeable_service_id', $this->chargeableServiceCodeIds()[$chargeableServiceCode])
             ->where('chargeable_month', $month)
             ->count();
-    }
-    
-    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): EloquentCollection
-    {
-        // TODO: Implement patientProblemsOfServiceCode() method.
-    }
-    
-    public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool
-    {
-        // TODO: Implement requiresPatientConsent() method.
-    }
-    
-    public function reloadPatientProblems(int $patientId): void
-    {
-        // TODO: Implement reloadPatientProblems() method.
-    }
-    
-    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
-    {
-        // TODO: Implement reloadPatientSummaryViews() method.
     }
 }

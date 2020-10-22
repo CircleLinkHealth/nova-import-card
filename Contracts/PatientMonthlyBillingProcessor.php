@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Contracts;
 
-use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 
 interface PatientMonthlyBillingProcessor

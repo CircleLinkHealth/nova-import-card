@@ -28,13 +28,15 @@ interface PatientServiceProcessorRepository
 
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
 
+    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): Collection;
+
+    public function reloadPatientProblems(int $patientId): void;
+
+    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void;
+
+    public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
+
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary;
-    
-    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode) : Collection;
-    
-    public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
-    public function reloadPatientProblems(int $patientId): void;
-    public function reloadPatientSummaryViews(int $patientId, Carbon $month):void;
 }

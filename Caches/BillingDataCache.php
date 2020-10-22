@@ -17,6 +17,18 @@ class BillingDataCache implements BillingCache
 
     protected array $queriedPatients = [];
 
+    public function clearPatients(): void
+    {
+        $this->patientCache    = [];
+        $this->queriedPatients = [];
+    }
+
+    public function forgetPatient(int $patientId): void
+    {
+        $this->patientCache    = collect($this->patientCache)->filter(fn ($p) => $p->id != $patientId)->toArray();
+        $this->queriedPatients = collect($this->patientCache)->filter(fn ($id) => $id != $patientId)->toArray();
+    }
+
     public function getPatient(int $patientId): User
     {
         return collect($this->patientCache)->firstWhere('id', $patientId);
@@ -31,21 +43,9 @@ class BillingDataCache implements BillingCache
     {
         $this->patientCache[] = $patientUser;
     }
-    
+
     public function setQueriedPatient(int $patientId): void
     {
         $this->queriedPatients[] = $patientId;
-    }
-    
-    public function clearPatients(): void
-    {
-        $this->patientCache = [];
-        $this->queriedPatients = [];
-    }
-    
-    public function forgetPatient(int $patientId): void
-    {
-        $this->patientCache = collect($this->patientCache)->filter(fn($p) => $p->id != $patientId)->toArray();
-        $this->queriedPatients = collect($this->patientCache)->filter(fn($id) => $id != $patientId)->toArray();
     }
 }
