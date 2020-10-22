@@ -43,7 +43,7 @@
 
                 </script>
             @endpush
-            <div class="col-sm-8" style="line-height: 22px;">
+            <div class="col-sm-7" style="line-height: 22px;">
                 <span style="font-size: 30px;">
                     <a href="{{ route('patient.summary', [$patient->id]) }}">
                     {{$patient->getFullName()}}
@@ -167,89 +167,27 @@
                                         @if(($problem['is_behavioral'] ?? false) && $enableBhiAttestation)
                                         title="BHI Condition: Switch to BHI timer when discussing with patient"
                                         class="with-bhi-tooltip bhi-problem inline-block"
-                                                @else
-                                                class="inline-block"
-                                                @endif
+                                        @else
+                                        class="inline-block"
+                                        @endif
                                 ><input type="checkbox" id="item-{{$problem['id']}}"
-                                                                name="item-{{$problem['id']}}"
-                                                                value="Active"
-                                                                checked="checked" disabled="disabled">
-                                    <label @if(($problem['is_behavioral'] ?? false) && $enableBhiAttestation) class="bhi-problem" @endif for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
+                                        name="item-{{$problem['id']}}"
+                                        value="Active"
+                                        checked="checked" disabled="disabled">
+                                    <label @if(($problem['is_behavioral'] ?? false) && $enableBhiAttestation) class="bhi-problem"
+                                           @endif for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}
+                                    </label>
                                 </li>
                             @endif
                         @endforeach
                     </ul>
                 @endif
             </div>
-            <div class="col-lg-push-0 col-sm-4 col-sm-push-0 col-xs-4 col-xs-push-1"
+            <div class="col-lg-push-0 col-sm-5 col-sm-push-0 col-xs-5 col-xs-push-1"
                  style="line-height: 22px; text-align: right">
 
-                <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
-                    <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
-                        @if (isset($disableTimeTracking) && $disableTimeTracking)
-                            <div class="color-grey">
-                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
-                                    <server-time-display url="{{config('services.ws.server-url')}}"
-                                                         patient-id="{{$patient->id}}"
-                                                         provider-id="{{auth()->id()}}"
-                                                         value="{{$monthlyTime}}"></server-time-display>
-                                </a>
-                            </div>
-                        @else
-                            <?php
-                            $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
-                            $ccmCountableUser        = auth()->user()->isCCMCountable();
-                            ?>
-                            @if ($noLiveCountTimeTracking)
-                                <div class="color-grey">
-                                    <div>
-                                        <div class="{{$monthlyBhiTime === '00:00:00' ? '' : 'col-md-6'}}">
-                                            <div>
-                                                <small>CCM</small>
-                                            </div>
-                                            <div>
-                                                 <a id="monthly-time-static"
-                                                    href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
-                                                    {{$monthlyTime}}
-                                                </a>
-                                            </div>
-                                        </div>
-                                        @if ($monthlyBhiTime !== '00:00:00')
-                                            <div class="col-md-6">
-                                                <div>
-                                                    <small>BHI</small>
-                                                </div>
-                                                <div>
-                                                     <a id="monthly-bhi-time-static"
-                                                        href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
-                                                        {{$monthlyBhiTime}}
-                                                     </a>
-                                                </div>
-                                        </div>
-                                        @endif
-                                    </div>
-
-                                    <span style="display:none">
-                                        <time-tracker ref="TimeTrackerApp"
-                                                      :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
-                                                      class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                                      :info="timeTrackerInfo"
-                                                      :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
-                                                      :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
-                                    </span>
-                                </div>
-                            @else
-                                <time-tracker ref="TimeTrackerApp"
-                                              class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                              :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
-                                              :info="timeTrackerInfo"
-                                              :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
-                                              :override-timeout="{{config('services.time-tracker.override-timeout')}}">
-                                        @include('partials.tt-loader')
-                                </time-tracker>
-                            @endif
-                        @endif
-                    </span>
+                <span style="font-size: 27px;">
+                    @include('partials.providerUItimerComponent')
                 </span>
 
                 <span class="sometimes-hidden" style="font-size:15px"></span>
@@ -291,6 +229,10 @@
 
         .color-grey {
             color: #7b7d81;
+        }
+
+        .color-green {
+            color: #47beab;
         }
 
         .load-hidden-bhi {

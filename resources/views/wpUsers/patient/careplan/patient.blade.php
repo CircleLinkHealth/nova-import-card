@@ -12,7 +12,7 @@ $user_info = [];
     {!! Form::open(['url' => optional($patient)->id ? route('patient.demographics.update', [$patient->id]) : route('patient.demographics.store'), 'method' => optional($patient)->id ? 'patch' : 'post', 'class' => 'form-horizontal', 'id' => 'ucpForm']) !!}
     <div class="row" style="margin-top:20px;margin-bottom:20px;">
         <div class="col-lg-10 col-lg-offset-1 col-xs-12 col-xs-offset-0">
-            <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;margin-bottom:20px;">
+            <div class="main-form-container-last col-lg-10 col-lg-offset-1" style="margin-top:20px;margin-bottom:20px;">
                 <div class="row"><!-- no-overflow-->
                     @if(isset($patient->id) )
                         <div class="main-form-title col-lg-12">

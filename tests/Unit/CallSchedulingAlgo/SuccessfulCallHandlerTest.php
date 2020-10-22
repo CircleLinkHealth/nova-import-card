@@ -12,7 +12,6 @@ use App\Call;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use Carbon\Carbon;
-
 use Tests\TestCase;
 
 class SuccessfulCallHandlerTest extends TestCase

@@ -193,7 +193,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
 
             //if this was a billable activity, we have to
             //recalculate ccm/bhi time for patient (patient_monthly_summaries table)
-            
+
             //todo: unfulfill everything
             ProcessSinglePatientMonthlyServices::dispatch($activity->patient_id);
             \Artisan::call('ccm_time:recalculate', [

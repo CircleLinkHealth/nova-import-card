@@ -184,12 +184,9 @@
 
                     this.reset()
                     this.selectedProblem = responseData.problem
-                    Event.$emit('careplan:bhi', {
-                        hasCcm: responseData.patient_is_ccm,
-                        hasBehavioral: responseData.patient_is_bhi
-                    })
-                    //TODO: deprecate
-                    setImmediate(() => this.checkPatientBehavioralStatus())
+                    if (responseData.chargeable_services && responseData.chargeable_services.data) {
+                        Event.$emit('careplan:ccd-problems-update', responseData.chargeable_services.data);
+                    }
                 }).catch(err => {
                     console.error('full-conditions:add', err)
                     this.loaders.addProblem = false

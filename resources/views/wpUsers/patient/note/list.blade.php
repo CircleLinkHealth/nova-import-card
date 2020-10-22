@@ -29,7 +29,7 @@
     @endpush
 
     <div class="row main-form-block" style="margin-top:30px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2 col-xs-12 col-xs-offset-0">
+        <div class="main-form-container col-lg-10 col-lg-offset-1 col-xs-12 col-xs-offset-0">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     All Patient Notes

@@ -10,6 +10,7 @@ use App\Call;
 use App\Jobs\StoreTimeTracking;
 use App\Note;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -31,7 +32,7 @@ trait TimeHelpers
         int $minutes,
         bool $billable,
         bool $withSuccessfulCall = false,
-        bool $bhiTime = false,
+        int $chargeableServiceId = null,
         Carbon $startTime = null,
         $enrolleeId = 0,
         $activityName = null,
@@ -53,6 +54,10 @@ trait TimeHelpers
             $note = $this->createNote($nurse, $patient->id, $withPhoneSession, $withSuccessfulCall, $startTime);
         }
 
+        if ( ! $chargeableServiceId) {
+            $chargeableServiceId = ChargeableService::firstWhere('code', '=', ChargeableService::CCM)->id;
+        }
+
         $seconds = $minutes * 60;
         $bag     = new ParameterBag();
         $bag->add([
@@ -62,15 +67,15 @@ trait TimeHelpers
                 : 0,
             'activities' => [
                 [
-                    'is_behavioral' => $bhiTime,
-                    'duration'      => $seconds,
-                    'start_time'    => $startTime ?? Carbon::now(),
-                    'name'          => $activityName,
-                    'title'         => 'test',
-                    'url'           => 'test',
-                    'url_short'     => 'test',
-                    'enrolleeId'    => $enrolleeId,
-                    'force_skip'    => $forceSkip,
+                    'chargeable_service_id' => $chargeableServiceId,
+                    'duration'              => $seconds,
+                    'start_time'            => $startTime ?? Carbon::now(),
+                    'name'                  => $activityName,
+                    'title'                 => 'test',
+                    'url'                   => 'test',
+                    'url_short'             => 'test',
+                    'enrolleeId'            => $enrolleeId,
+                    'force_skip'            => $forceSkip,
                 ],
             ],
         ]);

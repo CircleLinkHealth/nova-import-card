@@ -8,6 +8,7 @@ namespace App\Jobs;
 
 use App\Services\ActivityService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -75,14 +76,10 @@ class StoreTimeTracking implements ShouldQueue
         $patient   = $this->getPatient($patientId);
 
         foreach ($this->params->get('activities', []) as $activity) {
-            $isBehavioral = isset($activity['is_behavioral'])
-                ? (bool) $activity['is_behavioral'] && $this->isPatientBhi($patient)
-                : false;
-
             $pageTimer = $this->createPageTimer($activity);
 
             if ($this->isBillableActivity($pageTimer, $activity, $provider) && ! is_null($patient)) {
-                $this->processBillableActivity($patient, $pageTimer, $isBehavioral);
+                $this->processBillableActivity($patient, $pageTimer, $activity['chargeable_service_id'] ?? -1);
             }
 
             if ($this->isProcessableCareAmbassadorActivity($activity, $provider)) {
@@ -208,25 +205,16 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @return Activity|\Illuminate\Database\Eloquent\Model
      */
-    private function processBillableActivity(User $patient, PageTimer $pageTimer, $isBehavioral = false): void
+    private function processBillableActivity(User $patient, PageTimer $pageTimer, int $chargeableServiceId = -1): void
     {
-        $chargeableServicesDuration = $this->activityService->separateDurationForEachChargeableServiceId($patient, $pageTimer->duration, $isBehavioral);
+        $chargeableServicesDuration = $this->activityService->separateDurationForEachChargeableServiceId($patient, $pageTimer->duration, $chargeableServiceId);
         foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
-            $activity = Activity::create(
-                [
-                    'type'                  => $pageTimer->activity_type,
-                    'provider_id'           => $pageTimer->provider_id,
-                    'is_behavioral'         => $isBehavioral,
-                    'performed_at'          => $pageTimer->start_time,
-                    'duration'              => $chargeableServiceDuration->duration,
-                    'duration_unit'         => 'seconds',
-                    'patient_id'            => $pageTimer->patient_id,
-                    'logged_from'           => 'pagetimer',
-                    'logger_id'             => $pageTimer->provider_id,
-                    'page_timer_id'         => $pageTimer->id,
-                    'chargeable_service_id' => $chargeableServiceDuration->id,
-                ]
-            );
+            $activity = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('pagetimer', $pageTimer, $chargeableServiceDuration);
+
+            if ( ! $chargeableServiceDuration->id) {
+                sendSlackMessage('#time-tracking-issues', "Could not assign activity[{$activity->id}] to chargeable service. See page timer entry {$pageTimer->id}");
+            }
+
             ProcessMonthltyPatientTime::dispatchNow($patient->id);
             ProcessNurseMonthlyLogs::dispatchNow($activity);
             event(new PatientActivityCreated($patient->id));

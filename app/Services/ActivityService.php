@@ -132,25 +132,16 @@ class ActivityService
         }
     }
 
-    public function separateDurationForEachChargeableServiceId(User $patient, $duration, $isBehavioralActivity = false): array
+    public function separateDurationForEachChargeableServiceId(User $patient, $duration, int $chargeableServiceId = -1): array
     {
-        if ($isBehavioralActivity) {
-            $id = $this->getChargeServiceIdByCode($patient, ChargeableService::BHI);
-
-            return [new ChargeableServiceDuration($id, $duration)];
+        $cs = $this->getChargeableServiceById($patient, $chargeableServiceId);
+        if ( ! $cs) {
+            return [new ChargeableServiceDuration(null, $duration)];
         }
 
-        if ($patient->isPcm()) {
-            $id = $this->getChargeServiceIdByCode($patient, ChargeableService::PCM);
-
-            return [new ChargeableServiceDuration($id, $duration)];
-        }
-
-        if ($patient->isCcm()) {
+        if (ChargeableService::CCM === $cs->code) {
             if ( ! $patient->isCcmPlus()) {
-                $id = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM);
-
-                return [new ChargeableServiceDuration($id, $duration)];
+                return [new ChargeableServiceDuration($chargeableServiceId, $duration)];
             }
 
             $currentTime = $patient->getCcmTime();
@@ -159,8 +150,7 @@ class ActivityService
 
             $result = [];
             if ($slots->towards20) {
-                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM);
-                $result[] = new ChargeableServiceDuration($id, $slots->towards20);
+                $result[] = new ChargeableServiceDuration($chargeableServiceId, $slots->towards20);
             }
 
             if ($slots->after20) {
@@ -176,12 +166,25 @@ class ActivityService
             return $result;
         }
 
-        $gcm = $this->getChargeServiceIdByCode($patient, ChargeableService::GENERAL_CARE_MANAGEMENT);
-        if ($gcm) {
-            $result[] = new ChargeableServiceDuration($gcm, $duration);
+        if (ChargeableService::RPM === $cs->code) {
+            $currentTime = $patient->getRpmTime();
+            $splitter    = new TimeSplitter();
+            $slots       = $splitter->split($currentTime, $duration, false, false);
+
+            $result = [];
+            if ($slots->towards20) {
+                $result[] = new ChargeableServiceDuration($chargeableServiceId, $slots->towards20);
+            }
+
+            if ($slots->after20 || $slots->after40 || $slots->after60) {
+                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::RPM40);
+                $result[] = new ChargeableServiceDuration($id, $slots->after20 + $slots->after40 + $slots->after60);
+            }
+
+            return $result;
         }
 
-        return [new ChargeableServiceDuration(null, $duration)];
+        return [new ChargeableServiceDuration($cs->id, $duration, ChargeableService::BHI === $cs->code)];
     }
 
     /**
@@ -198,6 +201,15 @@ class ActivityService
         }
 
         return $this->repo->totalCCMTime([$patientId], $monthYear)->pluck('total_time', 'patient_id');
+    }
+
+    private function getChargeableServiceById(User $patient, int $id): ?ChargeableService
+    {
+        return $patient
+            ->primaryPractice
+            ->chargeableServices
+            ->where('id', '=', $id)
+            ->first();
     }
 
     private function getChargeServiceIdByCode(User $patient, string $code): ?int

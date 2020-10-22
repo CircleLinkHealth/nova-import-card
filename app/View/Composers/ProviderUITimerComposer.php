@@ -6,11 +6,13 @@
 
 namespace App\View\Composers;
 
-use App\Constants;
 use App\Jobs\StoreTimeTracking;
 use App\Policies\CreateNoteForPatient;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
+use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\Customer\Entities\CarePerson;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Request;
@@ -26,9 +28,6 @@ class ProviderUITimerComposer extends ServiceProvider
     public function boot()
     {
         View::composer(['partials.providerUItimer'], function ($view) {
-            $ccm_time = 0;
-            $bhi_time = 0;
-
             if ( ! isset($activity)) {
                 $activity = 'Undefined';
             }
@@ -61,32 +60,28 @@ class ProviderUITimerComposer extends ServiceProvider
             $noBhiSwitch = ! auth()->user()->isCareCoach();
 
             $patient = $view->patient;
+            $patientId = '';
+            $patientProgramId = '';
+            $patientFamilyId = null;
 
-            if (isset($patient) && ! empty($patient) && is_a($patient, User::class)) {
-                $patientId = $patient->id;
-                $patientProgramId = $patient->program_id;
-                $ccm_time = $patient->getCcmTime();
-                $bhi_time = $patient->getBhiTime();
-
-                $monthlyTime = $patient->formattedTime($ccm_time);
-                $monthlyBhiTime = $patient->formattedTime($bhi_time);
-
-                $noBhiSwitch = $noBhiSwitch || ! $patient->preferredContactLocationHasServices(ChargeableService::BHI);
-            } elseif (isset($patient) || ! empty($patient) && is_a($patient, Patient::class)) {
-                $patientId = $patient->user_id;
-                $patientProgramId = $patient->user->program_id;
-                $ccm_time = $patient->user->getCcmTime();
-                $bhi_time = $patient->user->getBhiTime();
-                $monthlyTime = $patient->user->formattedTime($ccm_time);
-                $monthlyBhiTime = $patient->user->formattedTime($bhi_time);
-
-                $noBhiSwitch = $noBhiSwitch || ! $patient->locationHasServices(ChargeableService::BHI);
-            } else {
-                $monthlyTime = '';
-                $monthlyBhiTime = '';
-                $patientId = '';
-                $patientProgramId = '';
+            if (isset($patient) && ! empty($patient) && (is_a($patient, User::class) || is_a($patient, Patient::class))) {
+                if (is_a($patient, User::class)) {
+                    $patientId = $patient->id;
+                    $patientProgramId = $patient->program_id;
+                    $patientFamilyId = optional($patient->patientInfo)->family_id;
+                } elseif (is_a($patient, Patient::class)) {
+                    $patientId = $patient->user_id;
+                    $patientProgramId = $patient->user->program_id;
+                    $patientFamilyId = $patient->family_id;
+                }
             }
+
+            $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
+            if ( ! $noLiveCountTimeTracking) {
+                $noLiveCountTimeTracking = ! auth()->user()->isCCMCountable();
+            }
+
+            $chargeableServices = $this->getChargeableServices($patientId);
 
             $view->with(compact([
                 'patientId',
@@ -95,18 +90,25 @@ class ProviderUITimerComposer extends ServiceProvider
                 'urlShort',
                 'ipAddr',
                 'title',
-                'ccm_time',
-                'bhi_time',
-                'noBhiSwitch',
-                'monthlyTime',
-                'monthlyBhiTime',
                 'forceSkip',
+                'patientFamilyId',
+                'noLiveCountTimeTracking',
+                'chargeableServices',
+                'noBhiSwitch',
+            ]));
+        });
+
+        View::composer(['partials.providerUItimerComponent'], function ($view) {
+            $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
+            if ( ! $noLiveCountTimeTracking) {
+                $noLiveCountTimeTracking = ! auth()->user()->isCCMCountable();
+            }
+            $view->with(compact([
+                'noLiveCountTimeTracking',
             ]));
         });
 
         View::composer(['partials.userheader', 'wpUsers.patient.careplan.print', 'wpUsers.patient.calls.index'], function ($view) {
-            // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
-
             /**
              * @var User
              */
@@ -120,16 +122,6 @@ class ProviderUITimerComposer extends ServiceProvider
 
                 $isAdminOrPatientsAssignedNurse = auth()->user()->isAdmin()
                     || auth()->user()->isCareCoach() && app(CreateNoteForPatient::class)->can(auth()->id(), $patient->id);
-
-                $ccmSeconds = $patient->getCcmTime();
-                $bhiSeconds = $patient->getBhiTime();
-                $monthlyTime = $patient->formattedTime($ccmSeconds);
-                $monthlyBhiTime = $patient->formattedTime($bhiSeconds);
-
-                $ccm_above = false;
-                if ($ccmSeconds >= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
-                    $ccm_above = true;
-                }
 
                 $regularDoctor = optional($patient->careTeamMembers->where('type', '=', CarePerson::REGULAR_DOCTOR)->first())->user;
                 $billingDoctor = optional($patient->careTeamMembers->where('type', '=', CarePerson::BILLING_PROVIDER)->first())->user;
@@ -145,8 +137,6 @@ class ProviderUITimerComposer extends ServiceProvider
             } else {
                 $ccm_above = false;
                 $location = 'N/A';
-                $monthlyTime = sprintf('%02d:%02d:%02d', 0, 0, 0);
-                $monthlyBhiTime = sprintf('%02d:%02d:%02d', 0, 0, 0);
                 $provider = 'N/A';
                 $billingDoctor = '';
                 $regularDoctor = '';
@@ -155,10 +145,7 @@ class ProviderUITimerComposer extends ServiceProvider
             }
 
             $view->with(compact([
-                'ccm_above',
                 'location',
-                'monthlyTime',
-                'monthlyBhiTime',
                 'provider',
                 'regularDoctor',
                 'billingDoctor',
@@ -173,5 +160,24 @@ class ProviderUITimerComposer extends ServiceProvider
      */
     public function register()
     {
+    }
+
+    private function getChargeableServices($patientId)
+    {
+        if ( ! empty($patientId)) {
+            $chargeableServices = (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
+        } else {
+            $record1                          = new ChargeablePatientMonthlySummaryView();
+            $record1->patient_user_id         = $patientId;
+            $record1->chargeable_service_id   = -1;
+            $record1->chargeable_service_code = 'NONE';
+            $record1->chargeable_service_name = 'NONE';
+            $record1->total_time              = 0;
+            $chargeableServices               = new PatientChargeableSummaryCollection(collect([
+                new PatientChargeableSummary($record1),
+            ]));
+        }
+
+        return $chargeableServices;
     }
 }

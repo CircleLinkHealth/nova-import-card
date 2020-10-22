@@ -7,8 +7,8 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\StoreTimeTracking;
-use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use App\ValueObjects\PatientChargeableServiceForTimeTracker;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -23,24 +23,22 @@ class PageTimerController extends Controller
             return response()->json([]);
         }
 
-        $times = PatientMonthlySummary::whereIn('patient_id', $patients)
-            ->whereMonthYear(Carbon::now()->startOfMonth())
-            ->orderBy('id', 'desc')
-            ->get([
-                'ccm_time',
-                'patient_id',
-            ])
-            ->mapWithKeys(function ($p) {
-                return [
-                    $p->patient_id => [
-                        'ccm_time' => $p->ccm_time ?? 0,
-                        'bhi_time' => $p->bhi_time ?? 0,
-                    ],
-                ];
-            })
-            ->all();
+        $result = collect();
+        // todo: improve this. should get times for all patients at once
+        foreach ($patients as $patientId) {
+            $id                 = (int) $patientId;
+            $chargeableServices = $this->getChargeableServices($id);
+            $csArray            = [];
+            foreach ($chargeableServices as $entry) {
+                if ( ! $entry->chargeable_service_id) {
+                    continue;
+                }
+                $csArray[] = (new PatientChargeableServiceForTimeTracker($entry->chargeable_service_id, $entry->total_time))->toArray();
+            }
+            $result->put($id, $csArray);
+        }
 
-        return response()->json($times);
+        return response()->json($result);
     }
 
     /**
@@ -83,5 +81,10 @@ class PageTimerController extends Controller
             ->onQueue('high');
 
         return response('PageTimer activities logged.', 201);
+    }
+
+    private function getChargeableServices($patientId)
+    {
+        return (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
     }
 }
