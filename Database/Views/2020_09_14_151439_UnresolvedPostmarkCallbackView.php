@@ -80,7 +80,7 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
              AND c2.id < c.id)
              
              
-         AND upc.deleted_at IS NOT NULL
+         AND upc.deleted_at IS NULL
      ");
     }
 
