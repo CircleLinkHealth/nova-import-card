@@ -338,7 +338,7 @@
                     .then(() => {
 
                     })
-                    .catch(err => console.error(err));
+                    .catch(err => console.warn(err));
             },
 
             toggleMute: function (number) {
@@ -386,7 +386,7 @@
                         .then(() => {
 
                         })
-                        .catch(err => console.error(err));
+                        .catch(err => console.warn(err));
                 }
             },
 
@@ -680,7 +680,7 @@
                         .then(() => {
 
                         })
-                        .catch(err => console.error(err));
+                        .catch(err => console.warn(err));
                 }
                 self.onPhone = {};
                 self.muted = {};
@@ -761,7 +761,7 @@
                                     .then(() => {
 
                                     })
-                                    .catch(err => console.error(err));
+                                    .catch(err => console.warn(err));
 
                             });
 
@@ -910,16 +910,14 @@
                 sendRequest("calls_page_closed", {})
                     .then((msg) => {
                     })
-                    .catch((err) => {
-                    });
+                    .catch((err) => console.warn(err));
             };
 
             //just handling the case of refresh
             sendRequest("calls_page_opened", {})
                 .then((msg) => {
                 })
-                .catch((err) => {
-                });
+                .catch((err) => console.warn(err));
         },
         mounted() {
             self.initTwilio();

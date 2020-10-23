@@ -459,7 +459,8 @@ export default {
                     //if we reached here from a logout_event, no need to broadcast again
                     isFromLogoutEvent = !!isFromLogoutEvent;
                     if (!isFromLogoutEvent) {
-                        sendRequest("logout_event", {}, 1000);
+                        sendRequest("logout_event", {}, 1000)
+                            .catch(err => console.warn(err));
                     }
                     location.href = rootUrl('auth/logout');
                 }

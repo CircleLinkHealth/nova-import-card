@@ -10,6 +10,7 @@ use App\Jobs\CreateNurseInvoices;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -58,11 +59,21 @@ class NursePaymentAlgoTest extends TestCase
     use TimeHelpers;
     use UserHelpers;
 
-    /** @var Location */
-    protected $location;
+    protected ?Location $location;
 
-    /** @var User */
-    protected $provider;
+    protected ?User $provider;
+
+    private int $bhiChargeableServiceId;
+
+    private int $ccmChargeableServiceId;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->ccmChargeableServiceId = ChargeableService::firstWhere('code', '=', ChargeableService::CCM)->id;
+        $this->bhiChargeableServiceId = ChargeableService::firstWhere('code', '=', ChargeableService::BHI)->id;
+    }
 
     /**
      * - Hourly Rate $20
@@ -91,8 +102,8 @@ class NursePaymentAlgoTest extends TestCase
         $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
-        $this->addTime($nurse1, $patient, 15, true, false);
-        $this->addTime($nurse2, $patient, 10, true, true);
+        $this->addTime($nurse1, $patient, 15, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse2, $patient, 10, true, true, $this->ccmChargeableServiceId);
 
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
@@ -156,8 +167,8 @@ class NursePaymentAlgoTest extends TestCase
         $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
-        $this->addTime($nurse1, $patient, 23, true, false);
-        $this->addTime($nurse2, $patient, 5, true, true);
+        $this->addTime($nurse1, $patient, 23, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse2, $patient, 5, true, true, $this->ccmChargeableServiceId);
 
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
@@ -223,9 +234,9 @@ class NursePaymentAlgoTest extends TestCase
         $nurse3          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
-        $this->addTime($nurse1, $patient, 17, true, false);
-        $this->addTime($nurse2, $patient, 6, true, true);
-        $this->addTime($nurse3, $patient, 15, true, true);
+        $this->addTime($nurse1, $patient, 17, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse2, $patient, 6, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse3, $patient, 15, true, true, $this->ccmChargeableServiceId);
 
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
@@ -302,8 +313,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true, true, true);
-        $this->addTime($nurse, $patient, 25, true, true, false);
+        $this->addTime($nurse, $patient, 25, true, true, $this->bhiChargeableServiceId);
+        $this->addTime($nurse, $patient, 25, true, true, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -351,8 +362,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true, true, true);
-        $this->addTime($nurse, $patient, 25, true, true, false);
+        $this->addTime($nurse, $patient, 25, true, true, $this->bhiChargeableServiceId);
+        $this->addTime($nurse, $patient, 25, true, true, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -399,8 +410,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true, true, true);
-        $this->addTime($nurse, $patient, 25, true, true, false);
+        $this->addTime($nurse, $patient, 25, true, true, $this->bhiChargeableServiceId);
+        $this->addTime($nurse, $patient, 25, true, true, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -446,8 +457,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true, true, true);
-        $this->addTime($nurse, $patient, 20, false, false, true);
+        $this->addTime($nurse, $patient, 25, true, true, $this->bhiChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, false, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -494,8 +505,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true, true, true);
-        $this->addTime($nurse, $patient, 20, false, false, true);
+        $this->addTime($nurse, $patient, 25, true, true, $this->bhiChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, false, false, $this->bhiChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -540,8 +551,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true, true, true);
-        $this->addTime($nurse, $patient, 20, false, false, true);
+        $this->addTime($nurse, $patient, 25, true, true, $this->bhiChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, false, false, $this->bhiChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -587,8 +598,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true, true, true);
-        $this->addTime($nurse, $patient, 20, false, false, true);
+        $this->addTime($nurse, $patient, 25, true, true, $this->bhiChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, false, false, $this->bhiChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -637,10 +648,10 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 15, true, true);
-        $this->addTime($nurse, $patient, 10, true, false);
-        $this->addTime($nurse, $patient, 10, true, false);
-        $this->addTime($nurse, $patient, 10, true, false);
+        $this->addTime($nurse, $patient, 15, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -685,9 +696,9 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 15, true, true);
-        $this->addTime($nurse, $patient, 10, true, false);
-        $this->addTime($nurse, $patient, 10, false, false);
+        $this->addTime($nurse, $patient, 15, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, false, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -729,8 +740,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 15, true, true);
-        $this->addTime($nurse, $patient, 10, true, true);
+        $this->addTime($nurse, $patient, 15, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, true, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -772,10 +783,10 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 15, true, true);
-        $this->addTime($nurse, $patient, 10, true, false);
-        $this->addTime($nurse, $patient, 10, true, true);
-        $this->addTime($nurse, $patient, 10, true, false);
+        $this->addTime($nurse, $patient, 15, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -817,12 +828,12 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 15, true, true);
-        $this->addTime($nurse, $patient, 10, true, false);
-        $this->addTime($nurse, $patient, 10, true, true);
-        $this->addTime($nurse, $patient, 10, true, false);
-        $this->addTime($nurse, $patient, 10, true, false);
-        $this->addTime($nurse, $patient, 10, true, true);
+        $this->addTime($nurse, $patient, 15, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 10, true, true, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -870,8 +881,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 22, true, true);
-        $this->addTime($nurse, $patient, 50, true, true);
+        $this->addTime($nurse, $patient, 22, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 50, true, true, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -918,8 +929,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 15, true, true);
-        $this->addTime($nurse, $patient, 20, false, false);
+        $this->addTime($nurse, $patient, 15, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, false, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -961,7 +972,7 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 15, true, true);
+        $this->addTime($nurse, $patient, 15, true, true, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1001,8 +1012,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, false);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, false, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1042,8 +1053,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, false);
+        $this->addTime($nurse, $patient, 25, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1083,7 +1094,7 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1124,7 +1135,7 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1165,8 +1176,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1206,8 +1217,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1247,9 +1258,9 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, true);
-        $this->addTime($nurse, $patient, 20, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1289,9 +1300,9 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, true);
-        $this->addTime($nurse, $patient, 20, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1331,8 +1342,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 10, true);
-        $this->addTime($nurse, $patient, 30, false);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 30, false, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1372,8 +1383,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 10, true);
-        $this->addTime($nurse, $patient, 30, false);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 30, false, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1413,7 +1424,7 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 15, true);
+        $this->addTime($nurse, $patient, 15, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1453,7 +1464,7 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 10, true);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1494,8 +1505,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, false);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, false, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1535,8 +1546,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, false);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, false, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1576,7 +1587,7 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1617,7 +1628,7 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1659,8 +1670,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1701,8 +1712,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1743,9 +1754,9 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, true);
-        $this->addTime($nurse, $patient, 20, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1786,9 +1797,9 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 25, true);
-        $this->addTime($nurse, $patient, 20, true);
-        $this->addTime($nurse, $patient, 20, true);
+        $this->addTime($nurse, $patient, 25, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 20, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1828,8 +1839,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 10, true);
-        $this->addTime($nurse, $patient, 30, false);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 30, false, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1869,8 +1880,8 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 10, true);
-        $this->addTime($nurse, $patient, 30, false);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 30, false, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1910,7 +1921,7 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 10, true);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1951,7 +1962,7 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, $patient, 10, true);
+        $this->addTime($nurse, $patient, 10, true, false, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -1990,9 +2001,9 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, null, 20, false, false, false);
-        $this->addTime($nurse, $patient, 25, true, true, false);
-        $this->addTime($nurse, $patient, 25, true, true, false);
+        $this->addTime($nurse, null, 20, false, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 25, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 25, true, true, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -2040,9 +2051,9 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, null, 28, false, false, false);
-        $this->addTime($nurse, $patient1, 29, true, true, false);
-        $this->addTime($nurse, $patient2, 30, true, true, false, now()->addDays(2));
+        $this->addTime($nurse, null, 28, false, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient1, 29, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient2, 30, true, true, $this->ccmChargeableServiceId, now()->addDays(2));
 
         //go forward to the future, so that we are in a moment of time where patient 1 and patient 2 times are in the past
         Carbon::setTestNow(now()->addDays(3));
@@ -2094,9 +2105,9 @@ class NursePaymentAlgoTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $this->addTime($nurse, null, 20, false, false, false);
-        $this->addTime($nurse, $patient, 25, true, true, false);
-        $this->addTime($nurse, $patient, 25, true, true, false);
+        $this->addTime($nurse, null, 20, false, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 25, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient, 25, true, true, $this->ccmChargeableServiceId);
 
         (new CreateNurseInvoices(
             $start,
@@ -2158,9 +2169,9 @@ class NursePaymentAlgoTest extends TestCase
         $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
-        $this->addTime($nurse1, $patient, 15, true, true, false, now()->subDay()->midDay());
-        $this->addTime($nurse2, $patient, 15, true, true);
-        $this->addTime($nurse1, $patient, 10, true, false);
+        $this->addTime($nurse1, $patient, 15, true, true, $this->ccmChargeableServiceId, now()->subDay()->midDay());
+        $this->addTime($nurse2, $patient, 15, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse1, $patient, 10, true, false, $this->ccmChargeableServiceId);
 
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
@@ -2226,9 +2237,9 @@ class NursePaymentAlgoTest extends TestCase
         $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
         $patient         = $this->setupPatient($practice);
 
-        $this->addTime($nurse1, $patient, 15, true, true);
-        $this->addTime($nurse2, $patient, 15, true, true);
-        $this->addTime($nurse1, $patient, 10, true, true);
+        $this->addTime($nurse1, $patient, 15, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse2, $patient, 15, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse1, $patient, 10, true, true, $this->ccmChargeableServiceId);
 
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
@@ -2294,12 +2305,12 @@ class NursePaymentAlgoTest extends TestCase
         $patient1 = $this->setupPatient($practice1);
         $patient2 = $this->setupPatient($practice2);
 
-        $this->addTime($nurse, $patient1, 10, true, false);
-        $this->addTime($nurse, $patient2, 10, true, false);
-        $this->addTime($nurse, $patient1, 15, true, false);
-        $this->addTime($nurse, $patient2, 15, true, false);
-        $this->addTime($nurse, $patient1, 20, true, true);
-        $this->addTime($nurse, $patient2, 20, true, true);
+        $this->addTime($nurse, $patient1, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient2, 10, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient1, 15, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient2, 15, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient1, 20, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse, $patient2, 20, true, true, $this->ccmChargeableServiceId);
 
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
@@ -2334,9 +2345,9 @@ class NursePaymentAlgoTest extends TestCase
         $patient1 = $this->setupPatient($practice, false, false);
         $patient2 = $this->setupPatient($practice, false, false);
 
-        $this->addTime($nurse1, $patient1, 20, true, 1);
-        $this->addTime($nurse1, $patient2, 10, true, 1);
-        $this->addTime($nurse2, $patient2, 10, true, 1);
+        $this->addTime($nurse1, $patient1, 20, true, 1, $this->ccmChargeableServiceId);
+        $this->addTime($nurse1, $patient2, 10, true, 1, $this->ccmChargeableServiceId);
+        $this->addTime($nurse2, $patient2, 10, true, 1, $this->ccmChargeableServiceId);
 
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
