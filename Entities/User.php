@@ -1256,6 +1256,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if (is_null($this->id)) {
             return 0;
         }
+        
+        if (! $this->isParticipant()){
+            return 0;
+        }
 
         return PatientMonthlyServiceTime::bhi($this->id, Carbon::now()->startOfMonth());
     }
@@ -1482,6 +1486,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getCcmTime(): int
     {
         if (is_null($this->id)) {
+            return 0;
+        }
+        
+        if(! $this->isParticipant()){
             return 0;
         }
 
