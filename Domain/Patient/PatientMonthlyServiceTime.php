@@ -25,31 +25,31 @@ class PatientMonthlyServiceTime
     {
         return app(PatientMonthlyServiceTime::class)
             ->setSummaries($patientId, $month)
-            ->forServices([ChargeableService::BHI], false);
+            ->getTimeforServices([ChargeableService::BHI], false);
     }
     
     public static function ccm(int $patientId, Carbon $month): int
     {
         return app(PatientMonthlyServiceTime::class)
             ->setSummaries($patientId, $month)
-            ->forServices([ChargeableService::CCM, ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60]);
+            ->getTimeforServices([ChargeableService::CCM, ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60]);
     }
     
     public static function rpm(int $patientId, Carbon $month): int
     {
         return app(PatientMonthlyServiceTime::class)
             ->setSummaries($patientId, $month)
-            ->forServices([ChargeableService::RPM, ChargeableService::RPM40]);
+            ->getTimeforServices([ChargeableService::RPM, ChargeableService::RPM40]);
     }
 
     public static function bhi(int $patientId, Carbon $month): int
     {
         return app(PatientMonthlyServiceTime::class)
             ->setSummaries($patientId, $month)
-            ->forServices([ChargeableService::BHI]);
+            ->getTimeforServices([ChargeableService::BHI]);
     }
 
-    public function forServices(array $chargeableServiceCodes, $include = true): int
+    public function getTimeforServices(array $chargeableServiceCodes, $include = true): int
     {
         if ($include) {
             return $this->summaries->whereIn('chargeable_service_code', $chargeableServiceCodes)
