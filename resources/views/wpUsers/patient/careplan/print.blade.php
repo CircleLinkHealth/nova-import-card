@@ -58,16 +58,7 @@ if (isset($patient) && ! empty($patient)) {
                                 <div class="col-sm-12" style="text-align: center">
                                     <br/>
                                     <span style="font-size: 27px;">
-                                        <time-tracker ref="TimeTrackerApp"
-                                                      class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                                      :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
-                                                      :info="timeTrackerInfo"
-                                                      route-activities="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}"
-                                                      :no-live-count="@json($noLiveCountTimeTracking ? true : false)"
-                                                      :disable-time-tracking="@json(isset($disableTimeTracking) && $disableTimeTracking)"
-                                                      :override-timeout="{{config('services.time-tracker.override-timeout')}}">
-                                                    @include('partials.tt-loader')
-                                            </time-tracker>
+                                        @include('partials.providerUItimerComponent')
                                     </span>
                                 </div>
                                 @if(! empty(optional($errors)->messages()))
