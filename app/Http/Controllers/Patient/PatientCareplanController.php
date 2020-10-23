@@ -274,11 +274,15 @@ class PatientCareplanController extends Controller
                     $c->with(['outboundUser'])
                         ->where('status', 'scheduled')
                         ->where('called_date', '=', null);
-                }, ])
+                },
+                'billingProvider.user', ], )
         )
             ->has('patientInfo')
-            ->has('billingProvider.user')
             ->findMany($userIds);
+
+        if ($users->isEmpty()) {
+            return response()->json('Something went wrong. CPM is unable to print care plan.');
+        }
 
         // create pdf for each user
         $p = 1;
