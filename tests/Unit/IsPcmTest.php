@@ -18,11 +18,11 @@ class IsPcmTest extends CustomerTestCase
 
     public function test_is_pcm()
     {
-        $this->assertFalse(PatientIsOfServiceCode::execute($this->patient()->id, ChargeableService::PCM));
+        $this->assertFalse($this->patient()->isPcm());
 
         /** @var Problem $problem */
         $problem = $this->attachValidPcmProblem($this->patient());
 
-        $this->assertTrue(PatientIsOfServiceCode::execute($this->patient()->id, ChargeableService::PCM));
+        $this->assertTrue($this->patient()->isPcm());
     }
 }

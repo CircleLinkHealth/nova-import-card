@@ -27,7 +27,7 @@ trait Problems
             'description' => $problem->name,
         ]);
 
-        //todo: billing, sync ? also, update cache?
+        //todo: billing, sync ? also, update cache? use ccdservice/repo
         SetupPracticeBillingData::forPractice($patient->program_id);
 
         return $problem;
