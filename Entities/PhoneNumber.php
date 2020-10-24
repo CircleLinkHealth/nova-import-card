@@ -42,17 +42,16 @@ use CircleLinkHealth\Core\StringManipulation;
  */
 class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    const ALTERNATE = 'alternate';
     //types
     const HOME   = 'home';
     const MOBILE = 'mobile';
-    const WORK   = 'work';
-
+    const ALTERNATE   = 'alternate';
+    
     public $phi = [
         'number',
         'extension',
     ];
-
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -72,14 +71,14 @@ class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
      * @var string
      */
     protected $primaryKey = 'id';
-
+    
     /**
      * The database table used by the model.
      *
      * @var string
      */
     protected $table = 'phone_numbers';
-
+    
     /**
      * Get phone number in this format xxx-xxx-xxxx.
      *
@@ -89,7 +88,7 @@ class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return (new StringManipulation())->formatPhoneNumber($this->number);
     }
-
+    
     public static function getTypes(): array
     {
         return [
@@ -98,7 +97,7 @@ class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
             3 => PhoneNumber::ALTERNATE,
         ];
     }
-
+    
     /**
      * Set the phone number.
      *
@@ -108,7 +107,7 @@ class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         $this->attributes['number'] = isProductionEnv() ? (new StringManipulation())->formatPhoneNumberE164($value) : $value;
     }
-
+    
     public function user()
     {
         return $this->belongsTo('CircleLinkHealth\Customer\Entities\User', 'id', 'user_id');
