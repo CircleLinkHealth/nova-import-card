@@ -211,6 +211,7 @@
     "circlelinkhealth/saml-sp-module": "1.0.3",
     "circlelinkhealth/shared-models-module": "dev-ROAD-346-billing-revamp",
     "circlelinkhealth/sqlviews-module": "dev-ROAD-346-billing-revamp",
+    "circlelinkhealth/synonyms-module": "*",
     "circlelinkhealth/timetracking-module": "dev-ROAD-346-billing-revamp",
     "circlelinkhealth/twofa-module": "1.2.3",
     "consoletvs/charts": "^6.5",
@@ -222,6 +223,7 @@
     "epartment/nova-dependency-container": "^1.2",
     "fideloper/proxy": "^4.2",
     "fourstacks/nova-checkboxes": "^0.1.5",
+    "friendsofcat/laravel-feature-flag": "^3.2",
     "fruitcake/laravel-cors": "^1.0",
     "fzaninotto/faker": "~1.4",
     "genealabs/laravel-caffeine": "^7.0",
@@ -272,8 +274,7 @@
     "waynestate/nova-ckeditor4-field": "^0.4.0",
     "wildbit/swiftmailer-postmark": "^3.1",
     "willdurand/email-reply-parser": "^2.9",
-    "yajra/laravel-datatables-oracle": "~9.0",
-    "circlelinkhealth/synonyms-module": "*"
+    "yajra/laravel-datatables-oracle": "~9.0"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",

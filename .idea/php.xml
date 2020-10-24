@@ -331,6 +331,7 @@
       <path value="$PROJECT_DIR$/vendor/macellan/laravel-zip" />
       <path value="$PROJECT_DIR$/vendor/joshgaber/novaunit" />
       <path value="$PROJECT_DIR$/vendor/laravie/serialize-queries" />
+      <path value="$PROJECT_DIR$/vendor/friendsofcat/laravel-feature-flag" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

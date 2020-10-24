@@ -232,6 +232,7 @@ return [
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
         SynonymsServiceProvider::class,
         Macellan\Zip\ZipServiceProvider::class,
+        FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider::class,
     ],
 
     /*
