@@ -33,6 +33,7 @@ trait ApprovablePatientUsersQuery
                 $q->with(['chargeableService'])
                     ->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
+            //todo: add ccd-pcm problem relationship and load
             'ccdProblems' => function ($problem) {
                 $problem->isBillable()
 //                    ->withPatientLocationProblemChargeableServices()
