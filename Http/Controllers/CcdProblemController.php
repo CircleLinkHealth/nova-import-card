@@ -74,7 +74,7 @@ class CcdProblemController extends Controller
     {
         $problem = $this->ccdProblemService->addPatientCcdProblem(
             (new CcdProblemInput())
-                ->fromRequest($request->input())
+                ->fromRequest($request->allSafe())
                 ->setUserId($userId)
         );
 
@@ -96,13 +96,14 @@ class CcdProblemController extends Controller
      */
     public function update($userId, $ccdProblemId, SafeRequest $request)
     {
-        $cpm_problem_id = $request->inputSafe('cpm_problem_id');
-        $is_monitored   = $request->inputSafe('is_monitored');
-        $icd10          = $request->inputSafe('icd10');
-        $instruction    = $request->inputSafe('instruction');
         if ($ccdProblemId) {
             return \response()->json([
-                'problem'             => $this->ccdProblemService->editPatientCcdProblem($userId, $ccdProblemId, $cpm_problem_id, $is_monitored, $icd10, $instruction),
+                'problem'             => $this->ccdProblemService->editPatientCcdProblem(
+                    (new CcdProblemInput())
+                        ->fromRequest($request->allSafe())
+                        ->setUserId($userId)
+                        ->setCcdProblemId($ccdProblemId)
+                ),
                 'chargeable_services' => $this->getChargeableServices($userId),
             ]);
         }
