@@ -166,7 +166,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
      */
     public function reloadPatientProblems(int $patientId): void
     {
-        if (BillingCache::patientExists($patientId)){
+        if (BillingCache::patientExistsInCache($patientId)){
             $this->getPatientFromCache($patientId)
                 ->load(['ccdProblems' => function ($problem) {
                     $problem->isBillable()
@@ -181,7 +181,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
      */
     public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
     {
-        if (BillingCache::patientExists($patientId)){
+        if (BillingCache::patientExistsInCache($patientId)){
             $this->getPatientFromCache($patientId)
                 ->load(['chargeableMonthlySummariesView' => function ($q) use ($month) {
                     $q->createdOnIfNotNull($month, 'chargeable_month');
