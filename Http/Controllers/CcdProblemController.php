@@ -41,7 +41,11 @@ class CcdProblemController extends Controller
     {
         if ($userId && $ccdProblemId) {
             return \response()->json([
-                'success'             => \CircleLinkHealth\SharedModels\Entities\Problem::where(['patient_id' => $userId, 'id' => $ccdProblemId])->delete(),
+                'success'             => $this->ccdProblemService->deletePatientCcdProblem(
+                    (new CcdProblemInput())
+                        ->setUserId($userId)
+                        ->setCcdProblemId($ccdProblemId)
+                ),
                 'chargeable_services' => $this->getChargeableServices($userId),
             ]);
         }
