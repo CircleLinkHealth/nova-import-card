@@ -95,6 +95,8 @@ class CcdProblemService
 
             return $this->problem($problem['id']);
         }
+        
+        (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($ccdProblem->getUserId());
 
         return $problem;
     }
