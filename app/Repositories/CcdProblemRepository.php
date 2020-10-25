@@ -46,8 +46,6 @@ class CcdProblemRepository
             $problem->cpm_problem_id = $problemCode;
             $problem->is_monitored   = $is_monitored;
             $problem->save();
-
-            event(new PatientProblemsChanged($userId));
         }
 
         return $problem;
