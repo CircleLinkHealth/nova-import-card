@@ -21,4 +21,6 @@ interface BillingCache
     public function setPatientInCache(User $patientUser): void;
 
     public function setQueriedPatient(int $patientId): void;
+    
+    public function patientExistsInCache(int $patientId): bool;
 }

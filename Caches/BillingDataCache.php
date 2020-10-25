@@ -38,6 +38,11 @@ class BillingDataCache implements BillingCache
     {
         return in_array($patientId, $this->queriedPatients);
     }
+    
+    public function patientExistsInCache(int $patientId): bool
+    {
+        return collect($this->patientCache)->where('id', $patientId)->isNotEmpty();
+    }
 
     public function setPatientInCache(User $patientUser): void
     {
