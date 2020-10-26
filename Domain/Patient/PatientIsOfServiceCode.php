@@ -66,7 +66,7 @@ class PatientIsOfServiceCode
 
     private function problemsOfServiceCount(): int
     {
-        return $this->repo()->patientProblemsOfServiceCode($this->patientId, $this->serviceCode)->count();
+        return $this->repo()->patientProblemsOfServiceCode($this->patientId, ChargeableService::getCodeForPatientProblems($this->serviceCode))->count();
     }
 
     private function repo(): PatientServiceProcessorRepository
