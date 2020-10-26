@@ -1265,7 +1265,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "97a94560a07b59f632168feee9d1958578c2ea1e"
+                "reference": "f005e43075c3f9577c09da0940a40afa8f7a7f3c"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-24T11:44:59+00:00"
+            "time": "2020-10-26T11:42:55+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -3537,16 +3537,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.151",
+            "version": "v0.152",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "784a4fdb110b67a2344cfbdbf927194bd29f9e73"
+                "reference": "e1cc05269e852d62677387f831271ad984b245f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/784a4fdb110b67a2344cfbdbf927194bd29f9e73",
-                "reference": "784a4fdb110b67a2344cfbdbf927194bd29f9e73",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/e1cc05269e852d62677387f831271ad984b245f8",
+                "reference": "e1cc05269e852d62677387f831271ad984b245f8",
                 "shasum": ""
             },
             "require": {
@@ -3570,7 +3570,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-10-19T00:26:26+00:00"
+            "time": "2020-10-25T00:25:04+00:00"
         },
         {
             "name": "google/auth",
@@ -8393,16 +8393,16 @@
         },
         {
             "name": "propaganistas/laravel-phone",
-            "version": "4.2.5",
+            "version": "4.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Propaganistas/Laravel-Phone.git",
-                "reference": "090a5617cfd5a565df359d3b8bd680b0f87ad99e"
+                "reference": "b99ca1fe48884df39656990819b9faec4ec711ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Propaganistas/Laravel-Phone/zipball/090a5617cfd5a565df359d3b8bd680b0f87ad99e",
-                "reference": "090a5617cfd5a565df359d3b8bd680b0f87ad99e",
+                "url": "https://api.github.com/repos/Propaganistas/Laravel-Phone/zipball/b99ca1fe48884df39656990819b9faec4ec711ea",
+                "reference": "b99ca1fe48884df39656990819b9faec4ec711ea",
                 "shasum": ""
             },
             "require": {
@@ -8450,7 +8450,7 @@
                 "phone",
                 "validation"
             ],
-            "time": "2020-09-08T18:43:48+00:00"
+            "time": "2020-10-25T20:07:56+00:00"
         },
         {
             "name": "psr/cache",
