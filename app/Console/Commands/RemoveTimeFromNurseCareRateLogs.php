@@ -48,7 +48,7 @@ class RemoveTimeFromNurseCareRateLogs extends Command
         $duration            = intval($durationStr);
         $allowAccruedTowards = boolval($this->argument('allowAccruedTowards'));
 
-        if ( ! $id || ! $duration) {
+        if ( ! $id || ! is_numeric($duration)) {
             $this->error("Invalid arguments: $idStr, $durationStr");
 
             return;
@@ -67,6 +67,8 @@ class RemoveTimeFromNurseCareRateLogs extends Command
                 $msg .= ' [no accrued_after_ccm] (in command)';
             }
             $this->error($msg);
+
+            return;
         }
 
         if ($careRateLog->increment < $duration) {

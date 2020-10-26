@@ -133,8 +133,7 @@ class NoteService
         $note->summary = $requestInput['summary'] ?? null;
         $note->body    = $requestInput['body'];
 
-        // this is no longer available in create note page
-        $note->performed_at = Carbon::now(); //$requestInput['performed_at'];
+        $note->performed_at = $requestInput['performed_at'] ?? Carbon::now();
 
         $note->did_medication_recon = isset($requestInput['medication_recon'])
             ? 'true' === $requestInput['medication_recon']

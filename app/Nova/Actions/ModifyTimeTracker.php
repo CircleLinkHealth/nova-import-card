@@ -6,7 +6,9 @@
 
 namespace App\Nova\Actions;
 
+use App\Entities\PatientTime;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
@@ -67,14 +69,22 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             /** @var PageTimer $timeRecord */
             $timeRecord = $model;
 
-            if ($timeRecord->duration === $duration) {
+            if ( ! $this->canModify($timeRecord)) {
+                $this->markAsFailed(
+                    $timeRecord,
+                    'You cannot modify this time tracker entry, because it has time tracked for already fulfilled chargeable services. Please try a more recent one for this patient.'
+                );
+            }
+
+            $maxDuration = optional($timeRecord->activities->sortBy('id')->last())->duration ?? $timeRecord->duration;
+            if ($maxDuration === $duration) {
                 continue;
             }
 
-            if ($duration > $timeRecord->duration) {
+            if ($duration > $maxDuration) {
                 $this->markAsFailed(
                     $timeRecord,
-                    'Only decreasing duration is supported at the moment. Please supply a lower value than the existing or choose another record.'
+                    "Only decreasing duration is supported at the moment. Please supply a lower value than the existing[$maxDuration] or choose another record."
                 );
 
                 return;
@@ -92,61 +102,40 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         $this->markAsFinished($models->first());
     }
 
-    /**
-     * @throws Exception
-     */
-    private function getBillableActivity(PageTimer $pageTimer, int $duration): ?Activity
+    private function canModify(PageTimer $timeRecord)
     {
-        $hasBillable = $pageTimer->activities->isNotEmpty();
-        foreach ($pageTimer->activities as $activity) {
-            if ($activity->duration >= $duration) {
-                return $activity;
-            }
+        if ($timeRecord->activities->isEmpty()) {
+            return true;
         }
 
-        if ($hasBillable) {
-            $msg = "Cannot modify time tracker entry[$pageTimer->id]. Could not find activity with higher duration than $duration.";
-            throw new Exception($msg);
+        /** @var ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices */
+        $chargeableServices = ChargeableService
+            ::whereIn('id', $timeRecord->activities->pluck('chargeable_service_id'))
+                ->get();
+
+        if ($chargeableServices->isEmpty()) {
+            return false;
         }
 
-        return null;
+        $patientTime = PatientTime::getForPatient($timeRecord->patient, $chargeableServices);
+        /** @var Activity $activity */
+        $activity = $timeRecord->activities->sortBy('id')->last();
+        if ( ! $activity->chargeable_service_id) {
+            return false;
+        }
+
+        $csCode = $chargeableServices->firstWhere('id', '=', $activity->chargeable_service_id)->code;
+
+        return $this->isModifiable($patientTime, $csCode);
     }
 
-    /**
-     * @throws Exception
-     */
-    private function getCareRateLog(int $activityId, int $duration, bool $allowAccruedTowards = false): NurseCareRateLog
+    private function isModifiable(PatientTime $patientTime, string $csCode)
     {
-        $careRateLogQuery = NurseCareRateLog::whereActivityId($activityId);
-        if ( ! $allowAccruedTowards) {
-            $careRateLogQuery->where('ccm_type', '=', 'accrued_after_ccm');
+        if (ChargeableService::CCM_PLUS_60 === $csCode) {
+            return true;
         }
 
-        $careRateLogs = $careRateLogQuery->get();
-        if ($careRateLogs->isEmpty()) {
-            //some more validation here, simply because the current implementation supports simple use cases
-            $msg = "Cannot modify activity[$activityId]. Could not find nurse care rate logs. Please choose a different one.";
-            if ( ! $allowAccruedTowards) {
-                $msg .= ' [no accrued_after_ccm]';
-            }
-            throw new Exception($msg);
-        }
-
-        /** @var NurseCareRateLog $careRateLog */
-        $careRateLog = null;
-        $careRateLogs->each(function (NurseCareRateLog $entry) use ($duration, &$careRateLog) {
-            if ($entry->increment >= $duration) {
-                $careRateLog = $entry;
-            }
-        });
-
-        if ( ! $careRateLog) {
-            /** @var NurseCareRateLog $firstCareRateLog */
-            $firstCareRateLog = $careRateLogs->first();
-            throw new Exception("Cannot modify activity[$activityId]. Please lower duration to at least {$firstCareRateLog->increment}[{$firstCareRateLog->id}]. [duration > care rate log]");
-        }
-
-        return $careRateLog;
+        return ! $patientTime->isFulFilled($csCode);
     }
 
     /**
@@ -156,37 +145,50 @@ class ModifyTimeTracker extends Action implements ShouldQueue
     {
         $entriesToSave = collect();
 
-        //lv_page_timer table
         $timeRecord->duration = $duration;
         $entriesToSave->push($timeRecord);
 
-        /** @var NurseCareRateLog $careRateLog */
-        $careRateLog      = null;
-        $billableActivity = $this->getBillableActivity($timeRecord, $duration);
-        if ($billableActivity) {
-            $billableActivity->duration = $duration;
-            $entriesToSave->push($billableActivity);
+        /** @var Activity $activity */
+        $activity = $timeRecord->activities->sortBy('id')->last();
+        if ($activity) {
+            $activity->duration = $duration;
+            $entriesToSave->push($activity);
 
-            $careRateLog = $this->getCareRateLog($billableActivity->id, $duration, $allowAccruedTowards);
+            /** @var NurseCareRateLog $careRateLog */
+            $careRateLogQuery = NurseCareRateLog::whereActivityId($activity->id);
+            if ( ! $allowAccruedTowards) {
+                $careRateLogQuery->where('ccm_type', '=', 'accrued_after_ccm');
+            }
+
+            $careRateLog = $careRateLogQuery->first();
+
+            //some more validation here, simply because the current implementation supports simple use cases
+            if ( ! $careRateLog) {
+                $msg = 'Cannot modify activity. Please choose a different one.';
+                if ( ! $allowAccruedTowards) {
+                    $msg .= ' [no accrued_after_ccm]';
+                }
+                throw new Exception($msg);
+            }
+
+            if ($duration > $careRateLog->increment) {
+                throw new Exception("Cannot modify activity. Please lower duration to at least $careRateLog->increment. [duration > care rate log]");
+            }
         }
 
-        if ($billableActivity && ! $careRateLog) {
-            throw new Exception("Something's wrong. Should not reach here.");
-        }
-
-        //now, that all validation passes, save pending entries
         $entriesToSave->each(function (Model $item) {
             $item->save();
         });
 
         $startTime = Carbon::parse($timeRecord->start_time);
-        if ($billableActivity) {
-            //adjust nurse care rate logs
-            \Artisan::call('nursecareratelogs:remove-time', [
-                'fromId'              => $careRateLog->id,
-                'newDuration'         => $duration,
-                'allowAccruedTowards' => $allowAccruedTowards,
-            ]);
+        if ($activity) {
+            if ($careRateLog) {
+                \Artisan::call('nursecareratelogs:remove-time', [
+                    'fromId'              => $careRateLog->id,
+                    'newDuration'         => $duration,
+                    'allowAccruedTowards' => $allowAccruedTowards,
+                ]);
+            }
 
             //if this was a billable activity, we have to
             //recalculate ccm/bhi time for patient (patient_monthly_summaries table)

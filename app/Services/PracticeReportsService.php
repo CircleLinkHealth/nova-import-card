@@ -64,7 +64,7 @@ class PracticeReportsService
             }
 
             $patientReport = $this->generatePatientReportCsv($practice, $date);
-            $link = shortenUrl($patientReport->getUrl());
+            $link          = shortenUrl($patientReport->getUrl());
 
             if ('practice' == $practice->cpmSettings()->bill_to || empty($practice->cpmSettings()->bill_to)) {
                 $chargeableServices = $this->getChargeableServices($practice);

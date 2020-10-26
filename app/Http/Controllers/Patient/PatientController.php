@@ -61,7 +61,7 @@ class PatientController extends Controller
 
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
-        
+
         $this->unsetCurrentPrimaryNumbers($patientUser);
 
         $patientUser->phoneNumbers()
