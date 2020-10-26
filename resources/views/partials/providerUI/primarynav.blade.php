@@ -1,21 +1,8 @@
 <?php
 
-use App\FullCalendar\NurseCalendarService;
-
 $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-if (isset($patient)) {
-    //$patient can be a User or Patient model.
-    $seconds     = $patient->getCcmTime();
-    $H           = floor($seconds / 3600);
-    $i           = ($seconds / 60) % 60;
-    $s           = $seconds % 60;
-    $monthlyTime = sprintf('%02d:%02d:%02d', $H, $i, $s);
-} else {
-    $monthlyTime = '';
-}
-
-$patientListDropdown = getPatientListDropdown($user);
-$isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
+$patientListDropdown     = getPatientListDropdown($user);
+$isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
 ?>
 @push('styles')
     <style>
@@ -173,12 +160,8 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                             @endif
 
                             @if (!isset($patient))
-                                <li data-monthly-time="{{$monthlyTime}}"
-                                    style="line-height: 20px;">
-                                    <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
-                                                  :twilio-enabled="@json(config('services.twilio.enabled'))"
-                                                  :no-live-count="@json($noLiveCountTimeTracking)"
-                                                  :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
+                                <li style="line-height: 20px;">
+                                    @include('partials.providerUItimerComponent', ['hideTracker' => true])
                                 </li>
                             @endif
 

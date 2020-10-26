@@ -11,7 +11,9 @@
             </li>
         </ul>
 
-        <multi-chargeable-service-modal :store-key="modalStoreKey" :chargeable-services="chargeableServices">
+        <multi-chargeable-service-modal v-if="hasMoreThanOneChargeableService"
+                                        :store-key="modalStoreKey"
+                                        :chargeable-services="chargeableServices">
         </multi-chargeable-service-modal>
 
     </div>
@@ -45,6 +47,11 @@ export default {
             if (!stor.contains(this.modalStoreKey)) {
                 Event.$emit('modal-multi-chargeable-service:show');
             }
+        }
+    },
+    computed: {
+        hasMoreThanOneChargeableService() {
+            return this.chargeableServices.filter(cs => cs.chargeable_service.id > -1).length > 1;
         }
     },
     mounted() {
