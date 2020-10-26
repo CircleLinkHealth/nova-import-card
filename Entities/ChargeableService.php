@@ -182,4 +182,18 @@ class ChargeableService extends BaseModel
     {
         return $query->where('code', self::SOFTWARE_ONLY);
     }
+    
+    public static function getCodeForPatientProblems(string $code):string
+    {
+        //todo: cleaner mapping
+        if (in_array($code, self::CCM_PLUS_CODES)){
+            return self::CCM;
+        }
+        
+        if ($code === self::RPM40){
+            return self::RPM;
+        }
+        
+        return $code;
+    }
 }
