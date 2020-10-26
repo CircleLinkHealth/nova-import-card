@@ -38,6 +38,5 @@ class TestSuiteSeeder extends Seeder
         $this->call(CareAmbassadorDefaultScriptsSeeder::class);
         $this->call(UserScopeTestsSeeder::class);
         $this->call(NekatostrasClinicSeeder::class);
-        $this->call(CpmProblemChargeableServiceLocationSeeder::class);
     }
 }
