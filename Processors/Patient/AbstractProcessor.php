@@ -22,26 +22,20 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return $this->repo()->store($patientId, $this->code(), $chargeableMonth, $this->requiresPatientConsent($patientId));
     }
 
-    public function canAttachWithoutFulFillingPrevious(): bool
-    {
-        return false;
-    }
-
     public function clashesWith(): array
     {
         return [
         ];
     }
 
+    public function codeForProblems(): string
+    {
+        return $this->code();
+    }
+
     public function fulfill(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
     {
-        $summary = $this->repo()->fulfill($patientId, $this->code(), $chargeableMonth);
-
-        if (method_exists($this, 'attachNext')) {
-            $this->attachNext($patientId, $chargeableMonth);
-        }
-
-        return $summary;
+        return $this->repo()->fulfill($patientId, $this->code(), $chargeableMonth);
     }
 
     public function isAttached(int $patientId, Carbon $chargeableMonth): bool
@@ -98,22 +92,21 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        $problemsCount = collect($patientProblems)
+        return collect($patientProblems)
             ->filter(
                 function (PatientProblemForProcessing $problem) use ($patientId, $chargeableMonth) {
-                    return collect($problem->getServiceCodes())->contains($this->code());
+                    return collect($problem->getServiceCodes())->contains($this->codeForProblems());
                 }
-            )->count();
-        if ($problemsCount < $this->minimumNumberOfProblems()) {
-            return false;
-        }
-
-        return $this->canAttachWithoutFulFillingPrevious() || ! $this->hasUnfulfilledPreviousService($patientId, $chargeableMonth);
+            )->count() >= $this->minimumNumberOfProblems();
     }
 
     public function shouldFulfill(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
         if ( ! $this->shouldAttach($patientId, $chargeableMonth, ...$patientProblems)) {
+            return false;
+        }
+
+        if ($this->hasUnfulfilledPreviousService($patientId, $chargeableMonth)) {
             return false;
         }
 
