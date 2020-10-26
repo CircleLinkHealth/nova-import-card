@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "db911bf663f28bb235165e29c5718cbe5466d5b9"
+                "reference": "4b4554d21f1a0ffaac11595ccc21b3857dae77a5"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-25T11:26:06+00:00"
+            "time": "2020-10-26T14:49:57+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1235,7 +1235,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "1fa7e8f0b0f5963d72fc3a9b665a59b668096ac7"
+                "reference": "fce9a1a09434b422bca11ad221e9e47807985f18"
             },
             "type": "laravel-module",
             "extra": {
@@ -1257,7 +1257,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-24T14:13:07+00:00"
+            "time": "2020-10-26T14:49:57+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1265,7 +1265,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f005e43075c3f9577c09da0940a40afa8f7a7f3c"
+                "reference": "9c19aaf4347925e921d560b44b6f4551dcf35c30"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-26T11:42:55+00:00"
+            "time": "2020-10-26T12:41:26+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1554,7 +1554,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "870141b12c118f70e9f07ddacd2dda1686c0169a"
+                "reference": "f79868b5f96ccc9d5ae110f3b74bcc085e24189d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1576,7 +1576,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-25T11:08:25+00:00"
+            "time": "2020-10-26T12:41:26+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
