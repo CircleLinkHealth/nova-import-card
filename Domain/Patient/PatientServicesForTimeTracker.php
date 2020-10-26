@@ -16,6 +16,11 @@ use Illuminate\Support\Collection;
 
 class PatientServicesForTimeTracker
 {
+    private const NON_TIME_TRACKABLE_SERVICES = [
+        'AWV1',
+        'AWV2+',
+    ];
+
     protected Carbon $month;
 
     protected int $patientId;
@@ -26,7 +31,7 @@ class PatientServicesForTimeTracker
     public function __construct(int $patientId, Carbon $month)
     {
         $this->patientId = $patientId;
-        $this->month     = $month;
+        $this->month     = $month->startOfMonth();
     }
 
     public function get(): PatientChargeableSummaryCollection
@@ -86,6 +91,13 @@ class PatientServicesForTimeTracker
         return true;
     }
 
+    private function rejectNonTimeTrackerServices(Collection $summaries): Collection
+    {
+        return $summaries->reject(function (ChargeablePatientMonthlySummaryView $summary) {
+            return in_array($summary->chargeable_service_name, self::NON_TIME_TRACKABLE_SERVICES);
+        });
+    }
+
     private function repo(): PatientServiceProcessorRepository
     {
         if ( ! isset($this->repo)) {
@@ -110,6 +122,7 @@ class PatientServicesForTimeTracker
 //            $this->summaries = $this->createFromPatientProblems();
         }
 
+        $summaries       = $this->rejectNonTimeTrackerServices($summaries);
         $this->summaries = $this->groupSimilarCodes($summaries);
 
         return $this;
