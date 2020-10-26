@@ -22,6 +22,11 @@ class RPM40 extends AbstractProcessor
         return ChargeableService::RPM40;
     }
     
+    public function codeForProblems(): string
+    {
+        return ChargeableService::RPM;
+    }
+    
     public function featureIsEnabled(): bool
     {
         return true;
