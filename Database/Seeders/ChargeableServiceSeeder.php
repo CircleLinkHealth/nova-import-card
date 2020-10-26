@@ -17,46 +17,51 @@ class ChargeableServiceSeeder extends Seeder
         ChargeableService::updateOrCreate([
             'code' => 'CPT 99490',
         ], [
-            'order'       => 1,
-            'is_enabled'  => true,
-            'description' => 'CCM Services over 20 mins (1 month)',
-            'amount'      => null,
+            'order'        => 1,
+            'is_enabled'   => true,
+            'description'  => 'CCM Services over 20 mins (1 month)',
+            'amount'       => null,
+            'display_name' => 'CCM',
         ]);
 
         ChargeableService::updateOrCreate([
             'code' => 'CPT 99484',
         ], [
-            'order'       => 2,
-            'is_enabled'  => true,
-            'description' => 'Behavioural Health Services over 20 mins (1 month)',
-            'amount'      => null,
+            'order'        => 2,
+            'is_enabled'   => true,
+            'description'  => 'Behavioural Health Services over 20 mins (1 month)',
+            'amount'       => null,
+            'display_name' => 'BHI',
         ]);
 
         ChargeableService::updateOrCreate([
             'code' => 'G2058(>40mins)',
         ], [
-            'order'       => 3,
-            'is_enabled'  => true,
-            'description' => 'CCM services over 40 mins (1 month)',
-            'amount'      => null,
+            'order'        => 3,
+            'is_enabled'   => true,
+            'description'  => 'CCM services over 40 mins (1 month)',
+            'amount'       => null,
+            'display_name' => 'CCM40',
         ]);
 
         ChargeableService::updateOrCreate([
             'code' => 'G2058(>60mins)',
         ], [
-            'order'       => 4,
-            'is_enabled'  => true,
-            'description' => 'CCM services over 60 mins (1 month)',
-            'amount'      => null,
+            'order'        => 4,
+            'is_enabled'   => true,
+            'description'  => 'CCM services over 60 mins (1 month)',
+            'amount'       => null,
+            'display_name' => 'CCM60',
         ]);
 
         ChargeableService::updateOrCreate([
             'code' => 'G0511',
         ], [
-            'order'       => 5,
-            'is_enabled'  => true,
-            'description' => 'FQHC / RHC General Care Management (1 month)',
-            'amount'      => null,
+            'order'        => 5,
+            'is_enabled'   => true,
+            'description'  => 'FQHC / RHC General Care Management (1 month)',
+            'amount'       => null,
+            'display_name' => 'RHC',
         ]);
 
         ChargeableService::updateOrCreate([
@@ -71,19 +76,21 @@ class ChargeableServiceSeeder extends Seeder
         ChargeableService::updateOrCreate([
             'code' => 'AWV: G0438',
         ], [
-            'order'       => 7,
-            'is_enabled'  => true,
-            'description' => 'Initial Annual Wellness Visit',
-            'amount'      => null,
+            'order'        => 7,
+            'is_enabled'   => true,
+            'description'  => 'Initial Annual Wellness Visit',
+            'amount'       => null,
+            'display_name' => 'AWV1',
         ]);
 
         ChargeableService::updateOrCreate([
             'code' => 'AWV: G0439',
         ], [
-            'order'       => 8,
-            'is_enabled'  => true,
-            'description' => 'Subsequent Annual Wellness Visit',
-            'amount'      => null,
+            'order'        => 8,
+            'is_enabled'   => true,
+            'description'  => 'Subsequent Annual Wellness Visit',
+            'amount'       => null,
+            'display_name' => 'AWV2+',
         ]);
 
         ChargeableService::updateOrCreate([
@@ -116,10 +123,31 @@ class ChargeableServiceSeeder extends Seeder
         ChargeableService::updateOrCreate([
             'code' => 'G2065',
         ], [
-            'order'       => 9,
-            'is_enabled'  => true,
-            'description' => 'PCM: Principal Care Management over 30 Minutes (1 month)',
-            'amount'      => null,
+            'order'        => 9,
+            'is_enabled'   => true,
+            'description'  => 'PCM: Principal Care Management over 30 Minutes (1 month)',
+            'amount'       => null,
+            'display_name' => 'PCM',
+        ]);
+
+        ChargeableService::updateOrCreate([
+            'code' => 'CPT 99457',
+        ], [
+            'order'        => 10,
+            'is_enabled'   => true,
+            'description'  => 'Remote Patient Monitoring',
+            'amount'       => null,
+            'display_name' => 'RPM',
+        ]);
+
+        ChargeableService::updateOrCreate([
+            'code' => 'CPT 99458',
+        ], [
+            'order'        => 11,
+            'is_enabled'   => true,
+            'description'  => 'Remote Patient Monitoring over 40 minutes',
+            'amount'       => null,
+            'display_name' => 'RPM40',
         ]);
     }
 }

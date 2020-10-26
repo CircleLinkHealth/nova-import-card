@@ -84,7 +84,6 @@ use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
 use Propaganistas\LaravelPhone\Exceptions\NumberParseException;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
-use Symfony\Component\Intl\Exception\MethodNotImplementedException;
 
 /**
  * CircleLinkHealth\Customer\Entities\User.
@@ -1256,8 +1255,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if (is_null($this->id)) {
             return 0;
         }
-        
-        if (! $this->isParticipant()){
+
+        if ( ! $this->isParticipant()) {
             return 0;
         }
 
@@ -1488,8 +1487,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if (is_null($this->id)) {
             return 0;
         }
-        
-        if(! $this->isParticipant()){
+
+        if ( ! $this->isParticipant()) {
             return 0;
         }
 
@@ -2021,7 +2020,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if (is_null($this->id)) {
             return 0;
         }
-    
+
         return PatientMonthlyServiceTime::rpm($this->id, Carbon::now()->startOfMonth());
     }
 
