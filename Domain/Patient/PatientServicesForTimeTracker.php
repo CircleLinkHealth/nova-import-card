@@ -95,7 +95,7 @@ class PatientServicesForTimeTracker
     {
         return $summaries->reject(function (ChargeablePatientMonthlySummaryView $summary) {
             return in_array($summary->chargeable_service_name, self::NON_TIME_TRACKABLE_SERVICES);
-        });
+        })->filter(fn($summary) => PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code));
     }
 
     private function repo(): PatientServiceProcessorRepository
