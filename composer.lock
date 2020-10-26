@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8eb57a3dbf27c1e4eddb8bde27058d55",
+    "content-hash": "28a271c079a7c27fd66297d156a84ff3",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1657,7 +1657,7 @@
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "dev-master",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
@@ -17501,7 +17501,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/saml-sp-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
