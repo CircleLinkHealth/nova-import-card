@@ -34,14 +34,14 @@ class BillingDataCache implements BillingCache
         return collect($this->patientCache)->firstWhere('id', $patientId);
     }
 
-    public function patientWasQueried(int $patientId): bool
-    {
-        return in_array($patientId, $this->queriedPatients);
-    }
-    
     public function patientExistsInCache(int $patientId): bool
     {
         return collect($this->patientCache)->where('id', $patientId)->isNotEmpty();
+    }
+
+    public function patientWasQueried(int $patientId): bool
+    {
+        return in_array($patientId, $this->queriedPatients);
     }
 
     public function setPatientInCache(User $patientUser): void

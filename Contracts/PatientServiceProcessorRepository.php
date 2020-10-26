@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface PatientServiceProcessorRepository
 {
+    public function createActivityForChargeableService(string $source, PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration): Activity;
+
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 
     public function getChargeablePatientSummaries(int $patientId, Carbon $month): Collection;
@@ -32,7 +34,7 @@ interface PatientServiceProcessorRepository
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
 
     public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): Collection;
-    
+
     //todo: make private
     public function reloadPatientProblems(int $patientId): void;
 
@@ -44,6 +46,4 @@ interface PatientServiceProcessorRepository
     public function setPatientConsented(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary;
 
     public function store(int $patientId, string $chargeableServiceCode, Carbon $month, bool $requiresPatientConsent = false): ChargeablePatientMonthlySummary;
-    
-    public function createActivityForChargeableService(string $source, PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration): Activity;
 }
