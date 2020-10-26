@@ -1661,7 +1661,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "33e2c3c5621df179ab00d244b83c13df58402832"
+                "reference": "1532678295392f7992c5521ca8fc62810637bcc4"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1691,7 +1691,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-26T11:02:52+00:00"
+            "time": "2020-10-26T11:22:12+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
