@@ -41,7 +41,7 @@ class CcdProblemController extends Controller
     {
         if ($userId && $ccdProblemId) {
             return \response()->json([
-                'success'             => $this->ccdProblemService->deletePatientCcdProblem(
+                'success' => $this->ccdProblemService->deletePatientCcdProblem(
                     (new CcdProblemInput())
                         ->setUserId($userId)
                         ->setCcdProblemId($ccdProblemId)
@@ -102,7 +102,7 @@ class CcdProblemController extends Controller
     {
         if ($ccdProblemId) {
             return \response()->json([
-                'problem'             => $this->ccdProblemService->editPatientCcdProblem(
+                'problem' => $this->ccdProblemService->editPatientCcdProblem(
                     (new CcdProblemInput())
                         ->fromRequest($request->allSafe())
                         ->setUserId($userId)
