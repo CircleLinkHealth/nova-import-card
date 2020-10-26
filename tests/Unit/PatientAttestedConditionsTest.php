@@ -520,8 +520,6 @@ class PatientAttestedConditionsTest extends TestCase
     }
 
     /**
-     *
-     *
      * @return array
      */
     private function getStoreCallInput()
