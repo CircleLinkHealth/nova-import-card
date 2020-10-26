@@ -22,6 +22,11 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return $this->repo()->store($patientId, $this->code(), $chargeableMonth, $this->requiresPatientConsent($patientId));
     }
 
+    public function canAttachWithoutFulFillingPrevious(): bool
+    {
+        return false;
+    }
+
     public function clashesWith(): array
     {
         return [
@@ -93,16 +98,17 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        if ($this->hasUnfulfilledPreviousService($patientId, $chargeableMonth)) {
-            return false;
-        }
-
-        return collect($patientProblems)
+        $problemsCount = collect($patientProblems)
             ->filter(
                 function (PatientProblemForProcessing $problem) use ($patientId, $chargeableMonth) {
                     return collect($problem->getServiceCodes())->contains($this->code());
                 }
-            )->count() >= $this->minimumNumberOfProblems();
+            )->count();
+        if ($problemsCount < $this->minimumNumberOfProblems()) {
+            return false;
+        }
+
+        return $this->canAttachWithoutFulFillingPrevious() || ! $this->hasUnfulfilledPreviousService($patientId, $chargeableMonth);
     }
 
     public function shouldFulfill(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool

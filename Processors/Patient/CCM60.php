@@ -15,6 +15,11 @@ class CCM60 extends AbstractProcessor
 {
     use IsPartOfSequence;
 
+    public function canAttachWithoutFulFillingPrevious(): bool
+    {
+        return true;
+    }
+
     public function code(): string
     {
         return ChargeableService::CCM_PLUS_60;
