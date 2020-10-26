@@ -79,41 +79,60 @@ class SamlLoginEventListener
         Auth::login($samlUser->cpmUser);
         session()->put(self::SESSION_IDP_NAME_KEY, $idp);
 
-        $cpmUrl = config('services.cpm.url', null);
-        if (empty($cpmUrl)) {
-            Log::debug('CPM URL not found. Will not redirect.');
-
+        $patientRedirectUrl = $this->getPatientRedirectUrl($idp, $idpAttributes);
+        if (empty($patientRedirectUrl)) {
             return;
-        }
-
-        $cpmPatientUrl = config('services.cpm.url_patient');
-        if ( ! empty($idpAttributes->patientId) && ! empty($cpmPatientUrl)) {
-            $ehr = DB::table('ehrs')
-                ->where('name', '=', $idp)
-                ->first();
-
-            if ($ehr) {
-                $targetPatient = DB::table('target_patients')
-                    ->where('ehr_id', '=', $ehr->id)
-                    ->where('ehr_patient_id', '=', $idpAttributes->patientId)
-                    ->first();
-
-                if ($targetPatient) {
-                    $cpmPatientUrl = str_replace('{USER_ID}', $targetPatient->user_id, $cpmPatientUrl);
-                    $cpmUrl .= $cpmPatientUrl;
-                } else {
-                    Log::warning("Could not find cpm patient with id[$idpAttributes->patientId] from $idp");
-                }
-            } else {
-                Log::warning("Could not found $idp in ehrs table");
-            }
         }
 
         /** @var Request $request */
         $request = app('request');
         $request->merge([
-            'RelayState' => $cpmUrl,
+            'RelayState' => $patientRedirectUrl,
         ]);
+    }
+
+    private function getPatientRedirectUrl(string $idp, SamlResponseAttributes $idpAttributes): ?string
+    {
+        if (empty($idpAttributes->patientId)) {
+            return null;
+        }
+
+        $ehr = DB::table('ehrs')
+            ->where('name', '=', $idp)
+            ->first();
+
+        if ( ! $ehr) {
+            Log::warning("Could not found $idp in ehrs table");
+
+            return null;
+        }
+
+        $targetPatientId = optional(DB::table('target_patients')
+            ->where('ehr_id', '=', $ehr->id)
+            ->where('ehr_patient_id', '=', $idpAttributes->patientId)
+            ->first())->user_id;
+
+        if ( ! $targetPatientId) {
+            Log::warning("Could not find cpm patient with id[$idpAttributes->patientId] from $idp");
+
+            return null;
+        }
+
+        if (isCpm()) {
+            return route('patient.note.index', ['patientId' => $targetPatientId]);
+        }
+
+        $cpmUrl        = config('services.cpm.url', null);
+        $cpmPatientUrl = config('services.cpm.url_patient', null);
+        if (empty($cpmUrl) || empty($cpmPatientUrl)) {
+            Log::debug('CPM URL or CPM Patient URL not found. Will not redirect.');
+
+            return null;
+        }
+        $cpmPatientUrl = str_replace('{USER_ID}', $targetPatientId, $cpmPatientUrl);
+        $cpmUrl .= $cpmPatientUrl;
+
+        return $cpmUrl;
     }
 
     private function getSamlAttributes(string $idpName, Saml2User $saml2User): SamlResponseAttributes
