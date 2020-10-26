@@ -98,6 +98,9 @@ class SamlLoginEventListener
     private function getPatientRedirectUrl(string $idp, SamlResponseAttributes $idpAttributes): ?string
     {
         if (empty($idpAttributes->patientId)) {
+            $stringified = json_encode($idpAttributes);
+            Log::warning("idpAttributes does not have patient id: $stringified");
+
             return null;
         }
 
@@ -159,6 +162,11 @@ class SamlLoginEventListener
         $patientId = $attributes[$patientIdMapping] ?? null;
         if (is_array($patientId)) {
             $patientId = reset($patientId);
+        }
+
+        if ( ! $patientId) {
+            $stringified = json_encode($attributes);
+            Log::warning("SAML Attributes: $stringified");
         }
 
         return new SamlResponseAttributes($attributes[$userIdMapping], $patientId);
