@@ -81,8 +81,12 @@ class SamlLoginEventListener
 
         $patientRedirectUrl = $this->getPatientRedirectUrl($idp, $idpAttributes);
         if (empty($patientRedirectUrl)) {
+            Log::warning('Could not get a url to redirect to patient from Athena SSO');
+
             return;
         }
+
+        Log::warning("Redirecting to $patientRedirectUrl");
 
         /** @var Request $request */
         $request = app('request');
