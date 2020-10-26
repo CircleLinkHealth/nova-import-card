@@ -18,6 +18,8 @@ interface PatientServiceProcessor
     public function clashesWith(): array;
 
     public function code(): string;
+    
+    public function codeForProblems(): string;
 
     public function featureIsEnabled(): bool;
 
