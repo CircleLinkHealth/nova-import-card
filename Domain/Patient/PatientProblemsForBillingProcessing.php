@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\Entities\RpmProblem;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Support\Collection;
@@ -82,12 +83,14 @@ class PatientProblemsForBillingProcessing
         
         if ($cpmProblem = $problem->cpmProblem)
         {
-            if ($cpmProblem->is_behavioral || in_array($cpmProblem->name, ['Dementia', 'Depression']))
+            $isDual = in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
+            
+            if ($cpmProblem->is_behavioral || $isDual)
             {
                 $services[] = ChargeableService::BHI;
             }
             
-            if (! $cpmProblem->is_behavioral || in_array($cpmProblem->name, ['Dementia', 'Depression']))
+            if (! $cpmProblem->is_behavioral || $isDual)
             {
                 $services[] = ChargeableService::CCM;
             }
