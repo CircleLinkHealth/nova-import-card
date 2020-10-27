@@ -23,7 +23,7 @@ trait ApprovablePatientUsersQuery
     public function approvablePatientUsersQuery(Carbon $monthYear = null): Builder
     {
         return User::with([
-            'primaryPractice',
+            'primaryPractice' => fn($p) => $p->with(['pcmProblems', 'rpmProblems']),
             'endOfMonthCcmStatusLogs' => function ($q) use ($monthYear) {
                 $q->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
