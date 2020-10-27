@@ -11,7 +11,9 @@ use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Events\PatientConsentedToService;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
@@ -124,7 +126,9 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
-        $this->assertFalse($bhiPatient->isBhi());
+        BillingCache::clearPatients();
+        
+        $this->assertFalse(PatientIsOfServiceCode::execute($bhiPatient->id, ChargeableService::BHI));
     }
 
     public function test_it_is_not_bhi_if_patient_does_not_have_bhi_consent_note()
