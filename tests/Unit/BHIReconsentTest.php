@@ -78,7 +78,7 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, false);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
-        $this->assertTrue($bhiPatient->isBhi());
+        $this->assertTrue(PatientIsOfServiceCode::execute($bhiPatient->id, ChargeableService::BHI));
     }
 
     public function test_it_is_bhi_for_before_cutoff_consent_date()
