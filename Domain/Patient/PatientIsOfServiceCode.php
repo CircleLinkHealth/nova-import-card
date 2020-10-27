@@ -12,6 +12,7 @@ use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\User;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
 class PatientIsOfServiceCode
@@ -92,10 +93,8 @@ class PatientIsOfServiceCode
     
     private function requiresPatientBhiConsent():bool
     {
-        $practiceName = $this->repo()
-            ->getPatientWithBillingDataForMonth($this->patientId)
-            ->primaryPractice
-            ->name;
-        return in_array($practiceName, PracticesRequiringSpecialBhiConsent::names());
+        return ! User::hasBhiConsent()
+            ->whereId($this->patientId)
+            ->exists();
     }
 }
