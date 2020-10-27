@@ -9,6 +9,8 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
+use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
+use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
@@ -18,20 +20,20 @@ class PatientIsOfServiceCode
 
     protected PatientServiceProcessorRepository $repo;
 
-    protected bool $requiresConsent;
+    protected bool $bypassRequiresConsent;
 
     protected string $serviceCode;
 
-    public function __construct(int $patientId, string $serviceCode, bool $requiresConsent = false)
+    public function __construct(int $patientId, string $serviceCode, bool $bypassRequiresConsent = false)
     {
         $this->patientId       = $patientId;
         $this->serviceCode     = $serviceCode;
-        $this->requiresConsent = $requiresConsent;
+        $this->bypassRequiresConsent = $bypassRequiresConsent;
     }
 
-    public static function execute(int $patientId, string $serviceCode, $requiresConsent = false): bool
+    public static function execute(int $patientId, string $serviceCode, $bypassRequiresConsent = false): bool
     {
-        return (new static($patientId, $serviceCode, $requiresConsent))->isOfServiceCode();
+        return (new static($patientId, $serviceCode, $bypassRequiresConsent))->isOfServiceCode();
     }
 
     public function isOfServiceCode(): bool
@@ -47,12 +49,15 @@ class PatientIsOfServiceCode
     private function hasSummary(): bool
     {
         if (! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)){
+            if (! $this->bypassRequiresConsent && $this->serviceCode === ChargeableService::BHI){
+               return ! $this->requiresPatientBhiConsent();
+            }
             return true;
         }
         
         return $this->repo()->getChargeablePatientSummaries($this->patientId, Carbon::now()->startOfMonth())
             ->where('chargeable_service_code', $this->serviceCode)
-            ->where('requires_patient_consent', $this->requiresConsent)
+            ->where('requires_patient_consent', $this->bypassRequiresConsent)
             ->count() > 0;
     }
 
@@ -83,5 +88,14 @@ class PatientIsOfServiceCode
         }
 
         return $this->repo;
+    }
+    
+    private function requiresPatientBhiConsent():bool
+    {
+        $practiceName = $this->repo()
+            ->getPatientWithBillingDataForMonth($this->patientId)
+            ->primaryPractice
+            ->name;
+        return in_array($practiceName, PracticesRequiringSpecialBhiConsent::names());
     }
 }
