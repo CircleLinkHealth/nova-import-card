@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
@@ -373,7 +374,13 @@ class PatientMonthlySummary extends BaseModel
     {
         return ! $this->hasServiceCode(ChargeableService::BHI, $includeUnfulfilledChargeableServices)
             ? $this->attestedProblems
-            : $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false);
+            : $this->attestedProblems->filter(function($p) {
+                $cpmProblem = $p->cpmProblem;
+                if (is_null($cpmProblem)){
+                    return true;
+                }
+                return$cpmProblem->is_behavioral == false || in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
+            });
     }
 
     public function createCallReportsForCurrentMonth()
