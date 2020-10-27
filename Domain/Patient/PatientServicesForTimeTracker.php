@@ -41,7 +41,15 @@ class PatientServicesForTimeTracker
     public function get(): PatientChargeableSummaryCollection
     {
         return $this->setSummaries()
+            ->consolidateSummaryData()
             ->createAndReturnResource();
+    }
+    
+    private function consolidateSummaryData():self
+    {
+        return $this->filterUsingPatientServiceStatus()
+            ->rejectNonTimeTrackerServices()
+            ->groupSimilarCodes();
     }
 
     private function createAndReturnResource(): PatientChargeableSummaryCollection
@@ -53,20 +61,20 @@ class PatientServicesForTimeTracker
         );
     }
 
-    private function groupSimilarCodes(Collection $summaries): Collection
+    private function groupSimilarCodes() : self
     {
         /** @var ChargeablePatientMonthlySummaryView $ccmChargeableService */
-        $ccmChargeableService = $summaries->filter(function (ChargeablePatientMonthlySummaryView $entry) {
+        $ccmChargeableService = $this->summaries->filter(function (ChargeablePatientMonthlySummaryView $entry) {
             return ChargeableService::CCM === $entry->chargeable_service_code;
         })->first();
 
         /** @var ChargeablePatientMonthlySummaryView $rpmChargeableService */
-        $rpmChargeableService = $summaries->filter(function (ChargeablePatientMonthlySummaryView $entry) {
+        $rpmChargeableService = $this->summaries->filter(function (ChargeablePatientMonthlySummaryView $entry) {
             return ChargeableService::RPM === $entry->chargeable_service_code;
         })->first();
 
         $patientChargeableSummaries = collect();
-        $summaries->each(function (ChargeablePatientMonthlySummaryView $entry) use ($patientChargeableSummaries, $ccmChargeableService, $rpmChargeableService) {
+        $this->summaries->each(function (ChargeablePatientMonthlySummaryView $entry) use ($patientChargeableSummaries, $ccmChargeableService, $rpmChargeableService) {
             $code = $entry->chargeable_service_code;
             if (in_array($code, [ChargeableService::CCM, ChargeableService::RPM])) {
                 return;
@@ -86,7 +94,9 @@ class PatientServicesForTimeTracker
             $patientChargeableSummaries->push($rpmChargeableService);
         }
 
-        return $patientChargeableSummaries;
+        $this->summaries = $patientChargeableSummaries;
+        
+        return $this;
     }
 
     private function newBillingIsEnabled(): bool
@@ -94,13 +104,23 @@ class PatientServicesForTimeTracker
         return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
     }
 
-    private function rejectNonTimeTrackerServices(Collection $summaries): Collection
+    private function rejectNonTimeTrackerServices(): self
     {
-        return $summaries
+        $this->summaries = $this->summaries
             ->reject(function (ChargeablePatientMonthlySummaryView $summary) {
                 return in_array($summary->chargeable_service_name, self::NON_TIME_TRACKABLE_SERVICES);
             })
+            ;
+        
+        return $this;
+    }
+    
+    private function filterUsingPatientServiceStatus() : self
+    {
+        $this->summaries = $this->summaries
             ->filter(fn ($summary) => PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code));
+        
+        return $this;
     }
 
     private function repo(): PatientServiceProcessorRepository
@@ -114,15 +134,10 @@ class PatientServicesForTimeTracker
 
     private function setSummaries(): self
     {
-        if ($this->newBillingIsEnabled()) {
-            $summaries = $this->repo()->getChargeablePatientSummaries($this->patientId, $this->month);
-        } else {
-            $summaries = collect();
-        }
-
-        $summaries       = $this->rejectNonTimeTrackerServices($summaries);
-        $this->summaries = $this->groupSimilarCodes($summaries);
-
+        $this->summaries = $this->newBillingIsEnabled() ?
+            $this->repo()->getChargeablePatientSummaries($this->patientId, $this->month) :
+            $this->createFauxSummariesFromLegacyData();
+        
         return $this;
     }
     
