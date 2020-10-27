@@ -10,7 +10,7 @@ use CircleLinkHealth\CcmBilling\Repositories\CachedLocationProcessorEloquentRepo
 
 class CachedLocationProcessorEloquentRepositoryTest extends LocationRepositoryTest
 {
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 

@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use App\Jobs\ChargeableServiceDuration;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as RepositoryInterface;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
@@ -16,6 +17,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class CachedPatientServiceProcessorRepository implements RepositoryInterface
@@ -150,15 +152,19 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
      */
     public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): EloquentCollection
     {
-        return $this->getPatientFromCache($patientId)
-            ->ccdProblems
-            ->filter(function (Problem $problem) use ($chargeableServiceCode) {
-                if (is_null($problem->cpmProblem)) {
-                    return false;
-                }
-
-                return $problem->cpmProblem->locationChargeableServices->contains('code', $chargeableServiceCode);
-            });
+        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) && Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)){
+            return $this->getPatientFromCache($patientId)
+                ->ccdProblems
+                ->filter(function (Problem $problem) use ($chargeableServiceCode) {
+                    if (is_null($problem->cpmProblem)) {
+                        return false;
+                    }
+            
+                    return $problem->cpmProblem->locationChargeableServices->contains('code', $chargeableServiceCode);
+                });
+        }
+        //todo:implement with ccd problem view
+        return new EloquentCollection();
     }
 
     /**

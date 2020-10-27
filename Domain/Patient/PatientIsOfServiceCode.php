@@ -8,7 +8,9 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
 class PatientIsOfServiceCode
 {
@@ -44,6 +46,10 @@ class PatientIsOfServiceCode
 
     private function hasSummary(): bool
     {
+        if (! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)){
+            return true;
+        }
+        
         return $this->repo()->getChargeablePatientSummaries($this->patientId, Carbon::now()->startOfMonth())
             ->where('chargeable_service_code', $this->serviceCode)
             ->where('requires_patient_consent', $this->requiresConsent)
@@ -61,6 +67,7 @@ class PatientIsOfServiceCode
             ChargeableService::CCM => 2,
             ChargeableService::BHI => 1,
             ChargeableService::PCM => 1,
+            ChargeableService::RPM => 1
         ];
     }
 
