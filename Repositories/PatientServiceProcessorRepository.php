@@ -126,6 +126,7 @@ class PatientServiceProcessorRepository implements Repository
 
     public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): Collection
     {
+        //todo: deprecate
         return Problem::wherePatientId($patientId)
             ->isBillable()
             ->ofService($chargeableServiceCode)
