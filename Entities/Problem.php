@@ -6,14 +6,10 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
-use CircleLinkHealth\CcmBilling\Entities\LegacyBillableCcdProblemsView;
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\HasProblemCodes;
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -68,6 +64,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Problem isMonitored()
  * @method static \Illuminate\Database\Eloquent\Builder|Problem ofService($service)
  * @method static \Illuminate\Database\Eloquent\Builder|Problem withPatientLocationProblemChargeableServices()
+ * @method static Builder|Problem forBilling()
  */
 class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contracts\Problem
 {
@@ -162,7 +159,7 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
     {
         return (bool) optional($this->cpmProblem)->is_behavioral;
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -176,6 +173,13 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
         return $this->belongsToMany(PatientMonthlySummary::class, 'patient_summary_problems', 'problem_id')
             ->withPivot('name', 'icd_10_code')
             ->withTimestamps();
+    }
+
+    public function scopeForBilling(Builder $query)
+    {
+        return $query->isMonitored()
+//                    ->withPatientLocationProblemChargeableServices()
+        ;
     }
 
     public function scopeIsBillable($query, $ignoreWith = false)
@@ -204,13 +208,6 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
                             ->where('code', $service);
                     });
             });
-    }
-    
-    public function scopeForBilling(Builder $query)
-    {
-        return $query->isMonitored()
-//                    ->withPatientLocationProblemChargeableServices()
-        ;
     }
 
     public function scopeWithPatientLocationProblemChargeableServices(Builder $query)
