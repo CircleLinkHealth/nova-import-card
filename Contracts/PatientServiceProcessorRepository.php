@@ -32,9 +32,7 @@ interface PatientServiceProcessorRepository
     public function isChargeableServiceEnabledForLocationForMonth(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
 
     public function isFulfilled(int $patientId, string $chargeableServiceCode, Carbon $month): bool;
-
-    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): Collection;
-
+    
     //todo: make private
     public function reloadPatientProblems(int $patientId): void;
 

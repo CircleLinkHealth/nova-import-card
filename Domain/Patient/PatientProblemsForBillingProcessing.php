@@ -16,6 +16,7 @@ use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\Entities\RpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
+use Illuminate\Database\Eloquent\Collection;
 
 class PatientProblemsForBillingProcessing
 {
@@ -30,11 +31,25 @@ class PatientProblemsForBillingProcessing
         $this->patientId = $patientId;
     }
 
-    public static function get(int $patientId): array
+    public static function getArray(int $patientId): array
+    {
+        return (new static($patientId))
+            ->setPatient()
+            ->getProblems()
+            ->toArray();
+    }
+    
+    public static function getCollection(int $patientId): Collection
     {
         return (new static($patientId))
             ->setPatient()
             ->getProblems();
+    }
+    
+    public static function getForCodes(int $patientId, array $codes): Collection
+    {
+        return self::getCollection($patientId)
+            ->filter(fn(PatientProblemForProcessing $p) => count(array_intersect($codes, $p->getServiceCodes())) != 0);
     }
     
     private function setPatient():self
@@ -45,7 +60,7 @@ class PatientProblemsForBillingProcessing
         return $this;
     }
 
-    private function getProblems(): array
+    private function getProblems(): Collection
     {
         return $this->patient->ccdProblems->map(function (Problem $p){
             return (new PatientProblemForProcessing())
@@ -53,8 +68,7 @@ class PatientProblemsForBillingProcessing
                 ->setCode($p->icd10Code())
                 ->setServiceCodes($this->getServicesForProblem($p));
         })
-            ->filter()
-            ->toArray();
+            ->filter();
     }
     
     private function getServicesForProblem(Problem $problem) : array

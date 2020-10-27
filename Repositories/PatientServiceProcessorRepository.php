@@ -123,16 +123,7 @@ class PatientServiceProcessorRepository implements Repository
             ->where('is_fulfilled', true)
             ->exists();
     }
-
-    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): Collection
-    {
-        //todo: deprecate
-        return Problem::wherePatientId($patientId)
-            ->isBillable()
-            ->ofService($chargeableServiceCode)
-            ->get();
-    }
-
+    
     public function reloadPatientProblems(int $patientId): void
     {
         // TODO: Implement reloadPatientProblems() method.

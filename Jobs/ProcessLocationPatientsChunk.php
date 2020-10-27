@@ -79,7 +79,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob implements S
                     ->subscribe($this->getAvailableServiceProcessors())
                     ->forPatient($patient->id)
                     ->forMonth($this->getChargeableMonth())
-                    ->withProblems(...PatientProblemsForBillingProcessing::get($patient->id))
+                    ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
             );
         });
     }

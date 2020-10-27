@@ -146,30 +146,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->where('is_fulfilled', true)
             ->count() > 0;
     }
-
-    /**
-     * @throws \Exception
-     */
-    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): EloquentCollection
-    {
-        $problems =  $this->getPatientFromCache($patientId)
-            ->ccdProblems;
-           
-        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) && Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)){
-            return $problems->filter(function (Problem $problem) use ($chargeableServiceCode) {
-                if (is_null($problem->cpmProblem)) {
-                    return false;
-                }
     
-                return $problem->cpmProblem->locationChargeableServices->contains('code', $chargeableServiceCode);
-            });
-        }
-        
-        return $problems->filter(function (Problem $problem)use ($chargeableServiceCode){
-            return $problem->isOfCodeLegacy($chargeableServiceCode);
-        });
-    }
-
     /**
      * @throws \Exception
      */

@@ -17,7 +17,7 @@ class LocationProblemServiceDatabaseTest extends CustomerTestCase
 {
     protected LocationProblemServiceRepository $repo;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -64,7 +64,7 @@ class LocationProblemServiceDatabaseTest extends CustomerTestCase
 
         self::assertTrue(
             is_a(
-                $patientProblemForProcessing = collect(PatientProblemsForBillingProcessing::get($this->patient()->id))->first(),
+                $patientProblemForProcessing = PatientProblemsForBillingProcessing::getCollection($this->patient()->id)->first(),
                 PatientProblemForProcessing::class
             )
         );

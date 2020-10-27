@@ -172,12 +172,7 @@ class Eloquent implements PatientServiceProcessorRepository
             ->pluck('showAsFulfilled')
             ->first();
     }
-
-    public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): EloquentCollection
-    {
-        // TODO: Implement patientProblemsOfServiceCode() method.
-    }
-
+    
     public function reloadPatientProblems(int $patientId): void
     {
         // TODO: Implement reloadPatientProblems() method.

@@ -89,7 +89,7 @@ class ProcessPatientSummaries
             ->subscribe($this->patientUser->patientInfo->location->availableServiceProcessors($this->month))
             ->forPatient($this->patientUser->id)
             ->forMonth($this->month)
-            ->withProblems(...PatientProblemsForBillingProcessing::get($this->patientId));
+            ->withProblems(...PatientProblemsForBillingProcessing::getArray($this->patientId));
 
         return $this;
     }

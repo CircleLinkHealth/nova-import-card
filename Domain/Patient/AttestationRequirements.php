@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\ValueObjects\AttestationRequirementsDTO;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
@@ -56,13 +57,14 @@ class AttestationRequirements
 
     private function attestedBhiProblemsCount(): self
     {
-        $bhiProblems = $this->repo()->patientProblemsOfServiceCode($this->patientId, ChargeableService::BHI);
-
+        $bhiProblems = PatientProblemsForBillingProcessing::getForCodes($this->patientId, [ChargeableService::BHI]);
+        $attested = $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray();
+        
         $this->dto->setAttestedBhiProblemsCount(
-            $bhiProblems->whereIn(
-                'id',
-                $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray()
-            )->count()
+            $bhiProblems->filter(
+                fn(PatientProblemForProcessing $p) => in_array($p->getId(), $attested)
+            )
+                ->count()
         );
 
         return $this;
@@ -70,13 +72,14 @@ class AttestationRequirements
 
     private function attestedCcmProblemsCount(): self
     {
-        $ccmProblems = $this->repo()->patientProblemsOfServiceCode($this->patientId, ChargeableService::CCM);
+        $ccmProblems = PatientProblemsForBillingProcessing::getForCodes($this->patientId, [ChargeableService::CCM]);
+        $attested = $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray();
 
         $this->dto->setAttestedCcmProblemsCount(
-            $ccmProblems->whereIn(
-                'id',
-                $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray()
-            )->count()
+            $ccmProblems->filter(
+                fn(PatientProblemForProcessing $p) => in_array($p->getId(), $attested)
+            )
+                ->count()
         );
 
         return $this;
