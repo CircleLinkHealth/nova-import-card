@@ -224,6 +224,7 @@
                                     </a></li>
                                 <li><a href="{{route('report-settings.index')}}">Manage Report Settings
                                     </a></li>
+                                <li><a href="{{url('/admin/feature_flags')}}">Manage Feature Flags</a></li>
                             </ul>
                         </li>
 
