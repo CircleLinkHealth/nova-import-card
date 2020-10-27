@@ -111,6 +111,20 @@ class ChargeableService extends BaseModel
         });
     }
 
+    public static function getCodeForPatientProblems(string $code): string
+    {
+        //todo: cleaner mapping
+        if (in_array($code, self::CCM_PLUS_CODES)) {
+            return self::CCM;
+        }
+
+        if (self::RPM40 === $code) {
+            return self::RPM;
+        }
+
+        return $code;
+    }
+
     public function patientSummaries()
     {
         return $this->morphedByMany(PatientMonthlySummary::class, 'chargeable')
@@ -181,19 +195,5 @@ class ChargeableService extends BaseModel
     public function scopeSoftwareOnly($query)
     {
         return $query->where('code', self::SOFTWARE_ONLY);
-    }
-    
-    public static function getCodeForPatientProblems(string $code):string
-    {
-        //todo: cleaner mapping
-        if (in_array($code, self::CCM_PLUS_CODES)){
-            return self::CCM;
-        }
-        
-        if ($code === self::RPM40){
-            return self::RPM;
-        }
-        
-        return $code;
     }
 }
