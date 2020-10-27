@@ -22,6 +22,7 @@ class AWV2 extends AbstractProcessor
         if (isUnitTestingEnv()) {
             return true;
         }
+
         return Feature::isEnabled(BillingConstants::AWV_BILLING_FLAG);
     }
 

@@ -44,8 +44,8 @@ class PatientServicesForTimeTracker
             ->consolidateSummaryData()
             ->createAndReturnResource();
     }
-    
-    private function consolidateSummaryData():self
+
+    private function consolidateSummaryData(): self
     {
         return $this->filterUsingPatientServiceStatus()
             ->rejectNonTimeTrackerServices()
@@ -61,7 +61,42 @@ class PatientServicesForTimeTracker
         );
     }
 
-    private function groupSimilarCodes() : self
+    private function createFauxSummariesFromLegacyData(): \Illuminate\Database\Eloquent\Collection
+    {
+        $servicesDerivedFromPatientProblems = PatientProblemsForBillingProcessing::getCollection($this->patientId)
+            ->transform(fn (PatientProblemForProcessing $p) => $p->getServiceCodes())
+            ->flatten()
+            ->filter()
+            ->unique();
+
+        $chargeableServices = ChargeableService::whereIn('code', $servicesDerivedFromPatientProblems)->get();
+
+        $activitiesForMonth = Activity::wherePatientId($this->patientId)
+            ->createdThisMonth('performed_at')->get();
+
+        $summaries = new \Illuminate\Database\Eloquent\Collection();
+        foreach ($chargeableServices as $service) {
+            $summaries->push(ChargeablePatientMonthlySummaryView::make([
+                'patient_user_id'         => $this->patientId,
+                'chargeable_service_id'   => $service->id,
+                'chargeable_service_code' => $service->code,
+                'chargeable_service_name' => $service->display_name,
+                'total_time'              => $activitiesForMonth->where('chargeable_service_id', $service->id)->sum('duration'),
+            ]));
+        }
+
+        return $summaries;
+    }
+
+    private function filterUsingPatientServiceStatus(): self
+    {
+        $this->summaries = $this->summaries
+            ->filter(fn ($summary) => PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code));
+
+        return $this;
+    }
+
+    private function groupSimilarCodes(): self
     {
         /** @var ChargeablePatientMonthlySummaryView $ccmChargeableService */
         $ccmChargeableService = $this->summaries->filter(function (ChargeablePatientMonthlySummaryView $entry) {
@@ -95,7 +130,7 @@ class PatientServicesForTimeTracker
         }
 
         $this->summaries = $patientChargeableSummaries;
-        
+
         return $this;
     }
 
@@ -111,15 +146,7 @@ class PatientServicesForTimeTracker
                 return in_array($summary->chargeable_service_name, self::NON_TIME_TRACKABLE_SERVICES);
             })
             ;
-        
-        return $this;
-    }
-    
-    private function filterUsingPatientServiceStatus() : self
-    {
-        $this->summaries = $this->summaries
-            ->filter(fn ($summary) => PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code));
-        
+
         return $this;
     }
 
@@ -137,34 +164,7 @@ class PatientServicesForTimeTracker
         $this->summaries = $this->newBillingIsEnabled() ?
             $this->repo()->getChargeablePatientSummaries($this->patientId, $this->month) :
             $this->createFauxSummariesFromLegacyData();
-        
+
         return $this;
-    }
-    
-    private function createFauxSummariesFromLegacyData() : \Illuminate\Database\Eloquent\Collection
-    {
-        $servicesDerivedFromPatientProblems = PatientProblemsForBillingProcessing::getCollection($this->patientId)
-            ->transform(fn(PatientProblemForProcessing $p) => $p->getServiceCodes())
-            ->flatten()
-            ->filter()
-            ->unique();
-        
-        $chargeableServices = ChargeableService::whereIn('code', $servicesDerivedFromPatientProblems)->get();
-        
-        $activitiesForMonth = Activity::wherePatientId($this->patientId)
-            ->createdThisMonth('performed_at')->get();
-        
-        $summaries = new \Illuminate\Database\Eloquent\Collection();
-        foreach ($chargeableServices as $service){
-            $summaries->push(ChargeablePatientMonthlySummaryView::make([
-                'patient_user_id' => $this->patientId,
-                'chargeable_service_id' => $service->id,
-                'chargeable_service_code' => $service->code,
-                'chargeable_service_name' => $service->display_name,
-                'total_time'              => $activitiesForMonth->where('chargeable_service_id', $service->id)->sum('duration')
-            ]));
-        }
-        
-        return $summaries;
     }
 }

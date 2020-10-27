@@ -7,9 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Builders;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Customer\Entities\User;
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Builder;
 
 trait ApprovablePatientUsersQuery
@@ -23,7 +21,7 @@ trait ApprovablePatientUsersQuery
     public function approvablePatientUsersQuery(Carbon $monthYear = null): Builder
     {
         return User::with([
-            'primaryPractice' => fn($p) => $p->with(['pcmProblems', 'rpmProblems']),
+            'primaryPractice'         => fn ($p)         => $p->with(['pcmProblems', 'rpmProblems']),
             'endOfMonthCcmStatusLogs' => function ($q) use ($monthYear) {
                 $q->createdOnIfNotNull($monthYear, 'chargeable_month');
             },

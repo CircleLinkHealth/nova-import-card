@@ -42,6 +42,13 @@ class PatientMonthlyServiceTime
             ->getTimeforServices([ChargeableService::CCM, ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60]);
     }
 
+    public static function forChargeableServiceCodes(array $chargeableServiceCodes, int $patientId, Carbon $month): int
+    {
+        return app(PatientMonthlyServiceTime::class)
+            ->setSummaries($patientId, $month)
+            ->getTimeforServices($chargeableServiceCodes);
+    }
+
     public function getTimeforServices(array $chargeableServiceCodes, $include = true): int
     {
         if ($include) {

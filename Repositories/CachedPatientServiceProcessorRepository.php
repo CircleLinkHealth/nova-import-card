@@ -9,15 +9,12 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use App\Jobs\ChargeableServiceDuration;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as RepositoryInterface;
-use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class CachedPatientServiceProcessorRepository implements RepositoryInterface
@@ -146,7 +143,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->where('is_fulfilled', true)
             ->count() > 0;
     }
-    
+
     /**
      * @throws \Exception
      */

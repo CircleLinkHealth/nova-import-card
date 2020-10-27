@@ -10,7 +10,6 @@ use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
-
 class AWV1 extends AbstractProcessor
 {
     public function code(): string
@@ -23,7 +22,7 @@ class AWV1 extends AbstractProcessor
         if (isUnitTestingEnv()) {
             return true;
         }
-        
+
         return Feature::isEnabled(BillingConstants::AWV_BILLING_FLAG);
     }
 
