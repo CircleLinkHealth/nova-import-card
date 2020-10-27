@@ -156,13 +156,13 @@ class PatientServicesForTimeTracker
         
         $summaries = new \Illuminate\Database\Eloquent\Collection();
         foreach ($chargeableServices as $service){
-            $summaries->push(ChargeablePatientMonthlySummaryView::make([
-                'patient_user_id' => $this->patientId,
-                'chargeable_service_id' => $service->id,
-                'chargeable_service_code' => $service->code,
-                'chargeable_service_name' => $service->display_name,
-                'total_time'              => $activitiesForMonth->where('chargeable_service_id', $service->id)->sum('duration')
-            ]));
+            $newSummary = new ChargeablePatientMonthlySummaryView();
+            $newSummary->patient_user_id = $this->patientId;
+            $newSummary->chargeable_service_id = $service->id;
+            $newSummary->chargeable_service_code = $service->code;
+            $newSummary->chargeable_service_name = $service->name;
+            $newSummary->total_time = $activitiesForMonth->where('chargeable_service_id', $service->id)->sum('duration');
+            $summaries->push($newSummary);
         }
         
         return $summaries;
