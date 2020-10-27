@@ -143,6 +143,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Illuminate\Database\Eloquent\Collection|PcmProblem[]                                                                    $pcmProblems
  * @property int|null                                                                                                                 $pcm_problems_count
  * @method   static                                                                                                                   \Illuminate\Database\Eloquent\Builder|Practice hasImportingHookEnabled($hook, $listener)
+ * @property \Illuminate\Database\Eloquent\Collection|RpmProblem[]                                                                    $rpmProblems
+ * @property int|null                                                                                                                 $rpm_problems_count
  */
 class Practice extends BaseModel implements HasMedia
 {
@@ -521,11 +523,6 @@ class Practice extends BaseModel implements HasMedia
     {
         return $this->hasMany(PcmProblem::class, 'practice_id');
     }
-    
-    public function rpmProblems()
-    {
-        return $this->hasMany(RpmProblem::class, 'practice_id');
-    }
 
     public function pcp()
     {
@@ -540,6 +537,11 @@ class Practice extends BaseModel implements HasMedia
     public function providers()
     {
         return Practice::getProviders($this->id);
+    }
+
+    public function rpmProblems()
+    {
+        return $this->hasMany(RpmProblem::class, 'practice_id');
     }
 
     public function scopeActive($q)

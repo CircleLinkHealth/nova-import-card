@@ -156,7 +156,7 @@ class ChargeableService extends BaseModel
             self::AWV_SUBSEQUENT          => new AWV2(),
             self::GENERAL_CARE_MANAGEMENT => new G0511(),
             self::RPM                     => new RPM(),
-            self::RPM40                   => new RPM40()
+            self::RPM40                   => new RPM40(),
         ];
     }
 
