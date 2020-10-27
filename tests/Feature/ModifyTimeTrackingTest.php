@@ -25,7 +25,7 @@ class ModifyTimeTrackingTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice);
-        $this->addTime($nurse, $patient, 5, true, true, false);
+        $this->addTime($nurse, $patient, 5, true, true, null);
 
         $time = $patient->getCcmTime();
         self::assertEquals(5 * 60, $time);
@@ -59,7 +59,7 @@ class ModifyTimeTrackingTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice);
-        $this->addTime($nurse, $patient, 5, true, true, false);
+        $this->addTime($nurse, $patient, 5, true, true, null);
 
         $time = $patient->getCcmTime();
         self::assertEquals(5 * 60, $time);
@@ -93,7 +93,7 @@ class ModifyTimeTrackingTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice);
-        $this->addTime($nurse, $patient, 5, false, false, false);
+        $this->addTime($nurse, $patient, 5, false, false, null);
 
         $time = $patient->getCcmTime();
         self::assertEquals(0, $time);

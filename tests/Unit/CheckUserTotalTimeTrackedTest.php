@@ -46,13 +46,13 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $this->addWorkHours($nurse, $end, $hoursPerDay);
 
         //32 hours CPM time - Not above max (33.6)
-        $this->addTime($nurse, null, 240, false, false, false, $start);
-        $this->addTime($nurse, null, 240, false, false, false, $sub6);
-        $this->addTime($nurse, null, 240, false, false, false, $sub5);
-        $this->addTime($nurse, null, 240, false, false, false, $sub4);
-        $this->addTime($nurse, null, 240, false, false, false, $sub3);
-        $this->addTime($nurse, null, 240, false, false, false, $sub2);
-        $this->addTime($nurse, null, 480, false, false, false, $end);
+        $this->addTime($nurse, null, 240, false, false, null, $start);
+        $this->addTime($nurse, null, 240, false, false, null, $sub6);
+        $this->addTime($nurse, null, 240, false, false, null, $sub5);
+        $this->addTime($nurse, null, 240, false, false, null, $sub4);
+        $this->addTime($nurse, null, 240, false, false, null, $sub3);
+        $this->addTime($nurse, null, 240, false, false, null, $sub2);
+        $this->addTime($nurse, null, 480, false, false, null, $end);
 
         $checker = new UserTotalTimeChecker($start, $end, true, $nurse->id);
         $alerts  = $checker->check();
@@ -89,8 +89,8 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         Carbon::setTestNow(now()->setHour(16));
         $startTime = now()->subDay()->endOfDay()->subHours(6);
 
-        $this->addTime($nurse, null, $twelveHoursInMinutes, false, false, false, $startTime);
-        $this->addTime($nurse, null, 60, false, false, false);
+        $this->addTime($nurse, null, $twelveHoursInMinutes, false, false, null, $startTime);
+        $this->addTime($nurse, null, 60, false, false, null);
 
         $start = now()->startOfDay();
         $end   = now()->endOfDay();
@@ -152,13 +152,13 @@ class CheckUserTotalTimeTrackedTest extends TestCase
         $this->addWorkHours($nurse, $end, $hoursPerDay);
 
         //35 hours CPM time
-        $this->addTime($nurse, null, 240, false, false, false, $start);
-        $this->addTime($nurse, null, 240, false, false, false, $sub6);
-        $this->addTime($nurse, null, 240, false, false, false, $sub5);
-        $this->addTime($nurse, null, 480, false, false, false, $sub4);
-        $this->addTime($nurse, null, 240, false, false, false, $sub3);
-        $this->addTime($nurse, null, 240, false, false, false, $sub2);
-        $this->addTime($nurse, null, 480, false, false, false, $end);
+        $this->addTime($nurse, null, 240, false, false, null, $start);
+        $this->addTime($nurse, null, 240, false, false, null, $sub6);
+        $this->addTime($nurse, null, 240, false, false, null, $sub5);
+        $this->addTime($nurse, null, 480, false, false, null, $sub4);
+        $this->addTime($nurse, null, 240, false, false, null, $sub3);
+        $this->addTime($nurse, null, 240, false, false, null, $sub2);
+        $this->addTime($nurse, null, 480, false, false, null, $end);
 
         $checker = new UserTotalTimeChecker($start, $end, true, $nurse->id);
         $alerts  = $checker->check();

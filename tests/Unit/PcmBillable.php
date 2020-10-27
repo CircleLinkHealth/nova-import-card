@@ -34,7 +34,7 @@ class PcmBillable extends CustomerTestCase
         $this->attachValidPcmProblem($patient);
 
         $nurse = $this->getNurse($practice->id, true, 1, true, 12.50);
-        $this->addTime($nurse, $patient, 31, true, true, false);
+        $this->addTime($nurse, $patient, 31, true, true, null);
 
         $service        = app(ApproveBillablePatientsService::class);
         $month          = $service->getBillablePatientsForMonth($practice->id, now());
@@ -56,7 +56,7 @@ class PcmBillable extends CustomerTestCase
         $this->attachValidPcmProblem($patient);
 
         $nurse = $this->getNurse($practice->id, true, 1, true, 12.50);
-        $this->addTime($nurse, $patient, 31, true, true, false);
+        $this->addTime($nurse, $patient, 31, true, true, null);
 
         $service        = app(ApproveBillablePatientsService::class);
         $month          = $service->getBillablePatientsForMonth($practice->id, now());

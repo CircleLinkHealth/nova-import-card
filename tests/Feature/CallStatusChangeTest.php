@@ -39,7 +39,7 @@ class CallStatusChangeTest extends CustomerTestCase
         $nurse = $this->careCoach();
         $this->setupNurse($nurse, true, 30, true, 12.50);
 
-        $note = $this->addTime($nurse, $patient, 20, true, true, false, null, 0, 'Patient Note Creation', false, true);
+        $note = $this->addTime($nurse, $patient, 20, true, true, null, null, 0, 'Patient Note Creation', false, true);
 
         $invoice         = $this->generateInvoice($nurse);
         $invoiceData     = $invoice->invoice_data;
@@ -96,7 +96,7 @@ class CallStatusChangeTest extends CustomerTestCase
         $nurse = $this->careCoach();
         $this->setupNurse($nurse, true, 30, true, 12.50);
 
-        $note = $this->addTime($nurse, $patient, 20, true, false, false, null, 0, 'Patient Note Creation', false, true);
+        $note = $this->addTime($nurse, $patient, 20, true, false, null, null, 0, 'Patient Note Creation', false, true);
 
         $invoice         = $this->generateInvoice($nurse);
         $invoiceData     = $invoice->invoice_data;
@@ -153,7 +153,7 @@ class CallStatusChangeTest extends CustomerTestCase
         $nurse = $this->careCoach();
         $this->setupNurse($nurse, true, 30, true, 12.50);
 
-        $note = $this->addTime($nurse, $patient, 20, true, false, false, null, 0, 'Patient Note Creation', false, false);
+        $note = $this->addTime($nurse, $patient, 20, true, false, null, null, 0, 'Patient Note Creation', false, false);
 
         $invoice         = $this->generateInvoice($nurse);
         $invoiceData     = $invoice->invoice_data;
@@ -210,7 +210,7 @@ class CallStatusChangeTest extends CustomerTestCase
         $nurse = $this->careCoach();
         $this->setupNurse($nurse, true, 30, true, 12.50);
 
-        $note = $this->addTime($nurse, $patient, 20, true, false, false, null, 0, 'Patient Note Creation', false, false);
+        $note = $this->addTime($nurse, $patient, 20, true, false, null, null, 0, 'Patient Note Creation', false, false);
 
         $invoice         = $this->generateInvoice($nurse);
         $invoiceData     = $invoice->invoice_data;
