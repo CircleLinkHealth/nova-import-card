@@ -8,9 +8,12 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\ValueObjects\AttestationRequirementsDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
 class AttestationRequirements
 {
@@ -27,13 +30,23 @@ class AttestationRequirements
 
     public function execute(): AttestationRequirementsDTO
     {
+        return $this->billingRevampIsEnabled() ? $this->getRequirements() : $this->getLegacyAttestationRequirements();
+    }
+    
+    private function getRequirements() : AttestationRequirementsDTO
+    {
         return $this->setPatient()
-            ->isEnabled()
-            ->hasCcm()
-            ->hasPcm()
-            ->attestedCcmProblemsCount()
-            ->attestedBhiProblemsCount()
-            ->getDto();
+                ->isEnabled()
+                ->hasCcm()
+                ->hasPcm()
+                ->attestedCcmProblemsCount()
+                ->attestedBhiProblemsCount()
+                ->getDto();
+    }
+    
+    private function billingRevampIsEnabled() : bool
+    {
+        return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
     }
 
     public static function get(int $patientId): AttestationRequirementsDTO
@@ -119,5 +132,48 @@ class AttestationRequirements
             );
 
         return $this;
+    }
+    
+    private function getLegacyAttestationRequirements()
+    {
+        $this->setPatient();
+        $this->isEnabled();
+        
+        if ( ! PatientMonthlySummary::existsForCurrentMonthForPatient($this->patient)) {
+            PatientMonthlySummary::createFromPatient($this->patient->id, Carbon::now()->startOfMonth());
+        }
+        
+        /**
+         * @var PatientMonthlySummary
+         */
+        $pms = $this->patient->patientSummaries()
+            ->with([
+                //all chargeable services includes un-fulfilled service codes as well as fulfilled.
+                'allChargeableServices',
+                'attestedProblems',
+            ])
+            ->getCurrent()
+            ->first();
+        
+        //if this hasn't had last month's chargeable services attach for some reason, try here
+        if ($pms->allchargeableServices->isEmpty()) {
+            $pms->attachChargeableServicesToFulfill();
+            $pms->load('allChargeableServices');
+        }
+        
+        $services = $pms->allChargeableServices;
+        
+        if ($services->where('code', ChargeableService::CCM)->isNotEmpty()) {
+            $this->dto->setHasCcm(true);
+        }
+        
+        if ($services->where('code', ChargeableService::PCM)->isNotEmpty()) {
+            $this->dto->setHasPcm(true);
+        }
+        
+        $this->dto->setAttestedCcmProblemsCount($pms->ccmAttestedProblems(true)->count());
+        $this->dto->setAttestedBhiProblemsCount($pms->bhiAttestedProblems(true)->count());
+        
+        return $this->dto;
     }
 }
