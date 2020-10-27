@@ -197,7 +197,6 @@
       <path value="$PROJECT_DIR$/vendor/dnoegel/php-xdg-base-dir" />
       <path value="$PROJECT_DIR$/vendor/jean85/pretty-package-versions" />
       <path value="$PROJECT_DIR$/vendor/pusher/pusher-php-server" />
-      <path value="$PROJECT_DIR$/vendor/scrivo/highlight.php" />
       <path value="$PROJECT_DIR$/vendor/giggsey/locale" />
       <path value="$PROJECT_DIR$/vendor/giggsey/libphonenumber-for-php" />
       <path value="$PROJECT_DIR$/vendor/suenerds/nova-searchable-belongs-to-filter" />
@@ -331,6 +330,7 @@
       <path value="$PROJECT_DIR$/vendor/joshgaber/novaunit" />
       <path value="$PROJECT_DIR$/vendor/laravie/serialize-queries" />
       <path value="$PROJECT_DIR$/vendor/friendsofcat/laravel-feature-flag" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php70" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

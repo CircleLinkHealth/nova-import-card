@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.158.13",
+            "version": "3.158.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "4d81b3f456435c30a4f9c71852164b6b46dc4d97"
+                "reference": "8eb1bfc65424c40e4d66d6ec71f5add6d91993b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4d81b3f456435c30a4f9c71852164b6b46dc4d97",
-                "reference": "4d81b3f456435c30a4f9c71852164b6b46dc4d97",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8eb1bfc65424c40e4d66d6ec71f5add6d91993b4",
+                "reference": "8eb1bfc65424c40e4d66d6ec71f5add6d91993b4",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-10-23T18:11:41+00:00"
+            "time": "2020-10-26T18:18:44+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "185cf7e155676b916f635e877f101de90878c1a0"
+                "reference": "57a075e3df903accc96b0104abcf2e365a7367d8"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-26T17:52:18+00:00"
+            "time": "2020-10-27T08:46:47+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1265,7 +1265,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "1cccf2e420b9fd680158f519df7c93e0315100c1"
+                "reference": "4abd1aca331329f5d55e2c990372a19236481e6d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-26T17:51:39+00:00"
+            "time": "2020-10-27T08:42:22+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -14239,16 +14239,16 @@
         },
         {
             "name": "doctrine/annotations",
-            "version": "1.11.0",
+            "version": "1.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/annotations.git",
-                "reference": "88fb6fb1dae011de24dd6b632811c1ff5c2928f5"
+                "reference": "ce77a7ba1770462cd705a91a151b6c3746f9c6ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/annotations/zipball/88fb6fb1dae011de24dd6b632811c1ff5c2928f5",
-                "reference": "88fb6fb1dae011de24dd6b632811c1ff5c2928f5",
+                "url": "https://api.github.com/repos/doctrine/annotations/zipball/ce77a7ba1770462cd705a91a151b6c3746f9c6ad",
+                "reference": "ce77a7ba1770462cd705a91a151b6c3746f9c6ad",
                 "shasum": ""
             },
             "require": {
@@ -14306,7 +14306,7 @@
                 "docblock",
                 "parser"
             ],
-            "time": "2020-10-17T22:05:33+00:00"
+            "time": "2020-10-26T10:28:16+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -14470,28 +14470,27 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.4.1",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "9fc6c3d3de5271a1b94cff19dce2c9295abf0ffa"
+                "reference": "81698c5e32837c74abf9bb764ff0c1b3e001afb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/9fc6c3d3de5271a1b94cff19dce2c9295abf0ffa",
-                "reference": "9fc6c3d3de5271a1b94cff19dce2c9295abf0ffa",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/81698c5e32837c74abf9bb764ff0c1b3e001afb3",
+                "reference": "81698c5e32837c74abf9bb764ff0c1b3e001afb3",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "facade/flare-client-php": "^1.0",
-                "facade/ignition-contracts": "^1.0",
+                "facade/flare-client-php": "^1.3.7",
+                "facade/ignition-contracts": "^1.0.2",
                 "filp/whoops": "^2.4",
                 "illuminate/support": "^7.0|^8.0",
                 "monolog/monolog": "^2.0",
-                "php": "^7.2.5",
-                "scrivo/highlight.php": "^9.15",
+                "php": "^7.2.5|^8.0",
                 "symfony/console": "^5.0",
                 "symfony/var-dumper": "^5.0"
             },
@@ -14538,7 +14537,7 @@
                 "laravel",
                 "page"
             ],
-            "time": "2020-10-14T08:59:59+00:00"
+            "time": "2020-10-27T13:02:22+00:00"
         },
         {
             "name": "facade/ignition-contracts",
@@ -16504,81 +16503,6 @@
             "time": "2020-05-04T10:17:57+00:00"
         },
         {
-            "name": "scrivo/highlight.php",
-            "version": "v9.18.1.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/scrivo/highlight.php.git",
-                "reference": "6a1699707b099081f20a488ac1f92d682181018c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/scrivo/highlight.php/zipball/6a1699707b099081f20a488ac1f92d682181018c",
-                "reference": "6a1699707b099081f20a488ac1f92d682181018c",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "php": ">=5.4"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8|^5.7",
-                "sabberworm/php-css-parser": "^8.3",
-                "symfony/finder": "^2.8|^3.4",
-                "symfony/var-dumper": "^2.8|^3.4"
-            },
-            "suggest": {
-                "ext-dom": "Needed to make use of the features in the utilities namespace"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Highlight\\": "",
-                    "HighlightUtilities\\": ""
-                },
-                "files": [
-                    "HighlightUtilities/functions.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Geert Bergman",
-                    "homepage": "http://www.scrivo.org/",
-                    "role": "Project Author"
-                },
-                {
-                    "name": "Vladimir Jimenez",
-                    "homepage": "https://allejo.io",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Martin Folkers",
-                    "homepage": "https://twobrain.io",
-                    "role": "Contributor"
-                }
-            ],
-            "description": "Server side syntax highlighter that supports 185 languages. It's a PHP port of highlight.js",
-            "keywords": [
-                "code",
-                "highlight",
-                "highlight.js",
-                "highlight.php",
-                "syntax"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/allejo",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-10-16T07:43:22+00:00"
-        },
-        {
             "name": "sebastian/code-unit-reverse-lookup",
             "version": "1.0.1",
             "source": {
@@ -17289,16 +17213,16 @@
         },
         {
             "name": "spatie/phpunit-watcher",
-            "version": "1.22.1",
+            "version": "1.23.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/phpunit-watcher.git",
-                "reference": "3e61826dcd26ca330188a55cccf4e1cb020fd3d4"
+                "reference": "8a8e0c3c8f3f03dfdb6bf62abf89c1b7273fc0b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/phpunit-watcher/zipball/3e61826dcd26ca330188a55cccf4e1cb020fd3d4",
-                "reference": "3e61826dcd26ca330188a55cccf4e1cb020fd3d4",
+                "url": "https://api.github.com/repos/spatie/phpunit-watcher/zipball/8a8e0c3c8f3f03dfdb6bf62abf89c1b7273fc0b3",
+                "reference": "8a8e0c3c8f3f03dfdb6bf62abf89c1b7273fc0b3",
                 "shasum": ""
             },
             "require": {
@@ -17343,7 +17267,7 @@
                 "phpunit-watcher",
                 "spatie"
             ],
-            "time": "2020-10-21T06:58:04+00:00"
+            "time": "2020-10-27T07:36:25+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
