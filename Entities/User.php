@@ -673,6 +673,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function billingCodes(Carbon $monthYear)
     {
+        //todo: replace with revamped code
         $summary = $this->patientSummaries()
             ->where('month_year', $monthYear->toDateString())
             ->with('chargeableServices')
