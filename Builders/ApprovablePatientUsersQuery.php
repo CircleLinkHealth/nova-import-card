@@ -7,7 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Builders;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Customer\Entities\User;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Builder;
 
 trait ApprovablePatientUsersQuery
@@ -33,11 +35,8 @@ trait ApprovablePatientUsersQuery
                 $q->with(['chargeableService'])
                     ->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
-            //todo: add ccd-pcm problem relationship and load
             'ccdProblems' => function ($problem) {
-                $problem->isBillable()
-//                    ->withPatientLocationProblemChargeableServices()
-                ;
+                $problem->forBilling();
             },
             'chargeableMonthlySummaries' => function ($q) use ($monthYear) {
                 $q->with(['chargeableService'])
