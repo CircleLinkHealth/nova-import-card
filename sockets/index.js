@@ -68,7 +68,7 @@ module.exports = app => {
                     if (csTimeHere < csTimeFromCpm.time) {
                         toSet.push({
                             chargeable_service: {id: csTimeFromCpm.chargeable_service_id},
-                            time: csTimeFromCpm.time
+                            total_time: csTimeFromCpm.time
                         });
                     }
                 }
