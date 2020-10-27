@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.158.14",
+            "version": "3.158.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8eb1bfc65424c40e4d66d6ec71f5add6d91993b4"
+                "reference": "8580352f6d8f8a6adfd786b18545258de4d25222"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8eb1bfc65424c40e4d66d6ec71f5add6d91993b4",
-                "reference": "8eb1bfc65424c40e4d66d6ec71f5add6d91993b4",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8580352f6d8f8a6adfd786b18545258de4d25222",
+                "reference": "8580352f6d8f8a6adfd786b18545258de4d25222",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-10-26T18:18:44+00:00"
+            "time": "2020-10-27T18:17:26+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "b33a722d799ed641dab82377cbe399ade169c661"
+                "reference": "4ea44c79db31ecdf42772c3650298b39aa1d39a1"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-27T18:09:32+00:00"
+            "time": "2020-10-27T18:43:27+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
