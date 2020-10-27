@@ -314,6 +314,7 @@ class SelfEnrollmentTest extends TestCase
             SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
             ['mail', 'twilio']
         );
+
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
     }
 

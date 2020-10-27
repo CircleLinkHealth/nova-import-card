@@ -75,7 +75,7 @@ class PostmarkInboundCallbackRequest
             $message = $e->getMessage();
             Log::error("Inbound Callback could not be parsed. id:$postmarkId. [$message]");
 
-            return;
+            return null;
         }
     }
 }

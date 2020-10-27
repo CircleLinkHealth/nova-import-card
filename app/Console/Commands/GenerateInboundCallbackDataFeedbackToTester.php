@@ -253,7 +253,7 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
             if ($this->confirm('Do you wish to process the generated data?
             This will run ProcessPostmarkInboundMailJob foreach generated data.')) {
                 \Artisan::call('process:postmark-inbound-mail', [
-                    'recordsId' => $postmarkGeneratedDataIds->toArray(),
+                    'recordIds' => $postmarkGeneratedDataIds->toArray(),
                 ]);
             }
 
@@ -440,15 +440,15 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $generatedPostmarkIds = collect();
         $generatedPostmarkIds->push(...collect($this->createUsersOfTypeEnrolled())->pluck('id'));
-        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeConsentedButNotEnrolled())->pluck('id'));
-        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeQueuedForEnrolmentButNotCAssigned())->pluck('id'));
-        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNameIsSelf())->pluck('id'));
-        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdraw())->pluck('id'));
-        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf())->pluck('id'));
-        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedAssignedToCa())->pluck('id'));
-        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedUnassignedCa())->pluck('id'));
-        $generatedPostmarkIds->push(...collect($this->multiMatchPatientsWithSameNumberAndName())->pluck('id'));
-        $generatedPostmarkIds->push(...collect($this->noMatch())->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeConsentedButNotEnrolled())->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeQueuedForEnrolmentButNotCAssigned())->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNameIsSelf())->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdraw())->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf())->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedAssignedToCa())->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedUnassignedCa())->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->multiMatchPatientsWithSameNumberAndName())->pluck('id'));
+//        $generatedPostmarkIds->push(...collect($this->noMatch())->pluck('id'));
 
         return $generatedPostmarkIds;
     }

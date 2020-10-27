@@ -17,8 +17,6 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class ScheduleCallbackAndNotifyService
 {
-  
-    
     public function processCallbackAndNotify(EmailAddressParts $emailParts, ?int $recordId, ?int $dbRecordId, PostmarkInboundMailRequest $input)
     {
         $users = User::where('email', 'REGEXP', '^'.$emailParts->username.'[+|@]')
@@ -36,13 +34,12 @@ class ScheduleCallbackAndNotifyService
             return;
         }
 
-        // 2. check that we have sent an unsuccessful call notification to this patient in the last 2 weeks
         $notification = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
             ->whereIn('notifiable_type', [User::class, \App\User::class])
             ->whereIn('notifiable_id', $users->map(fn ($user) => $user->id)->toArray())
             ->where('created_at', '>=', now()->subDays(14))
             ->orderByDesc('created_at')
-            ->first();
+            ->first('notifiable_id');
 
         if ( ! $notification) {
             sendSlackMessage('#carecoach_ops_alerts', "Could not find unsuccessful call notification from inbound mail. See database record id[$recordId]");
@@ -53,7 +50,6 @@ class ScheduleCallbackAndNotifyService
         try {
             $user = $users->where('id', '=', $notification->notifiable_id)->first();
 
-            // 3. create call for nurse with ASAP flag
             /** @var SchedulerService $service */
             $service = app(SchedulerService::class);
             $task    = $service->scheduleAsapCallbackTask(
@@ -79,7 +75,6 @@ class ScheduleCallbackAndNotifyService
             ->select(['id', 'first_name'])
             ->first();
 
-        // 4. reply to patient
         $user->notify(new PatientUnsuccessfulCallReplyNotification(optional($careCoach)->first_name, $user->primaryPractice->display_name, ['mail']));
     }
 

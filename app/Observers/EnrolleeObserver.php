@@ -53,10 +53,10 @@ class EnrolleeObserver
     {
         if (Enrollee::TO_CALL === $enrollee->getOriginal('status')
             && $enrollee->wasChanged('status')) {
-            $unresolvedCall = UnresolvedPostmarkCallback::where('user_id', $enrollee->user_id);
-            if ($unresolvedCall->exists()) {
+            $unresolvedCall = UnresolvedPostmarkCallback::where('user_id', $enrollee->user_id)->first();
+            if ($unresolvedCall) {
                 try {
-                    $unresolvedCall->first()->delete();
+                    $unresolvedCall->delete();
                 } catch (\Exception $e) {
                     \Log::warning("Failed to update unresolved_callbacks for user $enrollee->user_id");
                     sendSlackMessage('#carecoach_ops_alerts', "Patient with id $enrollee->user_id status was updated by Care Ambassador,

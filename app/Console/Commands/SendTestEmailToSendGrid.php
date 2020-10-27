@@ -8,6 +8,7 @@ namespace App\Console\Commands;
 
 use App\Notifications\PostmarkCallbackNotificationTest;
 use App\Notifications\SendGridTestNotification;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Console\Command;
@@ -15,8 +16,9 @@ use Illuminate\Console\Command;
 class SendTestEmailToSendGrid extends Command
 {
     use Queueable;
+    const DEFAULT_POSTMARK_INBOUND_ADDRESS = 'ce336c4be369b05746140c3478913fbd@inbound.postmarkapp.com';
 
-    const POSTMARK_INBOUND_ADRESS = 'ce336c4be369b05746140c3478913fbd@inbound.postmarkapp.com';
+    const POSTMARK_INBOUND_ADDRESS = 'postmark_inbound_address';
     /**
      * The console command description.
      *
@@ -48,8 +50,9 @@ class SendTestEmailToSendGrid extends Command
 
     public function handle()
     {
+        $x                    = $this->getPostmarkInboundAddress();
         $this->isCallbackMail = (bool) $this->option('callback-mail');
-        $this->email          = $this->isCallbackMail ? self::POSTMARK_INBOUND_ADRESS : $this->argument('email');
+        $this->email          = $this->isCallbackMail ? self::POSTMARK_INBOUND_ADDRESS : $this->argument('email');
 
         if ($this->isCallbackMail) {
             try {
@@ -69,6 +72,23 @@ class SendTestEmailToSendGrid extends Command
         }
 
         $this->error('Missing email argument');
+    }
+
+    /**
+     * @return string|string[]|void
+     */
+    private function getPostmarkInboundAddress()
+    {
+        $config = AppConfig::pull(self::POSTMARK_INBOUND_ADDRESS, '');
+
+        if (empty($config)) {
+            $defaultAddress = self::POSTMARK_INBOUND_ADDRESS;
+            $this->warn("Please set $defaultAddress in Configuration panel.");
+
+            return;
+        }
+
+        return $config;
     }
 
     private function sendTestNotification()

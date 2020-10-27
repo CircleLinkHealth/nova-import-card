@@ -22,7 +22,7 @@ class ProcessUnresolvedPostmarkCallback
      * ManageUnresolvedPostmarkCallback constructor.
      * @param $matchedData
      */
-    public function __construct($matchedData, int $recordId)
+    public function __construct(array $matchedData, int $recordId)
     {
         $this->matchedData = $matchedData;
         $this->recordId    = $recordId;

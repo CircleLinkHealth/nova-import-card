@@ -9,6 +9,7 @@ namespace Tests\Feature;
 use App\Entities\PostmarkInboundCallbackRequest;
 use App\Entities\PostmarkInboundMailRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
+use App\Notifications\CallCreated;
 use App\PostmarkInboundMail;
 use App\Services\Calls\SchedulerService;
 use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
@@ -23,6 +24,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use Notification;
 use Tests\TestCase;
 
 class AutoAssignCallbackTest extends TestCase
@@ -232,10 +234,22 @@ class AutoAssignCallbackTest extends TestCase
         ]);
     }
 
+    public function test_when_callback_is_created_assigned_nurse_will_get_live_notification()
+    {
+        Notification::fake();
+        $this->createPatientData(Enrollee::ENROLLED);
+        $nurse = $this->createUser(Practice::firstOrFail()->id, 'care-center');
+        $this->setUpPermanentNurse($nurse);
+        $this->createPostmarkCallbackData(false, true);
+        $this->dispatchPostmarkInboundMail(collect(json_decode($this->postmarkRecord->data))->toArray(), $this->postmarkRecord->id);
+        Notification::assertSentTo($nurse, CallCreated::class);
+    }
+
     public function test_when_multiple_users_matched_by_number_will_resolve_to_one_user_and_create_callback_if_enrolled()
     {
         $this->createPatientData(Enrollee::ENROLLED);
-        $this->setUpPermanentNurse();
+        $nurse = $this->createUser(Practice::firstOrFail()->id, 'care-center');
+        $this->setUpPermanentNurse($nurse);
         $this->createPostmarkCallbackData(false, true);
 
         $patient1 = $this->patient;
@@ -291,9 +305,8 @@ class AutoAssignCallbackTest extends TestCase
         );
     }
 
-    private function setUpPermanentNurse()
+    private function setUpPermanentNurse(User $nurse)
     {
-        $nurse = $this->createUser(Practice::firstOrFail()->id, 'care-center');
         PatientNurse::create([
             'patient_user_id' => $this->patient->id,
             'nurse_user_id'   => $nurse->id,

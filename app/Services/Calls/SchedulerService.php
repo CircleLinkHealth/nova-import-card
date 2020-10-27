@@ -411,9 +411,10 @@ class SchedulerService
             );
         }
 
-        $nurseId               = null;
-        $nurseFinderRepository = app(NurseFinderEloquentRepository::class);
-        $assignedNurse         = optional($nurseFinderRepository->assignedNurse($patient->id))->permanentNurse;
+        $nurseId                    = null;
+        $nurseFinderRepository      = app(NurseFinderEloquentRepository::class);
+        $assignedNurse              = optional($nurseFinderRepository->assignedNurse($patient->id))->permanentNurse;
+        $schedulerIsInboundCallback = ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL === $scheduler;
 
         if ( ! $assignedNurse) {
             $standByNurseId = StandByNurseUser::id();
@@ -422,10 +423,8 @@ class SchedulerService
                 throw new \Exception("$message [$patient->id]");
             }
             $nurseId = $standByNurseId;
-            // Should we always assign the stand by nurse as permanent nurse, instead of just this case? We need to do
-            // this in order to show up in stanByNurse's Activities page.
-            if (ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL === $scheduler) {
-                app(NurseFinderEloquentRepository::class)->assign($patient->id, $standByNurseId);
+            if ($schedulerIsInboundCallback) {
+                $nurseFinderRepository->assign($patient->id, $standByNurseId);
             }
         } else {
             $nurseId = $assignedNurse->id;
@@ -440,7 +439,7 @@ class SchedulerService
                 'sub_type'              => $taskSubType,
                 'status'                => Call::SCHEDULED,
                 'attempt_note'          => "Email/SMS Response at $callbackDateTime: $taskNote",
-                'scheduler'             => $scheduler,
+                'scheduler'             => $schedulerIsInboundCallback ? $nurseId : $scheduler,
                 'is_manual'             => false,
                 'inbound_phone_number'  => $phoneNumber ?? '',
                 'outbound_phone_number' => '',

@@ -43,11 +43,11 @@ class CallObserver
     {
         /** @var User $notifiable */
         $notifiable = auth()->user() ?? User::find($call->outbound_cpm_id);
-    
+
         if ( ! $notifiable) {
             return;
         }
-    
+
         $notify = $call->outboundUser;
         Notification::send($notify, new CallCreated($call, $notifiable));
     }

@@ -64,7 +64,8 @@ class AutoResolveCallbackRequestService
             sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See inbound_postmark_mail id [$recordId]");
         }
 
-        Log::error('Place error here');
+        Log::error("Unexpected error. Should have not reached here. See $recordId.");
+        sendSlackMessage('#carecoach_ops_alerts', "{Unexpected error. Should have not reached here. See inbound_postmark_mail id [$recordId]");
     }
 
     private function assignCallbackToCareAmbassador(User $user, int $recordId)
