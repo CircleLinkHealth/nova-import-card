@@ -148,14 +148,12 @@ class AttestationRequirements
          */
         $pms = $this->patient->patientSummaries()
             ->with([
-                //all chargeable services includes un-fulfilled service codes as well as fulfilled.
                 'allChargeableServices',
                 'attestedProblems',
             ])
             ->getCurrent()
             ->first();
         
-        //if this hasn't had last month's chargeable services attach for some reason, try here
         if ($pms->allchargeableServices->isEmpty()) {
             $pms->attachChargeableServicesToFulfill();
             $pms->load('allChargeableServices');
