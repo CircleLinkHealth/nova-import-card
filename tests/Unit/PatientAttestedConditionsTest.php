@@ -67,7 +67,7 @@ class PatientAttestedConditionsTest extends TestCase
      */
     protected $repo;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
