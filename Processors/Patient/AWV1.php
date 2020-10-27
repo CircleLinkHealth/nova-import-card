@@ -6,7 +6,10 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
+
 
 class AWV1 extends AbstractProcessor
 {
@@ -20,8 +23,8 @@ class AWV1 extends AbstractProcessor
         if (isUnitTestingEnv()) {
             return true;
         }
-        //todo: use feature toggling (package) in next iteration
-        return false;
+        
+        return Feature::isEnabled(BillingConstants::AWV_BILLING_FLAG);
     }
 
     public function minimumNumberOfCalls(): int
