@@ -16,7 +16,7 @@ trait Problems
     {
         $problem = $patient->ccdProblems()->create([
             'name'           => 'Test Valid PCM Problem',
-            'cpm_problem_id' => CpmProblem::whereNotNull('default_icd_10_code')->firstOrFail()->id,
+            'cpm_problem_id' => CpmProblem::notGenericDiabetes()->whereNotNull('default_icd_10_code')->firstOrFail()->id,
             'is_monitored'   => true,
         ]);
 
