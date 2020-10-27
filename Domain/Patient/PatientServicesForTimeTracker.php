@@ -8,10 +8,14 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Support\Collection;
 
 class PatientServicesForTimeTracker
@@ -87,8 +91,7 @@ class PatientServicesForTimeTracker
 
     private function newBillingIsEnabled(): bool
     {
-        //todo: add toggle
-        return true;
+        return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
     }
 
     private function rejectNonTimeTrackerServices(Collection $summaries): Collection
@@ -115,18 +118,38 @@ class PatientServicesForTimeTracker
             $summaries = $this->repo()->getChargeablePatientSummaries($this->patientId, $this->month);
         } else {
             $summaries = collect();
-            //todo: get by looking at PCM problems, just like legacy billing.
-            //e.g. CCM,and CCM plus = patient has 2 non bhi problems and practice has CCM
-            //PCM patient has 1 pcm problem (pcm_problems table) and practice has PCM
-            //BHI patient has at least one BHI Problem and practice has BHI
-            //I will be using the PatientIsOfServiceCode action class. Inside, depending on toggle, will try to determine patient CS
-            //until we make sure billing revamp works as intended
-//            $this->summaries = $this->createFromPatientProblems();
         }
 
         $summaries       = $this->rejectNonTimeTrackerServices($summaries);
         $this->summaries = $this->groupSimilarCodes($summaries);
 
         return $this;
+    }
+    
+    private function createFauxSummariesFromLegacyData() : \Illuminate\Database\Eloquent\Collection
+    {
+        $servicesDerivedFromPatientProblems = PatientProblemsForBillingProcessing::getCollection($this->patientId)
+            ->transform(fn(PatientProblemForProcessing $p) => $p->getServiceCodes())
+            ->flatten()
+            ->filter()
+            ->unique();
+        
+        $chargeableServices = ChargeableService::whereIn('code', $servicesDerivedFromPatientProblems)->get();
+        
+        $activitiesForMonth = Activity::wherePatientId($this->patientId)
+            ->createdThisMonth('performed_at')->get();
+        
+        $summaries = new \Illuminate\Database\Eloquent\Collection();
+        foreach ($chargeableServices as $service){
+            $summaries->push(ChargeablePatientMonthlySummaryView::make([
+                'patient_user_id' => $this->patientId,
+                'chargeable_service_id' => $service->id,
+                'chargeable_service_code' => $service->code,
+                'chargeable_service_name' => $service->display_name,
+                'total_time'              => $activitiesForMonth->where('chargeable_service_id', $service->id)->sum('duration')
+            ]));
+        }
+        
+        return $summaries;
     }
 }
