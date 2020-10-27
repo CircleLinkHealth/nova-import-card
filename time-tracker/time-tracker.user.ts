@@ -587,23 +587,26 @@ export default class TimeTrackerUser {
             console.log('will not cache ccm because time is 0');
         } else {
             const toCache: TimeEntity[] = [];
-            const currentCache = getTime(this.key);
-            for (let i = 0; i < currentCache.length; i++) {
-                const cacheEntry = currentCache[i];
-                const currentSeconds = this.getTotalSecondsForCsId(cacheEntry.chargeable_service_id);
-                if (cacheEntry.time > currentSeconds) {
+            for (let i = 0; i < requestData.activities.length; i++) {
+                const a = requestData.activities[i];
+                if (a.chargeable_service_id === -1) {
+                    continue;
+                }
+                const currentSeconds = this.getTotalSecondsForCsId(a.chargeable_service_id);
+                const cachedSeconds = this.getTotalSecondsForCsIdFromCache(a.chargeable_service_id);
+                if (cachedSeconds > currentSeconds) {
+                    console.debug(`will not cache cs[${a.chargeable_service_id}] because cache is higher`);
                     continue;
                 }
                 toCache.push({
-                    chargeable_service_id: cacheEntry.chargeable_service_id,
-                    time: Math.max(cacheEntry.time, currentSeconds)
-                })
+                    chargeable_service_id: a.chargeable_service_id,
+                    time: currentSeconds
+                });
             }
+
             if (toCache.length) {
                 console.log('caching time', JSON.stringify(toCache));
                 storeTime(this.key, requestData.activities, toCache);
-            } else {
-                console.log('will not cache ccm because cache is higher');
             }
         }
 
