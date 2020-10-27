@@ -152,16 +152,18 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
      */
     public function patientProblemsOfServiceCode(int $patientId, string $chargeableServiceCode): EloquentCollection
     {
-        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) && Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)){
-            return $this->getPatientFromCache($patientId)
-                ->ccdProblems
-                ->filter(function (Problem $problem) use ($chargeableServiceCode) {
-                    if (is_null($problem->cpmProblem)) {
-                        return false;
-                    }
+        $problems =  $this->getPatientFromCache($patientId)
+            ->ccdProblems
+            ->filter(function (Problem $problem) use ($chargeableServiceCode) {
+                if (is_null($problem->cpmProblem)) {
+                    return false;
+                }
             
-                    return $problem->cpmProblem->locationChargeableServices->contains('code', $chargeableServiceCode);
-                });
+                return $problem->cpmProblem->locationChargeableServices->contains('code', $chargeableServiceCode);
+            });
+        
+        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) && Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)){
+            return $problems;
         }
         //todo:implement with ccd problem view
         return new EloquentCollection();
