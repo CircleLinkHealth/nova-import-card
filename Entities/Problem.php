@@ -163,47 +163,6 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
         return (bool) optional($this->cpmProblem)->is_behavioral;
     }
     
-    public function legacyCcdProblemChargeableServiceStatus()
-    {
-        return $this->hasOne(LegacyBillableCcdProblemsView::class, 'id');
-    }
-    
-    public function isOfCodeLegacy(string $chareableServiceCode):bool
-    {
-        $serviceStatus = $this->legacyCcdProblemChargeableServiceStatus;
-        
-        if (is_null($serviceStatus)){
-            return false;
-        }
-        
-        if (in_array($chareableServiceCode, [
-            ChargeableService::CCM,
-            ChargeableService::CCM_PLUS_40,
-            ChargeableService::CCM_PLUS_60
-            ]))
-        {
-            return $serviceStatus->is_ccm;
-        }
-        
-        if ($chareableServiceCode === ChargeableService::BHI){
-            return $serviceStatus->is_bhi;
-        }
-        
-        if ($chareableServiceCode === ChargeableService::PCM){
-            return $serviceStatus->is_pcm;
-        }
-    
-        if (in_array($chareableServiceCode, [
-            ChargeableService::RPM,
-            ChargeableService::RPM40
-        ]))
-        {
-            return $serviceStatus->is_rpm;
-        }
-        
-        return false;
-    }
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -249,10 +208,7 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
     
     public function scopeForBilling(Builder $query)
     {
-        $query->when(! Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG),
-            fn ($p) => $p->with(['legacyCcdProblemChargeableServiceStatus'])
-        )
-            ->isMonitored()
+        return $query->isMonitored()
 //                    ->withPatientLocationProblemChargeableServices()
         ;
     }
