@@ -80,7 +80,15 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     const DIABETES_TYPE_2 = 'Diabetes Type 2';
 
     const GENERIC_DIABETES = 'Diabetes';
-
+    
+    const DEPRESSION = 'Depression';
+    const DEMENTIA = 'Dementia';
+    
+    const DUAL_CCM_BHI_CONDITIONS = [
+        self::DEMENTIA,
+        self::DEPRESSION
+    ];
+    
     protected $guarded = [];
 
     protected $table = 'cpm_problems';
