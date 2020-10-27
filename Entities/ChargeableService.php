@@ -15,6 +15,8 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM60;
 use CircleLinkHealth\CcmBilling\Processors\Patient\G0511;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
+use CircleLinkHealth\CcmBilling\Processors\Patient\RPM;
+use CircleLinkHealth\CcmBilling\Processors\Patient\RPM40;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Support\Facades\Cache;
 
@@ -153,6 +155,8 @@ class ChargeableService extends BaseModel
             self::AWV_INITIAL             => new AWV1(),
             self::AWV_SUBSEQUENT          => new AWV2(),
             self::GENERAL_CARE_MANAGEMENT => new G0511(),
+            self::RPM                     => new RPM(),
+            self::RPM40                   => new RPM40()
         ];
     }
 
