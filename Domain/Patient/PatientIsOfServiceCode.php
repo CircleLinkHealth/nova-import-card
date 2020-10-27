@@ -24,6 +24,8 @@ class PatientIsOfServiceCode
     protected bool $bypassRequiresConsent;
 
     protected string $serviceCode;
+    
+    protected bool $billingRevampIsEnabled;
 
     public function __construct(int $patientId, string $serviceCode, bool $bypassRequiresConsent = false)
     {
@@ -39,17 +41,26 @@ class PatientIsOfServiceCode
 
     public function isOfServiceCode(): bool
     {
-        return $this->hasSummary() && $this->hasEnoughProblems();
+        return $this->hasSummary() && $this->hasEnoughProblems() && $this->patientLocationHasService();
     }
 
     private function hasEnoughProblems(): bool
     {
         return $this->problemsOfServiceCount() >= $this->minimumProblemCountForService();
     }
+    
+    private function billingRevampIsEnabled():bool
+    {
+        if(! isset($this->billingRevampIsEnabled)){
+            $this->billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
+        }
+        
+        return $this->billingRevampIsEnabled;
+    }
 
     private function hasSummary(): bool
     {
-        if (! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)){
+        if (! $this->billingRevampIsEnabled()){
             if (! $this->bypassRequiresConsent && $this->serviceCode === ChargeableService::BHI){
                return ! $this->requiresPatientBhiConsent();
             }
@@ -96,5 +107,19 @@ class PatientIsOfServiceCode
         return ! User::hasBhiConsent()
             ->whereId($this->patientId)
             ->exists();
+    }
+    
+    private function patientLocationHasService():bool
+    {
+        $patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $thisMonth = Carbon::now()->startOfMonth());
+    
+        if (! $this->billingRevampIsEnabled()){
+            return $patient->primaryPractice->hasServiceCode(ChargeableService::BHI);
+        }
+        
+        return $patient->patientInfo->location->chargeableServiceSummaries
+            ->where('code', $this->serviceCode)
+            ->where('chargeable_month', $thisMonth)
+            ->isNotEmpty();
     }
 }
