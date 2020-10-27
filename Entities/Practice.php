@@ -18,6 +18,7 @@ use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\Eligibility\Entities\RpmProblem;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -519,6 +520,11 @@ class Practice extends BaseModel implements HasMedia
     public function pcmProblems()
     {
         return $this->hasMany(PcmProblem::class, 'practice_id');
+    }
+    
+    public function rpmProblems()
+    {
+        return $this->hasMany(RpmProblem::class, 'practice_id');
     }
 
     public function pcp()
