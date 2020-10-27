@@ -129,11 +129,10 @@ class AthenaCheckable implements Checkable
             )->data,
             new CcdaMedicalRecord(optional($ccda)->bluebuttonJson())
         );
-        
+
         if ($mr) {
             $ccda->json = $mr->toJson();
             $ccda->save();
-            
         }
     }
 }
