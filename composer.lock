@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "e47aa93ecf280a73b12d1f9e1a8f9be566338f3c"
+                "reference": "aaab6b4244750f1b058a94b9a821f9e8aa1ff76c"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-27T20:06:15+00:00"
+            "time": "2020-10-27T21:16:13+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1235,7 +1235,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "bdb3a219408c42bdeed700f290d2ae35f06ab49f"
+                "reference": "d4567934befedaa2b70afdaee7d06bd3c70c8b9d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1257,7 +1257,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-27T15:02:18+00:00"
+            "time": "2020-10-27T20:34:19+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1265,7 +1265,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "dd372e8fb0a80698c0c7e25a98dc8598804476d0"
+                "reference": "90c097104c995ab14a1929dee262603ae1b88fa0"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-27T18:09:32+00:00"
+            "time": "2020-10-27T20:34:19+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1307,7 +1307,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "6c6f7bd49afea86225e80ae31a7ee8e8eef034fe"
+                "reference": "b04b676728bbe37e8b26d58ea5058ac577d0b4d8"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1334,7 +1334,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-27T15:02:18+00:00"
+            "time": "2020-10-27T20:34:19+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1702,7 +1702,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "819dfa4ba023e3208e992e12001415082bf86358"
+                "reference": "a2bd6a40a5bcccec78d8b5a3342da68ad62c18fb"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1716,7 +1716,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-27T16:39:43+00:00"
+            "time": "2020-10-27T20:34:19+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -5150,17 +5150,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.13.0",
+            "version": "v3.14.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "b0a13f6c988b504275bbc82367f853bc78257256"
+                "reference": "89cf83f128bfc276331a83a702ab4a4b615e0293"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-b0a13f6c988b504275bbc82367f853bc78257256-zip-5aa88d.zip",
-                "reference": "b0a13f6c988b504275bbc82367f853bc78257256",
-                "shasum": "984f76ccf7b966250da9747f46db9dd2ab3fffe5"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-89cf83f128bfc276331a83a702ab4a4b615e0293-zip-2f6e3c.zip",
+                "reference": "89cf83f128bfc276331a83a702ab4a4b615e0293",
+                "shasum": "ccf9b21c4a8c4efbfb801a63ec852aeeab6c0dd7"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5180,7 +5180,7 @@
                 "laravel/legacy-factories": "^1.0",
                 "laravel/nova-dusk-suite": "dev-master",
                 "mockery/mockery": "^1.0",
-                "orchestra/testbench-dusk": "^6.1",
+                "orchestra/testbench-dusk": "^6.2.1",
                 "phpunit/phpunit": "^8.4",
                 "predis/predis": "^1.1"
             },
@@ -5214,6 +5214,10 @@
                     "@php -r \"file_exists('phpunit.dusk.xml') || copy('phpunit.dusk.xml.dist', 'phpunit.dusk.xml'); \"",
                     "@php -r \"if (file_exists('.env.dusk')) { copy('.env.dusk', 'vendor/laravel/nova-dusk-suite/.env'); } else { copy('.env.dusk.example', 'vendor/laravel/nova-dusk-suite/.env'); }\""
                 ],
+                "dusk:assets": [
+                    "yarn run prod",
+                    "./vendor/bin/testbench-dusk nova:publish"
+                ],
                 "dusk:test": [
                     "./vendor/bin/phpunit -c phpunit.dusk.xml"
                 ]
@@ -5232,7 +5236,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-10-20T16:54:09+00:00"
+            "time": "2020-10-27T20:28:22+00:00"
         },
         {
             "name": "laravel/passport",
