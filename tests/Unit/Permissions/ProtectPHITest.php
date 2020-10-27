@@ -32,7 +32,7 @@ class ProtectPHITest extends TestCase
 
     private $facadeMocks = [];
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
