@@ -16,7 +16,8 @@ use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\Entities\RpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class PatientProblemsForBillingProcessing
 {
