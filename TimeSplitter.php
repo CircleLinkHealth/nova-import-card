@@ -8,27 +8,38 @@ namespace CircleLinkHealth\Nurseinvoices;
 
 class TimeSplitter
 {
-    public function split(int $totalTimeBefore, $duration, $isBehavioral, $isPcm)
-    {
+    public function split(
+        int $totalTimeBefore,
+        int $duration,
+        bool $splitFor30Minutes = false,
+        bool $upTo40Minutes = false,
+        bool $upTo60Minutes = false
+    ): TimeSlots {
+        if ($splitFor30Minutes) {
+            return $this->splitFor30MinuteIntervals($totalTimeBefore, $duration);
+        }
+
+        return $this->splitFor20MinuteIntervals($totalTimeBefore, $duration, $upTo40Minutes, $upTo60Minutes);
+    }
+
+    private function splitFor20MinuteIntervals(
+        int $totalTimeBefore,
+        $duration,
+        bool $upTo40Minutes = false,
+        bool $upTo60Minutes = false
+    ): TimeSlots {
         $totalTimeAfter = $totalTimeBefore + $duration;
 
-        //ccm + bhi
         $add_to_accrued_towards_20 = 0;
         $add_to_accrued_after_20   = 0;
         $add_to_accrued_after_40   = 0;
         $add_to_accrued_after_60   = 0;
 
-        //pcm
-        $add_to_accrued_towards_30 = 0;
-        $add_to_accrued_after_30   = 0;
-
         $was_above_20 = $totalTimeBefore >= VariablePayCalculator::MONTHLY_TIME_TARGET_IN_SECONDS;
-        $was_above_30 = $totalTimeBefore >= VariablePayCalculator::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
         $was_above_40 = $totalTimeBefore >= VariablePayCalculator::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
         $was_above_60 = $totalTimeBefore >= VariablePayCalculator::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
 
         $is_above_20 = $totalTimeAfter >= VariablePayCalculator::MONTHLY_TIME_TARGET_IN_SECONDS;
-        $is_above_30 = $totalTimeAfter >= VariablePayCalculator::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
         $is_above_40 = $totalTimeAfter >= VariablePayCalculator::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
         $is_above_60 = $totalTimeAfter >= VariablePayCalculator::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
 
@@ -70,26 +81,48 @@ class TimeSplitter
             }
         }
 
-        if ( ! $isBehavioral && $isPcm) {
-            if ($was_above_30) {
-                $add_to_accrued_after_30 = $duration;
+        $result            = new TimeSlots();
+        $result->towards20 = $add_to_accrued_towards_20;
+        $result->after20   = $add_to_accrued_after_20;
+
+        if ($upTo40Minutes || $upTo60Minutes) {
+            $result->after40 = $add_to_accrued_after_40;
+
+            if ($upTo60Minutes) {
+                $result->after60 = $add_to_accrued_after_60;
             } else {
-                if ($is_above_30) {
-                    $add_to_accrued_after_30   = $totalTimeAfter - VariablePayCalculator::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
-                    $add_to_accrued_towards_30 = VariablePayCalculator::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM - $totalTimeBefore;
-                } else {
-                    $add_to_accrued_towards_30 = $duration;
-                }
+                $result->after40 += $add_to_accrued_after_60;
+            }
+        } else {
+            $result->after20 += $add_to_accrued_after_40 + $add_to_accrued_after_60;
+        }
+
+        return $result;
+    }
+
+    private function splitFor30MinuteIntervals(int $totalTimeBefore, $duration): TimeSlots
+    {
+        $totalTimeAfter = $totalTimeBefore + $duration;
+
+        $add_to_accrued_towards_30 = 0;
+        $add_to_accrued_after_30   = 0;
+        $was_above_30              = $totalTimeBefore >= VariablePayCalculator::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
+        $is_above_30               = $totalTimeAfter >= VariablePayCalculator::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
+
+        if ($was_above_30) {
+            $add_to_accrued_after_30 = $duration;
+        } else {
+            if ($is_above_30) {
+                $add_to_accrued_after_30   = $totalTimeAfter - VariablePayCalculator::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
+                $add_to_accrued_towards_30 = VariablePayCalculator::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM - $totalTimeBefore;
+            } else {
+                $add_to_accrued_towards_30 = $duration;
             }
         }
 
         $result            = new TimeSlots();
-        $result->towards20 = $add_to_accrued_towards_20;
         $result->towards30 = $add_to_accrued_towards_30;
-        $result->after20   = $add_to_accrued_after_20;
         $result->after30   = $add_to_accrued_after_30;
-        $result->after40   = $add_to_accrued_after_40;
-        $result->after60   = $add_to_accrued_after_60;
 
         return $result;
     }

@@ -11,6 +11,7 @@ use Carbon\CarbonPeriod;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\VariablePayCalculator;
+use CircleLinkHealth\Nurseinvoices\VisitFeePay;
 use Illuminate\Support\Collection;
 use Spatie\ViewModels\ViewModel;
 
@@ -18,95 +19,48 @@ class Invoice extends ViewModel
 {
     const DATE_FORMAT = 'jS M, Y';
 
-    /**
-     * @var Collection
-     */
-    public $aggregatedTotalTime;
+    public Collection $aggregatedTotalTime;
+
+    public float $baseSalary;
+
+    public bool $changedToFixedRateBecauseItYieldedMore = false;
+
+    public float $fixedRatePay = 0.0;
+
+    public string $nurseFullName = '';
+
+    public float $nurseHighRate = 0.0;
+
+    public float $nurseHourlyRate = 0.0;
+
+    public float $nurseLowRate = 0.0;
+
+    public float $nurseVisitFee = 0.0;
+
+    public ?Collection $timePerDay = null;
+
+    public int $totalSystemTime = 0;
+
+    public float $totalTimeAfterCcmInHours = 0.0;
+
+    public float $totalTimeTowardsCcmInHours = 0.0;
+
+    public bool $variablePay = false;
+
+    public float $variableRatePay = 0.0;
 
     /**
-     * @var bool Whether Option 1 (Alt Algo - Visit Fee based) algo is enabled or not
+     * @var ?Collection A matrix array, [patient id => [ cs code => [ range => pay ] ] ]
      */
-    public $altAlgoEnabled;
-    /**
-     * @var float
-     */
-    public $baseSalary;
+    public ?Collection $visits = null;
 
-    /**
-     * @var Collection A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
-     */
-    public $bhiVisits;
+    public float $visitsCount = 0.0;
 
-    /** @var bool New CCM Plus Algo from Jan 2020 */
-    public $ccmPlusAlgoEnabled;
-    /**
-     * @var bool
-     */
-    public $changedToFixedRateBecauseItYieldedMore = false;
+    public bool $visitsPerDayAvailable = false;
 
-    /**
-     * @var float the total pay with fixed rate algorithm
-     */
-    public $fixedRatePay = 0.0;
-    public $nurseFullName;
-    public $nurseHighRate;
-    public $nurseHourlyRate;
-    public $nurseLowRate;
-    public $nurseVisitFee;
+    protected ?Carbon $endDate = null;
 
-    /**
-     * @var Collection A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
-     */
-    public $pcmVisits;
-
-    /**
-     * An array showing the total time per day.
-     *
-     * @return Collection
-     */
-    public $timePerDay;
-
-    /**
-     * @var int
-     */
-    public $totalSystemTime;
-
-    public $totalTimeAfterCcmInHours;
-    public $totalTimeTowardsCcmInHours;
-    /**
-     * @var bool
-     */
-    public $variablePay;
-    /**
-     * @var float the total pay with variable rate algorithm
-     */
-    public $variableRatePay = 0.0;
-
-    /**
-     * @var Collection A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
-     */
-    public $visits;
-
-    /**
-     * @var int the total number of visits when option 1 algo is enabled
-     */
-    public $visitsCount;
-
-    /**
-     * An array showing the total visits per day.
-     *
-     * @return bool
-     */
-    public $visitsPerDayAvailable;
-
-    /**
-     * @var Carbon
-     */
-    protected $endDate;
-    /**
-     * @var int
-     */
-    protected $extraTime;
+    protected int $extraTime = 0;
 
     /**
      * Do not make this methods available to classes consuming this ViewModel.
@@ -114,35 +68,23 @@ class Invoice extends ViewModel
      * @var array array
      */
     protected $ignore = ['user'];
-    /**
-     * @var Carbon
-     */
-    protected $startDate;
 
-    /**
-     * @var Collection
-     */
-    protected $variablePayForNurse;
-    /**
-     * @var mixed
-     */
-    private $bonus;
+    protected ?Carbon $startDate = null;
+
+    protected ?Collection $variablePayForNurse;
+
+    private ?float $bonus;
 
     /**
      * @var \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
     private $nurseExtras;
-    /**
-     * @var int|null
-     */
-    private $systemTimeInHours;
-    /**
-     * @var User
-     */
-    private $user;
 
-    /** @var VariablePayCalculator */
-    private $variablePayCalculator;
+    private ?float $systemTimeInHours = null;
+
+    private User $user;
+
+    private VariablePayCalculator $variablePayCalculator;
 
     /**
      * Invoice constructor.
@@ -186,7 +128,7 @@ class Invoice extends ViewModel
     }
 
     /**
-     * PAyable amount due to extra time.
+     * Payable amount due to extra time.
      *
      * @return float|int
      */
@@ -229,22 +171,9 @@ class Invoice extends ViewModel
         if ( ! $this->variablePay && ! $this->changedToFixedRateBecauseItYieldedMore) {
             return $fixedRateMessage;
         }
-        $high_rate   = $this->user->nurseInfo->high_rate;
-        $high_rate_2 = $this->user->nurseInfo->high_rate_2;
-        $high_rate_3 = $this->user->nurseInfo->high_rate_3;
-        $low_rate    = $this->user->nurseInfo->low_rate;
 
-        $variableRatePay = number_format($this->variableRatePay, 2);
-
-        if ($this->ccmPlusAlgoEnabled) {
-            if ($this->altAlgoEnabled) {
-                $variableRateMessage = "\${$variableRatePay} (Visit-based: $this->visitsCount visits).";
-            } else {
-                $variableRateMessage = "\${$variableRatePay} (Variable Rate: \$$high_rate/hr, \$$high_rate_2/hr, \$$high_rate_3/hr or \$$low_rate/hr).";
-            }
-        } else {
-            $variableRateMessage = "\${$variableRatePay} (Variable Rate: \$$high_rate/hr or \$$low_rate/hr).";
-        }
+        $variableRatePay     = number_format($this->variableRatePay, 2);
+        $variableRateMessage = "\${$variableRatePay} (Visit-based: $this->visitsCount visits).";
 
         if ($this->variableRatePay > $this->fixedRatePay) {
             $result = [
@@ -428,7 +357,7 @@ class Invoice extends ViewModel
     {
         $variablePayMap = $this->variablePayCalculator->getForNurses();
 
-        return $variablePayMap->filter(function ($f, $key) {
+        return $variablePayMap->filter(function ($f) {
             return $f->nurse_id === $this->user->nurseInfo->id;
         });
     }
@@ -451,30 +380,28 @@ class Invoice extends ViewModel
     private function getVariableRatePay()
     {
         $calculationResult           = $this->variablePayCalculator->calculate($this->user);
-        $this->visits                = $calculationResult->visits;
-        $this->bhiVisits             = $calculationResult->bhiVisits;
-        $this->pcmVisits             = $calculationResult->pcmVisits;
+        $this->visits                = $calculationResult->visitsPerPatientPerChargeableServiceCode;
         $this->visitsCount           = round($calculationResult->visitsCount, 2);
-        $this->ccmPlusAlgoEnabled    = $calculationResult->ccmPlusAlgoEnabled;
-        $this->altAlgoEnabled        = $calculationResult->altAlgoEnabled;
         $this->visitsPerDayAvailable = true;
 
         return round($calculationResult->totalPay, 2);
     }
 
-    private function getVisitsForDay(string $dateStr, Collection $coll = null)
+    private function getVisitsForDay(string $targetDate, Collection $visitsPerPatientPerCsCode = null)
     {
         $visitsCountForDay = 0.0;
-        if ( ! $coll) {
+        if ( ! $visitsPerPatientPerCsCode) {
             return $visitsCountForDay;
         }
-        $coll->each(function (Collection $patientsPerDayColl) use (&$visitsCountForDay, $dateStr) {
-            $patientsPerDayColl->each(function (array $perPatient, $key) use (&$visitsCountForDay, $dateStr) {
-                if ($key !== $dateStr) {
-                    return;
-                }
+        $visitsPerPatientPerCsCode->each(function (Collection $patientsPerCsCode) use (&$visitsCountForDay, $targetDate) {
+            $patientsPerCsCode->each(function (Collection $patientsPerDay) use (&$visitsCountForDay, $targetDate) {
+                $patientsPerDay->each(function (VisitFeePay $perPatient, $dateKey) use (&$visitsCountForDay, $targetDate) {
+                    if ($dateKey !== $targetDate) {
+                        return;
+                    }
 
-                $visitsCountForDay += $perPatient['count'];
+                    $visitsCountForDay += $perPatient->count;
+                });
             });
         });
 
@@ -518,9 +445,7 @@ class Invoice extends ViewModel
             $dateStr = $date->toDateString();
 
             //region visits per day
-            $visitsCountForDay = $this->getVisitsForDay($dateStr, $this->visits) +
-                $this->getVisitsForDay($dateStr, $this->bhiVisits) +
-                $this->getVisitsForDay($dateStr, $this->pcmVisits);
+            $visitsCountForDay = $this->getVisitsForDay($dateStr, $this->visits);
             //endregion
 
             //region time per day
