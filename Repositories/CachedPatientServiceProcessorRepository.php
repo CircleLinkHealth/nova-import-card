@@ -9,15 +9,12 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use App\Jobs\ChargeableServiceDuration;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as RepositoryInterface;
-use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class CachedPatientServiceProcessorRepository implements RepositoryInterface
@@ -146,7 +143,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->where('is_fulfilled', true)
             ->count() > 0;
     }
-    
+
     /**
      * @throws \Exception
      */
@@ -244,16 +241,17 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         $patient = BillingCache::getPatient($patientId);
 
         if (is_null($patient)) {
-            sendSlackMessage("#billing_alerts", "Warning! (From cached repo:) Could not find Patient with id: $patientId in the Billing Cache.");
+            sendSlackMessage('#billing_alerts', "Warning! (From cached repo:) Could not find Patient with id: $patientId in the Billing Cache.");
+
             return null;
         }
 
         if (is_null($patient->patientInfo)) {
-            sendSlackMessage("#billing_alerts", "Warning! (From cached repo:) Patient with id: $patientId does not have patient info attached.");
+            sendSlackMessage('#billing_alerts', "Warning! (From cached repo:) Patient with id: $patientId does not have patient info attached.");
         }
 
         if (is_null(optional($patient->patientInfo)->preferred_contact_location)) {
-            sendSlackMessage("#billing_alerts", "Warning! (From cached repo:) Patient with id: $patientId does not have a preferred contact location.");
+            sendSlackMessage('#billing_alerts', "Warning! (From cached repo:) Patient with id: $patientId does not have a preferred contact location.");
         }
 
         return $patient;
@@ -263,9 +261,10 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     {
         $patient = $this->repo->getPatientWithBillingDataForMonth($patientId, $month);
         BillingCache::setQueriedPatient($patientId);
-        
-        if (is_null($patient)){
+
+        if (is_null($patient)) {
             sendSlackMessage('#billing_alerts', "Warning! (From cached repo:) Patient: $patientId not found.");
+
             return;
         }
         BillingCache::setPatientInCache($patient);

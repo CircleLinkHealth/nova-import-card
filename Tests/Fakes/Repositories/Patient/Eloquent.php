@@ -172,7 +172,7 @@ class Eloquent implements PatientServiceProcessorRepository
             ->pluck('showAsFulfilled')
             ->first();
     }
-    
+
     public function reloadPatientProblems(int $patientId): void
     {
         // TODO: Implement reloadPatientProblems() method.

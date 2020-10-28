@@ -33,22 +33,6 @@ class AttestationRequirements
     {
         return $this->billingRevampIsEnabled() ? $this->getRequirements() : $this->getLegacyAttestationRequirements();
     }
-    
-    private function getRequirements() : AttestationRequirementsDTO
-    {
-        return $this->setPatient()
-                ->isEnabled()
-                ->hasCcm()
-                ->hasPcm()
-                ->attestedCcmProblemsCount()
-                ->attestedBhiProblemsCount()
-                ->getDto();
-    }
-    
-    private function billingRevampIsEnabled() : bool
-    {
-        return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
-    }
 
     public static function get(int $patientId): AttestationRequirementsDTO
     {
@@ -58,11 +42,11 @@ class AttestationRequirements
     private function attestedBhiProblemsCount(): self
     {
         $bhiProblems = PatientProblemsForBillingProcessing::getForCodes($this->patientId, [ChargeableService::BHI]);
-        $attested = $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray();
-        
+        $attested    = $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray();
+
         $this->dto->setAttestedBhiProblemsCount(
             $bhiProblems->filter(
-                fn(PatientProblemForProcessing $p) => in_array($p->getId(), $attested)
+                fn (PatientProblemForProcessing $p) => in_array($p->getId(), $attested)
             )
                 ->count()
         );
@@ -73,11 +57,11 @@ class AttestationRequirements
     private function attestedCcmProblemsCount(): self
     {
         $ccmProblems = PatientProblemsForBillingProcessing::getForCodes($this->patientId, [ChargeableService::CCM]);
-        $attested = $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray();
+        $attested    = $this->patient->attestedProblems->pluck('ccd_problem_id')->toArray();
 
         $this->dto->setAttestedCcmProblemsCount(
             $ccmProblems->filter(
-                fn(PatientProblemForProcessing $p) => in_array($p->getId(), $attested)
+                fn (PatientProblemForProcessing $p) => in_array($p->getId(), $attested)
             )
                 ->count()
         );
@@ -85,9 +69,66 @@ class AttestationRequirements
         return $this;
     }
 
+    private function billingRevampIsEnabled(): bool
+    {
+        return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
+    }
+
     private function getDto(): AttestationRequirementsDTO
     {
         return $this->dto;
+    }
+
+    private function getLegacyAttestationRequirements()
+    {
+        $this->setPatient();
+        $this->isEnabled();
+
+        if ( ! PatientMonthlySummary::existsForCurrentMonthForPatient($this->patient)) {
+            PatientMonthlySummary::createFromPatient($this->patient->id, Carbon::now()->startOfMonth());
+        }
+
+        /**
+         * @var PatientMonthlySummary
+         */
+        $pms = $this->patient->patientSummaries()
+            ->with([
+                'allChargeableServices',
+                'attestedProblems',
+            ])
+            ->getCurrent()
+            ->first();
+
+        if ($pms->allchargeableServices->isEmpty()) {
+            $pms->attachChargeableServicesToFulfill();
+            $pms->load('allChargeableServices');
+        }
+
+        $services = $pms->allChargeableServices;
+
+        if ($services->where('code', ChargeableService::CCM)->isNotEmpty()) {
+            $this->dto->setHasCcm(true);
+        }
+
+        if ($services->where('code', ChargeableService::PCM)->isNotEmpty()) {
+            $this->dto->setHasPcm(true);
+        }
+
+        $this->dto->setAttestedCcmProblemsCount($pms->ccmAttestedProblems(true)->count());
+        $this->dto->setAttestedBhiProblemsCount($pms->bhiAttestedProblems(true)->count());
+
+        return $this->dto;
+    }
+
+    private function getRequirements(): AttestationRequirementsDTO
+    {
+        return $this->setPatient()
+            ->isEnabled()
+            ->hasCcm()
+            ->hasPcm()
+            ->attestedCcmProblemsCount()
+            ->attestedBhiProblemsCount()
+            ->getDto();
     }
 
     private function hasCcm(): self
@@ -135,46 +176,5 @@ class AttestationRequirements
             );
 
         return $this;
-    }
-    
-    private function getLegacyAttestationRequirements()
-    {
-        $this->setPatient();
-        $this->isEnabled();
-        
-        if ( ! PatientMonthlySummary::existsForCurrentMonthForPatient($this->patient)) {
-            PatientMonthlySummary::createFromPatient($this->patient->id, Carbon::now()->startOfMonth());
-        }
-        
-        /**
-         * @var PatientMonthlySummary
-         */
-        $pms = $this->patient->patientSummaries()
-            ->with([
-                'allChargeableServices',
-                'attestedProblems',
-            ])
-            ->getCurrent()
-            ->first();
-        
-        if ($pms->allchargeableServices->isEmpty()) {
-            $pms->attachChargeableServicesToFulfill();
-            $pms->load('allChargeableServices');
-        }
-        
-        $services = $pms->allChargeableServices;
-        
-        if ($services->where('code', ChargeableService::CCM)->isNotEmpty()) {
-            $this->dto->setHasCcm(true);
-        }
-        
-        if ($services->where('code', ChargeableService::PCM)->isNotEmpty()) {
-            $this->dto->setHasPcm(true);
-        }
-        
-        $this->dto->setAttestedCcmProblemsCount($pms->ccmAttestedProblems(true)->count());
-        $this->dto->setAttestedBhiProblemsCount($pms->bhiAttestedProblems(true)->count());
-        
-        return $this->dto;
     }
 }

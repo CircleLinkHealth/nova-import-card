@@ -18,7 +18,6 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\Patient as PatientModel;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Database\Eloquent\Collection;
@@ -118,7 +117,7 @@ class PatientServiceProcessorRepository implements Repository
             ->where('is_fulfilled', true)
             ->exists();
     }
-    
+
     public function reloadPatientProblems(int $patientId): void
     {
         // TODO: Implement reloadPatientProblems() method.
