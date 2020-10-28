@@ -7,8 +7,6 @@
 namespace App\Reports;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Support\Collection;
 
 /**
@@ -164,7 +162,7 @@ class OpsDashboardPracticeReportData
     public function incrementTimeRangeCount(int $ccmTime, int $bhiTime)
     {
         $this->totalCcmTimeArray[] = $ccmTime;
-        
+
         if (0 === $ccmTime || null == $ccmTime) {
             $this->incrementZeroMinsCount();
         }

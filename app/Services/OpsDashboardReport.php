@@ -22,6 +22,8 @@ class OpsDashboardReport
 {
     const DEFAULT_TIME_GOAL = '35';
 
+    protected bool $billingRevampIsEnabled;
+
     /**
      * @var
      */
@@ -31,8 +33,6 @@ class OpsDashboardReport
      * @var Carbon
      */
     protected $date;
-    
-    protected bool $billingRevampIsEnabled;
 
     /**
      * @var bool
@@ -144,6 +144,15 @@ class OpsDashboardReport
         });
     }
 
+    private function billingRevampIsEnabled(): bool
+    {
+        if ( ! isset($this->billingRevampIsEnabled)) {
+            $this->billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
+        }
+
+        return $this->billingRevampIsEnabled;
+    }
+
     /**
      * @param bool $patientWasEnrolledPriorDay
      */
@@ -243,7 +252,7 @@ class OpsDashboardReport
         if ( ! empty($alerts)) {
             $watchers = opsDashboardAlertWatchers();
             $message  = "$watchers Warning! The following discrepancies were found for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}'. \n".implode("\n", $alerts);
-            
+
             //todo: investigate in separate ticket - trigger table has constant discrepancies.
 //            sendSlackMessage('#ops_dashboard_alerts', $message);
         }
@@ -307,13 +316,13 @@ class OpsDashboardReport
 
                 $patientSummaries = $this->billingRevampIsEnabled() ? $patient->chargeableMonthlySummariesView : $patient->patientSummaries;
                 if ($patientSummaries->isNotEmpty()) {
-                    if ($this->billingRevampIsEnabled()){
+                    if ($this->billingRevampIsEnabled()) {
                         [$ccmSummaries, $bhiSummaries] = $patientSummaries->partition(function (ChargeablePatientMonthlySummaryView $summary) {
                             return ChargeableService::BHI !== $summary->chargeable_service_code;
                         });
-                        $ccmTime                   = $ccmSummaries->sum('total_time');
-                        $bhiTime                   = $bhiSummaries->sum('total_time');
-                    }else{
+                        $ccmTime = $ccmSummaries->sum('total_time');
+                        $bhiTime = $bhiSummaries->sum('total_time');
+                    } else {
                         $summary = $patientSummaries->first();
                         $ccmTime = $summary->ccm_time;
                         $bhiTime = $summary->bhi_time;
@@ -330,14 +339,6 @@ class OpsDashboardReport
         }
 
         return $this;
-    }
-    
-    private function billingRevampIsEnabled():bool
-    {
-        if(! isset($this->billingRevampIsEnabled)){
-            $this->billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
-        }
-        return $this->billingRevampIsEnabled;
     }
 
     /**

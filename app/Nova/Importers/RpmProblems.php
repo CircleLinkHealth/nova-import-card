@@ -1,10 +1,10 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Nova\Importers;
-
 
 use CircleLinkHealth\Eligibility\Entities\RpmProblem;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,45 +20,45 @@ class RpmProblems implements WithChunkReading, OnEachRow, WithHeadingRow, Should
 {
     use Importable;
     use RegistersEventListeners;
-    
+
     private $fileName;
-    
+
     /**
      * @var int
      */
     private $practiceId;
-    
+
     public function __construct(int $practiceId, $fileName)
     {
         $this->practiceId = $practiceId;
         $this->fileName   = $fileName;
     }
-    
+
     /**
-     * @inheritDoc
-     */
-    public function onRow(Row $row)
-    {
-        $row = $row->toArray();
-        
-        RpmProblem::updateOrCreate([
-            'practice_id' => $this->practiceId,
-            'code_type' => $row['code_type'],
-            'code' => $row['code'],
-            'description' => $row['description']
-        ]);
-    }
-    
-    /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function chunkSize(): int
     {
         return 100;
     }
-    
+
     public function message(): string
     {
         return 'File queued for importing.';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onRow(Row $row)
+    {
+        $row = $row->toArray();
+
+        RpmProblem::updateOrCreate([
+            'practice_id' => $this->practiceId,
+            'code_type'   => $row['code_type'],
+            'code'        => $row['code'],
+            'description' => $row['description'],
+        ]);
     }
 }
