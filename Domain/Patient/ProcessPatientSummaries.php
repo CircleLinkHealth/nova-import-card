@@ -50,7 +50,7 @@ class ProcessPatientSummaries
     private function process()
     {
         if ( ! isset($this->patientDTO) || is_null($this->patientDTO)) {
-            sendSlackMessage('#billing_alerts', "Patient({$this->patientId}) Billing Data are invalid. Aborting Processing. Please investigate");
+            sendSlackMessage('#billing_alerts', "Warning! (ProcessPatientSummaries:) Patient({$this->patientId}) Billing Data are invalid. (DTO is null)");
 
             return;
         }
@@ -73,13 +73,13 @@ class ProcessPatientSummaries
         }
 
         if (is_null($this->patientUser)) {
-            sendSlackMessage('#billing_alerts', "Patient ({$this->patientId}) does not exist. Please investigate");
+            sendSlackMessage('#billing_alerts', "Warning! (ProcessPatientSummaries:) Patient ({$this->patientId}) does not exist.");
 
             return $this;
         }
 
         if (is_null($this->patientUser->patientInfo->location)) {
-            sendSlackMessage('#billing_alerts', "Patient ({$this->patientUser->id}) does not have location attached. Cannot Process Billing, please investigate");
+            sendSlackMessage('#billing_alerts', "Warning! (ProcessPatientSummaries:) ({$this->patientUser->id}) does not have location attached.");
 
             return $this;
         }

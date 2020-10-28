@@ -43,7 +43,7 @@ class AttestPatientProblems
     public function createRecords(): void
     {
         if (empty($this->ccdProblemIds)) {
-            sendSlackMessage('#billing_alerts', 'Attestation failed. Insert data here.');
+            sendSlackMessage('#billing_alerts', "Warning! (AttestPatientProblems:) No ccd problems for Patient:{$this->patientUserId}");
 
             return;
         }
