@@ -102,7 +102,7 @@ class PatientIsOfServiceCode
         }
 
         return $patient->patientInfo->location->chargeableServiceSummaries
-            ->where('code', $this->serviceCode)
+            ->where('chargeableService.code', $this->serviceCode)
             ->where('chargeable_month', $thisMonth)
             ->isNotEmpty();
     }
