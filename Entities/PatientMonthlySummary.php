@@ -374,12 +374,13 @@ class PatientMonthlySummary extends BaseModel
     {
         return ! $this->hasServiceCode(ChargeableService::BHI, $includeUnfulfilledChargeableServices)
             ? $this->attestedProblems
-            : $this->attestedProblems->filter(function($p) {
+            : $this->attestedProblems->filter(function ($p) {
                 $cpmProblem = $p->cpmProblem;
-                if (is_null($cpmProblem)){
+                if (is_null($cpmProblem)) {
                     return true;
                 }
-                return$cpmProblem->is_behavioral == false || in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
+
+                returnfalse == $cpmProblem->is_behavioral || in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
             });
     }
 

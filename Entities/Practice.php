@@ -297,8 +297,8 @@ class Practice extends BaseModel implements HasMedia
                 ->whereHas(
                     'roles',
                     function ($q) use (
-                    $role
-                ) {
+                        $role
+                    ) {
                         $q->whereName($role);
                     }
                 )
