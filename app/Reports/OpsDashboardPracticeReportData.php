@@ -161,15 +161,10 @@ class OpsDashboardPracticeReportData
         ++$this->tenToFifteenMinsCount;
     }
 
-    public function incrementTimeRangeCount(Collection $patientSummaries)
+    public function incrementTimeRangeCount(int $ccmTime, int $bhiTime)
     {
-        [$ccmSummaries, $bhiSummaries] = $patientSummaries->partition(function (ChargeablePatientMonthlySummaryView $summary) {
-            return ChargeableService::BHI !== $summary->chargeable_service_code;
-        });
-        $ccmTime                   = $ccmSummaries->sum('total_time');
         $this->totalCcmTimeArray[] = $ccmTime;
-        $bhiTime                   = $bhiSummaries->sum('total_time');
-
+        
         if (0 === $ccmTime || null == $ccmTime) {
             $this->incrementZeroMinsCount();
         }

@@ -8,10 +8,14 @@ namespace App\Services;
 
 use App\Reports\OpsDashboardPracticeReportData;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Support\Facades\DB;
 
 class OpsDashboardReport
@@ -27,6 +31,8 @@ class OpsDashboardReport
      * @var Carbon
      */
     protected $date;
+    
+    protected bool $billingRevampIsEnabled;
 
     /**
      * @var bool
@@ -297,11 +303,23 @@ class OpsDashboardReport
                     }
                 }
 
-                $patientSummaries = $patient->chargeableMonthlySummariesView;
+                $patientSummaries = $this->billingRevampIsEnabled() ? $patient->chargeableMonthlySummariesView : $patient->patientSummaries;
                 if ($patientSummaries->isNotEmpty()) {
-                    $this->report->incrementTimeRangeCount($patientSummaries);
+                    if ($this->billingRevampIsEnabled()){
+                        [$ccmSummaries, $bhiSummaries] = $patientSummaries->partition(function (ChargeablePatientMonthlySummaryView $summary) {
+                            return ChargeableService::BHI !== $summary->chargeable_service_code;
+                        });
+                        $ccmTime                   = $ccmSummaries->sum('total_time');
+                        $bhiTime                   = $bhiSummaries->sum('total_time');
+                    }else{
+                        $summary = $patientSummaries->first();
+                        $ccmTime = $summary->ccm_time;
+                        $bhiTime = $summary->bhi_time;
+                    }
+                    $this->report->incrementTimeRangeCount($ccmTime, $bhiTime);
                 } else {
-                    sendSlackMessage('#billing_alerts', "No summaries found for Patient:{$patient->id}, please investigate.");
+                    $toggle = $this->billingRevampIsEnabled() ? 'on' : 'off';
+                    sendSlackMessage('#billing_alerts', "Warning! (OpsDashboard Report:) No summaries found for Patient:{$patient->id}. Billing Revamp is {$toggle}");
                     $this->report->incrementZeroMinsCount();
                 }
             }
@@ -310,6 +328,14 @@ class OpsDashboardReport
         }
 
         return $this;
+    }
+    
+    private function billingRevampIsEnabled():bool
+    {
+        if(! isset($this->billingRevampIsEnabled)){
+            $this->billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
+        }
+        return $this->billingRevampIsEnabled;
     }
 
     /**
