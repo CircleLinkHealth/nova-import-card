@@ -24,7 +24,7 @@ class PatientProblemsForBillingProcessing
 {
     protected int $patientId;
     
-    protected User $patient;
+    protected ?User $patient;
 
     protected PatientServiceProcessorRepository $repo;
 
@@ -64,6 +64,10 @@ class PatientProblemsForBillingProcessing
 
     private function getProblems(): Collection
     {
+        if (is_null($this->patient)){
+            return collect();
+        }
+        
         return $this->patient->ccdProblems->map(function (Problem $p){
             return (new PatientProblemForProcessing())
                 ->setId($p->id)
