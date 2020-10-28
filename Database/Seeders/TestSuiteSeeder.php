@@ -7,6 +7,7 @@
 use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
+use CircleLinkHealth\CcmBilling\Database\Seeders\BillingRevampTableSeeder;
 
 class TestSuiteSeeder extends Seeder
 {
@@ -37,5 +38,6 @@ class TestSuiteSeeder extends Seeder
         $this->call(CareAmbassadorDefaultScriptsSeeder::class);
         $this->call(UserScopeTestsSeeder::class);
         $this->call(NekatostrasClinicSeeder::class);
+        $this->call(BillingRevampTableSeeder::class);
     }
 }
