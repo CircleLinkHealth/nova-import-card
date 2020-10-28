@@ -380,7 +380,7 @@ class PatientMonthlySummary extends BaseModel
                     return true;
                 }
 
-                returnfalse == $cpmProblem->is_behavioral || in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
+                return false == $cpmProblem->is_behavioral || in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
             });
     }
 
