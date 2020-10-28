@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -31,4 +32,10 @@ class RpmProblem extends Model
         'code',
         'description',
     ];
+    
+    
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class, 'practice_id');
+    }
 }
