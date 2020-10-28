@@ -609,12 +609,9 @@ class Practice extends BaseModel implements HasMedia
         return $query->with([
             'patients' => function ($p) use ($startOfMonth) {
                 $p->with([
-                    'chargeableMonthlySummariesView' => function ($s) use ($startOfMonth) {
-                        $s->createdOn($startOfMonth, 'chargeable_month');
-                    },
-                    'patientInfo.patientCcmStatusRevisions' => function ($r) use ($startOfMonth) {
-                        $r->ofDate($startOfMonth, Carbon::now());
-                    },
+                    'patientSummaries' => fn($pms) => $pms->createdOn($startOfMonth, 'month_year'),
+                    'chargeableMonthlySummariesView' => fn ($s) => $s->createdOn($startOfMonth, 'chargeable_month'),
+                    'patientInfo.patientCcmStatusRevisions' => fn ($r) => $r->ofDate($startOfMonth, Carbon::now()),
                 ])
                     ->isNotDemo();
             },
