@@ -6,7 +6,7 @@
 
 namespace App\Services\Postmark;
 
-use App\ValueObjects\PostmarkCallback\MatchedDataPostmark;
+use App\ValueObjects\PostmarkCallback\PostmarkMultipleMatchedData;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -15,7 +15,7 @@ class InboundCallbackMultimatchService
 {
     public function multimatchResult(Collection $patientsMatched, string $reasoning)
     {
-        return (new MatchedDataPostmark(
+        return (new PostmarkMultipleMatchedData(
             $patientsMatched,
             $reasoning
         ))

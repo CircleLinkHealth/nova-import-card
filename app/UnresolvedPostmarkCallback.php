@@ -33,14 +33,15 @@ class UnresolvedPostmarkCallback extends Model
     use SoftDeletes;
 
     protected $casts = [
-        'suggestions' => 'array',
+        'suggestions'       => 'array',
+        'manually_resolved' => 'boolean',
     ];
+
     protected $fillable = [
         'postmark_id',
         'user_id',
         'unresolved_reason',
         'suggestions',
-        'manually_resolved',
     ];
 
     public function inboundPostmark()

@@ -36,28 +36,29 @@ class PostmarkInboundCallbackRequest
 
     public function run(string $inboundCallback, int $postmarkId)
     {
-        $stringToArray = $this->getArrayFromStringWithBreaks($inboundCallback, $postmarkId);
+        $inboundCallbackArray = $this->getArrayFromStringWithBreaks($inboundCallback, $postmarkId);
 
-        return  $this->arrayWithKeys($stringToArray);
+        return  $this->arrayWithKeys($inboundCallbackArray);
     }
-
+    
     /**
+     * @param Collection $inboundCallback
      * @return array
      */
-    private function arrayWithKeys(Collection $stringToArray)
+    private function arrayWithKeys(Collection $inboundCallback)
     {
-        $keys = $this->getKeys();
+        $callbackDataKeys = $this->getKeys();
 
-        $data = [];
-        foreach ($keys as $key) {
-            $stringToArray->map(function ($item) use ($key, &$data) {
-                if (Str::contains($item, $key)) {
-                    $data[trim($key, ':')] = trim(trim(substr($item, strpos($item, $key) + strlen($key)), '|'));
+        $callbackData = [];
+        foreach ($callbackDataKeys as $callbackDataKey) {
+            $inboundCallback->map(function ($callbackDataItem) use ($callbackDataKey, &$callbackData) {
+                if (Str::contains($callbackDataItem, $callbackDataKey)) {
+                    $callbackData[trim($callbackDataKey, ':')] = trim(trim(substr($callbackDataItem, strpos($callbackDataItem, $callbackDataKey) + strlen($callbackDataKey)), '|'));
                 }
             });
         }
 
-        return $data;
+        return $callbackData;
     }
 
     /**

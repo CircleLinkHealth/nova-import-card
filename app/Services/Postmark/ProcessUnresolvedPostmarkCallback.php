@@ -15,16 +15,16 @@ class ProcessUnresolvedPostmarkCallback
 {
     private bool $isMultiMatch;
     private bool $isUniqueMatch;
-    private $matchedData;
+    private $matchedUsersFromDatabase;
     private int $recordId;
 
     /**
      * ManageUnresolvedPostmarkCallback constructor.
-     * @param $matchedData
+     * @param $matchedUsersDataFromDb
      */
-    public function __construct(array $matchedData, int $recordId)
+    public function __construct(array $matchedUsersDataFromDb, int $recordId)
     {
-        $this->matchedData = $matchedData;
+        $this->matchedUsersFromDatabase = $matchedUsersDataFromDb;
         $this->recordId    = $recordId;
     }
 
@@ -36,11 +36,11 @@ class ProcessUnresolvedPostmarkCallback
         $suggestions = collect();
 
         if ($this->matchedWithMultipleUsers()) {
-            $suggestions->push(...$this->matchedData['matchUsersResult']->pluck('id'));
+            $suggestions->push(...$this->matchedUsersFromDatabase['matchUsersResult']->pluck('id'));
         }
 
         if ($this->matchedWithUniqueUser()) {
-            $suggestions->push($this->matchedData['matchUsersResult']->id);
+            $suggestions->push($this->matchedUsersFromDatabase['matchUsersResult']->id);
         }
 
         return $suggestions;
@@ -52,7 +52,7 @@ class ProcessUnresolvedPostmarkCallback
     public function getUserIdIfMatched()
     {
         if ($this->matchedWithUniqueUser()) {
-            return isset($this->matchedData['matchUsersResult']->id) ? $this->matchedData['matchUsersResult']->id : null;
+            return isset($this->matchedUsersFromDatabase['matchUsersResult']->id) ? $this->matchedUsersFromDatabase['matchUsersResult']->id : null;
         }
 
         return null;
@@ -74,7 +74,7 @@ class ProcessUnresolvedPostmarkCallback
                 ],
                 [
                     'user_id'           => $this->getUserIdIfMatched(),
-                    'unresolved_reason' => $this->matchedData['reasoning'],
+                    'unresolved_reason' => $this->matchedUsersFromDatabase['reasoning'],
                     'suggestions'       => $suggestedUsersIds,
                 ]
             );
@@ -92,8 +92,8 @@ class ProcessUnresolvedPostmarkCallback
      */
     private function matchedWithMultipleUsers()
     {
-        return $this->isMultiMatch = $this->matchedData['matchUsersResult'] instanceof Collection
-            || $this->matchedData['matchUsersResult'] instanceof \Illuminate\Support\Collection;
+        return $this->isMultiMatch = $this->matchedUsersFromDatabase['matchUsersResult'] instanceof Collection
+            || $this->matchedUsersFromDatabase['matchUsersResult'] instanceof \Illuminate\Support\Collection;
     }
 
     /**
@@ -101,6 +101,6 @@ class ProcessUnresolvedPostmarkCallback
      */
     private function matchedWithUniqueUser()
     {
-        return $this->matchedData['matchUsersResult'] instanceof User;
+        return $this->matchedUsersFromDatabase['matchUsersResult'] instanceof User;
     }
 }

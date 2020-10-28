@@ -9,7 +9,7 @@ namespace App\Nova;
 use App\Nova\Actions\ArchiveUnresolvedCallback;
 use App\Nova\Filters\UnresolvedCallbacksFilter;
 use App\Nova\Filters\UnresolvedCallbacksRangeFilter;
-use App\UnresolvedCallbacksResourceModel;
+use App\UnresolvedCallbacksView;
 use Circlelinkhealth\UnresolvedCallback\UnresolvedCallback;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
@@ -24,7 +24,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
      *
      * @var string
      */
-    public static $model = UnresolvedCallbacksResourceModel::class;
+    public static $model = UnresolvedCallbacksView::class;
 
     /**
      * The columns that should be searched.

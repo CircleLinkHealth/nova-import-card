@@ -56,7 +56,7 @@ class SendTestEmailToSendGrid extends Command
 
         if ($this->isCallbackMail) {
             try {
-                $anonymous = $this->sendToAnonymous();
+                $anonymous = $this->sendAnonymousNotification();
                 $anonymous->notifyNow(new PostmarkCallbackNotificationTest());
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
@@ -91,18 +91,18 @@ class SendTestEmailToSendGrid extends Command
         return $config;
     }
 
-    private function sendTestNotification()
-    {
-        $anonymous = $this->sendToAnonymous();
-        $anonymous->notifyNow(new SendGridTestNotification());
-        $this->info('Done');
-    }
-
     /**
      * @return \Illuminate\Notifications\AnonymousNotifiable
      */
-    private function sendToAnonymous()
+    private function sendAnonymousNotification()
     {
         return Notification::route('mail', $this->email);
+    }
+
+    private function sendTestNotification()
+    {
+        $anonymous = $this->sendAnonymousNotification();
+        $anonymous->notifyNow(new SendGridTestNotification());
+        $this->info('Done');
     }
 }

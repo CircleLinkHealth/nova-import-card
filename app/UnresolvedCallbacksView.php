@@ -17,9 +17,9 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @property mixed|null  $other_possible_matches
  * @property int|null    $call_id
  * @property int         $resolved
- * @method   static      \Illuminate\Database\Eloquent\Builder|UnresolvedCallbacksResourceModel newModelQuery()
- * @method   static      \Illuminate\Database\Eloquent\Builder|UnresolvedCallbacksResourceModel newQuery()
- * @method   static      \Illuminate\Database\Eloquent\Builder|UnresolvedCallbacksResourceModel query()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|UnresolvedCallbacksView newModelQuery()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|UnresolvedCallbacksView newQuery()
+ * @method   static      \Illuminate\Database\Eloquent\Builder|UnresolvedCallbacksView query()
  * @mixin \Eloquent
  * @property string|null                     $inbound_data
  * @property \Illuminate\Support\Carbon|null $date
@@ -27,7 +27,7 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @property int                             $assigned_to_ca
  * @property string|null                     $matched_user_name
  */
-class UnresolvedCallbacksResourceModel extends SqlViewModel
+class UnresolvedCallbacksView extends SqlViewModel
 {
     protected $dates = [
         'date',

@@ -83,7 +83,7 @@ class AutoResolveCallbackRequestService
             'status'                  => Enrollee::TO_CALL,
             'care_ambassador_user_id' => $enrollee->care_ambassador_user_id,
             'requested_callback'      => Carbon::now()->toDate(),
-            'callback_note'           => htmlspecialchars('Callback automatically scheduled by the system - patient requested callback', ENT_NOQUOTES),
+            'callback_note'           => 'Callback automatically scheduled by the system - patient requested callback',
         ]);
     }
 

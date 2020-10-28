@@ -6,21 +6,22 @@
 
 namespace App\ValueObjects\PostmarkCallback;
 
-class MatchedDataPostmark
+use Illuminate\Support\Collection;
+
+class PostmarkMultipleMatchedData
 {
     private $matchedData;
     /**
      * @var null
      */
     private $reasoning;
-    private bool $shouldCreateCallback;
-
+    
     /**
      * MatchedData constructor.
-     * @param $matchedData
-     * @param string $reasoning
+     * @param Collection $matchedData
+     * @param string|null $reasoning
      */
-    public function __construct($matchedData, ?string $reasoning)
+    public function __construct(Collection $matchedData, ?string $reasoning)
     {
         $this->matchedData = $matchedData;
         $this->reasoning   = $reasoning;

@@ -6,7 +6,7 @@
 
 namespace App\Services\Postmark;
 
-use App\ValueObjects\PostmarkCallback\MatchedDataPostmark;
+use App\ValueObjects\PostmarkCallback\PostmarkSingleMatchData;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -90,7 +90,7 @@ class InboundCallbackSingleMatchService
     {
         $callBackEligibleReason = $this->callbackEligibilityReasoning($inboundPostmarkData, $matchedPatient);
 
-        return (new MatchedDataPostmark(
+        return (new PostmarkSingleMatchData(
             $matchedPatient,
             $callBackEligibleReason
         ))->getMatchedData();
