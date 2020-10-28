@@ -171,7 +171,7 @@ class OfflineActivityTimeRequest extends Model
         $activityService->processMonthlyActivityTime($this->patient_id, $this->performed_at);
 
         if ($nurse) {
-            (new AlternativeCareTimePayableCalculator($nurse))->adjustNursePayForActivity($activity);
+            (new AlternativeCareTimePayableCalculator())->adjustNursePayForActivity($nurse->id, $activity);
         }
 
         $this->is_approved = true;

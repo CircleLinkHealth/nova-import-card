@@ -280,7 +280,7 @@ class ActivityController extends Controller
             }
         }
 
-        $nurseId = null;
+        $nurseUserId = null;
         $patient = null;
 
         // convert minutes to seconds.
@@ -288,7 +288,7 @@ class ActivityController extends Controller
             $input['duration'] = $input['duration'] * 60;
             $client            = new Client();
 
-            $nurseId   = $input['provider_id'];
+            $nurseUserId   = $input['provider_id'];
             $patientId = $input['patient_id'];
             $duration  = (int) $input['duration'];
 
@@ -313,8 +313,8 @@ class ActivityController extends Controller
             }
 
             // Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
-            if ($nurseId && $patientId && $duration) {
-                $url = config('services.ws.server-url').'/'.$nurseId.'/'.$patientId;
+            if ($nurseUserId && $patientId && $duration) {
+                $url = config('services.ws.server-url').'/'.$nurseUserId.'/'.$patientId;
                 try {
                     $timeParam = $is_bhi
                         ? 'bhiTime'
@@ -361,8 +361,8 @@ class ActivityController extends Controller
 
         /** @var Nurse $nurse */
         $nurse = null;
-        if ($nurseId) {
-            $nurse = Nurse::whereUserId($nurseId)->first();
+        if ($nurseUserId) {
+            $nurse = Nurse::whereUserId($nurseUserId)->first();
         }
 
         // store meta
@@ -386,8 +386,8 @@ class ActivityController extends Controller
         event(new PatientActivityCreated($input['patient_id'], false));
 
         if ($nurse) {
-            (new AlternativeCareTimePayableCalculator($nurse))
-                ->adjustNursePayForActivity($activity);
+            (new AlternativeCareTimePayableCalculator())
+                ->adjustNursePayForActivity($nurse->id, $activity);
         }
 
         return redirect()->route(
