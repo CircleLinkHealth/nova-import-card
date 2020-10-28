@@ -134,7 +134,7 @@ class PatientObserver
         $newValue = $patient->preferred_contact_location;
 
         if (is_null($newValue)) {
-            sendSlackMessage('#billing_alerts', "Patient ({$patient->user_id}) does not have a preferred contact location, please investigate.");
+            sendSlackMessage('#billing_alerts', "Warning! (PatientObserver:) Patient ({$patient->user_id}) does not have a preferred contact location.");
 
             return false;
         }

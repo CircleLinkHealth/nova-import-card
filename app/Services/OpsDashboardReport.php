@@ -243,7 +243,9 @@ class OpsDashboardReport
         if ( ! empty($alerts)) {
             $watchers = opsDashboardAlertWatchers();
             $message  = "$watchers Warning! The following discrepancies were found for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}'. \n".implode("\n", $alerts);
-            sendSlackMessage('#ops_dashboard_alerts', $message);
+            
+            //todo: investigate in separate ticket - trigger table has constant discrepancies.
+//            sendSlackMessage('#ops_dashboard_alerts', $message);
         }
 
         return $this->report->toArray();
