@@ -4,10 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\CcmBilling\Database\Seeders\BillingRevampTableSeeder;
 use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
-use CircleLinkHealth\CcmBilling\Database\Seeders\BillingRevampTableSeeder;
 
 class TestSuiteSeeder extends Seeder
 {

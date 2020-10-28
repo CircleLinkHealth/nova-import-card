@@ -68,18 +68,18 @@ class ChargeableService extends BaseModel
     const CCM            = 'CPT 99490';
     const CCM_PLUS_40    = 'G2058(>40mins)';
     const CCM_PLUS_60    = 'G2058(>60mins)';
-    
-    const CLASHES = [
-        self::PCM => [
-            self::CCM,
-            self::CCM_PLUS_40,
-            self::CCM_PLUS_60
-        ]
-    ];
 
     const CCM_PLUS_CODES = [
         self::CCM_PLUS_40,
         self::CCM_PLUS_60,
+    ];
+
+    const CLASHES = [
+        self::PCM => [
+            self::CCM,
+            self::CCM_PLUS_40,
+            self::CCM_PLUS_60,
+        ],
     ];
     /**
      * When a Patient consents to receive Care from CLH, they consent to these Chargeable Services, if consent date is
@@ -120,8 +120,8 @@ class ChargeableService extends BaseModel
                 ->value('id');
         });
     }
-    
-    public static function getClashesWithService(string $service):array
+
+    public static function getClashesWithService(string $service): array
     {
         return self::CLASHES[$service] ?? [];
     }
