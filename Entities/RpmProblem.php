@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|RpmProblem newQuery()
  * @method   static                          \Illuminate\Database\Eloquent\Builder|RpmProblem query()
  * @mixin \Eloquent
+ * @property Practice $practice
  */
 class RpmProblem extends Model
 {
@@ -32,8 +33,7 @@ class RpmProblem extends Model
         'code',
         'description',
     ];
-    
-    
+
     public function practice()
     {
         return $this->belongsTo(Practice::class, 'practice_id');
