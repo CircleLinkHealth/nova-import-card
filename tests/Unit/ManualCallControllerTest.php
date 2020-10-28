@@ -68,7 +68,8 @@ class ManualCallControllerTest extends CustomerTestCase
 
     private function fakePatient()
     {
-        return factory(User::class)->create([
+        return factory(User::class)->make([
+            'id'=>   8451251256,
             'program_id' => 8,
         ]);
     }
