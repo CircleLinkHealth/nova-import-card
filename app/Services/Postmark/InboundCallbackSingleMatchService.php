@@ -16,6 +16,8 @@ use Illuminate\Support\Str;
 class InboundCallbackSingleMatchService
 {
     /**
+     * @param array $inboundPostmarkData
+     * @param User $patientUser
      * @return string
      */
     public function callbackEligibilityReasoning(array $inboundPostmarkData, User $patientUser)

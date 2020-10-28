@@ -84,12 +84,12 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         $n           = self::START;
         $inboundData = collect();
         while ($n <= self::LIMIT) {
-            $this->createPatientData($patientType);
-            $this->save
-                ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf)
-                : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf);
+            $patient        = $this->createPatientData($patientType, $this->practice->id);
+            $postmarkRecord = $this->save
+                ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient)
+                : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient);
 
-            $inboundData->push($this->postmarkRecord);
+            $inboundData->push($postmarkRecord);
             ++$n;
         }
 
@@ -104,17 +104,17 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         $n           = self::START;
         $inboundData = collect();
         while ($n <= self::LIMIT) {
-            $this->createPatientData($patientType);
-            $this->patientEnrollee->update(
+            $patient = $this->createPatientData($patientType, $this->practice->id);
+            $this->createEnrolleeData($patientType, $patient, $this->practice->id, $this->careAmbassador->id)->update(
                 [
                     'care_ambassador_user_id' => null,
                 ]
             );
 
-            $this->save
-                ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf)
-                : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf);
-            $inboundData->push($this->postmarkRecord);
+            $postmarkRecord = $this->save
+                ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient)
+                : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient);
+            $inboundData->push($postmarkRecord);
             ++$n;
         }
 
@@ -134,8 +134,8 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
 
         $inboundData = collect();
         while ($n <= self::LIMIT) {
-            $this->createPatientData($patientType);
-            $this->patient->phoneNumbers
+            $patient = $this->createPatientData($patientType, $this->practice->id);
+            $patient->phoneNumbers
                 ->first()
                 ->update(
                     [
@@ -143,19 +143,19 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
                     ]
                 );
 
-            $this->patient->update([
+            $patient->update([
                 'display_name' => $firstName.' '.$lastName,
                 'first_name'   => $firstName,
                 'last_name'    => $lastName,
             ]);
 
-            $this->patient->fresh();
-            $this->save
-                ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf)
-                : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf);
+            $patient->fresh();
+            $postmarkRecord = $this->save
+                ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient)
+                : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient);
 
             if ($inboundData->isEmpty()) {
-                $inboundData->push($this->postmarkRecord);
+                $inboundData->push($postmarkRecord);
             }
 
             ++$n;
@@ -172,17 +172,17 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
         $n           = self::START;
         $inboundData = collect();
         while ($n <= self::LIMIT) {
-            $this->createPatientData($patientType);
-            $this->save
-                ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf)
-                : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf);
-            $this->patientEnrollee->update(
+            $patient        = $this->createPatientData($patientType, $this->practice->id);
+            $postmarkRecord = $this->save
+                ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient)
+                : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient);
+            $this->createEnrolleeData($patientType, $patient, $this->practice->id, $this->careAmbassador->id)->update(
                 [
                     'care_ambassador_user_id' => null,
                 ]
             );
 
-            $inboundData->push($this->postmarkRecord);
+            $inboundData->push($postmarkRecord);
             ++$n;
         }
 
@@ -203,11 +203,11 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
 
         $inboundData = collect();
         while ($n <= self::LIMIT) {
-            $this->createPatientData($patientType);
-            $this->save
-                ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf)
-                : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf);
-            $this->patient->phoneNumbers
+            $patient        = $this->createPatientData($patientType, $this->practice->id);
+            $postmarkRecord = $this->save
+                ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient)
+                : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient);
+            $patient->phoneNumbers
                 ->first()
                 ->update(
                     [
@@ -215,13 +215,13 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
                     ]
                 );
 
-            $this->patient->update([
+            $patient->update([
                 'display_name' => $firstName.' '.$lastName,
                 'first_name'   => $firstName,
                 'last_name'    => $lastName,
             ]);
 
-            $inboundData->push($this->postmarkRecord);
+            $inboundData->push($postmarkRecord);
             ++$n;
         }
 
@@ -440,15 +440,15 @@ class GenerateInboundCallbackDataFeedbackToTester extends Command
     {
         $generatedPostmarkIds = collect();
         $generatedPostmarkIds->push(...collect($this->createUsersOfTypeEnrolled())->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeConsentedButNotEnrolled())->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeQueuedForEnrolmentButNotCAssigned())->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNameIsSelf())->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdraw())->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf())->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedAssignedToCa())->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedUnassignedCa())->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->multiMatchPatientsWithSameNumberAndName())->pluck('id'));
-//        $generatedPostmarkIds->push(...collect($this->noMatch())->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeConsentedButNotEnrolled())->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeQueuedForEnrolmentButNotCAssigned())->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNameIsSelf())->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdraw())->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeRequestedToWithdrawAndNameIsSelf())->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedAssignedToCa())->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->createUsersOfTypeNotConsentedUnassignedCa())->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->multiMatchPatientsWithSameNumberAndName())->pluck('id'));
+        $generatedPostmarkIds->push(...collect($this->noMatch())->pluck('id'));
 
         return $generatedPostmarkIds;
     }

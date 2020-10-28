@@ -6,7 +6,6 @@
 
 namespace App\Traits\Tests;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -54,9 +53,14 @@ trait PostmarkCallbackHelpers
         return Practice::where('name', '=', \NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->firstOrFail();
     }
 
-    private function createEnrolleeWithStatus(User $patient, int $careAmbassadorId, string $status)
+    private function createEnrolleeData(string $status, User $patient, int $practiceId, int $careAmbassadorId)
     {
-        $provider = $this->createUser($this->practice->id, 'provider');
+        return $this->createEnrolleeWithStatus($patient, $careAmbassadorId, $status, $practiceId);
+    }
+
+    private function createEnrolleeWithStatus(User $patient, int $careAmbassadorId, string $status, int $practiceId)
+    {
+        $provider = $this->createUser($practiceId, 'provider');
 
         $enrollee = Enrollee::create([
             'user_id'                 => $patient->id,
@@ -65,7 +69,7 @@ trait PostmarkCallbackHelpers
             'home_phone'              => formatPhoneNumberE164($patient->phoneNumbers->first()->number),
             'status'                  => $status,
             'care_ambassador_user_id' => $careAmbassadorId,
-            'practice_id'             => $this->practice->id,
+            'practice_id'             => $practiceId,
         ]);
         $enrollee->provider()->associate($provider);
         $enrollee->save();
@@ -73,29 +77,28 @@ trait PostmarkCallbackHelpers
         return $enrollee;
     }
 
-    private function createPatientData(string $status)
+    private function createPatientData(string $status, int $practiceId)
     {
-        $this->patient         = $this->createUserWithPatientCcmStatus($this->practice, $status);
-        $this->patientEnrollee = $this->createEnrolleeWithStatus($this->patient, $this->careAmbassador->id, $status);
+        return $this->createUserWithPatientCcmStatus($practiceId, $status);
     }
 
-    private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf)
+    private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient)
     {
-        return  $this->postmarkRecord = PostmarkInboundMail::create(
+        return PostmarkInboundMail::create(
             [
                 'data' => json_encode(
                     [
                         'From'     => 'message.dispatch@callcenterusa.net',
-                        'TextBody' => $this->getCallbackMailData($this->patient, $requestToWithdraw, $nameIsSelf),
+                        'TextBody' => $this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf),
                     ]
                 ),
             ]
         );
     }
 
-    private function createUserWithPatientCcmStatus(Practice $practice, string $status)
+    private function createUserWithPatientCcmStatus(int $practiceId, string $status)
     {
-        $user = $this->createUser($practice->id, 'participant', $status);
+        $user = $this->createUser($practiceId, 'participant', $status);
         $user->patientSummaries()->update([
             'no_of_successful_calls' => 0,
         ]);
@@ -103,12 +106,13 @@ trait PostmarkCallbackHelpers
         $user->patientSummaries->fresh();
 
         return $user;
-//        $nurse = $this->createUser($practice->id, 'care-center');
-//        app(NurseFinderEloquentRepository::class)->assign($user->id, $nurse->id);
     }
 
-    private function generatePostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf)
+    /**
+     * @return string
+     */
+    private function generatePostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient)
     {
-        $this->postmarkRecord = $this->getCallbackMailData($this->patient, $requestToWithdraw, $nameIsSelf);
+        return $this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf);
     }
 }
