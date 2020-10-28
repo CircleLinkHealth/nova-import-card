@@ -28,9 +28,10 @@ class PatientServicesForTimeTracker
     protected Carbon $month;
 
     protected int $patientId;
+    
     protected PatientServiceProcessorRepository $repo;
 
-    protected Collection $summaries;
+    protected ?Collection $summaries;
 
     public function __construct(int $patientId, Carbon $month)
     {
@@ -47,6 +48,10 @@ class PatientServicesForTimeTracker
     
     private function consolidateSummaryData():self
     {
+        if ($this->summaries->isEmpty()){
+            return $this;
+        }
+        
         return $this->filterUsingPatientServiceStatus()
             ->rejectNonTimeTrackerServices()
             ->groupSimilarCodes();
