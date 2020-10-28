@@ -12,8 +12,8 @@ use Illuminate\Database\Seeder;
 
 class BillingRevampTableSeeder extends Seeder
 {
-    const VARIANT_OFF = 'off';
-    const VARIANT_ON  = 'on';
+    const VARIANT_OFF = '"off"';
+    const VARIANT_ON  = '"on"';
 
     /**
      * Run the database seeds.
