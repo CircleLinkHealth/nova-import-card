@@ -68,6 +68,14 @@ class ChargeableService extends BaseModel
     const CCM            = 'CPT 99490';
     const CCM_PLUS_40    = 'G2058(>40mins)';
     const CCM_PLUS_60    = 'G2058(>60mins)';
+    
+    const CLASHES = [
+        self::PCM => [
+            self::CCM,
+            self::CCM_PLUS_40,
+            self::CCM_PLUS_60
+        ]
+    ];
 
     const CCM_PLUS_CODES = [
         self::CCM_PLUS_40,
@@ -111,6 +119,11 @@ class ChargeableService extends BaseModel
             return ChargeableService::where('code', $code)
                 ->value('id');
         });
+    }
+    
+    public static function getClashesWithService(string $service):array
+    {
+        return self::CLASHES[$service] ?? [];
     }
 
     public static function getCodeForPatientProblems(string $code): string
