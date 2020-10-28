@@ -100,12 +100,12 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     /**
      * @throws \Exception
      */
-    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User
+    public function getPatientWithBillingDataForMonth(int $patientId, ?Carbon $month = null): ?User
     {
         //is it realistic that multiple months are going to be queried by this?
         //really have to account for other months as well. Maybe don't load only for specific month from the original repo and load everything?
         //also if we load all, we have to specify summary access for other cases
-        return $this->getPatientFromCache($patientId);
+        return $this->getPatientFromCache($patientId, $month);
     }
 
     /**
@@ -113,7 +113,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
      */
     public function isAttached(int $patientId, string $chargeableServiceCode, Carbon $month): bool
     {
-        return $this->getPatientFromCache($patientId)
+        return $this->getPatientFromCache($patientId, $month)
             ->chargeableMonthlySummaries
             ->where('chargeableService.code', $chargeableServiceCode)
             ->where('chargeable_month', $month)
@@ -237,40 +237,46 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
     /**
      * @throws \Exception
      */
-    private function getPatientFromCache(int $patientId): User
+    private function getPatientFromCache(int $patientId, ?Carbon $month = null): ?User
     {
-        $this->retrievePatientDataIfYouMust($patientId);
+        $this->retrievePatientDataIfYouMust($patientId, $month);
 
         $patient = BillingCache::getPatient($patientId);
 
         if (is_null($patient)) {
-            throw new \Exception("Could not find Patient with id: $patientId. Billing Processing aborted.");
+            sendSlackMessage("#billing_alerts", "Warning! (From cached repo:) Could not find Patient with id: $patientId in the Billing Cache.");
+            return null;
         }
 
         if (is_null($patient->patientInfo)) {
-            throw new \Exception("Patient with id: $patientId does not have patient info attached. Billing Processing aborted.");
+            sendSlackMessage("#billing_alerts", "Warning! (From cached repo:) Patient with id: $patientId does not have patient info attached.");
         }
 
-        if (is_null($patient->patientInfo->location)) {
-            throw new \Exception("Patient with id: $patientId does not have a preferred location attached. Billing Processing aborted.");
+        if (is_null(optional($patient->patientInfo)->preferred_contact_location)) {
+            sendSlackMessage("#billing_alerts", "Warning! (From cached repo:) Patient with id: $patientId does not have a preferred contact location.");
         }
 
         return $patient;
     }
 
-    private function queryPatientData(int $patientId)
+    private function queryPatientData(int $patientId, ?Carbon $month = null)
     {
-        BillingCache::setPatientInCache($this->repo->getPatientWithBillingDataForMonth($patientId));
-
+        $patient = $this->repo->getPatientWithBillingDataForMonth($patientId, $month);
         BillingCache::setQueriedPatient($patientId);
+        
+        if (is_null($patient)){
+            sendSlackMessage('#billing_alerts', "Warning! (From cached repo:) Patient: $patientId not found.");
+            return;
+        }
+        BillingCache::setPatientInCache($patient);
     }
 
-    private function retrievePatientDataIfYouMust(int $patientId): void
+    private function retrievePatientDataIfYouMust(int $patientId, ?Carbon $month = null): void
     {
         if (BillingCache::patientWasQueried($patientId)) {
             return;
         }
 
-        $this->queryPatientData($patientId);
+        $this->queryPatientData($patientId, $month);
     }
 }

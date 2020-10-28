@@ -29,7 +29,7 @@ class BillingDataCache implements BillingCache
         $this->queriedPatients = collect($this->patientCache)->filter(fn ($id) => $id != $patientId)->toArray();
     }
 
-    public function getPatient(int $patientId): User
+    public function getPatient(int $patientId): ?User
     {
         return collect($this->patientCache)->firstWhere('id', $patientId);
     }

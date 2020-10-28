@@ -14,7 +14,7 @@ interface BillingCache
 
     public function forgetPatient(int $patientId): void;
 
-    public function getPatient(int $patientId): User;
+    public function getPatient(int $patientId): ?User;
 
     public function patientExistsInCache(int $patientId): bool;
 
