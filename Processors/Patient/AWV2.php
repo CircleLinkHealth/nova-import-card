@@ -19,10 +19,6 @@ class AWV2 extends AbstractProcessor
 
     public function featureIsEnabled(): bool
     {
-        if (isUnitTestingEnv()) {
-            return true;
-        }
-
         return Feature::isEnabled(BillingConstants::AWV_BILLING_FLAG);
     }
 
