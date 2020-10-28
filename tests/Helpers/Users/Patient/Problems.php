@@ -27,9 +27,9 @@ trait Problems
             'code'        => $problem->icd10Code(),
             'description' => $problem->name,
         ]);
-        
+
         BillingCache::clearPatients();
-        
+
         SetupPracticeBillingData::forPractice($patient->program_id);
 
         return $problem;
