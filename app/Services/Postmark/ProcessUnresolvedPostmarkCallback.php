@@ -25,7 +25,7 @@ class ProcessUnresolvedPostmarkCallback
     public function __construct(array $matchedUsersDataFromDb, int $recordId)
     {
         $this->matchedUsersFromDatabase = $matchedUsersDataFromDb;
-        $this->recordId    = $recordId;
+        $this->recordId                 = $recordId;
     }
 
     /**

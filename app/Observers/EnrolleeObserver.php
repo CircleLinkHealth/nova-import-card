@@ -48,7 +48,6 @@ class EnrolleeObserver
     {
     }
 
-    
     public function saved(Enrollee $enrollee)
     {
         if (Enrollee::TO_CALL === $enrollee->getOriginal('status')

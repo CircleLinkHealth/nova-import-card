@@ -27,6 +27,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property mixed      $unresolved_reasons
  * @property mixed|null $unresolved_reason
  * @property int        $manually_resolved
+ * @method   static     \Illuminate\Database\Query\Builder|UnresolvedPostmarkCallback onlyTrashed()
+ * @method   static     \Illuminate\Database\Query\Builder|UnresolvedPostmarkCallback withTrashed()
+ * @method   static     \Illuminate\Database\Query\Builder|UnresolvedPostmarkCallback withoutTrashed()
  */
 class UnresolvedPostmarkCallback extends Model
 {

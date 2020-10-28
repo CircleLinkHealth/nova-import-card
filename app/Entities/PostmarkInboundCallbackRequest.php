@@ -40,9 +40,8 @@ class PostmarkInboundCallbackRequest
 
         return  $this->arrayWithKeys($inboundCallbackArray);
     }
-    
+
     /**
-     * @param Collection $inboundCallback
      * @return array
      */
     private function arrayWithKeys(Collection $inboundCallback)

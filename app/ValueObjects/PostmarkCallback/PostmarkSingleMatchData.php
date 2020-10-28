@@ -12,11 +12,9 @@ class PostmarkSingleMatchData
 {
     private User $matchedUser;
     private ?string $reasoning;
-    
+
     /**
      * PostmarkSingleMatchData constructor.
-     * @param User $matchedUser
-     * @param string|null $reasoning
      */
     public function __construct(User $matchedUser, ?string $reasoning)
     {

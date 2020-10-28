@@ -15,11 +15,9 @@ class PostmarkMultipleMatchedData
      * @var null
      */
     private $reasoning;
-    
+
     /**
      * MatchedData constructor.
-     * @param Collection $matchedData
-     * @param string|null $reasoning
      */
     public function __construct(Collection $matchedData, ?string $reasoning)
     {
