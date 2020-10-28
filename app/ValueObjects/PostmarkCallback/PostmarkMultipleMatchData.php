@@ -8,7 +8,7 @@ namespace App\ValueObjects\PostmarkCallback;
 
 use Illuminate\Support\Collection;
 
-class PostmarkMultipleMatchedData
+class PostmarkMultipleMatchData
 {
     private $matchedData;
     /**
