@@ -51,4 +51,17 @@ class ActivityRepository
             ->where('performed_at', '<=', $monthYear->copy()->endOfMonth())
             ->groupBy('patient_id');
     }
+
+    public function totalTimeForChargeableServiceIds(int $patientId, array $chargeableServiceIds, Carbon $monthYear = null)
+    {
+        if ( ! $monthYear) {
+            $monthYear = now();
+        }
+
+        return Activity::whereIn('chargeable_service_id', $chargeableServiceIds)
+            ->where('patient_id', $patientId)
+            ->where('performed_at', '>=', $monthYear->startOfMonth())
+            ->where('performed_at', '<=', $monthYear->copy()->endOfMonth())
+            ->sum('duration');
+    }
 }

@@ -67,227 +67,12 @@ class NursePaymentAlgoTest extends TestCase
 
     private int $ccmChargeableServiceId;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->ccmChargeableServiceId = ChargeableService::firstWhere('code', '=', ChargeableService::CCM)->id;
         $this->bhiChargeableServiceId = ChargeableService::firstWhere('code', '=', ChargeableService::BHI)->id;
-    }
-
-    /**
-     * - Hourly Rate $20
-     * - High Rate $29
-     * - Low Rate $10
-     * - Visit Fee $12.50
-     * - Variable Pay = true.
-     *
-     * Two nurses, 1 patient with ccm plus algo.
-     * Nurse 2 has successful call in range 20-40 minutes.
-     * Nurse 1 has 15 minutes in 0-20 range.
-     * Nurse 2 has 5 minutes in 0-20 range and 5 minutes in 20-40 range.
-     *
-     * Result:
-     * Nurse 1 -> $10.00 (30 min hourly rate. no visit fee, patient has 1 billable event, no successful call)
-     * Nurse 2 -> $12.50 (successful call, takes all credit)
-     *
-     * @throws \Exception
-     */
-    public function test__cp_m_1997_one_billable_event_pay_nurse_with_call()
-    {
-        $nurseVisitFee   = 12.50;
-        $nurseHourlyRate = 20.0;
-        $practice        = $this->setupPractice(true, true);
-        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $patient         = $this->setupPatient($practice);
-
-        $this->addTime($nurse1, $patient, 15, true, false, $this->ccmChargeableServiceId);
-        $this->addTime($nurse2, $patient, 10, true, true, $this->ccmChargeableServiceId);
-
-        $start = Carbon::now()->startOfMonth();
-        $end   = Carbon::now()->endOfMonth();
-
-        (new CreateNurseInvoices(
-            $start,
-            $end,
-            [$nurse1->id, $nurse2->id],
-            false,
-            null,
-            true
-        ))->handle();
-
-        $invoice1Data = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
-            ->orderBy('month_year', 'desc')
-            ->first()->invoice_data;
-        $fixedRatePay    = $invoice1Data['fixedRatePay'];
-        $variableRatePay = $invoice1Data['variableRatePay'];
-        $pay             = $invoice1Data['baseSalary'];
-
-        self::assertEquals(10.00, $fixedRatePay);
-        self::assertEquals(0.00, $variableRatePay);
-        self::assertEquals(10.00, $pay);
-
-        $invoice2Data = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
-            ->orderBy('month_year', 'desc')
-            ->first()->invoice_data;
-        $fixedRatePay    = $invoice2Data['fixedRatePay'];
-        $variableRatePay = $invoice2Data['variableRatePay'];
-        $pay             = $invoice2Data['baseSalary'];
-
-        self::assertEquals(10.00, $fixedRatePay);
-        self::assertEquals(12.50, $variableRatePay);
-        self::assertEquals(12.50, $pay);
-    }
-
-    /**
-     * - Hourly Rate $20
-     * - High Rate $29
-     * - Low Rate $10
-     * - Visit Fee $12.50
-     * - Variable Pay = true.
-     *
-     * Two nurses, 1 patient with ccm plus algo.
-     * Nurse 2 has successful call in range 20-40 minutes.
-     * Nurse 1 has 23 minutes in 0-20 range.
-     * Nurse 2 has 5 minutes in 20-40 range.
-     *
-     * Result:
-     * Nurse 1 -> $10.00 (30 min hourly rate. no visit fee, patient has 1 billable event, no successful call)
-     * Nurse 2 -> $12.50 (successful call, takes all credit)
-     *
-     * @throws \Exception
-     */
-    public function test__cp_m_1997_one_billable_event_pay_nurse_with_call_2()
-    {
-        $nurseVisitFee   = 12.50;
-        $nurseHourlyRate = 20.0;
-        $practice        = $this->setupPractice(true, true);
-        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $patient         = $this->setupPatient($practice);
-
-        $this->addTime($nurse1, $patient, 23, true, false, $this->ccmChargeableServiceId);
-        $this->addTime($nurse2, $patient, 5, true, true, $this->ccmChargeableServiceId);
-
-        $start = Carbon::now()->startOfMonth();
-        $end   = Carbon::now()->endOfMonth();
-
-        (new CreateNurseInvoices(
-            $start,
-            $end,
-            [$nurse1->id, $nurse2->id],
-            false,
-            null,
-            true
-        ))->handle();
-
-        $invoice1Data = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
-            ->orderBy('month_year', 'desc')
-            ->first()->invoice_data;
-        $fixedRatePay    = $invoice1Data['fixedRatePay'];
-        $variableRatePay = $invoice1Data['variableRatePay'];
-        $pay             = $invoice1Data['baseSalary'];
-
-        self::assertEquals(10.00, $fixedRatePay);
-        self::assertEquals(0.00, $variableRatePay);
-        self::assertEquals(10.00, $pay);
-
-        $invoice2Data = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
-            ->orderBy('month_year', 'desc')
-            ->first()->invoice_data;
-        $fixedRatePay    = $invoice2Data['fixedRatePay'];
-        $variableRatePay = $invoice2Data['variableRatePay'];
-        $pay             = $invoice2Data['baseSalary'];
-
-        self::assertEquals(10.00, $fixedRatePay);
-        self::assertEquals(12.50, $variableRatePay);
-        self::assertEquals(12.50, $pay);
-    }
-
-    /**
-     * - Hourly Rate $20
-     * - High Rate $29
-     * - Low Rate $10
-     * - Visit Fee $12.50
-     * - Variable Pay = true.
-     *
-     * 3 nurses, 1 patient with ccm plus algo.
-     * Nurse 1 0-17 minutes, no call.
-     * Nurse 2 17-23 minutes, call.
-     * Nurse 3 23-38 minutes, call.
-     *
-     * Result:
-     * Nurse 1 -> $10.00 (30 min * hourly rate. no visit fee, patient has 1 billable event, no successful call)
-     * Nurse 2 -> 6 / (6+15) * $12.50 = $3.57
-     * Nurse 3 -> 15 / (6+15) * $12.50 = $8.93
-     *
-     * @throws \Exception
-     */
-    public function test__cp_m_1997_one_billable_event_pay_nurse_with_call_3()
-    {
-        $nurseVisitFee   = 12.50;
-        $nurseHourlyRate = 20.0;
-        $practice        = $this->setupPractice(true, true);
-        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $nurse3          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
-        $patient         = $this->setupPatient($practice);
-
-        $this->addTime($nurse1, $patient, 17, true, false, $this->ccmChargeableServiceId);
-        $this->addTime($nurse2, $patient, 6, true, true, $this->ccmChargeableServiceId);
-        $this->addTime($nurse3, $patient, 15, true, true, $this->ccmChargeableServiceId);
-
-        $start = Carbon::now()->startOfMonth();
-        $end   = Carbon::now()->endOfMonth();
-
-        (new CreateNurseInvoices(
-            $start,
-            $end,
-            [$nurse1->id, $nurse2->id, $nurse3->id],
-            false,
-            null,
-            true
-        ))->handle();
-
-        $invoice1Data = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
-            ->orderBy('month_year', 'desc')
-            ->first()->invoice_data;
-        $visitsCount     = $invoice1Data['visitsCount'];
-        $fixedRatePay    = $invoice1Data['fixedRatePay'];
-        $variableRatePay = $invoice1Data['variableRatePay'];
-        $pay             = $invoice1Data['baseSalary'];
-
-        self::assertEquals(0, $visitsCount);
-        self::assertEquals(10.00, $fixedRatePay);
-        self::assertEquals(0.00, $variableRatePay);
-        self::assertEquals(10.00, $pay);
-
-        $invoice2Data = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
-            ->orderBy('month_year', 'desc')
-            ->first()->invoice_data;
-        $visitsCount     = $invoice2Data['visitsCount'];
-        $fixedRatePay    = $invoice2Data['fixedRatePay'];
-        $variableRatePay = $invoice2Data['variableRatePay'];
-        $pay             = $invoice2Data['baseSalary'];
-
-        self::assertEquals(0.29, $visitsCount);
-        self::assertEquals(10.00, $fixedRatePay);
-        self::assertEquals(3.57, $variableRatePay);
-        self::assertEquals(10.00, $pay);
-
-        $invoice3Data = NurseInvoice::where('nurse_info_id', $nurse3->nurseInfo->id)
-            ->orderBy('month_year', 'desc')
-            ->first()->invoice_data;
-        $visitsCount     = $invoice3Data['visitsCount'];
-        $fixedRatePay    = $invoice3Data['fixedRatePay'];
-        $variableRatePay = $invoice3Data['variableRatePay'];
-        $pay             = $invoice3Data['baseSalary'];
-
-        self::assertEquals(0.71, $visitsCount);
-        self::assertEquals(10.00, $fixedRatePay);
-        self::assertEquals(8.93, $variableRatePay);
-        self::assertEquals(10.00, $pay);
     }
 
     /**
@@ -989,6 +774,221 @@ class NursePaymentAlgoTest extends TestCase
 
         $pay = $invoiceData['baseSalary'];
         self::assertEquals($nurseHourlyRate / 2, $pay);
+    }
+
+    /**
+     * - Hourly Rate $20
+     * - High Rate $29
+     * - Low Rate $10
+     * - Visit Fee $12.50
+     * - Variable Pay = true.
+     *
+     * Two nurses, 1 patient with ccm plus algo.
+     * Nurse 2 has successful call in range 20-40 minutes.
+     * Nurse 1 has 15 minutes in 0-20 range.
+     * Nurse 2 has 5 minutes in 0-20 range and 5 minutes in 20-40 range.
+     *
+     * Result:
+     * Nurse 1 -> $10.00 (30 min hourly rate. no visit fee, patient has 1 billable event, no successful call)
+     * Nurse 2 -> $12.50 (successful call, takes all credit)
+     *
+     * @throws \Exception
+     */
+    public function test_cpm_1997_one_billable_event_pay_nurse_with_call()
+    {
+        $nurseVisitFee   = 12.50;
+        $nurseHourlyRate = 20.0;
+        $practice        = $this->setupPractice(true, true);
+        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $patient         = $this->setupPatient($practice);
+
+        $this->addTime($nurse1, $patient, 15, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse2, $patient, 10, true, true, $this->ccmChargeableServiceId);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse1->id, $nurse2->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoice1Data = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+        $fixedRatePay    = $invoice1Data['fixedRatePay'];
+        $variableRatePay = $invoice1Data['variableRatePay'];
+        $pay             = $invoice1Data['baseSalary'];
+
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(0.00, $variableRatePay);
+        self::assertEquals(10.00, $pay);
+
+        $invoice2Data = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+        $fixedRatePay    = $invoice2Data['fixedRatePay'];
+        $variableRatePay = $invoice2Data['variableRatePay'];
+        $pay             = $invoice2Data['baseSalary'];
+
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(12.50, $variableRatePay);
+        self::assertEquals(12.50, $pay);
+    }
+
+    /**
+     * - Hourly Rate $20
+     * - High Rate $29
+     * - Low Rate $10
+     * - Visit Fee $12.50
+     * - Variable Pay = true.
+     *
+     * Two nurses, 1 patient with ccm plus algo.
+     * Nurse 2 has successful call in range 20-40 minutes.
+     * Nurse 1 has 23 minutes in 0-20 range.
+     * Nurse 2 has 5 minutes in 20-40 range.
+     *
+     * Result:
+     * Nurse 1 -> $10.00 (30 min hourly rate. no visit fee, patient has 1 billable event, no successful call)
+     * Nurse 2 -> $12.50 (successful call, takes all credit)
+     *
+     * @throws \Exception
+     */
+    public function test_cpm_1997_one_billable_event_pay_nurse_with_call_2()
+    {
+        $nurseVisitFee   = 12.50;
+        $nurseHourlyRate = 20.0;
+        $practice        = $this->setupPractice(true, true);
+        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $patient         = $this->setupPatient($practice);
+
+        $this->addTime($nurse1, $patient, 23, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse2, $patient, 5, true, true, $this->ccmChargeableServiceId);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse1->id, $nurse2->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoice1Data = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+        $fixedRatePay    = $invoice1Data['fixedRatePay'];
+        $variableRatePay = $invoice1Data['variableRatePay'];
+        $pay             = $invoice1Data['baseSalary'];
+
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(0.00, $variableRatePay);
+        self::assertEquals(10.00, $pay);
+
+        $invoice2Data = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+        $fixedRatePay    = $invoice2Data['fixedRatePay'];
+        $variableRatePay = $invoice2Data['variableRatePay'];
+        $pay             = $invoice2Data['baseSalary'];
+
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(12.50, $variableRatePay);
+        self::assertEquals(12.50, $pay);
+    }
+
+    /**
+     * - Hourly Rate $20
+     * - High Rate $29
+     * - Low Rate $10
+     * - Visit Fee $12.50
+     * - Variable Pay = true.
+     *
+     * 3 nurses, 1 patient with ccm plus algo.
+     * Nurse 1 0-17 minutes, no call.
+     * Nurse 2 17-23 minutes, call.
+     * Nurse 3 23-38 minutes, call.
+     *
+     * Result:
+     * Nurse 1 -> $10.00 (30 min * hourly rate. no visit fee, patient has 1 billable event, no successful call)
+     * Nurse 2 -> 6 / (6+15) * $12.50 = $3.57
+     * Nurse 3 -> 15 / (6+15) * $12.50 = $8.93
+     *
+     * @throws \Exception
+     */
+    public function test_cpm_1997_one_billable_event_pay_nurse_with_call_3()
+    {
+        $nurseVisitFee   = 12.50;
+        $nurseHourlyRate = 20.0;
+        $practice        = $this->setupPractice(true, true);
+        $nurse1          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse2          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse3          = $this->getNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $patient         = $this->setupPatient($practice);
+
+        $this->addTime($nurse1, $patient, 17, true, false, $this->ccmChargeableServiceId);
+        $this->addTime($nurse2, $patient, 6, true, true, $this->ccmChargeableServiceId);
+        $this->addTime($nurse3, $patient, 15, true, true, $this->ccmChargeableServiceId);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse1->id, $nurse2->id, $nurse3->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoice1Data = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+        $visitsCount     = $invoice1Data['visitsCount'];
+        $fixedRatePay    = $invoice1Data['fixedRatePay'];
+        $variableRatePay = $invoice1Data['variableRatePay'];
+        $pay             = $invoice1Data['baseSalary'];
+
+        self::assertEquals(0, $visitsCount);
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(0.00, $variableRatePay);
+        self::assertEquals(10.00, $pay);
+
+        $invoice2Data = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+        $visitsCount     = $invoice2Data['visitsCount'];
+        $fixedRatePay    = $invoice2Data['fixedRatePay'];
+        $variableRatePay = $invoice2Data['variableRatePay'];
+        $pay             = $invoice2Data['baseSalary'];
+
+        self::assertEquals(0.29, $visitsCount);
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(3.57, $variableRatePay);
+        self::assertEquals(10.00, $pay);
+
+        $invoice3Data = NurseInvoice::where('nurse_info_id', $nurse3->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+        $visitsCount     = $invoice3Data['visitsCount'];
+        $fixedRatePay    = $invoice3Data['fixedRatePay'];
+        $variableRatePay = $invoice3Data['variableRatePay'];
+        $pay             = $invoice3Data['baseSalary'];
+
+        self::assertEquals(0.71, $visitsCount);
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(8.93, $variableRatePay);
+        self::assertEquals(10.00, $pay);
     }
 
     /**

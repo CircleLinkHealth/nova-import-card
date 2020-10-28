@@ -179,7 +179,7 @@ class PracticeInvoiceController extends Controller
 
     public function getChargeableServices()
     {
-        return $this->ok(ChargeableService::all());
+        return $this->ok(ChargeableService::getAll());
     }
 
     public function getCounts(
@@ -224,7 +224,7 @@ class PracticeInvoiceController extends Controller
             ];
         }
 
-        $chargeableServices = ChargeableService::all();
+        $chargeableServices = ChargeableService::getAll();
 
         return view('admin.reports.billing', compact([
             'cpmProblems',

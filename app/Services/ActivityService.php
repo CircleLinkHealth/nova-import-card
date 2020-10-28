@@ -146,7 +146,7 @@ class ActivityService
 
             $currentTime = $patient->getCcmTime();
             $splitter    = new TimeSplitter();
-            $slots       = $splitter->split($currentTime, $duration, false, false);
+            $slots       = $splitter->split($currentTime, $duration, false, true, true);
 
             $result = [];
             if ($slots->towards20) {
@@ -154,12 +154,12 @@ class ActivityService
             }
 
             if ($slots->after20) {
-                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM_PLUS_40);
+                $id       = $this->getChargeableServiceIdByCode($patient, ChargeableService::CCM_PLUS_40);
                 $result[] = new ChargeableServiceDuration($id, $slots->after20);
             }
 
             if ($slots->after40 || $slots->after60) {
-                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM_PLUS_60);
+                $id       = $this->getChargeableServiceIdByCode($patient, ChargeableService::CCM_PLUS_60);
                 $result[] = new ChargeableServiceDuration($id, $slots->after40 + $slots->after60);
             }
 
@@ -169,7 +169,7 @@ class ActivityService
         if (ChargeableService::RPM === $cs->code) {
             $currentTime = $patient->getRpmTime();
             $splitter    = new TimeSplitter();
-            $slots       = $splitter->split($currentTime, $duration, false, false);
+            $slots       = $splitter->split($currentTime, $duration, false, true, false);
 
             $result = [];
             if ($slots->towards20) {
@@ -177,7 +177,7 @@ class ActivityService
             }
 
             if ($slots->after20 || $slots->after40 || $slots->after60) {
-                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::RPM40);
+                $id       = $this->getChargeableServiceIdByCode($patient, ChargeableService::RPM40);
                 $result[] = new ChargeableServiceDuration($id, $slots->after20 + $slots->after40 + $slots->after60);
             }
 
@@ -203,6 +203,36 @@ class ActivityService
         return $this->repo->totalCCMTime([$patientId], $monthYear)->pluck('total_time', 'patient_id');
     }
 
+    public function totalTimeForChargeableServiceId(int $patientId, int $chargeableServiceId, Carbon $monthYear = null)
+    {
+        $cs     = ChargeableService::getAll();
+        $csCode = $cs->firstWhere('id', '=', $chargeableServiceId)->code;
+        switch ($csCode) {
+            case ChargeableService::CCM:
+            case ChargeableService::CCM_PLUS_40:
+            case ChargeableService::CCM_PLUS_60:
+                $csFiltered = $cs
+                    ->filter(fn ($cs) => in_array($cs->code, [ChargeableService::CCM, ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60]));
+                break;
+            case ChargeableService::BHI:
+                $csFiltered = $cs->filter(fn ($cs) => ChargeableService::BHI === $cs->code);
+                break;
+            case ChargeableService::PCM:
+                $csFiltered = $cs->filter(fn ($cs) => ChargeableService::PCM === $cs->code);
+                break;
+            case ChargeableService::RPM:
+            case ChargeableService::RPM40:
+                $csFiltered = $cs
+                    ->filter(fn ($cs) => in_array($cs->code, [ChargeableService::RPM, ChargeableService::RPM40]));
+                break;
+            default:
+                $csFiltered = collect();
+                break;
+        }
+
+        return $this->repo->totalTimeForChargeableServiceIds($patientId, $csFiltered->pluck('id')->toArray(), $monthYear);
+    }
+
     private function getChargeableServiceById(User $patient, int $id): ?ChargeableService
     {
         return $patient
@@ -212,7 +242,7 @@ class ActivityService
             ->first();
     }
 
-    private function getChargeServiceIdByCode(User $patient, string $code): ?int
+    private function getChargeableServiceIdByCode(User $patient, string $code): ?int
     {
         return optional($patient
             ->primaryPractice

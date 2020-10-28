@@ -10,6 +10,7 @@ use App\Jobs\CreateNurseInvoices;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Tests\TestCase;
@@ -23,10 +24,12 @@ class NursePcmPaymentAlgoTest extends TestCase
     use TimeHelpers;
     use UserHelpers;
 
-    protected function setUp(): void
+    private int $pcmChargeableServiceId;
+
+    public function setUp(): void
     {
         parent::setUp();
-        (new \ChargeableServiceSeeder())->run();
+        $this->pcmChargeableServiceId = ChargeableService::firstWhere('code', '=', ChargeableService::CCM)->id;
     }
 
     /**
@@ -51,14 +54,14 @@ class NursePcmPaymentAlgoTest extends TestCase
         $patient2 = $this->setupPatient($practice, false, true);
         $patient3 = $this->setupPatient($practice, false, true);
 
-        $this->addTime($nurse, $patient1, 20, true, 1);
-        $this->addTime($nurse, $patient1, 10, true, 1);
+        $this->addTime($nurse, $patient1, 20, true, 1, $this->pcmChargeableServiceId);
+        $this->addTime($nurse, $patient1, 10, true, 1, $this->pcmChargeableServiceId);
 
-        $this->addTime($nurse, $patient2, 20, true, 1);
-        $this->addTime($nurse, $patient2, 15, true, 1);
+        $this->addTime($nurse, $patient2, 20, true, 1, $this->pcmChargeableServiceId);
+        $this->addTime($nurse, $patient2, 15, true, 1, $this->pcmChargeableServiceId);
 
-        $this->addTime($nurse, $patient3, 20, true, 1);
-        $this->addTime($nurse, $patient3, 15, true, 1);
+        $this->addTime($nurse, $patient3, 20, true, 1, $this->pcmChargeableServiceId);
+        $this->addTime($nurse, $patient3, 15, true, 1, $this->pcmChargeableServiceId);
 
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
@@ -106,12 +109,12 @@ class NursePcmPaymentAlgoTest extends TestCase
         $patient1 = $this->setupPatient($practice, false, true);
         $patient2 = $this->setupPatient($practice, false, true);
 
-        $this->addTime($nurse, $patient1, 20, true, 1);
-        $this->addTime($nurse, $patient1, 20, true, 1);
-        $this->addTime($nurse, $patient1, 20, true, 1);
+        $this->addTime($nurse, $patient1, 20, true, 1, $this->pcmChargeableServiceId);
+        $this->addTime($nurse, $patient1, 20, true, 1, $this->pcmChargeableServiceId);
+        $this->addTime($nurse, $patient1, 20, true, 1, $this->pcmChargeableServiceId);
 
-        $this->addTime($nurse, $patient2, 20, true, 1);
-        $this->addTime($nurse, $patient2, 15, true, 1);
+        $this->addTime($nurse, $patient2, 20, true, 1, $this->pcmChargeableServiceId);
+        $this->addTime($nurse, $patient2, 15, true, 1, $this->pcmChargeableServiceId);
 
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
