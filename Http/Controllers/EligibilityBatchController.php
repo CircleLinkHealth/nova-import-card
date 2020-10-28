@@ -67,11 +67,13 @@ class EligibilityBatchController extends Controller
                 $firstIteration = true;
 
                 $batch->eligibilityJobs()
+                    ->with('enrollee')
                     ->chunk(
                         500,
                         function ($jobs) use ($handle, &$firstIteration) {
                             foreach ($jobs as $job) {
                                 $data = $job->data;
+                                $data['eligible_patient_id'] = optional($job->enrollee)->id;
 
                                 if ($firstIteration) {
                                     // Add CSV headers
