@@ -1,17 +1,20 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\CcmBilling\Database\Seeders;
 
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 
 class BillingRevampTableSeeder extends Seeder
 {
-    const VARIANT_ON = 'on';
     const VARIANT_OFF = 'off';
-    
+    const VARIANT_ON  = 'on';
+
     /**
      * Run the database seeds.
      *
@@ -21,17 +24,17 @@ class BillingRevampTableSeeder extends Seeder
     {
         FeatureFlag::insert([
             [
-                'key' => BillingConstants::BILLING_REVAMP_FLAG,
-                'variants' => self::VARIANT_ON
+                'key'      => BillingConstants::BILLING_REVAMP_FLAG,
+                'variants' => self::VARIANT_ON,
             ],
             [
-                'key' => BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG,
-                'variants' => self::VARIANT_OFF
+                'key'      => BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG,
+                'variants' => self::VARIANT_OFF,
             ],
             [
-                'key' => BillingConstants::AWV_BILLING_FLAG,
-                'variants' => self::VARIANT_OFF
-            ]
+                'key'      => BillingConstants::AWV_BILLING_FLAG,
+                'variants' => self::VARIANT_OFF,
+            ],
         ]);
     }
 }
