@@ -18,6 +18,7 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM40;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -81,6 +82,7 @@ class ChargeableService extends BaseModel
             self::CCM_PLUS_60,
         ],
     ];
+
     /**
      * When a Patient consents to receive Care from CLH, they consent to these Chargeable Services, if consent date is
      * after 7/23/2018. If consent date is before 7/23/2018, patient was consented to the same services except for 'CPT
@@ -96,9 +98,14 @@ class ChargeableService extends BaseModel
 
     const GENERAL_CARE_MANAGEMENT = 'G0511';
 
-    const PCM           = 'G2065';
-    const RPM           = 'CPT 99457';
-    const RPM40         = 'CPT 99458';
+    const PCM   = 'G2065';
+    const RPM   = 'CPT 99457';
+    const RPM40 = 'CPT 99458';
+
+    const RPM_CODES = [
+        self::RPM,
+        self::RPM40,
+    ];
     const SOFTWARE_ONLY = 'Software-Only';
 
     protected $fillable = [
@@ -108,9 +115,20 @@ class ChargeableService extends BaseModel
         'amount',
     ];
 
+    private static ?Collection $cached = null;
+
     public static function defaultServices()
     {
         return self::whereIn('code', self::DEFAULT_CHARGEABLE_SERVICE_CODES)->get();
+    }
+
+    public static function getAll()
+    {
+        if ( ! self::$cached) {
+            self::$cached = ChargeableService::all();
+        }
+
+        return self::$cached;
     }
 
     public static function getChargeableServiceIdUsingCode(string $code): int

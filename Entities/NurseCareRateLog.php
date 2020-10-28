@@ -63,6 +63,7 @@ class NurseCareRateLog extends \CircleLinkHealth\Core\Entities\BaseModel
         'is_successful_call',
         'is_behavioral',
         'performed_at',
+        'chargeable_service_id',
     ];
 
     public function activity()

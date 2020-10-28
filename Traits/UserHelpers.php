@@ -337,7 +337,7 @@ trait UserHelpers
     private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false)
     {
         $patient = $this->createUser($practice->id, 'participant');
-        $patient->setPreferredContactLocation($this->location->id);
+        $patient->setPreferredContactLocation($practice->locations()->first()->id);
 
         if ($isBhi) {
             $consentDate = Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI);
