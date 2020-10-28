@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
@@ -135,7 +136,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
     private function clashesWithHigherOrderServices(int $patientId, Carbon $chargeableMonth): bool
     {
         foreach ($this->clashesWith() as $clash) {
-            if ($this->repo()->isAttached($patientId, $clash->code(), $chargeableMonth)) {
+            if (PatientIsOfServiceCode::execute($patientId, $clash->code())) {
                 return true;
             }
         }
