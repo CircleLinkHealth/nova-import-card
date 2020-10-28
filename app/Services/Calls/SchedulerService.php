@@ -264,8 +264,8 @@ class SchedulerService
                 ->whereHas(
                     'patientInfo',
                     function ($q) use (
-                                   $row
-                               ) {
+                        $row
+                    ) {
                         $q->where(
                             'birth_date',
                             Carbon::parse($row['DOB'])->toDateString()

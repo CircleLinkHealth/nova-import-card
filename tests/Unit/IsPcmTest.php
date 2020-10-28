@@ -25,7 +25,7 @@ class IsPcmTest extends CustomerTestCase
         $problem = $this->attachValidPcmProblem($this->patient());
 
         BillingCache::clearPatients();
-        
+
         $this->assertTrue(PatientIsOfServiceCode::execute($this->patient()->id, ChargeableService::PCM));
     }
 }

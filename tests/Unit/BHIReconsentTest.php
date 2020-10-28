@@ -127,7 +127,7 @@ class BHIReconsentTest extends CustomerTestCase
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
         BillingCache::clearPatients();
-        
+
         $this->assertFalse(PatientIsOfServiceCode::execute($bhiPatient->id, ChargeableService::BHI));
     }
 
