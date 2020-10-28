@@ -90,7 +90,7 @@ class PatientIsOfServiceCode
 
     private function minimumProblemCountForService(): int
     {
-        return $this->patientRequiredProblemsCountMap()[$this->serviceCode] ?? 0;
+        return $this->patientRequiredProblemsCountMap()[ChargeableService::getCodeForPatientProblems($this->serviceCode)] ?? 0;
     }
 
     private function patientLocationHasService(): bool
