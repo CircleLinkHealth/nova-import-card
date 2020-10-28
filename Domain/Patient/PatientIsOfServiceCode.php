@@ -40,23 +40,6 @@ class PatientIsOfServiceCode
     {
         return $this->hasSummary() && $this->hasEnoughProblems() && $this->patientLocationHasService() && ! $this->hasClashingService();
     }
-    
-    private function hasClashingService(): bool
-    {
-        $clashes = ChargeableService::getClashesWithService($this->serviceCode);
-        
-        if (empty($clashes)){
-            return false;
-        }
-        
-        foreach ($clashes as $clashingService){
-            if (PatientIsOfServiceCode::execute($this->patientId, $clashingService)){
-                return true;
-            }
-        }
-        
-        return false;
-    }
 
     private function billingRevampIsEnabled(): bool
     {
@@ -65,6 +48,23 @@ class PatientIsOfServiceCode
         }
 
         return $this->billingRevampIsEnabled;
+    }
+
+    private function hasClashingService(): bool
+    {
+        $clashes = ChargeableService::getClashesWithService($this->serviceCode);
+
+        if (empty($clashes)) {
+            return false;
+        }
+
+        foreach ($clashes as $clashingService) {
+            if (PatientIsOfServiceCode::execute($this->patientId, $clashingService)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function hasEnoughProblems(): bool
