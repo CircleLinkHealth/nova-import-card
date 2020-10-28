@@ -14,14 +14,17 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\Entities\RpmProblem;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class PatientProblemsForBillingProcessing
 {
-    protected User $patient;
     protected int $patientId;
+    
+    protected User $patient;
 
     protected PatientServiceProcessorRepository $repo;
 
@@ -37,23 +40,31 @@ class PatientProblemsForBillingProcessing
             ->getProblems()
             ->toArray();
     }
-
+    
     public static function getCollection(int $patientId): Collection
     {
         return (new static($patientId))
             ->setPatient()
             ->getProblems();
     }
-
+    
     public static function getForCodes(int $patientId, array $codes): Collection
     {
         return self::getCollection($patientId)
-            ->filter(fn (PatientProblemForProcessing $p) => 0 != count(array_intersect($codes, $p->getServiceCodes())));
+            ->filter(fn(PatientProblemForProcessing $p) => count(array_intersect($codes, $p->getServiceCodes())) != 0);
+    }
+    
+    private function setPatient():self
+    {
+        $this->patient = $this->repo()
+            ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth());
+        
+        return $this;
     }
 
     private function getProblems(): Collection
     {
-        return $this->patient->ccdProblems->map(function (Problem $p) {
+        return $this->patient->ccdProblems->map(function (Problem $p){
             return (new PatientProblemForProcessing())
                 ->setId($p->id)
                 ->setCode($p->icd10Code())
@@ -61,55 +72,60 @@ class PatientProblemsForBillingProcessing
         })
             ->filter();
     }
-
-    private function getServicesForProblem(Problem $problem): array
+    
+    private function getServicesForProblem(Problem $problem) : array
     {
-        if (Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)) {
+        if (Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)){
             return $problem->chargeableServiceCodesForLocation($this->patient->patientInfo->preferred_contact_location);
         }
-
+        
         $services = [];
-
-        if ($cpmProblem = $problem->cpmProblem) {
-            if ($cpmProblem->is_behavioral || in_array($cpmProblem->name, ['Dementia', 'Depression'])) {
+        
+        if ($cpmProblem = $problem->cpmProblem)
+        {
+            $isDual = in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
+            
+            if ($cpmProblem->is_behavioral || $isDual)
+            {
                 $services[] = ChargeableService::BHI;
             }
-
-            if ( ! $cpmProblem->is_behavioral || in_array($cpmProblem->name, ['Dementia', 'Depression'])) {
+            
+            if (! $cpmProblem->is_behavioral || $isDual)
+            {
                 $services[] = ChargeableService::CCM;
             }
         }
-
+        
         $pcmProblems = $this->patient->primaryPractice->pcmProblems;
-
-        if ( ! empty($pcmProblems)) {
+    
+        if (! empty($pcmProblems)){
             $hasMatchingPcmProblem = $pcmProblems->filter(
                 function (PcmProblem $pcmProblem) use ($problem) {
                     //todo: use string contains on name?
                     return $pcmProblem->code === $problem->icd10Code() || $pcmProblem->description === $problem->name;
                 }
             )->isNotEmpty();
-
-            if ($hasMatchingPcmProblem) {
+        
+            if ($hasMatchingPcmProblem){
                 $services[] = ChargeableService::PCM;
             }
         }
-
+    
         $rpmProblems = $this->patient->primaryPractice->rpmProblems;
-
-        if ( ! empty($rpmProblems)) {
+    
+        if (! empty($rpmProblems)){
             $hasMatchingRpmProblem = $rpmProblems->filter(
                 function (RpmProblem $rpmProblem) use ($problem) {
                     //todo: use string contains on name?
                     return $rpmProblem->code === $problem->icd10Code() || $rpmProblem->description === $problem->name;
                 }
             )->isNotEmpty();
-
-            if ($hasMatchingRpmProblem) {
+        
+            if ($hasMatchingRpmProblem){
                 $services[] = ChargeableService::RPM;
             }
         }
-
+        
         return $services;
     }
 
@@ -120,13 +136,5 @@ class PatientProblemsForBillingProcessing
         }
 
         return $this->repo;
-    }
-
-    private function setPatient(): self
-    {
-        $this->patient = $this->repo()
-            ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth());
-
-        return $this;
     }
 }
