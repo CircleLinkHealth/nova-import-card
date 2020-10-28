@@ -114,7 +114,7 @@ class PatientIsOfServiceCode
         $patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $thisMonth = Carbon::now()->startOfMonth());
     
         if (! $this->billingRevampIsEnabled()){
-            return $patient->primaryPractice->hasServiceCode(ChargeableService::BHI);
+            return $patient->primaryPractice->hasServiceCode($this->serviceCode);
         }
         
         return $patient->patientInfo->location->chargeableServiceSummaries
