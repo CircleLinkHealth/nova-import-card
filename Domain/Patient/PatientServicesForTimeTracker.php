@@ -85,7 +85,7 @@ class PatientServicesForTimeTracker
             $newSummary->patient_user_id         = $this->patientId;
             $newSummary->chargeable_service_id   = $service->id;
             $newSummary->chargeable_service_code = $service->code;
-            $newSummary->chargeable_service_name = $service->name;
+            $newSummary->chargeable_service_name = $service->display_name;
             $newSummary->total_time              = $activitiesForMonth->where('chargeable_service_id', $service->id)->sum('duration');
             $summaries->push($newSummary);
         }
