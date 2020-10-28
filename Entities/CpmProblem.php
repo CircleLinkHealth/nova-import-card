@@ -74,21 +74,21 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
+    const DEMENTIA = 'Dementia';
+
+    const DEPRESSION = 'Depression';
 
     const DIABETES_TYPE_1 = 'Diabetes Type 1';
 
     const DIABETES_TYPE_2 = 'Diabetes Type 2';
 
-    const GENERIC_DIABETES = 'Diabetes';
-    
-    const DEPRESSION = 'Depression';
-    const DEMENTIA = 'Dementia';
-    
     const DUAL_CCM_BHI_CONDITIONS = [
         self::DEMENTIA,
-        self::DEPRESSION
+        self::DEPRESSION,
     ];
-    
+
+    const GENERIC_DIABETES = 'Diabetes';
+
     protected $guarded = [];
 
     protected $table = 'cpm_problems';

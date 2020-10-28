@@ -237,8 +237,8 @@ class CarePlan extends BaseModel implements PdfReport
                     ->whereHas(
                         'careTeamMembers',
                         function ($q) use (
-                                                $user
-                                            ) {
+                            $user
+                        ) {
                             $q->where('member_user_id', '=', $user->id)
                                 ->where('type', '=', CarePerson::BILLING_PROVIDER);
                         }
