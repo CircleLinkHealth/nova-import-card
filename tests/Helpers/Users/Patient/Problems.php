@@ -7,6 +7,7 @@
 namespace Tests\Helpers\Users\Patient;
 
 use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 
@@ -26,8 +27,9 @@ trait Problems
             'code'        => $problem->icd10Code(),
             'description' => $problem->name,
         ]);
-
-        //todo: billing, sync ? also, update cache? use ccdservice/repo
+        
+        BillingCache::clearPatients();
+        
         SetupPracticeBillingData::forPractice($patient->program_id);
 
         return $problem;
