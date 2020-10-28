@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "8a1bf436932c8e9a497cf776c919e8f3d87ce5e1"
+                "reference": "34b576ef9a8cadc1e6aff16def3331712687b727"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-28T17:18:32+00:00"
+            "time": "2020-10-28T18:18:18+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1265,7 +1265,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "8da5eb7d98dd3db89594c978d6e6364461d3fe32"
+                "reference": "e8abcb4bb7e017dec85b5414475af8e77152e91b"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-28T17:18:32+00:00"
+            "time": "2020-10-28T18:18:18+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1307,7 +1307,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "a5db262630815f5a0fbf7fbf7e24922dcc749f7a"
+                "reference": "d3ac49265d7b272324cbceba598d57c2dd48e47b"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1334,7 +1334,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-28T12:19:02+00:00"
+            "time": "2020-10-28T18:18:18+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -15404,12 +15404,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "6424ee9dfa131a8833288d99bfe1ce7c5298ee89"
+                "reference": "0105f218d06f016a58f003f2ab62c4764f95329a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/6424ee9dfa131a8833288d99bfe1ce7c5298ee89",
-                "reference": "6424ee9dfa131a8833288d99bfe1ce7c5298ee89",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/0105f218d06f016a58f003f2ab62c4764f95329a",
+                "reference": "0105f218d06f016a58f003f2ab62c4764f95329a",
                 "shasum": ""
             },
             "require": {
@@ -15473,7 +15473,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-16T12:02:56+00:00"
+            "time": "2020-10-28T17:49:15+00:00"
         },
         {
             "name": "orangehill/iseed",
