@@ -45,11 +45,11 @@ class InboundCallbackMultimatchService
      */
     public function tryToMatchByName(Collection $matchedWithPhone, array $inboundPostmarkData, int $recordId)
     {
-        if (PostmarkInboundCallbackMatchResults::SELF === $inboundPostmarkData['Ptn']) {
+        if (PostmarkInboundCallbackMatchResults::SELF === $inboundPostmarkData['ptn']) {
             return $this->matchByCallerField($matchedWithPhone, $inboundPostmarkData, $recordId);
         }
 
-        $matchedWithInboundName = $matchedWithPhone->where('display_name', '=', $inboundPostmarkData['Ptn']);
+        $matchedWithInboundName = $matchedWithPhone->where('display_name', '=', $inboundPostmarkData['ptn']);
 
         if ($matchedWithInboundName->isEmpty() || 1 !== $matchedWithInboundName->count()) {
             return $this->multimatchResult($matchedWithPhone, PostmarkInboundCallbackMatchResults::MULTIPLE_PATIENT_MATCHES);
@@ -63,7 +63,7 @@ class InboundCallbackMultimatchService
      */
     private function matchByCallerField(Collection $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId)
     {
-        $fullName  = $this->parseNameFromCallerField($inboundPostmarkData['Clr ID']);
+        $fullName  = $this->parseNameFromCallerField($inboundPostmarkData['callerId']);
         $firstName = $fullName['firstName'];
         $lastName  = $fullName['lastName'];
 

@@ -8,6 +8,7 @@ namespace App\Services\Postmark;
 
 use App\Entities\PostmarkInboundCallbackRequest;
 use App\PostmarkInboundMail;
+use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
 use Illuminate\Support\Facades\Log;
 
 class PostmarkCallbackMailService
@@ -33,6 +34,6 @@ class PostmarkCallbackMailService
             return;
         }
 
-        return $inboundDataArray;
+        return (new PostmarkCallbackInboundData())->getInboundDataArray($inboundDataArray);
     }
 }

@@ -61,7 +61,8 @@ class PostmarkInboundCallbackMatchResults
      */
     private function matchByPhone(array $inboundPostmarkData)
     {
-        return User::ofType('participant')
+        return User::withTrashed()
+        ->ofType('participant')
             ->with([
                 'patientInfo' => function ($q) {
                     return $q->select(['id', 'ccm_status', 'user_id']);
@@ -74,7 +75,7 @@ class PostmarkInboundCallbackMatchResults
                 },
             ])
             ->whereHas('phoneNumbers', function ($phoneNumber) use ($inboundPostmarkData) {
-                $phoneNumber->where('number', $inboundPostmarkData['Phone']);
+                $phoneNumber->where('number', $inboundPostmarkData['phone']);
             });
     }
 }

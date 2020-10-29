@@ -33,17 +33,7 @@ class AutoResolveCallbackRequestService
             }
 
             if (PostmarkInboundCallbackMatchResults::CREATE_CALLBACK === $matchedResultsFromDB['reasoning']) {
-                /** @var SchedulerService $service */
-                $service = app(SchedulerService::class);
-                $service->scheduleAsapCallbackTask(
-                    $matchedResultsFromDB['matchUsersResult'],
-                    $this->constructCallbackMessage($postmarkCallbackData),
-                    ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
-                    null,
-                    SchedulerService::CALL_BACK_TYPE,
-                );
-
-                return;
+                $this->assignCallbackToNurse($matchedResultsFromDB['matchUsersResult'], $postmarkCallbackData);
             }
 
             if (PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_ASSIGNED === $matchedResultsFromDB['reasoning']) {
@@ -65,7 +55,7 @@ class AutoResolveCallbackRequestService
         }
 
         Log::error("Unexpected error. Should have not reached here. See $recordId.");
-        sendSlackMessage('#carecoach_ops_alerts', "{Unexpected error. Should have not reached here. See inbound_postmark_mail id [$recordId]");
+        sendSlackMessage('#carecoach_ops_alerts', "{Unexpected error. See inbound_postmark_mail id [$recordId]");
     }
 
     private function assignCallbackToCareAmbassador(User $user, int $recordId)
@@ -89,15 +79,13 @@ class AutoResolveCallbackRequestService
 
     private function constructCallbackMessage(array $postmarkCallbackData)
     {
-        $callerId       = $postmarkCallbackData['Clr ID'];
+        $callerId       = $postmarkCallbackData['callerId'];
         $fullName       = app(InboundCallbackMultimatchService::class)->parseNameFromCallerField($callerId);
         $firstName      = $fullName['firstName'];
         $lastName       = $fullName['lastName'];
-        $phone          = $postmarkCallbackData['Phone'];
+        $phone          = $postmarkCallbackData['phone'];
         $phoneFormatted = formatPhoneNumberE164($phone);
-        $from           = $postmarkCallbackData['From'];
-        $message        = $postmarkCallbackData['Msg'];
-        $now            = Carbon::now();
+        $message        = $postmarkCallbackData['message'];
 
         return 'From'.' '."[$phoneFormatted $firstName $lastName]: $message.".' '."Callback Number: $phone";
     }
@@ -105,5 +93,20 @@ class AutoResolveCallbackRequestService
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)
     {
         (new ProcessUnresolvedPostmarkCallback($matchedResultsFromDB, $recordId))->handleUnresolved();
+    }
+    
+    private function assignCallbackToNurse(User $user, array $postmarkCallbackData)
+    {
+        /** @var SchedulerService $service */
+        $service = app(SchedulerService::class);
+        $service->scheduleAsapCallbackTask(
+            $user,
+            $this->constructCallbackMessage($postmarkCallbackData),
+            ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
+            null,
+            SchedulerService::CALL_BACK_TYPE,
+        );
+    
+        return;
     }
 }

@@ -68,8 +68,8 @@ class InboundCallbackSingleMatchService
      */
     public function requestsCancellation(array $postmarkData)
     {
-        return isset($postmarkData['Cancel/Withdraw Reason'])
-            || Str::contains(Str::of($postmarkData['Msg'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
+        return isset($postmarkData['cancelReason'])
+            || Str::contains(Str::of($postmarkData['message'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
     }
 
     /**
