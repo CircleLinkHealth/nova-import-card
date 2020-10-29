@@ -76,11 +76,11 @@ class EmailRNDailyReportToDeprecate extends Command
 
                         $systemTime = PageTimer::where('provider_id', $nurse->id)
                             ->createdOn($date, 'start_time')
-                            ->sum('billable_duration');
+                            ->sum('duration');
 
                         $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
                             ->createdInMonth($date, 'start_time')
-                            ->sum('billable_duration');
+                            ->sum('duration');
 
                         if (0 == $systemTime) {
                             continue;
