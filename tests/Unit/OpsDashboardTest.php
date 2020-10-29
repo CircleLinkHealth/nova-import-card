@@ -8,6 +8,7 @@ namespace Tests\Unit;
 
 use App\Jobs\GenerateOpsDailyPracticeReport;
 use App\Repositories\PatientSummaryEloquentRepository;
+use App\Traits\Tests\PracticeHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
@@ -24,6 +25,7 @@ class OpsDashboardTest extends \Tests\TestCase
 {
     use CarePlanHelpers;
     use UserHelpers;
+    use PracticeHelpers;
 
     /**
      * @var Factory
@@ -56,13 +58,13 @@ class OpsDashboardTest extends \Tests\TestCase
      */
     protected $repo;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->faker = Factory::create();
 
-        $this->practice = factory(Practice::class)->create();
+        $this->practice = $this->setupPractice(true, true, true, true);
         $this->location = Location::firstOrCreate([
             'practice_id' => $this->practice->id,
         ]);
@@ -76,7 +78,7 @@ class OpsDashboardTest extends \Tests\TestCase
     public function test_deltas_are_accurate()
     {
         //setup practice and patients
-        $practice = factory(Practice::class)->create();
+        $practice = $this->setupPractice(true, true, true,);
 
         $patients = [];
         for ($i = 10; $i > 0; --$i) {
@@ -235,10 +237,10 @@ class OpsDashboardTest extends \Tests\TestCase
      */
     public function test_report_is_logged_in_db_for_multiple_practices()
     {
-        $practice1 = factory(Practice::class)->create();
+        $practice1 = $this->setupPractice(true,true,true,true);
         $this->setupPatient($practice1);
 
-        $practice2 = factory(Practice::class)->create();
+        $practice2 = $this->setupPractice(true,true,true,true);
         $this->setupPatient($practice2);
 
         $this->runCommandToGenerateEntireOpsDailyReport();
