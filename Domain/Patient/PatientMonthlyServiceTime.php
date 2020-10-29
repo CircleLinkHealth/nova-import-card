@@ -42,9 +42,15 @@ class PatientMonthlyServiceTime
             ->getTimeForServices([ChargeableService::CCM, ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60]);
     }
 
-    public static function forChargeableServiceCode(string $chargeableServiceCode, int $patientId, Carbon $month): int
+    public static function forChargeableServiceId(int $chargeableServiceId, int $patientId, Carbon $month): int
     {
-        switch ($chargeableServiceCode) {
+        $allCs = ChargeableService::cached();
+        /** @var ChargeableService $cs */
+        $cs = $allCs->firstWhere('id', '=', $chargeableServiceId);
+        if ( ! $cs) {
+            return 0;
+        }
+        switch ($cs->code) {
             case ChargeableService::CCM:
             case ChargeableService::CCM_PLUS_40:
             case ChargeableService::CCM_PLUS_60:
@@ -59,13 +65,6 @@ class PatientMonthlyServiceTime
             default:
                 return 0;
         }
-    }
-
-    public static function forChargeableServiceIds(array $chargeableServiceIds, int $patientId, Carbon $month): int
-    {
-        return app(PatientMonthlyServiceTime::class)
-            ->setSummaries($patientId, $month)
-            ->getTimeForServiceIds($chargeableServiceIds);
     }
 
     public static function pcm(int $patientId, Carbon $month): int
@@ -96,14 +95,12 @@ class PatientMonthlyServiceTime
 
     private function getTimeForServices(array $chargeableServiceCodes, $include = true): int
     {
-        if ($include) {
-            return $this->summaries->whereIn('chargeable_service_code', $chargeableServiceCodes)
-                ->sum('total_time') ?? 0;
-        }
+        $csIds = ChargeableService::cached()
+            ->whereIn('code', $chargeableServiceCodes)
+            ->pluck('id')
+            ->toArray();
 
-        return $this->summaries
-            ->whereNotIn('chargeable_service_code', $chargeableServiceCodes)
-            ->sum('total_time') ?? 0;
+        return $this->getTimeForServiceIds($csIds, $include);
     }
 
     private function setSummaries(int $patientId, Carbon $month): self

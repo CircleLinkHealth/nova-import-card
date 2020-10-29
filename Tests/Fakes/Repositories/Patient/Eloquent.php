@@ -89,7 +89,7 @@ class Eloquent implements PatientServiceProcessorRepository
 
     public function getChargeablePatientSummaries(int $patientId, Carbon $month): EloquentCollection
     {
-        $chargebleServices = ChargeableService::getAll();
+        $chargebleServices = ChargeableService::cached();
 
         /** @var ChargeableService $cs */
         $cs = $chargebleServices->where('code', '=', ChargeableService::CCM)->first();
