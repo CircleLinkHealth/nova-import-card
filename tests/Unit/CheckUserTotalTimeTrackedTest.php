@@ -6,10 +6,10 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use App\UserTotalTimeChecker;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Tests\TestCase;
 
