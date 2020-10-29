@@ -188,13 +188,13 @@ abstract class NursePaymentAlgorithm
     protected function getTotalTimeForMonth(string $csCode): int
     {
         $month = $this->startDate->copy()->startOfMonth();
-        
+
         /** @var ChargeableService $cs */
-        $cs  = ChargeableService::cached()->firstWhere('code', '=', $csCode);
-        if ($cs) {
+        $cs = ChargeableService::cached()->firstWhere('code', '=', $csCode);
+        if ( ! $cs) {
             return 0;
         }
-        
+
         if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
             return PatientMonthlyServiceTime::forChargeableServiceId($cs->id, $this->patientId, $month);
         }
