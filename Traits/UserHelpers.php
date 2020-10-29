@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Customer\Traits;
 use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -354,7 +355,7 @@ trait UserHelpers
             $cpmProb     = CpmProblem::notGenericDiabetes()->first();
             $ccdProblems = $patient->ccdProblems()->createMany([
                 [
-                    'name'           => $name = 'test'.Str::random(5),
+                    'name'           => $cpmProb->name,
                     'is_monitored'   => true,
                     'code'           => 'pcm_test',
                     'cpm_problem_id' => $cpmProb->id,
@@ -399,7 +400,7 @@ trait UserHelpers
             }
         }
 
-        app(PatientServiceProcessorRepository::class)->reloadPatientProblems($patient->id);
+        BillingCache::clearPatients();
         ProcessSinglePatientMonthlyServices::dispatch($patient->id);
 
         return $patient;
