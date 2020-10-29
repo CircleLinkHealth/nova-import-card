@@ -122,7 +122,7 @@ class ChargeableService extends BaseModel
         return self::whereIn('code', self::DEFAULT_CHARGEABLE_SERVICE_CODES)->get();
     }
 
-    public static function getAll()
+    public static function cached()
     {
         if ( ! self::$cached) {
             self::$cached = ChargeableService::all();
