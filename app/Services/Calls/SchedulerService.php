@@ -211,8 +211,9 @@ class SchedulerService
      * So, run the query again to find any call of today with status of not 'reached' or 'not reached'.
      *
      * @param $patientId
+     * @param $authorId
      */
-    public function getTodaysCall($patientId): ?Call
+    public function getTodaysCall($patientId, $authorId = null): ?Call
     {
         $base = Call::where(
             function ($q) {
@@ -222,6 +223,9 @@ class SchedulerService
         )
             ->where('inbound_cpm_id', $patientId)
             ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
+            ->when($authorId, function ($q) use ($authorId) {
+                return $q->where('outbound_cpm_id', $authorId);
+            })
             ->orderBy('updated_at', 'desc');
 
         $scheduled = $base->where('status', Call::SCHEDULED);
@@ -741,7 +745,7 @@ class SchedulerService
     ): void {
         $scheduled_call = $this->updateOrCreateCallWithNote(
             $note,
-            $scheduled_call = $this->getTodaysCall($patient->id),
+            $scheduled_call = $this->getTodaysCall($patient->id, $note->author_id),
             $callStatus,
             $attestedProblems
         );
