@@ -42,6 +42,15 @@ class CallViewFilters extends QueryFilters
             });
     }
 
+    public function demo($value = null)
+    {
+        if (is_null($value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('is_demo', '=', $value);
+    }
+
     public function globalFilters(): array
     {
         return ['software_only_user' => ! auth()->user()->isAdmin()];

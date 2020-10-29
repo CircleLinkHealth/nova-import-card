@@ -9,6 +9,7 @@ namespace Tests\Feature;
 use App\Call;
 use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
 use App\Notifications\PatientUnsuccessfulCallNotification;
+use App\NotificationsExclusion;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
@@ -24,13 +25,13 @@ class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
     {
         parent::setUp();
         AppConfig::set('enable_unsuccessful_call_patient_notification', true);
-        Notification::fake();
         Mail::fake();
         Twilio::fake();
     }
 
     public function test_patient_does_not_receive_notification_after_second_unsuccessful_call()
     {
+        Notification::fake();
         $nurse   = $this->careCoach();
         $patient = $this->patient();
         $this->be($nurse);
@@ -40,8 +41,51 @@ class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
         Notification::assertSentToTimes($patient, PatientUnsuccessfulCallNotification::class, 1);
     }
 
+    public function test_patient_does_not_receive_notification_if_in_exclusion_list()
+    {
+        $patient = $this->patient();
+        NotificationsExclusion::updateOrCreate([
+            'user_id' => $patient->id,
+            'sms'     => true,
+            'mail'    => true,
+        ], []);
+        $nurse = $this->careCoach();
+        $this->be($nurse);
+        $this->createNote($patient->id);
+
+        /** @var DatabaseNotification $notification */
+        $notification = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
+            ->where('notifiable_id', '=', $patient->id)
+            ->first();
+
+        self::assertTrue('failed' === $notification->data['status']['mail']['value']);
+        self::assertTrue('failed' === $notification->data['status']['twilio']['value']);
+    }
+
+    public function test_patient_does_not_receive_sms_notification_if_in_exclusion_list_but_receives_email()
+    {
+        $patient = $this->patient();
+        NotificationsExclusion::updateOrCreate([
+            'user_id' => $patient->id,
+            'sms'     => true,
+            'mail'    => false,
+        ], []);
+        $nurse = $this->careCoach();
+        $this->be($nurse);
+        $this->createNote($patient->id);
+
+        /** @var DatabaseNotification $notification */
+        $notification = DatabaseNotification::whereType(PatientUnsuccessfulCallNotification::class)
+            ->where('notifiable_id', '=', $patient->id)
+            ->first();
+
+        self::assertFalse('failed' === $notification->data['status']['mail']['value']);
+        self::assertTrue('failed' === $notification->data['status']['twilio']['value']);
+    }
+
     public function test_patient_receives_notification_after_first_unsuccessful_call()
     {
+        Notification::fake();
         $nurse   = $this->careCoach();
         $patient = $this->patient();
         $this->be($nurse);
@@ -51,6 +95,7 @@ class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
 
     public function test_patient_receives_notification_after_third_unsuccessful_call()
     {
+        Notification::fake();
         $nurse   = $this->careCoach();
         $patient = $this->patient();
         $this->be($nurse);
@@ -64,6 +109,7 @@ class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
 
     public function test_patient_receives_only_one_reminder_after_two_days()
     {
+        Notification::fake();
         $nurse   = $this->careCoach();
         $patient = $this->patient();
         $this->be($nurse);
@@ -103,6 +149,7 @@ class PatientUnsuccessfulCallNotificationTest extends CustomerTestCase
 
     public function test_patient_receives_reminder_after_two_days()
     {
+        Notification::fake();
         $nurse   = $this->careCoach();
         $patient = $this->patient();
         $this->be($nurse);
