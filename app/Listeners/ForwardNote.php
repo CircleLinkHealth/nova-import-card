@@ -14,7 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 class ForwardNote implements ShouldQueue
 {
     use InteractsWithQueue;
-    
+
     /**
      * The name of the queue the job should be sent to.
      *
