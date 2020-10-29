@@ -101,7 +101,7 @@ trait NursePerformanceCalculations
         $totalCPMtimeForMonth = $nurse->pageTimersAsProvider()
             ->where('start_time', '>=', $start)
             ->where('start_time', '<=', $end)
-            ->sum('billable_duration');
+            ->sum('duration');
 
         return 0 === $totalMonthlyCompletedPatientsOfNurse ?
             0 :
@@ -350,7 +350,7 @@ trait NursePerformanceCalculations
     {
         return PageTimer::where('provider_id', $nurse->id)
             ->createdInMonth($date, 'start_time')
-            ->sum('billable_duration');
+            ->sum('duration');
     }
 
     /**
@@ -366,7 +366,7 @@ trait NursePerformanceCalculations
             'start_time',
             '>=',
             $date->toDateTimeString()
-        )->sum('billable_duration');
+        )->sum('duration');
     }
 
     /**

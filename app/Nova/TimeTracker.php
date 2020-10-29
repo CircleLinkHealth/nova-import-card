@@ -240,8 +240,12 @@ class TimeTracker extends Resource
             ::whereIn('id', $pageTimer->activities->pluck('chargeable_service_id'))
                 ->get();
 
+        $len = $pageTimer->activities->count();
+        if (0 === $len) {
+            return $fields;
+        }
+
         $patientTime        = PatientTime::getForPatient($pageTimer->patient, $chargeableServices);
-        $len                = $pageTimer->activities->count();
         $modifiableCsCode   = null;
         $modifiableDuration = null;
         for ($i = 0; $i < $len; ++$i) {
