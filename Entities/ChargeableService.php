@@ -96,6 +96,19 @@ class ChargeableService extends BaseModel
         self::GENERAL_CARE_MANAGEMENT,
     ];
 
+    const FRIENDLY_NAMES = [
+        self::CCM                     => 'CCM',
+        self::CCM_PLUS_40             => 'CCM40',
+        self::CCM_PLUS_60             => 'CCM60',
+        self::BHI                     => 'BHI',
+        self::GENERAL_CARE_MANAGEMENT => 'RHC',
+        self::AWV_INITIAL             => 'AWV1',
+        self::AWV_SUBSEQUENT          => 'AWV2+',
+        self::PCM                     => 'PCM',
+        self::RPM                     => 'RPM',
+        self::RPM40                   => 'RPM40',
+    ];
+
     const GENERAL_CARE_MANAGEMENT = 'G0511';
 
     const PCM   = 'G2065';
@@ -117,11 +130,6 @@ class ChargeableService extends BaseModel
 
     private static ?Collection $cached = null;
 
-    public static function defaultServices()
-    {
-        return self::whereIn('code', self::DEFAULT_CHARGEABLE_SERVICE_CODES)->get();
-    }
-
     public static function cached()
     {
         if ( ! self::$cached) {
@@ -129,6 +137,11 @@ class ChargeableService extends BaseModel
         }
 
         return self::$cached;
+    }
+
+    public static function defaultServices()
+    {
+        return self::whereIn('code', self::DEFAULT_CHARGEABLE_SERVICE_CODES)->get();
     }
 
     public static function getChargeableServiceIdUsingCode(string $code): int
@@ -156,6 +169,11 @@ class ChargeableService extends BaseModel
         }
 
         return $code;
+    }
+
+    public static function getFriendlyName($code)
+    {
+        return self::FRIENDLY_NAMES[$code] ?? $code;
     }
 
     public function patientSummaries()
