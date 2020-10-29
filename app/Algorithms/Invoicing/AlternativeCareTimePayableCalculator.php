@@ -7,17 +7,18 @@
 namespace App\Algorithms\Invoicing;
 
 use App\Call;
+use App\Constants;
 use App\Note;
 use App\Services\ActivityService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\NurseMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Created by PhpStorm.
@@ -27,8 +28,6 @@ use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
  */
 class AlternativeCareTimePayableCalculator
 {
-    const MONTHLY_TIME_TARGET_IN_SECONDS = 1200;
-
     /**
      * AlternativeCareTimePayableCalculator constructor.
      */
@@ -68,14 +67,14 @@ class AlternativeCareTimePayableCalculator
         $add_to_accrued_towards_ccm = 0;
         $add_to_accrued_after_ccm   = 0;
 
-        $was_above_20 = $totalTimeBefore >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
-        $is_above_20  = $totalTimeAfter >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
+        $was_above_20 = $totalTimeBefore >= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+        $is_above_20  = $totalTimeAfter >= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
 
         if ($was_above_20) {
             $add_to_accrued_after_ccm = $duration;
         } elseif ($is_above_20) {
-            $add_to_accrued_after_ccm   = $totalTimeAfter - self::MONTHLY_TIME_TARGET_IN_SECONDS;
-            $add_to_accrued_towards_ccm = self::MONTHLY_TIME_TARGET_IN_SECONDS - $totalTimeBefore;
+            $add_to_accrued_after_ccm   = $totalTimeAfter - Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+            $add_to_accrued_towards_ccm = Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS - $totalTimeBefore;
         } else {
             $add_to_accrued_towards_ccm = $duration;
         }
@@ -101,17 +100,17 @@ class AlternativeCareTimePayableCalculator
 
     private function getCurrentTotalTime(Activity $activity, User $user, Carbon $monthYear)
     {
+        if ( ! $activity->chargeable_service_id) {
+            Log::critical("Activity[$activity->id] does not have a chargeable service id");
+
+            return 0;
+        }
+
         if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
-            $csCode = ChargeableService::find($activity->chargeable_service_id)->code;
-
-            return PatientMonthlyServiceTime::forChargeableServiceCode($csCode, $user->id, $monthYear);
+            return PatientMonthlyServiceTime::forChargeableServiceId($activity->chargeable_service_id, $user->id, $monthYear);
         }
 
-        if ($activity->chargeable_service_id) {
-            return app(ActivityService::class)->totalTimeForChargeableServiceId($user->id, $activity->chargeable_service_id, $monthYear);
-        }
-
-        return 0;
+        return app(ActivityService::class)->totalTimeForChargeableServiceId($user->id, $activity->chargeable_service_id, $monthYear);
     }
 
     /**

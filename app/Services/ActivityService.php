@@ -205,7 +205,7 @@ class ActivityService
 
     public function totalTimeForChargeableServiceId(int $patientId, int $chargeableServiceId, Carbon $monthYear = null)
     {
-        $cs     = ChargeableService::getAll();
+        $cs     = ChargeableService::cached();
         $csCode = $cs->firstWhere('id', '=', $chargeableServiceId)->code;
         switch ($csCode) {
             case ChargeableService::CCM:
