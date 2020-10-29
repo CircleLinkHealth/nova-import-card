@@ -14,7 +14,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Nurseinvoices\TimeSplitter;
+use CircleLinkHealth\Nurseinvoices\Time\TimeSplitter;
 
 class ActivityService
 {
