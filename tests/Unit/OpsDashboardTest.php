@@ -24,8 +24,8 @@ use Tests\Helpers\CarePlanHelpers;
 class OpsDashboardTest extends \Tests\TestCase
 {
     use CarePlanHelpers;
-    use UserHelpers;
     use PracticeHelpers;
+    use UserHelpers;
 
     /**
      * @var Factory
@@ -78,7 +78,7 @@ class OpsDashboardTest extends \Tests\TestCase
     public function test_deltas_are_accurate()
     {
         //setup practice and patients
-        $practice = $this->setupPractice(true, true, true,);
+        $practice = $this->setupPractice(true, true, true, );
 
         $patients = [];
         for ($i = 10; $i > 0; --$i) {
@@ -237,10 +237,10 @@ class OpsDashboardTest extends \Tests\TestCase
      */
     public function test_report_is_logged_in_db_for_multiple_practices()
     {
-        $practice1 = $this->setupPractice(true,true,true,true);
+        $practice1 = $this->setupPractice(true, true, true, true);
         $this->setupPatient($practice1);
 
-        $practice2 = $this->setupPractice(true,true,true,true);
+        $practice2 = $this->setupPractice(true, true, true, true);
         $this->setupPatient($practice2);
 
         $this->runCommandToGenerateEntireOpsDailyReport();
