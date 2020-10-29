@@ -188,13 +188,18 @@ abstract class NursePaymentAlgorithm
     protected function getTotalTimeForMonth(string $csCode): int
     {
         $month = $this->startDate->copy()->startOfMonth();
+        
+        /** @var ChargeableService $cs */
+        $cs  = ChargeableService::cached()->firstWhere('code', '=', $csCode);
+        if ($cs) {
+            return 0;
+        }
+        
         if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
-            return PatientMonthlyServiceTime::forChargeableServiceCode($csCode, $this->patientId, $month);
+            return PatientMonthlyServiceTime::forChargeableServiceId($cs->id, $this->patientId, $month);
         }
 
-        $csId = ChargeableService::firstWhere('code', '=', $csCode)->id;
-
-        return app(ActivityService::class)->totalTimeForChargeableServiceId($this->patientId, $csId, $month);
+        return app(ActivityService::class)->totalTimeForChargeableServiceId($this->patientId, $cs->id, $month);
     }
 
     protected function practiceHasCcmPlusCode(
@@ -228,7 +233,7 @@ abstract class NursePaymentAlgorithm
          * 2 => 40+
          */
         $timeEntryPerCsCodePerRangePerNurseInfoId = collect();
-        $chargeableServices                       = ChargeableService::getAll();
+        $chargeableServices                       = ChargeableService::cached();
 
         $patientCareRateLogs->each(function ($e) use ($timeEntryPerCsCodePerRangePerNurseInfoId, $chargeableServices) {
             $chargeableServiceId = $e['chargeable_service_id'];
