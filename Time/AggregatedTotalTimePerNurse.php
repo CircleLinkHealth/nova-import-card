@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\NurseInvoices;
+namespace CircleLinkHealth\NurseInvoices\Time;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;

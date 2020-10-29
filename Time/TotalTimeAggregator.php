@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\NurseInvoices;
+namespace CircleLinkHealth\NurseInvoices\Time;
 
 use App\TimeTrackedPerDayView;
 use Carbon\Carbon;
@@ -14,6 +14,7 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class TotalTimeAggregator
 {
@@ -52,7 +53,7 @@ class TotalTimeAggregator
      */
     public function aggregate()
     {
-        return \DB::query()
+        return DB::query()
             ->fromSub(
                 $this->systemTimeFromPageTimer($this->userIds)
                     ->unionAll($this->offlineSystemTime($this->userIds))

@@ -10,8 +10,8 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\VariablePayCalculator;
-use CircleLinkHealth\Nurseinvoices\VisitFeePay;
+use CircleLinkHealth\NurseInvoices\Algorithms\VariablePayCalculator;
+use CircleLinkHealth\Nurseinvoices\ValueObjects\VisitFeePay;
 use Illuminate\Support\Collection;
 use Spatie\ViewModels\ViewModel;
 

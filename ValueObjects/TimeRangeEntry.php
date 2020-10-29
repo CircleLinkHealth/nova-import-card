@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Nurseinvoices;
+namespace CircleLinkHealth\NurseInvoices\ValueObjects;
 
 class TimeRangeEntry
 {

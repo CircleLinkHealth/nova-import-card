@@ -8,9 +8,9 @@ namespace CircleLinkHealth\NurseInvoices\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Algorithms\VariablePayCalculator;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
-use CircleLinkHealth\NurseInvoices\TotalTimeAggregator;
-use CircleLinkHealth\NurseInvoices\VariablePayCalculator;
+use CircleLinkHealth\NurseInvoices\Time\TotalTimeAggregator;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
