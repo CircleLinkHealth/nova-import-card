@@ -2319,7 +2319,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return false;
         }
 
-        return PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM);
+        return PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM_PLUS_40) || PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM_PLUS_40);
     }
 
     /**
