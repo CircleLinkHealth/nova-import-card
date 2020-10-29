@@ -9,7 +9,7 @@ namespace Tests\Unit;
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
-use App\Traits\Tests\TimeHelpers;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Tests\TestCase;

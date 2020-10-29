@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use App\Nova\Actions\ModifyTimeTracker;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
-use App\Traits\Tests\TimeHelpers;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use JoshGaber\NovaUnit\Actions\NovaActionTest;

@@ -10,7 +10,7 @@ use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
 use App\Call;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
-use App\Traits\Tests\TimeHelpers;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use Carbon\Carbon;
 use Tests\TestCase;
 

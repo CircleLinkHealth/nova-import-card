@@ -9,7 +9,7 @@ namespace Tests\Feature;
 use App\Call;
 use App\Jobs\CreateNurseInvoices;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
-use App\Traits\Tests\TimeHelpers;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;

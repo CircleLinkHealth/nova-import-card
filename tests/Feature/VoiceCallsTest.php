@@ -12,7 +12,7 @@ use App\CpmCallAlert;
 use App\Nova\Filters\TwilioCallSourceFilter;
 use App\Services\Calls\SchedulerService;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
-use App\Traits\Tests\TimeHelpers;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use App\TwilioCall;
 use App\VoiceCall;
 use CircleLinkHealth\Core\Entities\AppConfig;
