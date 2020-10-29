@@ -9,7 +9,7 @@ namespace Tests\Unit\CallSchedulingAlgo;
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestor;
 use App\Call;
-use App\Traits\Tests\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use Carbon\Carbon;
 use Tests\TestCase;

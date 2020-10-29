@@ -7,7 +7,7 @@
 namespace Tests\Feature;
 
 use App\Services\ApproveBillablePatientsService;
-use App\Traits\Tests\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Traits\UserHelpers;

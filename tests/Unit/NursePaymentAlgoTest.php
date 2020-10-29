@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use App\Jobs\CreateNurseInvoices;
-use App\Traits\Tests\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;

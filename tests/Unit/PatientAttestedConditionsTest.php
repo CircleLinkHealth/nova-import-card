@@ -11,7 +11,7 @@ use App\Call;
 use App\Note;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\CCD\CcdProblemService;
-use App\Traits\Tests\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\AttestPatientProblems;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;

@@ -11,7 +11,7 @@ use App\Console\Commands\CheckVoiceCalls;
 use App\CpmCallAlert;
 use App\Nova\Filters\TwilioCallSourceFilter;
 use App\Services\Calls\SchedulerService;
-use App\Traits\Tests\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use App\TwilioCall;
 use App\VoiceCall;
