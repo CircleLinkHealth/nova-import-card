@@ -343,7 +343,7 @@ trait UserHelpers
         if ( ! $location) {
             $location = factory(Location::class)->create(['practice_id' => $practice->id]);
         }
-        
+
         $patient->setPreferredContactLocation($location->id);
 
         if ($isBhi) {

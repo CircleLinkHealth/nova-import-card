@@ -42,22 +42,22 @@ trait TimeHelpers
         if ($withSuccessfulCall) {
             $withPhoneSession = true;
         }
-        
+
         if ( ! $activityName) {
             $activityName = $withSuccessfulCall
                 ? 'Patient Note Creation'
                 : 'test';
         }
-        
+
         $note = null;
         if ('Patient Note Creation' === $activityName || $withPhoneSession || $withSuccessfulCall) {
             $note = $this->createNote($nurse, $patient->id, $withPhoneSession, $withSuccessfulCall, $startTime);
         }
-        
+
         if ( ! $chargeableServiceId) {
             $chargeableServiceId = ChargeableService::firstWhere('code', '=', ChargeableService::CCM)->id;
         }
-        
+
         $seconds = $minutes * 60;
         $bag     = new ParameterBag();
         $bag->add([
@@ -79,41 +79,41 @@ trait TimeHelpers
                 ],
             ],
         ]);
-        
+
         StoreTimeTracking::dispatchNow($bag);
-        
+
         return $note;
     }
-    
+
     private function createNote(User $author, $patientId, $phoneSession = false, $successfulCall = false, Carbon $startTime = null): ?Note
     {
         $this->be($author);
-        
+
         $args = [
             'body'       => 'test',
             'patient_id' => $patientId,
         ];
-        
+
         if ($startTime) {
             $args['performed_at'] = $startTime;
         }
-        
+
         if ($phoneSession) {
             $args['phone']       = 1;
             $args['call_status'] = $successfulCall ? Call::REACHED : Call::NOT_REACHED;
         }
-        
+
         /** @var TestResponse $resp */
         $resp = $this->call(
             'POST',
             route('patient.note.store', ['patientId' => $patientId]),
             $args
         );
-        
+
         self::assertTrue($resp->status() < 400);
-        
+
         $this->flushSession();
-        
+
         return Note::where('patient_id', '=', $patientId)
             ->orderBy('created_at', 'desc')
             ->first();
