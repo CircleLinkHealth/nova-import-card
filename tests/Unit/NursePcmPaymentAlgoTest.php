@@ -10,6 +10,7 @@ use App\Jobs\CreateNurseInvoices;
 use App\Traits\Tests\PracticeHelpers;
 use App\Traits\Tests\TimeHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
@@ -53,7 +54,7 @@ class NursePcmPaymentAlgoTest extends TestCase
         $patient1 = $this->setupPatient($practice, false, true);
         $patient2 = $this->setupPatient($practice, false, true);
         $patient3 = $this->setupPatient($practice, false, true);
-
+        
         $this->addTime($nurse, $patient1, 20, true, 1, $this->pcmChargeableServiceId);
         $this->addTime($nurse, $patient1, 10, true, 1, $this->pcmChargeableServiceId);
 

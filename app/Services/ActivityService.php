@@ -235,6 +235,7 @@ class ActivityService
 
     private function getChargeableServiceById(User $patient, int $id): ?ChargeableService
     {
+        //todo: replace with new billing
         return $patient
             ->primaryPractice
             ->chargeableServices
