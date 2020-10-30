@@ -51,18 +51,7 @@ class VariableRatePaymentAlgorithm extends NursePaymentAlgorithm
             })
             ->filter();
 
-        $hasSuccessfulCall = false;
-        $rangesForNurseOnly->each(function (Collection $timeEntryForCsCodePerRange) use (&$hasSuccessfulCall) {
-            $hasSuccessfulCall = $timeEntryForCsCodePerRange
-                ->filter(function (TimeRangeEntry $entry) {
-                    return $entry->hasSuccessfulCall;
-                })
-                ->isNotEmpty();
-            if ($hasSuccessfulCall) {
-                //exit loop
-                return false;
-            }
-        });
+        $hasSuccessfulCall = $this->patientHasAtLeastOneSuccessfulCall($rangesForNurseOnly);
 
         $rangesForNurseOnly->each(function (Collection $timeEntryForCsCodePerRange, string $csCode) use ($hasSuccessfulCall, $lowRates, $highRates) {
             if ($timeEntryForCsCodePerRange->isEmpty()) {
@@ -134,5 +123,23 @@ class VariableRatePaymentAlgorithm extends NursePaymentAlgorithm
         $nurseCcmInRange = $range->duration / self::HOUR_IN_SECONDS;
 
         return new VariableRatePay($nurseCcmInRange * $rate, $rate);
+    }
+
+    private function patientHasAtLeastOneSuccessfulCall(Collection $timeEntryPerCsCodePerRangeForNurse)
+    {
+        $hasSuccessfulCall = false;
+        $timeEntryPerCsCodePerRangeForNurse->each(function (Collection $timeEntryForCsCodePerRange) use (&$hasSuccessfulCall) {
+            $hasSuccessfulCall = $timeEntryForCsCodePerRange
+                ->filter(function (TimeRangeEntry $entry) {
+                    return $entry->hasSuccessfulCall;
+                })
+                ->isNotEmpty();
+            if ($hasSuccessfulCall) {
+                //exit loop
+                return false;
+            }
+        });
+
+        return $hasSuccessfulCall;
     }
 }
