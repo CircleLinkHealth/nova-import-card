@@ -89,7 +89,7 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        if ($this->clashesWithHigherOrderServices($patientId, $chargeableMonth)) {
+        if ($this->clashesWithHigherOrderServices($patientId, $chargeableMonth, ...$patientProblems)) {
             return false;
         }
 
@@ -133,10 +133,16 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return true;
     }
 
-    private function clashesWithHigherOrderServices(int $patientId, Carbon $chargeableMonth): bool
+    private function clashesWithHigherOrderServices(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
         foreach ($this->clashesWith() as $clash) {
-            if (PatientIsOfServiceCode::execute($patientId, $clash->code())) {
+            $clashIsAttached = $this->repo->isAttached($patientId, $clash->code(), $chargeableMonth);
+            
+            $hasEnoughProblemsForClash = collect($patientProblems)
+                    ->filter(fn(PatientProblemForProcessing $problem) => in_array($clash->code(),$problem->getServiceCodes()))
+                    ->count() >= $clash->minimumNumberOfProblems();
+            
+            if ( $clashIsAttached && $hasEnoughProblemsForClash ) {
                 return true;
             }
         }
