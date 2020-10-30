@@ -25,6 +25,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\Eligibility\Entities\RpmProblem;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
@@ -334,7 +335,7 @@ trait UserHelpers
         return $nurse;
     }
 
-    private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false)
+    private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false, bool $addRpm = false)
     {
         $patient = $this->createUser($practice->id, 'participant');
 
@@ -356,10 +357,33 @@ trait UserHelpers
         $patient->patientInfo->save();
         $cpmProblems = CpmProblem::notGenericDiabetes()->get();
 
-        //$pcmOnly means one ccm condition only
+        if ($addRpm) {
+            $cpmProb     = $cpmProblems->get(1);
+            $patient->ccdProblems()->createMany([
+                [
+                    'name'           => $cpmProb->name,
+                    'is_monitored'   => true,
+                    'code'           => 'rpm_test',
+                    'cpm_problem_id' => $cpmProb->id,
+                ],
+            ]);
+            $patient->ccdProblems()
+                ->firstWhere('cpm_problem_id', $cpmProb->id)
+                ->codes()
+                ->create([
+                    'code' => 'rpm_test',
+                ]);
+            RpmProblem::create([
+                'practice_id' => $practice->id,
+                'code'        => 'rpm_test',
+                'description' => $cpmProb->name,
+            ]);
+        }
+
+        $ccdProblems = collect();
         if ($pcmOnly) {
-            $cpmProb     = CpmProblem::notGenericDiabetes()->first();
-            $ccdProblems = $patient->ccdProblems()->createMany([
+            $cpmProb     = $cpmProblems->get(2);
+            $patient->ccdProblems()->createMany([
                 [
                     'name'           => $cpmProb->name,
                     'is_monitored'   => true,
@@ -367,16 +391,17 @@ trait UserHelpers
                     'cpm_problem_id' => $cpmProb->id,
                 ],
             ]);
-            $patient->ccdProblems()->first()->codes()->create([
-                'code' => 'pcm_test',
-            ]);
+            $patient->ccdProblems()
+                ->firstWhere('cpm_problem_id', $cpmProb->id)
+                ->codes()
+                ->create([
+                    'code' => 'pcm_test',
+                ]);
             PcmProblem::create([
                 'practice_id' => $practice->id,
                 'code'        => 'pcm_test',
                 'description' => $cpmProb->name,
             ]);
-
-            SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
         } else {
             $ccdProblems = $patient->ccdProblems()->createMany([
                 ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
@@ -384,9 +409,13 @@ trait UserHelpers
                 ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
             ]);
         }
+        
+        if ($pcmOnly || $addRpm) {
+            SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
+        }
 
         //todo:revisit/cleanup in next iteration of billing
-        if ( ! $pcmOnly) {
+        if ($ccdProblems->isNotEmpty()) {
             $len = $ccdProblems->count();
             for ($i = 0; $i < $len; ++$i) {
                 $problem = $ccdProblems->get($i);

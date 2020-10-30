@@ -20,12 +20,11 @@ trait TimeHelpers
     /**
      * Add billable or not to a patient and credit nurse.
      *
-     * @param User|null $patient
-     * @param mixed $enrolleeId
+     * @param User|null  $patient
+     * @param mixed      $enrolleeId
      * @param mixed|null $activityName
-     * @param mixed $forceSkip
-     * @param mixed $withPhoneSession
-     * @return Note|null
+     * @param mixed      $forceSkip
+     * @param mixed      $withPhoneSession
      */
     private function addTime(
         User $nurse,
