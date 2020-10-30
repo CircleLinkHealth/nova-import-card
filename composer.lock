@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "ef2cc85c0d91dbc2b792a48ff355ea533a81ff68"
+                "reference": "595b98e1320c5d4a99a573e2f85b604ac3347051"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-29T13:25:19+00:00"
+            "time": "2020-10-30T11:15:14+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1269,7 +1269,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "ee26b00ed5e9f0a58a20e5c361fda289ddd257f5"
+                "reference": "a706095f71c5970253111ddf507f0142b4c8a768"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1303,7 +1303,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-29T15:51:18+00:00"
+            "time": "2020-10-30T11:15:14+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1528,7 +1528,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "1e26e306379e8654656a0e42f143888567b2d0a0"
+                "reference": "47140f9bda0c2a7933eaf9952a95c294345494d9"
             },
             "type": "laravel-module",
             "extra": {
@@ -1550,7 +1550,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-29T13:43:52+00:00"
+            "time": "2020-10-30T11:15:14+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
