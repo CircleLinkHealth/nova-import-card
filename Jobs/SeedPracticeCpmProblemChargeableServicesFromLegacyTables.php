@@ -33,10 +33,10 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
     protected ?string $ccmCodeId;
     protected EloquentCollection $cpmProblems;
     protected ?string $pcmCodeId;
-    protected ?string $rpmCodeId;
 
     protected int $practiceId;
     protected LocationProblemServiceRepository $repo;
+    protected ?string $rpmCodeId;
 
     /**
      * Create a new job instance.
@@ -59,10 +59,10 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
         $practice = Practice::with([
             'locations.chargeableServiceSummaries' => fn ($s) => $s->createdOn(Carbon::now()->startOfMonth(), 'chargeable_month'),
             'pcmProblems',
-            'rpmProblems'
+            'rpmProblems',
         ])
             ->findOrFail($this->practiceId);
-        
+
         $this->setChargeableServices();
 
         if (is_null($this->ccmCodeId) && is_null($this->bhiCodeId) && is_null($this->pcmCodeId) && is_null($this->rpmCodeId)) {
@@ -72,10 +72,10 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
         }
 
         $this->setCpmProblems();
-    
+
         $practicePcmProblems = $practice->pcmProblems;
         $practiceRpmProblems = $practice->rpmProblems;
-        
+
         $practice
             ->locations
             ->each(function (Location $location) use (&$toCreate, $practicePcmProblems, $practiceRpmProblems) {
@@ -95,12 +95,12 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                             return $pcmProblem->code === $problem->default_icd_10_code || $pcmProblem->description === $problem->name;
                         }
                     )->count() > 0;
-    
+
                     $isRpm = $practiceRpmProblems->filter(
-                            function (RpmProblem $rpmProblem) use ($problem) {
+                        function (RpmProblem $rpmProblem) use ($problem) {
                                 return $rpmProblem->code === $problem->default_icd_10_code || $rpmProblem->description === $problem->name;
                             }
-                        )->count() > 0;
+                    )->count() > 0;
 
                     if (($isBhi || $isDementia || $isDementia) && $locationHasBhi) {
                         $this->repo()->store($location->id, $problem->id, $this->bhiCodeId);
@@ -109,7 +109,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                     if ($isPcm && $locationHasPcm) {
                         $this->repo()->store($location->id, $problem->id, $this->pcmCodeId);
                     }
-                    
+
                     if ($isRpm && $locationHasRpm) {
                         $this->repo()->store($location->id, $problem->id, $this->rpmCodeId);
                     }
