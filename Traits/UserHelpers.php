@@ -358,7 +358,7 @@ trait UserHelpers
         $cpmProblems = CpmProblem::notGenericDiabetes()->get();
 
         if ($addRpm) {
-            $cpmProb     = $cpmProblems->get(1);
+            $cpmProb = $cpmProblems->get(1);
             $patient->ccdProblems()->createMany([
                 [
                     'name'           => $cpmProb->name,
@@ -382,7 +382,7 @@ trait UserHelpers
 
         $ccdProblems = collect();
         if ($pcmOnly) {
-            $cpmProb     = $cpmProblems->get(2);
+            $cpmProb = $cpmProblems->get(2);
             $patient->ccdProblems()->createMany([
                 [
                     'name'           => $cpmProb->name,
@@ -409,7 +409,7 @@ trait UserHelpers
                 ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
             ]);
         }
-        
+
         if ($pcmOnly || $addRpm) {
             SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
         }
