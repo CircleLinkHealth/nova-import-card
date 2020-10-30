@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.158.17",
+            "version": "3.158.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "086a504647f45d1166d18af2345684893ef43875"
+                "reference": "75aebc2f5dfd23ad7272ff1d59c521bc2a8e2802"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/086a504647f45d1166d18af2345684893ef43875",
-                "reference": "086a504647f45d1166d18af2345684893ef43875",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/75aebc2f5dfd23ad7272ff1d59c521bc2a8e2802",
+                "reference": "75aebc2f5dfd23ad7272ff1d59c521bc2a8e2802",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-10-29T18:16:24+00:00"
+            "time": "2020-10-30T18:12:38+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "595b98e1320c5d4a99a573e2f85b604ac3347051"
+                "reference": "a9790c8e26c3db0e4777adc7136841b1339ed3db"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-30T11:15:14+00:00"
+            "time": "2020-10-30T20:53:36+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1046,11 +1046,7 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1901,6 +1897,16 @@
                 "stream",
                 "stream_filter_append",
                 "stream_filter_register"
+            ],
+            "funding": [
+                {
+                    "url": "https://clue.engineering/support",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/clue",
+                    "type": "github"
+                }
             ],
             "time": "2020-10-02T12:38:20+00:00"
         },
@@ -2757,10 +2763,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0|^8.0"
+                "php": "^7.1|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
+                "phpunit/phpunit": "^6.4|^7.0"
             },
             "type": "library",
             "extra": {
@@ -2794,7 +2800,13 @@
                 "cron",
                 "schedule"
             ],
-            "time": "2020-10-13T00:52:37+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/dragonmantank",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-10-12T18:35:36+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -6532,6 +6544,12 @@
                 "stream",
                 "zip"
             ],
+            "funding": [
+                {
+                    "url": "https://opencollective.com/zipstream",
+                    "type": "open_collective"
+                }
+            ],
             "time": "2020-05-30T13:11:16+00:00"
         },
         {
@@ -9894,6 +9912,16 @@
                 "media",
                 "spatie"
             ],
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
             "time": "2020-09-30T21:19:21+00:00"
         },
         {
@@ -12434,6 +12462,20 @@
                 "psr-17",
                 "psr-7"
             ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-29T08:17:46+00:00"
         },
         {
@@ -12810,6 +12852,20 @@
                 "interfaces",
                 "interoperability",
                 "standards"
+            ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-09-28T13:05:58+00:00"
         },
@@ -13402,6 +13458,16 @@
                 "datatables",
                 "jquery",
                 "laravel"
+            ],
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/yajra",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/yajra",
+                    "type": "patreon"
+                }
             ],
             "time": "2020-10-06T03:24:30+00:00"
         }
@@ -14883,6 +14949,16 @@
                 "laravel",
                 "nova",
                 "novaunit"
+            ],
+            "funding": [
+                {
+                    "url": "https://ko-fi.com/JoshGaber",
+                    "type": "ko_fi"
+                },
+                {
+                    "url": "https://www.patreon.com/joshgaber",
+                    "type": "patreon"
+                }
             ],
             "time": "2020-10-11T02:14:47+00:00"
         },
