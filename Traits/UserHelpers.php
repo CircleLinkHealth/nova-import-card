@@ -7,7 +7,9 @@
 namespace CircleLinkHealth\Customer\Traits;
 
 use App\Call;
+use App\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
@@ -27,8 +29,10 @@ use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\Entities\RpmProblem;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
+use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Faker\Factory;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -359,49 +363,39 @@ trait UserHelpers
 
         if ($addRpm) {
             $cpmProb = $cpmProblems->get(1);
-            $patient->ccdProblems()->createMany([
-                [
-                    'name'           => $cpmProb->name,
-                    'is_monitored'   => true,
-                    'code'           => 'rpm_test',
-                    'cpm_problem_id' => $cpmProb->id,
-                ],
-            ]);
-            $patient->ccdProblems()
-                ->firstWhere('cpm_problem_id', $cpmProb->id)
-                ->codes()
-                ->create([
-                    'code' => 'rpm_test',
-                ]);
+    
             RpmProblem::create([
                 'practice_id' => $practice->id,
-                'code'        => 'rpm_test',
+                'code'        => $icd10 = 'rpm_test',
                 'description' => $cpmProb->name,
             ]);
+            
+            (app(CcdProblemService::class))->addPatientCcdProblem((new CcdProblemInput())
+                ->setCpmProblemId($cpmProb->id)
+                ->setUserId($this->patient()->id)
+                ->setName($cpmProb->name)
+                ->setIsMonitored(true)
+                ->setIcd10($icd10)
+            );
+            
         }
 
         $ccdProblems = collect();
         if ($pcmOnly) {
             $cpmProb = $cpmProblems->get(2);
-            $patient->ccdProblems()->createMany([
-                [
-                    'name'           => $cpmProb->name,
-                    'is_monitored'   => true,
-                    'code'           => 'pcm_test',
-                    'cpm_problem_id' => $cpmProb->id,
-                ],
-            ]);
-            $patient->ccdProblems()
-                ->firstWhere('cpm_problem_id', $cpmProb->id)
-                ->codes()
-                ->create([
-                    'code' => 'pcm_test',
-                ]);
             PcmProblem::create([
                 'practice_id' => $practice->id,
-                'code'        => 'pcm_test',
+                'code'        => $icd10 = 'pcm_test',
                 'description' => $cpmProb->name,
             ]);
+            
+            (app(CcdProblemService::class))->addPatientCcdProblem((new CcdProblemInput())
+                ->setCpmProblemId($cpmProb->id)
+                ->setUserId($this->patient()->id)
+                ->setName($cpmProb->name)
+                ->setIsMonitored(true)
+                ->setIcd10($icd10)
+            );
         } else {
             $ccdProblems = $patient->ccdProblems()->createMany([
                 ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
@@ -410,7 +404,7 @@ trait UserHelpers
             ]);
         }
 
-        if ($pcmOnly || $addRpm) {
+        if (($pcmOnly || $addRpm) && Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)) {
             SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
         }
 
