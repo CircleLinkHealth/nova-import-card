@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "08a3cc2b8546f1b0a4d54b864e60ed357b6f3689"
+                "reference": "ec1a0404c27745af57c4020badbf3261cd48a6c4"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-10-30T21:30:48+00:00"
+            "time": "2020-10-31T10:33:34+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1554,7 +1554,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "f79868b5f96ccc9d5ae110f3b74bcc085e24189d"
+                "reference": "49edd04ec1e94fabc2b4b7e13856d3c9061b97c8"
             },
             "type": "laravel-module",
             "extra": {
@@ -1576,7 +1576,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-26T12:41:26+00:00"
+            "time": "2020-10-31T10:33:33+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -13392,16 +13392,16 @@
         },
         {
             "name": "yajra/laravel-datatables-oracle",
-            "version": "v9.11.1",
+            "version": "v9.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-datatables.git",
-                "reference": "d85285c87cd9c02dfaee2a1201a05e002e148e1a"
+                "reference": "1f0945d9ea0bde659a8fc36c4e3ed7a824c70ca0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/d85285c87cd9c02dfaee2a1201a05e002e148e1a",
-                "reference": "d85285c87cd9c02dfaee2a1201a05e002e148e1a",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/1f0945d9ea0bde659a8fc36c4e3ed7a824c70ca0",
+                "reference": "1f0945d9ea0bde659a8fc36c4e3ed7a824c70ca0",
                 "shasum": ""
             },
             "require": {
@@ -13469,7 +13469,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-10-06T03:24:30+00:00"
+            "time": "2020-10-31T09:24:57+00:00"
         }
     ],
     "packages-dev": [
@@ -13895,16 +13895,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "2.0.3",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "f7eebdd092873f5d63929f21183e69ec9f5e83cd"
+                "reference": "4053eab90a7cdf0b81dd93073dc6c18c15d487fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/f7eebdd092873f5d63929f21183e69ec9f5e83cd",
-                "reference": "f7eebdd092873f5d63929f21183e69ec9f5e83cd",
+                "url": "https://api.github.com/repos/composer/composer/zipball/4053eab90a7cdf0b81dd93073dc6c18c15d487fd",
+                "reference": "4053eab90a7cdf0b81dd93073dc6c18c15d487fd",
                 "shasum": ""
             },
             "require": {
@@ -13983,7 +13983,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-28T14:50:56+00:00"
+            "time": "2020-10-30T21:39:11+00:00"
         },
         {
             "name": "composer/semver",
