@@ -6,10 +6,12 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
+use App\Services\CCD\CcdProblemService;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProblemServiceRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Tests\CustomerTestCase;
 
@@ -55,12 +57,13 @@ class LocationProblemServiceDatabaseTest extends CustomerTestCase
                 $bhiCodeId = ChargeableService::getChargeableServiceIdUsingCode($bhiCode = ChargeableService::BHI)
             )
         );
-
-        $this->patient()->ccdProblems()->create([
-            'cpm_problem_id' => $cpmProblem->id,
-            'name'           => $cpmProblem->name,
-            'is_monitored'   => true,
-        ]);
+        
+        (app(CcdProblemService::class))->addPatientCcdProblem((new CcdProblemInput())
+            ->setCpmProblemId($cpmProblem->id)
+            ->setUserId($this->patient()->id)
+            ->setName($cpmProblem->name)
+            ->setIsMonitored(true)
+        );
 
         self::assertTrue(
             is_a(
