@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
 use App\Call;
+use App\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
@@ -20,6 +21,7 @@ use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Tests\CustomerTestCase;
@@ -28,7 +30,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
 {
     protected PatientServiceProcessorRepository $repo;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -210,10 +212,12 @@ class PatientBillingDatabaseTest extends CustomerTestCase
         for ($i = 4; $i > 0; --$i) {
             $code = $i > 2 ? ChargeableService::BHI : ChargeableService::CCM;
             $locationProblemServiceRepo->store($locationId, $problemId = $cpmProblems[$i]['id'], ChargeableService::getChargeableServiceIdUsingCode($code));
-            $patient->ccdProblems()->create([
-                'cpm_problem_id' => $problemId,
-                'name'           => str_random(8),
-            ]);
+            (app(CcdProblemService::class))->addPatientCcdProblem((new CcdProblemInput())
+                ->setCpmProblemId($problemId)
+                ->setUserId($patient->id)
+                ->setName($cpmProblems[$i]['name'])
+                ->setIsMonitored(true)
+            );
         }
 
         self::assertFalse(ChargeablePatientMonthlySummary::where('patient_user_id', $patient->id)
@@ -228,7 +232,7 @@ class PatientBillingDatabaseTest extends CustomerTestCase
                 ->subscribe($patient->patientInfo->location->availableServiceProcessors($startOfMonth))
                 ->forPatient($patient->id)
                 ->forMonth($startOfMonth)
-                ->withProblems(...PatientProblemsForBillingProcessing::get($patient->id))
+                ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
         );
 
         self::assertTrue(
