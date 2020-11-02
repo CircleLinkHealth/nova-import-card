@@ -236,7 +236,7 @@ class ActivityService
 
     private function getChargeableServiceById(User $patient, int $id): ?ChargeableService
     {
-        return LocationServices::getUsingServiceId($patient->getPreferredContactLocation(), $id, Carbon::now());
+        return LocationServices::getUsingServiceId($patient->getPreferredContactLocation(), $id, Carbon::now()->startOfMonth());
     }
 
     private function getChargeableServiceIdByCode(User $patient, string $code): ?int
