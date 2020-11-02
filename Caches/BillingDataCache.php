@@ -91,9 +91,7 @@ class BillingDataCache implements BillingCache
 
     public function setLocationSummariesInCache(Collection $summaries): void
     {
-        $this->locationSummaryCache = collect($this->locationSummaryCache)
-            ->merge($summaries)
-            ->toArray();
+        $this->locationSummaryCache = array_merge($this->locationSummaryCache, $summaries->toArray());
     }
 
     public function setPatientInCache(User $patientUser): void
