@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "28a271c079a7c27fd66297d156a84ff3",
+    "content-hash": "49ed425a5d5893f50ce1902cdb6c2374",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1258,11 +1258,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.4.5",
+            "version": "v3.4.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "761bb3dfaf6af64f66d197036b0f12fe6dfadffa"
+                "reference": "d0948b402e26d6e65c20be97fb87a76c6b1ad50d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1296,7 +1296,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-07T21:26:43+00:00"
+            "time": "2020-11-02T10:24:09+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1657,11 +1657,11 @@
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "v1.0.5",
+            "version": "v1.0.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "1532678295392f7992c5521ca8fc62810637bcc4"
+                "reference": "0acc57f8b2a2dd31829bd43ade72ef829c69a644"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1691,7 +1691,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-26T11:22:12+00:00"
+            "time": "2020-11-02T10:22:18+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
