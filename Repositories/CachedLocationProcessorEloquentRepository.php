@@ -44,15 +44,14 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
     {
         if ( ! BillingCache::locationWasQueried($locationId)) {
             BillingCache::setLocationSummariesInCache($locationSummaries = $this->queryLocationServices($locationId));
-            
-            if ($locationSummaries->isEmpty()){
+
+            if ($locationSummaries->isEmpty()) {
                 sendSlackMessage('#billing_alerts', "Warning! (From Cached Location Repo:) Location ({$locationId}) has no chargeable service summaries.");
             }
         }
 
         return BillingCache::getLocationSummaries($locationId)
-            ->when(! is_null($month), function ($collection) use ($month)
-            {
+            ->when( ! is_null($month), function ($collection) use ($month) {
                 return $collection->where('chargeable_month', $month);
             });
     }
@@ -105,43 +104,43 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
 
             return $summary;
         }
-        
+
         $this->updateLocationSummariesInCache($locationId, $summary);
 
         return $summary;
-    }
-    
-    private function updateLocationSummariesInCache(int $locationId, ChargeableLocationMonthlySummary $summary): void
-    {
-        $summaries = BillingCache::getLocationSummaries($locationId);
-    
-        if ($summaries->contains('id', $summary->id)) {
-            $summaries->forgetUsingModelKey('id', $summary->id);
-        }
-    
-        $summaries->push($summary);
-    
-        BillingCache::forgetLocationSummaries($locationId);
-        BillingCache::setLocationSummariesInCache($summaries);
     }
 
     public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
     {
         $summary = $this->repo->storeUsingServiceId($locationId, $chargeableServiceId, $month, $amount);
-    
+
         if ( ! BillingCache::locationWasQueried($locationId)) {
             BillingCache::setLocationSummariesInCache($this->queryLocationServices($locationId));
-        
+
             return $summary;
         }
-    
+
         $this->updateLocationSummariesInCache($locationId, $summary);
-    
+
         return $summary;
     }
 
-    private function queryLocationServices(int $locationId, ?Carbon $month = null) : Collection
+    private function queryLocationServices(int $locationId, ?Carbon $month = null): Collection
     {
         return $this->repo->servicesForMonth($locationId, $month)->get();
+    }
+
+    private function updateLocationSummariesInCache(int $locationId, ChargeableLocationMonthlySummary $summary): void
+    {
+        $summaries = BillingCache::getLocationSummaries($locationId);
+
+        if ($summaries->contains('id', $summary->id)) {
+            $summaries->forgetUsingModelKey('id', $summary->id);
+        }
+
+        $summaries->push($summary);
+
+        BillingCache::forgetLocationSummaries($locationId);
+        BillingCache::setLocationSummariesInCache($summaries);
     }
 }
