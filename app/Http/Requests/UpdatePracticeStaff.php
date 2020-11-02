@@ -46,6 +46,8 @@ class UpdatePracticeStaff extends FormRequest
             'phone_extension'    => 'nullable',
             'emr_direct_address' => 'nullable|email',
             'role_names'         => 'required',
+            'ehr_id'             => 'sometimes|exists:ehrs,id',
+            'ehr_username'       => 'sometimes',
         ];
     }
 }

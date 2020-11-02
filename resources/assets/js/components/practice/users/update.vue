@@ -169,7 +169,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" v-if="locations.length">
                     <div class="input-field col s12">
                         <material-select multiple v-model="formData.locations" name="locations" id="locations"
                                          :class="isValid(formData.locations)">
@@ -179,6 +179,34 @@
 
                         <label for="locations">Locations</label>
                     </div>
+                </div>
+
+                <div class="row">
+
+                    <h6 class="col s12">
+                        SSO Integration between EHR Platforms and CPM
+                    </h6>
+
+                    <template v-if="!waitingEhr">
+                        <div class="input-field col s3">
+                            <material-select v-model="formData.ehr_id" name="ehr_id" id="ehr_id"
+                                             select-text="Select EHR"
+                                             :class="isValid(formData.ehr_id)">
+                                <option v-for="ehr in ehrPlatforms" :value="ehr.id"
+                                        v-text="ehr.name"></option>
+                            </material-select>
+
+                            <label for="ehr_id">EHR</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <v-input type="text" label="EHR Username" v-model="formData.ehr_username"
+                                     name="ehr_username"></v-input>
+                        </div>
+                    </template>
+                    <div class="input-field col s3" v-else>
+                        <loader></loader>
+                    </div>
+
                 </div>
 
                 <div class="row">
@@ -209,6 +237,7 @@
     import {practiceLocations, practiceStaff} from '../../../store/getters'
     import MaterialSelect from '../../src/material-select.vue'
     import store from '../../../store';
+    import loader from '../../loader';
 
     import {library} from '@fortawesome/fontawesome-svg-core'
     import {faSpinner} from '@fortawesome/free-solid-svg-icons'
@@ -235,7 +264,8 @@
         components: {
             modal,
             MaterialSelect,
-            FontAwesomeIcon
+            FontAwesomeIcon,
+            loader
         },
 
         created() {
@@ -262,6 +292,10 @@
             );
         },
 
+        mounted() {
+            this.getEhrPlatforms();
+        },
+
         destroyed() {
             if (this.unwatch) {
                 this.unwatch();
@@ -272,13 +306,21 @@
             mapGetters({
                 errors: 'errors',
                 waiting: 'practiceStaffIsUpdating',
+                waitingEhr: 'ehrPlatformsIsLoading',
                 staff: 'practiceStaff',
-                locations: 'practiceLocations'
+                locations: 'practiceLocations',
+                ehrPlatforms: 'ehrPlatforms'
             })
         ),
 
         methods: Object.assign(
-            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeStaff', 'clearErrors']),
+            mapActions([
+                'clearOpenModal',
+                'addNotification',
+                'updatePracticeStaff',
+                'clearErrors',
+                'getEhrPlatforms'
+            ]),
             {
                 submitForm() {
                     this.updatePracticeStaff(this.formData);
@@ -331,6 +373,8 @@
                         'who': 'billing_provider',
                         'user_ids': [],
                     },
+                    'ehr_id': '',
+                    'ehr_username': ''
                 },
                 formState: {},
                 roleOptions: [
