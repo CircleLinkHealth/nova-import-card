@@ -16,15 +16,17 @@
         <div class="row">
             <div class="row">
             </div>
-            <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 20px">
-                <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': this.hideAssigned}"
-                        @click="showAssigned">{{this.showAssignedLabel}}
-                </button>
-            </div>
-            <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 10px">
-                <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': this.isolateUploadedViaCsv}"
-                        @click="isolatePatientsUploadedViaCsv">{{this.showIsolatedViaCsvLabel}}
-                </button>
+            <div v-if="!isCallbacksAdmin">
+                <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 20px">
+                    <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': this.hideAssigned}"
+                            @click="showAssigned">{{this.showAssignedLabel}}
+                    </button>
+                </div>
+                <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 10px">
+                    <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': this.isolateUploadedViaCsv}"
+                            @click="isolatePatientsUploadedViaCsv">{{this.showIsolatedViaCsvLabel}}
+                    </button>
+                </div>
             </div>
             <div class="col-sm-12 text-right" style="margin-bottom: 10px">
                 <button class="btn btn-success btn-s" @click="assignCallback">Assign Callback</button>
@@ -35,7 +37,7 @@
             <div class="col-sm-2">
                 <loader style="margin-top:20px; margin-left: 80px" v-if="loading"/>
             </div>
-            <div class="col-sm-5 text-right" v-if="enrolleesAreSelected">
+            <div class="col-sm-5 text-right" v-if="enrolleesAreSelected && !isCallbacksAdmin">
                 <button class="btn btn-primary btn-s" @click="assignSelectedToCa">Assign To CA</button>
                 <button class="btn btn-warning btn-s" @click="unassignSelectedFromCa">Unassign From CA</button>
                 <button class="btn btn-danger btn-s" @click="markSelectedAsIneligible">Mark as Ineligible</button>
@@ -48,19 +50,21 @@
             <v-server-table class="table" v-on:filter="listenTo" :url="getUrl()" :columns="columns" :options="options"
                             ref="table">
                 <template slot="edit" slot-scope="props">
-                    <input class="btn btn-warning btn-s edit-button" value="Edit" @click="editPatient(props.row)" type="button"/>
+                    <input v-if="!isCallbacksAdmin" class="btn btn-warning btn-s edit-button" value="Edit" @click="editPatient(props.row)" type="button"/>
                 </template>
                 <template slot="h__edit" slot-scope="props">
 
                 </template>
                 <div slot="filter__select">
-                    <input type="checkbox"
+                    <input v-if="!isCallbacksAdmin"
+                           type="checkbox"
                            class="form-control check-all select-enrollee"
                            :checked="allSelected()"
                            @change="toggleAll()">
                 </div>
                 <template slot="select" slot-scope="props">
-                    <input type="checkbox"
+                    <input v-if="!isCallbacksAdmin"
+                           type="checkbox"
                            class="form-control select-enrollee"
                            :v-model="props.row.select"
                            :checked="selected(props.row.id)"
@@ -129,7 +133,9 @@
             'notifications': Notifications,
             'vue-multiselect': Multiselect
         },
-        props: [],
+        props: [
+            'authRole'
+        ],
         data() {
             return {
                 statusFilter: [
@@ -197,6 +203,9 @@
 
         },
         computed: {
+            isCallbacksAdmin() {
+                return this.authRole === 'callbacks-admin';
+            },
             enrolleesAreSelected() {
                 return this.selectedEnrolleeIds.length !== 0;
             },
@@ -410,6 +419,10 @@
 
     .edit-button{
         margin: 3px;
+    }
+
+    tr {
+        height: 30px;
     }
 
 </style>

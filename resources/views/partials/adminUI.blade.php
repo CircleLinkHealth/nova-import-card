@@ -302,6 +302,12 @@
             Frame</a>
             to improve your experience.</p>
         <![endif]-->
+        @else
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                @include('partials.providerUI.primarynav')
+            </div>
+        </nav>
     @endif
 
     {{--This is for JS variables. Purposefully included before content.--}}

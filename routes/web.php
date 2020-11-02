@@ -1141,7 +1141,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
     
     Route::group([
-        'prefix' => 'ca-director',
+        'prefix' => 'admin/ca-director',
         'middleware' => 'permission:ca-director.view'
     ], function () {
         Route::get('', [
