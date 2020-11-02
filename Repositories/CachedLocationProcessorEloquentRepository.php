@@ -117,7 +117,7 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
         $summary = $this->repo->storeUsingServiceId($locationId, $chargeableServiceId, $month, $amount);
 
         if ( ! in_array($locationId, $this->queriedLocationServices)) {
-            $this->queryLocationServices($locationId);
+            $this->queryLocationServices($locationId, $month);
 
             return $summary;
         }

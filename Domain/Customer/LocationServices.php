@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Customer;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
+use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
@@ -42,13 +43,14 @@ class LocationServices
             return $location->practice->chargeableServices;
         }
 
-        return $this->repo->getLocationSummaries($locationId, $month);
+        return $this->repo->getLocationSummaries($locationId, $month)
+            ->transform(fn(ChargeableLocationMonthlySummary $summary) => $summary->chargeableService);
     }
 
     public static function getUsingServiceId(?int $locationId, int $serviceId, ?Carbon $month = null): ?ChargeableService
     {
         return (app(self::class))->getChargeableServices($locationId, $month)->firstWhere('id', $serviceId);
-    }
+}
 
     public function hasCcmPlusCodes(?int $locationId): bool
     {
