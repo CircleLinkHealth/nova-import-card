@@ -187,6 +187,7 @@
                         <div class="input-field col s3">
                             <material-select v-model="formData.ehr_id"
                                              label-text="EHR"
+                                             :allow-no-select="true"
                                              name="ehr_id" id="ehr_id">
                                 <option v-for="ehr in ehrPlatforms" :value="ehr.id"
                                         v-text="ehr.name"></option>
@@ -367,8 +368,8 @@
                         'who': 'billing_provider',
                         'user_ids': [],
                     },
-                    'ehr_id': '',
-                    'ehr_username': ''
+                    'ehr_id': null,
+                    'ehr_username': null
                 },
                 formState: {},
                 roleOptions: [

@@ -1,7 +1,7 @@
 <template>
     <div>
         <select ref="selectRef" v-model="model" v-bind:multiple="multiple" :class="{invalid: errors.get(name)}" :name="name" :id="id">
-            <option value="" disabled>{{ selectText }}
+            <option value="" :disabled="!allowNoSelect">{{ selectText }}
             </option>
             <option v-for="(item, index) in items"
                     v-bind:value="item.id"
@@ -56,6 +56,10 @@
             className: {
                 default: '',
                 required: false
+            },
+            allowNoSelect: {
+                type: Boolean,
+                default: false
             }
         },
 
