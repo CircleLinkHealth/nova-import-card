@@ -28,7 +28,7 @@ export const UPDATE_CARE_PERSON = (state, newCarePerson) => {
         })
     }
 
-    
+
 
     // state.patientCareTeam.forEach((carePerson, index) => {
     //     if (carePerson.id === newCarePerson.id) {
@@ -168,6 +168,7 @@ export const CLEAR_ERROR = (state, field) => {
 
 export const SET_ERRORS = (state, errors) => {
     state.practiceStaffIsUpdating = false;
+    state.ehrPlatformsIsLoading = false;
     state.errors.setErrors(errors)
 }
 
@@ -179,6 +180,11 @@ export const SET_ERRORS = (state, errors) => {
  */
 export const CLEAR_PRACTICE_STAFF = (state) => {
     state.practiceStaff = []
+    state.practiceStaffIsLoading = false;
+}
+
+export const GET_PRACTICE_STAFF_LOADING = (state) => {
+    state.practiceStaffIsLoading = true;
 }
 
 /**
@@ -189,6 +195,7 @@ export const CLEAR_PRACTICE_STAFF = (state) => {
  * @constructor
  */
 export const SET_PRACTICE_STAFF = (state, practiceStaff) => {
+    state.practiceStaffIsLoading = false;
     practiceStaff.forEach(user => {
         state.practiceStaff.push(user)
     })
@@ -221,4 +228,11 @@ export const DELETE_PRACTICE_STAFF = (state, user) => {
 
 export const UPDATE_PRACTICE_STAFF_WAITING = (state) => {
     state.practiceStaffIsUpdating = true;
+}
+
+export const GET_EHR_PLATFORMS_WAITING = (state) => state.ehrPlatformsIsLoading = true;
+
+export const GET_EHR_PLATFORMS = (state, ehrs) => {
+    state.ehrPlatformsIsLoading = false;
+    state.ehrPlatforms = ehrs;
 }

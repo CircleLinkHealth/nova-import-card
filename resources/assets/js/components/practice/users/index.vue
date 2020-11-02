@@ -19,12 +19,17 @@
             </div>
         </div>
 
-        <grid
+        <grid v-if="!loading"
                 :data="users"
                 :options="gridOptions"
                 :filter-key="searchQuery"
                 @click="cellClicked">
         </grid>
+        <div class="row" v-else>
+            <div class="col s6">
+                <loader></loader>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -32,11 +37,16 @@
     import {mapGetters, mapActions} from 'vuex'
     import {practiceStaff} from '../../../store/getters'
     import {getPracticeStaff, deletePracticeStaff, getPracticeLocations} from '../../../store/actions'
+    import loader from "../../loader";
 
     export default {
+        components: {
+            loader
+        },
         computed: Object.assign({},
             mapGetters({
-                users: 'practiceStaff'
+                users: 'practiceStaff',
+                loading: 'practiceStaffIsLoading'
             })
         ),
 
