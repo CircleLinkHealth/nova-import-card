@@ -56,6 +56,11 @@ class Eloquent implements LocationProcessorRepository
         // TODO: Implement enrolledPatients() method.
     }
 
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection
+    {
+        // TODO: Implement getLocationSummaries() method.
+    }
+
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
     {
         return $this->summaries->where('location_id', $locationId)
@@ -170,10 +175,5 @@ class Eloquent implements LocationProcessorRepository
             })
             ->unique()
             ->count();
-    }
-    
-    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection
-    {
-        // TODO: Implement getLocationSummaries() method.
     }
 }

@@ -43,6 +43,15 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
         return $this->repo->enrolledPatients($locationId, $monthYear);
     }
 
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection
+    {
+        if ( ! in_array($locationId, $this->queriedLocationServices)) {
+            $this->queryLocationServices($locationId, $month);
+        }
+
+        return $this->cachedLocationServices[$locationId];
+    }
+
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
     {
         return $this->getLocationSummaries($locationId)
@@ -120,15 +129,6 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
         $this->cachedLocationServices[$locationId]->push($summary);
 
         return $summary;
-    }
-
-    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection
-    {
-        if ( ! in_array($locationId, $this->queriedLocationServices)) {
-            $this->queryLocationServices($locationId, $month);
-        }
-
-        return $this->cachedLocationServices[$locationId];
     }
 
     private function queryLocationServices(int $locationId, ?Carbon $month = null)

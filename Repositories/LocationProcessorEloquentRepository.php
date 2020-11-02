@@ -36,6 +36,11 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->get();
     }
 
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?Collection
+    {
+        return $this->servicesForMonth($locationId, $month)->get();
+    }
+
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
     {
         //todo: add test
@@ -124,10 +129,5 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->filter()
             ->values()
             ->toArray();
-    }
-    
-    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?Collection
-    {
-        return $this->servicesForMonth($locationId, $month)->get();
     }
 }

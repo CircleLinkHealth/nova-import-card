@@ -19,6 +19,8 @@ interface LocationProcessorRepository
 
     public function enrolledPatients(int $locationId, Carbon $monthYear): Collection;
 
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection;
+
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool;
 
     public function paginatePatients(int $customerModelId, Carbon $monthYear, int $pageSize): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -36,6 +38,4 @@ interface LocationProcessorRepository
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
 
     public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
-    
-    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection;
 }
