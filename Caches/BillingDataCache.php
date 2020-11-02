@@ -34,21 +34,21 @@ class BillingDataCache implements BillingCache
     {
         $this->locationSummaryCache = collect($this->locationSummaryCache)
             ->filter(fn ($locationSummary) => $locationSummary->location_id != $locationId)
-            ->toArray();
+            ->all();
 
         $this->queriedLocationSummaries = collect($this->queriedLocationSummaries)
             ->filter(fn ($id) => $id != $locationId)
-            ->toArray();
+            ->all();
     }
 
     public function forgetPatient(int $patientId): void
     {
         $this->patientCache = collect($this->patientCache)
             ->filter(fn ($p) => $p->id != $patientId)
-            ->toArray();
+            ->all();
         $this->queriedPatients = collect($this->patientCache)
             ->filter(fn ($id) => $id != $patientId)
-            ->toArray();
+            ->all();
     }
 
     public function getLocationSummaries(int $locationId): ?Collection
@@ -56,7 +56,7 @@ class BillingDataCache implements BillingCache
         return new Collection(
             collect($this->locationSummaryCache)
                 ->where('location_id', $locationId)
-                ->toArray()
+                ->all()
         );
     }
 
@@ -91,7 +91,7 @@ class BillingDataCache implements BillingCache
 
     public function setLocationSummariesInCache(Collection $summaries): void
     {
-        $this->locationSummaryCache = array_merge($this->locationSummaryCache, $summaries->toArray());
+        $this->locationSummaryCache = array_merge($this->locationSummaryCache, $summaries->all());
     }
 
     public function setPatientInCache(User $patientUser): void
