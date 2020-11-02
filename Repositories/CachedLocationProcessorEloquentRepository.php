@@ -9,16 +9,14 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class CachedLocationProcessorEloquentRepository implements LocationProcessorRepository
 {
-    protected array $cachedLocationServices = [];
-
-    protected array $queriedLocationServices = [];
-
     protected LocationProcessorEloquentRepository $repo;
 
     public function __construct()
@@ -29,8 +27,7 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
     public function availableLocationServiceProcessors(int $locationId, Carbon $chargeableMonth): AvailableServiceProcessors
     {
         return AvailableServiceProcessors::push(
-            $this->getLocationSummaries($locationId)
-                ->where('chargeable_month', $chargeableMonth)
+            $this->getLocationSummaries($locationId, $chargeableMonth)
                 ->map(fn (ChargeableLocationMonthlySummary $summary) => $summary->getServiceProcessor())
                 ->filter()
                 ->values()
@@ -45,11 +42,19 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
 
     public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection
     {
-        if ( ! in_array($locationId, $this->queriedLocationServices)) {
-            $this->queryLocationServices($locationId, $month);
+        if ( ! BillingCache::locationWasQueried($locationId)) {
+            BillingCache::setLocationSummariesInCache($locationSummaries = $this->queryLocationServices($locationId));
+            
+            if ($locationSummaries->isEmpty()){
+                sendSlackMessage('#billing_alerts', "Warning! (From Cached Location Repo:) Location ({$locationId}) has no chargeable service summaries.");
+            }
         }
 
-        return $this->cachedLocationServices[$locationId];
+        return BillingCache::getLocationSummaries($locationId)
+            ->when(! is_null($month), function ($collection) use ($month)
+            {
+                return $collection->where('chargeable_month', $month);
+            });
     }
 
     public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
@@ -88,51 +93,55 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
 
     public function servicesExistForMonth(int $locationId, Carbon $month): bool
     {
-        return $this->getLocationSummaries($locationId)
-            ->where('chargeable_month', $month)
-            ->isNotEmpty();
+        return $this->getLocationSummaries($locationId, $month)->isNotEmpty();
     }
 
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
     {
         $summary = $this->repo->store($locationId, $chargeableServiceCode, $month, $amount);
 
-        if ( ! in_array($locationId, $this->queriedLocationServices)) {
-            $this->queryLocationServices($locationId);
+        if ( ! BillingCache::locationWasQueried($locationId)) {
+            BillingCache::setLocationSummariesInCache($this->queryLocationServices($locationId));
 
             return $summary;
         }
-
-        if ($this->cachedLocationServices[$locationId]->contains('id', $summary->id)) {
-            $this->cachedLocationServices[$locationId]->forgetUsingModelKey('id', $summary->id);
-        }
-
-        $this->cachedLocationServices[$locationId]->push($summary);
+        
+        $this->updateLocationSummariesInCache($locationId, $summary);
 
         return $summary;
+    }
+    
+    private function updateLocationSummariesInCache(int $locationId, ChargeableLocationMonthlySummary $summary): void
+    {
+        $summaries = BillingCache::getLocationSummaries($locationId);
+    
+        if ($summaries->contains('id', $summary->id)) {
+            $summaries->forgetUsingModelKey('id', $summary->id);
+        }
+    
+        $summaries->push($summary);
+    
+        BillingCache::forgetLocationSummaries($locationId);
+        BillingCache::setLocationSummariesInCache($summaries);
     }
 
     public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary
     {
         $summary = $this->repo->storeUsingServiceId($locationId, $chargeableServiceId, $month, $amount);
-
-        if ( ! in_array($locationId, $this->queriedLocationServices)) {
-            $this->queryLocationServices($locationId, $month);
-
+    
+        if ( ! BillingCache::locationWasQueried($locationId)) {
+            BillingCache::setLocationSummariesInCache($this->queryLocationServices($locationId));
+        
             return $summary;
         }
-
-        if ($this->cachedLocationServices[$locationId]->contains('id', $summary->id)) {
-            $this->cachedLocationServices[$locationId]->forgetUsingModelKey('id', $summary->id);
-        }
-
-        $this->cachedLocationServices[$locationId]->push($summary);
-
+    
+        $this->updateLocationSummariesInCache($locationId, $summary);
+    
         return $summary;
     }
 
-    private function queryLocationServices(int $locationId, ?Carbon $month = null)
+    private function queryLocationServices(int $locationId, ?Carbon $month = null) : Collection
     {
-        $this->cachedLocationServices[$locationId] = $this->repo->servicesForMonth($locationId, $month)->get();
+        return $this->repo->servicesForMonth($locationId, $month)->get();
     }
 }
