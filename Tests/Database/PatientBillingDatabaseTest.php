@@ -214,10 +214,10 @@ class PatientBillingDatabaseTest extends CustomerTestCase
             $locationProblemServiceRepo->store($locationId, $problemId = $cpmProblems[$i]['id'], ChargeableService::getChargeableServiceIdUsingCode($code));
             (app(CcdProblemService::class))->addPatientCcdProblem(
                 (new CcdProblemInput())
-                ->setCpmProblemId($problemId)
-                ->setUserId($patient->id)
-                ->setName($cpmProblems[$i]['name'])
-                ->setIsMonitored(true)
+                    ->setCpmProblemId($problemId)
+                    ->setUserId($patient->id)
+                    ->setName($cpmProblems[$i]['name'])
+                    ->setIsMonitored(true)
             );
         }
 

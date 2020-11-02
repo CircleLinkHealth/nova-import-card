@@ -60,10 +60,10 @@ class LocationProblemServiceDatabaseTest extends CustomerTestCase
 
         (app(CcdProblemService::class))->addPatientCcdProblem(
             (new CcdProblemInput())
-            ->setCpmProblemId($cpmProblem->id)
-            ->setUserId($this->patient()->id)
-            ->setName($cpmProblem->name)
-            ->setIsMonitored(true)
+                ->setCpmProblemId($cpmProblem->id)
+                ->setUserId($this->patient()->id)
+                ->setName($cpmProblem->name)
+                ->setIsMonitored(true)
         );
 
         self::assertTrue(
