@@ -98,8 +98,8 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
 
                     $isRpm = $practiceRpmProblems->filter(
                         function (RpmProblem $rpmProblem) use ($problem) {
-                                return $rpmProblem->code === $problem->default_icd_10_code || $rpmProblem->description === $problem->name;
-                            }
+                            return $rpmProblem->code === $problem->default_icd_10_code || $rpmProblem->description === $problem->name;
+                        }
                     )->count() > 0;
 
                     if (($isBhi || $isDementia || $isDementia) && $locationHasBhi) {

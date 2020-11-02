@@ -57,8 +57,9 @@ class LocationProblemServiceDatabaseTest extends CustomerTestCase
                 $bhiCodeId = ChargeableService::getChargeableServiceIdUsingCode($bhiCode = ChargeableService::BHI)
             )
         );
-        
-        (app(CcdProblemService::class))->addPatientCcdProblem((new CcdProblemInput())
+
+        (app(CcdProblemService::class))->addPatientCcdProblem(
+            (new CcdProblemInput())
             ->setCpmProblemId($cpmProblem->id)
             ->setUserId($this->patient()->id)
             ->setName($cpmProblem->name)

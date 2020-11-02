@@ -212,7 +212,8 @@ class PatientBillingDatabaseTest extends CustomerTestCase
         for ($i = 4; $i > 0; --$i) {
             $code = $i > 2 ? ChargeableService::BHI : ChargeableService::CCM;
             $locationProblemServiceRepo->store($locationId, $problemId = $cpmProblems[$i]['id'], ChargeableService::getChargeableServiceIdUsingCode($code));
-            (app(CcdProblemService::class))->addPatientCcdProblem((new CcdProblemInput())
+            (app(CcdProblemService::class))->addPatientCcdProblem(
+                (new CcdProblemInput())
                 ->setCpmProblemId($problemId)
                 ->setUserId($patient->id)
                 ->setName($cpmProblems[$i]['name'])
