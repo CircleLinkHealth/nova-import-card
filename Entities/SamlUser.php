@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\SamlSp\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -19,6 +20,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Illuminate\Support\Carbon|null                                                             $created_at
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property User                                                                                        $cpmUser
+ * @property Ehr                                                                                         $idpRelation
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|SamlUser newModelQuery()
@@ -38,5 +40,10 @@ class SamlUser extends BaseModel
     public function cpmUser()
     {
         return $this->belongsTo(User::class, 'cpm_user_id', 'id');
+    }
+
+    public function idpRelation()
+    {
+        return $this->belongsTo(Ehr::class, 'idp', 'name');
     }
 }
