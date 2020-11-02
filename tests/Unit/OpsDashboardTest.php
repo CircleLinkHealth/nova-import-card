@@ -77,23 +77,21 @@ class OpsDashboardTest extends \Tests\TestCase
 
     public function test_deltas_are_accurate()
     {
-        //setup practice and patients
+        $twoDaysAgo = Carbon::now()->setTimeFromTimeString('23:30')->subDay(2);
+        Carbon::setTestNow($twoDaysAgo);
+        
         $practice = $this->setupPractice(true, true, true, );
 
         $patients = [];
         for ($i = 10; $i > 0; --$i) {
             $patients[] = $this->setupPatient($practice);
         }
-
-        //generate report for 1 day
-        $twoDaysAgo = Carbon::now()->setTimeFromTimeString('23:30')->subDay(2);
-        Carbon::setTestNow($twoDaysAgo);
+        
         $this->runJobToGenerateDBDataForPractice($practice->id, $twoDaysAgo);
 
         $dbReport1 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
             ->where('date', $twoDaysAgo->toDateString())
             ->first();
-        //assert true numbers
 
         $this->assertNotNull($dbReport1);
 
@@ -132,20 +130,17 @@ class OpsDashboardTest extends \Tests\TestCase
         $patient3->save();
         $patient3->delete();
 
-        //add new patient
+        //add new patient for 'added' metric
         $this->setupPatient($practice);
-
-        //generate report for next day
-        Carbon::setTestNow();
-        $yesterday = Carbon::now()->subDay(1)->setTimeFromTimeString('23:30');
+        
+        $yesterday = $twoDaysAgo->copy()->addDay(1)->setTimeFromTimeString('23:30');
         Carbon::setTestNow($yesterday);
         $this->runJobToGenerateDBDataForPractice($practice->id, $yesterday);
-
-        //assert deltas are correct
+        
         $dbReport2 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
             ->where('date', $yesterday->toDateString())
             ->first();
-        //assert true numbers
+     
 
         $this->assertNotNull($dbReport2);
 
@@ -173,20 +168,18 @@ class OpsDashboardTest extends \Tests\TestCase
         $patient0->patientInfo->ccm_status = Patient::ENROLLED;
         $patient0->save();
 
-        //add new patient
+        //add new patient ('added' metric)
         $this->setupPatient($practice);
-
-        //generate report for next day
-        Carbon::setTestNow();
-        $today = Carbon::now()->setTimeFromTimeString('23:30');
-
+        
+        $today = $yesterday->copy()->addDay(1)->setTimeFromTimeString('23:30');
+        Carbon::setTestNow($today);
+        
         $this->runJobToGenerateDBDataForPractice($practice->id, $today);
+        
 
-        //assert deltas are correct
         $dbReport3 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
             ->where('date', $today->toDateString())
             ->first();
-        //assert true numbers
 
         $this->assertNotNull($dbReport3);
 
@@ -203,8 +196,9 @@ class OpsDashboardTest extends \Tests\TestCase
 
         $this->assertTrue(2 === $dbReport3Data['Added']);
 
-        //if current date is start of month, all added patients will be considered unique added
-        $expectedUniqueAdded = $today->toDateString() === $today->copy()->startOfMonth()->toDateString() ? 2 : 1;
+        //if current date is start of month, all added patients will be considered unique added.
+        //if at the second of month, patient lost 2 days ago will still be considered unique.
+        $expectedUniqueAdded = $today->lte($today->copy()->startOfMonth()->addDay(1)->setTimeFromTimeString('23:30')) ? 2 : 1;
         $this->assertTrue($expectedUniqueAdded === $dbReport3Data['Unique Added']);
 
         $this->assertTrue(2 === $dbReport3Data['Delta']);
