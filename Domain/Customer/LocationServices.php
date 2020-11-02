@@ -44,14 +44,14 @@ class LocationServices
         }
 
         return $this->repo->getLocationSummaries($locationId, $month)
-            ->transform(fn(ChargeableLocationMonthlySummary $summary) => $summary->chargeableService)
+            ->transform(fn (ChargeableLocationMonthlySummary $summary) => $summary->chargeableService)
             ->filter();
     }
 
     public static function getUsingServiceId(?int $locationId, int $serviceId, ?Carbon $month = null): ?ChargeableService
     {
         return (app(self::class))->getChargeableServices($locationId, $month)->firstWhere('id', $serviceId);
-}
+    }
 
     public function hasCcmPlusCodes(?int $locationId): bool
     {
