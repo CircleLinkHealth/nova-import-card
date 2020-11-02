@@ -89,5 +89,11 @@ class PatientBillingHelpersTest extends CustomerTestCase
                 ->where('chargeable_month', Carbon::now()->startOfMonth())
                 ->exists()
         );
+        self::assertFalse(
+            $patient->chargeableMonthlySummariesView()
+                ->where('chargeable_service_code', ChargeableService::CCM)
+                ->where('chargeable_month', Carbon::now()->startOfMonth())
+                ->exists()
+        );
     }
 }
