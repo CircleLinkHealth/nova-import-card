@@ -74,6 +74,10 @@ class WelcomeController extends Controller
         if ($user->isAdmin()) {
             return \App::call('App\Http\Controllers\Admin\DashboardController@index');
         }
+    
+        if ($user->isCallbacksAdmin()) {
+            return redirect()->route('patientCallManagement.v2.index');
+        }
 
         if ($user->isSaasAdmin()) {
             return \App::call('App\Http\Controllers\Patient\PatientController@showDashboard');
