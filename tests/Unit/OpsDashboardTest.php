@@ -79,14 +79,14 @@ class OpsDashboardTest extends \Tests\TestCase
     {
         $twoDaysAgo = Carbon::now()->setTimeFromTimeString('23:30')->subDay(2);
         Carbon::setTestNow($twoDaysAgo);
-        
+
         $practice = $this->setupPractice(true, true, true, );
 
         $patients = [];
         for ($i = 10; $i > 0; --$i) {
             $patients[] = $this->setupPatient($practice);
         }
-        
+
         $this->runJobToGenerateDBDataForPractice($practice->id, $twoDaysAgo);
 
         $dbReport1 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
@@ -132,15 +132,14 @@ class OpsDashboardTest extends \Tests\TestCase
 
         //add new patient for 'added' metric
         $this->setupPatient($practice);
-        
+
         $yesterday = $twoDaysAgo->copy()->addDay(1)->setTimeFromTimeString('23:30');
         Carbon::setTestNow($yesterday);
         $this->runJobToGenerateDBDataForPractice($practice->id, $yesterday);
-        
+
         $dbReport2 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
             ->where('date', $yesterday->toDateString())
             ->first();
-     
 
         $this->assertNotNull($dbReport2);
 
@@ -170,12 +169,11 @@ class OpsDashboardTest extends \Tests\TestCase
 
         //add new patient ('added' metric)
         $this->setupPatient($practice);
-        
+
         $today = $yesterday->copy()->addDay(1)->setTimeFromTimeString('23:30');
         Carbon::setTestNow($today);
-        
+
         $this->runJobToGenerateDBDataForPractice($practice->id, $today);
-        
 
         $dbReport3 = OpsDashboardPracticeReport::where('practice_id', $practice->id)
             ->where('date', $today->toDateString())
