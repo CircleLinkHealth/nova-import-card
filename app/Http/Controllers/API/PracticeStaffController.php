@@ -163,7 +163,7 @@ class PracticeStaffController extends Controller
                 'who'      => $forwardCarePlanApprovalEmailsToContactUsers->keys()->first() ?? 'billing_provider',
                 'user_ids' => $forwardCarePlanApprovalEmailsToContactUsers->values()->first() ?? [],
             ],
-            'ehr_id'       => optional($samlUser)->idpRelation->id,
+            'ehr_id'       => optional(optional($samlUser)->idpRelation)->id,
             'ehr_username' => optional($samlUser)->idp_user_id,
         ];
     }
@@ -270,7 +270,7 @@ class PracticeStaffController extends Controller
             $user->nurseInfo->save();
         }
 
-        if (isset($formData['ehr_id'], $formData['ehr_username'])) {
+        if ( ! empty($formData['ehr_id']) && ! empty($formData['ehr_username'])) {
             \Artisan::queue(RegisterSamlUserMapping::class, [
                 'cpmUserId' => $user->id,
                 'idp'       => Ehr::find($formData['ehr_id'])->name,
