@@ -19,6 +19,11 @@ use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
@@ -37,6 +42,7 @@ use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\SamlSp\Entities\SamlUser;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -229,6 +235,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $roles_count
  * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null                                                            $saasAccount
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[]                                              $tokens
+ * @property \CircleLinkHealth\SamlSp\Entities\SamlUser[]|\Illuminate\Database\Eloquent\Collection                           $samlUsers
+ * @property int|null                                                                                                        $saml_users_count
  * @property int|null                                                                                                        $tokens_count
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                                      $ucp
  * @property int|null                                                                                                        $ucp_count
@@ -305,6 +313,18 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                $assigned_enrollees_count
  * @property \CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision[]|\Illuminate\Database\Eloquent\Collection $patientCcmStatusRevisions
  * @property int|null                                                                                                $patient_ccm_status_revisions_count
+ * @property string|null                                                                                             $scope
+ * @property AttestedProblem[]|EloquentCollection                                                                    $attestedProblems
+ * @property int|null                                                                                                $attested_problems_count
+ * @property ChargeablePatientMonthlySummary[]|EloquentCollection                                                    $chargeableMonthlySummaries
+ * @property int|null                                                                                                $chargeable_monthly_summaries_count
+ * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLog
+ * @property int|null                                                                                                $end_of_month_ccm_status_log_count
+ * @property ChargeablePatientMonthlySummaryView[]|EloquentCollection                                                $chargeableMonthlySummariesView
+ * @property int|null                                                                                                $chargeable_monthly_summaries_view_count
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User hasBhiConsent()
+ * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLogs
+ * @property int|null                                                                                                $end_of_month_ccm_status_logs_count
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -620,6 +640,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return false;
     }
 
+    public function attestedProblems()
+    {
+        return $this->hasMany(AttestedProblem::class, 'patient_user_id');
+    }
+
     public function authyUser()
     {
         return $this->hasOne(AuthyUser::class);
@@ -864,6 +889,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(Problem::class, 'patient_id');
     }
 
+    public function chargeableMonthlySummaries()
+    {
+        return $this->hasMany(ChargeablePatientMonthlySummary::class, 'patient_user_id');
+    }
+
+    public function chargeableMonthlySummariesView()
+    {
+        return $this->hasMany(ChargeablePatientMonthlySummaryView::class, 'patient_user_id');
+    }
+
     public function chargeableServices()
     {
         return $this->morphToMany(ChargeableService::class, 'chargeable')
@@ -1047,6 +1082,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function emailSettings()
     {
         return $this->hasOne(EmailSettings::class);
+    }
+
+    public function endOfMonthCcmStatusLogs()
+    {
+        return $this->hasMany(EndOfMonthCcmStatusLog::class, 'patient_user_id');
     }
 
     public function enrollee()
@@ -1755,11 +1795,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'gender'                  => 'required',
             'mrn_number'              => 'required',
             'birth_date'              => 'required',
-            'home_phone_number'       => 'required',
-            'consent_date'            => 'required',
-            'ccm_status'              => 'required',
-            'program_id'              => 'required',
-            'email'                   => [
+            'home_phone_number'       => [
+                Rule::requiredIf($this->relationLoaded('phoneNumbers')
+                    ? $this->phoneNumbers->isEmpty()
+                    : $this->phoneNumbers()->doesntExist()),
+            ],
+            'consent_date' => 'required',
+            'ccm_status'   => 'required',
+            'program_id'   => 'required',
+            'email'        => [
                 'sometimes',
                 Rule::unique('users', 'email')->ignore($this),
             ],
@@ -1794,6 +1838,38 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     public function getPhoneNumberForSms(): string
+    {
+        if ( ! $this->phoneNumbers) {
+            return '';
+        }
+
+        /** @var PhoneNumber $primary */
+        $primary       = $this->phoneNumbers->where('is_primary', '=', 1)->first();
+        $primaryResult = $this->getIfValidForSms($primary);
+        if ( ! empty($primaryResult)) {
+            return $primaryResult;
+        }
+
+        /** @var PhoneNumber $primary */
+        $mobile       = $this->phoneNumbers->where('type', '=', PhoneNumber::MOBILE)->first();
+        $mobileResult = $this->getIfValidForSms($mobile);
+        if ( ! empty($mobileResult)) {
+            return $mobileResult;
+        }
+
+        $validCellNumbers = $this->phoneNumbers
+            ->whereNotNull('number')->where('number', '!=', '')
+            ->map(function ($phone) {
+                return $this->getIfValidForSms($phone);
+            })
+            ->filter()
+            ->unique()
+            ->values();
+
+        return $validCellNumbers->first() ?? '';
+    }
+
+    public function getPhoneNumberForSms_old(): string
     {
         if ( ! $this->phoneNumbers) {
             return '';
@@ -2048,7 +2124,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->phoneNumbers) {
             return '';
         }
-        $phoneNumber = $this->phoneNumbers->where('type', 'work')->first();
+        $phoneNumber = $this->phoneNumbers->where('type', PhoneNumber::ALTERNATE)->first();
         if ($phoneNumber) {
             return $phoneNumber->number;
         }
@@ -2491,7 +2567,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return true;
     }
 
-    public function patientList(bool $showPracticePatients = true)
+    public function patientList(bool $showPracticePatients = true, array $carePlanStatus = null)
     {
         return User::intersectPracticesWith($this)
             ->ofType('participant')
@@ -2524,12 +2600,33 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                         );
                 });
             })
+            ->when( ! is_null($carePlanStatus), function ($query) use ($carePlanStatus) {
+                $query->whereHas('carePlan', function ($subQuery) use ($carePlanStatus) {
+                    $subQuery->whereIn('status', $carePlanStatus);
+                });
+            })
             ->get();
     }
 
     public function patientNurseAsPatient()
     {
         return $this->hasOne(PatientNurse::class, 'patient_user_id');
+    }
+
+    public function patientProblemsForBillingProcessing(): Collection
+    {
+        if ( ! $this->relationLoaded('ccdProblems')) {
+            $this->load(['ccdProblems' => function ($problems) {
+                $problems->isBillable();
+            }]);
+        }
+
+        return  $this->ccdProblems->map(function (Problem $p) {
+            return (new PatientProblemForProcessing())
+                ->setId($p->id)
+                ->setCode($p->icd10Code())
+                ->setServiceCodes($p->chargeableServiceCodesForLocation($this->patientInfo->preferred_contact_location));
+        });
     }
 
     public function patientSummaries()
@@ -2812,6 +2909,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         ];
     }
 
+    public function samlUsers()
+    {
+        return $this->hasMany(SamlUser::class, 'cpm_user_id', 'id');
+    }
+
     public function scopeCareCoaches($query)
     {
         return $query->ofType(['care-center', 'care-center-external']);
@@ -2837,6 +2939,30 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 } else {
                     $q->where('name', '!=', $type);
                 }
+            }
+        );
+    }
+
+    public function scopeHasBhiConsent($builder)
+    {
+        return $builder->where(
+            function ($q) {
+                $q->where(function ($q) {
+                    $q->notOfPracticeRequiringSpecialBhiConsent()
+                        ->whereHas(
+                            'patientInfo',
+                            function ($q) {
+                                $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
+                            }
+                        );
+                })->orWhere(function ($q) {
+                    $q->whereHas(
+                        'notes',
+                        function ($q) {
+                            $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
+                        }
+                    );
+                });
             }
         );
     }
@@ -2983,18 +3109,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function scopeIsBhiChargeable($builder)
     {
-        return $builder
-            ->whereHas(
-                'primaryPractice',
-                function ($q) {
-                    $q->hasServiceCode('CPT 99484');
-                }
-            )->whereHas(
-                'patientInfo',
-                function ($q) {
-                    $q->enrolled();
-                }
-            )
+        return $builder->whereHas(
+            'primaryPractice',
+            function ($q) {
+                $q->hasServiceCode('CPT 99484');
+            }
+        )->whereHas(
+            'patientInfo',
+            function ($q) {
+                $q->enrolled();
+            }
+        )
             ->whereHas(
                 'ccdProblems.cpmProblem',
                 function ($q) {
@@ -3011,14 +3136,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                     $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
                                 }
                             );
-                    })->orWhere(function ($q) {
-                        $q->orWhereHas(
-                            'notes',
-                            function ($q) {
-                                $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
-                            }
-                        );
-                    });
+                    })
+                        ->orWhere(function ($q) {
+                            $q->orWhereHas(
+                                'notes',
+                                function ($q) {
+                                    $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
+                                }
+                            );
+                        });
                 }
             );
     }
@@ -3966,14 +4092,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->phoneNumbers) {
             return '';
         }
-        $phoneNumber = $this->phoneNumbers->where('type', 'work')->first();
+        $phoneNumber = $this->phoneNumbers->where('type', PhoneNumber::ALTERNATE)->first();
         if ($phoneNumber) {
             $phoneNumber->number = $value;
         } else {
             $phoneNumber          = new PhoneNumber();
             $phoneNumber->user_id = $this->id;
             $phoneNumber->number  = $value;
-            $phoneNumber->type    = 'work';
+            $phoneNumber->type    = PhoneNumber::ALTERNATE;
         }
         $phoneNumber->save();
 
@@ -4195,6 +4321,30 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 return $number;
             }
         }
+    }
+
+    private function getIfValidForSms(PhoneNumber $number = null)
+    {
+        if (is_null($number)) {
+            return false;
+        }
+        $phoneNumber = \Propaganistas\LaravelPhone\PhoneNumber::make($number->number, ['US', 'CY']);
+        try {
+            //isOfType might throw, in that case we do not use the number
+            if ( ! isProductionEnv() || $phoneNumber->isOfType('mobile')) {
+                if ($this->isCypriotNumber($phoneNumber)) {
+                    return $number->number;
+                }
+
+                return formatPhoneNumberE164($number->number);
+            }
+        } catch (NumberParseException $e) {
+            Log::warning($e->getMessage());
+
+            return false;
+        }
+
+        return false;
     }
 
     private function isCypriotNumber(\Propaganistas\LaravelPhone\PhoneNumber $phoneNumber)

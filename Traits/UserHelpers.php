@@ -20,7 +20,9 @@ use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Illuminate\Support\Str;
@@ -115,15 +117,20 @@ trait UserHelpers
             }
         }
 
-        if ('participant' == $roleName && isCpm()) {
-            $user->carePlan()->updateOrCreate(
+        if ('participant' == $roleName) {
+            $user->ccdMedications()->create([
+                'name' => 'Test Aspirin',
+            ]);
+            CarePlan::updateOrCreate(
                 [
-                    'care_plan_template_id' => getDefaultCarePlanTemplate()->id,
+                    'user_id' => $user->id,
                 ],
                 [
-                    'status' => 'draft',
+                    'care_plan_template_id' => getDefaultCarePlanTemplate()->id,
+                    'status'                => 'draft',
                 ]
             );
+            $this->makePatientMonthlyRecord($user->patientInfo);
         }
 
         $arr = ['practices', 'patientInfo'];
@@ -206,16 +213,17 @@ trait UserHelpers
                 'address2'          => '',
                 'city'              => $faker->city,
                 'state'             => 'AL',
-                'zip'               => '12345',
+                'zip'               => '55555',
                 'is_auto_generated' => true,
                 'roles'             => $roles,
                 'timezone'          => 'America/New_York',
 
                 //provider Info
-                'prefix'     => 'Dr',
-                'suffix'     => 'MD',
-                'npi_number' => 1234567890,
-                'specialty'  => 'Unit Tester',
+                'prefix'                 => 'Dr',
+                'suffix'                 => 'MD',
+                'npi_number'             => 1234567890,
+                'specialty'              => 'Unit Tester',
+                'approve_own_care_plans' => true,
 
                 //phones
                 'home_phone_number' => $workPhone,
@@ -275,8 +283,15 @@ trait UserHelpers
         bool $variableRate = true,
         float $hourlyRate = 29.0,
         bool $enableCcmPlus = false,
-        float $visitFee = null
+        float $visitFee = null,
+        Carbon $startDate = null
     ) {
+        if ( ! $startDate) {
+            $startDate = now()->startOfDay();
+        }
+
+        $nurse->nurseInfo->start_date = $startDate;
+
         $nurse->nurseInfo->is_variable_rate = $variableRate;
         $nurse->nurseInfo->hourly_rate      = $hourlyRate;
         $nurse->nurseInfo->high_rate        = 30.00;
@@ -294,14 +309,17 @@ trait UserHelpers
         $nurse->nurseInfo->save();
 
         AppConfig::set(NurseCcmPlusConfig::NURSE_CCM_PLUS_ENABLED_FOR_ALL, $enableCcmPlus
-                    ? 'true'
-                    : 'false');
+            ? 'true'
+            : 'false');
+
+        //make sure this is false
+        AppConfig::set(NurseCcmPlusConfig::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_ALL, 'false');
 
         if ($enableCcmPlus && $visitFee) {
             $current = implode(',', NurseCcmPlusConfig::altAlgoEnabledForUserIds());
             AppConfig::set(NurseCcmPlusConfig::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS, $current.(empty($current)
-                            ? ''
-                            : ',').$nurse->id);
+                    ? ''
+                    : ',').$nurse->id);
 
             //hack for SmartCacheManager
             \Cache::store('array')->clear();
@@ -321,13 +339,21 @@ trait UserHelpers
             $patient->patientInfo->consent_date = $consentDate;
         }
 
+        $patient->patientInfo->ccm_status = Patient::ENROLLED;
         $patient->patientInfo->save();
         $cpmProblems = CpmProblem::get();
 
         //$pcmOnly means one ccm condition only
         if ($pcmOnly) {
             $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test'.Str::random(5)],
+                ['name' => 'test'.Str::random(5), 'code' => 'pcm_test'],
+            ]);
+            $patient->ccdProblems()->first()->codes()->create([
+                'code' => 'pcm_test',
+            ]);
+            PcmProblem::create([
+                'practice_id' => $practice->id,
+                'code'        => 'pcm_test',
             ]);
         } else {
             $ccdProblems = $patient->ccdProblems()->createMany([
@@ -344,7 +370,7 @@ trait UserHelpers
             if ($isLast && $isBhi) {
                 $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
             } else {
-                $problem->cpmProblem()->associate($cpmProblems->random());
+                $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 0));
             }
             $problem->save();
         }

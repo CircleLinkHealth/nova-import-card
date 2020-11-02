@@ -215,6 +215,7 @@ class RequiredPermissionsTableSeeder extends Seeder
             'offlineActivityRequest',
             'offlineActivity',
             'attestedProblems',
+            'phoneNumber',
         ]);
     }
 }
