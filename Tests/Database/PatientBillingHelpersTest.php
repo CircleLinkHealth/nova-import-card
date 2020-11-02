@@ -71,19 +71,23 @@ class PatientBillingHelpersTest extends CustomerTestCase
 
     public function test_patient_is_pcm_helper_uses_new_summaries()
     {
-        self::assertTrue(($patient = $this->patient())->ccdProblems->isEmpty());
-
-        $this->createPatientCcdProblemOfCode($patient = $this->patient(), $pcmCode = ChargeableService::PCM);
-
+        $patient = $this->setupPatient($this->practice, false, true);
+    
+        event(new PatientConsentedToService($patient->id, $pcmCode = ChargeableService::PCM));
+    
+        self::assertTrue(Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG));
+        self::assertTrue($patient->isBhi());
         self::assertTrue(
-            $this->getLocation()
-                ->chargeableServiceSummaries
-                ->where('chargeable_service_id', ChargeableService::getChargeableServiceIdUsingCode($pcmCode))
-                ->isNotEmpty()
+            $patient->chargeableMonthlySummariesView()
+                ->where('chargeable_service_code', $pcmCode)
+                ->where('chargeable_month', Carbon::now()->startOfMonth())
+                ->exists()
         );
-
-        ProcessSinglePatientMonthlyServices::dispatch($patient->id, Carbon::now()->startOfMonth());
-
-        self::assertTrue($patient->isPcm());
+        self::assertFalse(
+            $patient->chargeableMonthlySummariesView()
+                ->where('chargeable_service_code', ChargeableService::BHI)
+                ->where('chargeable_month', Carbon::now()->startOfMonth())
+                ->exists()
+        );
     }
 }
