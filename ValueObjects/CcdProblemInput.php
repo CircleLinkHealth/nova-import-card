@@ -8,13 +8,13 @@ namespace CircleLinkHealth\Patientapi\ValueObjects;
 
 class CcdProblemInput
 {
-    protected ?int $ccdProblemId = null;
-    protected ?int $cpmProblemId = null;
-    protected ?string $icd10 = null;
+    protected ?int $ccdProblemId   = null;
+    protected ?int $cpmProblemId   = null;
+    protected ?string $icd10       = null;
     protected ?string $instruction = null;
-    protected ?bool $isMonitored = null;
-    protected ?string $name = null;
-    protected ?int $userId = null;
+    protected ?bool $isMonitored   = null;
+    protected ?string $name        = null;
+    protected ?int $userId         = null;
 
     public function fromRequest(array $input): self
     {
