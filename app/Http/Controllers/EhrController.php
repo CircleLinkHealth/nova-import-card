@@ -21,7 +21,7 @@ class EhrController extends Controller
         $ehrs    = Ehr::when(
             $onlySso,
             function ($q) {
-                return $q->whereIn('name', ['athena']);
+                return $q->whereIn('name', self::SSO_INTEGRATIONS);
             }
         )
             ->get()
