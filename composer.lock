@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "dbb2b3ca21b7ab2b6b4c034777f869bdced4b1f0"
+                "reference": "2a8454213d3d2b6873e83a1a5146c3b2c2bfaf89"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-02T12:03:41+00:00"
+            "time": "2020-11-02T12:24:28+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1265,7 +1265,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "8d26cc50de2d272a3ed6adecc1f6f86df20e11b2"
+                "reference": "69a045f30e44fd752f6abc51dc5fe8117529ce56"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-02T11:36:04+00:00"
+            "time": "2020-11-02T12:24:29+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1554,7 +1554,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "49edd04ec1e94fabc2b4b7e13856d3c9061b97c8"
+                "reference": "19b187d531010695e7ffc9231414a952b29035ca"
             },
             "type": "laravel-module",
             "extra": {
@@ -1576,7 +1576,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-31T10:33:33+00:00"
+            "time": "2020-11-02T12:24:28+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
