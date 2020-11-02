@@ -380,6 +380,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'call.read',
                     'pam.view',
                     'ca-director.view',
+                    'practice.read', 'location.read', 'provider.read',
                 ],
             ],
             [

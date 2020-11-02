@@ -107,7 +107,8 @@ class RequiredPermissionsTableSeeder extends Seeder
             ], [
                 'name'         => 'pam.view',
                 'display_name' => 'Can view Patient Activity Management page.',
-            ], [
+            ],
+            [
                 'name'         => 'ca-director.view',
                 'display_name' => 'Can view Care Ambassador Director page.',
             ],
