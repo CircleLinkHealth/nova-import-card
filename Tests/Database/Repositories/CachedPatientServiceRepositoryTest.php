@@ -10,7 +10,7 @@ use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorReposi
 
 class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
 {
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
