@@ -11,6 +11,7 @@ use App\Repositories\CallRepository;
 use App\Repositories\Eloquent\ActivityRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Customer\LocationServices;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
@@ -235,12 +236,7 @@ class ActivityService
 
     private function getChargeableServiceById(User $patient, int $id): ?ChargeableService
     {
-        //todo: replace with new billing
-        return $patient
-            ->primaryPractice
-            ->chargeableServices
-            ->where('id', '=', $id)
-            ->first();
+        return LocationServices::getUsingServiceId($patient->getPreferredContactLocation(), $id, Carbon::now());
     }
 
     private function getChargeableServiceIdByCode(User $patient, string $code): ?int
