@@ -107,7 +107,7 @@
                                 Activities <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ route('admin.patientCallManagement.v2.index') }}">Manage (V2)</a></li>
+                                <li><a href="{{ route('patientCallManagement.v2.index') }}">Manage (V2)</a></li>
                                 <li><a href="{{ route('admin.families.index') }}">Families</a></li>
                                 <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                             </ul>

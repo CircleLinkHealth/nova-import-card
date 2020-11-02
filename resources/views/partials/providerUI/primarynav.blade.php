@@ -98,7 +98,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                         </button>
                     </div>
 
-                    @if(!$isTwoFaRoute)
+                    @if(!$isTwoFaRoute && ! auth()->user()->isCallbacksAdmin())
                         <div id="search-bar-container" class="col-md-9 col-xs-12">
                             @include('partials.search')
                         </div>
@@ -109,7 +109,20 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
             <div class="col-lg-8 col-sm-12 col-xs-12">
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        @if(!$isTwoFaRoute)
+                        @if (auth()->user()->isCallbacksAdmin())
+                                    <li>
+                                        <a href="{{ route('patientCallManagement.v2.index') }}">
+                                            Patient Activity Management
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('ca-director.index') }}">
+                                            Care Ambassador Panel
+                                        </a>
+                                    </li>
+                        @endif
+
+                        @if(!$isTwoFaRoute && ! auth()->user()->isCallbacksAdmin())
                             @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
                                 <li>
                                     <time-tracker-call-mode ref="timeTrackerCallMode"
@@ -159,7 +172,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                     </div>
                                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
                                         <li>
-                                            <a href="{{ route('admin.patientCallManagement.v2.index') }}">
+                                            <a href="{{ route('patientCallManagement.v2.index') }}">
                                                 Patient Activity Management
                                             </a>
                                         </li>
