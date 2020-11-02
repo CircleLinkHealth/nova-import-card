@@ -11,11 +11,6 @@ use Tests\CustomerTestCase;
 
 class EhrControllerTest extends CustomerTestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function test_get_ehrs()
     {
         $this->be($this->superadmin());
