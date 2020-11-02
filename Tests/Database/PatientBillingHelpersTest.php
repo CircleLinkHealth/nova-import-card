@@ -61,6 +61,12 @@ class PatientBillingHelpersTest extends CustomerTestCase
                 ->where('chargeable_month', Carbon::now()->startOfMonth())
         ->exists()
         );
+        self::assertFalse(
+            $bhiPatient->chargeableMonthlySummariesView()
+                ->where('chargeable_service_code', ChargeableService::PCM)
+                ->where('chargeable_month', Carbon::now()->startOfMonth())
+                ->exists()
+        );
     }
 
     public function test_patient_is_pcm_helper_uses_new_summaries()
