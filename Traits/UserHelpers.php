@@ -363,21 +363,21 @@ trait UserHelpers
 
         if ($addRpm) {
             $cpmProb = $cpmProblems->get(1);
-    
+
             RpmProblem::create([
                 'practice_id' => $practice->id,
                 'code'        => $icd10 = 'rpm_test',
                 'description' => $cpmProb->name,
             ]);
-            
-            (app(CcdProblemService::class))->addPatientCcdProblem((new CcdProblemInput())
+
+            (app(CcdProblemService::class))->addPatientCcdProblem(
+                (new CcdProblemInput())
                 ->setCpmProblemId($cpmProb->id)
                 ->setUserId($patient->id)
                 ->setName($cpmProb->name)
                 ->setIsMonitored(true)
                 ->setIcd10($icd10)
             );
-            
         }
 
         $ccdProblems = collect();
@@ -388,8 +388,9 @@ trait UserHelpers
                 'code'        => $icd10 = 'pcm_test',
                 'description' => $cpmProb->name,
             ]);
-            
-            (app(CcdProblemService::class))->addPatientCcdProblem((new CcdProblemInput())
+
+            (app(CcdProblemService::class))->addPatientCcdProblem(
+                (new CcdProblemInput())
                 ->setCpmProblemId($cpmProb->id)
                 ->setUserId($patient->id)
                 ->setName($cpmProb->name)
