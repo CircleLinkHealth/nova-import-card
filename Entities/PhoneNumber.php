@@ -43,9 +43,9 @@ use CircleLinkHealth\Core\StringManipulation;
 class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     //types
-    const HOME   = 'home';
-    const MOBILE = 'mobile';
-    const ALTERNATE   = 'alternate';
+    const ALTERNATE = 'alternate';
+    const HOME      = 'home';
+    const MOBILE    = 'mobile';
 
     public $phi = [
         'number',
