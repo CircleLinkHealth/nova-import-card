@@ -43,6 +43,7 @@
                                          select-text="Select Clinical Level"
                                          id="suffix"
                                          name="suffix"
+                                         label-text="Clinical Level"
                                          class="form-control input-md">
                             <option value="">Non-clinical</option>
                             <option value="MD">MD</option>
@@ -55,8 +56,6 @@
                             <option value="CNA">CNA</option>
                             <option value="MA">MA</option>
                         </material-select>
-
-                        <label for="suffix">Clinical Level</label>
                     </div>
                 </div>
 
@@ -72,10 +71,9 @@
                         <material-select v-model="formData.role_names" name="role_names" id="role_names"
                                          :multiple="true"
                                          select-text="Select all that apply"
+                                         label-text="Role"
                                          :items="roleOptions">
                         </material-select>
-
-                        <label for="role_names">Role</label>
                     </div>
 
                     <!-- deprecated -->
@@ -106,13 +104,12 @@
                     </div>
 
                     <div class="input-field col s2">
-                        <material-select v-model="formData.phone_type" name="phone_type" id="phone_type"
-                                         :class="isValid(formData.phone_type)">
+                        <material-select v-model="formData.phone_type"
+                                         label-text="Phone Type"
+                                         name="phone_type" id="phone_type">
                             <option v-for="option in phoneTypes" :value="option.value"
                                     v-text="option.name"></option>
                         </material-select>
-
-                        <label for="phone_type">Phone Type</label>
                     </div>
 
                     <div class="input-field col s5">
@@ -171,13 +168,12 @@
 
                 <div class="row" v-if="locations.length">
                     <div class="input-field col s12">
-                        <material-select multiple v-model="formData.locations" name="locations" id="locations"
-                                         :class="isValid(formData.locations)">
+                        <material-select multiple v-model="formData.locations"
+                                         label-text="Locations"
+                                         name="locations" id="locations">
                             <option v-for="location in locations" :value="location.id"
                                     v-text="location.name"></option>
                         </material-select>
-
-                        <label for="locations">Locations</label>
                     </div>
                 </div>
 
@@ -189,14 +185,12 @@
 
                     <template v-if="!waitingEhr">
                         <div class="input-field col s3">
-                            <material-select v-model="formData.ehr_id" name="ehr_id" id="ehr_id"
-                                             select-text="Select EHR"
-                                             :class="isValid(formData.ehr_id)">
+                            <material-select v-model="formData.ehr_id"
+                                             label-text="EHR"
+                                             name="ehr_id" id="ehr_id">
                                 <option v-for="ehr in ehrPlatforms" :value="ehr.id"
                                         v-text="ehr.name"></option>
                             </material-select>
-
-                            <label for="ehr_id">EHR</label>
                         </div>
                         <div class="input-field col s6">
                             <v-input type="text" label="EHR Username" v-model="formData.ehr_username"
