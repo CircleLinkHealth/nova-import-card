@@ -304,6 +304,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'description'  => 'A special administrative account where you can view the admin but not perform actions',
                 'permissions'  => [
                     'admin-access',
+                    'pam.view',
+                    'ca-director.view',
                     'users-edit-self',
                     'users-view-all',
                     'users-view-self',
@@ -366,6 +368,18 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'nurseReport.read',
                     'careplan.read',
                     'phi.read',
+                ],
+            ],
+            [
+                'name'         => 'callbacks-admin',
+                'display_name' => 'Callbacks Admin',
+                'description'  => 'An administrative account with permissions to manage callbacks',
+                'permissions'  => [
+                    'careplan.read',
+                    'patient.read',
+                    'call.read',
+                    'pam.view',
+                    'ca-director.view',
                 ],
             ],
             [
@@ -1170,6 +1184,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'description'  => 'Created for MDAlly, a partner which white-labels our CCM service to their customers',
                 'permissions'  => [
                     'admin-access',
+                    'pam.view',
+                    'ca-director.view',
                     'users-edit-self',
                     'users-view-all',
                     'users-view-self',

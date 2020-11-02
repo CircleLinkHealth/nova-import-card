@@ -2242,6 +2242,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
+    public function isCallbacksAdmin(): bool
+    {
+        return $this->hasRole('callbacks-admin');
+    }
+
     /**
      * Returns whether the user is an administrator.
      *
