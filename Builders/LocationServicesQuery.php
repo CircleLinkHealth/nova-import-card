@@ -21,6 +21,6 @@ trait LocationServicesQuery
     public function servicesForMonth(int $locationId, Carbon $month): Builder
     {
         return $this->servicesForLocation($locationId)
-            ->createdOn($month, 'chargeable_month');
+            ->createdOnIfNotNull($month, 'chargeable_month');
     }
 }

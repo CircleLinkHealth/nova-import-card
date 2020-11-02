@@ -122,17 +122,17 @@ class CachedLocationProcessorEloquentRepository implements LocationProcessorRepo
         return $summary;
     }
 
-    private function getLocationSummaries(int $locationId): ?EloquentCollection
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection
     {
         if ( ! in_array($locationId, $this->queriedLocationServices)) {
-            $this->queryLocationServices($locationId);
+            $this->queryLocationServices($locationId, $month);
         }
 
         return $this->cachedLocationServices[$locationId];
     }
 
-    private function queryLocationServices(int $locationId)
+    private function queryLocationServices(int $locationId, ?Carbon $month = null)
     {
-        $this->cachedLocationServices[$locationId] = $this->repo->servicesForLocation($locationId)->get();
+        $this->cachedLocationServices[$locationId] = $this->repo->servicesForMonth($locationId, $month)->get();
     }
 }

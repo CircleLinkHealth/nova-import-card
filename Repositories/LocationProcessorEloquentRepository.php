@@ -125,4 +125,9 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->values()
             ->toArray();
     }
+    
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?Collection
+    {
+        return $this->servicesForMonth($locationId, $month)->get();
+    }
 }

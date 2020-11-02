@@ -11,6 +11,7 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 interface LocationProcessorRepository
 {
@@ -35,4 +36,6 @@ interface LocationProcessorRepository
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
 
     public function storeUsingServiceId(int $locationId, int $chargeableServiceId, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary;
+    
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection;
 }

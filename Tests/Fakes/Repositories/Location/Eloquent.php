@@ -171,4 +171,9 @@ class Eloquent implements LocationProcessorRepository
             ->unique()
             ->count();
     }
+    
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?EloquentCollection
+    {
+        // TODO: Implement getLocationSummaries() method.
+    }
 }

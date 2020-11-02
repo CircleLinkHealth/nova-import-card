@@ -8,7 +8,12 @@ namespace CircleLinkHealth\CcmBilling\Domain\Customer;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class LocationServices
@@ -20,14 +25,40 @@ class LocationServices
         $this->repo = $repo;
     }
 
-    public function hasCcmPlusCodes(int $locationId): bool
+    public function hasCcmPlusCodes(?int $locationId): bool
     {
         return $this->hasServicesForMonth($locationId, ChargeableService::CCM_PLUS_CODES);
     }
-
-    public static function hasCCMPlusServiceCode(int $locationId, $cacheIt = false): bool
+    
+    public static function get(?int $locationId, ?Carbon $month = null): Collection
     {
-        $static = new static(app(LocationProcessorRepository::class));
+        return (app(self::class))->getChargeableServices($locationId, $month);
+    }
+    
+    public function getChargeableServices(?int $locationId, ?Carbon $month = null) : Collection
+    {
+        if (is_null($locationId)){
+            return new Collection();
+        }
+        
+        if (! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)){
+            $location = Location::with('practice.chargeableServices')
+                ->first();
+            
+            return $location->practice->chargeableServices;
+        }
+        
+        return $this->repo->getLocationSummaries($locationId, $month);
+    }
+    
+    public static function getUsingServiceId(?int $locationId, int $serviceId, ?Carbon $month = null) : ?ChargeableService
+    {
+        return (app(self::class))->getChargeableServices($locationId, $month)->firstWhere('id', $serviceId);
+    }
+
+    public static function hasCCMPlusServiceCode(?int $locationId, $cacheIt = false): bool
+    {
+        $static = app(self::class);
 
         if ($cacheIt) {
             return Cache::remember(
@@ -42,9 +73,13 @@ class LocationServices
         return $static->hasCcmPlusCodes($locationId);
     }
 
-    public static function hasServiceCodesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month = null)
+    public static function hasServiceCodesForMonth(?int $locationId, array $chargeableServiceCodes, Carbon $month = null) : bool
     {
-        return (new static(app(LocationProcessorRepository::class)))
+        if (is_null($locationId)){
+            return false;
+        }
+        
+        return (app(self::class))
             ->hasServicesForMonth($locationId, $chargeableServiceCodes, $month);
     }
 
