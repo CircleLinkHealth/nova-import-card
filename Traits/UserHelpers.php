@@ -372,11 +372,11 @@ trait UserHelpers
 
             (app(CcdProblemService::class))->addPatientCcdProblem(
                 (new CcdProblemInput())
-                ->setCpmProblemId($cpmProb->id)
-                ->setUserId($patient->id)
-                ->setName($cpmProb->name)
-                ->setIsMonitored(true)
-                ->setIcd10($icd10)
+                    ->setCpmProblemId($cpmProb->id)
+                    ->setUserId($patient->id)
+                    ->setName($cpmProb->name)
+                    ->setIsMonitored(true)
+                    ->setIcd10($icd10)
             );
         }
 
@@ -391,11 +391,11 @@ trait UserHelpers
 
             (app(CcdProblemService::class))->addPatientCcdProblem(
                 (new CcdProblemInput())
-                ->setCpmProblemId($cpmProb->id)
-                ->setUserId($patient->id)
-                ->setName($cpmProb->name)
-                ->setIsMonitored(true)
-                ->setIcd10($icd10)
+                    ->setCpmProblemId($cpmProb->id)
+                    ->setUserId($patient->id)
+                    ->setName($cpmProb->name)
+                    ->setIsMonitored(true)
+                    ->setIcd10($icd10)
             );
         } else {
             $ccdProblems = $patient->ccdProblems()->createMany([
