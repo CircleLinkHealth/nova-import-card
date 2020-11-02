@@ -42,6 +42,7 @@ use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\SamlSp\Entities\SamlUser;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -234,6 +235,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $roles_count
  * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null                                                            $saasAccount
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[]                                              $tokens
+ * @property \CircleLinkHealth\SamlSp\Entities\SamlUser[]|\Illuminate\Database\Eloquent\Collection                           $samlUsers
+ * @property int|null                                                                                                        $saml_users_count
  * @property int|null                                                                                                        $tokens_count
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                                      $ucp
  * @property int|null                                                                                                        $ucp_count
@@ -2904,6 +2907,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'created_at'    => optional($this->created_at)->format('c') ?? null,
             'updated_at'    => optional($this->updated_at)->format('c') ?? null,
         ];
+    }
+
+    public function samlUsers()
+    {
+        return $this->hasMany(SamlUser::class, 'cpm_user_id', 'id');
     }
 
     public function scopeCareCoaches($query)
