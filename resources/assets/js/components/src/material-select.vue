@@ -1,9 +1,8 @@
 <template>
     <div>
         <select ref="selectRef" v-model="model" v-bind:multiple="multiple" :class="{invalid: errors.get(name)}" :name="name" :id="id">
-            <option value=""
-                    disabled
-            >{{ selectText }}</option>
+            <option value="" disabled>{{ selectText }}
+            </option>
             <option v-for="(item, index) in items"
                     v-bind:value="item.id"
                     v-text="item[textField]"
@@ -98,6 +97,10 @@
         methods: Object.assign(
             mapActions(['clearErrors']), {
             init () {
+
+                if (!this.$refs.selectRef) {
+                    return;
+                }
 
                 //added this check so dropdown does not re-initialise at all times
                 //otherwise, when multiple is enabled, the dropdown closes on every item check
