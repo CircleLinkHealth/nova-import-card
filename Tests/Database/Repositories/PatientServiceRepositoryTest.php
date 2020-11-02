@@ -11,6 +11,7 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as P
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -20,7 +21,7 @@ class PatientServiceRepositoryTest extends CustomerTestCase
 {
     protected PatientServiceProcessorRepositoryInterface $repo;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -35,6 +36,8 @@ class PatientServiceRepositoryTest extends CustomerTestCase
             $ccmCode = ChargeableService::CCM,
             $startOfMonth = Carbon::now()->startOfMonth()
         );
+        
+        BillingCache::clearPatients();
 
         self::assertTrue($this->repo->isChargeableServiceEnabledForLocationForMonth($this->patient()->id, $ccmCode, $startOfMonth));
         self::assertFalse($this->repo->isChargeableServiceEnabledForLocationForMonth($this->patient()->id, ChargeableService::BHI, $startOfMonth));
