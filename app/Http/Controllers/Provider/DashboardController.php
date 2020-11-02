@@ -166,7 +166,7 @@ class DashboardController extends Controller
             ->chargeableServices()
             ->sync($sync);
 
-        //temporary solution until ROAD-286 gets deployed
+        //temporary solution until we switch over fully to billing gets deployed
         SetupPracticeBillingData::sync($this->primaryPractice->id);
 
         return redirect()->back();
