@@ -62,15 +62,12 @@ class ModifyTimeTrackingTest extends CustomerTestCase
         $patient  = $this->setupPatient($practice);
         $this->addTime($nurse, $patient, 5, true, true, null);
 
-        
         $time = $patient->getCcmTime();
         self::assertEquals(5 * 60, $time);
 
         $careRateLogs = $nurse->nurseInfo->careRateLogs()->sum('increment');
         self::assertEquals(5 * 60, $careRateLogs);
-    
-        
-        
+
         /** @var PageTimer $entry */
         $entry  = PageTimer::orderByDesc('id')->first();
         $action = NovaActionTest::novaAction(ModifyTimeTracker::class);
@@ -78,7 +75,7 @@ class ModifyTimeTrackingTest extends CustomerTestCase
             'duration'              => 3 * 60,
             'allow_accrued_towards' => true,
         ], $entry);
-        
+
         BillingCache::clearPatients();
 
         $entry = $entry->fresh();
