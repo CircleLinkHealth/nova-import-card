@@ -1,14 +1,13 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Nova\Actions;
 
-
 use Anaseqal\NovaImport\Actions\Action;
 use App\Nova\Importers\PcmProblems;
-use App\Nova\Importers\RpmProblems;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -24,24 +23,24 @@ class ImportPcmProblems extends Action
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     /**
      * Indicates if this action is only available on the resource detail view.
      *
      * @var bool
      */
     public $onlyOnIndex = true;
-    
+
     /**
      * @var array
      */
     private $fields;
-    
+
     public function __construct(array $fields = [])
     {
         $this->fields = $fields;
     }
-    
+
     /**
      * Get the fields available on the action.
      *
@@ -53,14 +52,14 @@ class ImportPcmProblems extends Action
             ->activeBillable()
             ->pluck('display_name', 'id')
             ->toArray();
-        
+
         return [
             File::make('File')
                 ->rules('required'),
             Select::make('Practice', 'practice_id')->options($practices)->withModel(Practice::class),
         ];
     }
-    
+
     /**
      * Perform the action on the given models.
      *
@@ -70,8 +69,7 @@ class ImportPcmProblems extends Action
     {
         $file = $fields->file;
         Excel::import(new PcmProblems($fields->practice_id, $file->getClientOriginalName()), $file);
-        
+
         return Action::message('It worked!');
     }
-    
 }

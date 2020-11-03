@@ -1,10 +1,10 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Nova\Importers;
-
 
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,20 +20,20 @@ class PcmProblems implements WithChunkReading, OnEachRow, WithHeadingRow, Should
 {
     use Importable;
     use RegistersEventListeners;
-    
+
     private $fileName;
-    
+
     /**
      * @var int
      */
     private $practiceId;
-    
+
     public function __construct(int $practiceId, $fileName)
     {
         $this->practiceId = $practiceId;
         $this->fileName   = $fileName;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -41,12 +41,12 @@ class PcmProblems implements WithChunkReading, OnEachRow, WithHeadingRow, Should
     {
         return 100;
     }
-    
+
     public function message(): string
     {
         return 'File queued for importing.';
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -54,7 +54,7 @@ class PcmProblems implements WithChunkReading, OnEachRow, WithHeadingRow, Should
     {
         //todo: extract abstract class for RPM and PCM problems
         $row = $row->toArray();
-        
+
         PcmProblem::updateOrCreate([
             'practice_id' => $this->practiceId,
             'code_type'   => $row['code_type'],
