@@ -81,20 +81,27 @@
                 </template>
                 <template slot="Care Coach" slot-scope="props">
                     <div>
-                        <select-editable v-model="props.row.NurseId" :display-text="props.row['Care Coach']"
+                        <select-editable v-if="isAdmin" v-model="props.row.NurseId" :display-text="props.row['Care Coach']"
                                          :values="props.row.nurses()"
                                          :class-name="isAssignedToPatientsCareCoach(props.row) ? 'blue' : 'orange'"
                                          :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
+
+                        <div v-else>
+                            {{props.row['Care Coach']}}
+                        </div>
                         <loader class="relative" v-if="props.row.loaders.nurse"></loader>
                     </div>
                 </template>
                 <template slot="Activity Day" slot-scope="props">
                     <div>
-                        <date-editable v-model="props.row['Activity Day']" :format="'YYYY-mm-DD'"
+                        <date-editable v-if="isAdmin || (isCallbacksAdmin && props.row['Type'] === 'Call Back')" v-model="props.row['Activity Day']" :format="'YYYY-mm-DD'"
                                        :class-name="isInThePast(props.row['Activity Day']) ? 'red' : 'blue'"
                                        :on-change="props.row.onNextCallUpdate.bind(props.row)"
                                        :show-confirm="props.row['Manual']"
                                        :confirm-message="getEditDateTimeConfirmMessage(props.row)"></date-editable>
+                        <div v-else>
+                            {{props.row['Activity Day']}}
+                        </div>
                         <loader class="relative" v-if="props.row.loaders.nextCall"></loader>
                     </div>
                 </template>
