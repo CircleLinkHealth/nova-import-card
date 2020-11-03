@@ -1039,6 +1039,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'phoneNumber.update',
                     'phoneNumber.delete',
                     'phoneNumber.read',
+                    'note.download',
                 ],
             ],
             [
@@ -1093,6 +1094,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'note.read',
                     'note.update',
                     'note.delete',
+                    'note.download',
                     'call.create',
                     'call.read',
                     'call.update',
@@ -1326,6 +1328,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'practice.read',
                     'call.read',
                     'phi.read',
+                    'note.read',
                     'careplan.read',
                     'patient.read',
                     'pam.view',
