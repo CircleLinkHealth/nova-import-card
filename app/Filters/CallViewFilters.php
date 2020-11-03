@@ -53,7 +53,7 @@ class CallViewFilters extends QueryFilters
 
     public function globalFilters(): array
     {
-        return ['software_only_user' => ! auth()->user()->isAdmin()];
+        return ['non_admin_user' => ! auth()->user()->isAdmin()];
     }
 
     public function last_call($lastCall = null)
@@ -124,12 +124,12 @@ class CallViewFilters extends QueryFilters
         return $this->builder->where('scheduled_date', 'like', '%'.$date.'%');
     }
 
-    public function software_only_user($value = null)
+    public function non_admin_user($value = null)
     {
         if ( ! $value) {
             return $this->builder;
         }
-        $roleIds = Role::getIdsFromNames(['software-only']);
+        $roleIds = Role::getIdsFromNames(['software-only', 'callbacks-admin']);
         $user    = auth()->user();
 
         return $this->builder->whereRaw(

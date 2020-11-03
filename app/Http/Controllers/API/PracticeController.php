@@ -216,7 +216,10 @@ class PracticeController extends Controller
         if ($practicesIAmAdmin) {
             $roleIds = $user->isAdmin()
                 ? null
-                : Role::getIdsFromNames(['software-only']);
+                : Role::getIdsFromNames([
+                    'software-only',
+                    'callbacks-admin',
+                ]);
         } else {
             $roleIds = null;
         }

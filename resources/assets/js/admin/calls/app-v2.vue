@@ -17,8 +17,8 @@
                     <span v-if="includeDemoPatients">Exclude Demo Patients</span>
                     <span v-else>Include Demo Patients</span>
                 </button>
-                <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
-                <label class="btn btn-gray btn-xs">
+                <button v-if="isAdmin" class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+                <label v-if="isAdmin" class="btn btn-gray btn-xs">
                     <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
                     Show Unassigned
                 </label>
@@ -34,12 +34,12 @@
         <div>
             <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
                 <template slot="selected" slot-scope="props">
-                    <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
+                    <input v-if="isAdmin" class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
                            :disabled="loaders.nurses"
                            type="checkbox"/>
                 </template>
                 <template slot="h__selected" slot-scope="props">
-                    <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
+                    <input v-if="isAdmin" class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
                 </template>
                 <template slot="Type" slot-scope="props">
                     <div class="container" style="width:auto;padding:0;margin:0">
