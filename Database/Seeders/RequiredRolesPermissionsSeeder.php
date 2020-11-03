@@ -384,6 +384,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'location.read',
                     'provider.read',
                     'nurse.read',
+                    'phi.read',
                 ],
             ],
             [
@@ -1294,7 +1295,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
             ],
             [
                 'name'         => 'software-only',
-                'display_name' => 'CCM Admin',
+                'display_name' => 'CCM Admin (Practice)',
                 'description'  => 'Uses only the software solution of CLH (CPM)',
                 'permissions'  => [
                     'practice-admin',
@@ -1311,6 +1312,29 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'call.update',
                     'call.delete',
                     'phi.read',
+                ],
+            ],
+            [
+                'name'         => 'clh-ccm-admin',
+                'display_name' => 'CLH CCM Admin',
+                'description'  => 'CLH in-house CCM Admin',
+                'permissions'  => [
+                    'patientSummary.read',
+                    'patientProblem.read',
+                    'patientProblem.update',
+                    'chargeableService.read',
+                    'practice.read',
+                    'call.read',
+                    'phi.read',
+    
+                    'careplan.read',
+                    'patient.read',
+                    'pam.view',
+                    'location.read',
+                    'provider.read',
+                    'nurse.read',
+                    'users-view-self',
+'users-view-all',
                 ],
             ],
             [
