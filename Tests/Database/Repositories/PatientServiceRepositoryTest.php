@@ -15,10 +15,17 @@ use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
+use Tests\TestCase;
 
-class PatientServiceRepositoryTest extends CustomerTestCase
+class PatientServiceRepositoryTest extends TestCase
 {
+    use UserHelpers;
+    use PracticeHelpers;
+    
+    protected $location;
+    
     protected PatientServiceProcessorRepositoryInterface $repo;
 
     public function setUp(): void
