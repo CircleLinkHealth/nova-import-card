@@ -1314,6 +1314,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'call.update',
                     'call.delete',
                     'phi.read',
+                    'pam.view',
                 ],
             ],
             [
