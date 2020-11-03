@@ -161,6 +161,23 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                 </li>
                             @endif
 
+                            @if($user->isClhCcmAdmin())
+                                <li class="dropdown">
+                                    <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                         aria-expanded="false">
+                                        Admin
+                                        <span class="caret text-white"></span>
+                                    </div>
+                                    <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                                        <li>
+                                            <a href="{{ route('patientCallManagement.v2.index') }}">
+                                                Patient Activity Management
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endif
+
                             @if ( ! auth()->guest()
                                  && $user->isNotSaas()
                                  && $user->hasRole('software-only'))
