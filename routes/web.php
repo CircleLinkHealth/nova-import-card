@@ -984,33 +984,31 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('create', [
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.create',
-            ])->middleware(['permission:patient.read']);
+            ])->middleware(['permission:note.create']);
             Route::get('edit/{noteId}', [
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.edit',
-            ])->middleware(['permission:note.create,patient.update,patientSummary.update']);
+            ])->middleware(['permission:note.create']);
             Route::post('store', [
                 'uses' => 'NotesController@store',
                 'as'   => 'patient.note.store',
-            ])->middleware('permission:note.create,patient.update,patientSummary.update');
+            ])->middleware('permission:note.create');
             Route::post('store-draft', [
                 'uses' => 'NotesController@storeDraft',
                 'as'   => 'patient.note.store.draft',
-            ])->middleware('permission:note.create,patient.update,patientSummary.update');
+            ])->middleware('permission:note.create');
             Route::post('delete/{noteId}', [
                 'uses' => 'NotesController@deleteDraft',
                 'as'   => 'patient.note.delete.draft',
-            ])->middleware('permission:note.create,patient.update,patientSummary.update');
+            ])->middleware('permission:note.delete');
             Route::get('{showAll?}', [
                 'uses' => 'NotesController@index',
                 'as'   => 'patient.note.index',
-            ])->middleware([
-                'permission:patient.read,provider.read,note.read,appointment.read,activity.read',
-            ]);
+            ])->middleware(['permission:note.read']);
             Route::get('view/{noteId}', [
                 'uses' => 'NotesController@show',
                 'as'   => 'patient.note.view',
-            ])->middleware(['permission:patient.read,provider.read,note.read']);
+            ])->middleware(['permission:note.read']);
             Route::post('send/{noteId}', [
                 'uses' => 'NotesController@send',
                 'as'   => 'patient.note.send',
@@ -1022,7 +1020,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('download/{noteId}', [
                 'uses' => 'NotesController@download',
                 'as'   => 'patient.note.download',
-            ])->middleware(['permission:patient.read']);
+            ])->middleware(['permission:note.download']);
         });
 
         Route::get('progress', [

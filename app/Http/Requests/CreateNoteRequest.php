@@ -18,7 +18,7 @@ class CreateNoteRequest extends FormRequest
      */
     public function authorize()
     {
-        if ( ! auth()->user()->isCareCoach()) {
+        if ( ! auth()->user()->hasPermission('note.create')) {
             return true;
         }
 
