@@ -25,8 +25,8 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
         $patient = $this->patient();
         DB::enableQueryLog();
         app(ProcessPatientSummaries::class)->execute($patient->id, Carbon::now()->startOfMonth());
-        $log = DB::getQueryLog();
-        $x   = 1;
+        self::assertTrue(empty(DB::getQueryLog()));
+        DB::disableQueryLog();
     }
 
     public function test_it_updates_cached_records_on_attach()
