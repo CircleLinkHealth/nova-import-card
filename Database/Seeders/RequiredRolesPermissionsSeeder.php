@@ -1326,7 +1326,6 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'practice.read',
                     'call.read',
                     'phi.read',
-    
                     'careplan.read',
                     'patient.read',
                     'pam.view',
@@ -1334,7 +1333,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'provider.read',
                     'nurse.read',
                     'users-view-self',
-'users-view-all',
+                    'users-view-all',
                 ],
             ],
             [
