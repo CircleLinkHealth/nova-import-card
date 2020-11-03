@@ -77,6 +77,19 @@ class AutoResolveCallbackRequestService
         ]);
     }
 
+    private function assignCallbackToNurse(User $user, array $postmarkCallbackData)
+    {
+        /** @var SchedulerService $service */
+        $service = app(SchedulerService::class);
+        $service->scheduleAsapCallbackTask(
+            $user,
+            $this->constructCallbackMessage($postmarkCallbackData),
+            ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
+            null,
+            SchedulerService::CALL_BACK_TYPE,
+        );
+    }
+
     private function constructCallbackMessage(array $postmarkCallbackData)
     {
         $callerId       = $postmarkCallbackData['callerId'];
@@ -93,20 +106,5 @@ class AutoResolveCallbackRequestService
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)
     {
         (new ProcessUnresolvedPostmarkCallback($matchedResultsFromDB, $recordId))->handleUnresolved();
-    }
-    
-    private function assignCallbackToNurse(User $user, array $postmarkCallbackData)
-    {
-        /** @var SchedulerService $service */
-        $service = app(SchedulerService::class);
-        $service->scheduleAsapCallbackTask(
-            $user,
-            $this->constructCallbackMessage($postmarkCallbackData),
-            ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
-            null,
-            SchedulerService::CALL_BACK_TYPE,
-        );
-    
-        return;
     }
 }

@@ -16,9 +16,7 @@ use Illuminate\Console\Command;
 class SendTestEmailToSendGrid extends Command
 {
     use Queueable;
-    const DEFAULT_POSTMARK_INBOUND_ADDRESS = 'ce336c4be369b05746140c3478913fbd@inbound.postmarkapp.com';
-
-    const POSTMARK_INBOUND_ADDRESS = 'postmark_inbound_address';
+    const POSTMARK_INBOUND_ADDRESS_CONFIG_KEY = 'postmark_inbound_address';
     /**
      * The console command description.
      *
@@ -50,9 +48,8 @@ class SendTestEmailToSendGrid extends Command
 
     public function handle()
     {
-        $x                    = $this->getPostmarkInboundAddress();
         $this->isCallbackMail = (bool) $this->option('callback-mail');
-        $this->email          = $this->isCallbackMail ? self::POSTMARK_INBOUND_ADDRESS : $this->argument('email');
+        $this->email          = $this->isCallbackMail ? self::POSTMARK_INBOUND_ADDRESS_CONFIG_KEY : $this->argument('email');
 
         if ($this->isCallbackMail) {
             try {
@@ -79,13 +76,13 @@ class SendTestEmailToSendGrid extends Command
      */
     private function getPostmarkInboundAddress()
     {
-        $config = AppConfig::pull(self::POSTMARK_INBOUND_ADDRESS, '');
+        $config = AppConfig::pull(self::POSTMARK_INBOUND_ADDRESS_CONFIG_KEY, '');
 
         if (empty($config)) {
-            $defaultAddress = self::POSTMARK_INBOUND_ADDRESS;
+            $defaultAddress = self::POSTMARK_INBOUND_ADDRESS_CONFIG_KEY;
             $this->warn("Please set $defaultAddress in Configuration panel.");
 
-            return;
+            return '';
         }
 
         return $config;
