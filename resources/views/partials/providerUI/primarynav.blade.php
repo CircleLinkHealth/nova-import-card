@@ -1,7 +1,5 @@
 <?php
 
-use App\FullCalendar\NurseCalendarService;
-
 $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
 if (isset($patient)) {
     //$patient can be a User or Patient model.
@@ -213,7 +211,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                             @endif
 
 
-                            @if(! $userIsCareCoach)
+                            @if(! $userIsCareCoach && !auth()->user()->isCallbacksAdmin() && !auth()->user()->isClhCcmAdmin())
                                 <li>
                                     <a href="{{ route('patients.dashboard') }}" class="text-white"><i
                                                 class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
@@ -282,6 +280,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
 
                         @endif
 
+                            @if(!auth()->user()->isCallbacksAdmin() && !auth()->user()->isClhCcmAdmin())
                             <li class="dropdown">
                                 <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
                                      aria-expanded="false"><i
@@ -313,6 +312,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                 @endif
                             </ul>
                         </li>
+                                @endif
                         {{--Live Notifications--}}
                         <li class="dropdown">
                             <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"

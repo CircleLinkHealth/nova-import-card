@@ -161,28 +161,30 @@ if (isset($patient) && ! empty($patient)) {
                                             : null;
                                         ?>
 
-                                        <careplan-actions v-cloak
-                                                       mode="web"
-                                                       ccm-status="{{$patientCcmStatus}}"
-                                                       careplan-status="{{$careplanStatus}}"
-                                                       user-scope="{{auth()->user()->scope}}"
-                                                       :is-provider="@json(auth()->user()->providerInfo && auth()->user()->isProvider())"
-                                                       :is-care-coach="@json(auth()->user()->isCareCoach())"
-                                                       :is-admin="@json(auth()->user()->isAdmin())"
-                                                       :provider-can-approve-own-care-plans="@json(auth()->user()->providerInfo && auth()->user()->providerInfo->approve_own_care_plans)"
-                                                       :rn-approval-enabled="@json($rnApprovalEnabled)"
-                                                       :show-ready-for-dr-button="@json($showReadyForDrButton)"
-                                                       :ready-for-dr-button-disabled="@json($readyForDrButtonDisabled)"
-                                                       :ready-for-dr-button-already-clicked="@json($readyForDrButtonAlreadyClicked)"
-                                                       :should-show-approval-button="@json(optional($patientCarePlan)->shouldShowApprovalButton() ?? false)"
-                                                       :patient-care-plan-pdfs-has-items="@json($patientCarePlanPdfsHasItems)"
-                                                       route-approve-own="{{route('provider.update-approve-own')}}"
-                                                       route-approve="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
-                                                       route-approve-view-next="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
-                                                       route-switch-to-pdf="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
-                                                       route-print-care-plan="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}"
-                                                       route-care-plan-not-eligible="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id])}}">
-                                        </careplan-actions>
+                                        @if(!auth()->user()->isCallbacksAdmin() && !auth()->user()->isClhCcmAdmin())
+                                                <careplan-actions v-cloak
+                                                                  mode="web"
+                                                                  ccm-status="{{$patientCcmStatus}}"
+                                                                  careplan-status="{{$careplanStatus}}"
+                                                                  user-scope="{{auth()->user()->scope}}"
+                                                                  :is-provider="@json(auth()->user()->providerInfo && auth()->user()->isProvider())"
+                                                                  :is-care-coach="@json(auth()->user()->isCareCoach())"
+                                                                  :is-admin="@json(auth()->user()->isAdmin())"
+                                                                  :provider-can-approve-own-care-plans="@json(auth()->user()->providerInfo && auth()->user()->providerInfo->approve_own_care_plans)"
+                                                                  :rn-approval-enabled="@json($rnApprovalEnabled)"
+                                                                  :show-ready-for-dr-button="@json($showReadyForDrButton)"
+                                                                  :ready-for-dr-button-disabled="@json($readyForDrButtonDisabled)"
+                                                                  :ready-for-dr-button-already-clicked="@json($readyForDrButtonAlreadyClicked)"
+                                                                  :should-show-approval-button="@json(optional($patientCarePlan)->shouldShowApprovalButton() ?? false)"
+                                                                  :patient-care-plan-pdfs-has-items="@json($patientCarePlanPdfsHasItems)"
+                                                                  route-approve-own="{{route('provider.update-approve-own')}}"
+                                                                  route-approve="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
+                                                                  route-approve-view-next="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
+                                                                  route-switch-to-pdf="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
+                                                                  route-print-care-plan="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}"
+                                                                  route-care-plan-not-eligible="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id])}}">
+                                                </careplan-actions>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
