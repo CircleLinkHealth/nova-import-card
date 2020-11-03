@@ -2302,6 +2302,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->isCcm() && $this->primaryPractice->hasCCMPlusServiceCode();
     }
 
+    public function isClhCcmAdmin(): bool
+    {
+        return $this->hasRole('clh-ccm-admin');
+    }
+
     /**
      * Returns whether the user is an administrator.
      */
