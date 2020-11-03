@@ -3,22 +3,25 @@
         <div class="row">
             <div class="col-sm-6">
                 <div v-if="isAdmin || isCallbacksAdmin">
-                <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
-                <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
-                <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
-                <button  class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
-                    <span v-if="showOnlyCompletedTasks">Show All Scheduled Activities</span>
-                    <span v-else>Show Completed Tasks</span>
-                </button>
-                <button class="btn btn-primary btn-xs" @click="changeShowPatientNames">
-                    <span v-if="showPatientNames">Hide Patient Names</span>
-                    <span v-else>Show Patient Names</span>
-                </button>
-                    <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
-                    <label class="btn btn-gray btn-xs">
-                        <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
-                        Show Unassigned
-                    </label>
+                    <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
+                </div>
+
+                <div v-if="isAdmin">
+                    <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
+                    <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
+                    <button  class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
+                        <span v-if="showOnlyCompletedTasks">Show All Scheduled Activities</span>
+                        <span v-else>Show Completed Tasks</span>
+                    </button>
+                    <button class="btn btn-primary btn-xs" @click="changeShowPatientNames">
+                        <span v-if="showPatientNames">Hide Patient Names</span>
+                        <span v-else>Show Patient Names</span>
+                    </button>
+                        <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+                        <label class="btn btn-gray btn-xs">
+                            <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
+                            Show Unassigned
+                        </label>
                 </div>
                 <button v-if="isAdmin" class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
                     <span v-if="includeDemoPatients">Exclude Demo Patients</span>

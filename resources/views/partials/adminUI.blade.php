@@ -57,6 +57,22 @@
         .select2 {
             width: 100%;
         }
+
+        .navbar {
+            margin-bottom: 0;
+            background: linear-gradient(to right,#4fb2e2 0,#0170b5 100%);
+            color: white;
+            border-radius: 0;
+            border: none;
+        }
+
+        .navbar-default .navbar-nav>li>a {
+            color: white;
+        }
+
+        .callback-admin-fix {
+            padding-top: 15px;
+        }
     </style>
     @stack('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css"
