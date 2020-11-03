@@ -2,11 +2,10 @@
     <div>
         <div class="row">
             <div class="col-sm-6">
-                <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
+                <a v-if="isAdmin" class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
                 <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
-                <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients
-                </button>
-                <button class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
+                <button v-if="isAdmin" class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
+                <button  v-if="isAdmin" class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
                     <span v-if="showOnlyCompletedTasks">Show All Scheduled Activities</span>
                     <span v-else>Show Completed Tasks</span>
                 </button>
@@ -14,7 +13,7 @@
                     <span v-if="showPatientNames">Hide Patient Names</span>
                     <span v-else>Show Patient Names</span>
                 </button>
-                <button class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
+                <button v-if="isAdmin" class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
                     <span v-if="includeDemoPatients">Exclude Demo Patients</span>
                     <span v-else>Include Demo Patients</span>
                 </button>
@@ -25,7 +24,7 @@
                 </label>
                 <loader class="absolute" v-if="loaders.calls"></loader>
             </div>
-            <div class="col-sm-6 text-right" v-if="selectedPatients.length > 0">
+            <div class="col-sm-6 text-right" v-if="isAdmin && selectedPatients.length > 0">
                 <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Care Coach</button>
                 <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Activity Date</button>
                 <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>

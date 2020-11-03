@@ -306,17 +306,6 @@
                     nurses: false
                 },
 
-                subTypesForSelect: [
-                    UNASSIGNED_VALUE,
-                    {label: 'Call', value: 'call'},
-                    {label: 'Call back', value: 'Call Back'},
-                    {label: 'Refill', value: 'Refill'},
-                    {label: 'Send Info', value: 'Send Info'},
-                    {label: 'Get appt.', value: 'Get Appt.'},
-                    {label: 'CP Review', value: 'CP Review'},
-                    {label: 'Other Task', value: 'Other Task'}
-                ],
-
                 practices: [],
                 practicesForSelect: [],
 
@@ -341,6 +330,24 @@
             },
             showPracticeColumn() {
                 return this.practices.length > 1;
+            },
+            subTypesForSelect() {
+                if (this.$parent.isAdmin) {
+                    return [
+                        UNASSIGNED_VALUE,
+                        {label: 'Call', value: 'call'},
+                        {label: 'Call back', value: 'Call Back'},
+                        {label: 'Refill', value: 'Refill'},
+                        {label: 'Send Info', value: 'Send Info'},
+                        {label: 'Get appt.', value: 'Get Appt.'},
+                        {label: 'CP Review', value: 'CP Review'},
+                        {label: 'Other Task', value: 'Other Task'}
+                    ];
+                }
+
+                return [
+                    {label: 'Call back', value: 'Call Back'}
+                ];
             },
         },
 
