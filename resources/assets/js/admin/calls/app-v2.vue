@@ -2,26 +2,28 @@
     <div>
         <div class="row">
             <div class="col-sm-6">
-                <a v-if="isAdmin" class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
+                <div v-if="isAdmin || isCallbacksAdmin">
+                <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
                 <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
-                <button v-if="isAdmin" class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
-                <button  v-if="isAdmin" class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
+                <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
+                <button  class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
                     <span v-if="showOnlyCompletedTasks">Show All Scheduled Activities</span>
                     <span v-else>Show Completed Tasks</span>
                 </button>
-                <button v-if="isAdmin" class="btn btn-primary btn-xs" @click="changeShowPatientNames">
+                <button class="btn btn-primary btn-xs" @click="changeShowPatientNames">
                     <span v-if="showPatientNames">Hide Patient Names</span>
                     <span v-else>Show Patient Names</span>
                 </button>
+                    <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+                    <label class="btn btn-gray btn-xs">
+                        <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
+                        Show Unassigned
+                    </label>
+                </div>
                 <button v-if="isAdmin" class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
                     <span v-if="includeDemoPatients">Exclude Demo Patients</span>
                     <span v-else>Include Demo Patients</span>
                 </button>
-                <button v-if="isAdmin" class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
-                <label v-if="isAdmin" class="btn btn-gray btn-xs">
-                    <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
-                    Show Unassigned
-                </label>
                 <loader class="absolute" v-if="loaders.calls"></loader>
             </div>
             <div class="col-sm-6 text-right" v-if="isAdmin && selectedPatients.length > 0">
@@ -34,12 +36,12 @@
         <div>
             <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
                 <template slot="selected" slot-scope="props">
-                    <input v-if="isAdmin" class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
+                    <input v-if="isAdmin || isCallbacksAdmin" class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
                            :disabled="loaders.nurses"
                            type="checkbox"/>
                 </template>
                 <template slot="h__selected" slot-scope="props">
-                    <input v-if="isAdmin" class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
+                    <input v-if="isAdmin || isCallbacksAdmin" class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
                 </template>
                 <template slot="Type" slot-scope="props">
                     <div class="container" style="width:auto;padding:0;margin:0">
@@ -181,7 +183,7 @@
         name: 'CallMgmtAppV2',
         mixins: [VueCache, GetsNurses],
         props: [
-            'isAdmin'
+            'authRole'
         ],
         components: {
             'text-editable': TextEditable,
@@ -219,6 +221,15 @@
             }
         },
         computed: {
+            isAdmin() {
+                return this.authRole === 'administrator';
+            },
+            isSoftwareOnly() {
+                return this.authRole === 'software-only';
+            },
+            isCallbacksAdmin() {
+                return this.authRole === 'callbacks-admin';
+            },
             patientNamesClass() {
                 return this.showPatientNames ? '' : 'hidden';
             },

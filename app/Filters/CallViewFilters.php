@@ -129,7 +129,9 @@ class CallViewFilters extends QueryFilters
         if ( ! $value) {
             return $this->builder;
         }
-        $roleIds = Role::getIdsFromNames(['software-only', 'callbacks-admin']);
+        $roleIds = Role::whereHas('perms', function ($q) {
+            $q->where('name', 'pam.view');
+        })->pluck('id')->all();
         $user    = auth()->user();
 
         return $this->builder->whereRaw(
