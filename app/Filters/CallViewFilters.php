@@ -129,15 +129,18 @@ class CallViewFilters extends QueryFilters
         if ( ! $value) {
             return $this->builder;
         }
-        $roleIds = Role::whereHas('perms', function ($q) {
-            $q->where('name', 'pam.view');
-        })->pluck('id')->all();
-        $user    = auth()->user();
 
-        return $this->builder->whereRaw(
-            'practice_id IN (SELECT program_id FROM practice_role_user WHERE role_id IN (?) AND user_id = ?)',
-            [implode(',', $roleIds), $user->id]
-        );
+        return $this->builder
+            ->whereIn('practice_id', function ($q) {
+                $roleIds = Role::whereHas('perms', function ($q) {
+                    $q->where('name', 'pam.view');
+                })->pluck('id')->all();
+                
+                $q->select('program_id')
+                    ->from('practice_role_user')
+                    ->where('user_id', auth()->id())
+                    ->whereIn('role_id', $roleIds);
+            });
     }
 
     public function sort_bhi_time($term)
