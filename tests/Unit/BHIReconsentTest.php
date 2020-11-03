@@ -108,6 +108,7 @@ class BHIReconsentTest extends CustomerTestCase
 
         //todo next iteration: is this a realistic scenario to happen say in the middle of the month? I think not, still try and cleanup either code or test
         $bhiPatient->chargeableMonthlySummaries()->delete();
+        BillingCache::clearPatients();
         ProcessSinglePatientMonthlyServices::dispatch($bhiPatient->id);
         $this->assertFalse($bhiPatient->isBhi());
     }
