@@ -64,7 +64,7 @@ class CarePlansGeneratedNotification extends Notification
             ->action('Download Care Plans', $this->getSignedUrl($notifiable))
             ->line("At $dateForMessage, you requested to generate care plans.")
             ->line('For security reasons, this link will expire in 48 hours.')
-            ->line('Thank you for using our CarePlan!');
+            ->line('Thank you for using CarePlan Manager!');
     }
 
     /**
