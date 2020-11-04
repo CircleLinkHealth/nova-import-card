@@ -303,6 +303,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Administrator - View Only',
                 'description'  => 'A special administrative account where you can view the admin but not perform actions',
                 'permissions'  => [
+                    'edit-patient-chart.disable',
                     'admin-access',
                     'pam.view',
                     'ca-director.view',
@@ -375,6 +376,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Callbacks Admin',
                 'description'  => 'An administrative account with permissions to manage callbacks',
                 'permissions'  => [
+                    'edit-patient-chart.disable',
                     'downloads.disable',
                     'careplan.read',
                     'patient.read',
@@ -663,6 +665,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Care Ambassador - View Only',
                 'description'  => 'Makes calls to enroll patients, and can see patient data for specific Practices',
                 'permissions'  => [
+                    'edit-patient-chart.disable',
                     'careplan.read',
                     'careplan.update',
                     'careplanAssessment.read',
@@ -1191,6 +1194,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Saas Admin - View Only',
                 'description'  => 'Created for MDAlly, a partner which white-labels our CCM service to their customers',
                 'permissions'  => [
+                    'edit-patient-chart.disable',
                     'admin-access',
                     'pam.view',
                     'ca-director.view',
@@ -1323,6 +1327,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'CLH CCM Admin',
                 'description'  => 'CLH in-house CCM Admin',
                 'permissions'  => [
+                    'edit-patient-chart.disable',
                     'downloads.disable',
                     'patientSummary.read',
                     'patientProblem.read',

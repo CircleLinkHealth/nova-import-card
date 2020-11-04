@@ -116,6 +116,10 @@ class RequiredPermissionsTableSeeder extends Seeder
                 'name'         => 'downloads.disable',
                 'display_name' => 'Disable downloading any content from CPM.',
             ],
+            [
+                'name'         => 'edit-patient-chart.disable',
+                'display_name' => 'Disable making changes to a patient\'s chart.',
+            ],
         ];
 
         return array_merge($perms, $old);
