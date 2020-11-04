@@ -60,7 +60,7 @@
                 name: 'User_list',
                 // the key from the array we want to display (name,id,email,etc...)
                 displayKey: 'hint',
-                limit: 50,
+                limit: 100,
                 templates: {
                     empty: [
                         '<div class="empty-message">No Patients Found...</div>'

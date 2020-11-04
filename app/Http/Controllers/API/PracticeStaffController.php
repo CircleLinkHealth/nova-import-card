@@ -8,6 +8,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeStaff;
+use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -15,6 +16,8 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SamlSp\Console\RegisterSamlUserMapping;
+use CircleLinkHealth\SamlSp\Entities\SamlUser;
 
 class PracticeStaffController extends Controller
 {
@@ -126,7 +129,9 @@ class PracticeStaffController extends Controller
             })
                                                        ?? null;
 
-        $user->loadMissing('providerInfo');
+        $user->loadMissing(['providerInfo', 'samlUsers.idpRelation']);
+        /** @var ?SamlUser $samlUser */
+        $samlUser = $user->samlUsers->isNotEmpty() ? $user->samlUsers->first() : null;
 
         return [
             'id'              => $user->id,
@@ -158,6 +163,8 @@ class PracticeStaffController extends Controller
                 'who'      => $forwardCarePlanApprovalEmailsToContactUsers->keys()->first() ?? 'billing_provider',
                 'user_ids' => $forwardCarePlanApprovalEmailsToContactUsers->values()->first() ?? [],
             ],
+            'ehr_id'       => optional(optional($samlUser)->idpRelation)->id,
+            'ehr_username' => optional($samlUser)->idp_user_id,
         ];
     }
 
@@ -261,6 +268,14 @@ class PracticeStaffController extends Controller
         } elseif ($user->nurseInfo) {
             $user->nurseInfo->status = 'inactive';
             $user->nurseInfo->save();
+        }
+
+        if ( ! empty($formData['ehr_id']) && ! empty($formData['ehr_username'])) {
+            \Artisan::queue(RegisterSamlUserMapping::class, [
+                'cpmUserId' => $user->id,
+                'idp'       => Ehr::find($formData['ehr_id'])->name,
+                'idpUserId' => $formData['ehr_username'],
+            ]);
         }
 
         return response()->json($this->present($user, $primaryPractice, $roles));

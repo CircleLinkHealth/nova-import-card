@@ -133,8 +133,8 @@ class CareTeamController extends Controller
             ->orderBy('type')
             ->get()
             ->map(function ($member) use (
-                                  $patient
-                              ) {
+                $patient
+            ) {
                 $type = $member->type;
 
                 if ($member->user->practice($patient->primaryPractice->id) && ! in_array(

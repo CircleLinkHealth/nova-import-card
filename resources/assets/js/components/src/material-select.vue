@@ -1,22 +1,38 @@
 <template>
-    <select v-model="model" v-bind:multiple="multiple">
-        <option value=""
-                disabled
-        >{{ selectText }}</option>
-        <option v-for="(item, index) in items"
-                v-bind:value="item.id"
-                v-text="item[textField]"
-                :key="item.id || item[textField] || index"
-        ></option>
-        <slot></slot>
-    </select>
+    <div>
+        <select ref="selectRef" v-model="model" v-bind:multiple="multiple" :class="{invalid: errors.get(name)}" :name="name" :id="id">
+            <option value="" :disabled="!allowNoSelect">{{ selectText }}
+            </option>
+            <option v-for="(item, index) in items"
+                    v-bind:value="item.id"
+                    v-text="item[textField]"
+                    :key="item.id || item[textField] || index"
+            ></option>
+            <slot></slot>
+        </select>
+        <p class="validation-error">{{errors.get(name)}}</p>
+        <label v-if="labelText.length" :for="name" class="active">{{labelText}}</label>
+    </div>
 </template>
 
 <script type="text/babel">
     import IsLoadable from '../../mixins/is-loadable'
+    import {mapActions, mapGetters} from "vuex";
 
     export default {
         props: {
+            id: {
+                type: String,
+                default: ''
+            },
+            name: {
+                type: String,
+                default: ''
+            },
+            labelText: {
+                type: String,
+                default: ''
+            },
             items: {
                 type: Array,
                 default: () => []
@@ -36,21 +52,33 @@
             textField: {
                 type: String,
                 default: 'text'
+            },
+            className: {
+                default: '',
+                required: false
+            },
+            allowNoSelect: {
+                type: Boolean,
+                default: false
             }
         },
 
         watch: {
             items () {
-                this.$el.removeAttribute('onchange');
+                this.$refs.selectRef.removeAttribute('onchange');
                 this.$nextTick(this.init);
             },
             value () {
-                this.$el.removeAttribute('onchange');
+                this.$refs.selectRef.removeAttribute('onchange');
                 this.$nextTick(this.init);
             }
         },
 
-        computed: {
+        computed: Object.assign(
+            mapGetters({
+                errors: 'errors'
+            }),{
+
             model () {
                 if (this.multiple && !this.value) {
                     return []
@@ -58,7 +86,7 @@
 
                 return this.value
             }
-        },
+        }),
 
         mixins: [
             IsLoadable
@@ -70,18 +98,23 @@
             }
         },
 
-        methods: {
+        methods: Object.assign(
+            mapActions(['clearErrors']), {
             init () {
+
+                if (!this.$refs.selectRef) {
+                    return;
+                }
 
                 //added this check so dropdown does not re-initialise at all times
                 //otherwise, when multiple is enabled, the dropdown closes on every item check
                 if (!this.isInit) {
-                    $(this.$el).material_select();
+                    $(this.$refs.selectRef).material_select();
                     this.isInit = true;
                 }
 
                 const vm = this
-                this.$el.onchange = function () {
+                this.$refs.selectRef.onchange = function () {
                     if (!this.multiple) {
                         vm.$emit('input', this.value)
                     } else {
@@ -91,7 +124,7 @@
             },
 
             multi (context, vm) {
-                const siblings = [...vm.$el.previousSibling.getElementsByClassName('active')].map(i => {
+                const siblings = [...vm.$refs.selectRef.previousSibling.getElementsByClassName('active')].map(i => {
                     return i.getElementsByTagName('label')[0].nextSibling.nodeValue
                 })
 
@@ -108,6 +141,6 @@
 
                 vm.$emit('input', array)
             }
-        }
+        })
     }
 </script>

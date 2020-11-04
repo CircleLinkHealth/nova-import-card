@@ -102,8 +102,8 @@ class OnboardingService
 
         $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
             ->whereHas('practices', function ($q) use (
-                                 $primaryPractice
-                             ) {
+                $primaryPractice
+            ) {
                 $q->where('practices.id', '=', $primaryPractice->id);
             })
             ->get()

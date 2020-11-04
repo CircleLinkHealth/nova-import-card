@@ -1782,6 +1782,11 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'NursePerformanceRepController@nurseMetricsDashboard',
         'as'   => 'admin.reports.nurse.metrics',
     ])->middleware('permission:nurseReport.read');
+
+    Route::get('ehrs', [
+        'uses' => 'EhrController@index',
+        'as'   => 'ehrs.get',
+    ])->middleware('permission:practice.read');
 });
 
 // pagetimer
