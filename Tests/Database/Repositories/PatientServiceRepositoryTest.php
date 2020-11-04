@@ -19,9 +19,9 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use Tests\TestCase;
+use Tests\CustomerTestCase;
 
-class PatientServiceRepositoryTest extends TestCase
+class PatientServiceRepositoryTest extends CustomerTestCase
 {
     use PracticeHelpers;
     use UserHelpers;
@@ -109,13 +109,5 @@ class PatientServiceRepositoryTest extends TestCase
         self::assertTrue(is_a($summary, ChargeablePatientMonthlySummary::class));
 
         self::assertTrue($this->repo->isFulfilled($patientId, $ccmCode, $startOfMonth));
-    }
-    
-    public function patient(): User
-    {
-        if (! isset($this->patient)){
-            $this->patient = $this->createUser(Practice::first()->id, 'participant');
-        }
-        return $this->patient;
     }
 }
