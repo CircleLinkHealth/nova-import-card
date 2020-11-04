@@ -26,11 +26,13 @@
                     <input id='firstName_btn' type='button' class='btn btn-primary' value='Show by First Name'
                            style='display:none;margin:15px;'
                            onclick='obs_alerts_dtable.hideColumn("last_name");obs_alerts_dtable.showColumn("first_name");obs_alerts_dtable.sort("#first_name#");this.style.display = "none";getElementById("lastName_btn").style.display = "inline-block";'>
-                    <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
+
+                        @if(! auth()->user()->hasPermission('downloads.disable'))
+                        <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                            onclick="webix.toPDF(obs_alerts_dtable);">
                     <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
                            onclick="webix.toExcel(obs_alerts_dtable);">
-
+@endif
                     <?php
 } else {
         ?>

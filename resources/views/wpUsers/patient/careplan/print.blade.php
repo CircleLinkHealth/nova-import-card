@@ -161,7 +161,7 @@ if (isset($patient) && ! empty($patient)) {
                                             : null;
                                         ?>
 
-                                        @if(!auth()->user()->isCallbacksAdmin() && !auth()->user()->isClhCcmAdmin())
+                                        @if(! auth()->user()->hasPermission('downloads.disable'))
                                                 <careplan-actions v-cloak
                                                                   mode="web"
                                                                   ccm-status="{{$patientCcmStatus}}"
