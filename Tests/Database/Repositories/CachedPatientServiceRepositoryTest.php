@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
 use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Illuminate\Support\Facades\DB;
@@ -33,8 +34,7 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
 
     public function test_it_fetches_patient_from_cache_and_does_not_perform_multiple_queries_during_processing()
     {
-        $practice = $this->setupPractice(true, true, true, true);
-        $patient  = $this->setupPatient($practice, true);
+        $patient  = $this->setupPatientWithSummaries();
 
         $dto = (new PatientMonthlyBillingDTO())
             ->subscribe(
@@ -66,8 +66,7 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
 
     public function test_it_updates_cached_records_on_attach()
     {
-        $practice = $this->setupPractice(true, true, true, true);
-        $patient  = $this->setupPatient($practice, true);
+        $patient  = $this->setupPatientWithSummaries();
     
         $serviceToAttach = ChargeableService::whereNotIn(
             'id',
@@ -100,9 +99,40 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
 
     public function test_it_updates_cached_records_on_fulfill()
     {
+        $patient = $this->setupPatientWithSummaries();
+        
+        $patientSummaries = $this->repo->getChargeablePatientSummaries($patient->id, $thisMonth = Carbon::now()->startOfMonth());
+        
+        DB::enableQueryLog();
+        
+        $this->repo->fulfill(
+            $patient->id,
+            $patientSummaries->first()->chargeable_service_code,
+            $thisMonth
+        );
+    
+        /**
+         * We expect 5 calls to the DB at this point
+         * Get Chargeable Service Id using Code has already been called on processing and it's cached
+         * 1. ServiceSummaryModel::updateOrCreate initial select query to see if model exists
+         * 2. ServiceSummaryModel::updateOrCreate subsequent insert query
+         * 3. Revisions insertion after insert query
+         *
+         */
+        self::assertTrue(count(DB::getQueryLog()) === 3);
+    
+        DB::disableQueryLog();
     }
 
     public function test_it_updates_cached_records_on_set_consent()
     {
+    }
+    
+    private function setupPatientWithSummaries() : User
+    {
+        return $this->setupPatient(
+            $this->setupPractice(true, true, true, true),
+            true
+        );
     }
 }
