@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.158.19",
+            "version": "3.158.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b1c3c763e227e518768f0416cbd2b29c11f79561"
+                "reference": "25e4fe20837601adbf69921da2ef7d13ecf8932c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b1c3c763e227e518768f0416cbd2b29c11f79561",
-                "reference": "b1c3c763e227e518768f0416cbd2b29c11f79561",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/25e4fe20837601adbf69921da2ef7d13ecf8932c",
+                "reference": "25e4fe20837601adbf69921da2ef7d13ecf8932c",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-11-02T19:49:21+00:00"
+            "time": "2020-11-04T20:11:29+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -4087,24 +4087,23 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.101",
+            "version": "v1.2.102",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "bffc10d3090bc99231c17f9960506ab51e9d25f5"
+                "reference": "346cfd72d11bb41f15e82654e532dc55360612ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/bffc10d3090bc99231c17f9960506ab51e9d25f5",
-                "reference": "bffc10d3090bc99231c17f9960506ab51e9d25f5",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/346cfd72d11bb41f15e82654e532dc55360612ac",
+                "reference": "346cfd72d11bb41f15e82654e532dc55360612ac",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8|^5.5|^6.5",
-                "satooshi/php-coveralls": "1.*"
+                "phpunit/phpunit": "^4.8|^5.5|^6.5"
             },
             "type": "library",
             "autoload": {
@@ -4132,7 +4131,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2020-10-24T09:23:11+00:00"
+            "time": "2020-11-04T19:23:01+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
