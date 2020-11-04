@@ -110,11 +110,11 @@
                        @click="changeNameDisplayType">
                 <span class="pad-10"></span>
 
-                <a v-if="! this.hideDownloadButtons" class="btn btn-patients-table" :class="{ disabled: loaders.pdf }" @click="exportPdf"
+                <a v-if="! this.hideDownloadButtons && ! this.isCallbacksAdmin && ! this.isClhCcmAdmin" class="btn btn-patients-table" :class="{ disabled: loaders.pdf }" @click="exportPdf"
                    :href="rootUrl('manage-patients/listing/pdf?showPracticePatients=' + this.showPracticePatients)" download="patient-list.pdf">Export as PDF</a>
                 <span class="pad-10"></span>
 
-                <input v-if="! this.hideDownloadButtons" type="button" class="btn btn-patients-table" :class="{ disabled: loaders.excel }"
+                <input v-if="! this.hideDownloadButtons && ! this.isCallbacksAdmin && ! this.isClhCcmAdmin" type="button" class="btn btn-patients-table" :class="{ disabled: loaders.excel }"
                        :value="exportCSVText" @click="exportCSV">
                 <span class="pad-10"></span>
 
@@ -132,6 +132,7 @@
     import {CancelToken} from 'axios'
     import moment from 'moment'
     import loader from '../loader'
+    import UserRolesHelperMixin from '../../mixins/user-roles-helpers.mixin'
 
     /**
      * Determines whether to show patient name format as
@@ -152,10 +153,6 @@
             loader
         },
         props: {
-            isAdmin: {
-                type: Boolean,
-                required: true,
-            },
             showProviderPatientsButton: {
                 type: Boolean,
                 required: true,
@@ -289,6 +286,7 @@
                 }
             }
         },
+        mixins: [UserRolesHelperMixin],
         methods: {
             rootUrl,
             isFilterActive() {

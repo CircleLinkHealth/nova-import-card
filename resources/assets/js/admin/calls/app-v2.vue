@@ -171,6 +171,7 @@
     import {today} from '../../util/today'
     import * as callUpdateFunctions from './utils/call-update.fn'
     import timeDisplay from '../../util/time-display'
+    import UserRolesHelperMixin from '../../mixins/user-roles-helpers.mixin'
 
 
     import {library} from '@fortawesome/fontawesome-svg-core'
@@ -191,10 +192,7 @@
 
     export default {
         name: 'CallMgmtAppV2',
-        mixins: [VueCache, GetsNurses],
-        props: [
-            'authRole'
-        ],
+        mixins: [VueCache, GetsNurses, UserRolesHelperMixin],
         components: {
             'text-editable': TextEditable,
             'date-editable': DateEditable,
@@ -231,15 +229,6 @@
             }
         },
         computed: {
-            isAdmin() {
-                return this.authRole === 'administrator';
-            },
-            isSoftwareOnly() {
-                return this.authRole === 'software-only';
-            },
-            isCallbacksAdmin() {
-                return this.authRole === 'callbacks-admin';
-            },
             patientNamesClass() {
                 return this.showPatientNames ? '' : 'hidden';
             },
