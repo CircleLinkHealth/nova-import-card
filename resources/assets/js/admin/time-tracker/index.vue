@@ -368,6 +368,8 @@ export default {
                 this.info.chargeableServiceId = bhiCs.chargeable_service.id
             } else if (this.info.chargeableServices.length) {
                 this.info.chargeableServiceId = this.info.chargeableServices[0].chargeable_service.id;
+            } else {
+                this.info.chargeableServiceId = -1;
             }
 
             return true;
