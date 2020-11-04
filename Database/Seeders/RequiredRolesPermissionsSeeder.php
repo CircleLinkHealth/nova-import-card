@@ -1345,6 +1345,9 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'nurse.read',
                     'users-view-self',
                     'users-view-all',
+                    'appointment.read',
+                    'misc.read',
+                    'carePerson.read',
                 ],
             ],
             [
