@@ -39,7 +39,7 @@ class CallObserver
     /**
      * @param $call
      */
-    public function createNotificationAndSendToPusher($call)
+    public function createNotification($call)
     {
         if ( ! auth()->check()) {
             return;
@@ -80,7 +80,7 @@ class CallObserver
         }
 
         if ($call->shouldSendLiveNotification()) {
-            $this->createNotificationAndSendToPusher($call);
+            $this->createNotification($call);
         }
     }
 
