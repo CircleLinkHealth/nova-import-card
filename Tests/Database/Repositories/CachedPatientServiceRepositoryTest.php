@@ -12,6 +12,7 @@ use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessi
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
 use CircleLinkHealth\CcmBilling\Repositories\CachedPatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Illuminate\Support\Facades\DB;
@@ -65,6 +66,36 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
 
     public function test_it_updates_cached_records_on_attach()
     {
+        $practice = $this->setupPractice(true, true, true, true);
+        $patient  = $this->setupPatient($practice, true);
+    
+        $serviceToAttach = ChargeableService::whereNotIn(
+            'id',
+            $this->repo->getChargeablePatientSummaries($patient->id, $thisMonth = Carbon::now()->startOfMonth())
+                ->pluck('id')
+        )->first();
+        
+        DB::enableQueryLog();
+        
+        $this->repo->store($patient->id, $serviceToAttach->code, $thisMonth);
+        
+        self::assertTrue(
+            $this->repo->getChargeablePatientSummaries($patient->id, $thisMonth)
+                ->where('chargeable_service_id', $serviceToAttach->id)
+                ->isNotEmpty()
+        );
+    
+        /**
+         * We expect 5 calls to the DB at this point
+         * 1. Get Chargeable Service Id using Code (normally it will be cached)
+         * 2. ServiceSummaryModel::updateOrCreate initial select query to see if model exists
+         * 3. ServiceSummaryModel::updateOrCreate subsequent insert query
+         * 4. Revisions insertion after insert query
+         * 5. ServiceSummarySQLView select query to update cached data
+         */
+        self::assertTrue(count(DB::getQueryLog()) === 5);
+        
+        DB::disableQueryLog();
     }
 
     public function test_it_updates_cached_records_on_fulfill()
