@@ -9,6 +9,8 @@ if (isset($patient) && ! empty($patient)) {
 
     $alreadyShown = [];
 }
+
+$authRoleName = auth()->user()->practiceOrGlobalRole()->name;
 ?>
 
 @if(!isset($isPdf))
@@ -249,7 +251,7 @@ if (isset($patient) && ! empty($patient)) {
                     @endif
                 </div>
                 <!-- CARE AREAS -->
-                <care-areas ref="careAreasComponent" patient-id="{{$patient->id}}" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}">
+                <care-areas ref="careAreasComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     <template>
                         @if($problemNames)
                             <ul class="subareas__list">
@@ -264,7 +266,7 @@ if (isset($patient) && ! empty($patient)) {
                 </care-areas>
                 <!-- /CARE AREAS -->
                 <!-- BIOMETRICS -->
-                <health-goals ref="healthGoalsComponent" patient-id="{{$patient->id}}" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}">
+                <health-goals ref="healthGoalsComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     @if($biometrics)
                         <ul class="subareas__list">
                             <li class="subareas__item subareas__item--wide col-sm-12">
@@ -292,7 +294,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
-                <medications ref="medicationsComponent" patient-id="{{$patient->id}}" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}">
+                <medications ref="medicationsComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
 
                     <div class="col-xs-10">
                         @if(!empty($taking_medications))
@@ -313,7 +315,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /MEDICATIONS -->
 
                 <!-- SYMPTOMS -->
-                <symptoms ref="symptomsComponent" patient-id="{{$patient->id}}" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}">
+                <symptoms ref="symptomsComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     <ul class="subareas__list">
                         @foreach($symptoms as $s)
                             @if($symptoms)
@@ -325,7 +327,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /SYMPTOMS -->
 
                 <!-- LIFESTYLES -->
-                <lifestyles ref="lifestylesComponent" patient-id="{{$patient->id}}" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}">
+                <lifestyles ref="lifestylesComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     <ul class="subareas__list">
                         @if($lifestyle)
                             @foreach($lifestyle as $style)
@@ -357,7 +359,7 @@ if (isset($patient) && ! empty($patient)) {
                 </div>
 
                 <!-- INSTRUCTIONS -->
-                <instructions ref="instructionsComponent" patient-id="{{$patient->id}}" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}"></instructions>
+                <instructions ref="instructionsComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}"></instructions>
                 <!-- /INSTRUCTIONS -->
 
                 <!-- OTHER INFORMATION -->
@@ -373,7 +375,7 @@ if (isset($patient) && ! empty($patient)) {
                 </div>
 
                 <!-- ALLERGIES -->
-                <allergies ref="allergiesComponent" patient-id="{{$patient->id}}" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}">
+                <allergies ref="allergiesComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     <div class="col-xs-12">
                         @if($allergies)
                             <p><?php echo nl2br($allergies); ?></p>
@@ -385,7 +387,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /ALLERGIES -->
 
                 <!-- SOCIALSERVICES -->
-                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}"
+                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}"
                                  misc-id="{{$socialServicesMiscId}}">
                     @if($social)
                         <p><?php echo nl2br($social); ?></p>
@@ -393,15 +395,15 @@ if (isset($patient) && ! empty($patient)) {
                         <p>No instructions at this time</p>
                     @endif
                 </social-services>
-                <misc-modal ref="miscModal" :patient-id="{{$patient->id}}" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}"></misc-modal>
+                <misc-modal ref="miscModal" :patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}"></misc-modal>
                 <!-- /SOCIAL AND OTHER SERVICES -->
 
                 <!-- CARE TEAM -->
-                <care-team ref="careTeamComponent" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}"></care-team>
+                <care-team ref="careTeamComponent" auth-role="{{$authRoleName}}"></care-team>
                 <!-- /CARE TEAM -->
 
                 <!-- Appointments -->
-                <appointments ref="appointmentsComponent" patient-id="{{$patient->id}}" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}">
+                <appointments ref="appointmentsComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     @if(isset($appointments['upcoming'] ))
                         <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
                             Upcoming: </h3>
@@ -440,7 +442,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
-                <others ref="othersComponent" patient-id="{{$patient->id}}" misc-id="{{$othersMiscId}}" disable-editing="{{ !! auth()->user()->hasPermission('edit-patient-chart.disable')}}">
+                <others ref="othersComponent" patient-id="{{$patient->id}}" misc-id="{{$othersMiscId}}" auth-role="{{$authRoleName}}">
                     @if($other)
                         <p><?php echo nl2br($other); ?></p>
                     @else

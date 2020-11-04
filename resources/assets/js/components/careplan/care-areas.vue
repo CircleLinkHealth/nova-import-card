@@ -52,7 +52,7 @@
         name: 'care-areas',
         props: {
             patientId: {
-                type: Number,
+                type: String,
                 required: true,
             }
         },

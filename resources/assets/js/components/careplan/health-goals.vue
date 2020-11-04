@@ -10,7 +10,7 @@
         <div class="row gutter">
             <div class="col-xs-12">
                 <div class="row top-10">
-                    <div :class="{ 'col-sm-12': !loaders.editNote && !loaders.getNote, 'col-sm-11': loaders.editNote }">
+                    <div :class="{ 'col-sm-12': !loaders.editNote && !loaders.getNote, 'col-sm-11': loaders.editNote, 'hide': disableEditing }">
                         <form @submit="editNote">
                             <textarea class="form-control free-note" v-model="note.body" placeholder="Enter Note and press ENTER" @change="editNote"  @keydown.enter.exact.prevent @keyup.enter.exact="editNote"></textarea>
                         </form>
@@ -49,7 +49,7 @@
         name: 'care-areas',
         props: {
             patientId: {
-                type: Number,
+                type: String,
                 required: true,
             },
         },

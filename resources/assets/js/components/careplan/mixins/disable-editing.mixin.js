@@ -1,8 +1,9 @@
+import UserRolesHelpers from '../../../mixins/user-roles-helpers.mixin'
 export default {
-    props: {
-        disableEditing: {
-            type: Boolean,
-            required: true
+    mixins: [UserRolesHelpers],
+    computed: {
+        disableEditing() {
+            return this.isCallbacksAdmin || this.isClhCcmAdmin;
         }
     }
 }
