@@ -155,6 +155,7 @@
     import CareplanMixin from '../mixins/careplan.mixin'
     import AddConditionMixin from '../mixins/add-condition.mixin'
     import AddCondition from '../add-condition'
+    import DisableEditingMixin from '../mixins/disable-editing.mixin'
 
     export default {
         name: 'care-areas-modal',
@@ -164,7 +165,8 @@
         },
         mixins: [
             CareplanMixin,
-            AddConditionMixin
+            AddConditionMixin,
+            DisableEditingMixin
         ],
         components: {
             'add-condition': AddCondition,

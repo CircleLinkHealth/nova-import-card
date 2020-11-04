@@ -4,7 +4,7 @@
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
                     Follow These Instructions
-                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showCareAreasModal" aria-hidden="true"></span>
+                    <span v-if="!disableEditing" class="btn btn-primary glyphicon glyphicon-edit" @click="showCareAreasModal" aria-hidden="true"></span>
                 </h2>
             </div>
         </div>
@@ -17,7 +17,7 @@
                 <p v-for="(instruction, index) in (problem.instruction.name || '').split('\n')" :key="index" v-html="instruction || '<br>'"></p>
             </div>
         </div>
-        <full-conditions-modal ref="fullConditionsModal" :patient-id="patientId" :cpm-problems="cpmProblems" :problems="ccdProblems"></full-conditions-modal>
+        <full-conditions-modal v-if="!disableEditing" ref="fullConditionsModal" :patient-id="patientId" :cpm-problems="cpmProblems" :problems="ccdProblems"></full-conditions-modal>
     </div>
 </template>
 
@@ -26,6 +26,8 @@
     import { Event } from 'vue-tables-2'
     import FullConditionsModal from './modals/full-conditions.modal'
     import CareplanMixin from './mixins/careplan.mixin'
+    import DisableEditingMixin from './mixins/disable-editing.mixin'
+
 
     export default {
         name: 'instructions',
@@ -35,7 +37,7 @@
         components: {
             'full-conditions-modal': FullConditionsModal
         },
-        mixins: [ CareplanMixin ],
+        mixins: [ CareplanMixin, DisableEditingMixin ],
         data() {
             return {
                  cpmProblems: [],
