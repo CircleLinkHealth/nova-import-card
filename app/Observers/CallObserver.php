@@ -45,8 +45,7 @@ class CallObserver
             return;
         }
 
-        $notify = $call->outboundUser;
-        Notification::send($notify, new CallCreated($call, auth()->user()));
+        $call->outboundUser->notify(new CallCreated($call, auth()->user()));
     }
 
     public function saved(Call $call)
