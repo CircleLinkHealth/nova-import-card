@@ -15,7 +15,6 @@ use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
@@ -27,11 +26,11 @@ class PatientServiceRepositoryTest extends CustomerTestCase
     use UserHelpers;
 
     protected $location;
-    
+
     protected User $patient;
 
     protected PatientServiceProcessorRepositoryInterface $repo;
-    
+
     public function setUp(): void
     {
         parent::setUp();
