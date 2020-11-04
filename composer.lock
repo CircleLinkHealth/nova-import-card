@@ -1270,7 +1270,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "a291e4eb9d36bb524c832ccbf79a8ad89f410fc5"
+                "reference": "e274c8fa519ce52374986b37c9f68f60d0b1817d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1304,7 +1304,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-04T14:23:31+00:00"
+            "time": "2020-11-04T16:09:40+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
