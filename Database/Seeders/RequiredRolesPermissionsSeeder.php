@@ -375,6 +375,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Callbacks Admin',
                 'description'  => 'An administrative account with permissions to manage callbacks',
                 'permissions'  => [
+                    'downloads.disable',
                     'careplan.read',
                     'patient.read',
                     'call.read',
@@ -1322,6 +1323,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'CLH CCM Admin',
                 'description'  => 'CLH in-house CCM Admin',
                 'permissions'  => [
+                    'downloads.disable',
                     'patientSummary.read',
                     'patientProblem.read',
                     'patientProblem.update',

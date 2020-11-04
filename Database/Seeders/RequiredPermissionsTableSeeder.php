@@ -112,6 +112,10 @@ class RequiredPermissionsTableSeeder extends Seeder
                 'name'         => 'ca-director.view',
                 'display_name' => 'Can view Care Ambassador Director page.',
             ],
+            [
+                'name'         => 'downloads.disable',
+                'display_name' => 'Disable downloading any content from CPM.',
+            ],
         ];
 
         return array_merge($perms, $old);
