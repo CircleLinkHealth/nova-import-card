@@ -21,11 +21,11 @@ use Tests\TestCase;
 
 class PatientServiceRepositoryTest extends TestCase
 {
-    use UserHelpers;
     use PracticeHelpers;
-    
+    use UserHelpers;
+
     protected $location;
-    
+
     protected PatientServiceProcessorRepositoryInterface $repo;
 
     public function setUp(): void

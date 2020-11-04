@@ -18,11 +18,11 @@ use Illuminate\Support\Facades\DB;
 
 class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
 {
-    use UserHelpers;
     use PracticeHelpers;
-    
+    use UserHelpers;
+
     protected $location;
-    
+
     public function setUp(): void
     {
         parent::setUp();
@@ -33,8 +33,8 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
     public function test_it_fetches_patient_from_cache_and_does_not_perform_multiple_queries_during_processing()
     {
         $practice = $this->setupPractice(true, true, true, true);
-        $patient = $this->setupPatient($practice, true);
-        
+        $patient  = $this->setupPatient($practice, true);
+
         $dto = (new PatientMonthlyBillingDTO())
             ->subscribe(
                 (app(LocationProcessorRepository::class))
@@ -46,20 +46,20 @@ class CachedPatientServiceRepositoryTest extends PatientServiceRepositoryTest
             ->forPatient($patient->id)
             ->forMonth($thisMonth)
             ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id));
-        
+
         self::assertFalse(empty($dto->getAvailableServiceProcessors()));
         self::assertFalse(empty($dto->getPatientProblems()));
-        
+
         DB::enableQueryLog();
-        
+
         ($actionClass = app(ProcessPatientSummaries::class))->fromDTO($dto);
-        
+
         self::assertTrue(empty(DB::getQueryLog()));
-        
+
         $actionClass->execute($patient->id, $thisMonth);
-    
+
         self::assertTrue(empty(DB::getQueryLog()));
-        
+
         DB::disableQueryLog();
     }
 
