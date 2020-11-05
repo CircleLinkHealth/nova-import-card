@@ -26,7 +26,7 @@ class PostmarkController extends Controller
 
     public function statusCallback(Request $request)
     {
-        ProcessPostmarkMailStatusCallbackJob::dispatch(new PostmarkInboundMailRequest($request->all()));
+        ProcessPostmarkMailStatusCallbackJob::dispatch($request->all());
 
         return response()->json([]);
     }
