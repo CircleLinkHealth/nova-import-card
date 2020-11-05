@@ -1724,7 +1724,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "1409aeb1d566b7971d2c7369314762e201d3ebee"
+                "reference": "190284c8165dd96f0a7dd01d1aecceab9487b602"
             },
             "type": "laravel-module",
             "extra": {
@@ -1749,7 +1749,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-27T16:39:43+00:00"
+            "time": "2020-11-05T19:12:44+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
@@ -1786,7 +1786,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "bae2a663f9a2e5815e18fd234db86031d47e7642"
+                "reference": "e3a0a3aeeb81e96eade96f2794e4e1039a83fef6"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1811,7 +1811,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-05T16:35:56+00:00"
+            "time": "2020-11-05T19:12:43+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
