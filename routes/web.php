@@ -1988,12 +1988,12 @@ Route::group([
     'prefix' => 'postmark',
 ], function () {
     Route::post('/status', [
-        'uses' => 'PostmarkController@statusCallback',
+        'uses' => 'Postmark\PostmarkController@statusCallback',
         'as'   => 'postmark.status',
     ]);
 
     Route::post('/inbound', [
-        'uses' => 'PostmarkController@inbound',
+        'uses' => 'Postmark\PostmarkController@inbound',
         'as'   => 'postmark.inbound',
     ]);
 });

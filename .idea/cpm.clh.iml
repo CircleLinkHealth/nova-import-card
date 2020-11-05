@@ -2,15 +2,14 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/CircleLinkHealth/SamlSp/Tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="Tests\" />
-      <sourceFolder url="file://$MODULE_DIR$/CircleLinkHealth/Eligibility/Tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/CircleLinkHealth" isTestSource="false" packagePrefix="CircleLinkHealth\" />
+      <sourceFolder url="file://$MODULE_DIR$/CircleLinkHealth/Eligibility/Tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="Tests\" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/CircleLinkHealth/CcmBilling/Tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/app" isTestSource="false" packagePrefix="App\" />
       <sourceFolder url="file://$MODULE_DIR$/CircleLinkHealth/Nurseinvoices/Tests" isTestSource="true" />
-      <excludeFolder url="file://$MODULE_DIR$/public/compiled" />
-      <excludeFolder url="file://$MODULE_DIR$/storage/clockwork" />
+      <sourceFolder url="file://$MODULE_DIR$/CircleLinkHealth/SamlSp/Tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/app" isTestSource="false" packagePrefix="App\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/aacotroneo/laravel-saml2" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/alexbowers/nova-prepopulate-searchable" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/algolia/algoliasearch-client-php" />
@@ -32,11 +31,13 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/cakephp/chronos" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-nova-theme" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/dates-input" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/enrollment-invites" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/invoices-download" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/unresolved-callback" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stdio-react" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stream-filter" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/term-react" />
@@ -96,7 +97,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/jkocik/laravel-profiler" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/jolicode/jolinotif" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/joshbrw/laravel-module-installer" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/joshgaber/novaunit" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/jubeki/nova-card-linkable" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/justinrainbow/json-schema" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/kitloong/laravel-migrations-generator" />
@@ -105,7 +105,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/lab404/laravel-impersonate" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laminas/laminas-diactoros" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laminas/laminas-zendframework-bridge" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/laracasts/cypress" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laracasts/utilities" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel-notification-channels/twilio" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/dusk" />
@@ -142,7 +141,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/mockery/mockery" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/monolog/monolog" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/moontoast/math" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mpbarlow/laravel-queue-debouncer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mtdowling/jmespath.php" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mxl/laravel-job" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/myclabs/deep-copy" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/myclabs/php-enum" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/nao-pon/flysystem-cached-extra" />
@@ -290,7 +291,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/willdurand/email-reply-parser" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/yajra/laravel-datatables-oracle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/yosymfony/resource-watcher" />
-      <excludePattern pattern=".php_cs.cache" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
