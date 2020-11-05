@@ -121,7 +121,7 @@ class ActivityController extends Controller
 
         return response()->json(
             [
-                'table'          => $acts,
+                'table' => $acts,
             ]
         );
     }
