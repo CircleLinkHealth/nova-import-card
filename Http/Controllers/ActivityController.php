@@ -121,8 +121,6 @@ class ActivityController extends Controller
 
         return response()->json(
             [
-                'monthlyTime'    => $patient->formattedCcmTime(),
-                'monthlyBhiTime' => $patient->formattedBhiTime(),
                 'table'          => $acts,
             ]
         );
@@ -407,10 +405,11 @@ class ActivityController extends Controller
         $acts = DB::table('lv_activities')
             ->select(
                 DB::raw(
-                    'lv_activities.id,lv_activities.logged_from,DATE(lv_activities.performed_at)as performed_at, lv_activities.type, SUM(lv_activities.duration) as duration, lv_activities.is_behavioral, users.first_name as provider_first_name, users.last_name as provider_last_name, users.suffix as provider_suffix'
+                    'lv_activities.id,lv_activities.logged_from,DATE(lv_activities.performed_at)as performed_at, lv_activities.type, SUM(lv_activities.duration) as duration, lv_activities.is_behavioral,lv_activities.chargeable_service_id,chargeable_services.display_name as chargeable_service_name,users.first_name as provider_first_name, users.last_name as provider_last_name, users.suffix as provider_suffix'
                 )
             )
             ->join('users', 'users.id', '=', 'lv_activities.provider_id')
+            ->leftJoin('chargeable_services', 'lv_activities.chargeable_service_id', '=', 'chargeable_services.id')
             ->where('lv_activities.performed_at', '>=', $start)
             ->where('lv_activities.performed_at', '<=', $end)
             ->where('lv_activities.patient_id', $patientId)
@@ -423,7 +422,7 @@ class ActivityController extends Controller
             )
             ->groupBy(
                 DB::raw(
-                    'lv_activities.provider_id, DATE(lv_activities.performed_at),lv_activities.type,lv_activities.is_behavioral'
+                    'lv_activities.provider_id, DATE(lv_activities.performed_at),lv_activities.type,lv_activities.chargeable_service_id'
                 )
             )
             ->orderBy('lv_activities.created_at', 'desc')
