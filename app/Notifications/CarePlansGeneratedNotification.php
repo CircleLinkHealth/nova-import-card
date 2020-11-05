@@ -119,7 +119,8 @@ class CarePlansGeneratedNotification extends Notification implements ShouldBroad
      */
     public function via($notifiable)
     {
-        return ['database', 'broadcast', 'mail'];
+        // todo: broadcast not working for some reason
+        return ['database', 'mail'];
     }
 
     private function getSignedUrl($notifiable)
