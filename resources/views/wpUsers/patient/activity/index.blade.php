@@ -98,7 +98,7 @@
                                 }
 
                                 function durationType(obj) {
-                                    return obj.is_behavioral ? 'BHI' : 'CCM';
+                                    return obj.chargeable_service_name;
                                 }
 
                                 function durationSumm(master, type) {
@@ -168,6 +168,16 @@
                                         node.firstChild.innerHTML = durationSumm(master, 'BHI');
                                     }
                                 }, webix.ui.datafilter.summColumn);
+                                webix.ui.datafilter.mySummColumnPCM = webix.extend({
+                                    refresh: function (master, node, value) {
+                                        node.firstChild.innerHTML = durationSumm(master, 'PCM');
+                                    }
+                                }, webix.ui.datafilter.summColumn);
+                                webix.ui.datafilter.mySummColumnRPM = webix.extend({
+                                    refresh: function (master, node, value) {
+                                        node.firstChild.innerHTML = durationSumm(master, 'RPM');
+                                    }
+                                }, webix.ui.datafilter.summColumn);
 
                             obs_alerts_dtable = new webix.ui({
                                 container: "obs_alerts_container",
@@ -198,8 +208,8 @@
                                                     return obj.type;
                                             },
 
-                                            fillspace: true,
-                                            width: 202,
+                                            fillspace: false,
+                                            width: 250,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "left"}
                                         },
@@ -214,7 +224,7 @@
                                         {
                                             id: "durationCCM",
                                             header: ["Total CCM", "(HH:MM:SS)"],
-                                            width: 150,
+                                            width: 130,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnCCM", css: "duration-footer"},
@@ -225,15 +235,40 @@
                                         {
                                             id: "durationBHI",
                                             header: ["Total BHI", "(HH:MM:SS)"],
-                                            width: 150,
-                                            fillspace: true,
+                                            width: 130,
+                                            fillspace: false,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnBHI", css: "duration-footer"},
                                             template: function (obj) {
                                                 return durationData(obj, 'BHI');
                                             }
+                                        },
+                                    {
+                                        id: "durationPCM",
+                                        header: ["Total PCM", "(HH:MM:SS)"],
+                                        width: 130,
+                                        fillspace: false,
+                                        sort: 'string',
+                                        css: {"color": "black", "text-align": "right"},
+                                        footer: {content: "mySummColumnPCM", css: "duration-footer"},
+                                        template: function (obj) {
+                                            return durationData(obj, 'PCM');
                                         }
+                                    },
+                                    {
+                                        id: "durationRPM",
+                                        header: ["Total RPM", "(HH:MM:SS)"],
+                                        width: 130,
+                                        fillspace: true,
+                                        sort: 'string',
+                                        css: {"color": "black", "text-align": "right"},
+                                        footer: {content: "mySummColumnRPM", css: "duration-footer"},
+                                        template: function (obj) {
+                                            return durationData(obj, 'RPM');
+                                        }
+                                    },
+
                                     ],
                                     ready: function () {
                                         this.adjustRowHeight("type");
@@ -272,8 +307,6 @@
                                         },
                                         data: {},
                                         success: function (data) {
-                                            $('#monthly-time-static').html(data.monthlyTime);
-                                            $('#monthly-bhi-time-static').html(data.monthlyBhiTime);
                                             const scrollPosition = $(document).scrollTop();
                                             obs_alerts_dtable.clearAll();
                                             obs_alerts_dtable.parse(data.table);
