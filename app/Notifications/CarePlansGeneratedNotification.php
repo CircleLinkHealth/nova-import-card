@@ -53,7 +53,7 @@ class CarePlansGeneratedNotification extends Notification implements ShouldBroad
 
     public function getSubject($notifiable): string
     {
-        return 'Care Plans are ready to be printed';
+        return 'Care Plans are ready to be printed. Click here to download.';
     }
 
     public function notificationData($notifiable): array
@@ -77,10 +77,10 @@ class CarePlansGeneratedNotification extends Notification implements ShouldBroad
      */
     public function toArray($notifiable): array
     {
-        return [
+        return array_merge($this->notificationData($notifiable), [
             'media_id'       => $this->mediaId,
             'date_requested' => $this->dateRequested,
-        ];
+        ]);
     }
 
     public function toBroadcast($notifiable): BroadcastMessage
@@ -120,7 +120,7 @@ class CarePlansGeneratedNotification extends Notification implements ShouldBroad
     public function via($notifiable)
     {
         //todo: would prefer broadcast, but it's not working.
-        return ['database', 'mail'];
+        return ['database', 'broadcast'];
     }
 
     private function getSignedUrl($notifiable)
