@@ -106,7 +106,7 @@ class DownloadController extends Controller
         if ($mediaExport->isNotEmpty()) {
             $now = now()->toDateTimeString();
 
-            return MediaStream::create("Practice Billing Documents downloaded at $now.zip")->addMedia($mediaExport);
+            return MediaStream::create("cpm_media_at_$now.zip")->addMedia($mediaExport);
         }
     }
 

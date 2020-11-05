@@ -248,8 +248,8 @@ class Observation extends BaseModel
 
         $starting = Observation::where('user_id', $userId)
             ->whereHas('meta', function ($q) use (
-                                   $message_id
-                               ) {
+                $message_id
+            ) {
                 $q->where('meta_key', 'starting_observation')
                     ->where('message_id', $message_id);
             })->first();

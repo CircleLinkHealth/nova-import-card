@@ -18,5 +18,6 @@ return [
         App\Notifications\InvoicesCreatedNotification::class,
         App\Notifications\PracticeStaffCreatedNote::class,
         App\Notifications\SendSignedUrlToDownloadPracticeReport::class,
+        App\Notifications\CarePlansGeneratedNotification::class
     ],
 ];

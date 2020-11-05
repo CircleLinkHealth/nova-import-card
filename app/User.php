@@ -238,6 +238,8 @@ namespace App;
  * @property \CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog[]|\Illuminate\Database\Eloquent\Collection              $endOfMonthCcmStatusLogs
  * @property int|null                                                                                                             $end_of_month_ccm_status_logs_count
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User hasBhiConsent()
+ * @property \CircleLinkHealth\SamlSp\Entities\SamlUser[]|\Illuminate\Database\Eloquent\Collection                                $samlUsers
+ * @property int|null                                                                                                             $saml_users_count
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

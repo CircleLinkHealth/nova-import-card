@@ -38,7 +38,10 @@ const state = {
     },
     practiceLocations: [],
     practiceStaff: [],
-    practiceStaffIsUpdating: false
+    practiceStaffIsLoading: false,
+    practiceStaffIsUpdating: false,
+    ehrPlatforms: [],
+    ehrPlatformsIsLoading: false
 }
 
 export default new Vuex.Store({
