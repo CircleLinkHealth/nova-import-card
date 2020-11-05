@@ -241,12 +241,12 @@ class PatientCareplanController extends Controller
         PatientService $patientService
     ) {
         if ( ! $request['users']) {
-            return response()->json('Something went wrong.. Missing users from request.');
+            return response()->json('Something went wrong.. Missing users from request.', 400);
         }
 
         $userIds = explode(',', $request['users']);
         if (empty($userIds)) {
-            return response()->json('Something went wrong.. Missing users from request.');
+            return response()->json('Something went wrong.. Missing users from request.', 400);
         }
 
         if ($request->input('final')) {
@@ -264,7 +264,7 @@ class PatientCareplanController extends Controller
 
         GeneratePatientsCarePlans::dispatch(auth()->id(), now(), $userIds, $letter);
 
-        return response()->json('You will receive an email when ready.');
+        return response()->json('The Care Plan(s) are being generated. You will receive an email when they are ready!');
     }
 
     public function showPatientDemographics(

@@ -35,7 +35,8 @@ class CarePlansGeneratedNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)
@@ -49,7 +50,8 @@ class CarePlansGeneratedNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed                                          $notifiable
+     * @param mixed $notifiable
+     *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
@@ -70,7 +72,8 @@ class CarePlansGeneratedNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -89,7 +92,7 @@ class CarePlansGeneratedNotification extends Notification
                 now()->addDays(2),
                 [
                     'user_id'   => $notifiable->id,
-                    'media_ids' => [$this->mediaId],
+                    'media_ids' => $this->mediaId,
                 ]
             );
         }

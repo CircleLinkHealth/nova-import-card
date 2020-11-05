@@ -16,6 +16,7 @@ use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class CarePlanGeneratorService
 {
@@ -36,6 +37,11 @@ class CarePlanGeneratorService
         $this->carePlanService       = $carePlanService;
     }
 
+    /**
+     * @throws \Exception
+     *
+     * @return \Spatie\MediaLibrary\Models\Media|null
+     */
     public function pdfForUsers(int $requesterId, array $userIds, bool $letter)
     {
         $this->requesterId = $requesterId;
@@ -69,9 +75,17 @@ class CarePlanGeneratorService
             $this->markPrintDate($user, $letter);
         }
 
-        $mergedFileNameWithPath = $this->pdfService->mergeFiles($pageFileNames);
+        $result = null;
+        $len    = count($pageFileNames);
+        if (0 === $len) {
+            Log::critical('Something is wrong. No pdf files were generated.');
+        } elseif (1 === $len) {
+            $result = $pageFileNames[0];
+        } else {
+            $result = $this->pdfService->mergeFiles($pageFileNames);
+        }
 
-        return $this->addFileToMedia($mergedFileNameWithPath);
+        return $result ? $this->addFileToMedia($result) : null;
     }
 
     public function renderForUser(int $requesterId, int $userId, bool $letter)
