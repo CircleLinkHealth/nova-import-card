@@ -10,8 +10,10 @@ use App\CallView;
 use App\Filters\CallViewFilters;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Http\Request;
 
 class CallReportController extends Controller
@@ -83,12 +85,16 @@ class CallReportController extends Controller
             'Last Call',
             'CCM Time',
             'BHI Time',
+            'PCM Time',
+            'RPM Time',
             'Successful Calls',
             'Billing Provider',
             'Scheduler',
         ];
 
         $rows = [];
+        
+        $billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
 
         foreach ($calls as $call) {
             $rows[] = [
@@ -102,8 +108,10 @@ class CallReportController extends Controller
                 $call->call_time_end,
                 $call->preferredCallDaysToString(),
                 $call->last_call,
-                $this->formatTime($call->ccm_time),
-                $this->formatTime($call->bhi_time),
+                $this->formatTime($billingRevampIsEnabled ? $call->ccm_total_time : $call->pms_ccm_time),
+                $this->formatTime($billingRevampIsEnabled ? $call->bhi_total_time : $call->pms_bhi_time),
+                $this->formatTime($billingRevampIsEnabled ? $call->pcm_total_time : 0),
+                $this->formatTime($billingRevampIsEnabled ? $call->rpm_total_time : 0),
                 $call->no_of_successful_calls,
                 $call->billing_provider,
                 $call->scheduler,
