@@ -6,13 +6,20 @@
 
 namespace App\Notifications;
 
+use App\Contracts\HasAttachment;
+use App\Contracts\LiveNotification;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Media;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
 
-class CarePlansGeneratedNotification extends Notification
+class CarePlansGeneratedNotification extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification, HasAttachment
 {
     use Queueable;
     private Carbon $dateRequested;
@@ -32,19 +39,53 @@ class CarePlansGeneratedNotification extends Notification
         $this->signedUrl     = null;
     }
 
+    public function description($notifiable): string
+    {
+        $dateForMessage = Carbon::parse($this->dateRequested)->format('m/d/Y H:i');
+
+        return "Date: $dateForMessage";
+    }
+
+    public function getAttachment(): ?Model
+    {
+        return Media::find($this->mediaId);
+    }
+
+    public function getSubject($notifiable): string
+    {
+        return 'Care Plans are ready to be printed';
+    }
+
+    public function notificationData($notifiable): array
+    {
+        return [
+            'redirect_link' => $this->redirectLink($notifiable),
+            'description'   => $this->description($notifiable),
+            'subject'       => $this->getSubject($notifiable),
+        ];
+    }
+
+    public function redirectLink($notifiable): string
+    {
+        return $this->getSignedUrl($notifiable);
+    }
+
     /**
      * Get the array representation of the notification.
      *
      * @param mixed $notifiable
-     *
-     * @return array
      */
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         return [
             'media_id'       => $this->mediaId,
             'date_requested' => $this->dateRequested,
         ];
+    }
+
+    public function toBroadcast($notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([]);
     }
 
     /**
@@ -78,6 +119,7 @@ class CarePlansGeneratedNotification extends Notification
      */
     public function via($notifiable)
     {
+        //todo: would prefer broadcast, but it's not working.
         return ['database', 'mail'];
     }
 
