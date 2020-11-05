@@ -262,7 +262,7 @@ class PatientCareplanController extends Controller
             return app(CarePlanGeneratorService::class)->renderForUser(auth()->id(), $userIds[0], $letter);
         }
 
-        GeneratePatientsCarePlans::dispatch(auth()->id(), $userIds, $letter);
+        GeneratePatientsCarePlans::dispatch(auth()->id(), now(), $userIds, $letter);
 
         return response()->json('You will receive an email when ready.');
     }
