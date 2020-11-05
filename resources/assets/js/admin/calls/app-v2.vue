@@ -112,20 +112,6 @@
                         <loader class="relative" v-if="props.row.loaders.callTimeEnd"></loader>
                     </div>
                 </template>
-                <template slot="CCM Time" slot-scope="props">
-                    <div>
-                        <span :class="!isCcmEligible(props.row.id) ? 'disabled' : ''">
-                            {{props.row['CCM Time']}}
-                        </span>
-                    </div>
-                </template>
-                <template slot="BHI Time" slot-scope="props">
-                    <div>
-                        <span :class="!isBhiEligible(props.row.id) ? 'disabled' : ''">
-                            {{props.row['BHI Time']}}
-                        </span>
-                    </div>
-                </template>
             </v-client-table>
         </div>
         <div class="row">
@@ -201,7 +187,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
+                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
                 tableData: [],
                 loaders: {
                     calls: false
@@ -239,7 +225,7 @@
                         'Patient ID': !this.isAdmin ? 'hidden' : '',
                         'Patient': this.patientNamesClass
                     },
-                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'State', 'Scheduler'],
+                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time', 'Practice', 'State', 'Scheduler'],
                     filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'Practice', 'State', 'Billing Provider', 'Patient\'s Care Coach'],
                     filterByColumn: true,
                     texts: {
@@ -259,6 +245,8 @@
                         'Last Call': (ascending) => (a, b) => 0,
                         'CCM Time': (ascending) => (a, b) => 0,
                         'BHI Time': (ascending) => (a, b) => 0,
+                        'PCM Time': (ascending) => (a, b) => 0,
+                        'RPM Time': (ascending) => (a, b) => 0,
                         Practice: (ascending) => (a, b) => 0,
                         State: (ascending) => (a, b) => 0,
                         Scheduler: (ascending) => (a, b) => 0,
@@ -292,8 +280,10 @@
                     'Patient ID': 'patient_id',
                     'Activity Day': 'scheduled_date',
                     'Last Call': 'last_call',
-                    'CCM Time': 'ccm_time',
-                    'BHI Time': 'bhi_time',
+                    'CCM Time': 'ccm_total_time',
+                    'BHI Time': 'bhi_total_time',
+                    'PCM Time': 'pcm_total_time',
+                    'RPM Time' : 'rpm_total_time',
                     'Successful Calls': 'no_of_successful_calls',
                     'Practice': 'practice',
                     'State': 'state',
@@ -508,8 +498,10 @@
                     Scheduler: call.scheduler,
                     'Billing Provider': call.billing_provider,
                     'Last Call': call.last_call,
-                    'CCM Time': timeDisplay(call.ccm_time),
-                    'BHI Time': timeDisplay(call.bhi_time),
+                    'CCM Time': timeDisplay(call.ccm_total_time),
+                    'BHI Time': timeDisplay(call.bhi_total_time),
+                    'PCM Time': timeDisplay(call.pcm_total_time),
+                    'RPM Time': timeDisplay(call.rpm_total_time),
                     'Successful Calls': call.no_of_successful_calls,
                     'Preferred Call Days': call.preferred_call_days,
                     'Patient ID': call.patient_id,
