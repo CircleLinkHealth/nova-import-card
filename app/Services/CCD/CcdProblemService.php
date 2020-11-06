@@ -9,6 +9,7 @@ namespace App\Services\CCD;
 use App\Repositories\CcdProblemRepository;
 use App\Services\CPM\CpmInstructionService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 
@@ -65,20 +66,20 @@ class CcdProblemService
         ));
 
         if ($instruction) {
-            $instructionData = null;
+            $cpmInstruction = null;
             if ($problem['instruction']) {
-                $instructionId   = $problem['instruction']->id;
-                $instructionData = $this->instructionService->edit($instructionId, $instruction);
+                $instructionId  = $problem['instruction']->id;
+                $cpmInstruction = $this->editOrCreateNewProblemInstruction($instructionId, $instruction, $userId);
             } else {
-                $instructionData = $this->instructionService->create($instruction);
+                $cpmInstruction = $this->instructionService->create($instruction);
             }
 
-            $problem['instruction'] = $instructionData;
+            $problem['instruction'] = $cpmInstruction;
 
             CcdProblem::where([
                 'id' => $ccdProblemId,
             ])->update([
-                'cpm_instruction_id' => $instructionData->id,
+                'cpm_instruction_id' => $cpmInstruction->id,
             ]);
         } else {
             CcdProblem::where([
@@ -169,5 +170,17 @@ class CcdProblemService
                 'should_show_default_instruction' => $shouldShowDefaultInstruction,
             ];
         }
+    }
+
+    private function editOrCreateNewProblemInstruction(int $instructionId, string $instructionText, int $patientId)
+    {
+        if ($this->instructionService->otherPatientsWithSameInstructionExist($instructionId, $patientId)) {
+            return $this->instructionService->create($instructionText);
+        }
+
+        $query = CpmInstruction::where('id', $instructionId);
+        $query->update(['name' => $instructionText]);
+
+        return $query->first();
     }
 }

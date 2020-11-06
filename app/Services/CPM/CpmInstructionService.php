@@ -9,6 +9,8 @@ namespace App\Services\CPM;
 use App\Repositories\CpmInstructionRepository;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
+use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
 use Illuminate\Support\Str;
 
 class CpmInstructionService
@@ -30,16 +32,6 @@ class CpmInstructionService
             $instruction->save();
 
             return $instruction;
-        }
-    }
-
-    public function edit($id, $text)
-    {
-        if ($id && $text) {
-            $query = CpmInstruction::where('id', $id);
-            $query->update(['name' => $text]);
-
-            return $query->first();
         }
     }
 
@@ -101,11 +93,7 @@ class CpmInstructionService
                 return;
             }
 
-            $userWithSameInstr = \DB::table($pivotTableName)
-                ->where('cpm_instruction_id', '=', 1025)
-                ->count();
-
-            if ($oldInstruction->is_default || $userWithSameInstr > 1) {
+            if ($oldInstruction->is_default || $this->otherPatientsWithSameInstructionExist($oldInstruction->id, $user->id)) {
                 $newInstruction = CpmInstruction::create([
                     'name' => $instructionInput,
                 ]);
@@ -174,5 +162,12 @@ class CpmInstructionService
 
             return;
         }
+    }
+    
+    public function otherPatientsWithSameInstructionExist(int $instructionId, int $patientId)
+    {
+        return Problem::where('cpm_instruction_id', '=', $instructionId)
+            ->where('patient_id', '!=', $patientId)
+            ->exists();
     }
 }
