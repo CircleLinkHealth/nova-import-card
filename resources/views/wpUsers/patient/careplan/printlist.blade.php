@@ -81,6 +81,7 @@
 @stop
 
 @push('scripts')
+    <script src="{{ asset('js/notify.min.js') }}"></script>
     <script>
         function filterText(text) {
             // var text = node;
@@ -208,8 +209,10 @@
             },
             on: {
                 onSelectChange: function () {
-                    var text = obs_alerts_dtable.getSelectedId(true).join();
-                    var textmsg = "<a href='{!! route('patients.careplan.multi')!!}?users=" + text + "&letter' class='btn btn-primary'>Print Selected</a>";
+                    var textmsg = `<a onclick='printSelected(this)' class='btn btn-primary'>
+Print Selected
+<div style="float: right"><div id="print-selected-loader" class="loader"></div></div>
+</a>`;
                     document.getElementById('print_list').innerHTML = textmsg + '\n<BR>';
                 }
             },
@@ -225,10 +228,41 @@
         obs_alerts_dtable.filter("#careplan_printed#", "No");
         obs_alerts_dtable.hideColumn("last_name");
 
+        function printSelected(button) {
+            const buttonElem = $(button);
+            const loaderElem = $('#print-selected-loader');
+            buttonElem.addClass('disabled');
+            loaderElem.show();
+            const data = obs_alerts_dtable.getSelectedId(true).join();
+            const route = `{{ route('patients.careplan.multi') }}?users=${data}&letter`;
+            $.get(route)
+                .done(resp => {
+                    $.notify(resp, 'success');
+                })
+                .fail(resp => {
+                    $.notify(resp.responseText, 'error');
+                })
+                .always(() => {
+                    buttonElem.removeClass('disabled');
+                    loaderElem.hide();
+                });
+        }
+
         // window.onload=filterText('#careplan_last_printed#','X');
         // obs_alerts_dtable.hideColumn("status_ccm");
 
         // window.onload=filterText('');
         // obs_alerts_dtable.hideColumn("ccm_status");
     </script>
+@endpush
+
+@push('styles')
+    <style>
+        #print-selected-loader {
+            display: none;
+            width: 14px;
+            height: 14px;
+            border-width: 3px;
+        }
+    </style>
 @endpush
