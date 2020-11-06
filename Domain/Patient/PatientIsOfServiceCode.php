@@ -90,7 +90,7 @@ class PatientIsOfServiceCode
 
     private function minimumProblemCountForService(): int
     {
-        return $this->patientRequiredProblemsCountMap()[ChargeableService::getCodeForPatientProblems($this->serviceCode)] ?? 0;
+        return PatientProblemsForBillingProcessing::SERVICE_PROBLEMS_MIN_COUNT_MAP[ChargeableService::getCodeForPatientProblems($this->serviceCode)] ?? 0;
     }
 
     private function patientLocationHasService(): bool
@@ -105,16 +105,6 @@ class PatientIsOfServiceCode
             ->where('chargeableService.code', $this->serviceCode)
             ->where('chargeable_month', $thisMonth)
             ->isNotEmpty();
-    }
-
-    private function patientRequiredProblemsCountMap(): array
-    {
-        return [
-            ChargeableService::CCM => 2,
-            ChargeableService::BHI => 1,
-            ChargeableService::PCM => 1,
-            ChargeableService::RPM => 1,
-        ];
     }
 
     private function problemsOfServiceCount(): int
