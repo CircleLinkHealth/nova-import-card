@@ -805,6 +805,10 @@
                     });
             }
         },
+        props: [
+            'practiceId',
+            'patientId'
+        ],
         created() {
             this.addNewAction();
         },
@@ -845,7 +849,7 @@
                 if (data) {
                     if (data.practiceId) {
                         this.actions[this.actions.length - 1].skipRefreshingPatients = true;
-                        this.actions[this.actions.length - 1].data.patientId = data.practiceId;
+                        this.actions[this.actions.length - 1].data.practiceId = data.practiceId;
                         this.actions[this.actions.length - 1].selectedPracticeData = {
                             label: data.practiceName,
                             value: data.practiceId
@@ -861,6 +865,12 @@
                     }
                 }
             })
+
+            if (this.patientId && this.practiceId) {
+                this.changePatient(0, this.patientId)
+                this.changePractice(0, this.practiceId)
+                Event.$emit("modal-add-action:show")
+            }
         }
     }
 </script>

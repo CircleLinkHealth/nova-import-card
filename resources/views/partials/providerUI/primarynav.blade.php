@@ -96,7 +96,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                         </button>
                     </div>
 
-                    @if(!$isTwoFaRoute && ! auth()->user()->isCallbacksAdmin())
+                    @if(!$isTwoFaRoute)
                         <div id="search-bar-container" class="col-md-9 col-xs-12">
                             @include('partials.search')
                         </div>

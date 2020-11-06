@@ -868,6 +868,11 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'practice/{practiceId}/patient/{patientId}',
         'middleware' => ['patientProgramSecurity'],
     ], function () {
+        Route::get('call/schedule', [
+            'uses' => 'Patient\PatientController@scheduleActivity',
+            'as'   => 'patient.schedule.activity',
+        ])->middleware('permission:call.create');
+
         Route::post('legacy-bhi-consent', [
             'uses' => 'LegacyBhiConsentController@store',
             'as'   => 'legacy-bhi.store',
@@ -1079,7 +1084,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'family.get',
         ])->middleware('permission:patient.read');
     });
-    
+
     Route::get('pam', [
         'uses' => 'Admin\PatientCallManagementController@remixV2',
         'as'   => 'patientCallManagement.v2.index',
@@ -1137,61 +1142,61 @@ Route::group(['middleware' => 'auth'], function () {
             });
         });
     });
-    
+
     Route::group([
-        'prefix' => 'admin/ca-director',
-        'middleware' => 'permission:ca-director.view'
+        'prefix'     => 'admin/ca-director',
+        'middleware' => 'permission:ca-director.view',
     ], function () {
         Route::get('', [
             'uses' => 'EnrollmentDirectorController@index',
             'as'   => 'ca-director.index',
         ]);
-        
+
         Route::get('searchEnrollables', [
             'uses' => 'EnrollmentDirectorController@searchEnrollables',
             'as'   => 'enrollables.ca-director.search',
         ]);
-        
+
         Route::get('/enrollees', [
             'uses' => 'EnrollmentDirectorController@getEnrollees',
             'as'   => 'ca-director.enrollees',
         ]);
-        
+
         Route::get('/ambassadors', [
             'uses' => 'EnrollmentDirectorController@getCareAmbassadors',
             'as'   => 'ca-director.ambassadors',
         ]);
-        
+
         Route::post('/assign-ambassador', [
             'uses' => 'EnrollmentDirectorController@assignCareAmbassadorToEnrollees',
             'as'   => 'ca-director.assign-ambassador',
         ]);
-        
+
         Route::post('/assign-callback', [
             'uses' => 'EnrollmentDirectorController@assignCallback',
             'as'   => 'ca-director.assign-callback',
         ]);
-        
+
         Route::post('/mark-ineligible', [
             'uses' => 'EnrollmentDirectorController@markEnrolleesAsIneligible',
             'as'   => 'ca-director.mark-ineligible',
         ]);
-        
+
         Route::post('/unassign-ca', [
             'uses' => 'EnrollmentDirectorController@unassignCareAmbassadorFromEnrollees',
             'as'   => 'ca-director.unassign-ambassador',
         ]);
-        
+
         Route::post('/edit-enrollee', [
             'uses' => 'EnrollmentDirectorController@editEnrolleeData',
             'as'   => 'ca-director.edit-enrollee',
         ]);
-        
+
         Route::post('/add-enrollee-custom-filter', [
             'uses' => 'EnrollmentDirectorController@addEnrolleeCustomFilter',
             'as'   => 'ca-director.add-enrollee-custom-filter',
         ]);
-        
+
         Route::get('/test-enrollees', [
             'uses' => 'EnrollmentDirectorController@runCreateEnrolleesSeeder',
             'as'   => 'ca-director.test-enrollees',

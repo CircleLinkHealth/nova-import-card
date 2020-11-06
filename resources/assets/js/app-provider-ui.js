@@ -81,6 +81,7 @@ const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2
 const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ './components/importer/ccd-upload');
 const ImportedMedicalRecordsManagement = () => import(/* webpackChunkName: "chunk-imported-medical-records-management" */ './components/importer/imported-medical-records-management');
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
+const AddActionModal = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/comps/modals/add-action.modal')
 const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
 const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/FullScreenLoader');
 const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ './../../../CircleLinkHealth/Nurseinvoices/Resources/assets/js/components/dispute-invoice')
@@ -142,6 +143,7 @@ Vue.component('authy-perform-2fa', AuthyPerform2FA);
 Vue.component('ccd-upload', CcdUploader);
 Vue.component('imported-medical-records-management', ImportedMedicalRecordsManagement);
 Vue.component('call-mgmt-app-v2', CallMgmtAppV2);
+Vue.component('add-action-modal', AddActionModal);
 Vue.component('dispute-nurse-invoice', DisputeNurseInvoice);
 Vue.component('nurse-invoice-daily-dispute', NurseInvoiceDailyDispute);
 Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
