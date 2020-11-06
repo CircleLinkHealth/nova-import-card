@@ -6,10 +6,11 @@
 
 namespace CircleLinkHealth\TimeTracking\Http\Controllers;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShowPatientActivities;
 use App\Jobs\ChargeableServiceDuration;
+use App\Jobs\ProcessMonthltyPatientTime;
+use App\Jobs\ProcessNurseMonthlyLogs;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
 use Carbon\Carbon;
@@ -339,6 +340,14 @@ class ActivityController extends Controller
             }
         }
 
+        /** @var Nurse $nurse */
+        $nurse = null;
+        if ($nurseUserId) {
+            $nurse = Nurse::whereUserId($nurseUserId)->first();
+        }
+
+        $metaData = $input['meta'] ?? [];
+
         $fakePageTimer                = new PageTimer();
         $fakePageTimer->activity_type = $input['type'];
         $fakePageTimer->provider_id   = $input['provider_id'];
@@ -347,45 +356,17 @@ class ActivityController extends Controller
 
         $activity = null;
         if ($patient) {
-            $cs                         = ChargeableService::firstWhere('code', '=', $input['is_behavioral'] ? ChargeableService::BHI : ChargeableService::CCM);
+            $cs                         = ChargeableService::cached()->firstWhere('code', '=', $input['is_behavioral'] ? ChargeableService::BHI : ChargeableService::CCM);
             $chargeableServicesDuration = app(ActivityService::class)->separateDurationForEachChargeableServiceId($patient, $input['duration'], $cs->id);
             foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
-                $activity = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $fakePageTimer, $chargeableServiceDuration);
+                $anActivity = $this->processNewActivity($fakePageTimer, $chargeableServiceDuration, null !== $nurse, $metaData);
+                if ( ! $activity) {
+                    $activity = $anActivity;
+                }
             }
         } else {
             $chargeableServiceDuration = new ChargeableServiceDuration(null, $input['duration'], false);
-            $activity                  = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $fakePageTimer, $chargeableServiceDuration);
-        }
-
-        /** @var Nurse $nurse */
-        $nurse = null;
-        if ($nurseUserId) {
-            $nurse = Nurse::whereUserId($nurseUserId)->first();
-        }
-
-        // store meta
-        if ($activity && array_key_exists('meta', $input)) {
-            $meta = $input['meta'];
-            unset($input['meta']);
-            $metaArray = [];
-            $i         = 0;
-            foreach ($meta as $actMeta) {
-                $metaArray[$i] = new ActivityMeta($actMeta);
-
-                ++$i;
-            }
-
-            $activity->meta()->saveMany($metaArray);
-        }
-
-        $performedAt = Carbon::parse($activity->performed_at);
-
-        $this->activityService->processMonthlyActivityTime($input['patient_id'], $performedAt);
-        event(new PatientActivityCreated($input['patient_id'], false));
-
-        if ($nurse) {
-            (new AlternativeCareTimePayableCalculator())
-                ->adjustNursePayForActivity($nurse->id, $activity);
+            $activity                  = $this->processNewActivity($fakePageTimer, $chargeableServiceDuration, null !== $nurse, $metaData);
         }
 
         return redirect()->route(
@@ -453,5 +434,25 @@ class ActivityController extends Controller
         $lastName  = ucwords(strtolower($lastName));
 
         return trim("${firstName} ${lastName} ${suffix}");
+    }
+
+    private function processNewActivity(PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration, bool $isNurseUser, array $metaData): Activity
+    {
+        $activity = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $pageTimer, $chargeableServiceDuration);
+        ProcessMonthltyPatientTime::dispatchNow($pageTimer->patient_id);
+        if ($isNurseUser) {
+            ProcessNurseMonthlyLogs::dispatchNow($activity);
+        }
+        event(new PatientActivityCreated($pageTimer->patient_id, false));
+
+        $metaArray = [];
+        foreach ($metaData as $actMeta) {
+            $metaArray[] = new ActivityMeta($actMeta);
+        }
+        if ( ! empty($metaArray)) {
+            $activity->meta()->saveMany($metaArray);
+        }
+
+        return $activity;
     }
 }

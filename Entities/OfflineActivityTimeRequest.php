@@ -6,7 +6,8 @@
 
 namespace CircleLinkHealth\TimeTracking\Entities;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use App\Jobs\ProcessMonthltyPatientTime;
+use App\Jobs\ProcessNurseMonthlyLogs;
 use App\Services\ActivityService;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
@@ -154,6 +155,8 @@ class OfflineActivityTimeRequest extends Model
 
         $cs = ChargeableService::firstWhere('code', '=', $this->is_behavioral ? ChargeableService::BHI : ChargeableService::CCM);
 
+        $activityId                 = null;
+        $nurse                      = optional($this->requester)->nurseInfo;
         $activityService            = app(ActivityService::class);
         $chargeableServicesDuration = $activityService->separateDurationForEachChargeableServiceId($this->patient, $this->duration_seconds, $cs->id);
         foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
@@ -163,19 +166,21 @@ class OfflineActivityTimeRequest extends Model
             $pageTimer->provider_id   = $this->requester_id;
             $pageTimer->start_time    = $this->performed_at->toDateTimeString();
             $activity                 = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $pageTimer, $chargeableServiceDuration);
-        }
-
-        $nurse = optional($this->requester)->nurseInfo;
-
-        event(new PatientActivityCreated($this->patient_id));
-        $activityService->processMonthlyActivityTime($this->patient_id, $this->performed_at);
-
-        if ($nurse) {
-            (new AlternativeCareTimePayableCalculator())->adjustNursePayForActivity($nurse->id, $activity);
+            if ( ! $activityId) {
+                $activityId = $activity->id;
+            }
+            ProcessMonthltyPatientTime::dispatchNow($this->patient_id);
+            if ($nurse) {
+                ProcessNurseMonthlyLogs::dispatchNow($activity);
+            }
+            event(new PatientActivityCreated($this->patient_id));
         }
 
         $this->is_approved = true;
-        $this->activity_id = $activity->id;
+        if ($activityId) {
+            $this->activity_id = $activityId;
+        }
+
         $this->save();
     }
 
