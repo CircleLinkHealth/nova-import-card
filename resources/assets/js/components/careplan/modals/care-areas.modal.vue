@@ -75,8 +75,7 @@
                                                 <input type="submit"
                                                        class="btn btn-secondary margin-0 instruction-add selected"
                                                        value="Save"
-                                                       title="Edit this problem"
-                                                       :disabled="(selectedProblem.name || '').length === 0 || patientHasSelectedProblem"/>
+                                                       title="Edit this problem"/>
                                             </div>
                                         </div>
 
