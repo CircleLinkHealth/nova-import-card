@@ -36,7 +36,7 @@
                 </ul>
             </div>
         </div>
-        <care-areas-modal  v-if="!disableEditing" ref="careAreasModal" :patient-id="patientId" :problems="problems"></care-areas-modal>
+        <care-areas-modal  v-if="!disableEditing" ref="careAreasModal" :patient-id="patientId" :problems="problems" auth-role="authRole"></care-areas-modal>
     </div>
 </template>
 
