@@ -93,7 +93,7 @@ class CallReportController extends Controller
         ];
 
         $rows = [];
-        
+
         $billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
 
         foreach ($calls as $call) {

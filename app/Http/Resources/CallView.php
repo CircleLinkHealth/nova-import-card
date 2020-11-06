@@ -13,8 +13,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class CallView extends JsonResource
 {
     private static bool $billingRevampIsEnabled;
-    
-    public static function setBillingRevampToggle() : void
+
+    public static function setBillingRevampToggle(): void
     {
         if ( ! isset(self::$billingRevampIsEnabled)) {
             self::$billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);

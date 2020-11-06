@@ -40,7 +40,7 @@ class CallsViewController extends ApiController
             ->paginate($rows ?? 15);
 
         CallViewResource::setBillingRevampToggle();
-        
+
         return CallViewResource::collection($calls);
     }
 }
