@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "e241f5ce1785b70ea49d4dbc8a80cf8f8e8d0646"
+                "reference": "26e61292ecfe6c3750c2b45f959d6a993fbebf9c"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-06T17:28:42+00:00"
+            "time": "2020-11-06T17:39:50+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1265,7 +1265,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "63cb792accfca7d769f6a1176bc4556139b4e57b"
+                "reference": "2a5342c45361436289788eb8f9ee69ab575f1125"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-06T17:28:16+00:00"
+            "time": "2020-11-06T17:39:51+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1724,7 +1724,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "190284c8165dd96f0a7dd01d1aecceab9487b602"
+                "reference": "0cd8b9712040000e4e094e60da852ba7be184ef1"
             },
             "type": "laravel-module",
             "extra": {
@@ -1749,7 +1749,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-05T19:12:44+00:00"
+            "time": "2020-11-06T17:39:51+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
