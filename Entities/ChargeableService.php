@@ -83,6 +83,13 @@ class ChargeableService extends BaseModel
         ],
     ];
 
+    const CODES_THAT_CAN_HAVE_PROBLEMS = [
+        self::CCM,
+        self::BHI,
+        self::PCM,
+        self::RPM,
+    ];
+
     /**
      * When a Patient consents to receive Care from CLH, they consent to these Chargeable Services, if consent date is
      * after 7/23/2018. If consent date is before 7/23/2018, patient was consented to the same services except for 'CPT
@@ -120,13 +127,6 @@ class ChargeableService extends BaseModel
         self::RPM40,
     ];
     const SOFTWARE_ONLY = 'Software-Only';
-    
-    const CODES_THAT_CAN_HAVE_PROBLEMS = [
-        self::CCM,
-        self::BHI,
-        self::PCM,
-        self::RPM
-    ];
 
     protected $fillable = [
         'code',
