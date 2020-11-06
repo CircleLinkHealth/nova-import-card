@@ -21,15 +21,14 @@ use Illuminate\Support\Collection;
 
 class PatientProblemsForBillingProcessing
 {
-    protected ?User $patient;
-    protected int $patientId;
-    
     const SERVICE_PROBLEMS_MIN_COUNT_MAP = [
         ChargeableService::CCM => 2,
         ChargeableService::BHI => 1,
         ChargeableService::PCM => 1,
         ChargeableService::RPM => 1,
     ];
+    protected ?User $patient;
+    protected int $patientId;
 
     protected PatientServiceProcessorRepository $repo;
 
