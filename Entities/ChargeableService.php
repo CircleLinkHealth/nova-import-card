@@ -120,6 +120,13 @@ class ChargeableService extends BaseModel
         self::RPM40,
     ];
     const SOFTWARE_ONLY = 'Software-Only';
+    
+    const CODES_THAT_CAN_HAVE_PROBLEMS = [
+        self::CCM,
+        self::BHI,
+        self::PCM,
+        self::RPM
+    ];
 
     protected $fillable = [
         'code',
