@@ -4,7 +4,7 @@
             <notifications name="connection-error"></notifications>
         </div>
 
-        <div v-if="showLoader || !visible" :class="{ 'hide-tracker': hideTracker }">
+        <div v-if="showLoader || !visible" v-show="!hideTracker">
             <div class="loader-filler"></div>
             <div class="loader-container">
                 <loader></loader>
@@ -12,7 +12,7 @@
         </div>
 
         <span v-if="visible" class="time-tracker">
-            <time-display-all-chargeable-services-static v-if="noLiveCount" v-show="!showLoader"
+            <time-display-all-chargeable-services-static v-if="noLiveCount" v-show="!showLoader && !hideTracker"
                                                          :route-activities="routeActivities"
                                                          :chargeable-services="info.chargeableServices">
             </time-display-all-chargeable-services-static>
@@ -29,7 +29,7 @@
 
                 </template>
 
-                <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
+                <span :class="{ hidden: showLoader }" v-show="!hideTracker">
                     <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime"
                                   :no-live-count="!!noLiveCount"
                                   :redirect-url="routeActivities"/>
@@ -575,10 +575,6 @@ div.loader-container {
 
 div.loader-filler {
     height: 30px;
-}
-
-.hide-tracker {
-    display: none;
 }
 
 .top-20 {
