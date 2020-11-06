@@ -104,7 +104,7 @@ class CallsView extends BaseSqlView
             # tasks can be in the past
             c.type != 'call'
       ");
-        
+
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
         // because we store scheduled_date in New York time (EST), but we the timezone in database can be anything (UTC or local)
 
