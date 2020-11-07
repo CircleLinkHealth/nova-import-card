@@ -760,7 +760,7 @@
 
                             } else {
                                 this.resetForm();
-                                Event.$emit("modal-add-action:hide");
+                                Event.$emit("modal-add-action:hide", actions);
                                 actions.forEach(action => {
                                     Event.$emit('actions:add', action);
                                 });
@@ -805,10 +805,6 @@
                     });
             }
         },
-        props: [
-            'practiceId',
-            'patientId'
-        ],
         created() {
             this.addNewAction();
         },
@@ -856,21 +852,37 @@
                         };
                     }
                     if (data.patientId) {
-                        console.log(data);
                         this.actions[this.actions.length - 1].data.patientId = data.patientId;
                         this.actions[this.actions.length - 1].selectedPatientData = {
                             label: data.patientName,
                             value: data.patientId
                         };
                     }
+                    if (data.type) {
+                        this.actions[this.actions.length - 1].data.type = data.type;
+                    }
+                    if (data.subType) {
+                        this.actions[this.actions.length - 1].data.subType = data.subType;
+                        this.actions[this.actions.length - 1].selectedSubTypeData = {
+                            label: data.subType,
+                            value: data.subType
+                        };
+                    }
+                    if (data.careCoachName && data.careCoachId) {
+                        this.actions[this.actions.length - 1].data.nurseId = data.careCoachId;
+                        this.actions[this.actions.length - 1].selectedNurseData = {
+                            label: data.careCoachName,
+                            value: data.careCoachId
+                        };
+                        this.actions[this.actions.length - 1].nursesForSelect = [
+                            {
+                                label: data.careCoachName,
+                                value: data.careCoachId
+                            }
+                        ];
+                    }
                 }
             })
-
-            if (this.patientId && this.practiceId) {
-                this.changePatient(0, this.patientId)
-                this.changePractice(0, this.practiceId)
-                Event.$emit("modal-add-action:show")
-            }
         }
     }
 </script>

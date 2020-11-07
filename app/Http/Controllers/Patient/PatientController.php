@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
@@ -226,9 +227,17 @@ class PatientController extends Controller
 
     public function scheduleActivity($practiceId, $patientId)
     {
+        $practice  = Practice::findOrFail($practiceId);
+        $patient   = User::findOrFail($patientId);
+        $careCoach = optional(app(NurseFinderEloquentRepository::class)->assignedNurse($patientId))->permanentNurse;
+
         return view('patient.schedule-task', [
-            'practiceId' => $practiceId,
-            'patientId'  => $patientId,
+            'practiceId'    => $practice->id,
+            'practiceName'  => $practice->display_name,
+            'patientId'     => $patient->id,
+            'patientName'   => $patient->getFullName(),
+            'careCoachId'   => optional($careCoach)->id,
+            'careCoachName' => optional($careCoach)->getFullName(),
         ]);
     }
 
