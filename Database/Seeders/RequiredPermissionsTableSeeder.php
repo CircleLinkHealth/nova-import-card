@@ -188,6 +188,7 @@ class RequiredPermissionsTableSeeder extends Seeder
             'provider',
             'ccda',
             'medication',
+            'notification',
             'patientProblem',
             'patient',
             'careplan',

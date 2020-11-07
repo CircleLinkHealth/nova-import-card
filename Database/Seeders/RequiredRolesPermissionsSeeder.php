@@ -120,6 +120,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'careplan-pdf.read',
                     'carePerson.read',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -223,6 +224,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'change-patient-enrollment-status',
                     'vitals-survey-complete',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -290,6 +292,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.read',
                     'comment.update',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -369,25 +372,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'nurseReport.read',
                     'careplan.read',
                     'phi.read',
-                ],
-            ],
-            [
-                'name'         => 'callbacks-admin',
-                'display_name' => 'Callbacks Admin',
-                'description'  => 'An administrative account with permissions to manage callbacks',
-                'permissions'  => [
-                    'edit-patient-chart.disable',
-                    'downloads.disable',
-                    'careplan.read',
-                    'patient.read',
-                    'call.read',
-                    'pam.view',
-                    'ca-director.view',
-                    'practice.read',
-                    'location.read',
-                    'provider.read',
-                    'nurse.read',
-                    'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -410,6 +395,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'phi.read',
                     'users-view-self',
                     'users-view-all',
+                    'notification.read',
                 ],
             ],
             [
@@ -503,6 +489,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.update',
                     'comment.delete',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -605,6 +592,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivity.create',
                     'vitals-survey-complete',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -645,6 +633,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'role.read',
                     'offlineActivity.create',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -663,6 +652,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'practice.read',
                     'careplan-pdf.create',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -680,6 +670,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'provider.read',
                     'ambassador.read',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -713,6 +704,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'careplan-pdf.create',
                     'users-view-all',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -808,6 +800,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivity.create',
                     'care-plan-approve',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -934,6 +927,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'phoneNumber.update',
                     'phoneNumber.delete',
                     'phoneNumber.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -1066,6 +1060,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'phoneNumber.delete',
                     'phoneNumber.read',
                     'note.download',
+                    'notification.read',
                 ],
             ],
             [
@@ -1194,6 +1189,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'phoneNumber.update',
                     'phoneNumber.delete',
                     'phoneNumber.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -1335,6 +1331,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'patientProblem.update',
                     'patientProblem.delete',
                     'chargeableService.read',
+                    'patient.read',
                     'practice.read',
                     'call.read',
                     'call.create',
@@ -1342,6 +1339,13 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'call.delete',
                     'phi.read',
                     'pam.view',
+                    'notification.read',
+                    'nurse.read',
+                    'note.read',
+                    'careplan.read',
+                    'users-view-self',
+                    'users-view-all',
+                    'phoneNumber.read',
                 ],
             ],
             [
@@ -1370,6 +1374,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'appointment.read',
                     'misc.read',
                     'carePerson.read',
+                    'notification.read',
                 ],
             ],
             [
