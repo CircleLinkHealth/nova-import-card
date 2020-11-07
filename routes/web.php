@@ -2084,7 +2084,7 @@ Route::get('notifications/{id}', [
 Route::get('notifications', [
     'uses' => 'NotificationController@index',
     'as'   => 'notifications.index',
-])->middleware('permission:provider.read,note.read');
+])->middleware('permission:notification.read');
 
 Route::post('/redirect-mark-read/{notificationId}', [
     'uses' => 'NotificationController@markNotificationAsRead',

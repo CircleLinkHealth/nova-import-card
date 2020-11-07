@@ -335,7 +335,7 @@
 
         methods: {
             subTypesForSelect() {
-                if (this.$parent.isAdmin) {
+                if (this.$parent.isAdmin || this.$parent.isSoftwareOnly) {
                     return [
                         UNASSIGNED_VALUE,
                         {label: 'Call', value: 'call'},
@@ -346,11 +346,11 @@
                         {label: 'CP Review', value: 'CP Review'},
                         {label: 'Other Task', value: 'Other Task'}
                     ];
-                }
-
-                return [
-                    {label: 'Call back', value: 'Call Back'}
-                ];
+                } else if (this.$parent.isCallbacksAdmin) {
+                    return [
+                        {label: 'Call back', value: 'Call Back'}
+                    ]
+                };
             },
             setNursesForSelect(actionIndex) {
                 this.actions[actionIndex].nursesForSelect = [

@@ -6,7 +6,7 @@
                     <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
                 </div>
 
-                <div v-if="isAdmin">
+                <div v-if="isAdmin || isSoftwareOnly">
                     <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
                     <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
                     <button  class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
@@ -22,6 +22,9 @@
                         <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
                         Show Unassigned
                     </label>
+                </div>
+
+                <div v-if="isAdmin">
                     <button class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
                         <span v-if="includeDemoPatients">Exclude Demo Patients</span>
                         <span v-else>Include Demo Patients</span>
