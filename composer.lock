@@ -1702,7 +1702,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "f7b9da32453a68f703c55e7084699e13bd04a5fb"
+                "reference": "0620e1616920bd77a05bfd34cdfdc005126566a0"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1716,7 +1716,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-06T18:26:21+00:00"
+            "time": "2020-11-07T17:59:29+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
