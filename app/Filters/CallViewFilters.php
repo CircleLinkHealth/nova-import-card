@@ -132,14 +132,21 @@ class CallViewFilters extends QueryFilters
 
         return $this->builder
             ->whereIn('practice_id', function ($q) {
-                $roleIds = Role::whereHas('perms', function ($q) {
-                    $q->where('name', 'pam.view');
-                })->pluck('id')->all();
-                
                 $q->select('program_id')
                     ->from('practice_role_user')
                     ->where('user_id', auth()->id())
-                    ->whereIn('role_id', $roleIds);
+                    ->whereIn('role_id', function ($q) {
+                        $q->select('lv_roles.id')
+                            ->from('lv_roles')
+                            ->join('permissibles', function ($join) {
+                                $join->on('permissibles.permissible_id', '=', 'lv_roles.id')
+                                    ->where('permissibles.permissible_type', '=', Role::class);
+                            })
+                            ->join('lv_permissions', function ($join) {
+                                $join->on('permissibles.permission_id', '=', 'lv_permissions.id')
+                                    ->where('lv_permissions.name', 'pam.view');
+                            });
+                    });
             });
     }
 
