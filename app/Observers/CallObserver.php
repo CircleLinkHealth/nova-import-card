@@ -45,7 +45,7 @@ class CallObserver
             return;
         }
 
-        $call->outboundUser->notify(new CallCreated($call, auth()->user()));
+        optional($call->outboundUser)->notify(new CallCreated($call, auth()->user()));
     }
 
     public function saved(Call $call)
