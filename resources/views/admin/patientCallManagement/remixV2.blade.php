@@ -1,5 +1,5 @@
 <?php
-$isAdmin = auth()->user()->isAdmin();
+$isAdmin = ! Auth::guest() && Cerberus::hasPermission('admin-access');
 ?>
 
 @extends($isAdmin ? 'partials.adminUI' : 'partials.providerUI')

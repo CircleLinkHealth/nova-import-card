@@ -82,9 +82,7 @@
 </head>
 <body>
 <div id="app">
-
-    @if (  ! Auth::guest() && Cerberus::hasPermission('admin-access') )
-        <nav class="navbar navbar-default">
+     <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
@@ -318,13 +316,6 @@
             Frame</a>
             to improve your experience.</p>
         <![endif]-->
-        @else
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                @include('partials.providerUI.primarynav')
-            </div>
-        </nav>
-    @endif
 
     {{--This is for JS variables. Purposefully included before content.--}}
     @include('partials.footer')

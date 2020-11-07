@@ -76,7 +76,7 @@
                                 <v-select :disabled="action.disabled"
                                           max-height="200px" class="form-control"
                                           v-model="action.selectedSubTypeData"
-                                          :options="subTypesForSelect"
+                                          :options="subTypesForSelect()"
                                           @input="function (type) {changeSubType(index, type)}">
                                 </v-select>
                             </td>
@@ -330,7 +330,10 @@
             },
             showPracticeColumn() {
                 return this.practices.length > 1;
-            },
+            }
+        },
+
+        methods: {
             subTypesForSelect() {
                 if (this.$parent.isAdmin) {
                     return [
@@ -349,9 +352,6 @@
                     {label: 'Call back', value: 'Call Back'}
                 ];
             },
-        },
-
-        methods: {
             setNursesForSelect(actionIndex) {
                 this.actions[actionIndex].nursesForSelect = [
                     UNASSIGNED_VALUE,
