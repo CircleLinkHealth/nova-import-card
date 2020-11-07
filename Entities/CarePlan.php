@@ -501,7 +501,7 @@ class CarePlan extends BaseModel implements PdfReport
                 'phoneNumbers',
                 'billingProvider.user',
                 'ccdProblems' => function ($q) {
-                //todo: location-problem-services toggle, require cpm problem when we make sure all PCM and RPM are migrated in the DB
+                    //todo: location-problem-services toggle, require cpm problem when we make sure all PCM and RPM are migrated in the DB
                     return $q->with('cpmProblem');
                 },
                 'ccdMedications',
