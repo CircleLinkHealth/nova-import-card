@@ -53,7 +53,10 @@ class CallViewFilters extends QueryFilters
 
     public function globalFilters(): array
     {
-        return ['non_admin_user' => ! auth()->user()->isAdmin()];
+        return [
+            'non_admin_user' => ! auth()->user()->isAdmin(),
+            'callbacks_admin' => auth()->user()->isCallbacksAdmin(),
+        ];
     }
 
     public function last_call($lastCall = null)
@@ -124,12 +127,8 @@ class CallViewFilters extends QueryFilters
         return $this->builder->where('scheduled_date', 'like', '%'.$date.'%');
     }
 
-    public function non_admin_user($value = null)
+    public function non_admin_user()
     {
-        if ( ! $value) {
-            return $this->builder;
-        }
-
         return $this->builder
             ->whereIn('practice_id', function ($q) {
                 $q->select('program_id')
@@ -148,6 +147,11 @@ class CallViewFilters extends QueryFilters
                             });
                     });
             });
+    }
+
+    public function callbacks_admin()
+    {
+        return $this->type('Call Back');
     }
 
     public function sort_bhi_time($term)
