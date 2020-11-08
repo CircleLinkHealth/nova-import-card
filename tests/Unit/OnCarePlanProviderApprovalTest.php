@@ -118,7 +118,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         $this->patient()->setPhone('+1-541-754-3010');
 
         $this->patient()->save();
-        
+
         BillingCache::clearPatients();
 
         $validator = $this->carePlan->validator();
@@ -191,19 +191,19 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
             [
                 [
                     'name'           => 'diabetes1',
-                    'is_monitored'  => 1,
+                    'is_monitored'   => 1,
                     'cpm_problem_id' => CpmProblem::whereName(CpmProblem::DIABETES_TYPE_1)->first()->id,
                 ],
                 [
                     'name'           => 'diabetes2',
-                    'is_monitored'  => 1,
+                    'is_monitored'   => 1,
                     'cpm_problem_id' => CpmProblem::whereName(CpmProblem::DIABETES_TYPE_2)->first()->id,
                 ],
             ]
         );
 
         BillingCache::clearPatients();
-        
+
         //Patient has both types of diabetes and DRAFT careplan. Test validation fails
         $this->assertFalse($this->carePlan->validator()->passes());
         //Test validation passes if approver confirms both types of diabetes are correct
