@@ -70,6 +70,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem withChargeableServicesForLocation($locationId)
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem hasChargeableServiceCodeForLocation($chargeableServiceCode, $locationId)
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem notGenericDiabetes()
+ * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem ofLocation($locationId)
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -210,16 +211,16 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
         return $query->where('name', '!=', self::GENERIC_DIABETES);
     }
 
+    public function scopeOfLocation($query, int $locationId)
+    {
+        return $query->whereHas('locationChargeableServices', fn ($lcs) => $lcs->where('location_id', $locationId));
+    }
+
     public function scopeWithChargeableServicesForLocation($query, int $locationId)
     {
         return $query->with(['locationChargeableServices' => function ($lps) use ($locationId) {
             $lps->where('location_id', $locationId);
         }]);
-    }
-    
-    public function scopeOfLocation($query, int $locationId)
-    {
-        return $query->whereHas('locationChargeableServices', fn($lcs) => $lcs->where('location_id', $locationId));
     }
 
     public function scopeWithIcd10Codes($builder)
