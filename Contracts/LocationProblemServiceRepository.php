@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface LocationProblemServiceRepository
 {
-    public function problemsForLocation(int $locationId) : Collection;
-    
+    public function problemsForLocation(int $locationId): Collection;
+
     public function store(int $locationId, int $cpmProblemId, int $chargeableServiceId): LocationProblemService;
 }
