@@ -216,6 +216,11 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
             $lps->where('location_id', $locationId);
         }]);
     }
+    
+    public function scopeOfLocation($query, int $locationId)
+    {
+        return $query->whereHas('locationChargeableServices', fn($lcs) => $lcs->where('location_id', $locationId));
+    }
 
     public function scopeWithIcd10Codes($builder)
     {
