@@ -13,7 +13,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Model;
 
-class MarillacClinicLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
+class MarillacClinicIncLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
 {
     public bool $disableButtons;
     public $enrollee;
