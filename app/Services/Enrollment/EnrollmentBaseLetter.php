@@ -182,7 +182,7 @@ class EnrollmentBaseLetter extends Controller
         $replacementVars = [
             $provider->last_name,
             $practiceNumber,
-            $provider->display_name,
+            $provider->display_name, // I think this has to change, some practices have standard signature name. Waiting confirmation from zach.
             $practice->display_name,
             $buttonsLocation,
             $practiceSigSrc,

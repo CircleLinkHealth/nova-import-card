@@ -31,6 +31,7 @@
                        <option value="calvary-medical-clinic">Calvary Clinic</option>
                        <option value="woodlands-internists-pa">Woodlands Clinic</option>
                        <option value="davis-county">Davis County Clinic</option>
+                       <option value="marillac-clinic">Marillac Health</option>
                    </select>
                </div>
                <a>
