@@ -15,6 +15,7 @@ use Illuminate\Support\Collection;
 
 class HasEnoughProblems implements Rule
 {
+    const VALIDATION_ERROR_TEXT = 'The Care Plan must have two CCM problems or one BHI, PCM or RPM problem.';
     /** @var User */
     private $patient;
 
@@ -35,7 +36,7 @@ class HasEnoughProblems implements Rule
      */
     public function message()
     {
-        return 'The Care Plan must have two CCM problems or one BHI, PCM or RPM problem.';
+        return self::VALIDATION_ERROR_TEXT;
     }
 
     /**

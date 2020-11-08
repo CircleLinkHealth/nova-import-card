@@ -7,7 +7,9 @@
 namespace Tests\Unit;
 
 use App\Notifications\CarePlanProviderApproved;
+use App\Rules\HasEnoughProblems;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -52,7 +54,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
      */
     protected $provider;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -71,7 +73,7 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         $validator = $this->carePlan->validator();
 
         $this->assertTrue($validator->fails());
-        $this->assertTrue('The Care Plan must have two CPM problems for CCM, one if practice has PCM (G2065) enabled or one BHI problem.' === $validator->errors()->first('conditions'), $validator->errors()->first('conditions'));
+        $this->assertTrue(HasEnoughProblems::VALIDATION_ERROR_TEXT === $validator->errors()->first('conditions'), $validator->errors()->first('conditions'));
         $this->assertTrue('The mrn field is required.' === $validator->errors()->first('mrn'), $validator->errors()->first('mrn'));
         $this->assertTrue('The billing provider field is required.' === $validator->errors()->first('billingProvider'), $validator->errors()->first('billingProvider'));
 
@@ -95,7 +97,6 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
                 ['name' => 'test'.Str::random(5), 'cpm_problem_id' => $cpmProblems->random()->id, 'is_monitored' => true],
             ]
         );
-        //todo: update cache?
 
         foreach ($ccdProblems as $problem) {
             $problem->cpmProblem()->associate($cpmProblems->random());
@@ -117,6 +118,8 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
         $this->patient()->setPhone('+1-541-754-3010');
 
         $this->patient()->save();
+        
+        BillingCache::clearPatients();
 
         $validator = $this->carePlan->validator();
 
@@ -188,15 +191,19 @@ class OnCarePlanProviderApprovalTest extends CustomerTestCase
             [
                 [
                     'name'           => 'diabetes1',
+                    'is_monitored'  => 1,
                     'cpm_problem_id' => CpmProblem::whereName(CpmProblem::DIABETES_TYPE_1)->first()->id,
                 ],
                 [
                     'name'           => 'diabetes2',
+                    'is_monitored'  => 1,
                     'cpm_problem_id' => CpmProblem::whereName(CpmProblem::DIABETES_TYPE_2)->first()->id,
                 ],
             ]
         );
 
+        BillingCache::clearPatients();
+        
         //Patient has both types of diabetes and DRAFT careplan. Test validation fails
         $this->assertFalse($this->carePlan->validator()->passes());
         //Test validation passes if approver confirms both types of diabetes are correct
