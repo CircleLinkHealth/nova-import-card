@@ -29,7 +29,7 @@ class GenerateMarillacHealthLetter extends Seeder
 
         $bodyPageOne = "
 
-<p>$practiceName has invested in a new Personalized Care Program to help patients get care at home, which is especially important given current events, and I'm inviting you to join.</p>
+<p>Marillac Health has invested in a new Personalized Care Program to help patients get care at home, which is especially important given current events, and I'm inviting you to join.</p>
 
 <p>You are getting this invitation because you're eligible according to Medicare guidelines, and we believe you will benefit from it greatly, particularly during this pandemic.</p>
 
@@ -82,16 +82,16 @@ class GenerateMarillacHealthLetter extends Seeder
 
     private function getPractice()
     {
-        $marillacPractice = Practice::where('name', '=', 'marillac-clinic')->first();
+        $marillacPractice = Practice::where('name', '=', 'marillac-clinic-inc')->first();
 
         if ( ! App::environment(['production'])) {
             $marillacPractice = Practice::firstOrCreate(
                 [
-                    'name' => 'marillac-clinic',
+                    'name' => 'marillac-clinic-inc',
                 ],
                 [
                     'active'                => 1,
-                    'display_name'          => 'Marillac Health',
+                    'display_name'          => 'Marillac Clinic, Inc',
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,
