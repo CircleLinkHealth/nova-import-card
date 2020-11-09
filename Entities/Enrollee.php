@@ -493,9 +493,9 @@ class Enrollee extends BaseModel
         return (new StringManipulation())->formatPhoneNumberE164($this->cell_phone);
     }
 
-    public function getCellPhoneNpaBracketsAttribute()
+    public function getCellPhoneNpaParenthesizedAttribute()
     {
-        return (new StringManipulation())->formatPhoneNumberWithNpaBrackets($this->cell_phone);
+        return (new StringManipulation())->formatPhoneNumberWithNpaParenthesized($this->cell_phone);
     }
 
     public static function getEquivalentToConfirmStatus($status)
@@ -529,9 +529,9 @@ class Enrollee extends BaseModel
         return (new StringManipulation())->formatPhoneNumberE164($this->home_phone);
     }
 
-    public function getHomePhoneNpaBracketsAttribute()
+    public function getHomePhoneNpaParenthesizedAttribute()
     {
-        return (new StringManipulation())->formatPhoneNumberWithNpaBrackets($this->home_phone);
+        return (new StringManipulation())->formatPhoneNumberWithNpaParenthesized($this->home_phone);
     }
 
     public function getLastEncounterAttribute($lastEncounter)
@@ -563,24 +563,24 @@ class Enrollee extends BaseModel
         return (new StringManipulation())->formatPhoneNumberE164($this->other_phone);
     }
 
-    public function getOtherPhoneNpaBracketsAttribute()
+    public function getOtherPhoneNpaParenthesizedAttribute()
     {
-        return (new StringManipulation())->formatPhoneNumberWithNpaBrackets($this->other_phone);
+        return (new StringManipulation())->formatPhoneNumberWithNpaParenthesized($this->other_phone);
     }
 
     public function getPhonesAsString(Enrollee $compareAgainstEnrollee = null)
     {
         $phones = [];
         foreach ($this->phoneAttributes as $attribute) {
-            $getAttr = $attribute.'_npa_brackets';
+            $getAttr = $attribute.'_npa_parenthesized';
             $attr    = $this->$getAttr;
             if ($compareAgainstEnrollee) {
                 if (in_array(
                     $attr,
                     [
-                        $compareAgainstEnrollee->home_phone_npa_brackets,
-                        $compareAgainstEnrollee->cell_phone_npa_brackets,
-                        $compareAgainstEnrollee->other_phone_npa_brackets,
+                        $compareAgainstEnrollee->home_phone_npa_parenthesized,
+                        $compareAgainstEnrollee->cell_phone_npa_parenthesized,
+                        $compareAgainstEnrollee->other_phone_npa_parenthesized,
                     ]
                 )
                 ) {
@@ -675,9 +675,9 @@ class Enrollee extends BaseModel
         return (new StringManipulation())->formatPhoneNumberE164($this->primary_phone);
     }
 
-    public function getPrimaryPhoneNpaBracketsAttribute()
+    public function getPrimaryPhoneNpaParenthesizedAttribute()
     {
-        return (new StringManipulation())->formatPhoneNumberWithNpaBrackets($this->primary_phone);
+        return (new StringManipulation())->formatPhoneNumberWithNpaParenthesized($this->primary_phone);
     }
 
     public function getProviderFullNameAttribute()
