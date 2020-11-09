@@ -1,4 +1,4 @@
-@extends('partials.adminUI')
+@extends(! Auth::guest() && Cerberus::hasPermission('admin-access') ? 'partials.adminUI' : 'partials.providerUI')
 
 @push('styles')
     <style>

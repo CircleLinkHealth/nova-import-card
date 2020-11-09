@@ -8,12 +8,14 @@ import axios from './bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
-import {ClientTable} from 'vue-tables-2'
+import {ClientTable, ServerTable} from 'vue-tables-2'
 import "vue-trix"
 import EventBus from './admin/time-tracker/comps/event-bus'
 import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
 
 Vue.use(ClientTable, {}, false)
+Vue.use(ServerTable, {}, false)
+
 
 
 if (document) {
@@ -93,6 +95,7 @@ const AttestCallConditionsModalComponent = () => import(/* webpackChunkName: "ch
 const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarDailyReport');
 const EditPatientNumber = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-number');
 const EditPatientAlternateContact = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-agent-contact');
+const CaDirectorPanel = () => import(/* webpackChunkName: "chunk-admin" */ './admin/ca-director/panel')
 
 
 Vue.component('attest-call-conditions-modal', AttestCallConditionsModalComponent);
@@ -153,6 +156,8 @@ Vue.component('pusher-see-all-notifications', PusherSeeAllNotifications);
 Vue.component('calendar-daily-report', CalendarDailyReport);
 Vue.component('edit-patient-number', EditPatientNumber);
 Vue.component('edit-patient-alternate-contact', EditPatientAlternateContact);
+Vue.component('ca-director-panel', CaDirectorPanel)
+
 
 const App = new Vue({
     el: '#app',
