@@ -1829,7 +1829,7 @@ if ( ! function_exists('isPatientRpmBadgeEnabled')) {
         if (null === $val) {
             return AppConfig::set($key, true);
         }
-        
+
         return $val;
     }
 }

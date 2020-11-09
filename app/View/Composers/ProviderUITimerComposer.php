@@ -100,13 +100,12 @@ class ProviderUITimerComposer extends ServiceProvider
 
         View::composer(['partials.providerUItimerComponent'], function ($view) {
             $params = $view->getData();
-            if (! isset($params['noLiveCountTimeTracking'])) {
+            if ( ! isset($params['noLiveCountTimeTracking'])) {
                 $noLiveCountTimeTracking = ! auth()->user()->isCCMCountable();
-            }
-            else {
+            } else {
                 $noLiveCountTimeTracking = $params['noLiveCountTimeTracking'];
             }
-            
+
             $view->with(compact([
                 'noLiveCountTimeTracking',
             ]));

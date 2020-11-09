@@ -482,6 +482,18 @@ $user_info = [];
                                                                             value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE ? 'selected' : ''}}>
                                                                         Unreachable
                                                                     </option>
+                                                                @else
+                                                                    @if($patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED)
+                                                                    <option class="paused" disabled
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" selected>
+                                                                        Paused
+                                                                    </option>
+                                                                    @elseif($patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE)
+                                                                    <option class="unreachable" disabled
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" selected>
+                                                                        Unreachable
+                                                                    </option>
+                                                                    @endif
                                                                 @endif
                                                             </select>
                                                         </div>
