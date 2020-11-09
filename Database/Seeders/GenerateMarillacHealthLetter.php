@@ -14,6 +14,8 @@ use Illuminate\Database\Seeder;
 
 class GenerateMarillacHealthLetter extends Seeder
 {
+    const SIGNATORY_NAME = "Crystal Owens, MD <br> Chief Medical Officer, MarillacHealth";
+    
     /**
      * Run the database seeds.
      *
@@ -56,6 +58,7 @@ class GenerateMarillacHealthLetter extends Seeder
             [
                 'practice_logo_src'      => '/img/logos/Marillac/marillac-clinic.png',
                 'customer_signature_src' => '/img/signatures/marillac-clinic/marillac_signature.png',
+                'signatory_name' => self::SIGNATORY_NAME,
                 'letter'                 => json_encode(
                     [
                         'page_1' => [
