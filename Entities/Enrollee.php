@@ -493,6 +493,11 @@ class Enrollee extends BaseModel
         return (new StringManipulation())->formatPhoneNumberE164($this->cell_phone);
     }
 
+    public function getCellPhoneNpaBracketsAttribute($cellPhone)
+    {
+        return (new StringManipulation())->formatPhoneNumberWithNpaBrackets($cellPhone);
+    }
+
     public static function getEquivalentToConfirmStatus($status)
     {
         return collect(self::TO_CONFIRM_STATUSES)->filter(
@@ -524,6 +529,11 @@ class Enrollee extends BaseModel
         return (new StringManipulation())->formatPhoneNumberE164($this->home_phone);
     }
 
+    public function getHomePhoneNpaBracketsAttribute($homePhone)
+    {
+        return (new StringManipulation())->formatPhoneNumberWithNpaBrackets($homePhone);
+    }
+
     public function getLastEncounterAttribute($lastEncounter)
     {
         return $lastEncounter
@@ -551,6 +561,11 @@ class Enrollee extends BaseModel
     public function getOtherPhoneE164Attribute()
     {
         return (new StringManipulation())->formatPhoneNumberE164($this->other_phone);
+    }
+
+    public function getOtherPhoneNpaBracketsAttribute($otherPhone)
+    {
+        return (new StringManipulation())->formatPhoneNumberWithNpaBrackets($otherPhone);
     }
 
     public function getPhonesAsString(Enrollee $compareAgainstEnrollee = null)
@@ -657,6 +672,11 @@ class Enrollee extends BaseModel
     public function getPrimaryPhoneE164Attribute()
     {
         return (new StringManipulation())->formatPhoneNumberE164($this->primary_phone);
+    }
+
+    public function getPrimaryPhoneNpaBracketsAttribute($primaryPhone)
+    {
+        return (new StringManipulation())->formatPhoneNumberWithNpaBrackets($primaryPhone);
     }
 
     public function getProviderFullNameAttribute()
