@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Model;
 class EnrollmentInvitationLetter extends Model
 {
     public const CUSTOMER_SIGNATURE_PIC        = 'customer signature (picture)';
+    const DEPENDED_ON_PROVIDER                 = 'depended_on_leader_provider';
     public const LOCATION_ENROLL_BUTTON        = 'location of enroll button on screen';
     public const LOCATION_ENROLL_BUTTON_SECOND = 'button on screen two';
     public const OPTIONAL_PARAGRAPH            = 'Optional Paragraph';

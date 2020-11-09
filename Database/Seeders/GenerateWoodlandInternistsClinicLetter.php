@@ -14,7 +14,8 @@ use Illuminate\Database\Seeder;
 
 class GenerateWoodlandInternistsClinicLetter extends Seeder
 {
-    const UI_REQUESTS = 'ui_requests';
+    const PRACTICE_SIGNATORY_NAME = 'Nadeem Jamil, MD';
+    const UI_REQUESTS             = 'ui_requests';
 
     /**
      * Run the database seeds.
@@ -59,6 +60,7 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
             [
                 'practice_logo_src'      => '/img/logos/Woodlands/woodlands_logo.png',
                 'customer_signature_src' => '/img/signatures/woodlands-clinic/woodlands_signature.png',
+                'signatory_name'         => self::PRACTICE_SIGNATORY_NAME,
                 'letter'                 => json_encode(
                     [
                         'page_1' => [
