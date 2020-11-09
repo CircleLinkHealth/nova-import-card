@@ -343,10 +343,10 @@ class UserRepository
             $params->add(['preferred_cc_contact_days' => $contactDaysDelmited]);
         }
 
-        if ($cpStatus = $params->has('careplan_status')) {
+        if ($params->has('careplan_status')) {
             $approverId = optional(auth()->user())->id;
             $toUpdate   = [
-                'status' => $params->get('careplan_status'),
+                'status' => $cpStatus = $params->get('careplan_status'),
                 'mode'   => $params->get('careplan_mode', CarePlan::WEB),
             ];
 
