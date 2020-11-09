@@ -10,7 +10,6 @@ use App\Repositories\CpmInstructionRepository;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 use CircleLinkHealth\SharedModels\Entities\Problem;
-use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
 use Illuminate\Support\Str;
 
 class CpmInstructionService
@@ -51,6 +50,13 @@ class CpmInstructionService
         $instructions->getCollection()->transform([$this, 'setupInstruction']);
 
         return $instructions;
+    }
+
+    public function otherPatientsWithSameInstructionExist(int $instructionId, int $patientId)
+    {
+        return Problem::where('cpm_instruction_id', '=', $instructionId)
+            ->where('patient_id', '!=', $patientId)
+            ->exists();
     }
 
     public function repo()
@@ -162,12 +168,5 @@ class CpmInstructionService
 
             return;
         }
-    }
-    
-    public function otherPatientsWithSameInstructionExist(int $instructionId, int $patientId)
-    {
-        return Problem::where('cpm_instruction_id', '=', $instructionId)
-            ->where('patient_id', '!=', $patientId)
-            ->exists();
     }
 }
