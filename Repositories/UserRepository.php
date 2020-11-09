@@ -343,13 +343,30 @@ class UserRepository
             $params->add(['preferred_cc_contact_days' => $contactDaysDelmited]);
         }
 
-        if ($params->has('careplan_status')) {
-            CarePlan::updateOrCreate([
-                'user_id' => $user->id,
-            ], [
+        if ($cpStatus = $params->has('careplan_status')) {
+            $approverId = optional(auth()->user())->id;
+            $toUpdate =[
                 'status' => $params->get('careplan_status'),
                 'mode'   => $params->get('careplan_mode', CarePlan::WEB),
-            ]);
+            ];
+            
+            if ($cpStatus === CarePlan::QA_APPROVED){
+                $toUpdate['qa_approver_id']= $approverId;
+                $toUpdate['qa_date'] = Carbon::now()->toDateTimeString();
+            }
+            
+            if ($cpStatus === CarePlan::RN_APPROVED){
+                $toUpdate['rn_approver_id']= $approverId;
+                $toUpdate['rn_date'] = Carbon::now()->toDateTimeString();
+            }
+    
+            if ($cpStatus === CarePlan::PROVIDER_APPROVED){
+                $toUpdate['provider_approver_id']= $approverId;
+                $toUpdate['provider_date'] = Carbon::now()->toDateTimeString();
+            }
+            CarePlan::updateOrCreate([
+                'user_id' => $user->id,
+            ], $toUpdate);
 
             $params->remove('careplan_status');
             $params->remove('careplan_mode');
