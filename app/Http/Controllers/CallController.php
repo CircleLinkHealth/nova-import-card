@@ -170,7 +170,7 @@ class CallController extends Controller
             $canUpdateCareCoach = $this->canAssignCareCoachToActivity($call, $value);
             if ( ! $canUpdateCareCoach) {
                 return response(
-                    'cannot update change care-coach',
+                    'You do not have the necessary permissions to perform this action.',
                     421
                 );
             }
@@ -284,6 +284,10 @@ class CallController extends Controller
 
         if ($user->isAdmin()) {
             return true;
+        }
+
+        if ($user->isCallbacksAdmin()) {
+            return 'Call Back' === $call->sub_type;
         }
 
         //get practice of patient
