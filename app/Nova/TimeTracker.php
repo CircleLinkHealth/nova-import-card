@@ -63,8 +63,8 @@ class TimeTracker extends Resource
      * @var array
      */
     public static $searchRelations = [
-        'logger'  => ['display_name', 'first_name', 'last_name'],
-        'patient' => ['display_name', 'first_name', 'last_name'],
+        'logger'  => ['id', 'display_name', 'first_name', 'last_name'],
+        'patient' => ['id', 'display_name', 'first_name', 'last_name'],
     ];
 
     /**
@@ -147,6 +147,10 @@ class TimeTracker extends Resource
             ID::make()->sortable(),
 
             BelongsTo::make('Logger', 'logger', User::class)
+                ->sortable()
+                ->readonly(true),
+    
+            Text::make('Patient ID', 'patient.id')
                 ->sortable()
                 ->readonly(true),
 
