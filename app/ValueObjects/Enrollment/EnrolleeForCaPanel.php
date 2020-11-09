@@ -92,9 +92,9 @@ class EnrolleeForCaPanel
                 'practice_id'              => $enrollable->practice->id,
                 'practice_name'            => $enrollable->practice->display_name,
                 'practice_phone'           => (new StringManipulation())->formatPhoneNumberWithNpaBrackets($enrollable->practice->outgoing_phone_number),
-                'other_phone'              => $enrollable->other_phone,
-                'cell_phone'               => $enrollable->cell_phone,
-                'home_phone'               => $enrollable->home_phone,
+                'other_phone'              => $enrollable->other_phone_npa_brackets,
+                'cell_phone'               => $enrollable->cell_phone_npa_brackets,
+                'home_phone'               => $enrollable->home_phone_npa_brackets,
                 'requested_callback'       => optional($enrollable->requested_callback)->toDateString() ?? '',
 
                 'extra' => $extra,
@@ -224,7 +224,7 @@ class EnrolleeForCaPanel
             $phone = $enrollable->practice->outgoing_phone_number;
         }
 
-        return (new StringManipulation())->formatPhoneNumberWithBrackets($phone);
+        return (new StringManipulation())->formatPhoneNumberWithNpaBrackets($phone);
     }
 
     private function getReasonAttributes($enrollable)
