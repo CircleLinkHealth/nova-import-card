@@ -125,6 +125,10 @@ use Illuminate\Support\Str;
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee lastCalledBetween(\Carbon\Carbon $start, \Carbon\Carbon $end)
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee ofStatus($status)
  * @property string|null                                                  $facility_name
+ * @property mixed                                                        $cell_phone_npa_parenthesized
+ * @property mixed                                                        $home_phone_npa_parenthesized
+ * @property mixed                                                        $other_phone_npa_parenthesized
+ * @property mixed                                                        $primary_phone_npa_parenthesized
  */
 class Enrollee extends BaseModel
 {
