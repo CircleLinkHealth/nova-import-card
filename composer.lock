@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "98a97dc16e45fb2bec266864ebdef457",
+    "content-hash": "42e7bf5b413e261e6a5fd4b1ff64b1ac",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1191,7 +1191,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "3736429004eab4fc1c79b07e3378dc60cf50d0bf"
+                "reference": "783d3bd6a88bf52726e077f34d8c346f7472615f"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1220,7 +1220,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-09T14:56:52+00:00"
+            "time": "2020-11-09T15:37:13+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1296,11 +1296,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.5.8",
+            "version": "dev-enrollee-phone-number-formats",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "19d551659a7f4be3c9b49a538189c01c0db3d27f"
+                "reference": "5324139c4b405d3e8999ac5c7035feb79c9e3893"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1327,7 +1327,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-20T04:15:58+00:00"
+            "time": "2020-11-09T15:37:12+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -17887,6 +17887,7 @@
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/sqlviews-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
