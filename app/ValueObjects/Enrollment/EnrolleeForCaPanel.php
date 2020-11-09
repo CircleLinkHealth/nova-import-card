@@ -91,7 +91,7 @@ class EnrolleeForCaPanel
                 'lang'                     => $enrollable->lang,
                 'practice_id'              => $enrollable->practice->id,
                 'practice_name'            => $enrollable->practice->display_name,
-                'practice_phone'           => $enrollable->practice->outgoing_phone_number,
+                'practice_phone'           => (new StringManipulation())->formatPhoneNumberWithBrackets($enrollable->practice->outgoing_phone_number),
                 'other_phone'              => $enrollable->other_phone,
                 'cell_phone'               => $enrollable->cell_phone,
                 'home_phone'               => $enrollable->home_phone,
