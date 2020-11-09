@@ -2385,6 +2385,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole('provider');
     }
 
+    public function isRpm(): bool
+    {
+        if (is_null($this->id)) {
+            return false;
+        }
+
+        return \Cache::remember("user:$this->id:is_rpm", 5, function () {
+            return PatientIsOfServiceCode::execute($this->id, ChargeableService::RPM);
+        });
+    }
+
     /**
      * Returns whether the user is an administrator.
      */
@@ -4190,6 +4201,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         // cache for 24 hours
         return Cache::remember("{$this->id}_pcm_badge", 60 * 24, function () {
             return isPatientPcmBadgeEnabled() && $this->isPcm();
+        });
+    }
+
+    public function shouldShowRpmBadge()
+    {
+        // cache for 24 hours
+        return Cache::remember("{$this->id}_rpm_badge", 60 * 24, function () {
+            return isPatientRpmBadgeEnabled() && $this->isRpm();
         });
     }
 
