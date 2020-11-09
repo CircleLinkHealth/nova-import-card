@@ -1439,6 +1439,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
         return [
             'care-plan-approve',
             'edit-patient-chart.disable',
+            'downloads.disable',
         ];
     }
 }
