@@ -81,6 +81,17 @@
                     </h4>
                 @endif
 
+                @if ($patient->shouldShowRpmBadge())
+                    <h4 style="display: inline">
+                        <span class="label label-success with-tooltip"
+                              data-placement="top"
+                              title="This patient is eligible for RPM reimbursement."
+                              style="vertical-align: top; margin-right: 3px">
+                            RPM
+                        </span>
+                    </h4>
+                @endif
+
                 {{-- red flag.indication patient is BHI eligible--}}
                 @if(isset($patient) && auth()->check()
                 && !isset($isPdf)
