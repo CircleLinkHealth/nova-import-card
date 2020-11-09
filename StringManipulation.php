@@ -45,14 +45,10 @@ class StringManipulation
      */
     public function formatPhoneNumber($string)
     {
-        $sanitized = $this->extractNumbers($string);
+        $sanitized = $this->sanitizeNumber($string);
 
-        if (strlen($sanitized) < 10) {
+        if (is_null($sanitized)) {
             return '';
-        }
-
-        if (strlen($sanitized) > 10) {
-            $sanitized = substr($sanitized, -10);
         }
 
         return substr($sanitized, 0, 3).'-'.substr($sanitized, 3, 3).'-'.substr($sanitized, 6, 4);
@@ -70,17 +66,27 @@ class StringManipulation
         $string,
         $countryCode = '1'
     ) {
-        $sanitized = $this->extractNumbers($string);
+        $sanitized = $this->sanitizeNumber($string);
 
-        if (strlen($sanitized) < 10) {
+        if (is_null($sanitized)) {
             return '';
         }
 
-        if (strlen($sanitized) > 10) {
-            $sanitized = substr($sanitized, -10);
+        return "+$countryCode$sanitized";
+    }
+
+    /**
+     * Formats a string of numbers as a phone number delimited by parenthesis and dashes as such: (xxx) xxx-xxxx.
+     */
+    public function formatPhoneNumberWithBrackets(string $string): string
+    {
+        $sanitized = $this->sanitizeNumber($string);
+
+        if (is_null($sanitized)) {
+            return '';
         }
 
-        return "+$countryCode$sanitized";
+        return '('.substr($sanitized, 0, 3).')'.' '.substr($sanitized, 3, 3).'-'.substr($sanitized, 6, 4);
     }
 
     /**
@@ -102,5 +108,20 @@ class StringManipulation
         $haystack
     ) {
         return str_replace($needle, '', $haystack);
+    }
+
+    private function sanitizeNumber(string $string): ?string
+    {
+        $sanitized = $this->extractNumbers($string);
+
+        if (strlen($sanitized) < 10) {
+            return null;
+        }
+
+        if (strlen($sanitized) > 10) {
+            $sanitized = substr($sanitized, -10);
+        }
+
+        return $sanitized;
     }
 }
