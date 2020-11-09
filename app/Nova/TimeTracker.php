@@ -149,7 +149,7 @@ class TimeTracker extends Resource
             BelongsTo::make('Logger', 'logger', User::class)
                 ->sortable()
                 ->readonly(true),
-    
+
             Text::make('Patient ID', 'patient.id')
                 ->sortable()
                 ->readonly(true),
