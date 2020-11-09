@@ -79,7 +79,7 @@ class StringManipulation
      * Formats a string of numbers as a phone number delimited by parenthesis and dashes as such: (xxx) xxx-xxxx.
      * NPA-NXX-XXXX.
      */
-    public function formatPhoneNumberWithNpaBrackets(?string $string): string
+    public function formatPhoneNumberWithNpaParenthesized(?string $string): string
     {
         $sanitized = $this->sanitizeNumber($string);
 
