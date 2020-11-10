@@ -1,5 +1,8 @@
 @extends(! Auth::guest() && Cerberus::hasPermission('admin-access') ? 'partials.adminUI' : 'partials.providerUI')
 
+@section('title', 'Care Ambassador Director Palen')
+@section('activity', 'Care Ambassador Director Palen')
+
 @push('styles')
     <style>
         .cpm-editable {
