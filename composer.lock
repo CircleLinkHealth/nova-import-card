@@ -1270,7 +1270,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d3da11c47fd3a48323db04d9c88954ec6eb910de"
+                "reference": "a30022e5418e45d1dae2827505bfad3cb3d09bea"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1304,7 +1304,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-10T16:04:56+00:00"
+            "time": "2020-11-10T18:53:21+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -15794,12 +15794,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "0105f218d06f016a58f003f2ab62c4764f95329a"
+                "reference": "850931b9758a2ebd32a7dc398465c437fda7303f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/0105f218d06f016a58f003f2ab62c4764f95329a",
-                "reference": "0105f218d06f016a58f003f2ab62c4764f95329a",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/850931b9758a2ebd32a7dc398465c437fda7303f",
+                "reference": "850931b9758a2ebd32a7dc398465c437fda7303f",
                 "shasum": ""
             },
             "require": {
@@ -15863,7 +15863,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-28T17:49:15+00:00"
+            "time": "2020-11-10T17:02:39+00:00"
         },
         {
             "name": "orangehill/iseed",
