@@ -2242,6 +2242,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
+    public function isCallbacksAdmin(): bool
+    {
+        return $this->hasRole('callbacks-admin');
+    }
+
     /**
      * Returns whether the user is an administrator.
      *
@@ -2295,6 +2300,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isCcmPlus()
     {
         return $this->isCcm() && $this->primaryPractice->hasCCMPlusServiceCode();
+    }
+
+    public function isClhCcmAdmin(): bool
+    {
+        return $this->hasRole('clh-ccm-admin');
     }
 
     /**
@@ -2683,6 +2693,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function practiceOrGlobalRole(bool $returnId = false)
     {
+        $key = "user:$this->id:practiceOrGlobalRole";
+
+        if (Cache::has($key)) {
+            return Cache::get($key);
+        }
+
         if ($this->practice($this->primaryPractice)) {
             $primaryPractice = $this->practice($this->primaryPractice);
 
@@ -2691,13 +2707,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     return $id;
                 }
 
-                return Role::allRoles()
+                $role = Role::allRoles()
                     ->whereIn('id', $id)
                     ->first();
             }
         }
 
-        return optional($this->roles)->first();
+        if ( ! isset($role)) {
+            $role = optional($this->roles)->first();
+        }
+
+        if ($role) {
+            Cache::put($key, $role, 1);
+        }
+
+        return $role;
     }
 
     public function practices(

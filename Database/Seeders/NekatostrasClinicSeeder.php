@@ -30,6 +30,9 @@ class NekatostrasClinicSeeder extends Seeder
                 'care-ambassador',
                 'care-center',
                 'administrator',
+                'callbacks-admin',
+                'software-only',
+                'clh-ccm-admin',
             ]) as $roleName) {
                 $u                       = $this->createUser($practice, $roleName);
                 $u->first_name           = $roleName;
