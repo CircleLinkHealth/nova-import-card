@@ -129,6 +129,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Office Admin',
                 'description'  => 'Non medical staff that work at a Practice. Not CCM countable.',
                 'permissions'  => [
+                    'call.create',
                     'medication.create',
                     'medication.read',
                     'medication.update',
@@ -594,6 +595,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'vitals-survey-complete',
                     'phi.read',
                     'notification.read',
+                    'call.create',
                 ],
             ],
             [
@@ -601,6 +603,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Specialist',
                 'description'  => 'An outside specialist doctor.',
                 'permissions'  => [
+                    'call.create',
                     'users-view-all',
                     'users-view-self',
                     'patient.create',
@@ -802,6 +805,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'care-plan-approve',
                     'phi.read',
                     'notification.read',
+                    'call.create',
                 ],
             ],
             [
