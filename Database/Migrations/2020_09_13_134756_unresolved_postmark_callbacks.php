@@ -10,8 +10,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 class UnresolvedPostmarkCallbacks extends Migration
 {
-    use SoftDeletes;
-
     /**
      * Reverse the migrations.
      *
