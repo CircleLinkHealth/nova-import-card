@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\Location;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class LocationServices
 {
@@ -33,10 +34,14 @@ class LocationServices
     public function getChargeableServices(?int $locationId, ?Carbon $month = null): Collection
     {
         if (is_null($locationId)) {
+            Log::warning("LocationServices::getChargeableServices $locationId is null. Returning empty collection.");
+
             return new Collection();
         }
 
         if ( ! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
+            Log::warning("LocationServices::getChargeableServices new billing is disabled. Returning practice chargeable services from location[$locationId].");
+
             $location = Location::with('practice.chargeableServices')
                 ->first();
 
