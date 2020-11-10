@@ -92,8 +92,6 @@ class ObserversServiceProvider extends ServiceProvider
         Enrollee::observe(EnrolleeObserver::class);
         TwilioCall::observe(TwilioCallObserver::class);
         Location::observe(LocationObserver::class);
-        //todo: decide event or observer
-//        ChargeableLocationMonthlySummary::observe(ChargeableLocationMonthlySummaryObserver::class);
     }
 
     /**
