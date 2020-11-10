@@ -6,7 +6,7 @@
             <div class="logo">
                 <div class="practice-logo">
                     <img style="height: 120px;"
-                         src="{{$practiceLogoSrc}}"
+                         src="{{asset($practiceLogoSrc)}}"
                          alt="{{$practiceName}}"/>
                 </div>
             </div>
