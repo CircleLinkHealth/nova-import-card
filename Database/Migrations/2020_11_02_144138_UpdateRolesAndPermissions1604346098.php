@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateRolesAndPermissions1601985978 extends Migration
+class UpdateRolesAndPermissions1604346098 extends Migration
 {
     /**
      * Reverse the migrations.
