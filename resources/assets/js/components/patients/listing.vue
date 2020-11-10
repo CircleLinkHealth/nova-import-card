@@ -181,7 +181,7 @@
         },
         data() {
             let carePlanStatusMap;
-            if (this.isAdmin) {
+            if (this.isAdmin()) {
                 carePlanStatusMap = {
                     to_enroll: 'To Enroll',
                     qa_approved: 'CLH Approved',
@@ -238,7 +238,7 @@
                     {id: 'rn_approved', text: this.carePlanStatusMap['rn_approved']},
                     {id: 'provider_approved', text: this.carePlanStatusMap['provider_approved']},
                 ];
-                if (this.isAdmin) {
+                if (this.isAdmin()) {
                     careplanStatus.push({id: '', text: this.carePlanStatusMap['none']});
                     careplanStatus.push({id: 'g0506', text: this.carePlanStatusMap['g0506']});
                     careplanStatus.push({id: 'draft', text: this.carePlanStatusMap['draft']});
