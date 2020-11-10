@@ -528,7 +528,9 @@ export default {
 
             EventBus.$on('tracker:chargeable-service:switch', (csId) => {
                 const shouldUpdateNetwork = this.info.chargeableServiceId !== csId;
-                this.info.chargeableServiceId = csId;
+                if (csId !== -1) {
+                    this.info.chargeableServiceId = csId;
+                }
                 if (this.socket && this.socket.readyState === WebSocket.OPEN && shouldUpdateNetwork) {
                     this.socket.send(JSON.stringify({message: STATE.CHARGEABLE_SERVICE_CHANGE, info: this.info}));
                 }
