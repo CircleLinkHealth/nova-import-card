@@ -105,8 +105,13 @@ class RequiredPermissionsTableSeeder extends Seeder
             [
                 'name'         => 'phi.read',
                 'display_name' => 'Can view PHI.',
-            ], [
+            ],
+            [
                 'name'         => Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE,
+                'display_name' => 'Can view Patient Activity Management page.',
+            ],
+            [
+                'name'         => 'pam.export',
                 'display_name' => 'Can view Patient Activity Management page.',
             ],
             [

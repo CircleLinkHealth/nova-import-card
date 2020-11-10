@@ -1341,6 +1341,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'patient.read',
                     'practice.read',
                     'call.read',
+                    'pam.export',
                     'call.create',
                     'call.update',
                     'call.delete',
