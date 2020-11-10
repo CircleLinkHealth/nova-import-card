@@ -195,7 +195,7 @@
 
                                             template: function (obj) {
                                                 if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                    return `<a href="/manage-patients/${patientId}/view/${obj.id}">${obj.type}</a>`;
+                                                    return `<a href="/manage-patients/${patientId}/activities/view/${obj.id}">${obj.type}</a>`;
                                                 else
                                                     return obj.type;
                                             },
