@@ -2,11 +2,11 @@
     <div>
         <div class="row">
             <div class="col-sm-6">
-                <div v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()">
+                <div v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()" class="inline">
                     <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
                 </div>
 
-                <div v-if="isAdmin() || isSoftwareOnly()">
+                <div v-if="isAdmin() || isSoftwareOnly()"  class="inline">
                     <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
                     <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
                     <button  class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
@@ -24,7 +24,7 @@
                     </label>
                 </div>
 
-                <div v-if="isAdmin()">
+                <div v-if="isAdmin()"  class="inline">
                     <button class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
                         <span v-if="includeDemoPatients">Exclude Demo Patients</span>
                         <span v-else>Include Demo Patients</span>
@@ -346,7 +346,7 @@
                 return this.$refs.tblCalls.query || {}
             },
             exportExcel() {
-                const url = rootUrl(`admin/reports/call-v2?excel${this.urlFilterSuffix()}`)
+                const url = rootUrl(`pam/export?excel${this.urlFilterSuffix()}`)
                 console.log('calls:excel', url)
                 document.location.href = url
             },
@@ -814,5 +814,9 @@
 
     .paused {
         color: grey;
+    }
+
+    .inline {
+        display: inline;
     }
 </style>
