@@ -164,11 +164,11 @@ class TimeTrackerUser {
                 && (item.chargeableServiceId === info.chargeableServiceId);
         });
     }
-    changeChargeableService(info) {
+    changeChargeableService(info, ws) {
         this.broadcast({
             message: 'server:chargeable-service:switch',
             chargeableServiceId: info.chargeableServiceId
-        });
+        }, ws);
         this.chargeableServiceId = info.chargeableServiceId;
     }
     closeOtherSameActivityWithOtherChargeableServiceId(info, ws) {
@@ -434,19 +434,19 @@ class TimeTrackerUser {
             //activity.duration = Math.max((activity.duration - ((!this.callMode ? this.ALERT_TIMEOUT : this.ALERT_TIMEOUT_CALL_MODE) - this.MINIMUM_DURATION_AFTER_INACTIVITY_SECONDS)), this.MINIMUM_DURATION_AFTER_INACTIVITY_SECONDS)
         }
     }
-    enterCallMode(info) {
+    enterCallMode(info, ws) {
         let activity = this.findActivity(info);
         if (activity) {
             activity.callMode = true;
         }
-        this.broadcast({ message: 'server:call-mode:enter' });
+        this.broadcast({ message: 'server:call-mode:enter' }, ws);
         this.$emitter.on(`server:enter:${this.providerId}`, this.serverEnterHandler.bind(this));
     }
-    exitCallMode() {
+    exitCallMode(ws) {
         this.activities.forEach(activity => {
             activity.callMode = false;
         });
-        this.broadcast({ message: 'server:call-mode:exit' });
+        this.broadcast({ message: 'server:call-mode:exit' }, ws);
         this.$emitter.removeListener(`server:enter:${this.providerId}`, this.serverEnterHandler.bind(this));
     }
     close() {

@@ -186,11 +186,11 @@ export default class TimeTrackerUser {
         });
     }
 
-    changeChargeableService(info) {
+    changeChargeableService(info, ws?) {
         this.broadcast({
             message: 'server:chargeable-service:switch',
             chargeableServiceId: info.chargeableServiceId
-        });
+        }, ws);
         this.chargeableServiceId = info.chargeableServiceId;
     }
 
@@ -475,7 +475,7 @@ export default class TimeTrackerUser {
         }
     }
 
-    enterCallMode(info: TimeTrackerInfo) {
+    enterCallMode(info: TimeTrackerInfo, ws?) {
         let activity = this.findActivity(info)
 
         if (activity) {
@@ -483,17 +483,17 @@ export default class TimeTrackerUser {
         }
 
 
-        this.broadcast({message: 'server:call-mode:enter'});
+        this.broadcast({message: 'server:call-mode:enter'}, ws);
 
         this.$emitter.on(`server:enter:${this.providerId}`, this.serverEnterHandler.bind(this));
     }
 
-    exitCallMode() {
+    exitCallMode(ws?) {
         this.activities.forEach(activity => {
             activity.callMode = false
         })
 
-        this.broadcast({message: 'server:call-mode:exit'});
+        this.broadcast({message: 'server:call-mode:exit'}, ws);
 
         this.$emitter.removeListener(`server:enter:${this.providerId}`, this.serverEnterHandler.bind(this));
     }

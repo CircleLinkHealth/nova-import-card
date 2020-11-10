@@ -153,7 +153,7 @@ module.exports = app => {
                         user.enter(info, ws);
                         user.sync();
                         if (data.message === 'client:chargeable-service-change') {
-                            user.changeChargeableService(info);
+                            user.changeChargeableService(info, ws);
                         }
                         break;
 
@@ -171,11 +171,11 @@ module.exports = app => {
                         break;
 
                     case 'client:call-mode:enter':
-                        user.enterCallMode(info);
+                        user.enterCallMode(info, ws);
                         break;
 
                     case 'client:call-mode:exit':
-                        user.exitCallMode();
+                        user.exitCallMode(ws);
                         break;
 
                     case 'client:timeouts:override':
@@ -242,16 +242,21 @@ module.exports = app => {
 
             //CPM-1024 - non-ccm pages are missing time
             if (/*!user.noLiveCount && */process.env.NODE_ENV !== 'production') {
-                console.log(
-                    'key:', user.key,
-                    'activities:', user.activities.filter(activity => activity.isActive).length,
-                    'totalTime:', user.totalTime,
-                    'totalDuration:', user.totalDuration,
-                    'inactive-seconds:', user.inactiveSeconds,
-                    'durations:', user.activities.map(activity => (activity.isActive ? colors.FgGreen : colors.FgRed) + activity.duration + colors.Reset).join(', '),
-                    'sockets:', user.allSockets.length,
-                    'call-mode:', (user.callMode ? colors.FgBlue : '') + user.callMode + colors.Reset
-                )
+                const obj = {
+                    'noLiveCount': user.noLiveCount ? 'Yes' : 'No',
+                    'key': user.key,
+                    'activities': user.activities
+                        .map(a => {
+                            return `Name[${a.name}] - Active[${a.isActive}] - Seconds[${a.duration}] - CsId[${a.chargeableServiceId}]`;
+                        })
+                        .join(' | '),
+                    'totalTime': user.totalTime,
+                    'totalDuration': user.totalDuration,
+                    'inactive-seconds': user.inactiveSeconds,
+                    'sockets': user.allSockets.length,
+                    'call-mode': user.callMode ? 'Yes' : 'No'
+                }
+                console.table(obj);
             }
         }
     }, 1000);
