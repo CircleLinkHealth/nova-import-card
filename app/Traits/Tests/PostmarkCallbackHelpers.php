@@ -11,7 +11,6 @@ use App\PostmarkInboundMail;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use Illuminate\Support\Facades\App;
 
 trait PostmarkCallbackHelpers
 {
@@ -47,17 +46,17 @@ trait PostmarkCallbackHelpers
 
     public function practiceForSeeding()
     {
-        if (isProductionEnv()){
-            throw new \Exception("Should not have reached here. You cannot run this seeder in Production.");
+        if (isProductionEnv()) {
+            throw new \Exception('Should not have reached here. You cannot run this seeder in Production.');
         }
-        
+
         if (isUnitTestingEnv()) {
             return Practice::firstOrFail();
         }
-        
-        $practice =  Practice::where('name', '=', \NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->first();
-        
-        if (! $practice){
+
+        $practice = Practice::where('name', '=', \NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->first();
+
+        if ( ! $practice) {
             $practice = Practice::where('name', '=', 'demo')->firstOrFail();
         }
 
