@@ -195,7 +195,7 @@
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.6",
-    "circlelinkhealth/core-module": "1.7.9",
+    "circlelinkhealth/core-module": "dev-role-changes-nov-2020",
     "circlelinkhealth/cpm-migrations-module": "dev-role-changes-nov-2020",
     "circlelinkhealth/customer-module": "dev-role-changes-nov-2020",
     "circlelinkhealth/eligibility-module": "3.5.8",
