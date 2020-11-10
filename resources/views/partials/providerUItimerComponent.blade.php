@@ -7,5 +7,4 @@
               :disable-time-tracking="@json(isset($disableTimeTracking) && $disableTimeTracking)"
               :no-live-count="@json($noLiveCountTimeTracking ? true : false)"
               :override-timeout="{{config('services.time-tracker.override-timeout')}}">
-    @include('partials.tt-loader')
 </time-tracker>
