@@ -1376,6 +1376,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'misc.read',
                     'carePerson.read',
                     'notification.read',
+                    'phoneNumber.read',
                 ],
             ],
             [
