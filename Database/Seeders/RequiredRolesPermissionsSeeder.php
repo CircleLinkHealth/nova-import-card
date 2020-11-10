@@ -1336,6 +1336,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'patientProblem.update',
                     'patientProblem.delete',
                     'chargeableService.read',
+                    'provider.read',
+                    'location.read',
                     'patient.read',
                     'practice.read',
                     'call.read',
