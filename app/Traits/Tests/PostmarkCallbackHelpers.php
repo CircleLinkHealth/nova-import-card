@@ -45,17 +45,23 @@ trait PostmarkCallbackHelpers
         return $callbackMailData;
     }
 
-    public function nekatostrasPractice()
+    public function practiceForSeeding()
     {
+        if (isProductionEnv()){
+            throw new \Exception("Should not have reached here. You cannot run this seeder in Production.");
+        }
+        
         if (isUnitTestingEnv()) {
             return Practice::firstOrFail();
         }
         
-        if (App::environment('review')){
-            return Practice::where('name', '=', \NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->firstOrFail();
-        }
+        $practice =  Practice::where('name', '=', \NekatostrasClinicSeeder::NEKATOSTRAS_PRACTICE)->first();
         
-        return Practice::where('name', 'demo')->firstOrFail();
+        if (! $practice){
+            $practice = Practice::where('name', '=', 'demo')->firstOrFail();
+        }
+
+        return $practice;
     }
 
     private function createEnrolleeData(string $status, User $patient, int $practiceId, int $careAmbassadorId)
