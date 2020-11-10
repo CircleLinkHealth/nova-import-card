@@ -49,14 +49,11 @@ class UpdateEnrolmentLettersInNonProductionEnv extends Command
             'davis-county'                      => GenerateDavisCountyLetter::PRACTICE_SIGNATORY_NAME,
         ];
 
-        $boolCheck = true;
-        if (isProductionEnv()) {
-            $boolCheck = false;
-        }
+        $isDemo = ! isProductionEnv();
 
         $practices = DB::table('practices')
             ->whereIn('name', array_keys($practicesWithSignatoryConstants))
-            ->where('is_demo', '=', boolval($boolCheck))
+            ->where('is_demo', '=', boolval($isDemo))
             ->get();
 
         $practiceIdsWithSignatoryName = $practices->mapWithKeys(function ($practice) use ($practicesWithSignatoryConstants) {
@@ -68,6 +65,7 @@ class UpdateEnrolmentLettersInNonProductionEnv extends Command
         if (4 !== $practices->count() || 4 !== count($practiceIdsWithSignatoryName)) {
             Log::error('Practices should have been 4 in total. Less found');
             $this->error('Practices should have been 4 in total. Less found.');
+            return;
         }
 
         foreach ($practiceIdsWithSignatoryName as $practiceId => $signatoryConstantName) {
