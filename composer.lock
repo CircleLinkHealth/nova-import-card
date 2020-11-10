@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e79111bf7d99634be71986ba880a3219",
+    "content-hash": "3cc338470ee6d0071730807b181f5282",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1236,11 +1236,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-role-changes-nov-2020",
+            "version": "v2.5.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "0a2dd4f24eb4c538ed92e3e85ac75a9b258f6a30"
+                "reference": "0e208dfc3f570b7ef2e5ba0b1775b617d0817164"
             },
             "type": "laravel-module",
             "extra": {
@@ -1262,15 +1262,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-10T10:19:50+00:00"
+            "time": "2020-11-10T22:31:32+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-role-changes-nov-2020",
+            "version": "v3.4.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f95b74edb67953ae2dd81f55dcb1b0ae1dd519c3"
+                "reference": "2e8dc2979fd01e25ae194c775d9bf4abcf8058d6"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1304,7 +1304,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-10T20:38:57+00:00"
+            "time": "2020-11-10T22:30:40+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1665,11 +1665,11 @@
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "dev-role-changes-nov-2020",
+            "version": "v1.0.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "c5bab7307ce5e02305b30bbdc08af56fc0b9e979"
+                "reference": "4dfc85966f8507b18badcd57c42c5521f9207d6e"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1699,7 +1699,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-02T21:37:34+00:00"
+            "time": "2020-11-10T22:31:27+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -15789,12 +15789,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "850931b9758a2ebd32a7dc398465c437fda7303f"
+                "reference": "208e3f79e34e54ceea62bf58ae1e312e9aa4dc97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/850931b9758a2ebd32a7dc398465c437fda7303f",
-                "reference": "850931b9758a2ebd32a7dc398465c437fda7303f",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/208e3f79e34e54ceea62bf58ae1e312e9aa4dc97",
+                "reference": "208e3f79e34e54ceea62bf58ae1e312e9aa4dc97",
                 "shasum": ""
             },
             "require": {
@@ -15858,7 +15858,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-10T17:02:39+00:00"
+            "time": "2020-11-10T21:14:49+00:00"
         },
         {
             "name": "orangehill/iseed",
@@ -18261,9 +18261,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
-        "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/saml-sp-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
