@@ -22,7 +22,7 @@ class UpdateEnrolmentLettersInNonProductionEnv extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Update enrolment letters signatory names';
     /**
      * The name and signature of the console command.
      *
