@@ -15,6 +15,7 @@ use App\Http\Resources\UserResource;
 use App\Services\Calls\ManagementService;
 use App\Services\NoteService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Constants;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
@@ -84,13 +85,13 @@ class CallsController extends ApiController
         if ( ! $user->isAdmin()) {
             //if we have $practiceId, make sure that user has access to it
             if ($practiceId) {
-                if ( ! $user->hasPermissionForSite('pam.view', $practiceId)) {
+                if ( ! $user->hasPermissionForSite(Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE, $practiceId)) {
                     abort(403);
                 }
             } else {
                 //if no $practiceId, get all practice ids where user is software-only / practice admin
                 $roleIds = Role::whereHas('perms', function ($q) {
-                    $q->where('name', 'pam.view');
+                    $q->where('name', Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE);
                 })->pluck('id')->all();
                 $practiceId = $user->practices(true, false, $roleIds)->pluck('id')->toArray();
             }

@@ -7,6 +7,7 @@
 namespace App\Filters;
 
 use App\Call;
+use CircleLinkHealth\Core\Constants;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
 
@@ -96,7 +97,7 @@ class CallViewFilters extends QueryFilters
                             })
                             ->join('lv_permissions', function ($join) {
                                 $join->on('permissibles.permission_id', '=', 'lv_permissions.id')
-                                    ->where('lv_permissions.name', 'pam.view');
+                                    ->where('lv_permissions.name', Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE);
                             });
                     });
             });
