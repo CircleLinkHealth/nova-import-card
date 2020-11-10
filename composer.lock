@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b59321029a15d1181d5ab188846bf4a8",
+    "content-hash": "906b51889e87f7d4ce6e94ca29caa4d1",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1236,11 +1236,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.5.7",
+            "version": "v2.5.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "9472fdfe6d170f1d80d9e553ab96820a538edb68"
+                "reference": "40c0d57a9f3a3cf34c1553933f7e10e96cf4145a"
             },
             "type": "laravel-module",
             "extra": {
@@ -1262,7 +1262,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-10T16:03:19+00:00"
+            "time": "2020-10-07T17:45:16+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1308,11 +1308,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.5.9",
+            "version": "v3.5.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "c2b0bb512b699de6b397d9c7c646b18cb27aaee7"
+                "reference": "19d551659a7f4be3c9b49a538189c01c0db3d27f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1339,7 +1339,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-10T16:01:39+00:00"
+            "time": "2020-10-20T04:15:58+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -5194,17 +5194,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v3.14.0",
+            "version": "3.15.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "89cf83f128bfc276331a83a702ab4a4b615e0293"
+                "reference": "54057eedd1b500f1d9b3395f21d882190c08cd50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-89cf83f128bfc276331a83a702ab4a4b615e0293-zip-2f6e3c.zip",
-                "reference": "89cf83f128bfc276331a83a702ab4a4b615e0293",
-                "shasum": "ccf9b21c4a8c4efbfb801a63ec852aeeab6c0dd7"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-54057eedd1b500f1d9b3395f21d882190c08cd50-zip-1ef7d6.zip",
+                "reference": "54057eedd1b500f1d9b3395f21d882190c08cd50",
+                "shasum": "84bfb83819c0c80f44afd195cf347d42ae79bfb6"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5224,7 +5224,7 @@
                 "laravel/legacy-factories": "^1.0",
                 "laravel/nova-dusk-suite": "dev-master",
                 "mockery/mockery": "^1.0",
-                "orchestra/testbench-dusk": "^6.2.1",
+                "orchestra/testbench-dusk": "^6.3",
                 "phpunit/phpunit": "^8.4",
                 "predis/predis": "^1.1"
             },
@@ -5280,7 +5280,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-10-27T20:28:22+00:00"
+            "time": "2020-11-10T16:05:55+00:00"
         },
         {
             "name": "laravel/passport",
@@ -15744,12 +15744,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "0105f218d06f016a58f003f2ab62c4764f95329a"
+                "reference": "850931b9758a2ebd32a7dc398465c437fda7303f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/0105f218d06f016a58f003f2ab62c4764f95329a",
-                "reference": "0105f218d06f016a58f003f2ab62c4764f95329a",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/850931b9758a2ebd32a7dc398465c437fda7303f",
+                "reference": "850931b9758a2ebd32a7dc398465c437fda7303f",
                 "shasum": ""
             },
             "require": {
@@ -15813,7 +15813,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-28T17:49:15+00:00"
+            "time": "2020-11-10T17:02:39+00:00"
         },
         {
             "name": "orangehill/iseed",
