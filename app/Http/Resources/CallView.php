@@ -46,7 +46,7 @@ class CallView extends JsonResource
             'bhi_total_time'             => self::$billingRevampIsEnabled ? $this->bhi_total_time : $this->pms_bhi_time,
             'pcm_total_time'             => self::$billingRevampIsEnabled ? $this->pcm_total_time : 0,
             'rpm_total_time'             => self::$billingRevampIsEnabled ? $this->rpm_total_time : 0,
-            'no_of_successful_calls'     => $this->no_of_successful_calls,
+            'no_of_successful_calls'     => self::$billingRevampIsEnabled ? $this->total_no_of_successful_calls : $this->pms_no_of_successful_calls,
             'practice_id'                => $this->practice_id,
             'practice'                   => $this->practice,
             'state'                      => $this->state,

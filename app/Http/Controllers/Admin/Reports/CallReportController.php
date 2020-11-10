@@ -112,7 +112,7 @@ class CallReportController extends Controller
                 $this->formatTime($billingRevampIsEnabled ? $call->bhi_total_time : $call->pms_bhi_time),
                 $this->formatTime($billingRevampIsEnabled ? $call->pcm_total_time : 0),
                 $this->formatTime($billingRevampIsEnabled ? $call->rpm_total_time : 0),
-                $call->no_of_successful_calls,
+                $billingRevampIsEnabled ? $call->total_no_of_successful_calls : $call->pms_no_of_successful_calls,
                 $call->billing_provider,
                 $call->scheduler,
             ];
