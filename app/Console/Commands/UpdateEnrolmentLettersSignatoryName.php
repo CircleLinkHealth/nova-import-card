@@ -15,7 +15,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class UpdateEnrolmentLettersInNonProductionEnv extends Command
+class UpdateEnrolmentLettersSignatoryName extends Command
 {
     /**
      * The console command description.
@@ -65,6 +65,7 @@ class UpdateEnrolmentLettersInNonProductionEnv extends Command
         if (4 !== $practices->count() || 4 !== count($practiceIdsWithSignatoryName)) {
             Log::error('Practices should have been 4 in total. Less found');
             $this->error('Practices should have been 4 in total. Less found.');
+
             return;
         }
 
