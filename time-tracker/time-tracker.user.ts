@@ -195,8 +195,9 @@ export default class TimeTrackerUser {
     }
 
     closeOtherSameActivityWithOtherChargeableServiceId(info, ws) {
-        const activity = this.activities.find(item => (item.name == info.activity) && (item.chargeableServiceId !== info.chargeableServiceId));
-        if (activity) {
+        const activities = this.activities.filter(item => (item.name == info.activity) && (item.chargeableServiceId !== info.chargeableServiceId));
+        for (let activity of activities) {
+            console.log(`Removing socket from ${activity.name}-${activity.chargeableServiceId}`);
             activity.sockets.splice(activity.sockets.indexOf(ws), 1);
         }
     }
