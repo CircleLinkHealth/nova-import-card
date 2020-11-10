@@ -17,7 +17,6 @@ use App\Services\Calls\SchedulerService;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Facades\Notification;
 
 class CallObserver
 {

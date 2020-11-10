@@ -302,7 +302,7 @@ class CallController extends Controller
             if ( ! $newCareCoachUserId) {
                 return ! $currentIsClhCareCoach;
             }
-            
+
             $newIsClhCareCoach = User::findOrFail($newCareCoachUserId)->hasRoleForSite(
                 'care-center',
                 $patientPrimaryPractice
