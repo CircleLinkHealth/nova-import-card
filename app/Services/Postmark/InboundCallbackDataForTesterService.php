@@ -26,7 +26,7 @@ class InboundCallbackDataForTesterService
 
     public function __construct()
     {
-        $this->practice       = $this->nekatostrasPractice();
+        $this->practice       = $this->practiceForSeeding();
         $this->careAmbassador = $this->createUser($this->practice->id, 'care-ambassador');
     }
 
