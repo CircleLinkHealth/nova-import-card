@@ -15,10 +15,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css"
           integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous"/>
 
-    <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
+    @if (Route::is('patientCallManagement.v2.index'))
+        <link href="{{ mix('/css/bootstrap.min.css') }}" rel="stylesheet">
+    @else
+        <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
+    @endif
 
-    @if (\Illuminate\Support\Str::contains(optional(Route::getCurrentRoute())->getName(), 'admin'))
-        <link href="{{mix('/css/bootstrap.min.css')}}" rel="stylesheet">
+    @if (! Route::is('patientCallManagement.v2.index') && \Illuminate\Support\Str::contains(optional(Route::getCurrentRoute())->getName(), 'admin'))
+        <link href="{{ mix('/css/bootstrap.min.css') }}" rel="stylesheet">
     @endif
 
     <link href="{{ mix('/img/favicon.png') }}" rel="icon">
