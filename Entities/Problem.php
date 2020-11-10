@@ -99,7 +99,7 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
         }
 
         if (is_null($this->patient->patientInfo)) {
-            sendSlackMessage('#billing_alerts', "Patient ({$this->patient->id}) does not have patientInfo attached.");
+            sendSlackMessage('#billing_alerts', "Warning! (Ccd Problem Model:) Patient ({$this->patient->id}) does not have patientInfo attached.");
 
             return [];
         }
@@ -212,9 +212,6 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
 
     public function scopeWithPatientLocationProblemChargeableServices(Builder $query)
     {
-        return $query->join('patient_info', 'patient_info.user_id', '=', 'ccd_problems.patient_id')
-            ->with('cpmProblem.locationChargeableServices', function (Builder $lcs) {
-                $lcs->whereRaw('location_problem_services.location_id = patient_info.preferred_contact_location');
-            });
+        return $query->with(['cpmProblem.locationChargeableServices']);
     }
 }
