@@ -5,7 +5,7 @@ export default {
             required: true,
         }
     },
-    computed: {
+    methods: {
         isAdmin() {
             return this.authRole === 'administrator';
         },
