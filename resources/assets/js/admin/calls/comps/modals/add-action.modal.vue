@@ -335,7 +335,7 @@
 
         methods: {
             subTypesForSelect() {
-                if (this.$parent.isAdmin || this.$parent.isSoftwareOnly) {
+                if (this.$parent.isAdmin() || this.$parent.isSoftwareOnly()) {
                     return [
                         UNASSIGNED_VALUE,
                         {label: 'Call', value: 'call'},
@@ -346,7 +346,7 @@
                         {label: 'CP Review', value: 'CP Review'},
                         {label: 'Other Task', value: 'Other Task'}
                     ];
-                } else if (this.$parent.isCallbacksAdmin) {
+                } else if (this.$parent.isCallbacksAdmin()) {
                     return [
                         {label: 'Call back', value: 'Call Back'}
                     ]

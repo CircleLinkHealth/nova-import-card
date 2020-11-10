@@ -7,7 +7,6 @@
 namespace App\Http\Requests;
 
 use App\Policies\CreateNoteForPatient;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateNewCallRequest extends FormRequest
@@ -19,31 +18,13 @@ class CreateNewCallRequest extends FormRequest
      */
     public function authorize()
     {
-        if ( ! auth()->check()) {
-            return false;
-        }
-        if (auth()->user()->isAdmin()) {
-            return true;
-        }
-        if (auth()->user()->isSoftwareOnly()) {
-            return true;
-        }
-        if (auth()->user()->isCallbacksAdmin()) {
-            return true;
-        }
-        if (auth()->user()->isPracticeStaff()) {
-            return true;
-        }
-        if ( ! auth()->user()->isCareCoach()) {
-            return false;
-        }
-        if ( ! $patientId = collect($this->input())->pluck('inbound_cpm_id')->first()) {
-            if ( ! $patientId = $this->input('inbound_cpm_id')) {
-                return false;
-            }
+        $user = auth()->user();
+
+        if ($user->isCareCoach()) {
+            return app(CreateNoteForPatient::class)->can($user->id, $this->route('patientId'));
         }
 
-        return app(CreateNoteForPatient::class)->can(auth()->id(), $patientId);
+        return $user->hasPermission('call.create');
     }
 
     /**
@@ -53,6 +34,9 @@ class CreateNewCallRequest extends FormRequest
      */
     public function rules()
     {
-        return [];
+        return [
+            'inbound_cpm_id'   => 'required_if:*.inbound_cpm_id,null|filled',
+            '*.inbound_cpm_id' => 'required_if:inbound_cpm_id,null|filled',
+        ];
     }
 }

@@ -2,11 +2,11 @@
     <div>
         <div class="row">
             <div class="col-sm-6">
-                <div v-if="isAdmin || isCallbacksAdmin || isSoftwareOnly">
+                <div v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()">
                     <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
                 </div>
 
-                <div v-if="isAdmin || isSoftwareOnly">
+                <div v-if="isAdmin() || isSoftwareOnly()">
                     <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
                     <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
                     <button  class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
@@ -24,7 +24,7 @@
                     </label>
                 </div>
 
-                <div v-if="isAdmin">
+                <div v-if="isAdmin()">
                     <button class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
                         <span v-if="includeDemoPatients">Exclude Demo Patients</span>
                         <span v-else>Include Demo Patients</span>
@@ -33,7 +33,7 @@
 
                 <loader class="absolute" v-if="loaders.calls"></loader>
             </div>
-            <div class="col-sm-6 text-right" v-if="(isAdmin || isSoftwareOnly) && selectedPatients.length > 0">
+            <div class="col-sm-6 text-right" v-if="(isAdmin() || isSoftwareOnly()) && selectedPatients.length > 0">
                 <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Care Coach</button>
                 <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Activity Date</button>
                 <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
@@ -43,12 +43,12 @@
         <div>
             <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
                 <template slot="selected" slot-scope="props">
-                    <input v-if="isAdmin || isCallbacksAdmin || isSoftwareOnly" class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
+                    <input v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()" class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
                            :disabled="loaders.nurses"
                            type="checkbox"/>
                 </template>
                 <template slot="h__selected" slot-scope="props">
-                    <input v-if="isAdmin || isCallbacksAdmin || isSoftwareOnly" class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
+                    <input v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()" class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
                 </template>
                 <template slot="Type" slot-scope="props">
                     <div class="container" style="width:auto;padding:0;margin:0">
@@ -233,7 +233,7 @@
                 },
                 showOnlyUnassigned: false,
                 showOnlyCompletedTasks: false,
-                showPatientNames: !this.isAdmin,
+                showPatientNames: !this.isAdmin(),
                 includeDemoPatients: false,
 
                 selectedPatients: [],
@@ -257,7 +257,7 @@
                     columnsClasses: {
                         'selected': 'blank',
                         'Type': 'padding-2',
-                        'Patient ID': !this.isAdmin ? 'hidden' : '',
+                        'Patient ID': !this.isAdmin() ? 'hidden' : '',
                         'Patient': this.patientNamesClass
                     },
                     sortable: ['Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'State', 'Scheduler'],
@@ -291,7 +291,7 @@
         methods: {
             rootUrl,
             canScheduleCalls(callType) {
-                return this.isAdmin || this.isSoftwareOnly || (this.isCallbacksAdmin && callType === 'Call Back')
+                return this.isAdmin() || this.isSoftwareOnly() || (this.isCallbacksAdmin() && callType === 'Call Back')
             },
             changeShowOnlyUnassigned(e) {
                 return this.activateFilters();
