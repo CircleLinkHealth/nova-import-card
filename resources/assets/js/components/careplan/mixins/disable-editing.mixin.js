@@ -1,9 +1,9 @@
 import UserRolesHelpers from '../../../mixins/user-roles-helpers.mixin'
 export default {
     mixins: [UserRolesHelpers],
-    computed: {
+    methods: {
         disableEditing() {
-            return this.isCallbacksAdmin || this.isClhCcmAdmin;
+            return this.isCallbacksAdmin() || this.isClhCcmAdmin();
         }
     }
 }

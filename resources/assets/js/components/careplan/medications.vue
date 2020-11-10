@@ -4,7 +4,7 @@
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
                     <a :href="url">Medications</a>
-                    <span  v-if="!disableEditing" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                    <span  v-if="!disableEditing()" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                     <span class="btn btn-primary" @click="toggleShowAll" style="margin-top: 6px; float: right;">
                         {{showAll ? 'Show Active Only' : 'Show Active & Inactive'}}
                     </span>
@@ -40,7 +40,7 @@
                 </ul>
             </div>
         </div>
-        <medications-modal v-if="!disableEditing" ref="medicationsModal" :patient-id="patientId" :medications="medications"
+        <medications-modal v-if="!disableEditing()" ref="medicationsModal" :patient-id="patientId" :medications="medications"
                            :groups="groups"></medications-modal>
     </div>
 </template>

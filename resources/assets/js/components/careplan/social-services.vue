@@ -4,7 +4,7 @@
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
                     Social Services
-                    <span v-if="!disableEditing" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                    <span v-if="!disableEditing()" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
         </div>

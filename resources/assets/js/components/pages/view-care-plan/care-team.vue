@@ -6,7 +6,7 @@
                 <h2 id="care-team-label"
                     class="patient-summary__subtitles patient-summary--careplan-background">
                     Care Team
-                    <span v-if="!disableEditing" class="btn btn-primary glyphicon glyphicon-plus" @click="createCarePerson" aria-hidden="true"></span>
+                    <span v-if="!disableEditing()" class="btn btn-primary glyphicon glyphicon-plus" @click="createCarePerson" aria-hidden="true"></span>
                 </h2>
             </div>
             <div class="col-xs-12">
@@ -21,7 +21,7 @@
                             <div class="col-md-3">
                                 <p v-show="carePerson.alert">Receives Alerts</p>
                             </div>
-                            <div v-if="!disableEditing" class="col-md-2">
+                            <div v-if="!disableEditing()" class="col-md-2">
                                 <button class="btn btn-xs btn-danger problem-delete-btn"
                                         v-on:click.stop.prevent="deleteCarePerson(carePerson)"><span> <i
                                         class="glyphicon glyphicon-remove"></i> </span></button>

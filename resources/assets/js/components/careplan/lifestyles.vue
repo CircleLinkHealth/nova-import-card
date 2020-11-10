@@ -4,7 +4,7 @@
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
                     We are Informing You About:
-                    <span v-if="!disableEditing" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                    <span v-if="!disableEditing()" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
         </div>
@@ -21,7 +21,7 @@
                 </ul>
             </div>
         </div>
-        <lifestyles-modal v-if="!disableEditing" ref="lifestylesModal" :patient-id="patientId" :lifestyles="lifestyles"></lifestyles-modal>
+        <lifestyles-modal v-if="!disableEditing()" ref="lifestylesModal" :patient-id="patientId" :lifestyles="lifestyles"></lifestyles-modal>
     </div>
 </template>
 

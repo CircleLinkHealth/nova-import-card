@@ -21,7 +21,8 @@
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options"
                         id="patient-list-table">
             <template slot="name" slot-scope="props">
-                <div><a class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')" target="_blank">{{props.row.name}}</a>
+                <div><a class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')"
+                        target="_blank">{{props.row.name}}</a>
                 </div>
             </template>
             <template slot="provider" slot-scope="props">
@@ -51,11 +52,13 @@
             </template>
             <template slot="careplanStatus" slot-scope="props">
                 <div v-if="props.row.patient_info.ccm_status === 'enrolled'">
-                    <a v-if="canApproveCareplans && props.row.careplanStatus === 'rn_approved'" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
+                    <a v-if="canApproveCareplans && props.row.careplanStatus === 'rn_approved'" class="in-table-link"
+                       :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
                         <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
                     </a>
 
-                    <a v-else-if="isAdmin && (props.row.careplanStatus === 'draft' || props.row.careplanStatus === 'qa_approved')" class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
+                    <a v-else-if="isAdmin && (props.row.careplanStatus === 'draft' || props.row.careplanStatus === 'qa_approved')"
+                       class="in-table-link" :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
                         <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
                     </a>
                 </div>
@@ -110,13 +113,16 @@
                        @click="changeNameDisplayType">
                 <span class="pad-10"></span>
 
-                <a v-if="! this.hideDownloadButtons && ! this.isCallbacksAdmin && ! this.isClhCcmAdmin" class="btn btn-patients-table" :class="{ disabled: loaders.pdf }" @click="exportPdf"
-                   :href="rootUrl('manage-patients/listing/pdf?showPracticePatients=' + this.showPracticePatients)" download="patient-list.pdf">Export as PDF</a>
-                <span class="pad-10"></span>
+                <div v-if="! this.hideDownloadButtons && ! this.isCallbacksAdmin() && ! this.isClhCcmAdmin()" class="inline-block">
+                    <a class="btn btn-patients-table" :class="{ disabled: loaders.pdf }" @click="exportPdf"
+                       :href="rootUrl('manage-patients/listing/pdf?showPracticePatients=' + this.showPracticePatients)"
+                       download="patient-list.pdf">Export as PDF</a>
+                    <span class="pad-10"></span>
 
-                <input v-if="! this.hideDownloadButtons && ! this.isCallbacksAdmin && ! this.isClhCcmAdmin" type="button" class="btn btn-patients-table" :class="{ disabled: loaders.excel }"
-                       :value="exportCSVText" @click="exportCSV">
-                <span class="pad-10"></span>
+                    <input type="button" class="btn btn-patients-table" :class="{ disabled: loaders.excel }"
+                           :value="exportCSVText" @click="exportCSV">
+                    <span class="pad-10"></span>
+                </div>
 
                 <input type="button" class="btn btn-patients-table"
                        :value="(columns.includes('practice') ? 'Hide' : 'Show') + ' Practice'"
@@ -293,9 +299,7 @@
                 return this.$refs.tblPatientList ? !!Object.values(this.$refs.tblPatientList.query).reduce((a, b) => a || b) : false
             },
             columnMapping(name) {
-                const columns = {
-
-                }
+                const columns = {}
                 return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
             },
             nextPageUrl() {
@@ -399,7 +403,7 @@
                 if (patient.patient_info.ccm_status === 'paused') {
                     return moment(patient.patient_info.date_paused).format('MM-DD-YYYY')
                 }
-                if (patient.patient_info.ccm_status === 'withdrawn'|| patient.patient_info.ccm_status === 'withdrawn_1st_call') {
+                if (patient.patient_info.ccm_status === 'withdrawn' || patient.patient_info.ccm_status === 'withdrawn_1st_call') {
                     return moment(patient.patient_info.date_withdrawn).format('MM-DD-YYYY')
                 }
                 if (patient.patient_info.ccm_status === 'unreachable') {
@@ -554,7 +558,7 @@
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
 
                 const download = (page = 1) => {
-                    return this.axios.get( rootUrl(`api/patients?rows=50&page=${page}&csv${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)).then(response => {
+                    return this.axios.get(rootUrl(`api/patients?rows=50&page=${page}&csv${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)).then(response => {
                         const pagination = response.data
                         patients = patients.concat(pagination.data)
                         this.exportCSVText = `Export as CSV (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`
@@ -740,5 +744,9 @@
     .in-table-link {
         color: #337ab7 !important;
         text-decoration: underline;
+    }
+
+    .inline-block {
+        display: inline-block;
     }
 </style>

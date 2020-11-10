@@ -4,7 +4,7 @@
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
                     <a :href="url">Appointments</a>
-                    <span v-if="!disableEditing" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                    <span v-if="!disableEditing()" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
         </div>
@@ -29,7 +29,7 @@
                 </ul>
             </div>
         </div>
-        <appointments-modal v-if="!disableEditing" ref="appointmentsModal" :patient-id="patientId" :appointments="appointments"></appointments-modal>
+        <appointments-modal v-if="!disableEditing()" ref="appointmentsModal" :patient-id="patientId" :appointments="appointments"></appointments-modal>
     </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-    <modal v-if="!disableEditing" name="misc" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-misc">
+    <modal v-if="!disableEditing()" name="misc" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-misc">
         <template>
             <div class="row">
                 <div class="col-sm-12" v-if="selectedMisc">
