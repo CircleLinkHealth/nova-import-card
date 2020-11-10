@@ -109,12 +109,12 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                     <ul class="nav navbar-nav navbar-right">
                         @if (auth()->user()->isCallbacksAdmin())
                                     <li>
-                                        <a href="{{ route('patientCallManagement.v2.index') }}">
+                                        <a href="{{ route('patientCallManagement.v2.index') }}" style="color: #fff;">
                                             Patient Activity Management
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('ca-director.index') }}">
+                                        <a href="{{ route('ca-director.index') }}" style="color: #fff;">
                                             Care Ambassador Panel
                                         </a>
                                     </li>
