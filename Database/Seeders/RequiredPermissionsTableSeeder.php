@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Database\Seeders;
 
+use CircleLinkHealth\Core\Constants;
 use CircleLinkHealth\Customer\Entities\Permission;
 use Illuminate\Database\Seeder;
 
@@ -105,7 +106,7 @@ class RequiredPermissionsTableSeeder extends Seeder
                 'name'         => 'phi.read',
                 'display_name' => 'Can view PHI.',
             ], [
-                'name'         => 'pam.view',
+                'name'         => Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE,
                 'display_name' => 'Can view Patient Activity Management page.',
             ],
             [

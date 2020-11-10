@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Database\Seeders;
 
+use CircleLinkHealth\Core\Constants;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Database\Seeder;
@@ -308,7 +309,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'permissions'  => [
                     'edit-patient-chart.disable',
                     'admin-access',
-                    'pam.view',
+                    Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE,
                     'ca-director.view',
                     'users-edit-self',
                     'users-view-all',
@@ -386,7 +387,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'patient.read',
                     'call.read',
                     'call.create',
-                    'pam.view',
+                    Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE,
                     'ca-director.view',
                     'practice.read',
                     'location.read',
@@ -1214,7 +1215,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'permissions'  => [
                     'edit-patient-chart.disable',
                     'admin-access',
-                    'pam.view',
+                    Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE,
                     'ca-director.view',
                     'users-edit-self',
                     'users-view-all',
@@ -1338,7 +1339,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'call.update',
                     'call.delete',
                     'phi.read',
-                    'pam.view',
+                    Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE,
                     'notification.read',
                     'nurse.read',
                     'note.read',
@@ -1365,7 +1366,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'note.read',
                     'careplan.read',
                     'patient.read',
-                    'pam.view',
+                    Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE,
                     'location.read',
                     'provider.read',
                     'nurse.read',
