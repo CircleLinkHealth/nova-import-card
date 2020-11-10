@@ -332,6 +332,9 @@
       <path value="$PROJECT_DIR$/vendor/react/promise" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php70" />
       <path value="$PROJECT_DIR$/vendor/scrivo/highlight.php" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/dates-input" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/range-input" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/unresolved-callback" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
