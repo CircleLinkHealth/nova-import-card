@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Nurseinvoices\Time\TimeSplitter;
+use Illuminate\Support\Facades\Log;
 
 class ActivityService
 {
@@ -137,6 +138,8 @@ class ActivityService
     {
         $cs = $this->getChargeableServiceById($patient, $chargeableServiceId);
         if ( ! $cs) {
+            Log::warning("ActivityService::getChargeableServiceById: Could not get chargeableService for patient[$patient->id] and csId[$chargeableServiceId]");
+
             return [new ChargeableServiceDuration(null, $duration)];
         }
 
