@@ -97,7 +97,7 @@ class CallViewFilters extends QueryFilters
                             })
                             ->join('lv_permissions', function ($join) {
                                 $join->on('permissibles.permission_id', '=', 'lv_permissions.id')
-                                    ->where('lv_permissions.name', Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE);
+                                    ->where('lv_permissions.name', 'pam.view');
                             });
                     });
             });

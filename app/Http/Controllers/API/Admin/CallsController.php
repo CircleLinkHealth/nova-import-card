@@ -85,13 +85,13 @@ class CallsController extends ApiController
         if ( ! $user->isAdmin()) {
             //if we have $practiceId, make sure that user has access to it
             if ($practiceId) {
-                if ( ! $user->hasPermissionForSite(Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE, $practiceId)) {
+                if ( ! $user->hasPermissionForSite('pam.view', $practiceId)) {
                     abort(403);
                 }
             } else {
                 //if no $practiceId, get all practice ids where user is software-only / practice admin
                 $roleIds = Role::whereHas('perms', function ($q) {
-                    $q->where('name', Constants::PERM_CAN_VIEW_PATIENT_ACTIVITY_MANAGEMENT_PAGE);
+                    $q->where('name', 'pam.view');
                 })->pluck('id')->all();
                 $practiceId = $user->practices(true, false, $roleIds)->pluck('id')->toArray();
             }
