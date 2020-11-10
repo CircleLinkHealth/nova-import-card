@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "d14d53002f79dc753aabfb67e0252104d5831823"
+                "reference": "209f5aa174c2792f961682e50b767c61643aa94f"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-10T20:47:08+00:00"
+            "time": "2020-11-10T21:05:28+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -15470,12 +15470,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "850931b9758a2ebd32a7dc398465c437fda7303f"
+                "reference": "208e3f79e34e54ceea62bf58ae1e312e9aa4dc97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/850931b9758a2ebd32a7dc398465c437fda7303f",
-                "reference": "850931b9758a2ebd32a7dc398465c437fda7303f",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/208e3f79e34e54ceea62bf58ae1e312e9aa4dc97",
+                "reference": "208e3f79e34e54ceea62bf58ae1e312e9aa4dc97",
                 "shasum": ""
             },
             "require": {
@@ -15539,7 +15539,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-10T17:02:39+00:00"
+            "time": "2020-11-10T21:14:49+00:00"
         },
         {
             "name": "orangehill/iseed",
