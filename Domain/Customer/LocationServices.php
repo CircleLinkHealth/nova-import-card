@@ -43,7 +43,7 @@ class LocationServices
             Log::warning("LocationServices::getChargeableServices new billing is disabled. Returning practice chargeable services from location[$locationId].");
 
             $location = Location::with('practice.chargeableServices')
-                ->first();
+                ->find($locationId);
 
             return $location->practice->chargeableServices;
         }
