@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Domain\Customer;
 
-use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Jobs\ClearPracticeLocationSummaries;
 use CircleLinkHealth\CcmBilling\Jobs\MigrateChargeableServicesFromChargeablesToLocationSummariesTable;
 use CircleLinkHealth\CcmBilling\Jobs\MigratePracticeServicesFromChargeablesToLocationSummariesTable;
@@ -24,7 +22,7 @@ class SetupPracticeBillingData
         MigrateChargeableServicesFromChargeablesToLocationSummariesTable::withChain(
             [
                 new SeedCpmProblemChargeableServicesFromLegacyTables(),
-                new ProcessAllPracticePatientMonthlyServices()
+                new ProcessAllPracticePatientMonthlyServices(),
             ]
         )->dispatch();
     }
@@ -33,7 +31,7 @@ class SetupPracticeBillingData
     {
         MigratePracticeServicesFromChargeablesToLocationSummariesTable::withChain([
             new SeedPracticeCpmProblemChargeableServicesFromLegacyTables($practiceId),
-            new ProcessPracticePatientMonthlyServices($practiceId)
+            new ProcessPracticePatientMonthlyServices($practiceId),
         ])->dispatch($practiceId);
     }
 
@@ -43,7 +41,7 @@ class SetupPracticeBillingData
         ClearPracticeLocationSummaries::withChain([
             new MigratePracticeServicesFromChargeablesToLocationSummariesTable($practiceId),
             new SeedPracticeCpmProblemChargeableServicesFromLegacyTables($practiceId),
-            new ProcessPracticePatientMonthlyServices($practiceId)
+            new ProcessPracticePatientMonthlyServices($practiceId),
         ])
             ->dispatch($practiceId)
             ->onQueue('high');

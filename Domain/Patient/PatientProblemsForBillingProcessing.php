@@ -93,14 +93,14 @@ class PatientProblemsForBillingProcessing
             }
         }
 
-        
         $primaryPractice = $this->patient->primaryPractice;
-        
-        if (is_null($primaryPractice)){
+
+        if (is_null($primaryPractice)) {
             sendSlackMessage('#billing_alerts', "Warning! (PatientProblemsForBillingProcessing:) Patient ({$this->patient->id}) does not have a primary practice.");
+
             return [];
         }
-        
+
         $pcmProblems = $primaryPractice->pcmProblems;
 
         if ( ! empty($pcmProblems)) {

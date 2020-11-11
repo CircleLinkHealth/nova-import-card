@@ -50,7 +50,8 @@ class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Job
         $chargeableServices = $practice->chargeableServices;
 
         if ($chargeableServices->isEmpty()) {
-            Log::warning("Billing: Practice chargeable services (chargeables) do not exist. Aborting migration to location summaries.");
+            Log::warning('Billing: Practice chargeable services (chargeables) do not exist. Aborting migration to location summaries.');
+
             return;
         }
 
