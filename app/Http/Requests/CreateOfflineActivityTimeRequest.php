@@ -40,7 +40,6 @@ class CreateOfflineActivityTimeRequest extends FormRequest
         return [
             'type'                  => ['required', Rule::in(Activity::input_activity_types())],
             'duration_minutes'      => ['required', 'numeric'],
-            'is_behavioral'         => ['boolean'],
             'performed_at'          => ['required', 'date'],
             'comment'               => ['required', 'string'],
             'patient_id'            => [Rule::exists((new User())->getTable(), 'id')],
