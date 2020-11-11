@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "be23ad0c6ed83b7dce884d0d16d52c2f",
+    "content-hash": "92cb403b7686ce694d007b79048c1bbc",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "209f5aa174c2792f961682e50b767c61643aa94f"
+                "reference": "e4243da5455274fb44d7fdb51798d3807aad0310"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-10T21:05:28+00:00"
+            "time": "2020-11-11T16:07:17+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1194,11 +1194,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-ROAD-346-billing-revamp",
+            "version": "dev-new-phone-number-format",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "e48cb2d03485582b168d778c55e20cfa1256edf1"
+                "reference": "e60764deb2f2aab6568c7550a7e695b80d0508d6"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1227,7 +1227,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-21T09:51:40+00:00"
+            "time": "2020-11-09T16:55:07+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1235,7 +1235,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "a521c2ed88f29ecc84e4f703f04c322cd3a5fda3"
+                "reference": "216e8f7b99b3f3728f931ab0d4117b2bf0f1224e"
             },
             "type": "laravel-module",
             "extra": {
@@ -1257,7 +1257,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-11T12:43:33+00:00"
+            "time": "2020-11-11T17:34:42+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1303,11 +1303,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-ROAD-346-billing-revamp",
+            "version": "dev-enrollee-phone-number-formats",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "1db2af763a73d148b41755e4de2daf0b0548fb8b"
+                "reference": "039dd90121e8d09d6450746b55e4124f060c6cbd"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1334,7 +1334,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-11T11:25:15+00:00"
+            "time": "2020-11-09T16:55:06+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1786,7 +1786,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "6bd49823b8daaa970f79c00f194b6162a97de781"
+                "reference": "01e50b12bf895a715664def3c3a0659a0571d6ed"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1811,7 +1811,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-06T10:58:55+00:00"
+            "time": "2020-11-11T17:34:42+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -3487,16 +3487,16 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.8.1",
+            "version": "v2.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "c8f6d09f50f859fa9457104bb0fb72c893804ede"
+                "reference": "24f3ec0c79567a08c31f8271b61d79b050b25b0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/c8f6d09f50f859fa9457104bb0fb72c893804ede",
-                "reference": "c8f6d09f50f859fa9457104bb0fb72c893804ede",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/24f3ec0c79567a08c31f8271b61d79b050b25b0a",
+                "reference": "24f3ec0c79567a08c31f8271b61d79b050b25b0a",
                 "shasum": ""
             },
             "require": {
@@ -3548,7 +3548,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-10-27T23:20:13+00:00"
+            "time": "2020-11-11T17:07:53+00:00"
         },
         {
             "name": "google/apiclient-services",
