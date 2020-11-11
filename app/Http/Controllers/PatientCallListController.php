@@ -37,7 +37,7 @@ class PatientCallListController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View|Response
      */
     public function index(Request $request, NoteService $noteService)
     {

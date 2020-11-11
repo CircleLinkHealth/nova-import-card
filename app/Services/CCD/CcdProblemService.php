@@ -10,8 +10,8 @@ use App\Repositories\CcdProblemRepository;
 use App\Services\CPM\CpmInstructionService;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 
@@ -77,7 +77,7 @@ class CcdProblemService
             $cpmInstruction = null;
             if ($problem['instruction']) {
                 $instructionId  = $problem['instruction']->id;
-                $cpmInstruction = $this->editOrCreateNewProblemInstruction($instructionId, $instruction, $userId);
+                $cpmInstruction = $this->editOrCreateNewProblemInstruction($instructionId, $instruction, $ccdProblem->getUserId());
             } else {
                 $cpmInstruction = $this->instructionService->create($instruction);
             }

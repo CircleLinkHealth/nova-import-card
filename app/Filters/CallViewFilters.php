@@ -7,7 +7,6 @@
 namespace App\Filters;
 
 use App\Call;
-use CircleLinkHealth\Core\Constants;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
 

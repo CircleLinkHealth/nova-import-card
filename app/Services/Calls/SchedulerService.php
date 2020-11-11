@@ -8,7 +8,6 @@ namespace App\Services\Calls;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
-use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Note;
 use App\Policies\CreateNoteForPatient;

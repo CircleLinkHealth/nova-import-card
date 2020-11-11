@@ -65,6 +65,7 @@ class UpdateEnrolmentLettersInNonProductionEnv extends Command
         if (4 !== $practices->count() || 4 !== count($practiceIdsWithSignatoryName)) {
             Log::error('Practices should have been 4 in total. Less found');
             $this->error('Practices should have been 4 in total. Less found.');
+
             return;
         }
 
