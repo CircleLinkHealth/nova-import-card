@@ -170,7 +170,7 @@ class CallController extends Controller
             $canUpdateCareCoach = $this->canAssignCareCoachToActivity($call, $value);
             if ( ! $canUpdateCareCoach) {
                 return response(
-                    'cannot update change care-coach',
+                    'You do not have the necessary permissions to perform this action.',
                     421
                 );
             }
@@ -286,29 +286,39 @@ class CallController extends Controller
             return true;
         }
 
-        //get practice of patient
+        if ($user->isCallbacksAdmin()) {
+            return 'Call Back' === $call->sub_type;
+        }
+
         $patientPrimaryPractice = $call->inboundUser->primaryPractice->id;
 
-        //check if user has software-only role for practice of patient
-        if ( ! $user->hasRoleForSite('software-only', $patientPrimaryPractice)) {
-            return false;
+        if ($user->hasRoleForSite('software-only', $patientPrimaryPractice)) {
+            if ( ! $call->outboundUser) {
+                return true;
+            }
+
+            $currentIsClhCareCoach = $call->outboundUser->hasRoleForSite('care-center', $patientPrimaryPractice);
+
+            if ( ! $newCareCoachUserId) {
+                return ! $currentIsClhCareCoach;
+            }
+
+            $newIsClhCareCoach = User::findOrFail($newCareCoachUserId)->hasRoleForSite(
+                'care-center',
+                $patientPrimaryPractice
+            );
+
+            if ($currentIsClhCareCoach && ! $newIsClhCareCoach) {
+                return false;
+            }
+
+            //current care-coach is clh and new is also clh care-coach
+            //current care-coach is not clh and new is not clh care-coach
+            //current care-coach is not clh and new is clh care-coach
+            return true;
         }
 
-        //check role of current care coach
-        $currentIsClhCareCoach = $call->outboundUser->hasRoleForSite('care-center', $patientPrimaryPractice);
-        $newIsClhCareCoach     = User::find($newCareCoachUserId)->hasRoleForSite(
-            'care-center',
-            $patientPrimaryPractice
-        );
-
-        if ($currentIsClhCareCoach && ! $newIsClhCareCoach) {
-            return false;
-        }
-
-        //current care-coach is clh and new is also clh care-coach
-        //current care-coach is not clh and new is not clh care-coach
-        //current care-coach is not clh and new is clh care-coach
-        return true;
+        return false;
     }
 
     /**

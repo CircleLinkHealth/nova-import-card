@@ -8,12 +8,12 @@ namespace App\Services\Calls;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
-use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Note;
 use App\Policies\CreateNoteForPatient;
 use App\Services\NoteService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Events\NurseAttestedToPatientProblems;
 use CircleLinkHealth\CcmBilling\Events\PatientSuccessfulCallCreated;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\Family;
@@ -739,10 +739,14 @@ class SchedulerService
             );
         }
 
-        //If this is the first call being created for the month, the patient might not have a summary - which gets created on the 'saved' event of the call
-        //So we are dispatching an event with a delayed job to make sure that the summary will be created before we attach the problems
         if ($attestedProblems) {
-            event(new CallIsReadyForAttestedProblemsAttachment($call, $attestedProblems));
+            event(
+                new NurseAttestedToPatientProblems(
+                    collect($attestedProblems)->flatten()->toArray(),
+                    auth()->id(),
+                    $call->id
+                )
+            );
         }
 
         if (Call::REACHED === $call->status) {

@@ -6,6 +6,7 @@
 
 namespace Tests\Unit;
 
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Tests\CustomerTestCase;
 
 class TimeTrackingTest extends CustomerTestCase
@@ -19,12 +20,13 @@ class TimeTrackingTest extends CustomerTestCase
                 'programId'  => $this->practice()->id,
                 'activities' => [
                     [
-                        'duration'   => 300, //in seconds
-                        'start_time' => now()->toDateTimeString(),
-                        'url'        => 'https://example.com/hello',
-                        'url_short'  => 'https://example.com',
-                        'name'       => 'example',
-                        'title'      => 'title',
+                        'duration'              => 300, //in seconds
+                        'start_time'            => now()->toDateTimeString(),
+                        'url'                   => 'https://example.com/hello',
+                        'url_short'             => 'https://example.com',
+                        'name'                  => 'example',
+                        'title'                 => 'title',
+                        'chargeable_service_id' => ChargeableService::firstWhere('code', '=', ChargeableService::CCM)->id,
                     ],
                 ],
             ]

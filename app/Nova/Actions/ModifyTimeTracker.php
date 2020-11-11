@@ -8,6 +8,7 @@ namespace App\Nova\Actions;
 
 use App\Entities\PatientTime;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -210,6 +211,9 @@ class ModifyTimeTracker extends Action implements ShouldQueue
 
             //if this was a billable activity, we have to
             //recalculate ccm/bhi time for patient (patient_monthly_summaries table)
+
+            //todo: unfulfill everything
+            ProcessSinglePatientMonthlyServices::dispatch($activity->patient_id);
             \Artisan::call('ccm_time:recalculate', [
                 'dateString' => $startTime->toDateString(),
                 'userIds'    => $timeRecord->patient_id,

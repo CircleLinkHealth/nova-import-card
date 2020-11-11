@@ -6,7 +6,7 @@
 
 namespace App\Relationships;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use App\Constants;
 use Carbon\Carbon;
 
 class BillableCPMPatientRelations
@@ -70,7 +70,7 @@ class BillableCPMPatientRelations
                 ->where(
                     'total_time',
                     '>=',
-                    AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
+                    Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
                 )
                 ->where('no_of_successful_calls', '>=', 1)
                 ->with('chargeableServices')

@@ -8,12 +8,14 @@ import axios from './bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
-import {ClientTable} from 'vue-tables-2'
+import {ClientTable, ServerTable} from 'vue-tables-2'
 import "vue-trix"
 import EventBus from './admin/time-tracker/comps/event-bus'
 import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
 
 Vue.use(ClientTable, {}, false)
+Vue.use(ServerTable, {}, false)
+
 
 
 if (document) {
@@ -54,7 +56,7 @@ const NurseDailyHours = () => import(/* webpackChunkName: "chunk" */ './componen
 const QuestionnaireApp = () => import(/* webpackChunkName: "chunk-assessment" */ './admin/questionnaire/app')
 const TimeTracker = () => import(/* webpackChunkName: "chunk-time-tracker" */ './admin/time-tracker')
 const TimeTrackerCallModeComponent = () => import(/* webpackChunkName: "chunk-time-tracker" */ './admin/time-tracker/time-tracker-call-mode')
-const ServerTimeDisplay = () => import(/* webpackChunkName: "chunk" */ './admin/time-tracker/comps/server-time-display')
+const TimeDisplayAllChargeableServicesStatic = () => import(/* webpackChunkName: "chunk" */ './admin/time-tracker/comps/time-display-all-chargeable-services-static')
 const LoaderComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/loader')
 const PersistentTextArea = () => import(/* webpackChunkName: "chunk-misc" */ './components/persistent-textarea')
 const CareAreasComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/care-areas')
@@ -81,6 +83,7 @@ const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2
 const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ './components/importer/ccd-upload');
 const ImportedMedicalRecordsManagement = () => import(/* webpackChunkName: "chunk-imported-medical-records-management" */ './components/importer/imported-medical-records-management');
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
+const SchedulePatientActivity = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/comps/schedule-patient-activity')
 const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
 const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/FullScreenLoader');
 const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ './../../../CircleLinkHealth/Nurseinvoices/Resources/assets/js/components/dispute-invoice')
@@ -92,6 +95,7 @@ const AttestCallConditionsModalComponent = () => import(/* webpackChunkName: "ch
 const CalendarDailyReport = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarDailyReport');
 const EditPatientNumber = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-number');
 const EditPatientAlternateContact = () => import(/* webpackChunkName: "chunk-edit-patient-number" */  './components/edit-patient-agent-contact');
+const CaDirectorPanel = () => import(/* webpackChunkName: "chunk-admin" */ './admin/ca-director/panel')
 
 
 Vue.component('attest-call-conditions-modal', AttestCallConditionsModalComponent);
@@ -115,7 +119,7 @@ Vue.component('nurseDailyHours', NurseDailyHours);
 Vue.component('questionnaire-app', QuestionnaireApp);
 Vue.component('time-tracker', TimeTracker);
 Vue.component('time-tracker-call-mode', TimeTrackerCallModeComponent);
-Vue.component('server-time-display', ServerTimeDisplay);
+Vue.component('time-display-all-chargeable-services-static', TimeDisplayAllChargeableServicesStatic);
 Vue.component('loader', LoaderComponent);
 Vue.component('persistent-textarea', PersistentTextArea);
 Vue.component('care-areas', CareAreasComponent);
@@ -142,6 +146,7 @@ Vue.component('authy-perform-2fa', AuthyPerform2FA);
 Vue.component('ccd-upload', CcdUploader);
 Vue.component('imported-medical-records-management', ImportedMedicalRecordsManagement);
 Vue.component('call-mgmt-app-v2', CallMgmtAppV2);
+Vue.component('schedule-patient-activity', SchedulePatientActivity);
 Vue.component('dispute-nurse-invoice', DisputeNurseInvoice);
 Vue.component('nurse-invoice-daily-dispute', NurseInvoiceDailyDispute);
 Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
@@ -151,6 +156,8 @@ Vue.component('pusher-see-all-notifications', PusherSeeAllNotifications);
 Vue.component('calendar-daily-report', CalendarDailyReport);
 Vue.component('edit-patient-number', EditPatientNumber);
 Vue.component('edit-patient-alternate-contact', EditPatientAlternateContact);
+Vue.component('ca-director-panel', CaDirectorPanel)
+
 
 const App = new Vue({
     el: '#app',

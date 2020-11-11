@@ -4,7 +4,7 @@
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
                     Watch out for
-                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                    <span v-if="!disableEditing()" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
         </div>
@@ -21,7 +21,7 @@
                 </ul>
             </div>
         </div>
-        <symptoms-modal ref="symptomsModal" :patient-id="patientId" :symptoms="symptoms"></symptoms-modal>
+        <symptoms-modal v-if="!disableEditing()" ref="symptomsModal" :patient-id="patientId" :symptoms="symptoms"></symptoms-modal>
     </div>
 </template>
 
@@ -30,6 +30,8 @@
     import { Event } from 'vue-tables-2'
     import SymptomsModal from './modals/symptoms.modal'
     import CareplanMixin from './mixins/careplan.mixin'
+    import DisableEditingMixin from './mixins/disable-editing.mixin'
+
 
     export default {
         name: 'symptoms',
@@ -39,7 +41,7 @@
         components: {
             'symptoms-modal': SymptomsModal
         },
-        mixins: [ CareplanMixin ],
+        mixins: [ CareplanMixin, DisableEditingMixin ],
         data() {
             return {
                  symptoms: []

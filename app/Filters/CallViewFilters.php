@@ -32,6 +32,11 @@ class CallViewFilters extends QueryFilters
         return $this->builder->where('billing_provider', 'like', '%'.$billingProvider.'%');
     }
 
+    public function callbacks_admin()
+    {
+        return $this->type('Call Back');
+    }
+
     public function completed_tasks()
     {
         return $this->builder
@@ -53,7 +58,17 @@ class CallViewFilters extends QueryFilters
 
     public function globalFilters(): array
     {
-        return ['software_only_user' => ! auth()->user()->isAdmin()];
+        $filters = [];
+
+        if ( ! auth()->user()->isAdmin()) {
+            $filters[] = 'non_admin_user';
+        }
+
+        if (auth()->user()->isCallbacksAdmin()) {
+            $filters[] = 'callbacks_admin';
+        }
+
+        return $filters;
     }
 
     public function last_call($lastCall = null)
@@ -63,6 +78,28 @@ class CallViewFilters extends QueryFilters
         }
 
         return $this->builder->where('last_call', 'like', '%'.$lastCall.'%');
+    }
+
+    public function non_admin_user()
+    {
+        return $this->builder
+            ->whereIn('practice_id', function ($q) {
+                $q->select('program_id')
+                    ->from('practice_role_user')
+                    ->where('user_id', auth()->id())
+                    ->whereIn('role_id', function ($q) {
+                        $q->select('lv_roles.id')
+                            ->from('lv_roles')
+                            ->join('permissibles', function ($join) {
+                                $join->on('permissibles.permissible_id', '=', 'lv_roles.id')
+                                    ->where('permissibles.permissible_type', '=', Role::class);
+                            })
+                            ->join('lv_permissions', function ($join) {
+                                $join->on('permissibles.permission_id', '=', 'lv_permissions.id')
+                                    ->where('lv_permissions.name', 'pam.view');
+                            });
+                    });
+            });
     }
 
     public function nurse($nurse = null)
@@ -122,20 +159,6 @@ class CallViewFilters extends QueryFilters
         }
 
         return $this->builder->where('scheduled_date', 'like', '%'.$date.'%');
-    }
-
-    public function software_only_user($value = null)
-    {
-        if ( ! $value) {
-            return $this->builder;
-        }
-        $roleIds = Role::getIdsFromNames(['software-only']);
-        $user    = auth()->user();
-
-        return $this->builder->whereRaw(
-            'practice_id IN (SELECT program_id FROM practice_role_user WHERE role_id IN (?) AND user_id = ?)',
-            [implode(',', $roleIds), $user->id]
-        );
     }
 
     public function sort_bhi_time($term)

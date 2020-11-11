@@ -17,7 +17,7 @@ class NoteObserver
     public function created(Note $note)
     {
         if (User::ofType(Constants::PRACTICE_STAFF_ROLE_NAMES)->where('id', $note->author_id)->exists() && $nurse = app(NurseFinderEloquentRepository::class)->assignedNurse($note->patient_id)) {
-            $nurse->notify(new PracticeStaffCreatedNote($note));
+            optional($nurse->permanentNurse)->notify(new PracticeStaffCreatedNote($note));
         }
     }
 }

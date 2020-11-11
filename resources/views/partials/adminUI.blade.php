@@ -18,13 +18,6 @@
     <!-- Fonts -->
     <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesnt work if you view the page via file:// -->
-    <!--[if lt IE 9]-->
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
     <!-- JQuery -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css" integrity="sha256-iWTx/iC9IoKaoSKD5+WVFef8ZYNIgQ4AxVpMbBw2hig=" crossorigin="anonymous" />
 
@@ -66,9 +59,7 @@
 </head>
 <body>
 <div id="app">
-
-    @if (  ! Auth::guest() && Cerberus::hasPermission('admin-access') )
-        <nav class="navbar navbar-default">
+     <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
@@ -107,7 +98,7 @@
                                 Activities <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ route('admin.patientCallManagement.v2.index') }}">Manage (V2)</a></li>
+                                <li><a href="{{ route('patientCallManagement.v2.index') }}">Manage (V2)</a></li>
                                 <li><a href="{{ route('admin.families.index') }}">Families</a></li>
                                 <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                             </ul>
@@ -224,6 +215,7 @@
                                     </a></li>
                                 <li><a href="{{route('report-settings.index')}}">Manage Report Settings
                                     </a></li>
+                                <li><a href="{{url('/admin/feature_flags')}}">Manage Feature Flags</a></li>
                             </ul>
                         </li>
 
@@ -302,7 +294,6 @@
             Frame</a>
             to improve your experience.</p>
         <![endif]-->
-    @endif
 
     {{--This is for JS variables. Purposefully included before content.--}}
     @include('partials.footer')

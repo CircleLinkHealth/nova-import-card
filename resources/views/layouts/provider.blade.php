@@ -17,8 +17,8 @@
 
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
 
-    @if (\Illuminate\Support\Str::contains(optional(Route::getCurrentRoute())->getName(), 'admin'))
-        <link href="{{mix('/css/bootstrap.min.css')}}" rel="stylesheet">
+    @if (Route::is('patientCallManagement.v2.index') || \Illuminate\Support\Str::contains(optional(Route::getCurrentRoute())->getName(), 'admin'))
+        <link href="{{ mix('/css/bootstrap.min.css') }}" rel="stylesheet">
     @endif
 
     <link href="{{ mix('/img/favicon.png') }}" rel="icon">
@@ -79,11 +79,6 @@
 
 @if(!isset($isPdf))
     @include('partials.footer')
-
-    <!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
 
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->

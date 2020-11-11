@@ -106,6 +106,9 @@
                             </div>
                         </div>
                     </div>
+                    @else
+{{--                    todo: address this when adding types to offline activities i.e. RPM, PCM--}}
+                    <input type="hidden" name="is_behavioral" value="{{$patient->isBhi()}}">
                 @endif
 
 
@@ -148,3 +151,9 @@
         </div>
     </div>
 @endsection
+<script>
+    import Input from "../../../assets/js/components/shared/materialize/input";
+    export default {
+        components: {Input}
+    }
+</script>
