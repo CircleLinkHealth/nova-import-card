@@ -93,7 +93,15 @@ class PatientProblemsForBillingProcessing
             }
         }
 
-        $pcmProblems = $this->patient->primaryPractice->pcmProblems;
+        
+        $primaryPractice = $this->patient->primaryPractice;
+        
+        if (is_null($primaryPractice)){
+            sendSlackMessage('#billing_alerts', "Warning! (PatientProblemsForBillingProcessing:) Patient ({$this->patient->id}) does not have a primary practice.");
+            return [];
+        }
+        
+        $pcmProblems = $primaryPractice->pcmProblems;
 
         if ( ! empty($pcmProblems)) {
             $hasMatchingPcmProblem = $pcmProblems->filter(
@@ -108,7 +116,7 @@ class PatientProblemsForBillingProcessing
             }
         }
 
-        $rpmProblems = $this->patient->primaryPractice->rpmProblems;
+        $rpmProblems = $primaryPractice->rpmProblems;
 
         if ( ! empty($rpmProblems)) {
             $hasMatchingRpmProblem = $rpmProblems->filter(
