@@ -20,16 +20,20 @@ class SetupPracticeBillingData
 {
     public static function execute()
     {
-        MigrateChargeableServicesFromChargeablesToLocationSummariesTable::dispatch();
-        SeedCpmProblemChargeableServicesFromLegacyTables::dispatch();
-        ProcessAllPracticePatientMonthlyServices::dispatch();
+        MigrateChargeableServicesFromChargeablesToLocationSummariesTable::withChain(
+            [
+                new SeedCpmProblemChargeableServicesFromLegacyTables(),
+                new ProcessAllPracticePatientMonthlyServices()
+            ]
+        )->dispatch();
     }
 
     public static function forPractice(int $practiceId)
     {
-        MigratePracticeServicesFromChargeablesToLocationSummariesTable::dispatch($practiceId);
-        SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practiceId);
-        ProcessPracticePatientMonthlyServices::dispatch($practiceId);
+        MigratePracticeServicesFromChargeablesToLocationSummariesTable::withChain([
+            new SeedPracticeCpmProblemChargeableServicesFromLegacyTables($practiceId),
+            new ProcessPracticePatientMonthlyServices($practiceId)
+        ])->dispatch($practiceId);
     }
 
     public static function sync(int $practiceiD)
