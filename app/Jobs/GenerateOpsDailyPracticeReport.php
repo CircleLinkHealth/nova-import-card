@@ -74,19 +74,15 @@ class GenerateOpsDailyPracticeReport implements ShouldQueue
             ->opsDashboardQuery($this->date->copy()->startOfMonth())
             ->findOrFail($this->practiceId);
 
-        $report = OpsDashboardPracticeReport::firstOrCreate([
-            'practice_id' => $practice->id,
-            'date'        => $this->date->toDateString(),
-        ]);
-
-        $array = OpsDashboardReport::generate($practice, $this->date);
-
-        //row can be null -> if practice has no enrolled patients and no added or remove, exclude from total report.
-        //check exists on GenerateOpsDailyReport
-        //however since since it's still an active practice, still log report in db as processed
-        //deal with null reports
-        $report->data         = $array;
-        $report->is_processed = true;
-        $report->save();
+        OpsDashboardPracticeReport::updateOrCreate(
+            [
+                'practice_id' => $practice->id,
+                'date'        => $this->date->toDateString(),
+            ],
+            [
+                'data'         => OpsDashboardReport::generate($practice, $this->date),
+                'is_processed' => true,
+            ]
+        );
     }
 }

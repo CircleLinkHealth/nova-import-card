@@ -7,7 +7,7 @@ const bc = new BroadcastChannel("cpm");
 bc.onmessage = (msgEv) => {
     const msg = msgEv.data;
     if (!msg.jobId) {
-        console.error("received invalid message");
+        console.warn("received invalid message");
         return;
     }
 
@@ -16,7 +16,7 @@ bc.onmessage = (msgEv) => {
         const action = msg.action;
         const handler = handlers[action];
         if (!handler) {
-            console.error(`received message[${action}] but could not be handled`);
+            console.warn(`received message[${action}] but could not be handled`);
             return;
         }
 
@@ -37,7 +37,7 @@ bc.onmessage = (msgEv) => {
     else {
         const job = getJob(msg.jobId);
         if (!job) {
-            console.error("received message but could not associate with a job");
+            console.warn("received message but could not associate with a job");
             return;
         }
         //this will resolve the promise

@@ -103,38 +103,23 @@ class NurseInvoiceBreakdown extends Resource
         $allVisits = $this->mergeVisitsToOneCollection($data);
         $allVisits->each(function ($patientVisits, $patientId) use (&$fields, $formatter) {
             $totalForPatient = 0;
-            $ccmText = '';
-            foreach (($patientVisits['ccm'] ?? []) as $date => $feePayAndCount) {
-                $totalForPatient += $feePayAndCount['count'];
-                $fee = $formatter->formatCurrency($feePayAndCount['fee'], 'USD');
-                $ccmText .= "{$date}: {$feePayAndCount['count']} visit(s) - {$fee}<br/>";
+            $texts = collect();
+            foreach ($patientVisits as $csCode => $visits) {
+                foreach ($visits as $date => $feePayAndCount) {
+                    $totalForPatient += $feePayAndCount['count'];
+                    $fee = $formatter->formatCurrency($feePayAndCount['fee'], 'USD');
+                    $csCodeText = $texts->get($csCode, '');
+                    $csCodeText .= "{$date}: {$feePayAndCount['count']} visit(s) - {$fee}<br/>";
+                    $texts->put($csCode, $csCodeText);
+                }
             }
 
-            $bhiText = '';
-            foreach (($patientVisits['bhi'] ?? []) as $date => $feePayAndCount) {
-                $totalForPatient += $feePayAndCount['count'];
-                $fee = $formatter->formatCurrency($feePayAndCount['fee'], 'USD');
-                $bhiText .= "{$date}: {$feePayAndCount['count']} visit(s) - {$fee}<br/>";
-            }
-
-            $pcmText = '';
-            foreach (($patientVisits['pcm'] ?? []) as $date => $feePayAndCount) {
-                $totalForPatient += $feePayAndCount['count'];
-                $fee = $formatter->formatCurrency($feePayAndCount['fee'], 'USD');
-                $pcmText .= "{$date}: {$feePayAndCount['count']} visit(s) - {$fee}<br/>";
-            }
-
-            $fields[] = Text::make("$patientId [$totalForPatient visits]", function ($invoice) use ($ccmText, $bhiText, $pcmText) {
+            $fields[] = Text::make("$patientId [$totalForPatient visits]", function ($invoice) use ($texts) {
                 $result = '';
-                if ( ! empty($ccmText)) {
-                    $result .= "<strong>CCM</strong><br/>$ccmText";
-                }
-                if ( ! empty($bhiText)) {
-                    $result .= "<strong>BHI</strong><br/>$bhiText";
-                }
-                if ( ! empty($pcmText)) {
-                    $result .= "<strong>PCM</strong><br/>$pcmText";
-                }
+                $texts->each(function ($text, $csCode) use (&$result) {
+                    $friendlyName = \CircleLinkHealth\Customer\Entities\ChargeableService::getFriendlyName($csCode);
+                    $result .= "<strong>$friendlyName</strong><br/>$text";
+                });
 
                 return $result;
             })->asHtml();
@@ -171,22 +156,12 @@ class NurseInvoiceBreakdown extends Resource
     private function mergeVisitsToOneCollection($data)
     {
         $allVisits = collect();
-        foreach (($data['visits'] ?? []) as $patientId => $patientVisits) {
-            $current        = $allVisits->get($patientId, []);
-            $current['ccm'] = $patientVisits;
-            $allVisits->put($patientId, $current);
-        }
-
-        foreach (($data['bhiVisits'] ?? []) as $patientId => $patientVisits) {
-            $current        = $allVisits->get($patientId, []);
-            $current['bhi'] = $patientVisits;
-            $allVisits->put($patientId, $current);
-        }
-
-        foreach (($data['pcmVisits'] ?? []) as $patientId => $patientVisits) {
-            $current        = $allVisits->get($patientId, []);
-            $current['pcm'] = $patientVisits;
-            $allVisits->put($patientId, $current);
+        foreach (($data['visits'] ?? []) as $patientId => $patientVisitsPerChargeableServiceCode) {
+            foreach ($patientVisitsPerChargeableServiceCode as $csCode => $visits) {
+                $current          = $allVisits->get($patientId, []);
+                $current[$csCode] = $visits;
+                $allVisits->put($patientId, $current);
+            }
         }
 
         return $allVisits;

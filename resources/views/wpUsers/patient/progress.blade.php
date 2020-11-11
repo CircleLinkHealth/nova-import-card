@@ -27,10 +27,12 @@ if (isset($patient)) {
                 a[href]:after {
                     content: none;
                 }
+
                 .padding-top-print {
                     padding-top: 10px;
                 }
             }
+
             div.pad-right-20 {
                 padding-right: 25px;
             }
@@ -40,75 +42,10 @@ if (isset($patient)) {
         <section class="patient-summary">
             <div class="row" style="margin-top:60px;">
                 <div class="patient-info__main" style="padding-left: 51px;">
-
                     <div class="row">
                         <div class="col-xs-12">
                                 <span style="font-size: 27px;">
-                                    <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
-                                        @if (isset($disableTimeTracking) && $disableTimeTracking)
-                                            <div class="color-grey">
-                                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
-                                                    <server-time-display url="{{config('services.ws.server-url')}}"
-                                                                         patient-id="{{$patient->id}}"
-                                                                         provider-id="{{Auth::user()->id}}"
-                                                                         value="{{$monthlyTime}}"></server-time-display>
-                                                </a>
-                                            </div>
-                                        @else
-                                            <?php
-                                            $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
-                                            $ccmCountableUser        = auth()->user()->isCCMCountable();
-                                            ?>
-                                            @if ($noLiveCountTimeTracking)
-                                                <div class="color-grey" style="max-width: 350px; margin: auto">
-                                    <div>
-                                        <div class="{{$monthlyBhiTime === '00:00:00' ? '' : 'col-md-6'}}">
-                                            <div>
-                                                <small>CCM</small>
-                                            </div>
-                                            <div class="padding-top-print">
-                                                 <a id="monthly-time-static"
-                                                    href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
-                                                    {{$monthlyTime}}
-                                                </a>
-                                            </div>
-                                        </div>
-                                        @if ($monthlyBhiTime !== '00:00:00')
-                                            <div class="col-md-6">
-                                                <div>
-                                                    <small>BHI</small>
-                                                </div>
-                                                <div class="padding-top-print">
-                                                     <a id="monthly-bhi-time-static"
-                                                        href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', [$patient->id]) }}">
-                                                        {{$monthlyBhiTime}}
-                                                     </a>
-                                                </div>
-                                        </div>
-                                        @endif
-                                    </div>
-
-                                    <span style="display:none">
-                                        <time-tracker ref="TimeTrackerApp"
-                                                      :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
-                                                      class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                                      :info="timeTrackerInfo"
-                                                      :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
-                                                      :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
-                                    </span>
-                                </div>
-                                            @else
-                                                <time-tracker ref="TimeTrackerApp"
-                                                              class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                                              :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
-                                                              :info="timeTrackerInfo"
-                                                              :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
-                                                              :override-timeout="{{config('services.time-tracker.override-timeout')}}">
-                                        @include('partials.tt-loader')
-                                </time-tracker>
-                                            @endif
-                                        @endif
-                                    </span>
+                                    @include('partials.providerUItimerComponent')
                                 </span>
                         </div>
                         @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)))
@@ -249,7 +186,8 @@ if (isset($patient)) {
                             </div>
                             <div class="col-xs-12 col-sm-4 col-sm-pull-2 col-xs-pull-2">
                                 <div class="patient-summary__info__graph">
-                                    <div id="chartDiv-key-{{$loop->index}}" style="width:360px;height:160px;margin:1px;"></div>
+                                    <div id="chartDiv-key-{{$loop->index}}"
+                                         style="width:360px;height:160px;margin:1px;"></div>
                                 </div>
                             </div>
                         </div>
@@ -354,7 +292,7 @@ if (isset($patient)) {
 
             @foreach($tracking_biometrics as $key => $value)
             @if($value['data'] != '')
-                createWebixChart('chartDiv-key-{{$loop->index}}', [{!! $value['data'] !!}]);
+            createWebixChart('chartDiv-key-{{$loop->index}}', [{!! $value['data'] !!}]);
             @endif
             @endforeach
 

@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background" style="margin-top: 10px">We Are Managing
-                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                    <span v-if="!disableEditing()" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
         </div>
@@ -36,7 +36,7 @@
                 </ul>
             </div>
         </div>
-        <care-areas-modal ref="careAreasModal" :patient-id="patientId" :problems="problems"></care-areas-modal>
+        <care-areas-modal  v-if="!disableEditing()" ref="careAreasModal" :patient-id="patientId" :problems="problems" auth-role="authRole"></care-areas-modal>
     </div>
 </template>
 
@@ -45,13 +45,18 @@
     import {Event} from 'vue-tables-2'
     import CareAreasModal from './modals/care-areas.modal'
     import CareplanMixin from './mixins/careplan.mixin'
+    import DisableEditingMixin from "./mixins/disable-editing.mixin";
+
 
     export default {
         name: 'care-areas',
-        props: [
-            'patient-id'
-        ],
-        mixins: [CareplanMixin],
+        props: {
+            patientId: {
+                type: String,
+                required: true,
+            }
+        },
+        mixins: [CareplanMixin,DisableEditingMixin],
         components: {
             'care-areas-modal': CareAreasModal
         },

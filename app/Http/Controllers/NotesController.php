@@ -28,11 +28,10 @@ use App\Services\NoteService;
 use App\Services\PatientCustomEmail;
 use App\ValueObjects\CreateManualCallAfterNote;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\AttestationRequirements;
 use CircleLinkHealth\Customer\Entities\CarePerson;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
@@ -232,7 +231,7 @@ class NotesController extends Controller
             'cpmProblems'                     => (new CpmProblemService())->all(),
             'patientRequestToKnow'            => $answerFromMoreInfo,
             'hasSuccessfulCall'               => $hasSuccessfulCall,
-            'attestationRequirements'         => $this->getAttestationRequirementsIfYouShould($patient),
+            'attestationRequirements'         => AttestationRequirements::get($patientId)->toArray(),
             'shouldShowForwardNoteSummaryBox' => is_null($existingNote) || 'draft' === optional($existingNote)->status,
             'shouldRnApprove'                 => $shouldRnApprove,
             'hasRnApprovedCarePlan'           => $hasRnApprovedCp,
@@ -932,76 +931,6 @@ class NotesController extends Controller
 
         // this is risky
         return json_decode($surveyAnswer->value)[0]->name;
-    }
-
-    /**
-     * Per CPM-2259
-     * Default behaviour for attesting patient conditions is: Require at least 1 condition to be attested on call.
-     *
-     * However:
-     *
-     * If feature is enabled for practice,
-     *
-     * If current summary has CCM code && less than 2 conditions have been attested alredy -> require nurse to
-     * attest to 2 CCM conditions in the modal.
-     * (Make distinction between CCM && BHI only if summary has both BHI && CCM code enabled - is_complex)
-     *
-     * If current summary has also BHI code && no BHI conditions have been attested already -> require nurse to
-     * attest 1 BHI condition along with 2 CCM
-     */
-    private function getAttestationRequirementsIfYouShould(User $patient)
-    {
-        $requirements = [
-            'disabled'              => true,
-            'has_ccm'               => false,
-            'has_pcm'               => false,
-            'ccm_problems_attested' => 0,
-            'bhi_problems_attested' => 0,
-        ];
-
-        if ( ! complexAttestationRequirementsEnabledForPractice($patient->primaryPractice->id)) {
-            return $requirements;
-        }
-
-        $requirements['disabled'] = false;
-
-        if ( ! PatientMonthlySummary::existsForCurrentMonthForPatient($patient)) {
-            PatientMonthlySummary::createFromPatient($patient->id, Carbon::now()->startOfMonth());
-        }
-
-        /**
-         * @var PatientMonthlySummary
-         */
-        $pms = $patient->patientSummaries()
-            ->with([
-                //all chargeable services includes un-fulfilled service codes as well as fulfilled.
-                'allChargeableServices',
-                'attestedProblems',
-            ])
-            ->getCurrent()
-            ->first();
-
-        //if this hasn't had last month's chargeable services attach for some reason, try here
-        if ($pms->allchargeableServices->isEmpty()) {
-            $pms->attachChargeableServicesToFulfill();
-            $pms->load('allChargeableServices');
-        }
-
-        $services = $pms->allChargeableServices;
-
-        if ($services->where('code', ChargeableService::CCM)->isNotEmpty()) {
-            $requirements['has_ccm'] = true;
-        }
-
-        if ($services->where('code', ChargeableService::PCM)->isNotEmpty()) {
-            $requirements['has_pcm'] = true;
-        }
-
-        $requirements['ccm_problems_attested'] = $pms->ccmAttestedProblems(true)->count();
-
-        $requirements['bhi_problems_attested'] = $pms->bhiAttestedProblems(true)->count();
-
-        return $requirements;
     }
 
     private function getProviders($getNotesFor)

@@ -7,6 +7,7 @@
 use App\Providers\CpmArtisanServiceProvider;
 use App\Providers\PrimaryNavComposer;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
+use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
@@ -224,12 +225,14 @@ return [
         CardServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
+        CcmBillingServiceProvider::class,
         \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
         \CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider::class,
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
         SynonymsServiceProvider::class,
         Macellan\Zip\ZipServiceProvider::class,
+        FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider::class,
     ],
 
     /*
@@ -279,6 +282,8 @@ return [
         'View'         => Illuminate\Support\Facades\View::class,
 
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
+
+        'BillingCache' => \CircleLinkHealth\CcmBilling\Facades\BillingCache::class,
 
         'DataTables'   => Yajra\DataTables\Facades\DataTables::class,
         'Form'         => \Collective\Html\FormFacade::class,

@@ -8,6 +8,7 @@ namespace App\Nova\Actions;
 
 use App\Entities\PatientTime;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -69,6 +70,13 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             /** @var PageTimer $timeRecord */
             $timeRecord = $model;
 
+            if ( ! $this->canModifyTemp($timeRecord)) {
+                $this->markAsFailed(
+                    $timeRecord,
+                    'You cannot modify this time tracker entry, because it has time tracked for multiple activities. Please contact CLH Dev Team.'
+                );
+            }
+
             if ( ! $this->canModify($timeRecord)) {
                 $this->markAsFailed(
                     $timeRecord,
@@ -127,6 +135,17 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         $csCode = $chargeableServices->firstWhere('id', '=', $activity->chargeable_service_id)->code;
 
         return $this->isModifiable($patientTime, $csCode);
+    }
+
+    /**
+     * Temporary block for modifying page timer entries with multiple activities.
+     * Will be removed with ROAD-389.
+     *
+     * @return bool
+     */
+    private function canModifyTemp(PageTimer $timeRecord)
+    {
+        return $timeRecord->activities->count() <= 1;
     }
 
     private function isModifiable(PatientTime $patientTime, string $csCode)
@@ -192,6 +211,9 @@ class ModifyTimeTracker extends Action implements ShouldQueue
 
             //if this was a billable activity, we have to
             //recalculate ccm/bhi time for patient (patient_monthly_summaries table)
+
+            //todo: unfulfill everything
+            ProcessSinglePatientMonthlyServices::dispatch($activity->patient_id);
             \Artisan::call('ccm_time:recalculate', [
                 'dateString' => $startTime->toDateString(),
                 'userIds'    => $timeRecord->patient_id,

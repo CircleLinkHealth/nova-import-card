@@ -1,4 +1,4 @@
-<li class="dropdown">
+<li class="dropdown callback-admin-fix">
     <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
          aria-expanded="false">
         <i class="top-nav-item-icon glyphicon glyphicon glyphicon-cog"></i>

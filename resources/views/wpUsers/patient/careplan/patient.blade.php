@@ -12,7 +12,7 @@ $user_info = [];
     {!! Form::open(['url' => optional($patient)->id ? route('patient.demographics.update', [$patient->id]) : route('patient.demographics.store'), 'method' => optional($patient)->id ? 'patch' : 'post', 'class' => 'form-horizontal', 'id' => 'ucpForm']) !!}
     <div class="row" style="margin-top:20px;margin-bottom:20px;">
         <div class="col-lg-10 col-lg-offset-1 col-xs-12 col-xs-offset-0">
-            <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;margin-bottom:20px;">
+            <div class="main-form-container-last col-lg-10 col-lg-offset-1" style="margin-top:20px;margin-bottom:20px;">
                 <div class="row"><!-- no-overflow-->
                     @if(isset($patient->id) )
                         <div class="main-form-title col-lg-12">
@@ -482,6 +482,18 @@ $user_info = [];
                                                                             value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE ? 'selected' : ''}}>
                                                                         Unreachable
                                                                     </option>
+                                                                @else
+                                                                    @if($patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED)
+                                                                    <option class="paused" disabled
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" selected>
+                                                                        Paused
+                                                                    </option>
+                                                                    @elseif($patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE)
+                                                                    <option class="unreachable" disabled
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" selected>
+                                                                        Unreachable
+                                                                    </option>
+                                                                    @endif
                                                                 @endif
                                                             </select>
                                                         </div>
@@ -595,13 +607,15 @@ $user_info = [];
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12 text-center" style="margin-top: -24px">
-                                <hr style="border-top: 3px solid #50b2e2;">
-                            </div>
-                            <div class="main-form-block main-form-secondary col-lg-12 text-center">
-                                <button id="save-patient-btn" class="btn btn-primary">Save Profile</button>
-                                <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
-                            </div>
+                            @if(! auth()->user()->hasPermission('edit-patient-chart.disable'))
+                                <div class="col-lg-12 text-center" style="margin-top: -24px">
+                                    <hr style="border-top: 3px solid #50b2e2;">
+                                </div>
+                                <div class="main-form-block main-form-secondary col-lg-12 text-center">
+                                    <button id="save-patient-btn" class="btn btn-primary">Save Profile</button>
+                                    <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
+                                </div>
+                            @endif
                         </div>
                         @push('styles')
                             <style>

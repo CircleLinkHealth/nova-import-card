@@ -12,11 +12,17 @@ class ChargeableServiceDuration
     public ?int $id;
 
     /**
+     * For background compatibility.
+     */
+    public bool $isBehavioral;
+
+    /**
      * ChargeableServiceDuration constructor.
      */
-    public function __construct(?int $id, int $duration)
+    public function __construct(?int $id, int $duration, bool $isBehavioral = false)
     {
-        $this->id       = $id;
-        $this->duration = $duration;
+        $this->id           = $id;
+        $this->isBehavioral = $isBehavioral;
+        $this->duration     = $duration;
     }
 }

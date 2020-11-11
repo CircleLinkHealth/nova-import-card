@@ -14,7 +14,7 @@
         </style>
     @endpush
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2 col-xs-10 col-xs-offset-1">
+        <div class="main-form-container col-lg-10 col-lg-offset-1 col-xs-10 col-xs-offset-1">
             <div class="row">
                 <div class="main-form-title">
                     Patient Activity Report
@@ -30,7 +30,9 @@
                 )) !!}
 
                 <div class="col-sm-3 col-xs-3" style="top: 20px">
-                    <input type="submit" value="Audit Report" name="download-audit-report" id="download-audit-report" class="btn btn-primary">
+                    @if(! auth()->user()->hasPermission('downloads.disable'))
+                        <input type="submit" value="Audit Report" name="download-audit-report" id="download-audit-report" class="btn btn-primary">
+                    @endif
 
                 @if ($data && $month_selected_text === \Carbon\Carbon::now()->format('F'))
                         <button id="refresh-activity" type="button" class="btn btn-primary">
@@ -98,7 +100,7 @@
                                 }
 
                                 function durationType(obj) {
-                                    return obj.is_behavioral ? 'BHI' : 'CCM';
+                                    return obj.chargeable_service_name;
                                 }
 
                                 function durationSumm(master, type) {
@@ -168,6 +170,16 @@
                                         node.firstChild.innerHTML = durationSumm(master, 'BHI');
                                     }
                                 }, webix.ui.datafilter.summColumn);
+                                webix.ui.datafilter.mySummColumnPCM = webix.extend({
+                                    refresh: function (master, node, value) {
+                                        node.firstChild.innerHTML = durationSumm(master, 'PCM');
+                                    }
+                                }, webix.ui.datafilter.summColumn);
+                                webix.ui.datafilter.mySummColumnRPM = webix.extend({
+                                    refresh: function (master, node, value) {
+                                        node.firstChild.innerHTML = durationSumm(master, 'RPM');
+                                    }
+                                }, webix.ui.datafilter.summColumn);
 
                             obs_alerts_dtable = new webix.ui({
                                 container: "obs_alerts_container",
@@ -193,13 +205,13 @@
 
                                             template: function (obj) {
                                                 if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                    return `<a href="/manage-patients/${patientId}/view/${obj.id}">${obj.type}</a>`;
+                                                    return `<a href="/manage-patients/${patientId}/activities/view/${obj.id}">${obj.type}</a>`;
                                                 else
                                                     return obj.type;
                                             },
 
-                                            fillspace: true,
-                                            width: 202,
+                                            fillspace: false,
+                                            width: 250,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "left"}
                                         },
@@ -214,7 +226,7 @@
                                         {
                                             id: "durationCCM",
                                             header: ["Total CCM", "(HH:MM:SS)"],
-                                            width: 150,
+                                            width: 130,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnCCM", css: "duration-footer"},
@@ -225,15 +237,40 @@
                                         {
                                             id: "durationBHI",
                                             header: ["Total BHI", "(HH:MM:SS)"],
-                                            width: 150,
-                                            fillspace: true,
+                                            width: 130,
+                                            fillspace: false,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnBHI", css: "duration-footer"},
                                             template: function (obj) {
                                                 return durationData(obj, 'BHI');
                                             }
+                                        },
+                                    {
+                                        id: "durationPCM",
+                                        header: ["Total PCM", "(HH:MM:SS)"],
+                                        width: 130,
+                                        fillspace: false,
+                                        sort: 'string',
+                                        css: {"color": "black", "text-align": "right"},
+                                        footer: {content: "mySummColumnPCM", css: "duration-footer"},
+                                        template: function (obj) {
+                                            return durationData(obj, 'PCM');
                                         }
+                                    },
+                                    {
+                                        id: "durationRPM",
+                                        header: ["Total RPM", "(HH:MM:SS)"],
+                                        width: 130,
+                                        fillspace: true,
+                                        sort: 'string',
+                                        css: {"color": "black", "text-align": "right"},
+                                        footer: {content: "mySummColumnRPM", css: "duration-footer"},
+                                        template: function (obj) {
+                                            return durationData(obj, 'RPM');
+                                        }
+                                    },
+
                                     ],
                                     ready: function () {
                                         this.adjustRowHeight("type");
@@ -272,8 +309,6 @@
                                         },
                                         data: {},
                                         success: function (data) {
-                                            $('#monthly-time-static').html(data.monthlyTime);
-                                            $('#monthly-bhi-time-static').html(data.monthlyBhiTime);
                                             const scrollPosition = $(document).scrollTop();
                                             obs_alerts_dtable.clearAll();
                                             obs_alerts_dtable.parse(data.table);
@@ -291,7 +326,7 @@
 
                             </script>
                         @endpush
-                        @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)))
+                        @if( (auth()->user()->hasRole(array_merge(['administrator', 'software-only'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES))) && (! auth()->user()->hasPermission('downloads.disable')) )
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
                                            header:'CarePlanManager.com - Patient Activity Report <?= date('M d,Y'); ?>',
