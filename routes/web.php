@@ -1084,21 +1084,21 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'family.get',
         ])->middleware('permission:patient.read');
     });
-    
+
     Route::group([
-        'prefix' => 'pam'
+        'prefix' => 'pam',
     ], function () {
         Route::get('', [
             'uses' => 'Admin\PatientCallManagementController@remixV2',
             'as'   => 'patientCallManagement.v2.index',
         ])->middleware('permission:pam.view');
-    
+
         Route::get('export', [
             'uses' => 'Admin\Reports\CallReportController@exportxlsV2',
             'as'   => 'CallReportController.exportxlsv2',
         ])->middleware('permission:pam.export');
     });
-    
+
     //
     // ADMIN (/admin)
     //
@@ -1475,7 +1475,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'reports.sales.practice.report',
                 ])->middleware('permission:salesReport.create');
             });
-            
+
             Route::group([
                 'prefix' => 'calls-dashboard',
             ], function () {

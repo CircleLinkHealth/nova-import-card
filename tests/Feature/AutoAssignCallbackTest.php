@@ -14,7 +14,7 @@ use App\PostmarkInboundMail;
 use App\Services\Calls\SchedulerService;
 use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use App\Traits\Tests\PostmarkCallbackHelpers;
-use App\Traits\Tests\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use App\UnresolvedPostmarkCallback;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
