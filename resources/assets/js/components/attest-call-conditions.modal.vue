@@ -361,7 +361,9 @@
 
                 if (this.isBhiEligible()){
                     if (bhiError) {
-                        this.showBhiLink = true;
+                        if (this.isCcmEligible()){
+                            this.showBhiLink = true;
+                        }
                         if (ccmError){
                             message = 'Please select 2 CCM conditions and  the BHI condition(s) discussed on this call.';
                         }else if(pcmError){
