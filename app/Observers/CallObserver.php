@@ -17,7 +17,6 @@ use App\Services\Calls\SchedulerService;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Facades\Notification;
 
 class CallObserver
 {
@@ -39,14 +38,13 @@ class CallObserver
     /**
      * @param $call
      */
-    public function createNotificationAndSendToPusher($call)
+    public function createLiveNotification($call)
     {
         if ( ! auth()->check()) {
             return;
         }
 
-        $notify = $call->outboundUser;
-        Notification::send($notify, new CallCreated($call, auth()->user()));
+        optional($call->outboundUser)->notify(new CallCreated($call, auth()->user()));
     }
 
     public function saved(Call $call)
@@ -81,7 +79,7 @@ class CallObserver
         }
 
         if ($call->shouldSendLiveNotification()) {
-            $this->createNotificationAndSendToPusher($call);
+            $this->createLiveNotification($call);
         }
     }
 

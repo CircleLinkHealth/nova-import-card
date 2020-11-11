@@ -145,12 +145,24 @@
                                 .catch(err => {
                                     let reason = err.toString();
                                     if (err.response) {
-                                        if (err.response && err.response.data && err.response.data.message) {
-                                            reason = err.response.data.message;
-                                        } else {
+                                        if (err.response && err.response.data) {
+                                            if (typeof err.response.data === 'string') {
+                                                reason = err.response.data;
+                                            }
+                                            else {
+                                                reason = err.response.data.message;
+                                            }
+                                        }
+
+                                        if (!reason) {
                                             reason = err.response.statusText;
                                         }
                                     }
+
+                                    if (!reason) {
+                                        reason = err.toString();
+                                    }
+
                                     Event.$emit('notifications-select-nurse:create', {
                                         type: 'error',
                                         text: reason,

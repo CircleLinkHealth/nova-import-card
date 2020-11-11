@@ -40,27 +40,25 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\CPRulesQuestions                                                                       $question
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User                                                    $user
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereCommentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereLegacyObsId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDateGmt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsKey($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMessageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMethod($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsUnit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsValue($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereProgramId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereSequenceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUserId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation newModelQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation newQuery()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation query()
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereCommentId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereCreatedAt($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereLegacyObsId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDate($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDateGmt($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsKey($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMessageId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMethod($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsUnit($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsValue($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereProgramId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereSequenceId($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereUpdatedAt($value)
+ * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\App\Observation whereUserId($value)
  * @mixin \Eloquent
- *
  * @property int|null    $meta_count
  * @property int|null    $revision_history_count
  * @property string|null $severity

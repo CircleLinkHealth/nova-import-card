@@ -113,6 +113,7 @@ if (isset($patient) && ! empty($patient)) {
                                 <div>
                                     <care-docs-index patient-id="{{$patient->id}}"
                                                      awv-url="{{config('services.awv.url')}}"
+                                                     auth-role="{{auth()->user()->practiceOrGlobalRole()->name}}"
                                                      ref="CareDocs"></care-docs-index>
                                 </div>
                             </div>

@@ -30,7 +30,7 @@
                     Notes and Activities
                 </div>
                 @include('partials.userheader')
-                @if(! auth()->user()->isCareCoach() || (auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id)))
+                @if((! auth()->user()->isCareCoach() && auth()->user()->hasPermission('note.create')) || (auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id)))
                     <div class="col-sm-6 col-xs-4">
                         <a href="{{ route('patient.note.create', [$patient->id]) }}"
                            class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">
@@ -271,7 +271,7 @@
                                 </li>
 
                             </div>
-                            @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)) )
+                            @if( (auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)) && (! auth()->user()->hasPermission('downloads.disable')) ) )
 
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'

@@ -182,7 +182,7 @@
                 default: false
             },
             patientId: {
-                type: Number,
+                type: String,
                 default: false
             }
         },
