@@ -8,7 +8,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateOfflineActivityTimeRequest;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
-use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
