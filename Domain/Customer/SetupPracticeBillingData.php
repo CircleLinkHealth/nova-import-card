@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Customer;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
+use CircleLinkHealth\CcmBilling\Jobs\ClearPracticeLocationSummaries;
 use CircleLinkHealth\CcmBilling\Jobs\MigrateChargeableServicesFromChargeablesToLocationSummariesTable;
 use CircleLinkHealth\CcmBilling\Jobs\MigratePracticeServicesFromChargeablesToLocationSummariesTable;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessAllPracticePatientMonthlyServices;
@@ -36,15 +37,15 @@ class SetupPracticeBillingData
         ])->dispatch($practiceId);
     }
 
-    public static function sync(int $practiceiD)
+    public static function sync(int $practiceId)
     {
-        $locations = Location::where('practice_id', $practiceiD)
-            ->get();
-
-        ChargeableLocationMonthlySummary::whereIn('location_id', $locations->pluck('id')->toArray())
-            ->where('chargeable_month', Carbon::now()->startOfMonth())
-            ->delete();
-
-        self::forPractice($practiceiD);
+        //todo: revisit clearing location summaries
+        ClearPracticeLocationSummaries::withChain([
+            new MigratePracticeServicesFromChargeablesToLocationSummariesTable($practiceId),
+            new SeedPracticeCpmProblemChargeableServicesFromLegacyTables($practiceId),
+            new ProcessPracticePatientMonthlyServices($practiceId)
+        ])
+            ->dispatch($practiceId)
+            ->onQueue('high');
     }
 }
