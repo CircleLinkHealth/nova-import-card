@@ -124,6 +124,7 @@ use Illuminate\Support\Collection;
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdThisMonth($field = 'created_at')
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdToday($field = 'created_at')
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdYesterday($field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  */
 class PatientMonthlySummary extends BaseModel
 {

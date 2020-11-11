@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Database\Seeders;
 
-use CircleLinkHealth\Core\Constants;
 use CircleLinkHealth\Customer\Entities\Permission;
 use Illuminate\Database\Seeder;
 
