@@ -5,8 +5,6 @@ module.exports = app => {
     require('express-ws')(app);
 
     const TimeTracker = require('../time-tracker')
-    const TimeTrackerUser = TimeTracker.TimeTrackerUser
-
     const $emitter = require('./sockets.events')
 
     const timeTracker = new TimeTracker($emitter)
@@ -51,6 +49,11 @@ module.exports = app => {
                 continue;
             }
 
+            /**
+             * [
+             *  { chargeable_service_id, time }
+             * ]
+             */
             const timeOnCpm = times[userId];
             for (let j = 0; j < users.length; j++) {
                 const user = users[j];
@@ -58,29 +61,27 @@ module.exports = app => {
                     continue;
                 }
 
-                let shouldSync = false;
-
-                //set values from cpm
-                if (user.totalCCMTime < timeOnCpm.ccm_time) {
-                    shouldSync = true;
-                    user.totalCCMTime = timeOnCpm.ccm_time;
+                const toSet = [];
+                for (let k = 0; k < timeOnCpm.length; k++) {
+                    const csTimeFromCpm = timeOnCpm[k];
+                    const csTimeHere = user.getTotalTimeForCsId(csTimeFromCpm.chargeable_service_id);
+                    if (csTimeHere < csTimeFromCpm.time) {
+                        toSet.push({
+                            chargeable_service: {id: csTimeFromCpm.chargeable_service_id},
+                            total_time: csTimeFromCpm.time
+                        });
+                    }
                 }
 
-                if (user.totalBHITime < timeOnCpm.bhi_time) {
-                    shouldSync = true;
-                    user.totalBHITime = timeOnCpm.bhi_time;
-                }
-
-                const syncTime = timeOnCpm.ccm_time + timeOnCpm.bhi_time;
-                if (!shouldSync) {
+                const syncTime = timeOnCpm.reduce((a, b) => a + b.time, 0);
+                if (!toSet.length) {
                     console.log(`sync time [${syncTime}] is equal or less to current time [${user.totalTime}]. ignoring`);
                     continue;
                 }
 
-                user.totalTime = user.totalCCMTime + user.totalBHITime;
-                const cachedTime = user.totalCcmTimeFromCache + user.totalBhiTimeFromCache;
+                user.setChargeableServices({chargeableServices: toSet});
 
-                console.log('sync time[', syncTime, '] cachedTime[', cachedTime, ']', 'now[', user.totalTime, ']');
+                console.log('sync time[', syncTime, '] cachedTime[', user.totalTimeFromCache, ']', 'now[', user.totalTime, ']');
                 user.sync();
             }
         }
@@ -147,12 +148,12 @@ module.exports = app => {
                         break;
 
                     case 'client:enter':
-                    case 'client:bhi':
-                        user.closeOtherBehavioralActivity(info, ws);
+                    case 'client:chargeable-service-change':
+                        user.closeOtherSameActivityWithOtherChargeableServiceId(info, ws);
                         user.enter(info, ws);
                         user.sync();
-                        if (data.message === 'client:bhi') {
-                            user.switchBhi(info)
+                        if (data.message === 'client:chargeable-service-change') {
+                            user.changeChargeableService(info, ws);
                         }
                         break;
 
@@ -170,11 +171,11 @@ module.exports = app => {
                         break;
 
                     case 'client:call-mode:enter':
-                        user.enterCallMode(info);
+                        user.enterCallMode(info, ws);
                         break;
 
                     case 'client:call-mode:exit':
-                        user.exitCallMode(info);
+                        user.exitCallMode(ws);
                         break;
 
                     case 'client:timeouts:override':
@@ -204,8 +205,6 @@ module.exports = app => {
 
             // there are cases where we have same keyInfo in timeTracker and timeTrackerNoLiveCount.
             // for this reason, we should check both collections
-            // const user = timeTracker.exists(keyInfo) ? timeTracker.get(keyInfo) :
-            //    (timeTrackerNoLiveCount.exists(keyInfo) ? timeTrackerNoLiveCount.get(keyInfo) : null)
 
             const user = timeTracker.exists(keyInfo) ? timeTracker.get(keyInfo) : null;
             if (user) {
@@ -220,12 +219,11 @@ module.exports = app => {
     });
 
     function closeSessionAndPostToCPM(user, ws) {
-        user.exit(ws)
+        user.exit(ws);
         if (user.allSockets.length === 0) {
             //no active sessions
-
             user.sendToCpm(true);
-            user.close()
+            user.close();
         }
     }
 
@@ -244,48 +242,22 @@ module.exports = app => {
 
             //CPM-1024 - non-ccm pages are missing time
             if (/*!user.noLiveCount && */process.env.NODE_ENV !== 'production') {
-                console.log(
-                    'key:', user.key,
-                    'activities:', user.activities.filter(activity => activity.isActive).length,
-                    'ccm:', user.totalCcmSeconds,
-                    'bhi:', user.totalBhiSeconds,
-                    'inactive-seconds:', user.inactiveSeconds,
-                    'durations:', user.activities.map(activity => (activity.isActive ? colors.FgGreen : colors.FgRed) + activity.duration + colors.Reset).join(', '),
-                    'sockets:', user.allSockets.length,
-                    'call-mode:', (user.callMode ? colors.FgBlue : '') + user.callMode + colors.Reset
-                )
+                const obj = {
+                    'noLiveCount': user.noLiveCount ? 'Yes' : 'No',
+                    'key': user.key,
+                    'activities': user.activities
+                        .map(a => {
+                            return `Name[${a.name}] - Active[${a.isActive}] - Seconds[${a.duration}] - CsId[${a.chargeableServiceId}]`;
+                        })
+                        .join(' | '),
+                    'totalTime': user.totalTime,
+                    'totalDuration': user.totalDuration,
+                    'inactive-seconds': user.inactiveSeconds,
+                    'sockets': user.allSockets.length,
+                    'call-mode': user.callMode ? 'Yes' : 'No'
+                }
+                console.table(obj);
             }
         }
     }, 1000);
-
 };
-
-/**
- * restart process every day at 2 am
- */
-
-const THRESHOLD_INTERVAL_SECONDS = 60 * 2; //2 minutes
-const HOURS = 2;
-const MINUTES = 0;
-setInterval(function () {
-
-    const upTimeSeconds = Math.floor(process.uptime());
-
-    if (upTimeSeconds < THRESHOLD_INTERVAL_SECONDS) {
-        // uptime less than 2 minutes.
-        // most probably process was just restarted
-        // console.debug("Uptime is ", upTimeSeconds, "seconds. Exiting.");
-        return;
-    }
-
-    const dateNow = new Date();
-    const hours = dateNow.getHours();
-    const minutes = dateNow.getMinutes();
-    // console.debug('Hours are now', hours, 'and minutes', minutes);
-
-    if (hours === HOURS && minutes === MINUTES) {
-        // console.debug('Exiting. Please restart me PM.');
-        process.exit(0);
-    }
-
-}, 1000 * 60); //check every minute

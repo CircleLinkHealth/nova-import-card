@@ -12,6 +12,9 @@ var https = require('https');
 var fs = require('fs');
 var errorLogger = require('../logger').getErrorLogger();
 
+var appRestart = require('../app-restart');
+appRestart.setup();
+
 /**
  * Get port from environment and store in Express.
  */

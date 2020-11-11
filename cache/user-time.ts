@@ -1,5 +1,7 @@
 //copied from StoreTimeTracking.php
 //todo: delete these, should not be needed after force_skip
+import {TimeEntity, UsersTimeCollection} from "../types";
+
 const UNTRACKED_ROUTES = [
     'patient.activity.create',
     'patient.activity.providerUIIndex',
@@ -8,35 +10,36 @@ const UNTRACKED_ROUTES = [
 
 const _usersTime: UsersTimeCollection = {};
 
-export function storeTime(key: string, activities: { title: string, is_behavioral: boolean; force_skip: boolean; duration: number }[], totalCcm: number, totalBhi: number) {
-    let finalCcm = totalCcm;
-    let finalBhi = totalBhi;
+export function storeTime(key: string, activities: { title: string, chargeable_service_id: number; force_skip: boolean; duration: number }[], times: TimeEntity[]) {
+    const removeTimeFromCs = (csId: number, timeToRemove: number) => {
+        for (let i = 0; i < times.length; i++) {
+            const time = times[i];
+            if (time.chargeable_service_id === csId) {
+                time.time -= timeToRemove;
+                break;
+            }
+        }
+    };
+
     activities.forEach(a => {
         // remove time for activities that have force_skip or are included in the UNTRACKED_ROUTES array
         if (a.force_skip || UNTRACKED_ROUTES.indexOf(a.title) > -1) {
             console.debug(`activity[${a.title}] has force_skip, will not store in cache`);
-            if (a.is_behavioral) {
-                finalBhi -= a.duration;
-            } else {
-                finalCcm -= a.duration;
-            }
+            removeTimeFromCs(a.chargeable_service_id, a.duration);
         }
     });
-    _usersTime[key] = {ccm: finalCcm, bhi: finalBhi};
+    _usersTime[key] = times;
 }
 
-export function getTime(key: string): TimeEntity {
+export function getTime(key: string): TimeEntity[] {
     if (!_usersTime[key]) {
-        return {ccm: 0, bhi: 0};
+        return [];
     }
     return _usersTime[key];
 }
 
-interface TimeEntity {
-    ccm: number;
-    bhi: number;
-}
-
-interface UsersTimeCollection {
-    [key: string]: TimeEntity;
+export function getTimeForCsId(key:string, csId: number): number {
+    const times = getTime(key);
+    const result = times.filter(t => t.chargeable_service_id === csId)[0];
+    return result ? result.time : 0;
 }
