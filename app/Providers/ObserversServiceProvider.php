@@ -14,7 +14,6 @@ use App\Observers\AppConfigObserver;
 use App\Observers\CallObserver;
 use App\Observers\CarePlanObserver;
 use App\Observers\CarePlanTemplateObserver;
-use App\Observers\ChargeableLocationMonthlySummaryObserver;
 use App\Observers\EligibilityBatchObserver;
 use App\Observers\EnrolleeObserver;
 use App\Observers\HolidayObserver;
@@ -37,7 +36,6 @@ use App\Observers\TwilioCallObserver;
 use App\Observers\UserObserver;
 use App\OutgoingSms;
 use App\TwilioCall;
-use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -92,8 +90,6 @@ class ObserversServiceProvider extends ServiceProvider
         Enrollee::observe(EnrolleeObserver::class);
         TwilioCall::observe(TwilioCallObserver::class);
         Location::observe(LocationObserver::class);
-        //todo: decide event or observer
-//        ChargeableLocationMonthlySummary::observe(ChargeableLocationMonthlySummaryObserver::class);
     }
 
     /**

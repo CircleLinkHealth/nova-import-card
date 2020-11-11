@@ -1817,6 +1817,23 @@ if ( ! function_exists('isPatientPcmBadgeEnabled')) {
     }
 }
 
+if ( ! function_exists('isPatientRpmBadgeEnabled')) {
+    /**
+     * Key: enable_patient_pcm_badge
+     * Default: true.
+     */
+    function isPatientRpmBadgeEnabled(): bool
+    {
+        $key = 'enable_patient_rpm_badge';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            return AppConfig::set($key, true);
+        }
+
+        return $val;
+    }
+}
+
 if ( ! function_exists('upg0506IsEnabled')) {
     /**
      * Key: upg0506_is_enabled
@@ -2151,33 +2168,6 @@ if ( ! function_exists('minDaysPastForCareAmbassadorNextAttempt')) {
         $key = 'min_days_past_for_care_ambassador_next_attempt';
 
         return (int) AppConfig::pull($key, 3);
-    }
-}
-if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
-    /**
-     * @param mixed $practiceId
-     */
-    function complexAttestationRequirementsEnabledForPractice($practiceId): bool
-    {
-        $key = 'complex_attestation_requirements_for_practice';
-
-        $val = AppConfig::pull($key, null);
-        if (null === $val) {
-            AppConfig::set($key, '');
-
-            $practiceIds = [];
-        } else {
-            $practiceIds = explode(',', $val);
-        }
-
-        return in_array($practiceId, $practiceIds) || in_array('all', $practiceIds);
-    }
-}
-
-if ( ! function_exists('isCpm')) {
-    function isCpm()
-    {
-        return 'CarePlan Manager' === config('app.name');
     }
 }
 

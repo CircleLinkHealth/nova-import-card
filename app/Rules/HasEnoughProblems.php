@@ -6,14 +6,20 @@
 
 namespace App\Rules;
 
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
+use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Collection;
 
 class HasEnoughProblems implements Rule
 {
+    const VALIDATION_ERROR_TEXT = 'The Care Plan must have two CCM problems or one BHI, PCM or RPM problem.';
     /** @var User */
     private $patient;
+
+    private Collection $problems;
 
     /**
      * Create a new rule instance.
@@ -30,7 +36,7 @@ class HasEnoughProblems implements Rule
      */
     public function message()
     {
-        return 'The Care Plan must have two CPM problems for CCM, one if practice has PCM (G2065) enabled or one BHI problem.';
+        return self::VALIDATION_ERROR_TEXT;
     }
 
     /**
@@ -48,20 +54,24 @@ class HasEnoughProblems implements Rule
             return false;
         }
 
-        $cpmProblems = $value->count();
-        $bhiProblems = $value->where('cpmProblem.is_behavioral', true)->count();
+        $this->problems = PatientProblemsForBillingProcessing::getCollection($this->patient->id);
 
-        if ($bhiProblems >= 1) {
-            return true;
+        foreach (ChargeableService::CODES_THAT_CAN_HAVE_PROBLEMS as $code) {
+            if ($this->hasEnoughProblemsForCode($code)) {
+                return true;
+            }
         }
 
-        // if we reach here, it means that we have no $bhiProblems.
-        // so, if only one ccm problem, we check if PCM is enabled for the practice
-        // otherwise, we return true only if ccm problems are equal or more than two
-        if (1 === $cpmProblems) {
-            return $this->patient->primaryPractice->hasServiceCode(ChargeableService::PCM);
-        }
+        return false;
+    }
 
-        return $cpmProblems >= 2;
+    private function hasEnoughProblemsForCode(string $code): bool
+    {
+        return $this->problems
+            ->filter(
+                fn (PatientProblemForProcessing $p) => 0 != count(array_intersect([$code], $p->getServiceCodes()))
+            )
+            ->count()
+            >= (PatientProblemsForBillingProcessing::SERVICE_PROBLEMS_MIN_COUNT_MAP[$code] ?? 0);
     }
 }

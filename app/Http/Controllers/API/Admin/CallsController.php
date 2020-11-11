@@ -15,7 +15,6 @@ use App\Http\Resources\UserResource;
 use App\Services\Calls\ManagementService;
 use App\Services\NoteService;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Constants;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;

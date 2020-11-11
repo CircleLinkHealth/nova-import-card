@@ -12,7 +12,7 @@ use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use CircleLinkHealth\Customer\Entities\CompanyHoliday;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\AggregatedTotalTimePerNurse;
+use CircleLinkHealth\NurseInvoices\Time\AggregatedTotalTimePerNurse;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

@@ -86,7 +86,7 @@
                 sendRequest("end_call", null)
                     .then(msg => {
                     })
-                    .catch(err => console.error(err));
+                    .catch(err => console.warn(err));
             },
             checkForCallStatus() {
                 sendRequest("call_status", null, 5000)

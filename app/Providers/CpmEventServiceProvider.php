@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Events\CarePlanWasApproved;
 use App\Events\CarePlanWasProviderApproved;
 use App\Events\CarePlanWasQAApproved;
@@ -17,7 +16,6 @@ use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
 use App\Listeners\AddPatientConsentNote;
-use App\Listeners\AttachAttestedProblemsToCall;
 use App\Listeners\AttachUPG0506CarePlanToPatientUser;
 use App\Listeners\AutoApproveCarePlan;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
@@ -40,9 +38,11 @@ use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\CcmBilling\Events\LocationServicesAttached;
+use CircleLinkHealth\CcmBilling\Events\NurseAttestedToPatientProblems;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\CcmBilling\Events\PatientProblemsChanged;
 use CircleLinkHealth\CcmBilling\Events\PatientSuccessfulCallCreated;
+use CircleLinkHealth\CcmBilling\Listeners\CreateAttestationRecords;
 use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationPatientServices;
 use CircleLinkHealth\CcmBilling\Listeners\ProcessLocationProblemServices;
 use CircleLinkHealth\CcmBilling\Listeners\ProcessPatientServices;
@@ -107,8 +107,8 @@ class CpmEventServiceProvider extends ServiceProvider
         PatientContactWindowUpdatedEvent::class => [
             PatientContactWindowUpdated::class,
         ],
-        CallIsReadyForAttestedProblemsAttachment::class => [
-            AttachAttestedProblemsToCall::class,
+        NurseAttestedToPatientProblems::class => [
+            CreateAttestationRecords::class,
         ],
         DirectMailMessageReceived::class => [
             UPG0506DirectMailListener::class,

@@ -84,6 +84,16 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property int|null                                                                                    $revision_history_count
  * @property string|null                                                                                 $preferred_contact_language
  * @property int|null                                                                                    $is_demo
+ * @property string|null                                                                                 $ccm_total_time
+ * @property string|null                                                                                 $bhi_total_time
+ * @property string|null                                                                                 $pcm_total_time
+ * @property string|null                                                                                 $rpm_total_time
+ * @property string|null                                                                                 $pms_ccm_time
+ * @property int|null                                                                                    $pms_bhi_time
+ * @property int|null                                                                                    $pms_no_of_calls
+ * @property int|null                                                                                    $pms_no_of_successful_calls
+ * @property int|null                                                                                    $total_no_of_calls
+ * @property int|null                                                                                    $total_no_of_successful_calls
  */
 class CallView extends SqlViewModel
 {

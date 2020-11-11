@@ -59,38 +59,8 @@ $authRoleName = auth()->user()->practiceOrGlobalRole()->name;
 
                                 <div class="col-sm-12" style="text-align: center">
                                     <br/>
-                                    <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
-                                        <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
-
-                                            <?php
-                                            $noLiveCountTimeTracking = (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
-                                            $ccmCountableUser        = auth()->user()->isCCMCountable();
-                                            ?>
-                                            @if ($noLiveCountTimeTracking)
-                                                <div class="color-grey">
-                                                        <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patientId' => $patient->id]) }}">
-                                                            {{$monthlyTime}}
-                                                        </a>
-                                                        <span style="display:none">
-                                                            <time-tracker ref="TimeTrackerApp"
-                                                                          :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
-                                                                          class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                                                          :info="timeTrackerInfo"
-                                                                          :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
-                                                                          :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
-                                                        </span>
-                                                    </div>
-                                            @else
-                                                <time-tracker ref="TimeTrackerApp"
-                                                              class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                                              :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
-                                                              :info="timeTrackerInfo"
-                                                              :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
-                                                              :override-timeout="{{config('services.time-tracker.override-timeout')}}">
-                                                            @include('partials.tt-loader')
-                                                    </time-tracker>
-                                            @endif
-                                        </span>
+                                    <span style="font-size: 27px;">
+                                        @include('partials.providerUItimerComponent')
                                     </span>
                                 </div>
                                 @if(! empty(optional($errors)->messages()))
@@ -163,30 +133,28 @@ $authRoleName = auth()->user()->practiceOrGlobalRole()->name;
                                             : null;
                                         ?>
 
-                                        @if(! auth()->user()->hasPermission('downloads.disable'))
-                                                <careplan-actions v-cloak
-                                                                  mode="web"
-                                                                  ccm-status="{{$patientCcmStatus}}"
-                                                                  careplan-status="{{$careplanStatus}}"
-                                                                  user-scope="{{auth()->user()->scope}}"
-                                                                  :is-provider="@json(auth()->user()->providerInfo && auth()->user()->isProvider())"
-                                                                  :is-care-coach="@json(auth()->user()->isCareCoach())"
-                                                                  :is-admin="@json(auth()->user()->isAdmin())"
-                                                                  :provider-can-approve-own-care-plans="@json(auth()->user()->providerInfo && auth()->user()->providerInfo->approve_own_care_plans)"
-                                                                  :rn-approval-enabled="@json($rnApprovalEnabled)"
-                                                                  :show-ready-for-dr-button="@json($showReadyForDrButton)"
-                                                                  :ready-for-dr-button-disabled="@json($readyForDrButtonDisabled)"
-                                                                  :ready-for-dr-button-already-clicked="@json($readyForDrButtonAlreadyClicked)"
-                                                                  :should-show-approval-button="@json(optional($patientCarePlan)->shouldShowApprovalButton() ?? false)"
-                                                                  :patient-care-plan-pdfs-has-items="@json($patientCarePlanPdfsHasItems)"
-                                                                  route-approve-own="{{route('provider.update-approve-own')}}"
-                                                                  route-approve="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
-                                                                  route-approve-view-next="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
-                                                                  route-switch-to-pdf="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
-                                                                  route-print-care-plan="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}"
-                                                                  route-care-plan-not-eligible="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id])}}">
-                                                </careplan-actions>
-                                        @endif
+                                        @if(! auth()->user()->hasPermission('downloads.disable'))<careplan-actions v-cloak
+                                                          mode="web"
+                                                          ccm-status="{{$patientCcmStatus}}"
+                                                          careplan-status="{{$careplanStatus}}"
+                                                          user-scope="{{auth()->user()->scope}}"
+                                                          :is-provider="@json(auth()->user()->providerInfo && auth()->user()->isProvider())"
+                                                          :is-care-coach="@json(auth()->user()->isCareCoach())"
+                                                          :is-admin="@json(auth()->user()->isAdmin())"
+                                                          :provider-can-approve-own-care-plans="@json(auth()->user()->providerInfo && auth()->user()->providerInfo->approve_own_care_plans)"
+                                                          :rn-approval-enabled="@json($rnApprovalEnabled)"
+                                                          :show-ready-for-dr-button="@json($showReadyForDrButton)"
+                                                          :ready-for-dr-button-disabled="@json($readyForDrButtonDisabled)"
+                                                          :ready-for-dr-button-already-clicked="@json($readyForDrButtonAlreadyClicked)"
+                                                          :should-show-approval-button="@json(optional($patientCarePlan)->shouldShowApprovalButton() ?? false)"
+                                                          :patient-care-plan-pdfs-has-items="@json($patientCarePlanPdfsHasItems)"
+                                                          route-approve-own="{{route('provider.update-approve-own')}}"
+                                                          route-approve="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
+                                                          route-approve-view-next="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
+                                                          route-switch-to-pdf="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
+                                                          route-print-care-plan="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}"
+                                                          route-care-plan-not-eligible="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id])}}">
+                                        </careplan-actions>@endif
                                     @endif
                                 </div>
                             </div>

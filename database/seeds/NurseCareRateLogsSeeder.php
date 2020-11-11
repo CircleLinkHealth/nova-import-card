@@ -40,6 +40,7 @@ class NurseCareRateLogsSeeder extends Seeder
         $provider3 = $this->createUser($practice3->id);
         $patient3  = $this->setupPatient($practice3);
 
+        //todo: cleanup
         $nurseHourlyRate = 10.0;
         $nurse           = $this->setupNurse($practice1->id, true, $nurseHourlyRate, true);
 

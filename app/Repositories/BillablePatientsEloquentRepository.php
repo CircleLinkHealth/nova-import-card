@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use App\Constants;
 use App\Relationships\BillableCPMPatientRelations;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
@@ -39,12 +39,12 @@ class BillablePatientsEloquentRepository
                             $q->where(
                                 'ccm_time',
                                 '>=',
-                                AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
+                                Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
                             )
                                 ->orWhere(
                                     'bhi_time',
                                     '>=',
-                                    AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
+                                    Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
                                 );
                         })
                         ->when($showApprovedOnly, function ($q) {
@@ -68,12 +68,12 @@ class BillablePatientsEloquentRepository
                 $q->where(
                     'ccm_time',
                     '>=',
-                    AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
+                    Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
                 )
                     ->orWhere(
                         'bhi_time',
                         '>=',
-                        AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
+                        Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
                     );
             })
             ->when(false === $ignoreWith, function ($q) use ($month, $practiceId) {

@@ -22,6 +22,7 @@ use DB;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\SQLiteBuilder;
@@ -129,6 +130,14 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         );
+
+        EloquentCollection::macro('forgetUsingModelKey', function (string $key, $value) {
+            foreach ($this as $index => $model) {
+                if ($model->$key === $value) {
+                    $this->forget($index);
+                }
+            }
+        });
 
         /** @var ChannelManager $cm */
         $cm = $this->app->make(ChannelManager::class);

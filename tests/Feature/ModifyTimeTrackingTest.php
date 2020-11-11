@@ -7,8 +7,9 @@
 namespace Tests\Feature;
 
 use App\Nova\Actions\ModifyTimeTracker;
-use App\Traits\Tests\PracticeHelpers;
-use App\Traits\Tests\TimeHelpers;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use JoshGaber\NovaUnit\Actions\NovaActionTest;
@@ -25,7 +26,7 @@ class ModifyTimeTrackingTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice);
-        $this->addTime($nurse, $patient, 5, true, true, false);
+        $this->addTime($nurse, $patient, 5, true, true, null);
 
         $time = $patient->getCcmTime();
         self::assertEquals(5 * 60, $time);
@@ -59,7 +60,7 @@ class ModifyTimeTrackingTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice);
-        $this->addTime($nurse, $patient, 5, true, true, false);
+        $this->addTime($nurse, $patient, 5, true, true, null);
 
         $time = $patient->getCcmTime();
         self::assertEquals(5 * 60, $time);
@@ -74,6 +75,8 @@ class ModifyTimeTrackingTest extends CustomerTestCase
             'duration'              => 3 * 60,
             'allow_accrued_towards' => true,
         ], $entry);
+
+        BillingCache::clearPatients();
 
         $entry = $entry->fresh();
         self::assertEquals(3 * 60, $entry->duration);
@@ -93,7 +96,7 @@ class ModifyTimeTrackingTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice);
-        $this->addTime($nurse, $patient, 5, false, false, false);
+        $this->addTime($nurse, $patient, 5, false, false, null);
 
         $time = $patient->getCcmTime();
         self::assertEquals(0, $time);

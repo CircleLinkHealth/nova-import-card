@@ -56,7 +56,7 @@ const NurseDailyHours = () => import(/* webpackChunkName: "chunk" */ './componen
 const QuestionnaireApp = () => import(/* webpackChunkName: "chunk-assessment" */ './admin/questionnaire/app')
 const TimeTracker = () => import(/* webpackChunkName: "chunk-time-tracker" */ './admin/time-tracker')
 const TimeTrackerCallModeComponent = () => import(/* webpackChunkName: "chunk-time-tracker" */ './admin/time-tracker/time-tracker-call-mode')
-const ServerTimeDisplay = () => import(/* webpackChunkName: "chunk" */ './admin/time-tracker/comps/server-time-display')
+const TimeDisplayAllChargeableServicesStatic = () => import(/* webpackChunkName: "chunk" */ './admin/time-tracker/comps/time-display-all-chargeable-services-static')
 const LoaderComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/loader')
 const PersistentTextArea = () => import(/* webpackChunkName: "chunk-misc" */ './components/persistent-textarea')
 const CareAreasComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/care-areas')
@@ -119,7 +119,7 @@ Vue.component('nurseDailyHours', NurseDailyHours);
 Vue.component('questionnaire-app', QuestionnaireApp);
 Vue.component('time-tracker', TimeTracker);
 Vue.component('time-tracker-call-mode', TimeTrackerCallModeComponent);
-Vue.component('server-time-display', ServerTimeDisplay);
+Vue.component('time-display-all-chargeable-services-static', TimeDisplayAllChargeableServicesStatic);
 Vue.component('loader', LoaderComponent);
 Vue.component('persistent-textarea', PersistentTextArea);
 Vue.component('care-areas', CareAreasComponent);
