@@ -178,6 +178,29 @@ class TimeTrackerUser {
             activity.sockets.splice(activity.sockets.indexOf(ws), 1);
         }
     }
+    addToChargeableService(id, code, name, durationSeconds, sync = true) {
+        if (!this.chargeableServices) {
+            this.chargeableServices = [];
+        }
+        const existing = this.chargeableServices.find(item => item.chargeable_service.id === id);
+        if (existing) {
+            existing.total_time += durationSeconds;
+        }
+        else {
+            this.chargeableServices.push({
+                patient_user_id: Number(this.patientId),
+                total_time: durationSeconds,
+                chargeable_service: {
+                    display_name: name,
+                    id: id,
+                    code: code
+                }
+            });
+        }
+        if (sync) {
+            this.sync();
+        }
+    }
     setChargeableServices(info) {
         if (!info || !info.chargeableServices) {
             return;

@@ -202,6 +202,32 @@ export default class TimeTrackerUser {
         }
     }
 
+    addToChargeableService(id: number, code: string, name: string, durationSeconds: number, sync: boolean = true) {
+        if (!this.chargeableServices) {
+            this.chargeableServices = [] as PatientChargeableService[];
+        }
+
+        const existing = this.chargeableServices.find(item => item.chargeable_service.id === id);
+        if (existing) {
+            existing.total_time += durationSeconds;
+        }
+        else {
+            this.chargeableServices.push({
+                patient_user_id: Number(this.patientId),
+                total_time: durationSeconds,
+                chargeable_service: {
+                    display_name: name,
+                    id: id,
+                    code: code
+                }
+            });
+        }
+
+        if (sync) {
+            this.sync();
+        }
+    }
+
     setChargeableServices(info: { chargeableServices: PatientChargeableService[] }) {
         if (!info || !info.chargeableServices) {
             return;
@@ -386,7 +412,7 @@ export default class TimeTrackerUser {
         });
     }
 
-    sync(socket) {
+    sync(socket?) {
         this.allSockets.forEach(ws => {
             // if socket arg is specified, don't send to that socket
             const shouldSend = socket ? (socket !== ws) : true;
