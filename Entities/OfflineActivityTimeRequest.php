@@ -13,17 +13,15 @@ use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
-use GuzzleHttp\Client;
+use CircleLinkHealth\Timetracking\Services\TimeTrackerServerService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Log;
 
 /**
  * CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest.
  *
  * @property int                                                   $id
  * @property int|null                                              $is_approved
- * @property int                                                   $is_behavioral
  * @property string|null                                           $type
  * @property int                                                   $duration_seconds
  * @property int                                                   $patient_id
@@ -93,6 +91,8 @@ use Log;
  * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest
  *     withoutTrashed()
  * @mixin \Eloquent
+ * @property int|null               $chargeable_service_id
+ * @property ChargeableService|null $chargeableService
  */
 class OfflineActivityTimeRequest extends Model
 {
@@ -112,7 +112,7 @@ class OfflineActivityTimeRequest extends Model
         'patient_id',
         'requester_id',
         'is_approved',
-        'is_behavioral',
+        'chargeable_service_id',
         'performed_at',
         'activity_id',
     ];
@@ -124,41 +124,12 @@ class OfflineActivityTimeRequest extends Model
 
     public function approve()
     {
-        // Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
-        $client = new Client();
-
-        $url = config('services.ws.server-url').'/'.$this->requester_id.'/'.$this->patient_id;
-
-        try {
-            $timeParam = $this->is_behavioral
-                ? 'bhiTime'
-                : 'ccmTime';
-            $res = $client->put(
-                $url,
-                [
-                    'form_params' => [
-                        'startTime' => $this->duration_seconds,
-                        $timeParam  => $this->duration_seconds,
-                    ],
-                ]
-            );
-            $status = $res->getStatusCode();
-            $body   = $res->getBody();
-            if (200 == $status) {
-                Log::info($body);
-            } else {
-                Log::critical($body);
-            }
-        } catch (\Exception $ex) {
-            Log::critical($ex);
-        }
-
-        $cs = ChargeableService::firstWhere('code', '=', $this->is_behavioral ? ChargeableService::BHI : ChargeableService::CCM);
+        app(TimeTrackerServerService::class)->syncOfflineTime($this);
 
         $activityId                 = null;
         $nurse                      = optional($this->requester)->nurseInfo;
         $activityService            = app(ActivityService::class);
-        $chargeableServicesDuration = $activityService->separateDurationForEachChargeableServiceId($this->patient, $this->duration_seconds, $cs->id);
+        $chargeableServicesDuration = $activityService->separateDurationForEachChargeableServiceId($this->patient, $this->duration_seconds, $this->chargeable_service_id);
         foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
             $pageTimer                = new PageTimer();
             $pageTimer->activity_type = $this->type;
@@ -182,6 +153,11 @@ class OfflineActivityTimeRequest extends Model
         }
 
         $this->save();
+    }
+
+    public function chargeableService()
+    {
+        return $this->belongsTo(ChargeableService::class, 'chargeable_service_id');
     }
 
     public function durationInMinutes()
