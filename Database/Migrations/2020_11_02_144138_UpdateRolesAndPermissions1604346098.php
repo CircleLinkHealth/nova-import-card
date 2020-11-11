@@ -4,10 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\CcmBilling\Database\Seeders\ChargeableServiceHumanFriendlyNamesSeeder;
 use Illuminate\Database\Migrations\Migration;
 
-class SeedHumanFriendlyNamesForChargeableServices extends Migration
+class UpdateRolesAndPermissions1604346098 extends Migration
 {
     /**
      * Reverse the migrations.
@@ -25,9 +24,9 @@ class SeedHumanFriendlyNamesForChargeableServices extends Migration
      */
     public function up()
     {
-        if (isCpm()) {
+        if ( ! isUnitTestingEnv()) {
             Artisan::call('db:seed', [
-                '--class' => ChargeableServiceHumanFriendlyNamesSeeder::class,
+                '--class' => \CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder::class,
             ]);
         }
     }

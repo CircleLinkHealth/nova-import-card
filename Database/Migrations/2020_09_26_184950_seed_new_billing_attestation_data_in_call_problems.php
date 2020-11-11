@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateRolesAndPermissions1601985978 extends Migration
+class SeedNewBillingAttestationDataInCallProblems extends Migration
 {
     /**
      * Reverse the migrations.
@@ -24,10 +24,8 @@ class UpdateRolesAndPermissions1601985978 extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv()) {
-            Artisan::call('db:seed', [
-                '--class' => \CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder::class,
-            ]);
+        if (isCpm()) {
+            \CircleLinkHealth\CcmBilling\Jobs\MigrateAttestationDataToNewBillingColumns::dispatch();
         }
     }
 }
