@@ -2,30 +2,38 @@
     <div>
         <div class="row">
             <div class="col-sm-6">
-                <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
-                <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
-                <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients
-                </button>
-                <button class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
-                    <span v-if="showOnlyCompletedTasks">Show All Scheduled Activities</span>
-                    <span v-else>Show Completed Tasks</span>
-                </button>
-                <button v-if="isAdmin" class="btn btn-primary btn-xs" @click="changeShowPatientNames">
-                    <span v-if="showPatientNames">Hide Patient Names</span>
-                    <span v-else>Show Patient Names</span>
-                </button>
-                <button class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
-                    <span v-if="includeDemoPatients">Exclude Demo Patients</span>
-                    <span v-else>Include Demo Patients</span>
-                </button>
-                <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
-                <label class="btn btn-gray btn-xs">
-                    <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
-                    Show Unassigned
-                </label>
+                <div v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()" class="inline">
+                    <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
+                </div>
+
+                <div v-if="isAdmin() || isSoftwareOnly()"  class="inline">
+                    <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
+                    <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
+                    <button  class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
+                        <span v-if="showOnlyCompletedTasks">Show All Scheduled Activities</span>
+                        <span v-else>Show Completed Tasks</span>
+                    </button>
+                    <button class="btn btn-primary btn-xs" @click="changeShowPatientNames">
+                        <span v-if="showPatientNames">Hide Patient Names</span>
+                        <span v-else>Show Patient Names</span>
+                    </button>
+                    <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+                    <label class="btn btn-gray btn-xs">
+                        <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
+                        Show Unassigned
+                    </label>
+                </div>
+
+                <div v-if="isAdmin()"  class="inline">
+                    <button class="btn btn-primary btn-xs" @click="changeIncludeDemoPatients">
+                        <span v-if="includeDemoPatients">Exclude Demo Patients</span>
+                        <span v-else>Include Demo Patients</span>
+                    </button>
+                </div>
+
                 <loader class="absolute" v-if="loaders.calls"></loader>
             </div>
-            <div class="col-sm-6 text-right" v-if="selectedPatients.length > 0">
+            <div class="col-sm-6 text-right" v-if="(isAdmin() || isSoftwareOnly()) && selectedPatients.length > 0">
                 <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Care Coach</button>
                 <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Activity Date</button>
                 <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
@@ -35,12 +43,12 @@
         <div>
             <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
                 <template slot="selected" slot-scope="props">
-                    <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
+                    <input v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()" class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
                            :disabled="loaders.nurses"
                            type="checkbox"/>
                 </template>
                 <template slot="h__selected" slot-scope="props">
-                    <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
+                    <input v-if="isAdmin() || isCallbacksAdmin() || isSoftwareOnly()" class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
                 </template>
                 <template slot="Type" slot-scope="props">
                     <div class="container" style="width:auto;padding:0;margin:0">
@@ -77,38 +85,53 @@
                 </template>
                 <template slot="Care Coach" slot-scope="props">
                     <div>
-                        <select-editable v-model="props.row.NurseId" :display-text="props.row['Care Coach']"
+                        <select-editable v-if="canScheduleCalls(props.row['Type'])" v-model="props.row.NurseId" :display-text="props.row['Care Coach']"
                                          :values="props.row.nurses()"
                                          :class-name="isAssignedToPatientsCareCoach(props.row) ? 'blue' : 'orange'"
                                          :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
+
+                        <div v-else>
+                            {{props.row['Care Coach']}}
+                        </div>
                         <loader class="relative" v-if="props.row.loaders.nurse"></loader>
                     </div>
                 </template>
                 <template slot="Activity Day" slot-scope="props">
                     <div>
-                        <date-editable v-model="props.row['Activity Day']" :format="'YYYY-mm-DD'"
+                        <date-editable v-if="canScheduleCalls(props.row['Type'])" v-model="props.row['Activity Day']" :format="'YYYY-mm-DD'"
                                        :class-name="isInThePast(props.row['Activity Day']) ? 'red' : 'blue'"
                                        :on-change="props.row.onNextCallUpdate.bind(props.row)"
                                        :show-confirm="props.row['Manual']"
                                        :confirm-message="getEditDateTimeConfirmMessage(props.row)"></date-editable>
+                        <div v-else>
+                            {{props.row['Activity Day']}}
+                        </div>
                         <loader class="relative" v-if="props.row.loaders.nextCall"></loader>
                     </div>
                 </template>
                 <template slot="Activity Start" slot-scope="props">
                     <div>
-                        <time-editable :value="props.row['Activity Start']" :format="'YYYY-mm-DD'" :class-name="'blue'"
+                        <time-editable v-if="canScheduleCalls(props.row['Type'])"
+                                       :value="props.row['Activity Start']" :format="'YYYY-mm-DD'" :class-name="'blue'"
                                        :on-change="props.row.onCallTimeStartUpdate.bind(props.row)"
                                        :show-confirm="props.row['Manual']"
                                        :confirm-message="getEditDateTimeConfirmMessage(props.row)"></time-editable>
+                        <div v-else>
+                            {{props.row['Activity Start']}}
+                        </div>
                         <loader class="relative" v-if="props.row.loaders.callTimeStart"></loader>
                     </div>
                 </template>
                 <template slot="Activity End" slot-scope="props">
                     <div>
-                        <time-editable :value="props.row['Activity End']" :format="'YYYY-mm-DD'" :class-name="'blue'"
+                        <time-editable v-if="canScheduleCalls(props.row['Type'])"
+                                       :value="props.row['Activity End']" :format="'YYYY-mm-DD'" :class-name="'blue'"
                                        :on-change="props.row.onCallTimeEndUpdate.bind(props.row)"
                                        :show-confirm="props.row['Manual']"
                                        :confirm-message="getEditDateTimeConfirmMessage(props.row)"></time-editable>
+                        <div v-else>
+                            {{props.row['Activity End']}}
+                        </div>
                         <loader class="relative" v-if="props.row.loaders.callTimeEnd"></loader>
                     </div>
                 </template>
@@ -160,6 +183,7 @@
     import {today} from '../../util/today'
     import * as callUpdateFunctions from './utils/call-update.fn'
     import timeDisplay from '../../util/time-display'
+    import UserRolesHelperMixin from '../../mixins/user-roles-helpers.mixin'
 
 
     import {library} from '@fortawesome/fontawesome-svg-core'
@@ -180,10 +204,7 @@
 
     export default {
         name: 'CallMgmtAppV2',
-        mixins: [VueCache, GetsNurses],
-        props: [
-            'isAdmin'
-        ],
+        mixins: [VueCache, GetsNurses, UserRolesHelperMixin],
         components: {
             'text-editable': TextEditable,
             'date-editable': DateEditable,
@@ -212,7 +233,7 @@
                 },
                 showOnlyUnassigned: false,
                 showOnlyCompletedTasks: false,
-                showPatientNames: !this.isAdmin,
+                showPatientNames: !this.isAdmin(),
                 includeDemoPatients: false,
 
                 selectedPatients: [],
@@ -236,7 +257,7 @@
                     columnsClasses: {
                         'selected': 'blank',
                         'Type': 'padding-2',
-                        'Patient ID': !this.isAdmin ? 'hidden' : '',
+                        'Patient ID': !this.isAdmin() ? 'hidden' : '',
                         'Patient': this.patientNamesClass
                     },
                     sortable: ['Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'State', 'Scheduler'],
@@ -269,6 +290,9 @@
         },
         methods: {
             rootUrl,
+            canScheduleCalls(callType) {
+                return this.isAdmin() || this.isSoftwareOnly() || (this.isCallbacksAdmin() && callType === 'Call Back')
+            },
             changeShowOnlyUnassigned(e) {
                 return this.activateFilters();
             },
@@ -322,7 +346,7 @@
                 return this.$refs.tblCalls.query || {}
             },
             exportExcel() {
-                const url = rootUrl(`admin/reports/call-v2?excel${this.urlFilterSuffix()}`)
+                const url = rootUrl(`pam/export?excel${this.urlFilterSuffix()}`)
                 console.log('calls:excel', url)
                 document.location.href = url
             },
@@ -790,5 +814,9 @@
 
     .paused {
         color: grey;
+    }
+
+    .inline {
+        display: inline;
     }
 </style>

@@ -80,7 +80,7 @@ class Constants
     const TRIX_FIELDS                = ['patient-email-body'];
     const TWENTY_MINUTES_IN_SECONDS  = 1200;
     const VIEWING_PATIENT            = 'viewing-patient';
-
+    
     public static function athenaEhrId()
     {
         return \Cache::remember('athena_ehr_id_in_cpm', 2, function () {

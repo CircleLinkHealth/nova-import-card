@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
@@ -127,15 +128,20 @@ class PatientController extends Controller
 
         foreach ($searchTerms as $term) {
             $query->where(function ($q) use ($term) {
+                $phoneNumberTerm = extractNumbers($term);
+
                 $q->where('first_name', 'like', "%${term}%")
                     ->orWhere('last_name', 'like', "%${term}%")
+                    ->orWhere('display_name', 'like', "%${term}%")
                     ->orWhere('id', 'like', "%${term}%")
                     ->orWhereHas('patientInfo', function ($query) use ($term) {
                         $query->where('mrn_number', 'like', "%${term}%")
                             ->orWhere('birth_date', 'like', "%${term}%");
                     })
-                    ->orWhereHas('phoneNumbers', function ($query) use ($term) {
-                        $query->where('number', 'like', "%${term}%");
+                    ->when( ! empty($phoneNumberTerm), function ($q) use ($phoneNumberTerm) {
+                        $q->orWhereHas('phoneNumbers', function ($query) use ($phoneNumberTerm) {
+                            $query->where('number', 'like', "%${phoneNumberTerm}%");
+                        });
                     });
             });
         }
@@ -148,7 +154,9 @@ class PatientController extends Controller
             $dob                  = new Carbon(($d->getBirthDate()));
             $patients[$i]['dob']  = $dob->format('m-d-Y');
             $patients[$i]['mrn']  = $d->getMRN();
-            $patients[$i]['link'] = route('patient.summary', ['patientId' => $d->id]);
+            $patients[$i]['link'] = auth()->user()->isCallbacksAdmin()
+                ? route('patient.schedule.activity', [$d->program_id, $d->id])
+                : route('patient.summary', ['patientId' => $d->id]);
 
             $programObj = Practice::find($d->program_id);
 
@@ -215,6 +223,22 @@ class PatientController extends Controller
         return response()->json([
             'message' => 'Phone number has been saved!',
         ], 200);
+    }
+
+    public function scheduleActivity($practiceId, $patientId)
+    {
+        $practice  = Practice::findOrFail($practiceId);
+        $patient   = User::findOrFail($patientId);
+        $careCoach = optional(app(NurseFinderEloquentRepository::class)->assignedNurse($patientId))->permanentNurse;
+
+        return view('patient.schedule-task', [
+            'practiceId'    => $practice->id,
+            'practiceName'  => $practice->display_name,
+            'patientId'     => $patient->id,
+            'patientName'   => $patient->getFullName(),
+            'careCoachId'   => optional($careCoach)->id,
+            'careCoachName' => optional($careCoach)->getFullName(),
+        ]);
     }
 
     public function showCallPatientPage(CallPatientRequest $request, $patientId)

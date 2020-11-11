@@ -595,13 +595,15 @@ $user_info = [];
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12 text-center" style="margin-top: -24px">
-                                <hr style="border-top: 3px solid #50b2e2;">
-                            </div>
-                            <div class="main-form-block main-form-secondary col-lg-12 text-center">
-                                <button id="save-patient-btn" class="btn btn-primary">Save Profile</button>
-                                <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
-                            </div>
+                            @if(! auth()->user()->hasPermission('edit-patient-chart.disable'))
+                                <div class="col-lg-12 text-center" style="margin-top: -24px">
+                                    <hr style="border-top: 3px solid #50b2e2;">
+                                </div>
+                                <div class="main-form-block main-form-secondary col-lg-12 text-center">
+                                    <button id="save-patient-btn" class="btn btn-primary">Save Profile</button>
+                                    <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
+                                </div>
+                            @endif
                         </div>
                         @push('styles')
                             <style>

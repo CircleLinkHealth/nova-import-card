@@ -1,5 +1,5 @@
 <template>
-    <modal name="misc" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-misc">
+    <modal v-if="!disableEditing()" name="misc" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-misc">
         <template>
             <div class="row">
                 <div class="col-sm-12" v-if="selectedMisc">
@@ -28,6 +28,8 @@
     import EventBus from '../../../admin/time-tracker/comps/event-bus'
     import NotificationsComponent from '../../notifications'
     import CareplanMixin from '../mixins/careplan.mixin'
+    import DisableEditingMixin from '../mixins/disable-editing.mixin'
+
 
     export default {
         name: 'misc-modal',
@@ -36,7 +38,7 @@
             'modal': Modal,
             'notifications': NotificationsComponent
         },
-        mixins: [ CareplanMixin ],
+        mixins: [ CareplanMixin, DisableEditingMixin ],
         data() {
             return {
                 newMisc: {

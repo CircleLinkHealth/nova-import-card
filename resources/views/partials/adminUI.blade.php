@@ -66,9 +66,7 @@
 </head>
 <body>
 <div id="app">
-
-    @if (  ! Auth::guest() && Cerberus::hasPermission('admin-access') )
-        <nav class="navbar navbar-default">
+     <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
@@ -107,7 +105,7 @@
                                 Activities <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ route('admin.patientCallManagement.v2.index') }}">Manage (V2)</a></li>
+                                <li><a href="{{ route('patientCallManagement.v2.index') }}">Manage (V2)</a></li>
                                 <li><a href="{{ route('admin.families.index') }}">Families</a></li>
                                 <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                             </ul>
@@ -302,7 +300,6 @@
             Frame</a>
             to improve your experience.</p>
         <![endif]-->
-    @endif
 
     {{--This is for JS variables. Purposefully included before content.--}}
     @include('partials.footer')

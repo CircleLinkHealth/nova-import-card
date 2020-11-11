@@ -1,4 +1,7 @@
-@extends('partials.adminUI')
+@extends(! Auth::guest() && Cerberus::hasPermission('admin-access') ? 'partials.adminUI' : 'partials.providerUI')
+
+@section('title', 'Care Ambassador Director Palen')
+@section('activity', 'Care Ambassador Director Palen')
 
 @push('styles')
     <style>
@@ -49,16 +52,18 @@
                                     @include('errors.errors')
                                     @include('errors.messages')
                                 </div>
-                                <div class="col-md-12" style="text-align: right">
-                                    <a class="btn btn-danger btn-m"
-                                       href="{{route('ca-director.test-enrollees', ['erase' => true, 'redirect' => true])}}">Erase
-                                        Demo Patients</a>
-                                    <a class="btn btn-info btn-m"
-                                       href="{{route('ca-director.test-enrollees', ['redirect' => true])}}">Create Demo
-                                        Patients</a>
-                                </div>
+                                @if (!auth()->user()->isCallbacksAdmin())
+                                    <div class="col-md-12" style="text-align: right">
+                                        <a class="btn btn-danger btn-m"
+                                           href="{{route('ca-director.test-enrollees', ['erase' => true, 'redirect' => true])}}">Erase
+                                            Demo Patients</a>
+                                        <a class="btn btn-info btn-m"
+                                           href="{{route('ca-director.test-enrollees', ['redirect' => true])}}">Create Demo
+                                            Patients</a>
+                                    </div>
+                                @endif
                                 <div>
-                                    <ca-director-panel ref="CaDirectorPanel"></ca-director-panel>
+                                    <ca-director-panel ref="CaDirectorPanel" auth-role="{{auth()->user()->practiceOrGlobalRole()->name}}"></ca-director-panel>
                                 </div>
                             </div>
                         </div>
