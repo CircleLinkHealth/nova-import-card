@@ -43,6 +43,7 @@ use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\SamlSp\Entities\SamlUser;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -235,6 +236,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $roles_count
  * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null                                                            $saasAccount
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[]                                              $tokens
+ * @property \CircleLinkHealth\SamlSp\Entities\SamlUser[]|\Illuminate\Database\Eloquent\Collection                           $samlUsers
+ * @property int|null                                                                                                        $saml_users_count
  * @property int|null                                                                                                        $tokens_count
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                                      $ucp
  * @property int|null                                                                                                        $ucp_count
@@ -2248,6 +2251,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
+    public function isCallbacksAdmin(): bool
+    {
+        return $this->hasRole('callbacks-admin');
+    }
+
     /**
      * Returns whether the user is an administrator.
      *
@@ -2319,6 +2327,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         return PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM_PLUS_40) || PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM_PLUS_40);
+    }
+
+    public function isClhCcmAdmin(): bool
+    {
+        return $this->hasRole('clh-ccm-admin');
     }
 
     /**
@@ -2684,6 +2697,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function practiceOrGlobalRole(bool $returnId = false)
     {
+        $key = "user:$this->id:practiceOrGlobalRole";
+
+        if (Cache::has($key)) {
+            return Cache::get($key);
+        }
+
         if ($this->practice($this->primaryPractice)) {
             $primaryPractice = $this->practice($this->primaryPractice);
 
@@ -2692,13 +2711,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     return $id;
                 }
 
-                return Role::allRoles()
+                $role = Role::allRoles()
                     ->whereIn('id', $id)
                     ->first();
             }
         }
 
-        return optional($this->roles)->first();
+        if ( ! isset($role)) {
+            $role = optional($this->roles)->first();
+        }
+
+        if ($role) {
+            Cache::put($key, $role, 1);
+        }
+
+        return $role;
     }
 
     public function practices(
@@ -2919,6 +2946,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'created_at'    => optional($this->created_at)->format('c') ?? null,
             'updated_at'    => optional($this->updated_at)->format('c') ?? null,
         ];
+    }
+
+    public function samlUsers()
+    {
+        return $this->hasMany(SamlUser::class, 'cpm_user_id', 'id');
     }
 
     public function scopeCareCoaches($query)

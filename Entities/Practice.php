@@ -21,6 +21,7 @@ use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\Entities\RpmProblem;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Nova\Actions\Actionable;
 use Laravel\Scout\Searchable;
@@ -278,7 +279,12 @@ class Practice extends BaseModel implements HasMedia
         }
 
         if (is_null($primary)) {
-            throw new \Exception("This Practice [$this->id] does not have a location.", 500);
+            Log::error("This Practice [$this->id] does not have a location.");
+
+            return [
+                'line1' => '',
+                'line2' => '',
+            ];
         }
 
         return [

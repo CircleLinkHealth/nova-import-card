@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Database\Seeders;
 
+use CircleLinkHealth\Core\Constants;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Database\Seeder;
@@ -120,6 +121,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'careplan-pdf.read',
                     'carePerson.read',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -127,6 +129,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Office Admin',
                 'description'  => 'Non medical staff that work at a Practice. Not CCM countable.',
                 'permissions'  => [
+                    'call.create',
                     'medication.create',
                     'medication.read',
                     'medication.update',
@@ -223,6 +226,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'change-patient-enrollment-status',
                     'vitals-survey-complete',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -290,6 +294,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.read',
                     'comment.update',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -303,7 +308,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Administrator - View Only',
                 'description'  => 'A special administrative account where you can view the admin but not perform actions',
                 'permissions'  => [
+                    'edit-patient-chart.disable',
                     'admin-access',
+                    'pam.view',
+                    'ca-director.view',
                     'users-edit-self',
                     'users-view-all',
                     'users-view-self',
@@ -366,6 +374,30 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'nurseReport.read',
                     'careplan.read',
                     'phi.read',
+                    'notification.read',
+                ],
+            ],
+            [
+                'name'         => 'callbacks-admin',
+                'display_name' => 'Callbacks Admin',
+                'description'  => 'An administrative account with permissions to manage callbacks',
+                'permissions'  => [
+                    'edit-patient-chart.disable',
+                    'downloads.disable',
+                    'careplan.read',
+                    'patient.read',
+                    'call.read',
+                    'call.create',
+                    'pam.view',
+                    'ca-director.view',
+                    'practice.read',
+                    'location.read',
+                    'provider.read',
+                    'nurse.read',
+                    'phi.read',
+                    'users-view-self',
+                    'users-view-all',
+                    'notification.read',
                 ],
             ],
             [
@@ -459,6 +491,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.update',
                     'comment.delete',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -561,6 +594,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivity.create',
                     'vitals-survey-complete',
                     'phi.read',
+                    'notification.read',
+                    'call.create',
                 ],
             ],
             [
@@ -568,6 +603,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Specialist',
                 'description'  => 'An outside specialist doctor.',
                 'permissions'  => [
+                    'call.create',
                     'users-view-all',
                     'users-view-self',
                     'patient.create',
@@ -601,6 +637,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'role.read',
                     'offlineActivity.create',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -619,6 +656,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'practice.read',
                     'careplan-pdf.create',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -636,6 +674,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'provider.read',
                     'ambassador.read',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -643,6 +682,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Care Ambassador - View Only',
                 'description'  => 'Makes calls to enroll patients, and can see patient data for specific Practices',
                 'permissions'  => [
+                    'edit-patient-chart.disable',
                     'careplan.read',
                     'careplan.update',
                     'careplanAssessment.read',
@@ -668,6 +708,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'careplan-pdf.create',
                     'users-view-all',
                     'phi.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -763,6 +804,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivity.create',
                     'care-plan-approve',
                     'phi.read',
+                    'notification.read',
+                    'call.create',
                 ],
             ],
             [
@@ -889,6 +932,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'phoneNumber.update',
                     'phoneNumber.delete',
                     'phoneNumber.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -1020,6 +1064,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'phoneNumber.update',
                     'phoneNumber.delete',
                     'phoneNumber.read',
+                    'note.download',
+                    'notification.read',
                 ],
             ],
             [
@@ -1074,6 +1120,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'note.read',
                     'note.update',
                     'note.delete',
+                    'note.download',
                     'call.create',
                     'call.read',
                     'call.update',
@@ -1147,6 +1194,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'phoneNumber.update',
                     'phoneNumber.delete',
                     'phoneNumber.read',
+                    'notification.read',
                 ],
             ],
             [
@@ -1169,7 +1217,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Saas Admin - View Only',
                 'description'  => 'Created for MDAlly, a partner which white-labels our CCM service to their customers',
                 'permissions'  => [
+                    'edit-patient-chart.disable',
                     'admin-access',
+                    'pam.view',
+                    'ca-director.view',
                     'users-edit-self',
                     'users-view-all',
                     'users-view-self',
@@ -1274,7 +1325,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
             ],
             [
                 'name'         => 'software-only',
-                'display_name' => 'CCM Admin',
+                'display_name' => 'CCM Admin (Practice)',
                 'description'  => 'Uses only the software solution of CLH (CPM)',
                 'permissions'  => [
                     'practice-admin',
@@ -1285,12 +1336,54 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'patientProblem.update',
                     'patientProblem.delete',
                     'chargeableService.read',
+                    'provider.read',
+                    'location.read',
+                    'patient.read',
                     'practice.read',
                     'call.read',
+                    'pam.export',
                     'call.create',
                     'call.update',
                     'call.delete',
                     'phi.read',
+                    'pam.view',
+                    'notification.read',
+                    'nurse.read',
+                    'note.read',
+                    'careplan.read',
+                    'users-view-self',
+                    'users-view-all',
+                    'phoneNumber.read',
+                ],
+            ],
+            [
+                'name'         => 'clh-ccm-admin',
+                'display_name' => 'CLH CCM Admin',
+                'description'  => 'CLH in-house CCM Admin',
+                'permissions'  => [
+                    'edit-patient-chart.disable',
+                    'downloads.disable',
+                    'patientSummary.read',
+                    'patientProblem.read',
+                    'patientProblem.update',
+                    'chargeableService.read',
+                    'practice.read',
+                    'call.read',
+                    'phi.read',
+                    'note.read',
+                    'careplan.read',
+                    'patient.read',
+                    'pam.view',
+                    'location.read',
+                    'provider.read',
+                    'nurse.read',
+                    'users-view-self',
+                    'users-view-all',
+                    'appointment.read',
+                    'misc.read',
+                    'carePerson.read',
+                    'notification.read',
+                    'phoneNumber.read',
                 ],
             ],
             [
@@ -1354,6 +1447,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
     {
         return [
             'care-plan-approve',
+            'edit-patient-chart.disable',
+            'downloads.disable',
         ];
     }
 }
