@@ -75,8 +75,7 @@
                                                 <input type="submit"
                                                        class="btn btn-secondary margin-0 instruction-add selected"
                                                        value="Save"
-                                                       title="Edit this problem"
-                                                       :disabled="(selectedProblem.name || '').length === 0 || patientHasSelectedProblem"/>
+                                                       title="Edit this problem"/>
                                             </div>
                                         </div>
 
@@ -155,6 +154,7 @@
     import CareplanMixin from '../mixins/careplan.mixin'
     import AddConditionMixin from '../mixins/add-condition.mixin'
     import AddCondition from '../add-condition'
+    import DisableEditingMixin from '../mixins/disable-editing.mixin'
 
     export default {
         name: 'care-areas-modal',
@@ -164,7 +164,8 @@
         },
         mixins: [
             CareplanMixin,
-            AddConditionMixin
+            AddConditionMixin,
+            DisableEditingMixin
         ],
         components: {
             'add-condition': AddCondition,

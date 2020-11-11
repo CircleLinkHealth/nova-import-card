@@ -43,6 +43,7 @@
                                          select-text="Select Clinical Level"
                                          id="suffix"
                                          name="suffix"
+                                         label-text="Clinical Level"
                                          class="form-control input-md">
                             <option value="">Non-clinical</option>
                             <option value="MD">MD</option>
@@ -55,8 +56,6 @@
                             <option value="CNA">CNA</option>
                             <option value="MA">MA</option>
                         </material-select>
-
-                        <label for="suffix">Clinical Level</label>
                     </div>
                 </div>
 
@@ -72,10 +71,9 @@
                         <material-select v-model="formData.role_names" name="role_names" id="role_names"
                                          :multiple="true"
                                          select-text="Select all that apply"
+                                         label-text="Role"
                                          :items="roleOptions">
                         </material-select>
-
-                        <label for="role_names">Role</label>
                     </div>
 
                     <!-- deprecated -->
@@ -106,13 +104,12 @@
                     </div>
 
                     <div class="input-field col s2">
-                        <material-select v-model="formData.phone_type" name="phone_type" id="phone_type"
-                                         :class="isValid(formData.phone_type)">
+                        <material-select v-model="formData.phone_type"
+                                         label-text="Phone Type"
+                                         name="phone_type" id="phone_type">
                             <option v-for="option in phoneTypes" :value="option.value"
                                     v-text="option.name"></option>
                         </material-select>
-
-                        <label for="phone_type">Phone Type</label>
                     </div>
 
                     <div class="input-field col s5">
@@ -169,16 +166,42 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" v-if="locations.length">
                     <div class="input-field col s12">
-                        <material-select multiple v-model="formData.locations" name="locations" id="locations"
-                                         :class="isValid(formData.locations)">
+                        <material-select multiple v-model="formData.locations"
+                                         label-text="Locations"
+                                         name="locations" id="locations">
                             <option v-for="location in locations" :value="location.id"
                                     v-text="location.name"></option>
                         </material-select>
-
-                        <label for="locations">Locations</label>
                     </div>
+                </div>
+
+                <div class="row">
+
+                    <h6 class="col s12">
+                        SSO Integration between EHR Platforms and CPM
+                    </h6>
+
+                    <template v-if="!waitingEhr">
+                        <div class="input-field col s3">
+                            <material-select v-model="formData.ehr_id"
+                                             label-text="EHR"
+                                             :allow-no-select="true"
+                                             name="ehr_id" id="ehr_id">
+                                <option v-for="ehr in ehrPlatforms" :value="ehr.id"
+                                        v-text="ehr.name"></option>
+                            </material-select>
+                        </div>
+                        <div class="input-field col s6">
+                            <v-input type="text" label="EHR Username" v-model="formData.ehr_username"
+                                     name="ehr_username"></v-input>
+                        </div>
+                    </template>
+                    <div class="input-field col s3" v-else>
+                        <loader></loader>
+                    </div>
+
                 </div>
 
                 <div class="row">
@@ -209,6 +232,7 @@
     import {practiceLocations, practiceStaff} from '../../../store/getters'
     import MaterialSelect from '../../src/material-select.vue'
     import store from '../../../store';
+    import loader from '../../loader';
 
     import {library} from '@fortawesome/fontawesome-svg-core'
     import {faSpinner} from '@fortawesome/free-solid-svg-icons'
@@ -235,7 +259,8 @@
         components: {
             modal,
             MaterialSelect,
-            FontAwesomeIcon
+            FontAwesomeIcon,
+            loader
         },
 
         created() {
@@ -262,6 +287,10 @@
             );
         },
 
+        mounted() {
+            this.getEhrPlatforms();
+        },
+
         destroyed() {
             if (this.unwatch) {
                 this.unwatch();
@@ -272,13 +301,21 @@
             mapGetters({
                 errors: 'errors',
                 waiting: 'practiceStaffIsUpdating',
+                waitingEhr: 'ehrPlatformsIsLoading',
                 staff: 'practiceStaff',
-                locations: 'practiceLocations'
+                locations: 'practiceLocations',
+                ehrPlatforms: 'ehrPlatforms'
             })
         ),
 
         methods: Object.assign(
-            mapActions(['clearOpenModal', 'addNotification', 'updatePracticeStaff', 'clearErrors']),
+            mapActions([
+                'clearOpenModal',
+                'addNotification',
+                'updatePracticeStaff',
+                'clearErrors',
+                'getEhrPlatforms'
+            ]),
             {
                 submitForm() {
                     this.updatePracticeStaff(this.formData);
@@ -331,6 +368,8 @@
                         'who': 'billing_provider',
                         'user_ids': [],
                     },
+                    'ehr_id': null,
+                    'ehr_username': null
                 },
                 formState: {},
                 roleOptions: [

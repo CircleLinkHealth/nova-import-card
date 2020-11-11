@@ -6,7 +6,7 @@
                 <h2 id="care-team-label"
                     class="patient-summary__subtitles patient-summary--careplan-background">
                     Care Team
-                    <span class="btn btn-primary glyphicon glyphicon-plus" @click="createCarePerson" aria-hidden="true"></span>
+                    <span v-if="!disableEditing()" class="btn btn-primary glyphicon glyphicon-plus" @click="createCarePerson" aria-hidden="true"></span>
                 </h2>
             </div>
             <div class="col-xs-12">
@@ -21,7 +21,7 @@
                             <div class="col-md-3">
                                 <p v-show="carePerson.alert">Receives Alerts</p>
                             </div>
-                            <div class="col-md-2">
+                            <div v-if="!disableEditing()" class="col-md-2">
                                 <button class="btn btn-xs btn-danger problem-delete-btn"
                                         v-on:click.stop.prevent="deleteCarePerson(carePerson)"><span> <i
                                         class="glyphicon glyphicon-remove"></i> </span></button>
@@ -43,6 +43,8 @@
     import {getPatientCareTeam} from '../../../store/actions'
     import {patientCareTeam} from '../../../store/getters'
     import UpdateCarePerson from './update-care-person.vue'
+    import DisableEditingMixin from '../../../components/careplan/mixins/disable-editing.mixin'
+
 
     export default {
         components: {
@@ -54,6 +56,8 @@
                 patientCareTeam: 'patientCareTeam'
             })
         ),
+
+        mixins: [DisableEditingMixin],
 
         methods: Object.assign(
             mapActions(['getPatientCareTeam', 'destroyCarePerson', 'setOpenModal']),

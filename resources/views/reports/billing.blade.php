@@ -325,7 +325,7 @@
                             }, 1000);
                             webix.event(window, "resize", debounced);
                         </script>
-                        @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                        @if((auth()->user()->hasRole(['administrator', 'med_assistant', 'provider'])) && (! auth()->user()->hasPermission('downloads.disable')))
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
                                            header:'CarePlanManager.com - Billing Report <?= date('M d,Y'); ?>',

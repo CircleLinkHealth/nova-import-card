@@ -95,8 +95,8 @@ class EnrollableCallQueue
                  * @var Carbon
                  */
                 $callback = $patientWithRequestedCallback->requested_callback;
-
-                if ($callback && $nextAttempt && $callback->lt($nextAttempt)) {
+                
+                if (is_null($nextAttempt) ||  $callback->lt($nextAttempt)){
                     $nextAttempt = $callback;
                 }
             }

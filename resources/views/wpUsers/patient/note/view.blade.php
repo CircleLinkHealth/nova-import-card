@@ -194,7 +194,7 @@
                             <div class="new-note-item">
                                 <div class="form-block col-md-12">
                                     <div class="row">
-                                        @if(! auth()->user()->isCareCoach() || (auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id)))
+                                        @if((! auth()->user()->isCareCoach() && auth()->user()->hasPermission('note.send'))|| (auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id)))
                                         <div class="new-note-item">
                                                 @include('partials.sendToCareTeam')
                                             </div>
@@ -325,9 +325,11 @@
                                 @if(authUserCanSendPatientEmail())
                                     @include('wpUsers.patient.note.patient-emails')
                                 @endif
-                                <div class="col-sm-12">
-                                    @include('wpUsers.patient.note.manage-addendums')
-                                </div>
+                                @if(auth()->user()->hasPermission('addendum.create'))
+                                    <div class="col-sm-12">
+                                        @include('wpUsers.patient.note.manage-addendums')
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

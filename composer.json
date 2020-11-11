@@ -208,7 +208,7 @@
     "circlelinkhealth/patientapi-module": "dev-billing-staging-fixes",
     "circlelinkhealth/raygun-module": "1.2",
     "circlelinkhealth/revisionable-module": "6.1.1",
-    "circlelinkhealth/saml-sp-module": "1.0.3",
+    "circlelinkhealth/saml-sp-module": "1.0.7",
     "circlelinkhealth/shared-models-module": "dev-ROAD-346-billing-revamp",
     "circlelinkhealth/sqlviews-module": "dev-ROAD-346-billing-revamp",
     "circlelinkhealth/synonyms-module": "*",

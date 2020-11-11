@@ -30,7 +30,9 @@
                 )) !!}
 
                 <div class="col-sm-3 col-xs-3" style="top: 20px">
-                    <input type="submit" value="Audit Report" name="download-audit-report" id="download-audit-report" class="btn btn-primary">
+                    @if(! auth()->user()->hasPermission('downloads.disable'))
+                        <input type="submit" value="Audit Report" name="download-audit-report" id="download-audit-report" class="btn btn-primary">
+                    @endif
 
                 @if ($data && $month_selected_text === \Carbon\Carbon::now()->format('F'))
                         <button id="refresh-activity" type="button" class="btn btn-primary">
@@ -203,7 +205,7 @@
 
                                             template: function (obj) {
                                                 if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                    return `<a href="/manage-patients/${patientId}/view/${obj.id}">${obj.type}</a>`;
+                                                    return `<a href="/manage-patients/${patientId}/activities/view/${obj.id}">${obj.type}</a>`;
                                                 else
                                                     return obj.type;
                                             },
@@ -324,7 +326,7 @@
 
                             </script>
                         @endpush
-                        @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)))
+                        @if( (auth()->user()->hasRole(array_merge(['administrator', 'software-only'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES))) && (! auth()->user()->hasPermission('downloads.disable')) )
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
                                            header:'CarePlanManager.com - Patient Activity Report <?= date('M d,Y'); ?>',

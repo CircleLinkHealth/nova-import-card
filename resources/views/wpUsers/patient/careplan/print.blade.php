@@ -9,6 +9,8 @@ if (isset($patient) && ! empty($patient)) {
 
     $alreadyShown = [];
 }
+
+$authRoleName = auth()->user()->practiceOrGlobalRole()->name;
 ?>
 
 @if(!isset($isPdf))
@@ -131,7 +133,7 @@ if (isset($patient) && ! empty($patient)) {
                                             : null;
                                         ?>
 
-                                        <careplan-actions v-cloak
+                                        @if(! auth()->user()->hasPermission('downloads.disable'))<careplan-actions v-cloak
                                                           mode="web"
                                                           ccm-status="{{$patientCcmStatus}}"
                                                           careplan-status="{{$careplanStatus}}"
@@ -152,7 +154,7 @@ if (isset($patient) && ! empty($patient)) {
                                                           route-switch-to-pdf="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
                                                           route-print-care-plan="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}"
                                                           route-care-plan-not-eligible="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id])}}">
-                                        </careplan-actions>
+                                        </careplan-actions>@endif
                                     @endif
                                 </div>
                             </div>
@@ -217,7 +219,7 @@ if (isset($patient) && ! empty($patient)) {
                     @endif
                 </div>
                 <!-- CARE AREAS -->
-                <care-areas ref="careAreasComponent" patient-id="{{$patient->id}}">
+                <care-areas ref="careAreasComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     <template>
                         @if($problemNames)
                             <ul class="subareas__list">
@@ -232,7 +234,7 @@ if (isset($patient) && ! empty($patient)) {
                 </care-areas>
                 <!-- /CARE AREAS -->
                 <!-- BIOMETRICS -->
-                <health-goals ref="healthGoalsComponent" patient-id="{{$patient->id}}">
+                <health-goals ref="healthGoalsComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     @if($biometrics)
                         <ul class="subareas__list">
                             <li class="subareas__item subareas__item--wide col-sm-12">
@@ -260,7 +262,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
-                <medications ref="medicationsComponent" patient-id="{{$patient->id}}">
+                <medications ref="medicationsComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
 
                     <div class="col-xs-10">
                         @if(!empty($taking_medications))
@@ -281,7 +283,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /MEDICATIONS -->
 
                 <!-- SYMPTOMS -->
-                <symptoms ref="symptomsComponent" patient-id="{{$patient->id}}">
+                <symptoms ref="symptomsComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     <ul class="subareas__list">
                         @foreach($symptoms as $s)
                             @if($symptoms)
@@ -293,7 +295,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /SYMPTOMS -->
 
                 <!-- LIFESTYLES -->
-                <lifestyles ref="lifestylesComponent" patient-id="{{$patient->id}}">
+                <lifestyles ref="lifestylesComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     <ul class="subareas__list">
                         @if($lifestyle)
                             @foreach($lifestyle as $style)
@@ -325,7 +327,7 @@ if (isset($patient) && ! empty($patient)) {
                 </div>
 
                 <!-- INSTRUCTIONS -->
-                <instructions ref="instructionsComponent" patient-id="{{$patient->id}}"></instructions>
+                <instructions ref="instructionsComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}"></instructions>
                 <!-- /INSTRUCTIONS -->
 
                 <!-- OTHER INFORMATION -->
@@ -341,7 +343,7 @@ if (isset($patient) && ! empty($patient)) {
                 </div>
 
                 <!-- ALLERGIES -->
-                <allergies ref="allergiesComponent" patient-id="{{$patient->id}}">
+                <allergies ref="allergiesComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     <div class="col-xs-12">
                         @if($allergies)
                             <p><?php echo nl2br($allergies); ?></p>
@@ -353,7 +355,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /ALLERGIES -->
 
                 <!-- SOCIALSERVICES -->
-                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}"
+                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}"
                                  misc-id="{{$socialServicesMiscId}}">
                     @if($social)
                         <p><?php echo nl2br($social); ?></p>
@@ -361,15 +363,15 @@ if (isset($patient) && ! empty($patient)) {
                         <p>No instructions at this time</p>
                     @endif
                 </social-services>
-                <misc-modal ref="miscModal" :patient-id="{{$patient->id}}"></misc-modal>
+                <misc-modal ref="miscModal" :patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}"></misc-modal>
                 <!-- /SOCIAL AND OTHER SERVICES -->
 
                 <!-- CARE TEAM -->
-                <care-team ref="careTeamComponent"></care-team>
+                <care-team ref="careTeamComponent" auth-role="{{$authRoleName}}"></care-team>
                 <!-- /CARE TEAM -->
 
                 <!-- Appointments -->
-                <appointments ref="appointmentsComponent" patient-id="{{$patient->id}}">
+                <appointments ref="appointmentsComponent" patient-id="{{$patient->id}}" auth-role="{{$authRoleName}}">
                     @if(isset($appointments['upcoming'] ))
                         <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
                             Upcoming: </h3>
@@ -408,7 +410,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
-                <others ref="othersComponent" patient-id="{{$patient->id}}" misc-id="{{$othersMiscId}}">
+                <others ref="othersComponent" patient-id="{{$patient->id}}" misc-id="{{$othersMiscId}}" auth-role="{{$authRoleName}}">
                     @if($other)
                         <p><?php echo nl2br($other); ?></p>
                     @else

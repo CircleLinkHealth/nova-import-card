@@ -10,7 +10,7 @@
             </div>
             <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                     <patient-list :show-provider-patients-button="@json(auth()->user()->isProvider() && auth()->user()->scope !== App\User::SCOPE_LOCATION)"
-                                  :is-admin="@json(auth()->user()->isAdmin())"
+                                  auth-role="{{auth()->user()->practiceOrGlobalRole()->name}}"
                                   :can-approve-careplans="@json(auth()->user()->canApproveCarePlans())"
                                   url-filter="patientsPendingAuthUserApproval"
                                   :hide-download-buttons="@json(true)"

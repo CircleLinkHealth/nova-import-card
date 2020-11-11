@@ -1,5 +1,5 @@
 <?php
-$isAdmin = auth()->user()->isAdmin();
+$isAdmin = ! Auth::guest() && Cerberus::hasPermission('admin-access');
 ?>
 
 @extends($isAdmin ? 'partials.adminUI' : 'partials.providerUI')
@@ -62,7 +62,7 @@ $isAdmin = auth()->user()->isAdmin();
                                     @include('errors.messages')
                                 </div>
                                 <div>
-                                    <call-mgmt-app-v2 :is-admin="@json($isAdmin)" ref="callMgmtAppV2"></call-mgmt-app-v2>
+                                    <call-mgmt-app-v2 ref="callMgmtAppV2" auth-role="{{auth()->user()->practiceOrGlobalRole()->name}}"></call-mgmt-app-v2>
                                 </div>
                             </div>
                         </div>

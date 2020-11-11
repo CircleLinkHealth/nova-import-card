@@ -96,7 +96,20 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
             <div class="col-lg-8 col-sm-12 col-xs-12">
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        @if(!$isTwoFaRoute)
+                        @if (auth()->user()->isCallbacksAdmin())
+                                    <li>
+                                        <a href="{{ route('patientCallManagement.v2.index') }}" style="color: #fff;">
+                                            Patient Activity Management
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('ca-director.index') }}" style="color: #fff;">
+                                            Care Ambassador Panel
+                                        </a>
+                                    </li>
+                        @endif
+
+                        @if(!$isTwoFaRoute && ! auth()->user()->isCallbacksAdmin())
                             @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
                                 <li>
                                     <time-tracker-call-mode ref="timeTrackerCallMode"
@@ -135,6 +148,26 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                 </li>
                             @endif
 
+                            @if($user->isClhCcmAdmin())
+                                <li class="dropdown">
+                                    <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                         aria-expanded="false">
+                                        Admin
+                                        <span class="caret text-white"></span>
+                                    </div>
+                                    <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                                        <li>
+                                            <a href="{{ route('patient.note.listing') }}">Notes Report</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('patientCallManagement.v2.index') }}">
+                                                Patient Activity Management
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endif
+
                             @if ( ! auth()->guest()
                                  && $user->isNotSaas()
                                  && $user->hasRole('software-only'))
@@ -146,7 +179,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                     </div>
                                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
                                         <li>
-                                            <a href="{{ route('admin.patientCallManagement.v2.index') }}">
+                                            <a href="{{ route('patientCallManagement.v2.index') }}">
                                                 Patient Activity Management
                                             </a>
                                         </li>
@@ -166,7 +199,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                             @endif
 
 
-                            @if(! $userIsCareCoach)
+                            @if(! $userIsCareCoach && !auth()->user()->isCallbacksAdmin() && !auth()->user()->isClhCcmAdmin())
                                 <li>
                                     <a href="{{ route('patients.dashboard') }}" class="text-white"><i
                                                 class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
@@ -235,6 +268,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
 
                         @endif
 
+                            @if(!auth()->user()->isCallbacksAdmin() && !auth()->user()->isClhCcmAdmin())
                             <li class="dropdown">
                                 <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
                                      aria-expanded="false"><i
@@ -266,6 +300,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                                 @endif
                             </ul>
                         </li>
+                                @endif
                         {{--Live Notifications--}}
                         <li class="dropdown">
                             <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"

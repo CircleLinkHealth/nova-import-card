@@ -70,6 +70,13 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             /** @var PageTimer $timeRecord */
             $timeRecord = $model;
 
+            if ( ! $this->canModifyTemp($timeRecord)) {
+                $this->markAsFailed(
+                    $timeRecord,
+                    'You cannot modify this time tracker entry, because it has time tracked for multiple activities. Please contact CLH Dev Team.'
+                );
+            }
+
             if ( ! $this->canModify($timeRecord)) {
                 $this->markAsFailed(
                     $timeRecord,
@@ -128,6 +135,17 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         $csCode = $chargeableServices->firstWhere('id', '=', $activity->chargeable_service_id)->code;
 
         return $this->isModifiable($patientTime, $csCode);
+    }
+
+    /**
+     * Temporary block for modifying page timer entries with multiple activities.
+     * Will be removed with ROAD-389.
+     *
+     * @return bool
+     */
+    private function canModifyTemp(PageTimer $timeRecord)
+    {
+        return $timeRecord->activities->count() <= 1;
     }
 
     private function isModifiable(PatientTime $patientTime, string $csCode)

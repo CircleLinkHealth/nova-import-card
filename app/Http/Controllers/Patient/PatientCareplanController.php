@@ -6,17 +6,16 @@
 
 namespace App\Http\Controllers\Patient;
 
-use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\CarePlanPrintListView;
-use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
 use App\Http\Requests\DeleteAlternateContactRequest;
 use App\Http\Requests\DeletePatientPhoneRequest;
 use App\Http\Requests\PatientPhonesRequest;
-use App\Relationships\PatientCareplanRelations;
+use App\Jobs\GeneratePatientsCarePlans;
 use App\Repositories\PatientReadRepository;
+use App\Services\CarePlanGeneratorService;
 use App\Services\CareplanService;
 use App\Services\PatientService;
 use Auth;
@@ -242,17 +241,13 @@ class PatientCareplanController extends Controller
         PatientService $patientService
     ) {
         if ( ! $request['users']) {
-            return response()->json('Something went wrong..');
-        }
-
-        //Welcome Letter Check
-        $letter = false;
-
-        if (isset($request['letter'])) {
-            $letter = true;
+            return response()->json('Something went wrong.. Missing users from request.', 400);
         }
 
         $userIds = explode(',', $request['users']);
+        if (empty($userIds)) {
+            return response()->json('Something went wrong.. Missing users from request.', 400);
+        }
 
         if ($request->input('final')) {
             foreach ($userIds as $userId) {
@@ -261,113 +256,15 @@ class PatientCareplanController extends Controller
             }
         }
 
-        $storageDirectory = 'storage/pdfs/careplans/';
-        $pageFileNames    = [];
-
-        $fileNameWithPathBlankPage = $this->pdfService->blankPage();
-
-        $users = User::with(
-            array_merge(PatientCareplanRelations::get(), [
-                'patientInfo',
-                'primaryPractice',
-                'inboundCalls' => function ($c) {
-                    $c->with(['outboundUser'])
-                        ->where('status', 'scheduled')
-                        ->where('called_date', '=', null);
-                },
-                'billingProvider.user', ], )
-        )
-            ->has('patientInfo')
-            ->findMany($userIds);
-
-        if ($users->isEmpty()) {
-            return response()->json('Something went wrong. CPM is unable to print care plan.');
+        $letter = isset($request['letter']);
+        $render = $request->filled('render') && 'html' == $request->input('render');
+        if ($render) {
+            return app(CarePlanGeneratorService::class)->renderForUser(auth()->id(), $userIds[0], $letter);
         }
 
-        // create pdf for each user
-        $p = 1;
-        foreach ($users as $user) {
-            $careplan = $this->formatter->formatDataForViewPrintCareplanReport($user);
-            $careplan = $careplan[$user->id];
-            if (empty($careplan)) {
-                return false;
-            }
+        GeneratePatientsCarePlans::dispatch(auth()->id(), now(), $userIds, $letter);
 
-            $pageCount         = 0;
-            $gender            = $user->patientInfo->gender;
-            $title             = 'm' === strtolower($gender) ? 'Mr.' : ('f' === strtolower($gender) ? 'Ms.' : null);
-            $practiceNumber    = $user->primaryPractice->number_with_dashes;
-            $assignedNurseName = optional(app(NurseFinderEloquentRepository::class)->find($user->id))->first_name;
-
-            //if permanent assigned nurse does not exist, get nurse from scheduled call - CPM-1829
-            if ( ! $assignedNurseName) {
-                $call              = $user->inboundCalls->first();
-                $assignedNurseName = $call ? optional($call->outboundUser)->first_name : null;
-            }
-
-            $viewParams = [
-                'careplans'         => [$user->id => $careplan],
-                'isPdf'             => true,
-                'letter'            => $letter,
-                'problemNames'      => $careplan['problem'],
-                'patient'           => $user,
-                'careTeam'          => $user->careTeamMembers,
-                'data'              => $careplanService->careplan($user->id),
-                'billingDoctor'     => $user->billingProviderUser(),
-                'regularDoctor'     => $user->regularDoctorUser(),
-                'title'             => $title,
-                'practiceNumber'    => $practiceNumber,
-                'assignedNurseName' => $assignedNurseName,
-            ];
-
-            if ($request->filled('render') && 'html' == $request->input('render')) {
-                return view('wpUsers.patient.multiview', $viewParams);
-            }
-
-            $pdfCareplan = null;
-            if (true == $letter && 'pdf' == $user->carePlan->mode) {
-                $viewParams['pdfCarePlan'] = $user->carePlan->pdfs->sortByDesc('created_at')->first();
-            }
-
-            $fileNameWithPath = $this->pdfService->createPdfFromView(
-                'wpUsers.patient.multiview',
-                $viewParams,
-                null,
-                Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
-            );
-
-            $pageCount = $this->pdfService->countPages($fileNameWithPath);
-            // append blank page if needed
-            if ((count($users) > 1) && 0 != $pageCount % 2) {
-                $fileNameWithPath = $this->pdfService->mergeFiles(
-                    [
-                        $fileNameWithPath,
-                        $fileNameWithPathBlankPage,
-                    ],
-                    $fileNameWithPath
-                );
-            }
-
-            // add to array
-            $pageFileNames[] = $fileNameWithPath;
-
-            if (auth()->user()->isAdmin() && true == $letter) {
-                $careplanObj               = $user->carePlan;
-                $careplanObj->last_printed = Carbon::now()->toDateTimeString();
-                if ( ! $careplanObj->first_printed) {
-                    $careplanObj->first_printed    = Carbon::now()->toDateTimeString();
-                    $careplanObj->first_printed_by = auth()->id();
-                }
-                $careplanObj->save();
-            }
-
-            ++$p;
-        }
-
-        // merge to final file
-        $mergedFileNameWithPath = $this->pdfService->mergeFiles($pageFileNames);
-
-        return response()->file($mergedFileNameWithPath);
+        return response()->json('The Care Plan(s) are being generated. You will receive an email when they are ready!');
     }
 
     public function showPatientDemographics(
