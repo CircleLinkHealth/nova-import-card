@@ -50,7 +50,7 @@ class GenerateToledoClinicLetter extends Seeder
             ],
             [
                 'practice_logo_src'      => '/img/logos/Toledo/toledo_logo.png',
-                'customer_signature_src' => 'depended_on_leader_provider',
+                'customer_signature_src' => EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER,
                 'letter'                 => json_encode(
                     [
                         'page_1' => [

@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\App;
 
 class GenerateDavisCountyLetter extends Seeder
 {
+    const PRACTICE_SIGNATORY_NAME = 'Robert D Floyd, DO <br> Davis County Medical Associates, Medical Director';
+
     /**
      * Run the database seeds.
      *
@@ -57,6 +59,7 @@ class GenerateDavisCountyLetter extends Seeder
             [
                 'practice_logo_src'      => '/img/logos/DavisCounty/davis_logo.png',
                 'customer_signature_src' => '/img/signatures/davisCounty-clinic/davisCounty_signature.png',
+                'signatory_name'         => self::PRACTICE_SIGNATORY_NAME,
                 'letter'                 => json_encode(
                     [
                         'page_1' => [
