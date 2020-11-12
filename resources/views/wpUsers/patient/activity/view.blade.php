@@ -98,6 +98,7 @@
                             </div>
                         </div>
 
+                        @if(!empty($activity['chargeable_service_id']))
                         <div class="form-block col-md-6">
                             <div class="row">
                                 <div class="col-sm-6">
@@ -113,6 +114,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
 
                         <div class="new-activity-item">
                             <div class="form-group">
