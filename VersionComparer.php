@@ -96,10 +96,10 @@ class VersionComparer
         return $this->dbVersion;
     }
 
-    private function isSemVer($versionString): bool
+    private function isSemVer(string $version): bool
     {
         try {
-            SemVer\Version::parse($versionString);
+            SemVer\Version::parse($version);
 
             return true;
         } catch (SemVer\Exceptions\InvalidVersionException $e) {
