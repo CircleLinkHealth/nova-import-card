@@ -15,7 +15,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class UpdateEnrolmentLettersInNonProductionEnv extends Command
+class UpdateEnrolmentLettersSignatoryName extends Command
 {
     /**
      * The console command description.

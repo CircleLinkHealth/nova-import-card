@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateOfflineActivityTimeRequest;
-use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
@@ -17,7 +17,10 @@ class OfflineActivityTimeRequestController extends Controller
 {
     public function adminIndex()
     {
-        $requests = OfflineActivityTimeRequest::with('patient')
+        $requests = OfflineActivityTimeRequest::with([
+            'patient',
+            'chargeableService',
+        ])
             ->whereNull('is_approved')
             ->get();
 
@@ -35,7 +38,6 @@ class OfflineActivityTimeRequestController extends Controller
 
         if ($isApproved) {
             $timeRequest->approve();
-            event(new PatientActivityCreated($timeRequest->patient_id, false));
         } else {
             $timeRequest->reject();
         }
@@ -70,6 +72,7 @@ class OfflineActivityTimeRequestController extends Controller
                 'patient'                 => $patient,
                 'patient_name'            => $patient_name,
                 'activity_types'          => Activity::input_activity_types(),
+                'chargeableServices'      => $this->getChargeableServices($patient->id),
                 'userTimeZone'            => $userTimeZone,
                 'noLiveCountTimeTracking' => true,
             ]
@@ -78,7 +81,10 @@ class OfflineActivityTimeRequestController extends Controller
 
     public function index()
     {
-        $requests = OfflineActivityTimeRequest::with('patient')
+        $requests = OfflineActivityTimeRequest::with([
+            'patient',
+            'chargeableService',
+        ])
             ->where('requester_id', auth()->id())
             ->get();
 
@@ -97,13 +103,13 @@ class OfflineActivityTimeRequestController extends Controller
     {
         $offlineActivityRequest = OfflineActivityTimeRequest::create(
             [
-                'type'             => $request->input('type'),
-                'comment'          => $request->input('comment'),
-                'duration_seconds' => $request->input('duration_minutes') * 60,
-                'patient_id'       => $request->input('patient_id'),
-                'requester_id'     => auth()->id(),
-                'is_behavioral'    => $request->input('is_behavioral'),
-                'performed_at'     => \Carbon::parse($request->input('performed_at')),
+                'type'                  => $request->input('type'),
+                'comment'               => $request->input('comment'),
+                'duration_seconds'      => $request->input('duration_minutes') * 60,
+                'patient_id'            => $request->input('patient_id'),
+                'requester_id'          => auth()->id(),
+                'chargeable_service_id' => $request->input('chargeable_service_id'),
+                'performed_at'          => \Carbon::parse($request->input('performed_at')),
             ]
         );
 
@@ -112,5 +118,10 @@ class OfflineActivityTimeRequestController extends Controller
         }
 
         throw new \Exception('Failed saving Offline Activity Time Request', 500);
+    }
+
+    private function getChargeableServices($patientId)
+    {
+        return (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
     }
 }

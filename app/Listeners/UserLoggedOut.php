@@ -40,19 +40,20 @@ class UserLoggedOut implements ShouldQueue
             $user->is_online = false;
             $user->save();
 
-            $activity                    = new PageTimer();
-            $activity->duration          = 0;
-            $activity->billable_duration = 0;
-            $activity->duration_unit     = 'seconds';
-            $activity->activity_type     = 'logout';
-            $activity->title             = 'Logout';
-            $activity->url_short         = '/auth/logout/';
-            $activity->url_full          = url()->current();
-            $activity->patient_id        = null;
-            $activity->provider_id       = $user->id;
-            $activity->start_time        = Carbon::now();
-            $activity->end_time          = Carbon::now();
-            $activity->program_id        = $user->program_id;
+            $activity                        = new PageTimer();
+            $activity->duration              = 0;
+            $activity->billable_duration     = 0;
+            $activity->chargeable_service_id = null;
+            $activity->duration_unit         = 'seconds';
+            $activity->activity_type         = 'logout';
+            $activity->title                 = 'Logout';
+            $activity->url_short             = '/auth/logout/';
+            $activity->url_full              = url()->current();
+            $activity->patient_id            = null;
+            $activity->provider_id           = $user->id;
+            $activity->start_time            = Carbon::now();
+            $activity->end_time              = Carbon::now();
+            $activity->program_id            = $user->program_id;
             $activity->save();
         }
     }
