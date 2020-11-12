@@ -1307,7 +1307,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "1b50ecb001a2d3fa9b9970f23412aa33987827f1"
+                "reference": "f1ee2b8df81f60b2af2a743f6ac2df7bf035abaa"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1334,7 +1334,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-11T17:56:54+00:00"
+            "time": "2020-11-12T16:00:06+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -3370,16 +3370,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.12",
+            "version": "8.12.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "f3802f572c5fff322a2ccd8d2d792c147ed9e3c4"
+                "reference": "571bbbabdab5b1cf16550cb257005bb527fa0899"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/f3802f572c5fff322a2ccd8d2d792c147ed9e3c4",
-                "reference": "f3802f572c5fff322a2ccd8d2d792c147ed9e3c4",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/571bbbabdab5b1cf16550cb257005bb527fa0899",
+                "reference": "571bbbabdab5b1cf16550cb257005bb527fa0899",
                 "shasum": ""
             },
             "require": {
@@ -3434,7 +3434,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-10-29T09:27:40+00:00"
+            "time": "2020-11-12T14:42:30+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -9742,31 +9742,30 @@
         },
         {
             "name": "spatie/image",
-            "version": "1.7.6",
+            "version": "1.7.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/image.git",
-                "reference": "74535b5fd67ace75840c00c408666660843e755e"
+                "reference": "dfa02e81c73a11b252552cbb10c0df1767c2f54c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/image/zipball/74535b5fd67ace75840c00c408666660843e755e",
-                "reference": "74535b5fd67ace75840c00c408666660843e755e",
+                "url": "https://api.github.com/repos/spatie/image/zipball/dfa02e81c73a11b252552cbb10c0df1767c2f54c",
+                "reference": "dfa02e81c73a11b252552cbb10c0df1767c2f54c",
                 "shasum": ""
             },
             "require": {
                 "ext-exif": "*",
                 "ext-mbstring": "*",
                 "league/glide": "^1.4",
-                "php": "^7.0",
+                "php": "^7.2|^8.0",
                 "spatie/image-optimizer": "^1.0",
                 "spatie/temporary-directory": "^1.0.0",
                 "symfony/process": "^3.0|^4.0|^5.0"
             },
             "require-dev": {
-                "larapack/dd": "^1.1",
-                "phpunit/phpunit": "^6.0|^7.0",
-                "symfony/var-dumper": "^3.2|^5.0"
+                "phpunit/phpunit": "^8.0|^9.0",
+                "symfony/var-dumper": "^4.0|^5.0"
             },
             "type": "library",
             "autoload": {
@@ -9792,7 +9791,17 @@
                 "image",
                 "spatie"
             ],
-            "time": "2020-01-26T18:56:44+00:00"
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-11-12T15:15:06+00:00"
         },
         {
             "name": "spatie/image-optimizer",
