@@ -218,7 +218,8 @@ class ActivityController extends Controller
         $actId
     ) {
         $patient = User::findOrFail($patientId);
-        $act     = Activity::findOrFail($actId);
+        /** @var Activity $act */
+        $act     = Activity::with('chargeableService')->findOrFail($actId);
 
         if ($act->patient_id !== $patient->id) {
             abort(400, 'Not found');
@@ -228,8 +229,8 @@ class ActivityController extends Controller
         $activity                            = [];
         $messages                            = \Session::get('messages');
         $activity['type']                    = $act->type;
-        $activity['chargeable_service_id']   = $act->chargeableService->id;
-        $activity['chargeable_service_name'] = $act->chargeableService->display_name;
+        $activity['chargeable_service_id']   = optional($act->chargeableService)->id;
+        $activity['chargeable_service_name'] = optional($act->chargeableService)->display_name;
         $activity['performed_at']            = $act->performed_at;
         $activity['provider_name']           = User::find($act->provider_id)
             ? (User::find($act->provider_id)->getFullName())
