@@ -137,6 +137,12 @@ class OfflineActivityTimeRequest extends Model
             $pageTimer->provider_id   = $this->requester_id;
             $pageTimer->start_time    = $this->performed_at->toDateTimeString();
             $activity                 = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $pageTimer, $chargeableServiceDuration);
+
+            if ( ! empty($this->comment)) {
+                $meta = new ActivityMeta(['meta_key' => 'comment', 'meta_value' => $this->comment]);
+                $activity->meta()->save($meta);
+            }
+
             if ( ! $activityId) {
                 $activityId = $activity->id;
             }

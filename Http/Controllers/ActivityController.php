@@ -219,7 +219,7 @@ class ActivityController extends Controller
     ) {
         $patient = User::findOrFail($patientId);
         /** @var Activity $act */
-        $act     = Activity::with('chargeableService')->findOrFail($actId);
+        $act = Activity::with('chargeableService')->findOrFail($actId);
 
         if ($act->patient_id !== $patient->id) {
             abort(400, 'Not found');
@@ -273,7 +273,7 @@ class ActivityController extends Controller
         $durationSeconds     = $request->input('duration_minutes') * 60;
         $nurseUserId         = $request->input('provider_id');
         $patientId           = $request->input('patient_id');
-        
+
         /** @var User $patient */
         $patient = User::withTrashed()->find($patientId);
 
@@ -382,14 +382,13 @@ class ActivityController extends Controller
     private function processNewActivity(PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration, bool $isNurseUser, ActivityMeta $metaData): Activity
     {
         $activity = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $pageTimer, $chargeableServiceDuration);
+        $activity->meta()->save($metaData);
+
         ProcessMonthltyPatientTime::dispatchNow($pageTimer->patient_id);
         if ($isNurseUser) {
             ProcessNurseMonthlyLogs::dispatchNow($activity);
         }
         event(new PatientActivityCreated($pageTimer->patient_id, false));
-
-        $metaArray = [$metaData];
-        $activity->meta()->saveMany($metaArray);
 
         return $activity;
     }
