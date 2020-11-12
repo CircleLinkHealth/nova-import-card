@@ -122,8 +122,15 @@ class OfflineActivityTimeRequest extends Model
         return $this->belongsTo(Activity::class, 'activity_id');
     }
 
+    /**
+     * @throws \Exception
+     */
     public function approve()
     {
+        if ( ! $this->chargeable_service_id) {
+            $this->setChargeableServiceIdBasedOnPatientConditions();
+        }
+
         app(TimeTrackerServerService::class)->syncOfflineTime($this);
 
         $activityId                 = null;
@@ -215,5 +222,31 @@ class OfflineActivityTimeRequest extends Model
         if (false === (bool) $this->is_approved) {
             return 'REJECTED';
         }
+    }
+
+    /**
+     * For backwards compatibility, in case we have requests without a chargeable service id.
+     */
+    private function setChargeableServiceIdBasedOnPatientConditions()
+    {
+        // for backwards compatibility
+        $patient = User::withTrashed()->find($this->patient_id);
+        /** @var string $code */
+        $code = null;
+        if ($patient->isCcm()) {
+            $code = ChargeableService::CCM;
+        } elseif ($patient->isBhi()) {
+            $code = ChargeableService::BHI;
+        } elseif ($patient->isPcm()) {
+            $code = ChargeableService::PCM;
+        } elseif ($patient->isRpm()) {
+            $code = ChargeableService::RPM;
+        }
+
+        if ( ! $code) {
+            throw new \Exception("could not assign chargeable service to offline activity time request[$this->id]");
+        }
+
+        $this->chargeable_service_id = ChargeableService::cached()->firstWhere('code', $code)->id;
     }
 }
