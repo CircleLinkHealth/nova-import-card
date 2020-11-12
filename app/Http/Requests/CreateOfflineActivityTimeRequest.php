@@ -42,8 +42,8 @@ class CreateOfflineActivityTimeRequest extends FormRequest
             'duration_minutes'      => ['required', 'numeric'],
             'performed_at'          => ['required', 'date'],
             'comment'               => ['required', 'string'],
-            'patient_id'            => [Rule::exists((new User())->getTable(), 'id')],
-            'chargeable_service_id' => [Rule::exists((new ChargeableService())->getTable(), 'id')],
+            'patient_id'            => ['required', Rule::exists((new User())->getTable(), 'id')],
+            'chargeable_service_id' => ['required', Rule::exists((new ChargeableService())->getTable(), 'id')],
         ];
     }
 }

@@ -97,6 +97,7 @@
                             <div class="{{ 'col-sm-'. (count($chargeableServices) === 3 ? '4' : (count($chargeableServices) === 2 ? '6' : '12' )) }}">
                                 <input type="radio"
                                        name="chargeable_service_id"
+                                       required
                                        style="display:inline"
                                        value="{{ $chargeableService->chargeable_service_id  }}"
                                         {{ $chargeableService->chargeable_service_id == old('chargeable_service_id') ? 'checked' : ''}}/>
