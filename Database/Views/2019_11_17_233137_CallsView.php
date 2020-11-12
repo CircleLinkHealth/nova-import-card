@@ -33,10 +33,16 @@ class CallsView extends BaseSqlView
             u1.patient,
             c.scheduled_date,
             (select max(called_date) from calls where `status` in ('reached', 'not reached', 'ignored') and calls.inbound_cpm_id = c.inbound_cpm_id) as last_call,
-            if (u5.ccm_time is null, 0, u5.ccm_time) as ccm_time,
-            if (u5.bhi_time is null, 0, u5.bhi_time) as bhi_time,
-            if (u5.no_of_calls is null, 0, u5.no_of_calls) as no_of_calls,
-            if (u5.no_of_successful_calls is null, 0, u5.no_of_successful_calls) as no_of_successful_calls,
+            if (ccm_summary.total_time is null, 0, ccm_summary.total_time) as ccm_total_time,
+            if (bhi_summary.total_time is null, 0, bhi_summary.total_time) as bhi_total_time,
+            if (pcm_summary.total_time is null, 0, pcm_summary.total_time) as pcm_total_time,
+            if (rpm_summary.total_time is null, 0, rpm_summary.total_time) as rpm_total_time,
+            if (u5.ccm_time is null, 0, u5.ccm_time) as pms_ccm_time,
+            if (u5.bhi_time is null, 0, u5.bhi_time) as pms_bhi_time,
+            if (u5.no_of_calls is null, 0, u5.no_of_calls) as pms_no_of_calls,
+            if (u5.no_of_successful_calls is null, 0, u5.no_of_successful_calls) as pms_no_of_successful_calls,
+            if(ccm_summary.no_of_calls is null, if(bhi_summary.no_of_calls is null, if(pcm_summary.no_of_calls is null, if(rpm_summary.no_of_calls is null, 0, rpm_summary.no_of_calls) ,pcm_summary.no_of_calls), bhi_summary.no_of_calls),ccm_summary.no_of_calls) as total_no_of_calls,
+            if(ccm_summary.no_of_successful_calls is null, if(bhi_summary.no_of_successful_calls is null, if(pcm_summary.no_of_successful_calls is null, if(rpm_summary.no_of_successful_calls is null, 0, rpm_summary.no_of_successful_calls) ,pcm_summary.no_of_successful_calls), bhi_summary.no_of_successful_calls),ccm_summary.no_of_successful_calls) as total_no_of_successful_calls,
             u7.practice_id,
             u7.practice,
             u7.is_demo,
@@ -72,7 +78,15 @@ class CallsView extends BaseSqlView
 						group by pi.user_id, pi.general_comment, pi.ccm_status, pi.preferred_contact_language) as u4 on c.inbound_cpm_id = u4.patient_id
 						
             left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, pms.no_of_calls from patient_monthly_summaries pms where month_year = DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) u5 on c.inbound_cpm_id = u5.patient_id
-
+            
+            left join (select patient_user_id, chargeable_month, ANY_VALUE(chargeable_service_name), SUM(total_time) as total_time, no_of_successful_calls, no_of_calls from chargeable_patient_monthly_summaries_view where chargeable_month = DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH) and chargeable_service_name LIKE 'CCM%' GROUP BY patient_user_id) ccm_summary on ccm_summary.patient_user_id = u1.patient_id
+            
+            left join (select patient_user_id, chargeable_month, ANY_VALUE(chargeable_service_name), SUM(total_time) as total_time, no_of_successful_calls, no_of_calls from chargeable_patient_monthly_summaries_view where chargeable_month = DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH) and chargeable_service_name = 'BHI' GROUP BY patient_user_id) bhi_summary on bhi_summary.patient_user_id = u1.patient_id
+            
+            left join (select patient_user_id, chargeable_month, ANY_VALUE(chargeable_service_name), SUM(total_time) as total_time, no_of_successful_calls, no_of_calls from chargeable_patient_monthly_summaries_view where chargeable_month = DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH) and chargeable_service_name = 'PCM' GROUP BY patient_user_id) pcm_summary on pcm_summary.patient_user_id = u1.patient_id
+            
+            left join (select patient_user_id, chargeable_month, ANY_VALUE(chargeable_service_name), SUM(total_time) as total_time, no_of_successful_calls, no_of_calls from chargeable_patient_monthly_summaries_view where chargeable_month = DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH) and chargeable_service_name LIKE 'RPM%' GROUP BY patient_user_id) rpm_summary on rpm_summary.patient_user_id = u1.patient_id
+            
 			left join (select u.id as user_id, p.id as practice_id, p.display_name as practice, p.is_demo from practices p join users u on u.program_id = p.id where p.active = 1) u7 on c.inbound_cpm_id = u7.user_id
 
             left join patients_bhi_chargeable_view pbhi on c.inbound_cpm_id = pbhi.id
@@ -91,7 +105,6 @@ class CallsView extends BaseSqlView
             OR
             # tasks can be in the past
             c.type != 'call'
-            
       ");
 
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
