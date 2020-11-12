@@ -114,29 +114,27 @@ class PatientServicesForTimeTracker
     private function groupSimilarCodes(): self
     {
         /** @var ChargeablePatientMonthlySummaryView $ccmChargeableService */
-        $ccmChargeableService = $this->summaries->filter(function (ChargeablePatientMonthlySummaryView $entry) {
-            return ChargeableService::CCM === $entry->chargeable_service_code;
-        })->first();
+        $ccmChargeableService = $this->summaries->filter(fn (ChargeablePatientMonthlySummaryView $entry) => ChargeableService::CCM === $entry->chargeable_service_code)->first();
 
         /** @var ChargeablePatientMonthlySummaryView $rpmChargeableService */
-        $rpmChargeableService = $this->summaries->filter(function (ChargeablePatientMonthlySummaryView $entry) {
-            return ChargeableService::RPM === $entry->chargeable_service_code;
-        })->first();
+        $rpmChargeableService = $this->summaries->filter(fn (ChargeablePatientMonthlySummaryView $entry) => ChargeableService::RPM === $entry->chargeable_service_code)->first();
 
         $patientChargeableSummaries = collect();
-        $this->summaries->each(function (ChargeablePatientMonthlySummaryView $entry) use ($patientChargeableSummaries, $ccmChargeableService, $rpmChargeableService) {
-            $code = $entry->chargeable_service_code;
-            if (in_array($code, [ChargeableService::CCM, ChargeableService::RPM])) {
-                return;
-            }
-            if ($ccmChargeableService && in_array($code, [ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60])) {
-                $ccmChargeableService->total_time += $entry->total_time;
-            } elseif ($rpmChargeableService && ChargeableService::RPM40 === $code) {
-                $rpmChargeableService->total_time += $entry->total_time;
-            } else {
-                $patientChargeableSummaries->push($entry);
-            }
-        });
+        $this->summaries
+            ->transform(fn (ChargeablePatientMonthlySummaryView $entry) => $entry->replicate())
+            ->each(function (ChargeablePatientMonthlySummaryView $entry) use ($patientChargeableSummaries, $ccmChargeableService, $rpmChargeableService) {
+                $code = $entry->chargeable_service_code;
+                if (in_array($code, [ChargeableService::CCM, ChargeableService::RPM])) {
+                    return;
+                }
+                if ($ccmChargeableService && in_array($code, [ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60])) {
+                    $ccmChargeableService->total_time += $entry->total_time;
+                } elseif ($rpmChargeableService && ChargeableService::RPM40 === $code) {
+                    $rpmChargeableService->total_time += $entry->total_time;
+                } else {
+                    $patientChargeableSummaries->push($entry);
+                }
+            });
         if ($ccmChargeableService) {
             $patientChargeableSummaries->push($ccmChargeableService);
         }
