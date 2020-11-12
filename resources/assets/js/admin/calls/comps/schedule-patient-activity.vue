@@ -9,6 +9,7 @@
 <script>
     import {Event} from 'vue-tables-2'
     import AddActionModal from './modals/add-action.modal'
+    import UserRolesHelperMixin from '../../../mixins/user-roles-helpers.mixin'
 
     export default {
         name: 'schedule-patient-activity',
@@ -16,6 +17,10 @@
         components: {
             'add-action-modal': AddActionModal,
         },
+
+        mixins: [
+            UserRolesHelperMixin
+        ],
 
         props: [
             'patientId',
