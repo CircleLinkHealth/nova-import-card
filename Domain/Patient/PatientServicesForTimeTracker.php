@@ -74,7 +74,17 @@ class PatientServicesForTimeTracker
             ->filter()
             ->unique();
 
-        $chargeableServices = ChargeableService::whereIn('code', $servicesDerivedFromPatientProblems)->get();
+        if ($servicesDerivedFromPatientProblems->contains(ChargeableService::CCM)) {
+            $servicesDerivedFromPatientProblems->push(...ChargeableService::CCM_PLUS_CODES);
+        }
+
+        if ($servicesDerivedFromPatientProblems->contains(ChargeableService::RPM)) {
+            $servicesDerivedFromPatientProblems->push(ChargeableService::RPM40);
+        }
+
+        $chargeableServices = ChargeableService::cached()
+            ->whereIn('code', $servicesDerivedFromPatientProblems)
+            ->collect();
 
         $activitiesForMonth = Activity::wherePatientId($this->patientId)
             ->createdThisMonth('performed_at')->get();
