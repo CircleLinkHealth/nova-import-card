@@ -4336,7 +4336,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         try {
             return \Propaganistas\LaravelPhone\PhoneNumber::make($number)->formatE164();
-        } catch (NumberParseException $e) {
+        } catch (\libphonenumber\NumberParseException|NumberParseException $e) {
             try {
                 return \Propaganistas\LaravelPhone\PhoneNumber::make($number, 'us')->formatE164();
             } catch (\libphonenumber\NumberParseException|NumberParseException $e) {
