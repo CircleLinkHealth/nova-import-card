@@ -15,17 +15,19 @@ use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\ActivityMeta;
+use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
-use GuzzleHttp\Client;
+use CircleLinkHealth\Timetracking\Requests\AdminCreateOfflineActivityTimeRequest;
+use CircleLinkHealth\Timetracking\Services\TimeTrackerServerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Log;
 
 /**
  * Class ActivityController.
@@ -81,12 +83,13 @@ class ActivityController extends Controller
             ->all();
 
         $view_data = [
-            'program_id'     => $patient->program_id,
-            'patient'        => $patient,
-            'patient_name'   => $patient_name,
-            'activity_types' => Activity::input_activity_types(),
-            'provider_info'  => $provider_info,
-            'userTimeZone'   => $userTimeZone,
+            'program_id'         => $patient->program_id,
+            'patient'            => $patient,
+            'patient_name'       => $patient_name,
+            'activity_types'     => Activity::input_activity_types(),
+            'chargeableServices' => $this->getChargeableServices($patient->id),
+            'provider_info'      => $provider_info,
+            'userTimeZone'       => $userTimeZone,
         ];
 
         return view('wpUsers.patient.activity.create', $view_data);
@@ -222,11 +225,13 @@ class ActivityController extends Controller
         }
 
         //Set up note pack for view
-        $activity                  = [];
-        $messages                  = \Session::get('messages');
-        $activity['type']          = $act->type;
-        $activity['performed_at']  = $act->performed_at;
-        $activity['provider_name'] = User::find($act->provider_id)
+        $activity                            = [];
+        $messages                            = \Session::get('messages');
+        $activity['type']                    = $act->type;
+        $activity['chargeable_service_id']   = $act->chargeableService->id;
+        $activity['chargeable_service_name'] = $act->chargeableService->display_name;
+        $activity['performed_at']            = $act->performed_at;
+        $activity['provider_name']           = User::find($act->provider_id)
             ? (User::find($act->provider_id)->getFullName())
             : '';
         $activity['duration'] = intval($act->duration) / 60;
@@ -259,114 +264,46 @@ class ActivityController extends Controller
     }
 
     /**
-     * @param bool $params
-     *
-     * @throws \Exception
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(
-        Request $request,
-        $params = false
-    ) {
-        if ($params) {
-            $input = $request->all();
-        } else {
-            if ($request->isJson()) {
-                $input = $request->input();
-            } else {
-                return response('Unauthorized', 401);
-            }
-        }
+    public function store(AdminCreateOfflineActivityTimeRequest $request)
+    {
+        $chargeableServiceId = $request->input('chargeable_service_id');
+        $durationSeconds     = $request->input('duration_minutes') * 60;
+        $nurseUserId         = $request->input('provider_id');
+        $patientId           = $request->input('patient_id');
+        
+        /** @var User $patient */
+        $patient = User::withTrashed()->find($patientId);
 
-        $nurseUserId = null;
-        $patient     = null;
-
-        // convert minutes to seconds.
-        if ($input['duration']) {
-            $input['duration'] = $input['duration'] * 60;
-            $client            = new Client();
-
-            $nurseUserId = $input['provider_id'];
-            $patientId   = $input['patient_id'];
-            $duration    = (int) $input['duration'];
-
-            $patient = User::find($patientId);
-
-            if ($patient) {
-                $isCcm        = $patient->isCcm();
-                $isBehavioral = $patient->isBhi();
-                if ($isCcm && $isBehavioral) {
-                    $is_bhi = isset($input['is_behavioral'])
-                        ? ('true' != $input['is_behavioral']
-                            ? false
-                            : true)
-                        : false;
-                    $input['is_behavioral'] = $is_bhi;
-                } else {
-                    $is_bhi                 = $isBehavioral;
-                    $input['is_behavioral'] = $isBehavioral;
-                }
-            } else {
-                throw new \Exception('patient_id '.$patientId.' does not correspond to any patient');
-            }
-
-            // Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
-            if ($nurseUserId && $patientId && $duration) {
-                $url = config('services.ws.server-url').'/'.$nurseUserId.'/'.$patientId;
-                try {
-                    $timeParam = $is_bhi
-                        ? 'bhiTime'
-                        : 'ccmTime';
-                    $res = $client->put(
-                        $url,
-                        [
-                            'form_params' => [
-                                'startTime' => $duration,
-                                $timeParam  => $duration,
-                            ],
-                        ]
-                    );
-                    $status = $res->getStatusCode();
-                    $body   = $res->getBody();
-                    if (200 == $status) {
-                        Log::info($body);
-                    } else {
-                        Log::critical($body);
-                    }
-                } catch (\Exception $ex) {
-                    Log::critical($ex);
-                }
-            }
-        }
+        /** @var ChargeableService $cs */
+        $cs = ChargeableService::cached()->firstWhere('id', '=', $chargeableServiceId);
 
         /** @var Nurse $nurse */
-        $nurse = null;
-        if ($nurseUserId) {
-            $nurse = Nurse::whereUserId($nurseUserId)->first();
+        $nurse = Nurse::whereUserId($nurseUserId)->first();
+
+        if ($nurse) {
+            $this->syncWithTimeTrackerServer($nurseUserId, $patientId, $durationSeconds, $cs);
         }
 
-        $metaData = $input['meta'] ?? [];
+        $metaData             = new ActivityMeta();
+        $metaData->meta_key   = 'comment';
+        $metaData->meta_value = $request->input('comment');
 
         $fakePageTimer                = new PageTimer();
-        $fakePageTimer->activity_type = $input['type'];
-        $fakePageTimer->provider_id   = $input['provider_id'];
-        $fakePageTimer->start_time    = $input['performed_at'];
-        $fakePageTimer->patient_id    = $input['patient_id'];
+        $fakePageTimer->activity_type = $request->input('type');
+        $fakePageTimer->provider_id   = $nurseUserId;
+        $fakePageTimer->start_time    = $request->input('performed_at');
+        $fakePageTimer->patient_id    = $patientId;
 
-        $activity = null;
-        if ($patient) {
-            $cs                         = ChargeableService::cached()->firstWhere('code', '=', $input['is_behavioral'] ? ChargeableService::BHI : ChargeableService::CCM);
-            $chargeableServicesDuration = app(ActivityService::class)->separateDurationForEachChargeableServiceId($patient, $input['duration'], $cs->id);
-            foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
-                $anActivity = $this->processNewActivity($fakePageTimer, $chargeableServiceDuration, null !== $nurse, $metaData);
-                if ( ! $activity) {
-                    $activity = $anActivity;
-                }
+        /** @var Activity $activity */
+        $activity                   = null;
+        $chargeableServicesDuration = app(ActivityService::class)->separateDurationForEachChargeableServiceId($patient, $durationSeconds, $cs->id);
+        foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
+            $anActivity = $this->processNewActivity($fakePageTimer, $chargeableServiceDuration, null !== $nurse, $metaData);
+            if ( ! $activity) {
+                $activity = $anActivity;
             }
-        } else {
-            $chargeableServiceDuration = new ChargeableServiceDuration(null, $input['duration'], false);
-            $activity                  = $this->processNewActivity($fakePageTimer, $chargeableServiceDuration, null !== $nurse, $metaData);
         }
 
         return redirect()->route(
@@ -428,6 +365,11 @@ class ActivityController extends Controller
         return $acts;
     }
 
+    private function getChargeableServices($patientId)
+    {
+        return (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
+    }
+
     private function getFullName($firstName, $lastName, $suffix)
     {
         $firstName = ucwords(strtolower($firstName));
@@ -436,7 +378,7 @@ class ActivityController extends Controller
         return trim("${firstName} ${lastName} ${suffix}");
     }
 
-    private function processNewActivity(PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration, bool $isNurseUser, array $metaData): Activity
+    private function processNewActivity(PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration, bool $isNurseUser, ActivityMeta $metaData): Activity
     {
         $activity = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $pageTimer, $chargeableServiceDuration);
         ProcessMonthltyPatientTime::dispatchNow($pageTimer->patient_id);
@@ -445,14 +387,21 @@ class ActivityController extends Controller
         }
         event(new PatientActivityCreated($pageTimer->patient_id, false));
 
-        $metaArray = [];
-        foreach ($metaData as $actMeta) {
-            $metaArray[] = new ActivityMeta($actMeta);
-        }
-        if ( ! empty($metaArray)) {
-            $activity->meta()->saveMany($metaArray);
-        }
+        $metaArray = [$metaData];
+        $activity->meta()->saveMany($metaArray);
 
         return $activity;
+    }
+
+    private function syncWithTimeTrackerServer(int $nurseUserId, int $patientId, int $durationSeconds, ChargeableService $chargeableService)
+    {
+        $req                        = new OfflineActivityTimeRequest();
+        $req->duration_seconds      = $durationSeconds;
+        $req->requester_id          = $nurseUserId;
+        $req->patient_id            = $patientId;
+        $req->chargeable_service_id = $chargeableService->id;
+        $req->setRelation('chargeableService', $chargeableService);
+
+        app(TimeTrackerServerService::class)->syncOfflineTime($req);
     }
 }
