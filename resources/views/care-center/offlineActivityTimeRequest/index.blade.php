@@ -43,7 +43,7 @@
                                             Deleted patient [{{$r->patient_id}}]
                                         @endif
                                     </td>
-                                    <td>{{$r->chargeableService->display_name}}</td>
+                                    <td>{{optional($r->chargeableService)->display_name ?? 'n/a'}}</td>
                                     <td>{{$r->performed_at}}</td>
                                     <td>{{$r->comment}}</td>
                                     @if(auth()->user()->isAdmin())

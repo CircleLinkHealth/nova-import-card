@@ -20,6 +20,12 @@
         </script>
     @endpush
 
+    <div class="row" style="margin-top: 5px">
+        <div class="col-lg-10 col-lg-offset-1">
+            @include('errors.errors')
+        </div>
+    </div>
+
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"
              style="border-bottom: 3px solid #50b2e2;">
@@ -101,9 +107,9 @@
                             </div>
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <select id="activityValue" name="duration" class="selectpickerX dropdown Valid form-control" data-size="10" required>
+                                    <select id="activityValue" name="duration_minutes" class="selectpickerX dropdown Valid form-control" data-size="10" required>
                                         @for($i = 1; $i < 121 ; $i++)
-                                            <option value="{{$i}}" name="duration"> {{$i}} </option>
+                                            <option value="{{$i}}" name="duration_minutes"> {{$i}} </option>
                                         @endfor
                                     </select>
                                 </div>
@@ -111,32 +117,31 @@
                         </div>
                     </div>
 
-                    @if ($patient->isCcm() && $patient->isBhi())
-                        <div class="form-block col-md-6">
-                            <div class="row">
-                                <div class="col-sm-6">
+                    <div class="form-block col-md-6">
+                        <div class="row">
+                            @foreach($chargeableServices as $chargeableService)
+                                <div class="{{ 'col-sm-'. (count($chargeableServices) === 3 ? '4' : (count($chargeableServices) === 2 ? '6' : '12' )) }}">
                                     <label>
-                                        <input type="radio" name="is_behavioral" style="display:inline" value="false" checked /> CCM Time 
+                                        <input type="radio"
+                                               required
+                                               name="chargeable_service_id"
+                                               style="display:inline"
+                                               value="{{ $chargeableService->chargeable_service_id  }}"
+                                                {{ $chargeableService->chargeable_service_id == old('chargeable_service_id') ? 'checked' : ''}}/>
+                                        {{ $chargeableService->chargeable_service_name  }}
                                     </label>
                                 </div>
-                                <div class="col-sm-6">
-                                    <label>
-                                        <input type="radio" name="is_behavioral" style="display:inline" value="true" /> BHI Time 
-                                    </label>
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
-                    @endif
-                    
+                    </div>
 
                     <div class="form-block col-md-12">
                         <div class="row">
                             <div class="new-activity-item">
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        <input type="hidden" name="meta[1][meta_key]" value="comment">
                                         <textarea id="activity" class="form-control" rows="10" cols="100" placeholder="Enter Comment..."
-                                                  name="meta[1][meta_value]" required></textarea> <br/>
+                                                  name="comment" required></textarea> <br/>
                                     </div>
                                 </div>
                                 <div class="col-lg-8 col-lg-offset-2">
@@ -145,20 +150,15 @@
                                     </div>
                                 </div>
                                 <div class="">
-                                    <input type="hidden" name="duration_unit" value="seconds">
                                     <input type="hidden" name="perfomred_at_gmt" value="{{ $userTimeGMT }}">
                                     <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                                    <input type="hidden" name="logged_from" value="manual_input">
-                                    <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
-                                    <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
-                                    <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
+                                    <input type="hidden" name="provider_id" value="{{auth()->id()}}">
                                 </div>
                                 <div class="new-activity-item">
                                     <div class="form-group">
                                         <div class="center-block">
                                             <div class="form-item form-item-spacing text-center">
                                                 <div>
-                                                    <input type="hidden" value="new_activity"/>
                                                     <button id="update" name="submitAction" type="submit" value="new_activity"
                                                             class="btn btn-primary btn-lg form-item--button form-item-spacing">
                                                         Save Offline Activity
