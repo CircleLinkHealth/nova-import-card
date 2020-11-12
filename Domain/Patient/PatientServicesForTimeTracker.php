@@ -114,14 +114,15 @@ class PatientServicesForTimeTracker
     private function groupSimilarCodes(): self
     {
         /** @var ChargeablePatientMonthlySummaryView $ccmChargeableService */
-        $ccmChargeableService = $this->summaries->filter(fn (ChargeablePatientMonthlySummaryView $entry) => ChargeableService::CCM === $entry->chargeable_service_code)->first();
+        $ccmChargeableService = $this->summaries->filter(fn (ChargeablePatientMonthlySummaryView $entry) => ChargeableService::CCM === $entry->chargeable_service_code)
+            ->first();
 
         /** @var ChargeablePatientMonthlySummaryView $rpmChargeableService */
-        $rpmChargeableService = $this->summaries->filter(fn (ChargeablePatientMonthlySummaryView $entry) => ChargeableService::RPM === $entry->chargeable_service_code)->first();
+        $rpmChargeableService = $this->summaries->filter(fn (ChargeablePatientMonthlySummaryView $entry) => ChargeableService::RPM === $entry->chargeable_service_code)
+            ->first();
 
         $patientChargeableSummaries = collect();
         $this->summaries
-            ->transform(fn (ChargeablePatientMonthlySummaryView $entry) => $entry->replicate())
             ->each(function (ChargeablePatientMonthlySummaryView $entry) use ($patientChargeableSummaries, $ccmChargeableService, $rpmChargeableService) {
                 $code = $entry->chargeable_service_code;
                 if (in_array($code, [ChargeableService::CCM, ChargeableService::RPM])) {
@@ -135,6 +136,7 @@ class PatientServicesForTimeTracker
                     $patientChargeableSummaries->push($entry);
                 }
             });
+        
         if ($ccmChargeableService) {
             $patientChargeableSummaries->push($ccmChargeableService);
         }
@@ -175,7 +177,10 @@ class PatientServicesForTimeTracker
     private function setSummaries(): self
     {
         $this->summaries = $this->newBillingIsEnabled() ?
-            $this->repo()->getChargeablePatientSummaries($this->patientId, $this->month) :
+            $this->repo()
+                ->getChargeablePatientSummaries($this->patientId, $this->month)
+                //create copies of the models because we are modifying them in groupSimilarCodes()
+                ->transform(fn ($entry) => $entry->replicate()) :
             $this->createFauxSummariesFromLegacyData();
 
         return $this;
