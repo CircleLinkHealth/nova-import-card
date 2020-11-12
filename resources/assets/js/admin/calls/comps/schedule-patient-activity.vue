@@ -56,7 +56,7 @@
             }
 
             Event.$on("modal-add-action:hide", (actions) => {
-                if (actions.length > 0) {
+                if (actions && actions.length > 0) {
                     this.showSuccessBanner = true;
                 }
             });
