@@ -152,7 +152,6 @@
                                 <div class="">
                                     <input type="hidden" name="perfomred_at_gmt" value="{{ $userTimeGMT }}">
                                     <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                                    <input type="hidden" name="provider_id" value="{{auth()->id()}}">
                                 </div>
                                 <div class="new-activity-item">
                                     <div class="form-group">
