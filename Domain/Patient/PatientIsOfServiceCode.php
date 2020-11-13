@@ -31,21 +31,21 @@ class PatientIsOfServiceCode
         $this->bypassRequiresConsent = $bypassRequiresConsent;
     }
 
-    public static function execute(int $patientId, string $serviceCode, $bypassRequiresConsent = false): bool
-    {
-        return (new static($patientId, $serviceCode, $bypassRequiresConsent))->isOfServiceCode();
-    }
-    
     public static function excludeLocationCheck(int $patientId, string $serviceCode, $bypassRequiresConsent = false): bool
     {
         return (new static($patientId, $serviceCode, $bypassRequiresConsent))->isOfServiceCodeExcludingLocationCheck();
+    }
+
+    public static function execute(int $patientId, string $serviceCode, $bypassRequiresConsent = false): bool
+    {
+        return (new static($patientId, $serviceCode, $bypassRequiresConsent))->isOfServiceCode();
     }
 
     public function isOfServiceCode(): bool
     {
         return $this->hasSummary() && $this->hasEnoughProblems() && $this->patientLocationHasService() && ! $this->hasClashingService();
     }
-    
+
     public function isOfServiceCodeExcludingLocationCheck(): bool
     {
         return $this->hasSummary() && $this->hasEnoughProblems() && ! $this->hasClashingService();
