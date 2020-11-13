@@ -102,12 +102,6 @@ class ChargeableService extends BaseModel
         'CPT 99489',
         self::GENERAL_CARE_MANAGEMENT,
     ];
-    
-    const ONLY_PLUS_CODES = [
-        self::CCM_PLUS_40,
-        self::CCM_PLUS_60,
-        self::RPM40
-    ];
 
     const FRIENDLY_NAMES = [
         self::CCM                     => 'CCM',
@@ -123,6 +117,12 @@ class ChargeableService extends BaseModel
     ];
 
     const GENERAL_CARE_MANAGEMENT = 'G0511';
+
+    const ONLY_PLUS_CODES = [
+        self::CCM_PLUS_40,
+        self::CCM_PLUS_60,
+        self::RPM40,
+    ];
 
     const PCM   = 'G2065';
     const RPM   = 'CPT 99457';
