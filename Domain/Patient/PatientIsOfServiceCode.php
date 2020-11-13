@@ -18,37 +18,30 @@ class PatientIsOfServiceCode
     protected bool $billingRevampIsEnabled;
 
     protected bool $bypassRequiresConsent;
+    
+    protected bool $bypassLocationCheck;
     protected int $patientId;
 
     protected PatientServiceProcessorRepository $repo;
 
     protected string $serviceCode;
 
-    public function __construct(int $patientId, string $serviceCode, bool $bypassRequiresConsent = false)
+    public function __construct(int $patientId, string $serviceCode, bool $bypassRequiresConsent = false, bool $bypassLocationCheck = false)
     {
         $this->patientId             = $patientId;
         $this->serviceCode           = $serviceCode;
         $this->bypassRequiresConsent = $bypassRequiresConsent;
+        $this->bypassLocationCheck = $bypassLocationCheck;
     }
 
-    public static function excludeLocationCheck(int $patientId, string $serviceCode, $bypassRequiresConsent = false): bool
+    public static function execute(int $patientId, string $serviceCode, $bypassRequiresConsent = false, $bypassLocationCheck = false): bool
     {
-        return (new static($patientId, $serviceCode, $bypassRequiresConsent))->isOfServiceCodeExcludingLocationCheck();
-    }
-
-    public static function execute(int $patientId, string $serviceCode, $bypassRequiresConsent = false): bool
-    {
-        return (new static($patientId, $serviceCode, $bypassRequiresConsent))->isOfServiceCode();
+        return (new static($patientId, $serviceCode, $bypassRequiresConsent, $bypassLocationCheck))->isOfServiceCode();
     }
 
     public function isOfServiceCode(): bool
     {
         return $this->hasSummary() && $this->hasEnoughProblems() && $this->patientLocationHasService() && ! $this->hasClashingService();
-    }
-
-    public function isOfServiceCodeExcludingLocationCheck(): bool
-    {
-        return $this->hasSummary() && $this->hasEnoughProblems() && ! $this->hasClashingService();
     }
 
     private function billingRevampIsEnabled(): bool
@@ -105,6 +98,10 @@ class PatientIsOfServiceCode
 
     private function patientLocationHasService(): bool
     {
+        if ($this->bypassLocationCheck){
+            return true;
+        }
+        
         $patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $thisMonth = Carbon::now()->startOfMonth());
 
         if ( ! $this->billingRevampIsEnabled()) {

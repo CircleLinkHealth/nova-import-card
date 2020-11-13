@@ -108,7 +108,7 @@ class PatientServicesForTimeTracker
         $this->summaries = $this->summaries
             ->filter(function ($summary) {
                 if (in_array($summary->chargeable_service_code, ChargeableService::ONLY_PLUS_CODES)) {
-                    return PatientIsOfServiceCode::excludeLocationCheck($summary->patient_user_id, $summary->chargeable_service_code);
+                    return PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code, false, true);
                 }
 
                 return PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code);
