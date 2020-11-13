@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35103d5f414145fefb6a75bef5dc512e",
+    "content-hash": "76af137ff70d417a97a64b75a889a873",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.161.0",
+            "version": "3.161.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "93f237f55463035896dbe298c9100b2438a87193"
+                "reference": "4c1852e9efaef18e15f2a6c914d8dc41fda2a052"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/93f237f55463035896dbe298c9100b2438a87193",
-                "reference": "93f237f55463035896dbe298c9100b2438a87193",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4c1852e9efaef18e15f2a6c914d8dc41fda2a052",
+                "reference": "4c1852e9efaef18e15f2a6c914d8dc41fda2a052",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-11-12T19:25:24+00:00"
+            "time": "2020-11-13T19:17:55+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1194,11 +1194,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-ROAD-346-billing-revamp",
+            "version": "dev-new-phone-number-format",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "e48cb2d03485582b168d778c55e20cfa1256edf1"
+                "reference": "10dff0af85c2c79a459d7c106b02c9672184e5e2"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1227,7 +1227,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-21T09:51:40+00:00"
+            "time": "2020-11-11T17:56:46+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1303,11 +1303,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-ROAD-346-billing-revamp",
+            "version": "dev-enrollee-phone-number-formats",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "2f48b6a676c5a00024fbcff8625bed8c5fb01931"
+                "reference": "f1ee2b8df81f60b2af2a743f6ac2df7bf035abaa"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1334,7 +1334,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-11T16:51:17+00:00"
+            "time": "2020-11-12T16:00:06+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
