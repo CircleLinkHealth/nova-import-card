@@ -94,7 +94,7 @@ class Enrollees extends Resource
                 ->subtitle('Click to download.')
                 ->target('_self'),
             (new LinkableAway())
-                ->title('Auto Enrolment CSV Template')
+                ->title('Auto Enrolment/CA CSV Template')
                 ->url('https://drive.google.com/file/d/1qEF-p6PB4q_gI6q0i3JQAwZeIHwfSRop/view?usp=sharing')
                 ->subtitle('Click to download.')
                 ->target('_self'),
