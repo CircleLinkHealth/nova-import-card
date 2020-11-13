@@ -17,9 +17,9 @@ class PatientIsOfServiceCode
 {
     protected bool $billingRevampIsEnabled;
 
-    protected bool $bypassRequiresConsent;
-    
     protected bool $bypassLocationCheck;
+
+    protected bool $bypassRequiresConsent;
     protected int $patientId;
 
     protected PatientServiceProcessorRepository $repo;
@@ -31,7 +31,7 @@ class PatientIsOfServiceCode
         $this->patientId             = $patientId;
         $this->serviceCode           = $serviceCode;
         $this->bypassRequiresConsent = $bypassRequiresConsent;
-        $this->bypassLocationCheck = $bypassLocationCheck;
+        $this->bypassLocationCheck   = $bypassLocationCheck;
     }
 
     public static function execute(int $patientId, string $serviceCode, $bypassRequiresConsent = false, $bypassLocationCheck = false): bool
@@ -98,10 +98,10 @@ class PatientIsOfServiceCode
 
     private function patientLocationHasService(): bool
     {
-        if ($this->bypassLocationCheck){
+        if ($this->bypassLocationCheck) {
             return true;
         }
-        
+
         $patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $thisMonth = Carbon::now()->startOfMonth());
 
         if ( ! $this->billingRevampIsEnabled()) {
