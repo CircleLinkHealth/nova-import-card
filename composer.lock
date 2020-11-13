@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "76af137ff70d417a97a64b75a889a873",
+    "content-hash": "35103d5f414145fefb6a75bef5dc512e",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.160.0",
+            "version": "3.161.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5f1be65b657a53d79f585e2df8c996931b1b01b1"
+                "reference": "93f237f55463035896dbe298c9100b2438a87193"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5f1be65b657a53d79f585e2df8c996931b1b01b1",
-                "reference": "5f1be65b657a53d79f585e2df8c996931b1b01b1",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/93f237f55463035896dbe298c9100b2438a87193",
+                "reference": "93f237f55463035896dbe298c9100b2438a87193",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-11-11T19:16:21+00:00"
+            "time": "2020-11-12T19:25:24+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "e4243da5455274fb44d7fdb51798d3807aad0310"
+                "reference": "9037a4987d0a51547344ce2b4fcb161d28944415"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-11T16:07:17+00:00"
+            "time": "2020-11-13T17:10:33+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1194,11 +1194,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-new-phone-number-format",
+            "version": "dev-ROAD-346-billing-revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "10dff0af85c2c79a459d7c106b02c9672184e5e2"
+                "reference": "e48cb2d03485582b168d778c55e20cfa1256edf1"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1227,7 +1227,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-11T17:56:46+00:00"
+            "time": "2020-10-21T09:51:40+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1265,7 +1265,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "fc6f54192329b916e2ac409fd8b17a28aa1d972f"
+                "reference": "9da69925cd0475e2502b49a1f8274ea88861b0d8"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,15 +1299,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-11T12:43:33+00:00"
+            "time": "2020-11-13T16:29:42+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-enrollee-phone-number-formats",
+            "version": "dev-ROAD-346-billing-revamp",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "f1ee2b8df81f60b2af2a743f6ac2df7bf035abaa"
+                "reference": "2f48b6a676c5a00024fbcff8625bed8c5fb01931"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1334,7 +1334,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-12T16:00:06+00:00"
+            "time": "2020-11-11T16:51:17+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1554,7 +1554,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "19b187d531010695e7ffc9231414a952b29035ca"
+                "reference": "29963abfc9f528c3daabb03a0ad01cd1a2cd09c8"
             },
             "type": "laravel-module",
             "extra": {
@@ -1576,7 +1576,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-02T12:24:28+00:00"
+            "time": "2020-11-13T16:29:41+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1724,7 +1724,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "0a632fc6618f7fc28c750e5b6052ab22e050143f"
+                "reference": "4e1c9c995a61552ccf4dcad18f4ca64e6f4fa26b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1749,7 +1749,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-11T11:26:01+00:00"
+            "time": "2020-11-12T17:56:16+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
@@ -6298,16 +6298,16 @@
         },
         {
             "name": "maatwebsite/excel",
-            "version": "3.1.24",
+            "version": "3.1.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Maatwebsite/Laravel-Excel.git",
-                "reference": "8b267b4a940634195eb6ea60c2da62f178a15940"
+                "reference": "a3e56f1a60e49f21798fd242a3b3d2f4051eeda7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/8b267b4a940634195eb6ea60c2da62f178a15940",
-                "reference": "8b267b4a940634195eb6ea60c2da62f178a15940",
+                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/a3e56f1a60e49f21798fd242a3b3d2f4051eeda7",
+                "reference": "a3e56f1a60e49f21798fd242a3b3d2f4051eeda7",
                 "shasum": ""
             },
             "require": {
@@ -6368,7 +6368,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-28T09:10:05+00:00"
+            "time": "2020-11-13T10:37:36+00:00"
         },
         {
             "name": "maatwebsite/laravel-nova-excel",
@@ -9742,16 +9742,16 @@
         },
         {
             "name": "spatie/image",
-            "version": "1.7.7",
+            "version": "1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/image.git",
-                "reference": "dfa02e81c73a11b252552cbb10c0df1767c2f54c"
+                "reference": "cef42a2d131e28d6f3e0af91c0570f6ba45a8d40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/image/zipball/dfa02e81c73a11b252552cbb10c0df1767c2f54c",
-                "reference": "dfa02e81c73a11b252552cbb10c0df1767c2f54c",
+                "url": "https://api.github.com/repos/spatie/image/zipball/cef42a2d131e28d6f3e0af91c0570f6ba45a8d40",
+                "reference": "cef42a2d131e28d6f3e0af91c0570f6ba45a8d40",
                 "shasum": ""
             },
             "require": {
@@ -9759,7 +9759,7 @@
                 "ext-mbstring": "*",
                 "league/glide": "^1.4",
                 "php": "^7.2|^8.0",
-                "spatie/image-optimizer": "^1.0",
+                "spatie/image-optimizer": "^1.1",
                 "spatie/temporary-directory": "^1.0.0",
                 "symfony/process": "^3.0|^4.0|^5.0"
             },
@@ -9801,7 +9801,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-12T15:15:06+00:00"
+            "time": "2020-11-13T09:39:41+00:00"
         },
         {
             "name": "spatie/image-optimizer",
@@ -13969,16 +13969,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "2.0.6",
+            "version": "2.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "d5789bd8e2d852a6b98fe944ca2ff82e921eb43d"
+                "reference": "cbee637510037f293e641857b2a6223d0ea8008d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/d5789bd8e2d852a6b98fe944ca2ff82e921eb43d",
-                "reference": "d5789bd8e2d852a6b98fe944ca2ff82e921eb43d",
+                "url": "https://api.github.com/repos/composer/composer/zipball/cbee637510037f293e641857b2a6223d0ea8008d",
+                "reference": "cbee637510037f293e641857b2a6223d0ea8008d",
                 "shasum": ""
             },
             "require": {
@@ -14057,27 +14057,27 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-11-07T10:21:17+00:00"
+            "time": "2020-11-13T16:31:06+00:00"
         },
         {
             "name": "composer/semver",
-            "version": "3.2.3",
+            "version": "3.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/semver.git",
-                "reference": "bcf1cc72150023e1c3dca4a353296b4c83deea41"
+                "reference": "a02fdf930a3c1c3ed3a49b5f63859c0c20e10464"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/semver/zipball/bcf1cc72150023e1c3dca4a353296b4c83deea41",
-                "reference": "bcf1cc72150023e1c3dca4a353296b4c83deea41",
+                "url": "https://api.github.com/repos/composer/semver/zipball/a02fdf930a3c1c3ed3a49b5f63859c0c20e10464",
+                "reference": "a02fdf930a3c1c3ed3a49b5f63859c0c20e10464",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.3.2 || ^7.0 || ^8.0"
             },
             "require-dev": {
-                "phpstan/phpstan": "^0.12.19",
+                "phpstan/phpstan": "^0.12.54",
                 "symfony/phpunit-bridge": "^4.2 || ^5"
             },
             "type": "library",
@@ -14133,7 +14133,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-11-12T11:25:27+00:00"
+            "time": "2020-11-13T08:59:24+00:00"
         },
         {
             "name": "composer/spdx-licenses",
@@ -14197,16 +14197,16 @@
         },
         {
             "name": "composer/xdebug-handler",
-            "version": "1.4.4",
+            "version": "1.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/xdebug-handler.git",
-                "reference": "6e076a124f7ee146f2487554a94b6a19a74887ba"
+                "reference": "f28d44c286812c714741478d968104c5e604a1d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/xdebug-handler/zipball/6e076a124f7ee146f2487554a94b6a19a74887ba",
-                "reference": "6e076a124f7ee146f2487554a94b6a19a74887ba",
+                "url": "https://api.github.com/repos/composer/xdebug-handler/zipball/f28d44c286812c714741478d968104c5e604a1d4",
+                "reference": "f28d44c286812c714741478d968104c5e604a1d4",
                 "shasum": ""
             },
             "require": {
@@ -14251,7 +14251,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-24T12:39:10+00:00"
+            "time": "2020-11-13T08:04:11+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -14495,16 +14495,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.5.0",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "81698c5e32837c74abf9bb764ff0c1b3e001afb3"
+                "reference": "3b3403f18bbdc0aeadf1ffaddf11a1588b12ec7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/81698c5e32837c74abf9bb764ff0c1b3e001afb3",
-                "reference": "81698c5e32837c74abf9bb764ff0c1b3e001afb3",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/3b3403f18bbdc0aeadf1ffaddf11a1588b12ec7a",
+                "reference": "3b3403f18bbdc0aeadf1ffaddf11a1588b12ec7a",
                 "shasum": ""
             },
             "require": {
@@ -14562,7 +14562,7 @@
                 "laravel",
                 "page"
             ],
-            "time": "2020-10-27T13:02:22+00:00"
+            "time": "2020-11-13T13:36:24+00:00"
         },
         {
             "name": "facade/ignition-contracts",
@@ -15370,16 +15370,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.10.1",
+            "version": "1.10.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "969b211f9a51aa1f6c01d1d2aef56d3bd91598e5"
+                "reference": "776f831124e9c62e1a2c601ecc52e776d8bb7220"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/969b211f9a51aa1f6c01d1d2aef56d3bd91598e5",
-                "reference": "969b211f9a51aa1f6c01d1d2aef56d3bd91598e5",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/776f831124e9c62e1a2c601ecc52e776d8bb7220",
+                "reference": "776f831124e9c62e1a2c601ecc52e776d8bb7220",
                 "shasum": ""
             },
             "require": {
@@ -15414,7 +15414,13 @@
                 "object",
                 "object graph"
             ],
-            "time": "2020-06-29T13:22:24+00:00"
+            "funding": [
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/myclabs/deep-copy",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-11-13T09:40:50+00:00"
         },
         {
             "name": "nunomaduro/collision",

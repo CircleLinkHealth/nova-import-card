@@ -100,10 +100,26 @@
                                 }
 
                                 function durationType(obj) {
-                                    return obj.chargeable_service_name;
+                                    if (!obj) {
+                                        return null;
+                                    }
+
+                                    switch (obj.chargeable_service_name) {
+                                        case 'CCM':
+                                        case 'CCM40':
+                                        case 'CCM60':
+                                            return 'CCM';
+
+                                        case 'RPM':
+                                        case 'RPM40':
+                                            return 'RPM';
+
+                                        default:
+                                            return obj.chargeable_service_name;
+                                    }
                                 }
 
-                                function durationSumm(master, type) {
+                                function durationSum(master, type) {
                                     var seconds = 0;
                                     master.data.each(function (obj) {
                                         if (durationType(obj) == type) {
@@ -162,22 +178,22 @@
                                 };
                                 webix.ui.datafilter.mySummColumnCCM = webix.extend({
                                     refresh: function (master, node, value) {
-                                        node.firstChild.innerHTML = durationSumm(master, 'CCM');
+                                        node.firstChild.innerHTML = durationSum(master, 'CCM');
                                     }
                                 }, webix.ui.datafilter.summColumn);
                                 webix.ui.datafilter.mySummColumnBHI = webix.extend({
                                     refresh: function (master, node, value) {
-                                        node.firstChild.innerHTML = durationSumm(master, 'BHI');
+                                        node.firstChild.innerHTML = durationSum(master, 'BHI');
                                     }
                                 }, webix.ui.datafilter.summColumn);
                                 webix.ui.datafilter.mySummColumnPCM = webix.extend({
                                     refresh: function (master, node, value) {
-                                        node.firstChild.innerHTML = durationSumm(master, 'PCM');
+                                        node.firstChild.innerHTML = durationSum(master, 'PCM');
                                     }
                                 }, webix.ui.datafilter.summColumn);
                                 webix.ui.datafilter.mySummColumnRPM = webix.extend({
                                     refresh: function (master, node, value) {
-                                        node.firstChild.innerHTML = durationSumm(master, 'RPM');
+                                        node.firstChild.innerHTML = durationSum(master, 'RPM');
                                     }
                                 }, webix.ui.datafilter.summColumn);
 
