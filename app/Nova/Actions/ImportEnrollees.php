@@ -76,7 +76,7 @@ class ImportEnrollees extends Action
             File::make('File')
                 ->rules('required'),
             Select::make('Practice', 'practice_id')->options($practices)->withModel(Practice::class),
-            Select::make('Care Ambassador (only for assigning)', 'ca_id')->options($ambassadors),
+            Select::make('Care Ambassador (only for assign action type)', 'ca_id')->options($ambassadors),
         ];
     }
 
