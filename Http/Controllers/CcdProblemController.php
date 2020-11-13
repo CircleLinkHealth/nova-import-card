@@ -45,11 +45,11 @@ class CcdProblemController extends Controller
                     ->setUserId($userId)
                     ->setCcdProblemId($ccdProblemId)
             );
-    
+
             (app(ProcessPatientSummaries::class))->execute($userId, Carbon::now()->startOfMonth());
-            
+
             return \response()->json([
-                'success' => $success,
+                'success'             => $success,
                 'chargeable_services' => $this->getChargeableServices($userId),
             ]);
         }
@@ -111,11 +111,11 @@ class CcdProblemController extends Controller
                     ->setUserId($userId)
                     ->setCcdProblemId($ccdProblemId)
             );
-            
+
             (app(ProcessPatientSummaries::class))->execute($userId, Carbon::now()->startOfMonth());
-            
+
             return \response()->json([
-                'problem' => $problem,
+                'problem'             => $problem,
                 'chargeable_services' => $this->getChargeableServices($userId),
             ]);
         }
