@@ -40,12 +40,16 @@ class CcdProblemController extends Controller
     public function destroy($userId, $ccdProblemId)
     {
         if ($userId && $ccdProblemId) {
+            $success = $this->ccdProblemService->deletePatientCcdProblem(
+                (new CcdProblemInput())
+                    ->setUserId($userId)
+                    ->setCcdProblemId($ccdProblemId)
+            );
+    
+            (app(ProcessPatientSummaries::class))->execute($userId, Carbon::now()->startOfMonth());
+            
             return \response()->json([
-                'success' => $this->ccdProblemService->deletePatientCcdProblem(
-                    (new CcdProblemInput())
-                        ->setUserId($userId)
-                        ->setCcdProblemId($ccdProblemId)
-                ),
+                'success' => $success,
                 'chargeable_services' => $this->getChargeableServices($userId),
             ]);
         }
@@ -101,13 +105,17 @@ class CcdProblemController extends Controller
     public function update($userId, $ccdProblemId, SafeRequest $request)
     {
         if ($ccdProblemId) {
+            $problem = $this->ccdProblemService->editPatientCcdProblem(
+                (new CcdProblemInput())
+                    ->fromRequest($request->allSafe())
+                    ->setUserId($userId)
+                    ->setCcdProblemId($ccdProblemId)
+            );
+            
+            (app(ProcessPatientSummaries::class))->execute($userId, Carbon::now()->startOfMonth());
+            
             return \response()->json([
-                'problem' => $this->ccdProblemService->editPatientCcdProblem(
-                    (new CcdProblemInput())
-                        ->fromRequest($request->allSafe())
-                        ->setUserId($userId)
-                        ->setCcdProblemId($ccdProblemId)
-                ),
+                'problem' => $problem,
                 'chargeable_services' => $this->getChargeableServices($userId),
             ]);
         }
