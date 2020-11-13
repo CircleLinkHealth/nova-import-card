@@ -106,10 +106,12 @@ class PatientServicesForTimeTracker
     private function filterUsingPatientServiceStatus(): self
     {
         $this->summaries = $this->summaries
-            ->filter(fn ($summary) =>
-                in_array($summary->chargeable_service_code, ChargeableService::ONLY_PLUS_CODES) ||
-                PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code)
-            );
+            ->filter(function ($summary){
+                if (in_array($summary->chargeable_service_code, ChargeableService::ONLY_PLUS_CODES)){
+                    return PatientIsOfServiceCode::excludeLocationCheck($summary->patient_user_id, $summary->chargeable_service_code);
+                }
+                return PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code);
+            });
 
         return $this;
     }

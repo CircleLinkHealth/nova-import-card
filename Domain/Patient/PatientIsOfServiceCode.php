@@ -35,10 +35,20 @@ class PatientIsOfServiceCode
     {
         return (new static($patientId, $serviceCode, $bypassRequiresConsent))->isOfServiceCode();
     }
+    
+    public static function excludeLocationCheck(int $patientId, string $serviceCode, $bypassRequiresConsent = false): bool
+    {
+        return (new static($patientId, $serviceCode, $bypassRequiresConsent))->isOfServiceCodeExcludingLocationCheck();
+    }
 
     public function isOfServiceCode(): bool
     {
         return $this->hasSummary() && $this->hasEnoughProblems() && $this->patientLocationHasService() && ! $this->hasClashingService();
+    }
+    
+    public function isOfServiceCodeExcludingLocationCheck(): bool
+    {
+        return $this->hasSummary() && $this->hasEnoughProblems() && ! $this->hasClashingService();
     }
 
     private function billingRevampIsEnabled(): bool
