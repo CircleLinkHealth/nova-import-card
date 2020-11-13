@@ -61,7 +61,7 @@ class ImportEnrollees extends Action
             ->activeBillable()
             ->pluck('display_name', 'id')
             ->toArray();
-        
+
         $ambassadors = User::ofType('care-ambassador')
             ->pluck('display_name', 'id')
             ->toArray();
@@ -88,7 +88,7 @@ class ImportEnrollees extends Action
     public function handle(ActionFields $fields, Collection $models)
     {
         $file = $fields->file;
-        Excel::import(new Enrollees($fields->practice_id, $fields->action_type, $file->getClientOriginalName()), $file, $fields->ca_id);
+        Excel::import(new Enrollees($fields->practice_id, $fields->action_type, $file->getClientOriginalName(), $fields->ca_id), $file);
 
         return Action::message('It worked!');
     }
