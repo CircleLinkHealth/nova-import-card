@@ -52,9 +52,9 @@ class PatientServicesForTimeTracker
             return $this;
         }
 
-        return $this->filterUsingPatientServiceStatus()
-            ->rejectNonTimeTrackerServices()
-            ->groupSimilarCodes();
+        return $this->groupSimilarCodes()
+            ->filterUsingPatientServiceStatus()
+            ->rejectNonTimeTrackerServices();
     }
 
     private function createAndReturnResource(): PatientChargeableSummaryCollection
@@ -106,13 +106,7 @@ class PatientServicesForTimeTracker
     private function filterUsingPatientServiceStatus(): self
     {
         $this->summaries = $this->summaries
-            ->filter(function ($summary) {
-                if (in_array($summary->chargeable_service_code, ChargeableService::ONLY_PLUS_CODES)) {
-                    return PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code, false, true);
-                }
-
-                return PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code);
-            });
+            ->filter(fn ($summary) => PatientIsOfServiceCode::execute($summary->patient_user_id, $summary->chargeable_service_code));
 
         return $this;
     }
