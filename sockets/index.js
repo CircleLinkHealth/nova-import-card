@@ -153,7 +153,7 @@ module.exports = app => {
                         user.enter(info, ws);
                         user.sync();
                         if (data.message === 'client:chargeable-service-change') {
-                            user.changeChargeableService(info, ws);
+                            user.changeChargeableService(info);
                         }
                         break;
 
@@ -171,11 +171,11 @@ module.exports = app => {
                         break;
 
                     case 'client:call-mode:enter':
-                        user.enterCallMode(info, ws);
+                        user.enterCallMode(info);
                         break;
 
                     case 'client:call-mode:exit':
-                        user.exitCallMode(ws);
+                        user.exitCallMode();
                         break;
 
                     case 'client:timeouts:override':
