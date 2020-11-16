@@ -86,10 +86,17 @@ trait PostmarkCallbackHelpers
 
         return $enrollee;
     }
-
-    private function createPatientData(string $status, int $practiceId)
+    
+    /**
+     * @param string $patientStatus
+     * @param int $practiceId
+     * @param string $enrolleeStatus
+     */
+    private function createPatientData(string $patientStatus, int $practiceId, string $enrolleeStatus)
     {
-        return $this->createUserWithPatientCcmStatus($practiceId, $status);
+        $patient =  $this->createUserWithPatientCcmStatus($practiceId, $patientStatus);
+        $this->createEnrolleeData($enrolleeStatus, $patient, $this->practice->id, $this->careAmbassador->id);
+        return $patient;
     }
 
     private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient)

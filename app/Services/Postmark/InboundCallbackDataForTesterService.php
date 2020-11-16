@@ -8,6 +8,7 @@ namespace App\Services\Postmark;
 
 use App\Console\Commands\GenerateInboundCallbackDataFeedbackToTester;
 use App\Traits\Tests\PostmarkCallbackHelpers;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -35,7 +36,7 @@ class InboundCallbackDataForTesterService
      */
     public function createUsersOfTypeConsentedButNotEnrolled(bool $save = false)
     {
-        return $this->dataOfStatusType(Enrollee::CONSENTED, false, false, $save);
+        return $this->dataOfStatusType(Patient::TO_ENROLL, false, false, $save, Enrollee::CONSENTED);
     }
 
     /**
@@ -43,7 +44,7 @@ class InboundCallbackDataForTesterService
      */
     public function createUsersOfTypeEnrolled(bool $save = false)
     {
-        return $this->dataOfStatusType(Enrollee::ENROLLED, false, false, $save);
+        return $this->dataOfStatusType(Patient::ENROLLED, false, false, $save, Enrollee::ENROLLED);
     }
 
     /**
@@ -51,7 +52,7 @@ class InboundCallbackDataForTesterService
      */
     public function createUsersOfTypeNameIsSelf(bool $save = false)
     {
-        return $this->dataOfStatusType(Enrollee::ENROLLED, false, true, $save);
+        return $this->dataOfStatusType(Patient::ENROLLED, false, true, $save, Enrollee::ENROLLED);
     }
 
     /**
@@ -59,7 +60,7 @@ class InboundCallbackDataForTesterService
      */
     public function createUsersOfTypeNotConsentedAssignedToCa(bool $save = false)
     {
-        return $this->dataOfStatusType(Enrollee::ELIGIBLE, false, false, $save);
+        return $this->dataOfStatusType(Patient::PAUSED, false, false, $save, Enrollee::ELIGIBLE);
     }
 
     /**
@@ -67,7 +68,7 @@ class InboundCallbackDataForTesterService
      */
     public function createUsersOfTypeNotConsentedUnassignedCa(bool $save = false)
     {
-        return $this->dataOfTypeNotConsentedCaUnassigned(Enrollee::ELIGIBLE, false, false, $save);
+        return $this->dataOfTypeNotConsentedCaUnassigned(Patient::PAUSED, false, false, $save);
     }
 
     /**
@@ -75,7 +76,7 @@ class InboundCallbackDataForTesterService
      */
     public function createUsersOfTypeQueuedForEnrolmentButNotCAssigned(bool $save = false)
     {
-        return $this->dataOfTypeSelfEnrollableCaUnassigned(Enrollee::QUEUE_AUTO_ENROLLMENT, false, false, $save);
+        return $this->dataOfTypeSelfEnrollableCaUnassigned(Patient::TO_ENROLL, false, false, $save);
     }
 
     /**
@@ -83,7 +84,7 @@ class InboundCallbackDataForTesterService
      */
     public function createUsersOfTypeRequestedToWithdraw(bool $save = false)
     {
-        return $this->dataOfStatusType(Enrollee::ENROLLED, true, false, $save);
+        return $this->dataOfStatusType(Patient::ENROLLED, true, false, $save, Enrollee::ENROLLED);
     }
 
     /**
@@ -91,18 +92,23 @@ class InboundCallbackDataForTesterService
      */
     public function createUsersOfTypeRequestedToWithdrawAndNameIsSelf(bool $save = false)
     {
-        return $this->dataOfStatusType(Enrollee::ENROLLED, true, true, $save);
+        return $this->dataOfStatusType(Patient::ENROLLED, true, true, $save, Enrollee::ENROLLED);
     }
-
+    
     /**
+     * @param string $patientType
+     * @param bool $requestToWithdraw
+     * @param bool $nameIsSelf
+     * @param bool $save
+     * @param string $enrolleeType
      * @return array
      */
-    public function dataOfStatusType(string $patientType, bool $requestToWithdraw, bool $nameIsSelf, bool $save = false)
+    public function dataOfStatusType(string $patientType, bool $requestToWithdraw, bool $nameIsSelf, bool $save = false, string $enrolleeType)
     {
         $n           = GenerateInboundCallbackDataFeedbackToTester::START;
         $inboundData = collect();
         while ($n <= GenerateInboundCallbackDataFeedbackToTester::LIMIT) {
-            $patient        = $this->createPatientData($patientType, $this->practice->id);
+            $patient        = $this->createPatientData($patientType, $this->practice->id, $enrolleeType);
             $postmarkRecord = $save
                 ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient)
                 : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient);
@@ -122,7 +128,7 @@ class InboundCallbackDataForTesterService
         $n           = GenerateInboundCallbackDataFeedbackToTester::START;
         $inboundData = collect();
         while ($n <= GenerateInboundCallbackDataFeedbackToTester::LIMIT) {
-            $patient = $this->createPatientData($patientType, $this->practice->id);
+            $patient = $this->createPatientData($patientType, $this->practice->id, Enrollee::ELIGIBLE);
             $this->createEnrolleeData($patientType, $patient, $this->practice->id, $this->careAmbassador->id)->update(
                 [
                     'care_ambassador_user_id' => null,
@@ -152,7 +158,7 @@ class InboundCallbackDataForTesterService
 
         $inboundData = collect();
         while ($n <= GenerateInboundCallbackDataFeedbackToTester::LIMIT) {
-            $patient = $this->createPatientData($patientType, $this->practice->id);
+            $patient = $this->createPatientData($patientType, $this->practice->id, Enrollee::ENROLLED);
             $patient->phoneNumbers
                 ->first()
                 ->update(
@@ -190,7 +196,7 @@ class InboundCallbackDataForTesterService
         $n           = GenerateInboundCallbackDataFeedbackToTester::START;
         $inboundData = collect();
         while ($n <= GenerateInboundCallbackDataFeedbackToTester::LIMIT) {
-            $patient        = $this->createPatientData($patientType, $this->practice->id);
+            $patient        = $this->createPatientData($patientType, $this->practice->id,Enrollee::QUEUE_AUTO_ENROLLMENT);
             $postmarkRecord = $save
                 ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient)
                 : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient);
@@ -221,7 +227,7 @@ class InboundCallbackDataForTesterService
 
         $inboundData = collect();
         while ($n <= GenerateInboundCallbackDataFeedbackToTester::LIMIT) {
-            $patient        = $this->createPatientData($patientType, $this->practice->id);
+            $patient        = $this->createPatientData($patientType, $this->practice->id, Enrollee::ENROLLED);
             $postmarkRecord = $save
                 ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient)
                 : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient);
@@ -251,12 +257,12 @@ class InboundCallbackDataForTesterService
      */
     public function multiMatchPatientsWithSameNumberAndName(bool $save = false)
     {
-        return $this->dataOfTypeSamePhoneAndName(Enrollee::ENROLLED, false, false, $save);
+        return $this->dataOfTypeSamePhoneAndName(Patient::ENROLLED, false, false, $save);
     }
 
     public function noMatch(bool $save = false)
     {
-        return $this->dataOfTypeUnmatchable(Enrollee::ENROLLED, false, false, $save);
+        return $this->dataOfTypeUnmatchable(Patient::ENROLLED, false, false, $save);
     }
 
     /**
