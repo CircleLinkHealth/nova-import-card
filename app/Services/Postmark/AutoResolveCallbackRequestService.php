@@ -28,17 +28,16 @@ class AutoResolveCallbackRequestService
             if (empty($matchedResultsFromDB)) {
                 Log::warning("Could not find a patient match for record_id:[$recordId] in postmark_inbound_mail");
                 sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient match for record_id:[$recordId] in postmark_inbound_mail");
-
                 return;
             }
 
             if (PostmarkInboundCallbackMatchResults::CREATE_CALLBACK === $matchedResultsFromDB['reasoning']) {
                 $this->assignCallbackToNurse($matchedResultsFromDB['matchUsersResult'], $postmarkCallbackData);
+                return;
             }
 
             if (PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_ASSIGNED === $matchedResultsFromDB['reasoning']) {
                 $this->assignCallbackToCareAmbassador($matchedResultsFromDB['matchUsersResult'], $recordId);
-
                 return;
             }
 
@@ -47,7 +46,6 @@ class AutoResolveCallbackRequestService
             if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {
                 Log::error($e->getMessage());
                 sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See inbound_postmark_mail id [$recordId]. Nurse not found");
-
                 return;
             }
             Log::error($e->getMessage());
