@@ -51,7 +51,7 @@
                 CCM Status Change
             </template>
             <template slot="careplanStatus" slot-scope="props">
-                <div v-if="props.row.patient_info.ccm_status === 'enrolled'">
+                <div v-if="props.row.patient_info && props.row.patient_info.ccm_status === 'enrolled'">
                     <a v-if="canApproveCareplans && props.row.careplanStatus === 'rn_approved'" class="in-table-link"
                        :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">
                         <b>{{carePlanStatusMap[props.row.careplanStatus] || props.row.careplanStatus}}</b>
