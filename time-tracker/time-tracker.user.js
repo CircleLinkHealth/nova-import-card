@@ -130,12 +130,10 @@ class TimeTrackerUser {
     /**
      *
      * @param {any} data JSON or string you want to send via web sockets
-     * @param {*} socket WebSocket instance you want to exclude from broadcast
      */
-    broadcast(data, socket) {
+    broadcast(data) {
         this.allSockets.forEach(ws => {
-            const shouldSend = socket ? (socket !== ws) : true; // if socket arg is specified, don't send to that socket
-            if (ws.readyState === ws.OPEN && shouldSend) {
+            if (ws.readyState === ws.OPEN) {
                 ws.send(JSON.stringify(data));
             }
         });
@@ -164,11 +162,11 @@ class TimeTrackerUser {
                 && (item.chargeableServiceId === info.chargeableServiceId);
         });
     }
-    changeChargeableService(info, ws) {
+    changeChargeableService(info) {
         this.broadcast({
             message: 'server:chargeable-service:switch',
             chargeableServiceId: info.chargeableServiceId
-        }, ws);
+        });
         this.chargeableServiceId = info.chargeableServiceId;
     }
     closeOtherSameActivityWithOtherChargeableServiceId(info, ws) {
@@ -374,10 +372,8 @@ class TimeTrackerUser {
             }
         });
     }
-    sync(socket) {
+    sync() {
         this.allSockets.forEach(ws => {
-            // if socket arg is specified, don't send to that socket
-            const shouldSend = socket ? (socket !== ws) : true;
             let totalSeconds = 0;
             const secondsPerChargeableService = [];
             for (let i = 0; i < this.chargeableServices.length; i++) {
@@ -391,7 +387,7 @@ class TimeTrackerUser {
                 secondsPerChargeableService.push(entry);
                 totalSeconds += entry.seconds;
             }
-            if (ws.readyState === ws.OPEN && shouldSend) {
+            if (ws.readyState === ws.OPEN) {
                 ws.send(JSON.stringify({
                     message: 'server:sync',
                     seconds: totalSeconds,
@@ -458,19 +454,19 @@ class TimeTrackerUser {
             //activity.duration = Math.max((activity.duration - ((!this.callMode ? this.ALERT_TIMEOUT : this.ALERT_TIMEOUT_CALL_MODE) - this.MINIMUM_DURATION_AFTER_INACTIVITY_SECONDS)), this.MINIMUM_DURATION_AFTER_INACTIVITY_SECONDS)
         }
     }
-    enterCallMode(info, ws) {
+    enterCallMode(info) {
         let activity = this.findActivity(info);
         if (activity) {
             activity.callMode = true;
         }
-        this.broadcast({ message: 'server:call-mode:enter' }, ws);
+        this.broadcast({ message: 'server:call-mode:enter' });
         this.$emitter.on(`server:enter:${this.providerId}`, this.serverEnterHandler.bind(this));
     }
-    exitCallMode(ws) {
+    exitCallMode() {
         this.activities.forEach(activity => {
             activity.callMode = false;
         });
-        this.broadcast({ message: 'server:call-mode:exit' }, ws);
+        this.broadcast({ message: 'server:call-mode:exit' });
         this.$emitter.removeListener(`server:enter:${this.providerId}`, this.serverEnterHandler.bind(this));
     }
     close() {
