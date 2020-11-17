@@ -6,8 +6,9 @@
 
 namespace App\Listeners;
 
-use Carbon\Carbon;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use App\Services\PageTimerService;
+use App\ValueObjects\CreatePageTimerParams;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -32,6 +33,7 @@ class UserLoggedOut implements ShouldQueue
     {
         session()->put('last_login', null);
 
+        /** @var User $user */
         $user = $event->user;
         if ($user) {
             //not really needed here, but is saves the trip to redis when trying to destroy a non-existing session
@@ -39,22 +41,27 @@ class UserLoggedOut implements ShouldQueue
 
             $user->is_online = false;
             $user->save();
-
-            $activity                        = new PageTimer();
-            $activity->duration              = 0;
-            $activity->billable_duration     = 0;
-            $activity->chargeable_service_id = null;
-            $activity->duration_unit         = 'seconds';
-            $activity->activity_type         = 'logout';
-            $activity->title                 = 'Logout';
-            $activity->url_short             = '/auth/logout/';
-            $activity->url_full              = url()->current();
-            $activity->patient_id            = null;
-            $activity->provider_id           = $user->id;
-            $activity->start_time            = Carbon::now();
-            $activity->end_time              = Carbon::now();
-            $activity->program_id            = $user->program_id;
-            $activity->save();
+            $this->createPageTimer($user);
         }
+    }
+
+    private function createPageTimer(User $user)
+    {
+        $params = (new CreatePageTimerParams())
+            ->setActivity([
+                'duration'              => 0,
+                'chargeable_service_id' => null,
+                'name'                  => 'logout',
+                'title'                 => 'Logout',
+                'url'                   => url()->current(),
+                'url_short'             => '/auth/logout/',
+                'start_time'            => now()->format('Y-m-d H:i:s'),
+                'end_time'              => now()->format('Y-m-d H:i:s'),
+            ])
+            ->setPatientId(null)
+            ->setProviderId($user->id)
+            ->setProgramId($user->program_id);
+
+        app(PageTimerService::class)->createPageTimer($params);
     }
 }
