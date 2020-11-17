@@ -94,13 +94,8 @@ class InboundCallbackDataForTesterService
     {
         return $this->dataOfStatusType(Patient::ENROLLED, true, true, $save, Enrollee::ENROLLED);
     }
-    
+
     /**
-     * @param string $patientType
-     * @param bool $requestToWithdraw
-     * @param bool $nameIsSelf
-     * @param bool $save
-     * @param string $enrolleeType
      * @return array
      */
     public function dataOfStatusType(string $patientType, bool $requestToWithdraw, bool $nameIsSelf, bool $save = false, string $enrolleeType)
@@ -196,7 +191,7 @@ class InboundCallbackDataForTesterService
         $n           = GenerateInboundCallbackDataFeedbackToTester::START;
         $inboundData = collect();
         while ($n <= GenerateInboundCallbackDataFeedbackToTester::LIMIT) {
-            $patient        = $this->createPatientData($patientType, $this->practice->id,Enrollee::QUEUE_AUTO_ENROLLMENT);
+            $patient        = $this->createPatientData($patientType, $this->practice->id, Enrollee::QUEUE_AUTO_ENROLLMENT);
             $postmarkRecord = $save
                 ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient)
                 : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient);

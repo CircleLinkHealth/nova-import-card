@@ -86,16 +86,12 @@ trait PostmarkCallbackHelpers
 
         return $enrollee;
     }
-    
-    /**
-     * @param string $patientStatus
-     * @param int $practiceId
-     * @param string $enrolleeStatus
-     */
+
     private function createPatientData(string $patientStatus, int $practiceId, string $enrolleeStatus)
     {
-        $patient =  $this->createUserWithPatientCcmStatus($practiceId, $patientStatus);
+        $patient = $this->createUserWithPatientCcmStatus($practiceId, $patientStatus);
         $this->createEnrolleeData($enrolleeStatus, $patient, $this->practice->id, $this->careAmbassador->id);
+
         return $patient;
     }
 
