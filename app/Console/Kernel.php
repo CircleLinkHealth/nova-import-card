@@ -6,6 +6,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\AlertSlackForPatientsWithNoLocation;
 use App\Console\Commands\AssignUnassignedPatientsToStandByNurse;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
@@ -225,6 +226,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(CheckForMissingLogoutsAndInsert::class)
             ->dailyAt('04:00');
+    
+        $schedule->command(AlertSlackForPatientsWithNoLocation::class)
+            ->dailyAt('04:30');
 
         $schedule->command(CareplanEnrollmentAdminNotification::class)
             ->dailyAt('07:00')
