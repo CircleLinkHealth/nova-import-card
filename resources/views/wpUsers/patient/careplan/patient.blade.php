@@ -446,7 +446,18 @@ $user_info = [];
                                                     </script>
                                                 @endpush
                                             @endif
+                                            @if(! isProductionEnv())
+                                                <div class="form-group form-item form-item-spacing">
+                                                    <div class="col-sm-12">
+                                                        <div class="radio">
+                                                            <input type="checkbox" name="empty_location"
+                                                                   id="empty_location" @if(empty($patient->getPreferredContactLocation())) checked @endif>
+                                                            <label for="empty_location"><span> </span>(QA only) Location is not set/ clear location</label>
+                                                        </div>
 
+                                                    </div>
+                                                </div>
+                                            @endif
                                             <input type=hidden name=status
                                                    value="{{ (old('status') ? old('status') : ($patient->status)) }}">
 

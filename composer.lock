@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.161.2",
+            "version": "3.162.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "2703896142f292058ce9d6c9026a9329a89778e0"
+                "reference": "64b0468417c4a84ff5cc51a69cf2ff9d899c2e8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2703896142f292058ce9d6c9026a9329a89778e0",
-                "reference": "2703896142f292058ce9d6c9026a9329a89778e0",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/64b0468417c4a84ff5cc51a69cf2ff9d899c2e8e",
+                "reference": "64b0468417c4a84ff5cc51a69cf2ff9d899c2e8e",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-11-16T19:11:59+00:00"
+            "time": "2020-11-17T19:12:26+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -3493,16 +3493,16 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.8.2",
+            "version": "v2.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "24f3ec0c79567a08c31f8271b61d79b050b25b0a"
+                "reference": "81696e6206322e38c643cfcc96c4494ccfef8a32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/24f3ec0c79567a08c31f8271b61d79b050b25b0a",
-                "reference": "24f3ec0c79567a08c31f8271b61d79b050b25b0a",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/81696e6206322e38c643cfcc96c4494ccfef8a32",
+                "reference": "81696e6206322e38c643cfcc96c4494ccfef8a32",
                 "shasum": ""
             },
             "require": {
@@ -3554,7 +3554,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-11-11T17:07:53+00:00"
+            "time": "2020-11-17T17:33:35+00:00"
         },
         {
             "name": "google/apiclient-services",
