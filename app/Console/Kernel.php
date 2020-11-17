@@ -226,7 +226,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(CheckForMissingLogoutsAndInsert::class)
             ->dailyAt('04:00');
-    
+
         $schedule->command(AlertSlackForPatientsWithNoLocation::class)
             ->dailyAt('04:30');
 
