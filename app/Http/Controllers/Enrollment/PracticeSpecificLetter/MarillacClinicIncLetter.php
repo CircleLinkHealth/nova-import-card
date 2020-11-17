@@ -21,7 +21,7 @@ class MarillacClinicIncLetter extends EnrollmentLetterDefaultConfigs implements 
     public $extraAddressValuesExists;
     public $practice;
     public $userEnrollee;
-    
+
     public function __construct(bool $hideButtons, array $baseLetter, Practice $practice, User $userEnrollee, bool $disableButtons = false)
     {
         $this->constructorDefaultArguments($hideButtons, $baseLetter, $practice, $userEnrollee);
@@ -29,36 +29,36 @@ class MarillacClinicIncLetter extends EnrollmentLetterDefaultConfigs implements 
         $this->extraAddressValuesExists;
         $this->disableButtons = $disableButtons;
     }
-    
+
     public function getBaseViewConfigs(): array
     {
         return $this->viewConfigurations($this->practice, $this->enrollee);
     }
-    
+
     public function letterBladeView()
     {
         $baseLetterConfigs                  = $this->getBaseViewConfigs();
         $className                          = $baseLetterConfigs['className'];
         $letterViewParams                   = LettersHelper::propsWithExtraAddress($this, $baseLetterConfigs);
         $letterViewParams['disableButtons'] = $this->disableButtons;
-        
+
         return view("enrollment-letters.$className", $letterViewParams);
     }
-    
+
     public function letterSpecificView()
     {
         $this->extraAddressValues[] = $this->getExtraAddressValues($this->userEnrollee);
-        
+
         $this->extraAddressValuesExists = ! empty(collect($this->extraAddressValues)->filter()->all());
-        
+
         return  $this->letterBladeView();
     }
-    
+
     public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
     {
         return "<img src='$practiceLetter->customer_signature_src'  alt='$practice->dipslay_name'/>";
     }
-    
+
     /**
      * @return array
      */
@@ -66,18 +66,18 @@ class MarillacClinicIncLetter extends EnrollmentLetterDefaultConfigs implements 
     {
         $practiceLocation      = LettersHelper::getPracticeLocation($userEnrollee);
         $practiceLocationArray = $practiceLocation->toArray();
-        
+
         if (empty($practiceLocationArray)) {
             return [];
         }
-        
+
         $extraProps = [
             'address_line_1',
             'city',
             'state',
             'postal_code', // zip
         ];
-        
+
         return LettersHelper::extraAddressValues($extraProps, $practiceLocationArray);
     }
 }

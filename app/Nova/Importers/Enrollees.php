@@ -184,7 +184,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
             return;
         }
-        
+
         if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status || $enrollee->enrollmentInvitationLinks->isNotEmpty()) {
             Log::channel('database')->warning("Patient for CSV:{$this->fileName}, for row: {$this->rowNumber} has already been marked for auto-enrollment.");
 
@@ -193,7 +193,6 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 
         $enrollee->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
 
-       
         $enrollee->care_ambassador_user_id = null;
 
         //reset attempt count and requested callback to prevent the CA call queue from accidentally picking these up - edge case
