@@ -165,19 +165,7 @@ class ReArrangeActivityChargeableServices extends Command
 
         Log::debug("ReArrangeActivityChargeableServices: Activities $activity->id and $nextActivity->id have been modified. Please review.");
 
-        NurseCareRateLog::where('activity_id', '=', $activity->id)
-            ->orderBy('time_before', 'asc')
-            ->get()
-            ->each(function (NurseCareRateLog $nurseCareRateLog, int $key) use ($nextActivity) {
-                //key 0 will keep $activity->id
-                if (0 === $key) {
-                    return;
-                }
-                $nurseCareRateLog->activity_id = $nextActivity->id;
-                $nurseCareRateLog->chargeable_service_id = $nextActivity->chargeable_service_id;
-                $nurseCareRateLog->save();
-            });
-
+        $this->setActivityForNurseCareRateLogs($activity->id, $nextActivity);
         $this->dispatchPostProcessing($nextActivity);
 
         return true;
@@ -223,6 +211,22 @@ class ReArrangeActivityChargeableServices extends Command
                         }
                     });
                 });
+            });
+    }
+
+    private function setActivityForNurseCareRateLogs(int $currentActivityId, Activity $nextActivity)
+    {
+        NurseCareRateLog::where('activity_id', '=', $currentActivityId)
+            ->orderBy('time_before', 'asc')
+            ->get()
+            ->each(function (NurseCareRateLog $nurseCareRateLog, int $key) use ($nextActivity) {
+                //key 0 will keep $activity->id
+                if (0 === $key) {
+                    return;
+                }
+                $nurseCareRateLog->activity_id = $nextActivity->id;
+                $nurseCareRateLog->chargeable_service_id = $nextActivity->chargeable_service_id;
+                $nurseCareRateLog->save();
             });
     }
 }
