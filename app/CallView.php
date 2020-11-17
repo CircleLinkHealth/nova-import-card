@@ -100,22 +100,22 @@ use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 class CallView extends SqlViewModel
 {
     use Filterable;
+    const TABLE = 'calls_view';
+
+    const TABLE_TO_DEPRECATE = 'calls_view_to_deprecate';
 
     public $phi = [
         'patient',
         'state',
     ];
-    
-    const TABLE_TO_DEPRECATE = 'calls_view_to_deprecate';
-    const TABLE = 'calls_view';
 
     protected $table = self::TABLE;
-    
+
     public function getTable()
     {
         return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) ? self::TABLE : self::TABLE_TO_DEPRECATE;
     }
-    
+
     public function preferredCallDaysToString()
     {
         $days   = explode(',', $this->preferred_call_days);

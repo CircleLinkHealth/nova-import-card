@@ -6,8 +6,6 @@
 
 namespace App\Http\Resources;
 
-use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CallView extends JsonResource

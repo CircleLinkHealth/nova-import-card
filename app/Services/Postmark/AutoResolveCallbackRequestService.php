@@ -29,9 +29,9 @@ class AutoResolveCallbackRequestService
                 $mainMessage = "Could not find a patient match for record_id:[$recordId] in postmark_inbound_mail";
                 Log::warning($mainMessage);
                 $testingSlack = forceSendSlackNotifications();
-                $slackMessage = $testingSlack ? $mainMessage . ' ' . 'Please Ignore this post [TESTING]' : $mainMessage;
+                $slackMessage = $testingSlack ? $mainMessage.' '.'Please Ignore this post [TESTING]' : $mainMessage;
                 sendSlackMessage('#carecoach_ops_alerts', $slackMessage, $testingSlack);
-              
+
                 return;
             }
 
