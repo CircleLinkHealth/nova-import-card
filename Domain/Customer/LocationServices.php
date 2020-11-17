@@ -12,6 +12,7 @@ use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\User;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -26,26 +27,23 @@ class LocationServices
         $this->repo = $repo;
     }
 
-    public static function get(?int $locationId, ?Carbon $month = null): Collection
+    public static function get(User $patient, ?Carbon $month = null): Collection
     {
-        return (app(self::class))->getChargeableServices($locationId, $month);
+        return (app(self::class))->getChargeableServices($patient, $month);
     }
 
-    public function getChargeableServices(?int $locationId, ?Carbon $month = null): Collection
+    public function getChargeableServices(User $patient, ?Carbon $month = null): Collection
     {
-        if (is_null($locationId)) {
-            Log::warning("LocationServices::getChargeableServices $locationId is null. Returning empty collection.");
-
-            return new Collection();
-        }
-
         if ( ! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
-            Log::warning("LocationServices::getChargeableServices new billing is disabled. Returning practice chargeable services from location[$locationId].");
-
-            $location = Location::with('practice.chargeableServices')
-                ->find($locationId);
-
-            return $location->practice->chargeableServices;
+            Log::warning("LocationServices::getChargeableServices new billing is disabled. Returning practice chargeable services for patient[$patient->id].");
+            
+            return $patient->primaryPractice->chargeableServices;
+        }
+    
+        if (is_null($locationId = $patient->getPreferredContactLocation())) {
+            Log::warning("LocationServices::getChargeableServices $locationId is null. Returning empty collection.");
+        
+            return new Collection();
         }
 
         return $this->repo->getLocationSummaries($locationId, $month)
@@ -53,9 +51,9 @@ class LocationServices
             ->filter();
     }
 
-    public static function getUsingServiceId(?int $locationId, int $serviceId, ?Carbon $month = null): ?ChargeableService
+    public static function getUsingServiceId(User $user, int $serviceId, ?Carbon $month = null): ?ChargeableService
     {
-        return (app(self::class))->getChargeableServices($locationId, $month)->firstWhere('id', $serviceId);
+        return (app(self::class))->getChargeableServices($user, $month)->firstWhere('id', $serviceId);
     }
 
     public function hasCcmPlusCodes(?int $locationId): bool
