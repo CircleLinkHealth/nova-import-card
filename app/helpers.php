@@ -257,7 +257,7 @@ if ( ! function_exists('forceSendSlackNotifications')) {
      */
     function forceSendSlackNotifications()
     {
-        return filter_var(AppConfig::pull('test_slack_notifications', false), FILTER_VALIDATE_BOOLEAN);
+        return filter_var(AppConfig::pull('force_send_slack_notifications', false), FILTER_VALIDATE_BOOLEAN);
     }
 }
 
