@@ -181,7 +181,6 @@ class ReArrangeActivityChargeableServices extends Command
         ChargeablePatientMonthlySummaryView::where('chargeable_month', '=', $this->month())
             ->whereIn('chargeable_service_id', $ids)
             ->where('total_time', '>', Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS)
-            ->groupBy('patient_user_id')
             ->chunk(100, function (Collection $summaries) {
                 $summaries->each(function (ChargeablePatientMonthlySummaryView $summary) {
                     $timeToRemove = $summary->total_time - Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
