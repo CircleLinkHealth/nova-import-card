@@ -33,16 +33,15 @@ class CallsView extends BaseSqlView
             u1.patient,
             c.scheduled_date,
             (select max(called_date) from calls where `status` in ('reached', 'not reached', 'ignored') and calls.inbound_cpm_id = c.inbound_cpm_id) as last_call,
-            if (ccm_summary.total_time is null, 0, ccm_summary.total_time) as ccm_total_time,
-            if (bhi_summary.total_time is null, 0, bhi_summary.total_time) as bhi_total_time,
-            if (pcm_summary.total_time is null, 0, pcm_summary.total_time) as pcm_total_time,
-            if (rpm_summary.total_time is null, 0, rpm_summary.total_time) as rpm_total_time,
-            if (u5.ccm_time is null, 0, u5.ccm_time) as pms_ccm_time,
-            if (u5.bhi_time is null, 0, u5.bhi_time) as pms_bhi_time,
-            if (u5.no_of_calls is null, 0, u5.no_of_calls) as pms_no_of_calls,
-            if (u5.no_of_successful_calls is null, 0, u5.no_of_successful_calls) as pms_no_of_successful_calls,
-            if(ccm_summary.no_of_calls is null, if(bhi_summary.no_of_calls is null, if(pcm_summary.no_of_calls is null, if(rpm_summary.no_of_calls is null, 0, rpm_summary.no_of_calls) ,pcm_summary.no_of_calls), bhi_summary.no_of_calls),ccm_summary.no_of_calls) as total_no_of_calls,
-            if(ccm_summary.no_of_successful_calls is null, if(bhi_summary.no_of_successful_calls is null, if(pcm_summary.no_of_successful_calls is null, if(rpm_summary.no_of_successful_calls is null, 0, rpm_summary.no_of_successful_calls) ,pcm_summary.no_of_successful_calls), bhi_summary.no_of_successful_calls),ccm_summary.no_of_successful_calls) as total_no_of_successful_calls,
+            if (billing_feature.variants = '\"on\"', if(ccm_summary.total_time is null, 0, ccm_summary.total_time), coalesce((SELECT SUM(duration) as total_time from lv_activities where patient_id=u1.patient_id and (chargeable_service_id = (SELECT id from chargeable_services where `code` = 'CPT 99490') OR chargeable_service_id = (SELECT id from chargeable_services where `code` = 'G2058(>40mins)') OR chargeable_service_id = (SELECT id from chargeable_services where `code` = 'G2058(>60mins)')) AND (DATE(performed_at) between DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH) and LAST_DAY(DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)))),0
+)) as ccm_total_time,
+            if (billing_feature.variants = '\"on\"', if(bhi_summary.total_time is null, 0, bhi_summary.total_time), if(u5.bhi_time is null,0, u5.bhi_time)) as bhi_total_time,
+            if (billing_feature.variants = '\"on\"', if(pcm_summary.total_time is null, 0, pcm_summary.total_time), coalesce((SELECT SUM(duration) as total_time from lv_activities where patient_id=u1.patient_id and chargeable_service_id=coalesce((SELECT id from chargeable_services where code='G2065'))  AND (DATE(performed_at) between DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH) and LAST_DAY(DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)))),0
+)) as pcm_total_time,
+            if (billing_feature.variants = '\"on\"', if(rpm_summary.total_time is null, 0, rpm_summary.total_time), coalesce((SELECT SUM(duration) as total_time from lv_activities where patient_id=u1.patient_id and (chargeable_service_id = (SELECT id from chargeable_services where `code` = 'CPT 99457') OR chargeable_service_id = (SELECT id from chargeable_services where `code` = 'CPT 99458')) AND (DATE(performed_at) between DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH) and LAST_DAY(DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)))),0
+)) as rpm_total_time,
+           if(billing_feature.variants = '\"on\"', if(ccm_summary.no_of_calls is null, if(bhi_summary.no_of_calls is null, if(pcm_summary.no_of_calls is null, if(rpm_summary.no_of_calls is null, 0, rpm_summary.no_of_calls) ,pcm_summary.no_of_calls), bhi_summary.no_of_calls),ccm_summary.no_of_calls),if (u5.no_of_calls is null, 0, u5.no_of_calls)) as total_no_of_calls,
+           if(billing_feature.variants = '\"on\"',if(ccm_summary.no_of_successful_calls is null, if(bhi_summary.no_of_successful_calls is null, if(pcm_summary.no_of_successful_calls is null, if(rpm_summary.no_of_successful_calls is null, 0, rpm_summary.no_of_successful_calls) ,pcm_summary.no_of_successful_calls), bhi_summary.no_of_successful_calls),ccm_summary.no_of_successful_calls),if(u5.no_of_successful_calls is null, 0, u5.no_of_successful_calls)) as total_no_of_successful_calls,
             u7.practice_id,
             u7.practice,
             u7.is_demo,
@@ -65,6 +64,9 @@ class CallsView extends BaseSqlView
             
         FROM
             calls c
+            join (SELECT variants FROM feature_flags WHERE `key`='billing-2.0') as billing_feature
+  
+
             join (select u.id as patient_id, u.display_name as patient, u.timezone from users u where u.deleted_at is null) as u1 on c.inbound_cpm_id = u1.patient_id
 
             left join (select u.id as nurse_id, CONCAT(u.first_name, ' ', u.last_name, ' ', (if (u.suffix is null, '', u.suffix))) as nurse from users u) as u2 on c.outbound_cpm_id = u2.nurse_id
