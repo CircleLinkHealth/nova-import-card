@@ -22,6 +22,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
@@ -64,6 +65,7 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -2242,7 +2244,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return false;
         }
 
-        if (empty($this->getPreferredContactLocation())) {
+        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) && empty($this->getPreferredContactLocation())) {
             return false;
         }
 
@@ -2321,8 +2323,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->isParticipant()) {
             return false;
         }
-
-        if (empty($this->getPreferredContactLocation())) {
+    
+        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) && empty($this->getPreferredContactLocation())) {
             return false;
         }
 
