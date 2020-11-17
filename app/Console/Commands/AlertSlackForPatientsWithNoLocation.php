@@ -43,7 +43,7 @@ class AlertSlackForPatientsWithNoLocation extends Command
      */
     public function handle()
     {
-        $patientsWithNoLocation = User::whereHas('patientInfo', fn ($pi) => $pi->whereNotNull('preferred_contact_location'))
+        $patientsWithNoLocation = User::whereHas('patientInfo', fn ($pi) => $pi->enrolled()->whereNull('preferred_contact_location'))
             ->whereHas('primaryPractice', fn ($p) => $p->where('is_demo', false))
             ->pluck('id')
             ->toArray();
