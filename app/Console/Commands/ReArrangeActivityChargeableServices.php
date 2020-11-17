@@ -19,7 +19,6 @@ use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class ReArrangeActivityChargeableServices extends Command
 {
@@ -71,7 +70,7 @@ class ReArrangeActivityChargeableServices extends Command
         $activity->chargeable_service_id = $this->getCsId($newCsCode);
         $activity->save();
 
-        Log::debug("ReArrangeActivityChargeableServices: Activity[$activity->id] has been modified. Please review.");
+        sendSlackMessage('#time-tracking-issues', "ReArrangeActivityChargeableServices: Activity[$activity->id] has been modified. Please review.");
 
         NurseCareRateLog::where('activity_id', '=', $activity->id)
             ->update([
@@ -163,7 +162,7 @@ class ReArrangeActivityChargeableServices extends Command
             $nextActivity              = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('rearrange-activity', $pageTimer, $chargeableServiceDuration);
         }
 
-        Log::debug("ReArrangeActivityChargeableServices: Activities $activity->id and $nextActivity->id have been modified. Please review.");
+        sendSlackMessage('#time-tracking-issues', "ReArrangeActivityChargeableServices: Activities $activity->id and $nextActivity->id have been modified. Please review.");
 
         $this->setActivityForNurseCareRateLogs($activity->id, $nextActivity);
         $this->dispatchPostProcessing($nextActivity);
