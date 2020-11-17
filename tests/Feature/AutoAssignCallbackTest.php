@@ -60,7 +60,7 @@ class AutoAssignCallbackTest extends TestCase
 
     private User $standByNurse;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->practice       = $this->practiceForSeeding();
@@ -92,7 +92,7 @@ class AutoAssignCallbackTest extends TestCase
 
     public function test_email_body_with_extra_keys_is_decoded_successfully()
     {
-        $patient         = $this->createPatientData(Patient::ENROLLED, $this->practice->id,Enrollee::ENROLLED);
+        $patient         = $this->createPatientData(Patient::ENROLLED, $this->practice->id, Enrollee::ENROLLED);
         $postmarkRecord  = $this->createPostmarkCallbackData(true, false, $patient);
         $patient         = $this->patient;
         $inboundTextBody = collect(json_decode($postmarkRecord->data))->toArray();
@@ -137,7 +137,7 @@ class AutoAssignCallbackTest extends TestCase
         /** @var PhoneNumber $phone1 */
         $phone1 = $this->phone;
 
-        $patient2 = $this->createPatientData(Patient::ENROLLED, $this->practice->id,Enrollee::ENROLLED);
+        $patient2 = $this->createPatientData(Patient::ENROLLED, $this->practice->id, Enrollee::ENROLLED);
         $patient2->phoneNumbers
             ->first()
             ->update(
@@ -164,15 +164,14 @@ class AutoAssignCallbackTest extends TestCase
     {
         $patient        = $this->createPatientData(Patient::TO_ENROLL, $this->practice->id, Enrollee::QUEUE_AUTO_ENROLLMENT);
         $postmarkRecord = $postmarkRecord = $this->createPostmarkCallbackData(false, false, $patient);
-    
+
         $patient->enrollee->update(
             [
                 'care_ambassador_user_id' => null,
             ]
         );
-    
+
         $patient->enrollee->save();
-        
 
         $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord->data))->toArray(), $postmarkRecord->id);
 
@@ -187,7 +186,7 @@ class AutoAssignCallbackTest extends TestCase
 
     public function test_it_saves_as_unresolved_if_patient_not_consented_and_has_no_care_ambassador_id()
     {
-        $patient         = $this->createPatientData(Patient::TO_ENROLL, $this->practice->id,Enrollee::ELIGIBLE);
+        $patient         = $this->createPatientData(Patient::TO_ENROLL, $this->practice->id, Enrollee::ELIGIBLE);
         $postmarkRecord1 = $this->createPostmarkCallbackData(false, false, $patient);
         $patient->enrollee->update(
             [
@@ -217,7 +216,7 @@ class AutoAssignCallbackTest extends TestCase
 
     public function test_it_will_assign_to_care_ambassador_if_patient_not_consented_and_has_care_ambassador_id()
     {
-        $patient        = $this->createPatientData(Patient::TO_ENROLL, $this->practice->id,Enrollee::ELIGIBLE);
+        $patient        = $this->createPatientData(Patient::TO_ENROLL, $this->practice->id, Enrollee::ELIGIBLE);
         $postmarkRecord = $this->createPostmarkCallbackData(false, false, $patient);
         $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord->data))->toArray(), $postmarkRecord->id);
         $this->assertDatabaseHas('enrollees', [
