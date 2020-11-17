@@ -38,9 +38,7 @@ class CallsViewController extends ApiController
         $rows  = $request->input('rows');
         $calls = CallView::filter($filters)
             ->paginate($rows ?? 15);
-
-        CallViewResource::setBillingRevampToggle();
-
+        
         return CallViewResource::collection($calls);
     }
 }

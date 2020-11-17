@@ -94,8 +94,6 @@ class CallReportController extends Controller
 
         $rows = [];
 
-        $billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
-
         foreach ($calls as $call) {
             $rows[] = [
                 $call->id,
@@ -108,11 +106,11 @@ class CallReportController extends Controller
                 $call->call_time_end,
                 $call->preferredCallDaysToString(),
                 $call->last_call,
-                $this->formatTime($billingRevampIsEnabled ? $call->ccm_total_time : $call->pms_ccm_time),
-                $this->formatTime($billingRevampIsEnabled ? $call->bhi_total_time : $call->pms_bhi_time),
-                $this->formatTime($billingRevampIsEnabled ? $call->pcm_total_time : 0),
-                $this->formatTime($billingRevampIsEnabled ? $call->rpm_total_time : 0),
-                $billingRevampIsEnabled ? $call->total_no_of_successful_calls : $call->pms_no_of_successful_calls,
+                $this->formatTime($call->ccm_total_time),
+                $this->formatTime($call->bhi_total_time),
+                $this->formatTime($call->pcm_total_time),
+                $this->formatTime($call->rpm_total_time),
+                $call->total_no_of_successful_calls,
                 $call->billing_provider,
                 $call->scheduler,
             ];
