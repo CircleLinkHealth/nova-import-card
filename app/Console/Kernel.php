@@ -29,6 +29,7 @@ use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
 use App\Console\Commands\QueueSendApprovedCareplanSlackNotification;
 use App\Console\Commands\QueueSendAuditReports;
+use App\Console\Commands\ReArrangeActivityChargeableServices;
 use App\Console\Commands\RemoveDuplicateScheduledCalls;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
@@ -301,6 +302,10 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
             ->twiceDaily(6, 21);
+
+        $schedule->command(ReArrangeActivityChargeableServices::class, [now()->startOfMonth()->toDateString()])
+            ->dailyAt('23:15')
+            ->onOneServer();
 
         $schedule->command(QueueGenerateOpsDailyReport::class)
             ->dailyAt('23:30')
