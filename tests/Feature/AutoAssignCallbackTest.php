@@ -60,7 +60,7 @@ class AutoAssignCallbackTest extends TestCase
 
     private User $standByNurse;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->practice       = $this->practiceForSeeding();

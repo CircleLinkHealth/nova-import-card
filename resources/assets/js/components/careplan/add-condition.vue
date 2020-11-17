@@ -202,7 +202,7 @@
             },
             checkForIcd10CodeDuplicates() {
                 let isNotCareAreasModal = this.isNotesPage || this.isApproveBillablePage;
-                if (isNotCareAreasModal && !this.showNoProblemSelected && this.newProblem.icd10.length > 0) {
+                if (isNotCareAreasModal && !this.showNoProblemSelected && this.newProblem.icd10 && this.newProblem.icd10.length > 0) {
                     let matchingProblem = this.problems.find(p => p.code == this.newProblem.icd10)
 
                     if (matchingProblem) {
