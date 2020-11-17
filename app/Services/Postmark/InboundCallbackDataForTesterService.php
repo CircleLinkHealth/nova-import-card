@@ -124,7 +124,7 @@ class InboundCallbackDataForTesterService
         $inboundData = collect();
         while ($n <= GenerateInboundCallbackDataFeedbackToTester::LIMIT) {
             $patient = $this->createPatientData($patientType, $this->practice->id, Enrollee::ELIGIBLE);
-            $this->createEnrolleeData($patientType, $patient, $this->practice->id, $this->careAmbassador->id)->update(
+            $patient->enrollee->update(
                 [
                     'care_ambassador_user_id' => null,
                 ]
@@ -195,7 +195,7 @@ class InboundCallbackDataForTesterService
             $postmarkRecord = $save
                 ? $this->createPostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient)
                 : $this->generatePostmarkCallbackData($requestToWithdraw, $nameIsSelf, $patient);
-            $this->createEnrolleeData($patientType, $patient, $this->practice->id, $this->careAmbassador->id)->update(
+            $patient->enrollee->update(
                 [
                     'care_ambassador_user_id' => null,
                 ]

@@ -251,6 +251,16 @@ if ( ! function_exists('sendSlackMessage')) {
     }
 }
 
+if ( ! function_exists('forceSendSlackNotifications')) {
+    /**
+     * @return mixed
+     */
+    function forceSendSlackNotifications()
+    {
+        return filter_var(AppConfig::pull('force_send_slack_notifications', false), FILTER_VALIDATE_BOOLEAN);
+    }
+}
+
 if ( ! function_exists('formatPhoneNumber')) {
     /**
      * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx.
