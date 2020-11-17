@@ -122,15 +122,15 @@ class TimeTrackingAndChargeableServiceTest extends TestCase
         $practice = $this->setupPractice(true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice);
-
+        
         $resp = $this->actingAs($nurse)
             ->post(route('offline-activity-time-requests.store', ['patientId' => $patient->id]), [
                 'type'             => 'Other',
                 'comment'          => 'test',
                 'duration_minutes' => 3,
                 'patient_id'       => $patient->id,
-                'is_behavioral'    => 0,
                 'performed_at'     => now(),
+                'chargeable_service_id' => ChargeableService::cached()->firstWhere('code', '=', ChargeableService::CCM)->id
             ]);
 
         self::assertTrue($resp->status() < 400);
