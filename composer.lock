@@ -1724,7 +1724,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "4e1c9c995a61552ccf4dcad18f4ca64e6f4fa26b"
+                "reference": "2ca29e5da90fd0b27955ae2777fd6a0f7d59548f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1749,7 +1749,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-12T17:56:16+00:00"
+            "time": "2020-11-17T17:33:57+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
