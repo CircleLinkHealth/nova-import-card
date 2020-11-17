@@ -255,6 +255,30 @@
                         </div>
                     </div>
                 </div>
+                <div class="input-field col s12 grid-row">
+                    <div class="col s4 grid-item"><span>Include CCDA with Message</span></div>
+                    <div class="col s3">
+                        <div>
+                            <input name="settings[include_ccda_with_dm]" type="checkbox" id="include_ccda_with_dm"
+                                   value="1" @if($practiceSettings->include_ccda_with_dm){{'checked'}}@endif>
+                            <label for="include_ccda_with_dm"></label>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div>
+                            <input type="checkbox"
+                                   disabled>
+                            <label></label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div>
+                            <input type="checkbox"
+                                   disabled>
+                            <label></label>
+                        </div>
+                    </div>
+                </div>
                 <div class="col s12">
                     <hr>
                 </div>
