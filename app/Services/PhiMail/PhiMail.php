@@ -131,7 +131,7 @@ class PhiMail implements DirectMail
                 $this->connector->addRaw(self::loadFile($binaryAttachmentFilePath), $binaryAttachmentFileName);
             }
             
-            $ccdaContent = $this->upgTemporaryHack($patient);
+            $ccdaContent = $this->addCcdaIfYouShould($patient);
             
             if ($ccdaContent) {
                 // Add a CDA attachment and let phiMail server assign a filename.
@@ -292,7 +292,7 @@ class PhiMail implements DirectMail
         $this->connector->authenticateUser($phiMailUser, $phiMailPass);
     }
     
-    private function upgTemporaryHack(?User $patient)
+    private function addCcdaIfYouShould(?User $patient)
     {
         if (!$patient) {
             return null;
