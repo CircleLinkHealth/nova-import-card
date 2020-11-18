@@ -11,7 +11,6 @@ use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection;
@@ -36,13 +35,13 @@ class LocationServices
     {
         if ( ! Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
             Log::warning("LocationServices::getChargeableServices new billing is disabled. Returning practice chargeable services for patient[$patient->id].");
-            
+
             return $patient->primaryPractice->chargeableServices;
         }
-    
+
         if (is_null($locationId = $patient->getPreferredContactLocation())) {
             Log::warning("LocationServices::getChargeableServices $locationId is null. Returning empty collection.");
-        
+
             return new Collection();
         }
 
