@@ -101,7 +101,10 @@ class PatientCareplanController extends Controller
     public function forwardToBillingProviderViaDM(DmCarePlanToBillingProviderRequest $request, DirectMail $dm)
     {
         $patient = User::ofType('participant')
-            ->with('carePlan')
+            ->with([
+                'carePlan',
+                'primaryPractice.settings',
+            ])
             ->find($patientId = $request->input('patient_id'));
     
         if (! $patient->carePlan) {
@@ -111,7 +114,9 @@ class PatientCareplanController extends Controller
         $dm = $dm->send(
             $request->input('dm_address'),
             $patient->carePlan->toPdf(),
-            now()->toDateTimeString()." - Patient ID $patientId Care Plan.pdf"
+            now()->toDateTimeString()." - Patient ID $patientId Care Plan.pdf",
+            null,
+            $patient
         );
 
         dd($dm);
