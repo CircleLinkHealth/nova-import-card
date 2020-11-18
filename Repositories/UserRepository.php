@@ -401,8 +401,8 @@ class UserRepository
                 }
             }
         }
-        
-        if ($params->has('empty_location')){
+
+        if ($params->has('empty_location')) {
             $user->patientInfo->preferred_contact_location = null;
         }
 

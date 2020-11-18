@@ -2323,7 +2323,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->isParticipant()) {
             return false;
         }
-    
+
         if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) && empty($this->getPreferredContactLocation())) {
             return false;
         }
