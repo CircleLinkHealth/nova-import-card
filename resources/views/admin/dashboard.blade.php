@@ -93,8 +93,30 @@
                         <form action="/send-sample-direct-mail" method="POST">
                             {{csrf_field()}}
                             <input type="email" name="direct_address" placeholder="mail@direct.clh.com"
-                                   required>
-                            <input type="submit" value="send">
+                                   required class="form-control">
+                            <br>
+                            <input type="submit" value="Send Sample (Demo) Note" class="btn btn-m btn-success pull-right">
+                        </form>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Send Patient CarePlan PDF via Direct Mail</div>
+                    <div class="panel-body">
+                        <p>Enter the patient ID and the receiver's DM address. Make sure the receiver is in the same practice as the patient.</p>
+                        <form action="{{route('forward-careplan-to-billing-provider-via-dm')}}" method="POST">
+                            {{csrf_field()}}
+                            <div class="col-sm-4">
+                            <input type="number" name="patient_id" placeholder="Patient ID"
+                                   required class="form-control">
+                            </div>
+                            <div class="col-sm-8">
+                            <input type="email" name="dm_address" placeholder="mail@direct.clh.com"
+                                   required class="form-control">
+                            </div>
+                            <br>
+                            <br>
+                            <br>
+                            <input type="submit" value="Send PDF CarePlan" class="btn btn-m btn-danger pull-right">
                         </form>
                     </div>
                 </div>
