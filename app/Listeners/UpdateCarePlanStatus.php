@@ -90,7 +90,7 @@ class UpdateCarePlanStatus
      */
     private function shouldBeProviderApproved(User $patient, User $approver): bool
     {
-        return CarePlan::RN_APPROVED == $patient->getCarePlanStatus() && $approver->canApproveCarePlans();
+        return CarePlan::RN_APPROVED == $patient->getCarePlanStatus() && $approver->canApproveCarePlans() && $patient->carePlan->validator()->passes();
     }
 
     /**
@@ -99,7 +99,8 @@ class UpdateCarePlanStatus
     private function shouldBeQAApproved(User $patient, User $approver): bool
     {
         return CarePlan::DRAFT == $patient->getCarePlanStatus()
-               && $approver->hasPermissionForSite('care-plan-qa-approve', $patient->getPrimaryPracticeId());
+            && $approver->hasPermissionForSite('care-plan-qa-approve', $patient->getPrimaryPracticeId())
+            && $patient->carePlan->validator()->passes();
     }
 
     /**
@@ -108,6 +109,7 @@ class UpdateCarePlanStatus
     private function shouldBeRNApproved(User $patient, User $approver): bool
     {
         return CarePlan::QA_APPROVED == $patient->getCarePlanStatus()
-            && $approver->hasPermissionForSite('care-plan-rn-approve', $patient->getPrimaryPracticeId());
+            && $approver->hasPermissionForSite('care-plan-rn-approve', $patient->getPrimaryPracticeId())
+            && $patient->carePlan->validator()->passes();
     }
 }
