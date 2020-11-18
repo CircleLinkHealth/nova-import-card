@@ -19,6 +19,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class StoreTimeTracking implements ShouldQueue
@@ -169,17 +170,20 @@ class StoreTimeTracking implements ShouldQueue
      */
     private function processBillableActivity(User $patient, PageTimer $pageTimer, int $chargeableServiceId = -1): void
     {
-        $chargeableServicesDuration = $this->activityService->separateDurationForEachChargeableServiceId($patient, $pageTimer->duration, $chargeableServiceId);
-        foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
-            $activity = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('pagetimer', $pageTimer, $chargeableServiceDuration);
+        Cache::lock("time_tracking_$patient->id")
+            ->get(function () use ($patient, $pageTimer, $chargeableServiceId) {
+                $chargeableServicesDuration = $this->activityService->separateDurationForEachChargeableServiceId($patient, $pageTimer->duration, $chargeableServiceId);
+                foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
+                    $activity = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('pagetimer', $pageTimer, $chargeableServiceDuration);
 
-            if ( ! $chargeableServiceDuration->id) {
-                sendSlackMessage('#time-tracking-issues', "Could not assign activity[{$activity->id}] to chargeable service. Original csId[{$chargeableServiceId}]. See page timer entry {$pageTimer->id}");
-            }
+                    if ( ! $chargeableServiceDuration->id) {
+                        sendSlackMessage('#time-tracking-issues', "Could not assign activity[{$activity->id}] to chargeable service. Original csId[{$chargeableServiceId}]. See page timer entry {$pageTimer->id}");
+                    }
 
-            ProcessMonthltyPatientTime::dispatchNow($patient->id);
-            ProcessNurseMonthlyLogs::dispatchNow($activity);
-            event(new PatientActivityCreated($patient->id));
-        }
+                    ProcessMonthltyPatientTime::dispatchNow($patient->id);
+                    ProcessNurseMonthlyLogs::dispatchNow($activity);
+                    event(new PatientActivityCreated($patient->id));
+                }
+            });
     }
 }

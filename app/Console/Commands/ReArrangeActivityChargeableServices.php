@@ -52,10 +52,8 @@ class ReArrangeActivityChargeableServices extends Command
      */
     public function handle()
     {
-        $this->process();
-        // process once more in case we created CCM40 activities
-        // that should have been re-arranged to CCM60
-        $this->process();
+        $this->process(ChargeableService::CCM, ChargeableService::RPM);
+        $this->process(ChargeableService::CCM_PLUS_40);
 
         return 0;
     }
@@ -123,12 +121,28 @@ class ReArrangeActivityChargeableServices extends Command
         }
     }
 
+    private function modifyNurseCareRateLogsForNewActivity(Activity $currentActivity, Activity $nextActivity)
+    {
+        NurseCareRateLog::where('activity_id', '=', $currentActivity->id)
+            ->orderBy('time_before', 'asc')
+            ->get()
+            ->each(function (NurseCareRateLog $nurseCareRateLog, int $key) use ($nextActivity) {
+                //key 0 will keep $activity->id
+                if (0 === $key) {
+                    return;
+                }
+                $nurseCareRateLog->activity_id = $nextActivity->id;
+                $nurseCareRateLog->chargeable_service_id = $nextActivity->chargeable_service_id;
+                $nurseCareRateLog->save();
+            });
+    }
+
     private function month(): Carbon
     {
         return Carbon::parse($this->argument('month'))->startOfMonth();
     }
 
-    private function moveDurationToNextActivity(Activity $activity, int $timeToRemove): bool
+    private function moveDurationToNewActivity(Activity $activity, int $timeToRemove): bool
     {
         $nextCsCode = $this->getNextCsCode($this->getCsCode($activity));
         if ( ! $nextCsCode) {
@@ -138,42 +152,28 @@ class ReArrangeActivityChargeableServices extends Command
         $activity->duration -= $timeToRemove;
         $activity->save();
 
-        $nextCsId = $this->getCsId($nextCsCode);
+        $pageTimer                = new PageTimer();
+        $pageTimer->activity_type = $activity->type;
+        $pageTimer->patient_id    = $activity->patient_id;
+        $pageTimer->provider_id   = $activity->provider_id;
+        $pageTimer->start_time    = $activity->performed_at;
 
-        /** @var Activity $nextActivity */
-        $nextActivity = Activity::where('id', '>', $activity->id)
-            ->where('patient_id', '=', $activity->patient_id)
-            ->where('provider_id', '=', $activity->provider_id)
-            ->where('chargeable_service_id', '=', $nextCsId)
-            ->orderBy('performed_at', 'asc')
-            ->first();
-
-        if ($nextActivity) {
-            $nextActivity->duration += $timeToRemove;
-            $nextActivity->save();
-        } else {
-            $pageTimer                = new PageTimer();
-            $pageTimer->activity_type = $activity->type;
-            $pageTimer->patient_id    = $activity->patient_id;
-            $pageTimer->provider_id   = $activity->provider_id;
-            $pageTimer->start_time    = $activity->performed_at;
-
-            $chargeableServiceDuration = new ChargeableServiceDuration($nextCsId, $timeToRemove, ChargeableService::BHI === $nextCsCode);
-            $nextActivity              = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('rearrange-activity', $pageTimer, $chargeableServiceDuration);
-        }
+        $nextCsId                  = $this->getCsId($nextCsCode);
+        $chargeableServiceDuration = new ChargeableServiceDuration($nextCsId, $timeToRemove, ChargeableService::BHI === $nextCsCode);
+        $nextActivity              = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('rearrange-activity', $pageTimer, $chargeableServiceDuration);
 
         sendSlackMessage('#time-tracking-issues', "ReArrangeActivityChargeableServices: Activities $activity->id and $nextActivity->id have been modified. Please review.");
 
-        $this->setActivityForNurseCareRateLogs($activity->id, $nextActivity);
+        $this->modifyNurseCareRateLogsForNewActivity($activity, $nextActivity);
         $this->dispatchPostProcessing($nextActivity);
 
         return true;
     }
 
-    private function process()
+    private function process(...$codes)
     {
         $ids = ChargeableService::cached()
-            ->whereIn('code', [ChargeableService::CCM, ChargeableService::CCM_PLUS_40, ChargeableService::RPM])
+            ->whereIn('code', $codes)
             ->pluck('id')
             ->all();
 
@@ -186,6 +186,10 @@ class ReArrangeActivityChargeableServices extends Command
                     $activitiesToModify = collect();
                     Activity::where('chargeable_service_id', '=', $summary->chargeable_service_id)
                         ->where('patient_id', '=', $summary->patient_user_id)
+                        ->whereBetween('performed_at', [
+                            Carbon::parse($summary->chargeable_month)->startOfMonth(),
+                            Carbon::parse($summary->chargeable_month)->endOfMonth(),
+                        ])
                         ->orderBy('performed_at', 'desc')
                         ->limit(10)
                         ->each(function (Activity $activity) use ($timeToRemove, $activitiesToModify) {
@@ -204,27 +208,11 @@ class ReArrangeActivityChargeableServices extends Command
                             $this->changeChargeableServiceOfActivity($activity);
                             $remainingToRemove -= $activity->duration;
                         } else {
-                            $this->moveDurationToNextActivity($activity, $remainingToRemove);
+                            $this->moveDurationToNewActivity($activity, $remainingToRemove);
                             $remainingToRemove = 0;
                         }
                     });
                 });
-            });
-    }
-
-    private function setActivityForNurseCareRateLogs(int $currentActivityId, Activity $nextActivity)
-    {
-        NurseCareRateLog::where('activity_id', '=', $currentActivityId)
-            ->orderBy('time_before', 'asc')
-            ->get()
-            ->each(function (NurseCareRateLog $nurseCareRateLog, int $key) use ($nextActivity) {
-                //key 0 will keep $activity->id
-                if (0 === $key) {
-                    return;
-                }
-                $nurseCareRateLog->activity_id = $nextActivity->id;
-                $nurseCareRateLog->chargeable_service_id = $nextActivity->chargeable_service_id;
-                $nurseCareRateLog->save();
             });
     }
 }

@@ -28,11 +28,6 @@ use Illuminate\Support\Collection;
 use ReflectionMethod;
 use Tests\TestCase;
 
-/**
- * TODO: test nurse_care_rate_logs also.
- *
- * Class ReArrangeChargeableServicesTest
- */
 class ReArrangeChargeableServicesTest extends TestCase
 {
     use PracticeHelpers;
@@ -106,20 +101,53 @@ class ReArrangeChargeableServicesTest extends TestCase
 
         $csId = ChargeableService::cached()->firstWhere('code', '=', ChargeableService::CCM)->id;
         $this->addActivity($patient->id, $practice->id, $nurse->id, 1100, $csId);
-        $this->addActivity($patient->id, $practice->id, $nurse->id, 1306, $csId);
+        $this->addActivity($patient->id, $practice->id, $nurse->id, 1106, $csId);
 
         $count = Activity::where('patient_id', '=', $patient->id)->count();
         self::assertEquals(2, $count);
 
-        $this->validateSummariesData($patient->id, 2406, 0, 0);
-        $this->validateNurseCareRateLogs($patient, $nurse->id, 1200, 1200, 6);
+        $this->validateSummariesData($patient->id, 2206, 0, 0);
+        $this->validateNurseCareRateLogs($patient, $nurse->id, 1200, 1006, 0);
 
         $this->artisan(ReArrangeActivityChargeableServices::class, [
             'month' => now()->startOfMonth()->toDateString(),
         ]);
 
-        $this->validateSummariesData($patient->id, 1200, 1200, 6);
-        $this->validateNurseCareRateLogs($patient, $nurse->id, 1200, 1200, 6);
+        $this->validateSummariesData($patient->id, 1200, 1006, 0);
+        $this->validateNurseCareRateLogs($patient, $nurse->id, 1200, 1006, 0);
+
+        $count = Activity::where('patient_id', '=', $patient->id)->count();
+        self::assertEquals(3, $count);
+    }
+
+    /**
+     * sum: 1206
+     * last activity: 4 seconds
+     * no ccm40 activity.
+     */
+    public function test_it_creates_new_activity_and_sets_chargeable_service_id()
+    {
+        $practice = $this->setupPractice(true, true);
+        $nurse    = $this->createUser($practice->id, 'care-center');
+        $patient  = $this->setupPatient($practice);
+
+        $csId = ChargeableService::cached()->firstWhere('code', '=', ChargeableService::CCM)->id;
+        $this->addActivity($patient->id, $practice->id, $nurse->id, 1100, $csId);
+        $this->addActivity($patient->id, $practice->id, $nurse->id, 102, $csId);
+        $this->addActivity($patient->id, $practice->id, $nurse->id, 4, $csId);
+
+        $count = Activity::where('patient_id', '=', $patient->id)->count();
+        self::assertEquals(3, $count);
+
+        $this->validateSummariesData($patient->id, 1206, 0);
+        $this->validateNurseCareRateLogs($patient, $nurse->id, 1200, 6);
+
+        $this->artisan(ReArrangeActivityChargeableServices::class, [
+            'month' => now()->startOfMonth()->toDateString(),
+        ]);
+
+        $this->validateSummariesData($patient->id, 1200, 6);
+        $this->validateNurseCareRateLogs($patient, $nurse->id, 1200, 6);
 
         $count = Activity::where('patient_id', '=', $patient->id)->count();
         self::assertEquals(4, $count);
@@ -157,37 +185,33 @@ class ReArrangeChargeableServicesTest extends TestCase
         self::assertEquals(3, $count);
     }
 
-    /**
-     * sum: 1206
-     * last activity: 4 seconds
-     * no ccm40 activity.
-     */
-    public function test_it_moves_duration_to_next_activity_and_changes_chargeable_service_id()
+    public function test_new_activity_matches_nurse_care_rate_log()
     {
         $practice = $this->setupPractice(true, true);
         $nurse    = $this->createUser($practice->id, 'care-center');
         $patient  = $this->setupPatient($practice);
 
-        $csId = ChargeableService::cached()->firstWhere('code', '=', ChargeableService::CCM)->id;
+        $csId   = ChargeableService::cached()->firstWhere('code', '=', ChargeableService::CCM)->id;
+        $cs40Id = ChargeableService::cached()->firstWhere('code', '=', ChargeableService::CCM_PLUS_40)->id;
         $this->addActivity($patient->id, $practice->id, $nurse->id, 1100, $csId);
-        $this->addActivity($patient->id, $practice->id, $nurse->id, 102, $csId);
-        $this->addActivity($patient->id, $practice->id, $nurse->id, 4, $csId);
+        $this->addActivity($patient->id, $practice->id, $nurse->id, 306, $csId);
+        $this->addActivity($patient->id, $practice->id, $nurse->id, 400, $cs40Id);
+
+        $this->validateSummariesData($patient->id, 1406, 400);
+        $this->validateNurseCareRateLogs($patient, $nurse->id, 1200, 606);
 
         $count = Activity::where('patient_id', '=', $patient->id)->count();
         self::assertEquals(3, $count);
-
-        $this->validateSummariesData($patient->id, 1206, 0);
-        $this->validateNurseCareRateLogs($patient, $nurse->id, 1200, 6);
 
         $this->artisan(ReArrangeActivityChargeableServices::class, [
             'month' => now()->startOfMonth()->toDateString(),
         ]);
 
-        $this->validateSummariesData($patient->id, 1200, 6);
-        $this->validateNurseCareRateLogs($patient, $nurse->id, 1200, 6);
+        $this->validateSummariesData($patient->id, 1200, 606);
+        $this->validateNurseCareRateLogs($patient, $nurse->id, 1200, 606);
 
         $count = Activity::where('patient_id', '=', $patient->id)->count();
-        self::assertEquals(3, $count);
+        self::assertEquals(4, $count);
     }
 
     private function addActivity(int $patientId, int $practiceId, int $providerId, int $duration, int $csId)
@@ -197,8 +221,8 @@ class ReArrangeChargeableServicesTest extends TestCase
         $params                  = (new CreatePageTimerParams())
             ->setActivity([
                 'duration'              => $duration,
-                'start_time'            => now()->subSeconds($duration)->format('Y-m-d H:i:s'),
-                'end_time'              => now()->format('Y-m-d H:i:s'),
+                'start_time'            => now()->format('Y-m-d H:i:s'),
+                'end_time'              => now()->addSeconds($duration)->format('Y-m-d H:i:s'),
                 'chargeable_service_id' => $csId,
                 'enrolleeId'            => '',
                 'url'                   => 'test',

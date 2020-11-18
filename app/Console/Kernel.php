@@ -307,10 +307,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(CountPatientMonthlySummaryCalls::class, [now()->startOfMonth()->toDateString()])
             ->twiceDaily(6, 21);
 
-        $schedule->command(ReArrangeActivityChargeableServices::class, [now()->startOfMonth()->toDateString()])
-            ->dailyAt('23:15')
-            ->onOneServer();
-
         $schedule->command(QueueGenerateOpsDailyReport::class)
             ->dailyAt('23:30')
             ->onOneServer();
