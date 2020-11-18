@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Console\Command;
 
 class AlertSlackForPatientsWithNoLocation extends Command
@@ -45,6 +46,11 @@ class AlertSlackForPatientsWithNoLocation extends Command
     {
         $patientsWithNoLocation = User::whereHas('patientInfo', fn ($pi) => $pi->enrolled()->whereNull('preferred_contact_location'))
             ->whereHas('primaryPractice', fn ($p) => $p->where('is_demo', false))
+            ->whereHas('carePlan', fn ($cp) => $cp->whereIn('status', [
+                CarePlan::QA_APPROVED,
+                CarePlan::RN_APPROVED,
+                CarePlan::PROVIDER_APPROVED,
+            ]))
             ->pluck('id')
             ->toArray();
 
