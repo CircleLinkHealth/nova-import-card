@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "dbe7c4e9f368cfa7820c864f3dbbb1d47eff0d9c"
+                "reference": "1b3ff158cb22eec4ec18f34475b8d905c8c30be4"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-17T23:31:51+00:00"
+            "time": "2020-11-18T00:14:06+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1265,7 +1265,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "13d6f050ef9b7baa11f7c57083d3f9306482b29b"
+                "reference": "cf473b1a09ea0e655f5e1bcf4dc68879ddeef318"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-17T23:02:26+00:00"
+            "time": "2020-11-18T00:14:06+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
