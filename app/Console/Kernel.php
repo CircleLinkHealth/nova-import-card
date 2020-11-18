@@ -30,7 +30,6 @@ use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
 use App\Console\Commands\QueueSendApprovedCareplanSlackNotification;
 use App\Console\Commands\QueueSendAuditReports;
-use App\Console\Commands\ReArrangeActivityChargeableServices;
 use App\Console\Commands\RemoveDuplicateScheduledCalls;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
