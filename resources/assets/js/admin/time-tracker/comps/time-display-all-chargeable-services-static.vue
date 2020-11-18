@@ -6,7 +6,7 @@
                     <small>{{ csSummary.chargeable_service.display_name }}</small>
                 </div>
                 <div>
-                    <a :href="routeActivities">
+                    <a :href="routeActivities" :id="'monthly-time-' + csSummary.chargeable_service.display_name">
                         {{ formatTime(csSummary.total_time) }}
                     </a>
                 </div>
