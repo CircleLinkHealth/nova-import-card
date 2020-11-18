@@ -28,12 +28,8 @@ class PracticePullMedicalRecordToXmlAdapter
 
     public static function fromCcda(Ccda $ccda)
     {
-        $instance = new self($ccda->bluebuttonJson());
-
-        $doc = $instance->newCpmXml();
-        $instance->setCustodian($doc);
-
-        return $instance->storeMedia($ccda, $doc->toDOMDocument());
+        return (new self($ccda->bluebuttonJson()))
+            ->createAndStoreXml($ccda);
     }
 
     protected function setCustodian(ClinicalDocument &$clinicalDocument)
@@ -56,7 +52,8 @@ class PracticePullMedicalRecordToXmlAdapter
         $doc->setTitle(
             new Title(new CharacterString('CarePlan Manager CCDA'))
         );
-
+        $this->setCustodian($doc);
+        
         return $doc;
     }
 
@@ -70,5 +67,12 @@ class PracticePullMedicalRecordToXmlAdapter
             ->toMediaCollection(Ccda::CCD_MEDIA_COLLECTION_NAME);
 
         return $fullPath;
+    }
+    
+    private function createAndStoreXml(Ccda $ccda)
+    {
+        $doc = $this->newCpmXml();
+    
+        return $this->storeMedia($ccda, $doc->toDOMDocument());
     }
 }
