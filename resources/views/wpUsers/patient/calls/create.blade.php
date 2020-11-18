@@ -75,7 +75,7 @@
                                                       id="date"
                                                       :required="true"
                                                       placeholder="YYYY-MM-DD"
-                                                      @selected="function (e) { this.dateChanged(e) }"
+                                                      v-on:dateChanged="function (e){this.getDate(e)}"
                                                       value="{{ auth()->user()->resolveTimezoneToGMT(Carbon::parse($date)) }}">
                                         </v-datepicker>
                                     </div>
