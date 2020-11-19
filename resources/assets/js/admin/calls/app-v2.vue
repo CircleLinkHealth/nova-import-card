@@ -112,7 +112,7 @@
                 <template slot="CCM Time" slot-scope="props">
                     <div>
                         <div v-if="props.row['CCM Time'] === null">
-                            <loader class="relative"></loader>
+                            <loader class="in-column"></loader>
                         </div>
                         <div v-else>
                             {{props.row['CCM Time']}}
@@ -122,7 +122,7 @@
                 <template slot="BHI Time" slot-scope="props">
                     <div>
                         <div v-if="props.row['BHI Time'] === null">
-                            <loader class="relative"></loader>
+                            <loader class="in-column"></loader>
                         </div>
                         <div v-else>
                             {{props.row['BHI Time']}}
@@ -132,7 +132,7 @@
                 <template slot="PCM Time" slot-scope="props">
                     <div>
                         <div v-if="props.row['PCM Time'] === null">
-                            <loader class="relative"></loader>
+                            <loader class="in-column"></loader>
                         </div>
                         <div v-else>
                             {{props.row['PCM Time']}}
@@ -142,7 +142,7 @@
                 <template slot="RPM Time" slot-scope="props">
                     <div>
                         <div v-if="props.row['RPM Time'] === null">
-                            <loader class="relative"></loader>
+                            <loader class="in-column"></loader>
                         </div>
                         <div v-else>
                             {{props.row['RPM Time']}}
@@ -152,7 +152,7 @@
                 <template slot="Successful Calls" slot-scope="props">
                     <div>
                         <div v-if="props.row['Successful Calls'] === null">
-                            <loader class="relative"></loader>
+                            <loader class="successful-calls"></loader>
                         </div>
                         <div v-else>
                             {{props.row['Successful Calls']}}
@@ -786,7 +786,7 @@
                         row['BHI Time']         = timeDisplay(patientData['bhi_total_time']);
                         row['PCM Time']         = timeDisplay(patientData['pcm_total_time']);
                         row['RPM Time']         = timeDisplay(patientData['rpm_total_time']);
-                        row['Successful Calls'] = timeDisplay(patientData['no_of_successful_calls']);
+                        row['Successful Calls'] = patientData['no_of_successful_calls'];
 
                         return row;
                     });
@@ -867,6 +867,16 @@
     div.loader.relative {
         position: relative;
         left: 0px;
+    }
+
+    div.loader.in-column {
+        position: relative;
+        left: 15%;
+    }
+
+    div.loader.successful-calls {
+        position: relative;
+        left: 25%;
     }
 
     .table-bordered > tbody > tr > td {
