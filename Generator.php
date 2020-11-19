@@ -72,7 +72,7 @@ class Generator
         $this->nurseUsers()->chunk(
             5,
             function ($nurseUsers) use (&$invoices) {
-                $delay = 10;
+                $delay = 40;
 
                 foreach ($nurseUsers as $nurseUser) {
                     GenerateNurseInvoice::dispatch(
