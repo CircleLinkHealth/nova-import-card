@@ -21,6 +21,7 @@ class SetChargeableServiceIdInNurseCareRateLogs extends Migration
         ])
             ->each(function (CircleLinkHealth\Customer\Entities\NurseCareRateLog $item) {
                 $item->chargeable_service_id = null;
+                $item->save();
             });
     }
 
@@ -42,6 +43,7 @@ class SetChargeableServiceIdInNurseCareRateLogs extends Migration
             ])
             ->each(function (CircleLinkHealth\Customer\Entities\NurseCareRateLog $item) {
                 $item->chargeable_service_id = $item->activity->chargeable_service_id;
+                $item->save();
             });
     }
 }
