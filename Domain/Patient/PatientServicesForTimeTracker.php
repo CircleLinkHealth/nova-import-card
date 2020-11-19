@@ -69,6 +69,44 @@ class PatientServicesForTimeTracker
 
     private function createFauxSummariesFromLegacyData(): \Illuminate\Database\Eloquent\Collection
     {
+        $summaries = new \Illuminate\Database\Eloquent\Collection();
+
+        if ($this->patientEligibleForRHC()) {
+            $rhc               = ChargeableService::cached()->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT);
+            $rhcNullActivities = boolval(AppConfig::pull('rhc_null_activities', false));
+
+            $activitiesForMonth = Activity::wherePatientId($this->patientId)
+                ->createdThisMonth('performed_at')
+                ->where(function ($sq) use ($rhc, $rhcNullActivities) {
+                    $sq->where('chargeable_service_id', $rhc->id)
+                        ->when($rhcNullActivities, function ($q) {
+                            $q->orWhereNull('chargeable_service_id');
+                        });
+                })
+                ->get();
+
+            $newSummary                          = new ChargeablePatientMonthlySummaryView();
+            $newSummary->patient_user_id         = $this->patientId;
+            $newSummary->chargeable_service_id   = $rhc->id;
+            $newSummary->chargeable_service_code = $rhc->code;
+            $newSummary->chargeable_service_name = $rhc->display_name;
+            $newSummary->total_time              = $activitiesForMonth->filter(function (Activity $a) use ($rhc, $rhcNullActivities) {
+                $csId = $a->chargeable_service_id;
+                $matchingId = $csId === $rhc->id;
+
+                if ( ! $rhcNullActivities) {
+                    return $matchingId;
+                }
+
+                return $matchingId || is_null($csId);
+            })
+                ->sum('duration');
+
+            $summaries->push($newSummary);
+
+            return $summaries;
+        }
+
         $servicesDerivedFromPatientProblems = PatientProblemsForBillingProcessing::getCollection($this->patientId)
             ->transform(fn (PatientProblemForProcessing $p) => $p->getServiceCodes())
             ->flatten()
@@ -90,7 +128,6 @@ class PatientServicesForTimeTracker
         $activitiesForMonth = Activity::wherePatientId($this->patientId)
             ->createdThisMonth('performed_at')->get();
 
-        $summaries = new \Illuminate\Database\Eloquent\Collection();
         foreach ($chargeableServices as $service) {
             $newSummary                          = new ChargeablePatientMonthlySummaryView();
             $newSummary->patient_user_id         = $this->patientId;
@@ -98,30 +135,6 @@ class PatientServicesForTimeTracker
             $newSummary->chargeable_service_code = $service->code;
             $newSummary->chargeable_service_name = $service->display_name;
             $newSummary->total_time              = $activitiesForMonth->where('chargeable_service_id', $service->id)->sum('duration');
-            $summaries->push($newSummary);
-        }
-
-        //todo: revisit and cleanup
-        if ($this->patientEligibleForRHC()) {
-            $rhc               = ChargeableService::cached()->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT);
-            $rhcNullActivities = boolval(AppConfig::pull('rhc_null_activities', false));
-
-            $newSummary                          = new ChargeablePatientMonthlySummaryView();
-            $newSummary->patient_user_id         = $this->patientId;
-            $newSummary->chargeable_service_id   = $rhc->id;
-            $newSummary->chargeable_service_code = $rhc->code;
-            $newSummary->chargeable_service_name = $rhc->display_name;
-            $newSummary->total_time              = $activitiesForMonth->filter(function (Activity $a) use ($rhc, $rhcNullActivities) {
-                $matchingId = ($csId = $a->chargeable_service_id) == $rhc->id;
-
-                if ( ! $rhcNullActivities) {
-                    return $matchingId;
-                }
-
-                return $matchingId || is_null($csId);
-            })
-                ->sum('duration');
-
             $summaries->push($newSummary);
         }
 
@@ -184,7 +197,7 @@ class PatientServicesForTimeTracker
     {
         $patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId);
 
-        return $patient->primaryPractice->chargeableServices->where('code', ChargeableService::GENERAL_CARE_MANAGEMENT)->count() > 0;
+        return $patient->primaryPractice->chargeableServices->where('code', $rhc = ChargeableService::GENERAL_CARE_MANAGEMENT)->count() > 0;
     }
 
     private function rejectNonTimeTrackerServices(): self
@@ -193,7 +206,7 @@ class PatientServicesForTimeTracker
             ->reject(function (ChargeablePatientMonthlySummaryView $summary) {
                 return in_array($summary->chargeable_service_name, self::NON_TIME_TRACKABLE_SERVICES);
             })
-            ;
+        ;
 
         return $this;
     }
