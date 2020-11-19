@@ -80,7 +80,7 @@ class Generator
                         $this->startDate,
                         $this->endDate
                     )->delay(now()->addSeconds($delay));
-                    $delay = $delay + 10;
+                    $delay = $delay + 40;
                 }
             }
         );
