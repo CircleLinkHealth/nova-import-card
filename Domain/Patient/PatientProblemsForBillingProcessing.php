@@ -80,7 +80,17 @@ class PatientProblemsForBillingProcessing
             return $problem->chargeableServiceCodesForLocation($this->patient->patientInfo->preferred_contact_location);
         }
 
+        $primaryPractice = $this->patient->primaryPractice;
+
+        if (is_null($primaryPractice)) {
+            sendSlackMessage('#billing_alerts', "Warning! (PatientProblemsForBillingProcessing:) Patient ({$this->patient->id}) does not have a primary practice.");
+
+            return [];
+        }
+
         $services = [];
+
+        $practiceHasBhi = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::BHI));
 
         if ($cpmProblem = $problem->cpmProblem) {
             $isDual = in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
@@ -89,17 +99,9 @@ class PatientProblemsForBillingProcessing
                 $services[] = ChargeableService::BHI;
             }
 
-            if ( ! $cpmProblem->is_behavioral || $isDual) {
+            if ( ! $practiceHasBhi || ! $cpmProblem->is_behavioral || $isDual) {
                 $services[] = ChargeableService::CCM;
             }
-        }
-
-        $primaryPractice = $this->patient->primaryPractice;
-
-        if (is_null($primaryPractice)) {
-            sendSlackMessage('#billing_alerts', "Warning! (PatientProblemsForBillingProcessing:) Patient ({$this->patient->id}) does not have a primary practice.");
-
-            return [];
         }
 
         $pcmProblems = $primaryPractice->pcmProblems;
