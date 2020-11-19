@@ -109,6 +109,56 @@
                         <loader class="relative" v-if="props.row.loaders.nextCall"></loader>
                     </div>
                 </template>
+                <template slot="CCM Time" slot-scope="props">
+                    <div>
+                        <div v-if="props.row['CCM Time'] === null">
+                            <loader class="relative"></loader>
+                        </div>
+                        <div v-else>
+                            {{props.row['CCM Time']}}
+                        </div>
+                    </div>
+                </template>
+                <template slot="BHI Time" slot-scope="props">
+                    <div>
+                        <div v-if="props.row['BHI Time'] === null">
+                            <loader class="relative"></loader>
+                        </div>
+                        <div v-else>
+                            {{props.row['BHI Time']}}
+                        </div>
+                    </div>
+                </template>
+                <template slot="PCM Time" slot-scope="props">
+                    <div>
+                        <div v-if="props.row['PCM Time'] === null">
+                            <loader class="relative"></loader>
+                        </div>
+                        <div v-else>
+                            {{props.row['PCM Time']}}
+                        </div>
+                    </div>
+                </template>
+                <template slot="RPM Time" slot-scope="props">
+                    <div>
+                        <div v-if="props.row['RPM Time'] === null">
+                            <loader class="relative"></loader>
+                        </div>
+                        <div v-else>
+                            {{props.row['RPM Time']}}
+                        </div>
+                    </div>
+                </template>
+                <template slot="Successful Calls" slot-scope="props">
+                    <div>
+                        <div v-if="props.row['Successful Calls'] === null">
+                            <loader class="relative"></loader>
+                        </div>
+                        <div v-else>
+                            {{props.row['Successful Calls']}}
+                        </div>
+                    </div>
+                </template>
                 <template slot="Activity Start" slot-scope="props">
                     <div>
                         <time-editable v-if="canScheduleCalls(props.row['Type'])"
@@ -522,10 +572,10 @@
                     Scheduler: call.scheduler,
                     'Billing Provider': call.billing_provider,
                     'Last Call': call.last_call,
-                    'CCM Time': timeDisplay(call.ccm_total_time),
-                    'BHI Time': timeDisplay(call.bhi_total_time),
-                    'PCM Time': timeDisplay(call.pcm_total_time),
-                    'RPM Time': timeDisplay(call.rpm_total_time),
+                    'CCM Time': call.ccm_total_time != null ? timeDisplay(call.ccm_total_time) : null,
+                    'BHI Time': call.bhi_total_time != null ? timeDisplay(call.bhi_total_time) : null,
+                    'PCM Time': call.pcm_total_time != null ? timeDisplay(call.pcm_total_time) : null,
+                    'RPM Time': call.rpm_total_time != null ? timeDisplay(call.rpm_total_time) : null,
                     'Successful Calls': call.no_of_successful_calls,
                     'Preferred Call Days': call.preferred_call_days,
                     'Patient ID': call.patient_id,
@@ -676,6 +726,8 @@
 
                                 $vm.loaders.calls = false;
                             }, 1000);
+                            Event.$emit('calls:data-retrieved', tableCalls);
+
                             return tableCalls;
                         }
                     }
@@ -711,6 +763,27 @@
         },
         mounted() {
             BindAppEvents(this, Event);
+
+            Event.$on('calls:data-retrieved', (tableData) =>{
+                let ids = tableData.map(function (call){
+                    return call['Patient ID'];
+                });
+
+                this.axios.post(rootUrl('api/admin/calls-v2-time-and-calls'), ids).then(function (resp){
+                    let data = resp.data;
+
+                    this.tableData = this.tableData.map(function (row) {
+                        let patientData = data[row['Patient ID']];
+                        row['CCM Time']         = patientData['ccm_total_time'];
+                        row['BHI Time']         = patientData['bhi_total_time'];
+                        row['PCM Time']         = patientData['pcm_total_time'];
+                        row['RPM Time']         = patientData['rpm_total_time'];
+                        row['Successful Calls'] = patientData['no_of_successful_calls']
+
+                        return row;
+                    });
+                })
+            })
 
             return Promise.all([this.next(), this.getNurses()])
         }

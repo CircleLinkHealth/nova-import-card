@@ -14,6 +14,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 
 /**
  * App\Call.
@@ -91,6 +92,8 @@ class Call extends BaseModel implements AttachableToNotification
 {
     use Filterable;
     use NotificationAttachable;
+    use DateScopesTrait;
+    
     //Denotes a completed task
     const DONE = 'done';
 
