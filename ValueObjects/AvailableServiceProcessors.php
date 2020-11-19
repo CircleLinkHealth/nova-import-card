@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM60;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
+use CircleLinkHealth\CcmBilling\Processors\Patient\RHC;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM40;
 use Illuminate\Contracts\Support\Arrayable;
@@ -32,12 +33,15 @@ class AvailableServiceProcessors implements Arrayable
 
     private ?PCM $pcm;
 
+    private ?RHC $rhc;
+
     private ?RPM $rpm;
     private ?RPM40 $rpm40;
 
     public static function classMap(): array
     {
         return [
+            RHC::class   => 'rhc',
             CCM::class   => 'ccm',
             BHI::class   => 'bhi',
             CCM40::class => 'ccm40',
@@ -83,6 +87,11 @@ class AvailableServiceProcessors implements Arrayable
     public function getPcm(): ?PCM
     {
         return $this->pcm ?? null;
+    }
+
+    public function getRhc(): ?RHC
+    {
+        return $this->rhc ?? null;
     }
 
     public function getRpm(): ?RPM
@@ -144,6 +153,11 @@ class AvailableServiceProcessors implements Arrayable
         $this->pcm = $pcm;
     }
 
+    public function setRhc(?RHC $rhc): void
+    {
+        $this->rhc = $rhc;
+    }
+
     public function setRpm(?RPM $rpm): void
     {
         $this->rpm = $rpm;
@@ -160,6 +174,7 @@ class AvailableServiceProcessors implements Arrayable
     public function toArray(): array
     {
         return array_filter([
+            $this->rhc ?? null,
             $this->awv1 ?? null,
             $this->awv2 ?? null,
             $this->ccm ?? null,

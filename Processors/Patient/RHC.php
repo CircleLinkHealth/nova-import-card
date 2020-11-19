@@ -9,13 +9,11 @@ namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 use App\Constants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
-class G0511 extends AbstractProcessor
+class RHC extends AbstractProcessor
 {
     public function clashesWith(): array
     {
-        return [
-            new CCM(),
-        ];
+        return [];
     }
 
     public function code(): string
