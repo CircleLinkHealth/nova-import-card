@@ -50,6 +50,9 @@ class CallsViewController extends ApiController
         $data = [];
         $ids = $request->input();
         
+        if (empty($ids)){
+            return response()->json([]);
+        }
         $activities = Activity::whereIn('patient_id', $ids)
             ->createdInMonth($thisMonth = Carbon::now()->startOfMonth(), 'performed_at')
             ->get();
@@ -68,10 +71,10 @@ class CallsViewController extends ApiController
             $patientActivities = $activities->where('patient_id', $patientId);
             
             $data[$patientId] = [
-                'ccm_total_time' => $patientActivities->whereIn('chargeable_service_id', ChargeableService::cached()->whereIn('code', ChargeableService::CCM_CODES))->sum('duration'),
-                'bhi_total_time' => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->where('code', ChargeableService::BHI))->sum('duration'),
-                'pcm_total_time' => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->where('code', ChargeableService::PCM))->sum('duration'),
-                'rpm_total_time' => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->whereIn('code', ChargeableService::RPM_CODES))->sum('duration'),
+                'ccm_total_time' => $patientActivities->whereIn('chargeable_service_id', ChargeableService::cached()->whereIn('code', ChargeableService::CCM_CODES)->pluck('id')->toArray())->sum('duration'),
+                'bhi_total_time' => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->firstWhere('code', ChargeableService::BHI)->id)->sum('duration'),
+                'pcm_total_time' => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->firstWhere('code', ChargeableService::PCM)->id)->sum('duration'),
+                'rpm_total_time' => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->whereIn('code', ChargeableService::RPM_CODES)->pluck('id')->toArray())->sum('duration'),
                 'no_of_successful_calls' => $calls->where('inbound_cpm_id', $patientId)->count()
             ];
         }

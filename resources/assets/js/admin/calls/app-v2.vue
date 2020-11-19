@@ -761,6 +761,9 @@
                 this.selectedPatientsNew = this.tableData.filter(row => row.selected && row.Patient);
             },
         },
+        created() {
+            self = this;
+        },
         mounted() {
             BindAppEvents(this, Event);
 
@@ -772,13 +775,18 @@
                 this.axios.post(rootUrl('api/admin/calls-v2-time-and-calls'), ids).then(function (resp){
                     let data = resp.data;
 
-                    this.tableData = this.tableData.map(function (row) {
+                    self.tableData = self.tableData.map(function (row) {
                         let patientData = data[row['Patient ID']];
-                        row['CCM Time']         = patientData['ccm_total_time'];
-                        row['BHI Time']         = patientData['bhi_total_time'];
-                        row['PCM Time']         = patientData['pcm_total_time'];
-                        row['RPM Time']         = patientData['rpm_total_time'];
-                        row['Successful Calls'] = patientData['no_of_successful_calls']
+
+                        if (! patientData){
+                            return row;
+                        }
+
+                        row['CCM Time']         = timeDisplay(patientData['ccm_total_time']);
+                        row['BHI Time']         = timeDisplay(patientData['bhi_total_time']);
+                        row['PCM Time']         = timeDisplay(patientData['pcm_total_time']);
+                        row['RPM Time']         = timeDisplay(patientData['rpm_total_time']);
+                        row['Successful Calls'] = timeDisplay(patientData['no_of_successful_calls']);
 
                         return row;
                     });
