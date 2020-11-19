@@ -90,10 +90,10 @@ use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
  */
 class Call extends BaseModel implements AttachableToNotification
 {
+    use DateScopesTrait;
     use Filterable;
     use NotificationAttachable;
-    use DateScopesTrait;
-    
+
     //Denotes a completed task
     const DONE = 'done';
 
