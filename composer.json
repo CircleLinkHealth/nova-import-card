@@ -197,7 +197,7 @@
     "circlelinkhealth/condition-code-lookup-module": "1.1.6",
     "circlelinkhealth/core-module": "dev-ROAD-346-billing-revamp",
     "circlelinkhealth/cpm-migrations-module": "dev-ROAD-346-billing-revamp",
-    "circlelinkhealth/customer-module": "dev-ROAD-346-billing-revamp",
+    "circlelinkhealth/customer-module": "dev-pam-split-table-data-fetch",
     "circlelinkhealth/eligibility-module": "dev-ROAD-346-billing-revamp",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
