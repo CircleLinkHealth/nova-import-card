@@ -22,10 +22,11 @@ use Illuminate\Support\Collection;
 class PatientProblemsForBillingProcessing
 {
     const SERVICE_PROBLEMS_MIN_COUNT_MAP = [
-        ChargeableService::CCM => 2,
-        ChargeableService::BHI => 1,
-        ChargeableService::PCM => 1,
-        ChargeableService::RPM => 1,
+        ChargeableService::GENERAL_CARE_MANAGEMENT => 2,
+        ChargeableService::CCM                     => 2,
+        ChargeableService::BHI                     => 1,
+        ChargeableService::PCM                     => 1,
+        ChargeableService::RPM                     => 1,
     ];
     protected ?User $patient;
     protected int $patientId;

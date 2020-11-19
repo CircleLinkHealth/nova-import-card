@@ -47,4 +47,9 @@ class G0511 extends AbstractProcessor
     {
         return false;
     }
+    
+    public function codeForProblems(): string
+    {
+        return ChargeableService::CCM;
+    }
 }

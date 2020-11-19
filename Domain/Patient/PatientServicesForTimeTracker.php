@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
@@ -100,6 +101,30 @@ class PatientServicesForTimeTracker
             $summaries->push($newSummary);
         }
 
+        //todo: revisit and cleanup
+        if ($this->patientEligibleForRHC()) {
+            $rhc               = ChargeableService::cached()->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT);
+            $rhcNullActivities = boolval(AppConfig::pull('rhc_null_activities', false));
+
+            $newSummary                          = new ChargeablePatientMonthlySummaryView();
+            $newSummary->patient_user_id         = $this->patientId;
+            $newSummary->chargeable_service_id   = $rhc->id;
+            $newSummary->chargeable_service_code = $rhc->code;
+            $newSummary->chargeable_service_name = $rhc->display_name;
+            $newSummary->total_time              = $activitiesForMonth->filter(function (Activity $a) use ($rhc, $rhcNullActivities) {
+                $matchingId = ($csId = $a->chargeable_service_id) == $rhc->id;
+
+                if ( ! $rhcNullActivities) {
+                    return $matchingId;
+                }
+
+                return $matchingId || is_null($csId);
+            })
+                ->sum('duration');
+
+            $summaries->push($newSummary);
+        }
+
         return $summaries;
     }
 
@@ -153,6 +178,13 @@ class PatientServicesForTimeTracker
     private function newBillingIsEnabled(): bool
     {
         return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
+    }
+
+    private function patientEligibleForRHC(): bool
+    {
+        $patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId);
+
+        return $patient->primaryPractice->chargeableServices->where('code', ChargeableService::GENERAL_CARE_MANAGEMENT)->count() > 0;
     }
 
     private function rejectNonTimeTrackerServices(): self
