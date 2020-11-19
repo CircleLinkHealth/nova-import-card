@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35103d5f414145fefb6a75bef5dc512e",
+    "content-hash": "1a25c1e5a576069e11635116417a48f9",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -950,11 +950,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "dev-ROAD-346-billing-revamp",
+            "version": "dev-hotfix-rhc",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "0e9c626ac43dbcf5a10645c11e969f6f5b862034"
+                "reference": "09ae661ac9e994b97183336ee27ce9c0ffaa905b"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-19T13:54:07+00:00"
+            "time": "2020-11-19T20:18:52+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1261,11 +1261,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-ROAD-346-billing-revamp",
+            "version": "dev-hotfix-rhc",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d64258754fa314972d896468c1a7824fd5afea0a"
+                "reference": "00cc4ee44adc275d6994984f1367ed5d9146dd02"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-19T12:23:17+00:00"
+            "time": "2020-11-19T20:26:18+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
