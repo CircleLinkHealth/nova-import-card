@@ -106,11 +106,11 @@ class PatientCareplanController extends Controller
                 'primaryPractice.settings',
             ])
             ->find($patientId = $request->input('patient_id'));
-    
-        if (! $patient->carePlan) {
+
+        if ( ! $patient->carePlan) {
             return "Patient with ID $patientId does not have a CarePlan";
         }
-        
+
         $dm = $dm->send(
             $request->input('dm_address'),
             $patient->carePlan->toPdf(),
