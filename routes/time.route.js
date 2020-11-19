@@ -29,6 +29,18 @@ const userExistsValidator = function (req, res, next) {
     })
 }
 
+const addTimeToChargeableServiceValidator = function (req, res, next) {
+    const data = req.body;
+    if (!data || Object.keys(data) < 4 || isNaN(data.chargeable_service_id) || isNaN(data.duration_seconds)) {
+        res.status(404).send({
+            error: 'invalid request:' + JSON.stringify(data)
+        })
+        return;
+    }
+
+    next();
+}
+
 /**
  * @swagger
  * /:practitionerId/:patientId:
@@ -47,7 +59,7 @@ const userExistsValidator = function (req, res, next) {
  *       200:
  *         description: practitioner-patient activities
  */
-router.put('/:providerId/:patientId', userExistsValidator, function (req, res, next) {
+router.put('/:providerId/:patientId', userExistsValidator, addTimeToChargeableServiceValidator, function (req, res, next) {
     const providerId = req.params.providerId
     const patientId = req.params.patientId
 
@@ -58,22 +70,8 @@ router.put('/:providerId/:patientId', userExistsValidator, function (req, res, n
     const user = timeTracker.get(info)
 
     if (user) {
-        const {
-            startTime,
-            ccmTime,
-            bhiTime
-        } = req.body
-
-        if (Number(startTime)) {
-            user.totalTime += Number(startTime)
-        }
-        if (Number(ccmTime)) {
-            user.totalCCMTime += Number(ccmTime)
-        }
-        if (Number(bhiTime)) {
-            user.totalBHITime += Number(bhiTime)
-        }
-        user.sync()
+        const data = req.body;
+        user.addToChargeableService(+data.chargeable_service_id, data.chargeable_service_code, data.chargeable_service_name, +data.duration_seconds);
         res.send(user.report())
     }
     else res.status(404).send({
@@ -137,8 +135,22 @@ router.get('/active', function (req, res, next) {
         .map(x => {
             return {
                 report: x.report(),
-                totalCCMTime: x.totalCCMTime,
-                totalBHITime: x.totalBHITime,
+                totalSeconds: x.totalSeconds,
+                isActive: x.isActive
+            }
+        });
+    res.send(result);
+})
+
+router.get('/active-no-live-count', function (req, res, next) {
+    const timeTracker = app.timeTrackerNoLiveCount
+
+    const result = timeTracker.users()
+        .filter(x => x.totalSeconds > 0)
+        .map(x => {
+            return {
+                report: x.report(),
+                totalSeconds: x.totalSeconds,
                 isActive: x.isActive
             }
         });

@@ -1,6 +1,6 @@
 const {EventEmitter} = require('events')
 const {validateInfo} = require('./utils.fn')
-const TimeTrackerUser = require('./time-tracker.user')
+const TimeTrackerUser = require('./time-tracker.user').default;
 const errorLogger = require('../logger').getErrorLogger();
 
 function TimeTracker($emitter = new EventEmitter()) {

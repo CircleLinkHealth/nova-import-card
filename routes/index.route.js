@@ -23,6 +23,7 @@ if (process.env.NODE_ENV !== 'production') {
     router.get('/', (req, res) => {
         res.send({
             message: 'Time Tracker',
+            time: new Date().toString(),
             uptime: Math.floor(process.uptime()),
             raygun: errorLogger.reportsToRaygun(),
             sentry: errorLogger.reportsToSentry(),

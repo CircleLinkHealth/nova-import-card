@@ -34,7 +34,7 @@ describe('TimeTrackerFlow', () => {
                     assert.equal(user.totalSeconds, 30)
                 })
             })
-            
+
             describe('User chose YES', () => {
                 const timeTracker = new TimeTracker()
                 const user = timeTracker.get(info)
@@ -56,7 +56,7 @@ describe('TimeTrackerFlow', () => {
                 const timeTracker = new TimeTracker()
                 const info = new TimeTrackerInfo({ initSeconds: 5 })
                 const user = timeTracker.get(info)
-    
+
                 user.start(info, ws)
 
                 assert.equal(user.totalDuration, 5)
@@ -71,7 +71,7 @@ describe('TimeTrackerFlow', () => {
             user.callMode = true
 
             user.start(info, ws)
-    
+
             // assert.isTrue(user.allSockets[0].messages.some(data => {
             //     return JSON.parse(data).message === 'server:call-mode:enter'
             // }))
@@ -83,13 +83,13 @@ describe('TimeTrackerFlow', () => {
             it('should have total duration equal to 100', () => {
                 const timeTracker = new TimeTracker()
                 const user = timeTracker.get(info)
-    
+
                 user.start(info, ws)
-    
+
                 user.inactiveSeconds = 100
-    
+
                 user.enter(info, ws)
-    
+
                 assert.equal(user.totalDuration, 100)
             })
         })
@@ -98,15 +98,15 @@ describe('TimeTrackerFlow', () => {
             it('should trigger inactive modal', () => {
                 const timeTracker = new TimeTracker()
                 const user = timeTracker.get(info)
-    
+
                 user.start(info, ws)
-    
+
                 user.inactiveSeconds = 120
-    
+
                 user.enter(info, ws)
-    
+
                 assert.equal(user.totalDuration, 0)
-    
+
                 assert.equal(JSON.parse(user.allSockets[0].messages.slice(-1)[0]).message, 'server:modal')
             })
         })
@@ -115,13 +115,13 @@ describe('TimeTrackerFlow', () => {
             it('should logout if inactivity-seconds is more than 600', () => {
                 const timeTracker = new TimeTracker()
                 const user = timeTracker.get(info)
-    
+
                 user.start(info, ws)
-    
+
                 user.inactiveSeconds = 601
-    
+
                 user.enter(info, ws)
-    
+
                 assert.equal(JSON.parse(user.allSockets[0].messages.slice(-1)[0]).message, 'server:logout')
             })
 
@@ -129,22 +129,22 @@ describe('TimeTrackerFlow', () => {
                 it('should not reset inactive duration more than once', () => {
                     const timeTracker = new TimeTracker()
                     const user = timeTracker.get(info)
-        
+
                     user.start(info, ws)
-    
+
                     user.activities[0].duration = 125
-        
+
                     user.inactiveSeconds = 601
-        
+
                     user.clientInactivityLogout(info)
-        
+
                     user.clientInactivityLogout(info)
-        
+
                     assert.equal(user.totalDuration, 35)
                 })
             })
         })
-        
+
     })
 
     describe('InactivityAction', () => {
@@ -197,31 +197,31 @@ describe('TimeTrackerFlow', () => {
 
             it('should neither require modal nor logout (100 seconds)', () => {
                 user.inactiveSeconds = 100
-    
+
                 assert.equal(user.inactivityRequiresNoModal(), true)
             })
-    
+
             it('should NOT require modal (130 seconds)', () => {
                 user.inactiveSeconds = 130
-    
+
                 assert.equal(user.inactivityRequiresModal(), false)
             })
-    
+
             it('should NOT require logout (610 seconds)', () => {
                 user.inactiveSeconds = 610
-    
+
                 assert.equal(user.inactivityRequiresLogout(), false)
             })
-    
+
             it('should require modal (910 seconds)', () => {
                 user.inactiveSeconds = user.ALERT_TIMEOUT_CALL_MODE + 10;
-    
+
                 assert.equal(user.inactivityRequiresModal(), true)
             })
-    
+
             it('should require logout (1210)', () => {
                 user.inactiveSeconds = user.LOGOUT_TIMEOUT_CALL_MODE + 10;
-    
+
                 assert.equal(user.inactivityRequiresLogout(), true)
             })
         })
@@ -245,7 +245,7 @@ describe('TimeTrackerFlow', () => {
                 assert.notEqual(info1.patientFamilyId, info2.patientFamilyId)
             })
         })
-        
+
         describe('Exits If User With Different Family ID Is Entered', () => {
             user1.enter(info1, ws)
             user1.enterCallMode(info1, ws)
@@ -262,7 +262,7 @@ describe('TimeTrackerFlow', () => {
             })
         })
     })
-        
+
     describe('Does NOT Exit If Both Users Have NULL Patient Family IDs', () => {
 
         const timeTracker = new TimeTracker()
@@ -285,7 +285,7 @@ describe('TimeTrackerFlow', () => {
 
         })
     })
-        
+
     describe('should Exit If One User Has Patient Family IDs value', () => {
 
         const timeTracker = new TimeTracker()
@@ -308,7 +308,7 @@ describe('TimeTrackerFlow', () => {
 
         })
     })
-        
+
     describe('should Exit If One User Has NULL Patient ID', () => {
 
         const timeTracker = new TimeTracker()
@@ -334,7 +334,7 @@ describe('TimeTrackerFlow', () => {
 
         })
     })
-        
+
     describe('should Exit If One User Has "0" Patient ID', () => {
 
         const timeTracker = new TimeTracker()
@@ -365,8 +365,8 @@ describe('TimeTrackerFlow', () => {
 
         const timeTracker = new TimeTracker()
 
-        const info1 = { ...info, ...{ patientId: 1, isManualBehavioral: true } }
-        const info2 = { ...info, ...{ patientId: 1, isManualBehavioral: false } }
+        const info1 = { ...info, ...{ patientId: 1, chargeableServiceId: 2 } }
+        const info2 = { ...info, ...{ patientId: 1, chargeableServiceId: 1 } }
 
         const user = timeTracker.get(info1)
 
@@ -383,9 +383,9 @@ describe('TimeTrackerFlow', () => {
 
             assert.notEqual(activity1, activity2)
 
-            assert.equal(user.totalBhiSeconds, 30)
+            assert.equal(user.getTotalSecondsForCsId(2), 30)
 
-            assert.equal(user.totalCcmSeconds, 0)
+            assert.equal(user.getTotalSecondsForCsId(1), 0)
 
             assert.equal(user.totalSeconds, 30)
         })
