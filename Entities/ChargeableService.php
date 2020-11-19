@@ -177,6 +177,10 @@ class ChargeableService extends BaseModel
             return self::CCM;
         }
 
+        if (self::GENERAL_CARE_MANAGEMENT === $code) {
+            return self::CCM;
+        }
+
         if (self::RPM40 === $code) {
             return self::RPM;
         }
