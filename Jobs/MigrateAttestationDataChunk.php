@@ -56,7 +56,11 @@ class MigrateAttestationDataChunk extends ChunksEloquentBuilderJob implements Sh
     public function handle()
     {
         $this->getBuilder()->each(function (AttestedProblem $attestation) {
-            $attestation->chargeable_month = Carbon::parse(($attestation->pms->month_year ?? $attestation->call->called_date))->startOfMonth()->startOfDay();
+            $attestedMonth = optional($attestation->pms)->month_year ?? optional($attestation->call)->called_date ?? $attestation->created_at ?? $attestation->updated_at;
+            if ( ! is_null($attestedMonth)) {
+                $attestation->chargeable_month = Carbon::parse($attestedMonth)->startOfMonth()->startOfDay();
+            }
+
             $attestation->patient_user_id = optional($attestation->ccdProblem)->patient_id ?? optional($attestation->pms)->patient_id;
 
             if ($problem = $attestation->ccdProblem) {
