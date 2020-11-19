@@ -77,6 +77,7 @@ class ChargeableService extends BaseModel
 
     const CLASHES = [
         self::PCM => [
+            self::GENERAL_CARE_MANAGEMENT,
             self::CCM,
             self::CCM_PLUS_40,
             self::CCM_PLUS_60,
@@ -167,7 +168,11 @@ class ChargeableService extends BaseModel
 
     public static function getClashesWithService(string $service): array
     {
-        return self::CLASHES[$service] ?? [];
+        if (self::GENERAL_CARE_MANAGEMENT === $service) {
+            return [];
+        }
+
+        return self::CLASHES[$service] ?? [self::GENERAL_CARE_MANAGEMENT];
     }
 
     public static function getCodeForPatientProblems(string $code): string
