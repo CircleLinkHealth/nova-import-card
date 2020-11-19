@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class SetChargeableServiceIdInNurseCareRateLogs extends Migration
+class SetChargeableServiceIdInNurseCareRateLogsV2 extends Migration
 {
     /**
      * Reverse the migrations.
@@ -24,7 +24,7 @@ class SetChargeableServiceIdInNurseCareRateLogs extends Migration
                 $item->save();
             });
     }
-
+    
     /**
      * Run the migrations.
      *
