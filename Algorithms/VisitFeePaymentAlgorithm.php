@@ -93,6 +93,7 @@ class VisitFeePaymentAlgorithm extends NursePaymentAlgorithm
             ->each(function ($csCode) use (&$noOfBillableEvents, &$lastBillableCode) {
                 $totalTimeForMonth = $this->getTotalTimeForMonth($csCode);
                 switch ($csCode) {
+                    case ChargeableService::GENERAL_CARE_MANAGEMENT:
                     case ChargeableService::CCM:
                     case ChargeableService::RPM:
                     case ChargeableService::BHI:
@@ -253,6 +254,7 @@ class VisitFeePaymentAlgorithm extends NursePaymentAlgorithm
         $rate = 0.0;
 
         switch ($csCode) {
+            case ChargeableService::GENERAL_CARE_MANAGEMENT:
             case ChargeableService::CCM:
             case ChargeableService::BHI:
             case ChargeableService::RPM:
