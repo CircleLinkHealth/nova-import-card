@@ -74,6 +74,12 @@ class ChargeableService extends BaseModel
         self::CCM_PLUS_40,
         self::CCM_PLUS_60,
     ];
+    
+    const CCM_CODES = [
+        self::CCM,
+        self::CCM_PLUS_40,
+        self::CCM_PLUS_60
+    ];
 
     const CLASHES = [
         self::PCM => [
