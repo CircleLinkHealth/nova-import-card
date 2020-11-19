@@ -413,8 +413,7 @@ class CarePlan extends BaseModel implements PdfReport
         return $this->isRnApprovalEnabled()
             && CarePlan::QA_APPROVED === $this->status
             && $currentUser->isCareCoach()
-            && $currentUser->canRNApproveCarePlans()
-            && $this->validator()->passes();
+            && $currentUser->canRNApproveCarePlans();
     }
 
     /**
