@@ -90,17 +90,7 @@ class PatientServicesForTimeTracker
             $newSummary->chargeable_service_id   = $rhc->id;
             $newSummary->chargeable_service_code = $rhc->code;
             $newSummary->chargeable_service_name = $rhc->display_name;
-            $newSummary->total_time              = $activitiesForMonth->filter(function (Activity $a) use ($rhc, $rhcNullActivities) {
-                $csId = $a->chargeable_service_id;
-                $matchingId = $csId === $rhc->id;
-
-                if ( ! $rhcNullActivities) {
-                    return $matchingId;
-                }
-
-                return $matchingId || is_null($csId);
-            })
-                ->sum('duration');
+            $newSummary->total_time              = $activitiesForMonth->sum('duration');
 
             $summaries->push($newSummary);
 
