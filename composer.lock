@@ -1235,7 +1235,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "7d043244a5ee56273cf7f8f98105f4ea6c28cf7a"
+                "reference": "c4e2bd68d5d6700ded5652d5d03c3d371c2ab22a"
             },
             "type": "laravel-module",
             "extra": {
@@ -1257,7 +1257,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-19T09:46:44+00:00"
+            "time": "2020-11-19T13:39:17+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1524,7 +1524,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "47140f9bda0c2a7933eaf9952a95c294345494d9"
+                "reference": "1a2fe5e322d9e41aaa2aa7e3850040ae7fba5b82"
             },
             "type": "laravel-module",
             "extra": {
@@ -1546,7 +1546,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-10-30T11:15:14+00:00"
+            "time": "2020-11-19T12:49:18+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1702,7 +1702,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "ae890cb5ce2736a70ccbe36c834bd563950a95a6"
+                "reference": "684cf5f228b08fa9208c45a96dce87622b6dc516"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1716,7 +1716,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-18T15:34:19+00:00"
+            "time": "2020-11-19T12:46:41+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
