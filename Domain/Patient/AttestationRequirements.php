@@ -134,7 +134,8 @@ class AttestationRequirements
     private function hasCcm(): self
     {
         $this->dto->setHasCcm(
-            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::CCM)
+            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::CCM) ??
+            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::GENERAL_CARE_MANAGEMENT)
         );
 
         return $this;
