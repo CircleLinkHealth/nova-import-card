@@ -6,12 +6,17 @@
 
 namespace App\Console\Commands;
 
+use App\Notifications\PostmarkCallbackNotificationTest;
 use App\Notifications\SendGridTestNotification;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
+use Illuminate\Bus\Queueable;
 use Illuminate\Console\Command;
 
 class SendTestEmailToSendGrid extends Command
 {
+    use Queueable;
+    const POSTMARK_INBOUND_ADDRESS_CONFIG_KEY = 'postmark_inbound_address';
     /**
      * The console command description.
      *
@@ -23,7 +28,13 @@ class SendTestEmailToSendGrid extends Command
      *
      * @var string
      */
-    protected $signature = 'send:test-email {email}';
+    protected $signature = 'send:test-email {email?} {--callback-mail}';
+    /**
+     * @var array|string|null
+     */
+    private $email;
+
+    private bool $isCallbackMail;
 
     /**
      * Create a new command instance.
@@ -35,15 +46,59 @@ class SendTestEmailToSendGrid extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
     public function handle()
     {
-        $email     = $this->argument('email');
-        $anonymous = Notification::route('mail', $email);
+        $this->isCallbackMail = (bool) $this->option('callback-mail');
+        $this->email          = $this->isCallbackMail ? self::POSTMARK_INBOUND_ADDRESS_CONFIG_KEY : $this->argument('email');
+
+        if ($this->isCallbackMail) {
+            try {
+                $anonymous = $this->sendAnonymousNotification();
+                $anonymous->notifyNow(new PostmarkCallbackNotificationTest());
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
+            }
+
+            $this->info('Done');
+
+            return;
+        }
+
+        if ( ! is_null($this->email)) {
+            return $this->sendTestNotification();
+        }
+
+        $this->error('Missing email argument');
+    }
+
+    /**
+     * @return string|string[]|void
+     */
+    private function getPostmarkInboundAddress()
+    {
+        $config = AppConfig::pull(self::POSTMARK_INBOUND_ADDRESS_CONFIG_KEY, '');
+
+        if (empty($config)) {
+            $defaultAddress = self::POSTMARK_INBOUND_ADDRESS_CONFIG_KEY;
+            $this->warn("Please set $defaultAddress in Configuration panel.");
+
+            return '';
+        }
+
+        return $config;
+    }
+
+    /**
+     * @return \Illuminate\Notifications\AnonymousNotifiable
+     */
+    private function sendAnonymousNotification()
+    {
+        return Notification::route('mail', $this->email);
+    }
+
+    private function sendTestNotification()
+    {
+        $anonymous = $this->sendAnonymousNotification();
         $anonymous->notifyNow(new SendGridTestNotification());
         $this->info('Done');
     }

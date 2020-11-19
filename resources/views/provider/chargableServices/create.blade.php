@@ -28,6 +28,8 @@
                                                value="1"
                                         @if($service->code === \CircleLinkHealth\Customer\Entities\ChargeableService::CCM_PLUS_40){!!'class="ccm_plus_40"'!!}@endif
                                         @if($service->code === \CircleLinkHealth\Customer\Entities\ChargeableService::CCM_PLUS_60){!!'class="ccm_plus_60"'!!}@endif
+                                        @if($service->code === \CircleLinkHealth\Customer\Entities\ChargeableService::RPM){!!'class="rpm"'!!}@endif
+                                        @if($service->code === \CircleLinkHealth\Customer\Entities\ChargeableService::RPM40){!!'class="rpm_40"'!!}@endif
                                         @if($service->is_on){{'checked'}}@endif
                                         @if(!auth()->user()->hasPermission('chargeableService.create')){{'disabled'}}@endif>
                                         <label for="service-{{$service->id}}">Active</label>
@@ -70,6 +72,8 @@
 
                     const ccmPlus40Elem = $('.ccm_plus_40');
                     const ccmPlus60Elem = $('.ccm_plus_60');
+                    const rpmElem = $('.rpm');
+                    const rpm40Elem = $('.rpm_40');
 
                     ccmPlus40Elem.click(function (e) {
                         ccmPlus60Elem.prop('checked', e.currentTarget.checked);
@@ -78,6 +82,15 @@
                     ccmPlus60Elem.click(function (e) {
                         ccmPlus40Elem.prop('checked', e.currentTarget.checked);
                     });
+
+                    rpmElem.click(function (e) {
+                        rpm40Elem.prop('checked', e.currentTarget.checked);
+                    });
+
+                    rpm40Elem.click(function (e) {
+                        rpmElem.prop('checked', e.currentTarget.checked);
+                    });
+
                 });
             </script>
     @endpush

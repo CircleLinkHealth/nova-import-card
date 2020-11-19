@@ -8,9 +8,9 @@ namespace Tests\Unit;
 
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Services\ApproveBillablePatientsService;
-use App\Traits\Tests\PracticeHelpers;
-use App\Traits\Tests\TimeHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Tests\TestCase;
 
@@ -23,7 +23,7 @@ class PracticePcmBillingTest extends TestCase
     /** @var ApproveBillablePatientsService */
     protected $service;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->service = $this->app->make(ApproveBillablePatientsService::class);
@@ -31,11 +31,12 @@ class PracticePcmBillingTest extends TestCase
 
     public function test_pcm_charged_only()
     {
+        //TODO: IMPLEMENT NEW BILLING
         $practice = $this->setupPractice(false, false, false, true);
         $nurse    = $this->getNurse($practice->id);
         $patient  = $this->setupPatient($practice, false, true);
 
-        $this->addTime($nurse, $patient, 35, true, 1);
+        $this->addTime($nurse, $patient, 35, true, 1, ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM));
 
         $patients  = $this->service->getBillablePatientsForMonth($practice->id, now());
         $summaries = collect($patients['summaries']->toArray()['data']);
@@ -69,7 +70,7 @@ class PracticePcmBillingTest extends TestCase
         $nurse    = $this->getNurse($practice->id);
         $patient  = $this->setupPatient($practice);
 
-        $this->addTime($nurse, $patient, 35, true, 1);
+        $this->addTime($nurse, $patient, 35, true, 1, ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM));
 
         $patients  = $this->service->getBillablePatientsForMonth($practice->id, now());
         $summaries = collect($patients['summaries']->toArray()['data']);
@@ -103,7 +104,7 @@ class PracticePcmBillingTest extends TestCase
         $nurse    = $this->getNurse($practice->id);
         $patient  = $this->setupPatient($practice, false, true);
 
-        $this->addTime($nurse, $patient, 28, true, 1);
+        $this->addTime($nurse, $patient, 28, true, 1, ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::PCM));
 
         $patients  = $this->service->getBillablePatientsForMonth($practice->id, now());
         $summaries = collect($patients['summaries']->toArray()['data']);
@@ -137,7 +138,7 @@ class PracticePcmBillingTest extends TestCase
         $nurse    = $this->getNurse($practice->id);
         $patient  = $this->setupPatient($practice);
 
-        $this->addTime($nurse, $patient, 35, true, 1);
+        $this->addTime($nurse, $patient, 35, true, 1, ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::CCM));
 
         $patients  = $this->service->getBillablePatientsForMonth($practice->id, now());
         $summaries = collect($patients['summaries']->toArray()['data']);

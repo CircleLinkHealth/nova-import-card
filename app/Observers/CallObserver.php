@@ -38,13 +38,16 @@ class CallObserver
     /**
      * @param $call
      */
-    public function createLiveNotification($call)
+    public function createLiveNotification(Call $call)
     {
-        if ( ! auth()->check()) {
+        /** @var User $notifiable */
+        $notifiable = auth()->user() ?? User::find($call->outbound_cpm_id);
+
+        if ( ! $notifiable) {
             return;
         }
 
-        optional($call->outboundUser)->notify(new CallCreated($call, auth()->user()));
+        optional($call->outboundUser)->notify(new CallCreated($call, $notifiable));
     }
 
     public function saved(Call $call)

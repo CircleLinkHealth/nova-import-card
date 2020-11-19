@@ -43,17 +43,7 @@
                             </div>
 
                             <div class="col-sm-12">
-                                <?php
-                                $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-                                $ccmCountableUser        = auth()->user()->isCCMCountable();
-                                ?>
-                                <time-tracker ref="TimeTrackerApp"
-                                              :twilio-enabled="true"
-                                              class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                              :info="timeTrackerInfo"
-                                              :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
-                                              :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
-
+                                @include('partials.providerUItimerComponent')
                             </div>
 
                             <div class="col-sm-12">

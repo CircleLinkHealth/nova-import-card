@@ -6,15 +6,15 @@
 
 namespace Tests\Feature;
 
-use App\Traits\Tests\PracticeHelpers;
-use App\Traits\Tests\TimeHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
-use Tests\CustomerTestCase;
+use Tests\TestCase;
 
-class TimeTrackingAndChargeableServiceTest extends CustomerTestCase
+class TimeTrackingAndChargeableServiceTest extends TestCase
 {
     use PracticeHelpers;
     use TimeHelpers;
@@ -25,24 +25,30 @@ class TimeTrackingAndChargeableServiceTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice, true);
-        $this->addTime($nurse, $patient, 15, true, false, true);
-        /** @var Activity $activity */
-        $activity = $patient->activities->first();
+
         /** @var ChargeableService $cs */
         $cs = ChargeableService::firstWhere('code', '=', ChargeableService::BHI);
+
+        $this->addTime($nurse, $patient, 15, true, false, $cs->id);
+        /** @var Activity $activity */
+        $activity = $patient->activities->first();
+
         self::assertEquals($activity->chargeable_service_id, $cs->id);
     }
 
     public function test_activity_created_with_ccm_cs()
     {
+        /** @var ChargeableService $cs */
+        $cs = ChargeableService::firstWhere('code', '=', ChargeableService::CCM);
+
         $practice = $this->setupPractice(true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice);
-        $this->addTime($nurse, $patient, 15, true, false);
+        $this->addTime($nurse, $patient, 15, true, false, $cs->id);
+
         /** @var Activity $activity */
         $activity = $patient->activities->first();
-        /** @var ChargeableService $cs */
-        $cs = ChargeableService::firstWhere('code', '=', ChargeableService::CCM);
+
         self::assertEquals($activity->chargeable_service_id, $cs->id);
     }
 
@@ -51,8 +57,12 @@ class TimeTrackingAndChargeableServiceTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice);
-        $this->addTime($nurse, $patient, 15, true, false);
-        $this->addTime($nurse, $patient, 15, true, false);
+
+        /** @var ChargeableService $cs */
+        $ccmCs = ChargeableService::firstWhere('code', '=', ChargeableService::CCM);
+
+        $this->addTime($nurse, $patient, 15, true, false, $ccmCs->id);
+        $this->addTime($nurse, $patient, 15, true, false, $ccmCs->id);
         $sum = $patient->activities->sum(function (Activity $activity) {
             return $activity->duration;
         });
@@ -71,9 +81,13 @@ class TimeTrackingAndChargeableServiceTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice);
-        $this->addTime($nurse, $patient, 15, true, false);
-        $this->addTime($nurse, $patient, 15, true, false);
-        $this->addTime($nurse, $patient, 15, true, true);
+
+        /** @var ChargeableService $cs */
+        $ccmCs = ChargeableService::firstWhere('code', '=', ChargeableService::CCM);
+
+        $this->addTime($nurse, $patient, 15, true, false, $ccmCs->id);
+        $this->addTime($nurse, $patient, 15, true, false, $ccmCs->id);
+        $this->addTime($nurse, $patient, 15, true, true, $ccmCs->id);
         $sum = $patient->activities->sum(function (Activity $activity) {
             return $activity->duration;
         });
@@ -92,11 +106,13 @@ class TimeTrackingAndChargeableServiceTest extends CustomerTestCase
         $practice = $this->setupPractice(true, true, true, true);
         $nurse    = $this->getNurse($practice->id, true);
         $patient  = $this->setupPatient($practice, false, true);
-        $this->addTime($nurse, $patient, 15, true, false);
-        /** @var Activity $activity */
-        $activity = $patient->activities->first();
+
         /** @var ChargeableService $cs */
         $cs = ChargeableService::firstWhere('code', '=', ChargeableService::PCM);
+
+        $this->addTime($nurse, $patient, 15, true, false, $cs->id);
+        /** @var Activity $activity */
+        $activity = $patient->activities->first();
         self::assertEquals($cs->id, $activity->chargeable_service_id);
         self::assertEquals(15 * 60, $activity->duration);
     }
@@ -109,12 +125,12 @@ class TimeTrackingAndChargeableServiceTest extends CustomerTestCase
 
         $resp = $this->actingAs($nurse)
             ->post(route('offline-activity-time-requests.store', ['patientId' => $patient->id]), [
-                'type'             => 'Other',
-                'comment'          => 'test',
-                'duration_minutes' => 3,
-                'patient_id'       => $patient->id,
-                'is_behavioral'    => 0,
-                'performed_at'     => now(),
+                'type'                  => 'Other',
+                'comment'               => 'test',
+                'duration_minutes'      => 3,
+                'patient_id'            => $patient->id,
+                'performed_at'          => now(),
+                'chargeable_service_id' => ChargeableService::cached()->firstWhere('code', '=', ChargeableService::CCM)->id,
             ]);
 
         self::assertTrue($resp->status() < 400);

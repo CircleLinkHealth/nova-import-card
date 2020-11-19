@@ -96,7 +96,7 @@ class ProcessTwilioInboundSmsJob implements ShouldQueue
             // 3. create call for nurse with ASAP flag
             /** @var SchedulerService $service */
             $service = app(SchedulerService::class);
-            $task    = $service->scheduleAsapCallbackTaskFromSms($user, $this->input->From, $this->input->Body, 'twilio_inbound_sms');
+            $task    = $service->scheduleAsapCallbackTaskFromSms($user, $this->input->From, $this->input->Body, 'twilio_inbound_sms', SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS);
         } catch (\Exception $e) {
             sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See database record id[$recordId]");
 

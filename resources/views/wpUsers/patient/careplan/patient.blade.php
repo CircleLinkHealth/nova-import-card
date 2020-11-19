@@ -12,7 +12,7 @@ $user_info = [];
     {!! Form::open(['url' => optional($patient)->id ? route('patient.demographics.update', [$patient->id]) : route('patient.demographics.store'), 'method' => optional($patient)->id ? 'patch' : 'post', 'class' => 'form-horizontal', 'id' => 'ucpForm']) !!}
     <div class="row" style="margin-top:20px;margin-bottom:20px;">
         <div class="col-lg-10 col-lg-offset-1 col-xs-12 col-xs-offset-0">
-            <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;margin-bottom:20px;">
+            <div class="main-form-container-last col-lg-10 col-lg-offset-1" style="margin-top:20px;margin-bottom:20px;">
                 <div class="row"><!-- no-overflow-->
                     @if(isset($patient->id) )
                         <div class="main-form-title col-lg-12">
@@ -446,7 +446,18 @@ $user_info = [];
                                                     </script>
                                                 @endpush
                                             @endif
+                                            @if(! isProductionEnv())
+                                                <div class="form-group form-item form-item-spacing">
+                                                    <div class="col-sm-12">
+                                                        <div class="radio">
+                                                            <input type="checkbox" name="empty_location"
+                                                                   id="empty_location" @if(empty($patient->getPreferredContactLocation())) checked @endif>
+                                                            <label for="empty_location"><span> </span>(QA only) Location is not set/ clear location</label>
+                                                        </div>
 
+                                                    </div>
+                                                </div>
+                                            @endif
                                             <input type=hidden name=status
                                                    value="{{ (old('status') ? old('status') : ($patient->status)) }}">
 
@@ -482,6 +493,18 @@ $user_info = [];
                                                                             value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE ? 'selected' : ''}}>
                                                                         Unreachable
                                                                     </option>
+                                                                @else
+                                                                    @if($patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED)
+                                                                    <option class="paused" disabled
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" selected>
+                                                                        Paused
+                                                                    </option>
+                                                                    @elseif($patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE)
+                                                                    <option class="unreachable" disabled
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" selected>
+                                                                        Unreachable
+                                                                    </option>
+                                                                    @endif
                                                                 @endif
                                                             </select>
                                                         </div>

@@ -42,36 +42,14 @@ $canSwitchToWeb = $patient->carePlan && CircleLinkHealth\SharedModels\Entities\C
         <div class="row">
             <div class="col-md-12 top-20 text-right tt-container">
                 <span style="font-size: 22px;">
-                    <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
-                        @if (isset($disableTimeTracking) && $disableTimeTracking)
-                            <div class="color-grey">
-                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patientId' => $patient->id]) }}">
-                                    <server-time-display url="{{config('services.ws.server-url')}}"
-                                                         patient-id="{{$patient->id}}"
-                                                         provider-id="{{Auth::user()->id}}"
-                                                         value="{{$monthlyTime}}"></server-time-display>
-                                </a>
-                            </div>
-                        @else
-                            <?php
-                            $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-                            $ccmCountableUser        = auth()->user()->isCCMCountable();
-                            ?>
-                            <time-tracker ref="TimeTrackerApp"
-                                          :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
-                                          class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                          :info="timeTrackerInfo"
-                                          :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
-                                          :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
-                        @endif
-                    </span>
+                    @include('partials.providerUItimerComponent')
                 </span>
             </div>
         </div>
 
         <careplan-actions mode="pdf"
-                       route-switch-to-web="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan ? $patient->carePlan->id : 0])}}"
-                       :can-switch-to-web="@json($canSwitchToWeb)">
+                          route-switch-to-web="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan ? $patient->carePlan->id : 0])}}"
+                          :can-switch-to-web="@json($canSwitchToWeb)">
         </careplan-actions>
     </div>
 @endsection

@@ -7,13 +7,18 @@
 namespace App\Algorithms\Invoicing;
 
 use App\Call;
+use App\Constants;
 use App\Note;
-use App\User;
+use App\Services\ActivityService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\NurseMonthlySummary;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Created by PhpStorm.
@@ -23,64 +28,38 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  */
 class AlternativeCareTimePayableCalculator
 {
-    const MONTHLY_TIME_TARGET_IN_SECONDS = 1200;
-
-    protected $nurse;
-
     /**
      * AlternativeCareTimePayableCalculator constructor.
      */
-    public function __construct(Nurse $nurse)
+    public function __construct()
     {
-        $this->nurse = $nurse;
     }
 
-    public function adjustNursePayForActivity(Activity $activity)
+    public function adjustNursePayForActivity($nurseId, Activity $activity)
     {
         $user = $activity->patient;
         if ( ! $user) {
-            //in case the patient was deleted
-            $user = User::withTrashed()
-                ->with('chargeableServices')
-                ->findOrFail($activity->patient_id);
-        } else {
-            $user->loadMissing('chargeableServices');
+            $user = User::withTrashed()->findOrFail($activity->patient_id);
         }
-
-        $isActivityForSuccessfulCall = $this->isActivityForSuccessfulCall($activity);
 
         $monthYear = Carbon::parse($activity->performed_at)->startOfMonth();
 
-        $summary = $user->patientSummaries()
-            ->whereMonthYear($monthYear)
-            ->first();
-
-        $totalTime = $activity->is_behavioral
-            ? $summary->bhi_time
-            : $summary->ccm_time;
-
-        //total time after storing activity
-        $total_time_after = intval($totalTime);
-
-        //total time before storing activity
-        $total_time_before = $total_time_after - $activity->duration;
+        $totalTimeAfter  = $this->getCurrentTotalTime($activity, $user, $monthYear);
+        $totalTimeBefore = $totalTimeAfter - $activity->duration;
 
         $this->updateNurseCareLogs(
-            $total_time_before,
-            $total_time_after,
-            $activity->duration,
-            $activity->id,
-            $isActivityForSuccessfulCall,
+            $nurseId,
+            $totalTimeBefore,
+            $totalTimeAfter,
             $user,
             $monthYear,
-            $activity->is_behavioral,
-            Carbon::parse($activity->performed_at)
+            $activity
         );
     }
 
     private function calculateTimeRanges(
-        int $total_time_before,
-        int $total_time_after,
+        int $totalTimeBefore,
+        int $totalTimeAfter,
         int $duration
     ) {
         $ranges = [];
@@ -88,14 +67,14 @@ class AlternativeCareTimePayableCalculator
         $add_to_accrued_towards_ccm = 0;
         $add_to_accrued_after_ccm   = 0;
 
-        $was_above_20 = $total_time_before >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
-        $is_above_20  = $total_time_after >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
+        $was_above_20 = $totalTimeBefore >= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+        $is_above_20  = $totalTimeAfter >= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
 
         if ($was_above_20) {
             $add_to_accrued_after_ccm = $duration;
         } elseif ($is_above_20) {
-            $add_to_accrued_after_ccm   = $total_time_after - self::MONTHLY_TIME_TARGET_IN_SECONDS;
-            $add_to_accrued_towards_ccm = self::MONTHLY_TIME_TARGET_IN_SECONDS - $total_time_before;
+            $add_to_accrued_after_ccm   = $totalTimeAfter - Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+            $add_to_accrued_towards_ccm = Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS - $totalTimeBefore;
         } else {
             $add_to_accrued_towards_ccm = $duration;
         }
@@ -104,7 +83,7 @@ class AlternativeCareTimePayableCalculator
             $ranges[] = [
                 'duration'          => $add_to_accrued_towards_ccm,
                 'key'               => 'accrued_towards_ccm',
-                'total_time_before' => $total_time_before,
+                'total_time_before' => $totalTimeBefore,
             ];
         }
 
@@ -112,11 +91,26 @@ class AlternativeCareTimePayableCalculator
             $ranges[] = [
                 'duration'          => $add_to_accrued_after_ccm,
                 'key'               => 'accrued_after_ccm',
-                'total_time_before' => $total_time_before + $add_to_accrued_towards_ccm,
+                'total_time_before' => $totalTimeBefore + $add_to_accrued_towards_ccm,
             ];
         }
 
         return $ranges;
+    }
+
+    private function getCurrentTotalTime(Activity $activity, User $user, Carbon $monthYear)
+    {
+        if ( ! $activity->chargeable_service_id) {
+            Log::critical("Activity[$activity->id] does not have a chargeable service id");
+
+            return 0;
+        }
+
+        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
+            return PatientMonthlyServiceTime::forChargeableServiceId($activity->chargeable_service_id, $user->id, $monthYear);
+        }
+
+        return app(ActivityService::class)->totalTimeForChargeableServiceId($user->id, $activity->chargeable_service_id, $monthYear);
     }
 
     /**
@@ -152,24 +146,21 @@ class AlternativeCareTimePayableCalculator
     }
 
     private function updateNurseCareLogs(
-        int $total_time_before,
-        int $total_time_after,
-        int $duration,
-        int $activityId,
-        bool $isActivityForSuccessfulCall,
-        \CircleLinkHealth\Customer\Entities\User $patient,
+        int $nurseId,
+        int $totalTimeBefore,
+        int $totalTimeAfter,
+        User $patient,
         Carbon $monthYear,
-        bool $isBehavioral,
-        Carbon $time
+        Activity $activity
     ) {
         $ranges = $this->calculateTimeRanges(
-            $total_time_before,
-            $total_time_after,
-            $duration
+            $totalTimeBefore,
+            $totalTimeAfter,
+            $activity->duration
         );
 
-        $add_to_accrued_towards = 0;
-        $add_to_accrued_after   = 0;
+        $addToAccruedTowards = 0;
+        $addToAccruedAfter   = 0;
 
         foreach ($ranges as $item) {
             $ccmType    = $item['key'];
@@ -178,40 +169,43 @@ class AlternativeCareTimePayableCalculator
 
             NurseCareRateLog::create(
                 [
-                    'nurse_id'           => $this->nurse->id,
-                    'patient_user_id'    => $patient->id,
-                    'activity_id'        => $activityId,
-                    'ccm_type'           => $ccmType,
-                    'increment'          => $duration,
-                    'time_before'        => $timeBefore,
-                    'is_successful_call' => $isActivityForSuccessfulCall,
-                    'is_behavioral'      => $isBehavioral,
-                    'performed_at'       => $time,
+                    'nurse_id'              => $nurseId,
+                    'patient_user_id'       => $patient->id,
+                    'activity_id'           => $activity->id,
+                    'ccm_type'              => $ccmType,
+                    'increment'             => $duration,
+                    'time_before'           => $timeBefore,
+                    'is_successful_call'    => $this->isActivityForSuccessfulCall($activity),
+                    'is_behavioral'         => $activity->is_behavioral,
+                    'chargeable_service_id' => $activity->chargeable_service_id,
+                    'performed_at'          => Carbon::parse($activity->performed_at),
                 ]
             );
 
             if ('accrued_towards_ccm' === $ccmType) {
-                $add_to_accrued_towards += $duration;
+                $addToAccruedTowards += $duration;
             } else {
-                $add_to_accrued_after += $duration;
+                $addToAccruedAfter += $duration;
             }
         }
 
         $this->updateNurseSummary(
-            $add_to_accrued_towards,
-            $add_to_accrued_after,
+            $nurseId,
+            $addToAccruedTowards,
+            $addToAccruedAfter,
             $monthYear
         );
     }
 
     private function updateNurseSummary(
+        int $nurseId,
         int $toAddToAccruedTowardsCCM,
         int $toAddToAccruedAfterCCM,
         Carbon $monthYear
     ): NurseMonthlySummary {
         $report = NurseMonthlySummary::firstOrNew(
             [
-                'nurse_id'   => $this->nurse->id,
+                'nurse_id'   => $nurseId,
                 'month_year' => $monthYear,
             ]
         );

@@ -8,7 +8,9 @@ namespace App\Services\CCD;
 
 use App\Repositories\CcdProblemRepository;
 use App\Services\CPM\CpmInstructionService;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
@@ -26,50 +28,56 @@ class CcdProblemService
         $this->instructionService = $instructionService;
     }
 
-    public function addPatientCcdProblem($ccdProblem)
+    public function addPatientCcdProblem(CcdProblemInput $ccdProblem)
     {
-        if ($ccdProblem) {
-            if ($ccdProblem['userId'] && $ccdProblem['name'] && strlen($ccdProblem['name']) > 0) {
-                $problem = $this->setupProblem($this->problemRepo->addPatientCcdProblem($ccdProblem));
+        if ($ccdProblem->getUserId() && $ccdProblem->getName() && strlen($ccdProblem->getName()) > 0) {
+            $problem = $this->setupProblem($this->problemRepo->addPatientCcdProblem($ccdProblem));
 
-                if ($problem && $ccdProblem['icd10']) {
-                    $problemCode                         = new ProblemCode();
-                    $problemCode->problem_id             = $problem['id'];
-                    $problemCode->problem_code_system_id = 2;
-                    $problemCode->code                   = $ccdProblem['icd10'];
-                    $problemCode->resolve();
-                    $problemCode->save();
+            if ($problem && $ccdProblem->getIcd10()) {
+                $problemCode                         = new ProblemCode();
+                $problemCode->problem_id             = $problem['id'];
+                $problemCode->problem_code_system_id = 2;
+                $problemCode->code                   = $ccdProblem->getIcd10();
+                $problemCode->resolve();
+                $problemCode->save();
 
-                    return $this->problem($problem['id']);
-                }
-
-                return $problem;
+                return $this->problem($problem['id']);
             }
-            throw new \Exception('$ccdProblem needs "userId" and "name" parameters');
+
+            (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($ccdProblem->getUserId());
+
+            return $problem;
         }
-        throw new \Exception('$ccdProblem should not be null');
+        throw new \Exception('$ccdProblem needs "userId" and "name" parameters');
+    }
+
+    public function deletePatientCcdProblem(CcdProblemInput $ccdProblem): bool
+    {
+        $success = CcdProblem::where([
+            'patient_id' => $ccdProblem->getUserId(),
+            'id'         => $ccdProblem->getCcdProblemId(),
+        ])->delete();
+
+        (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($ccdProblem->getUserId());
+
+        return $success;
     }
 
     public function editPatientCcdProblem(
-        $userId,
-        $ccdProblemId,
-        $problemCode = null,
-        $is_monitored = null,
-        $icd10 = null,
-        $instruction = null
+        CcdProblemInput $ccdProblem
     ) {
         $problem = $this->setupProblem($this->problemRepo->editPatientCcdProblem(
-            $userId,
-            $ccdProblemId,
-            $problemCode,
-            $is_monitored
+            $ccdProblem->getUserId(),
+            $ccdProblem->getCcdProblemId(),
+            $ccdProblem->getCpmProblemId(),
+            $ccdProblem->getIsMonitored()
         ));
 
-        if ($instruction) {
+        if ($instruction = $ccdProblem->getInstruction()) {
             $cpmInstruction = null;
             if ($problem['instruction']) {
                 $instructionId  = $problem['instruction']->id;
-                $cpmInstruction = $this->editOrCreateNewProblemInstruction($instructionId, $instruction, $userId);
+                $cpmInstruction = $this->editOrCreateNewProblemInstruction($instructionId, $instruction, $ccdProblem->getUserId());
             } else {
                 $cpmInstruction = $this->instructionService->create($instruction);
             }
@@ -77,29 +85,31 @@ class CcdProblemService
             $problem['instruction'] = $cpmInstruction;
 
             CcdProblem::where([
-                'id' => $ccdProblemId,
+                'id' => $ccdProblem->getCcdProblemId(),
             ])->update([
                 'cpm_instruction_id' => $cpmInstruction->id,
             ]);
         } else {
             CcdProblem::where([
-                'id' => $ccdProblemId,
+                'id' => $ccdProblem->getCcdProblemId(),
             ])->update([
                 'cpm_instruction_id' => null,
             ]);
             $problem['instruction'] = null;
         }
 
-        if ($icd10) {
+        if ($ccdProblem->getIcd10()) {
             $problemCode                         = new ProblemCode();
             $problemCode->problem_id             = $problem['id'];
             $problemCode->problem_code_system_id = 2;
-            $problemCode->code                   = $icd10;
+            $problemCode->code                   = $ccdProblem->getIcd10();
             $problemCode->resolve();
             $problemCode->save();
 
             return $this->problem($problem['id']);
         }
+
+        (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($ccdProblem->getUserId());
 
         return $problem;
     }

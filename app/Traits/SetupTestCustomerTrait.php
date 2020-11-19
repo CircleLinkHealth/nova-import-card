@@ -102,6 +102,7 @@ trait SetupTestCustomerTrait
                     ]);
             });
 
+        //todo: billing
         $patient->load('ccdProblems');
 
         //careplan

@@ -84,6 +84,7 @@ class PatientDailyAuditReport
             $this->forMonth->endOfMonth()->toDateTimeString(),
         ])
             ->where('patient_id', $this->user->id)
+            //todo: pangratios -> is it possible to have activities without CS? if so, a check here would help, to avoid inconsistencies between other activity report pages.
             ->sum('duration');
 
         $this->data['name']     = $this->user->getFullName();
