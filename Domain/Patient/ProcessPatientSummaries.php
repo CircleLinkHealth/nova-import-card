@@ -20,7 +20,7 @@ class ProcessPatientSummaries
 
     protected int $patientId;
 
-    protected User $patientUser;
+    protected ?User $patientUser;
 
     protected PatientMonthlyBillingProcessor $processor;
 
