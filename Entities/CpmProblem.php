@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
+use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
@@ -69,14 +70,23 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem withChargeableServicesForLocation($locationId)
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem hasChargeableServiceCodeForLocation($chargeableServiceCode, $locationId)
  * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem notGenericDiabetes()
+ * @method   static                                                       \Illuminate\Database\Eloquent\Builder|CpmProblem ofLocation($locationId)
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
+    const DEMENTIA = 'Dementia';
+
+    const DEPRESSION = 'Depression';
 
     const DIABETES_TYPE_1 = 'Diabetes Type 1';
 
     const DIABETES_TYPE_2 = 'Diabetes Type 2';
+
+    const DUAL_CCM_BHI_CONDITIONS = [
+        self::DEMENTIA,
+        self::DEPRESSION,
+    ];
 
     const GENERIC_DIABETES = 'Diabetes';
 
@@ -176,6 +186,7 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     public function locationChargeableServices()
     {
         return $this->belongsToMany(ChargeableService::class, 'location_problem_services', 'cpm_problem_id', 'chargeable_service_id')
+            ->using(LocationProblemService::class)
             ->withPivot(['location_id']);
     }
 
@@ -198,6 +209,11 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     public function scopeNotGenericDiabetes($query)
     {
         return $query->where('name', '!=', self::GENERIC_DIABETES);
+    }
+
+    public function scopeOfLocation($query, int $locationId)
+    {
+        return $query->whereHas('locationChargeableServices', fn ($lcs) => $lcs->where('location_id', $locationId));
     }
 
     public function scopeWithChargeableServicesForLocation($query, int $locationId)

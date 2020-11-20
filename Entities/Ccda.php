@@ -101,6 +101,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property string|null                                   $patient_dob
  * @property string|null                                   $patient_email
  * @property \CircleLinkHealth\Customer\Entities\User|null $billingProvider
+ * @property string|null                                   $hash
  */
 class Ccda extends BaseModel implements HasMedia, MedicalRecord
 {

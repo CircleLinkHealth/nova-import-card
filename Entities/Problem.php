@@ -10,6 +10,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\HasProblemCodes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -62,6 +63,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Problem isBillable($ignoreWith = false)
  * @method static \Illuminate\Database\Eloquent\Builder|Problem isMonitored()
  * @method static \Illuminate\Database\Eloquent\Builder|Problem ofService($service)
+ * @method static \Illuminate\Database\Eloquent\Builder|Problem withPatientLocationProblemChargeableServices()
+ * @method static Builder|Problem forBilling()
  */
 class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contracts\Problem
 {
@@ -96,7 +99,7 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
         }
 
         if (is_null($this->patient->patientInfo)) {
-            sendSlackMessage('#billing_alerts', "Patient ({$this->patient->id}) does not have patientInfo attached.");
+            sendSlackMessage('#billing_alerts', "Warning! (Ccd Problem Model:) Patient ({$this->patient->id}) does not have patientInfo attached.");
 
             return [];
         }
@@ -172,6 +175,13 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
             ->withTimestamps();
     }
 
+    public function scopeForBilling(Builder $query)
+    {
+        return $query->isMonitored()
+//                    ->withPatientLocationProblemChargeableServices()
+        ;
+    }
+
     public function scopeIsBillable($query, $ignoreWith = false)
     {
         return $query->when( ! $ignoreWith, function ($q) {
@@ -188,15 +198,20 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
         return $query->where('is_monitored', true);
     }
 
-    public function scopeOfService($query, string $service)
+    public function scopeOfService(Builder $query, string $service)
     {
         return $query->join('patient_info', 'patient_info.user_id', '=', 'ccd_problems.patient_id')
-            ->whereHas('cpmProblem', function ($cpmProblem) use ($service) {
+            ->whereHas('cpmProblem', function (Builder $cpmProblem) use ($service) {
                 $cpmProblem->notGenericDiabetes()
-                    ->whereHas('locationChargeableServices', function ($lcs) use ($service) {
+                    ->whereHas('locationChargeableServices', function (Builder $lcs) use ($service) {
                         $lcs->whereRaw('location_problem_services.location_id = patient_info.preferred_contact_location')
                             ->where('code', $service);
                     });
             });
+    }
+
+    public function scopeWithPatientLocationProblemChargeableServices(Builder $query)
+    {
+        return $query->with(['cpmProblem.locationChargeableServices']);
     }
 }
