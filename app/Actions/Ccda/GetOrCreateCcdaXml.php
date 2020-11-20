@@ -20,7 +20,8 @@ class GetOrCreateCcdaXml
         }
 
         if ($ccda = $q->first()) {
-            return PracticePullMedicalRecordToXmlAdapter::fromCcda($ccda);
+            return (new PracticePullMedicalRecordToXmlAdapter($ccda))
+                ->createAndStoreXml();
         }
 
         return null;
