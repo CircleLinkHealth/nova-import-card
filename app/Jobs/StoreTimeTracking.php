@@ -176,8 +176,8 @@ class StoreTimeTracking implements ShouldQueue
                 foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
                     $activity = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('pagetimer', $pageTimer, $chargeableServiceDuration);
 
-                    if ( ! $chargeableServiceDuration->id) {
-                        sendSlackMessage('#time-tracking-issues', "Could not assign activity[{$activity->id}] to chargeable service. Original csId[{$chargeableServiceId}]. See page timer entry {$pageTimer->id}");
+                    if ( ! $chargeableServiceDuration->id && $patient->chargeableServices()->count() > 0) {
+                        sendSlackMessage('#time-tracking-issues', "Could not assign activity[{$activity->id}] to chargeable service. Original csId[{$chargeableServiceId}]. See page timer entry {$pageTimer->id}. Patient[$patient->id].");
                     }
 
                     ProcessMonthltyPatientTime::dispatchNow($patient->id);
