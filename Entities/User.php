@@ -4363,7 +4363,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         try {
             return \Propaganistas\LaravelPhone\PhoneNumber::make($number)->formatE164();
-        } catch (NumberParseException $e) {
+        } catch (\libphonenumber\NumberParseException|NumberParseException $e) {
             try {
                 return \Propaganistas\LaravelPhone\PhoneNumber::make($number, 'us')->formatE164();
             } catch (\libphonenumber\NumberParseException|NumberParseException $e) {
@@ -4389,7 +4389,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
                 return formatPhoneNumberE164($number->number);
             }
-        } catch (NumberParseException $e) {
+        } catch (\libphonenumber\NumberParseException|NumberParseException $e) {
             Log::warning($e->getMessage());
 
             return false;
@@ -4402,7 +4402,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         try {
             return $phoneNumber->isOfCountry('CY');
-        } catch (NumberParseException $e) {
+        } catch (\libphonenumber\NumberParseException|NumberParseException $e) {
             return false;
         }
     }

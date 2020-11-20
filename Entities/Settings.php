@@ -91,6 +91,7 @@ class Settings extends \CircleLinkHealth\Core\Entities\BaseModel
         'dm_audit_reports',
         'dm_careplan_approval_reminders',
         'dm_awv_reports',
+        'include_ccda_with_dm',
 
         //Efax Notifications
         'efax_pdf_careplan',

@@ -13,7 +13,7 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM60;
-use CircleLinkHealth\CcmBilling\Processors\Patient\G0511;
+use CircleLinkHealth\CcmBilling\Processors\Patient\RHC;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM40;
@@ -83,6 +83,7 @@ class ChargeableService extends BaseModel
 
     const CLASHES = [
         self::PCM => [
+            self::GENERAL_CARE_MANAGEMENT,
             self::CCM,
             self::CCM_PLUS_40,
             self::CCM_PLUS_60,
@@ -173,13 +174,21 @@ class ChargeableService extends BaseModel
 
     public static function getClashesWithService(string $service): array
     {
-        return self::CLASHES[$service] ?? [];
+        if (self::GENERAL_CARE_MANAGEMENT === $service) {
+            return [];
+        }
+
+        return self::CLASHES[$service] ?? [self::GENERAL_CARE_MANAGEMENT];
     }
 
     public static function getCodeForPatientProblems(string $code): string
     {
         //todo: cleaner mapping
         if (in_array($code, self::CCM_PLUS_CODES)) {
+            return self::CCM;
+        }
+
+        if (self::GENERAL_CARE_MANAGEMENT === $code) {
             return self::CCM;
         }
 
@@ -222,7 +231,7 @@ class ChargeableService extends BaseModel
             self::PCM                     => new PCM(),
             self::AWV_INITIAL             => new AWV1(),
             self::AWV_SUBSEQUENT          => new AWV2(),
-            self::GENERAL_CARE_MANAGEMENT => new G0511(),
+            self::GENERAL_CARE_MANAGEMENT => new RHC(),
             self::RPM                     => new RPM(),
             self::RPM40                   => new RPM40(),
         ];
