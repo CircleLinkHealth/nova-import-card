@@ -1,6 +1,6 @@
 <div class="flow-text" style="max-height: 590px;">
-    <div class="header" style="margin-bottom: 20px">
-        <div class="address" style="max-width: 377px;">
+    <div class="header row" style="margin-bottom: 20px;">
+        <div class="address col" style="max-width: 377px;">
             @if($extraAddressValuesExists)
                 <br>
                 {{$extraAddressValues[0]['address_line_1']}}
@@ -11,7 +11,8 @@
                 {{$extraAddressValues[0]['postal_code']}}
             @endif
         </div>
-        <div class="logo">
+
+        <div class="logo col">
             @include('enrollment-letters.practiceLogo')
         </div>
     </div>
@@ -35,10 +36,6 @@
         padding-bottom: unset;
     }
 
-    .letter-sent{
-        margin-top: -27px;
-    }
-
     .header{
         font-size: 23px;
     }
@@ -46,7 +43,7 @@
     .logo{
         opacity: 90%;
         margin-top: 15px;
-        text-align: left;
+        float: right;
     }
 
     @media (max-width: 490px) {
