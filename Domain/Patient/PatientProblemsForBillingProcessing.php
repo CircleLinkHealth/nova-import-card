@@ -22,10 +22,11 @@ use Illuminate\Support\Collection;
 class PatientProblemsForBillingProcessing
 {
     const SERVICE_PROBLEMS_MIN_COUNT_MAP = [
-        ChargeableService::CCM => 2,
-        ChargeableService::BHI => 1,
-        ChargeableService::PCM => 1,
-        ChargeableService::RPM => 1,
+        ChargeableService::GENERAL_CARE_MANAGEMENT => 2,
+        ChargeableService::CCM                     => 2,
+        ChargeableService::BHI                     => 1,
+        ChargeableService::PCM                     => 1,
+        ChargeableService::RPM                     => 1,
     ];
     protected ?User $patient;
     protected int $patientId;
@@ -79,20 +80,6 @@ class PatientProblemsForBillingProcessing
             return $problem->chargeableServiceCodesForLocation($this->patient->patientInfo->preferred_contact_location);
         }
 
-        $services = [];
-
-        if ($cpmProblem = $problem->cpmProblem) {
-            $isDual = in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
-
-            if ($cpmProblem->is_behavioral || $isDual) {
-                $services[] = ChargeableService::BHI;
-            }
-
-            if ( ! $cpmProblem->is_behavioral || $isDual) {
-                $services[] = ChargeableService::CCM;
-            }
-        }
-
         $primaryPractice = $this->patient->primaryPractice;
 
         if (is_null($primaryPractice)) {
@@ -101,6 +88,27 @@ class PatientProblemsForBillingProcessing
             return [];
         }
 
+        $services = [];
+        //todo: clear logic with a clearer mind
+        $practiceHasBhi    = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::BHI));
+        $parcticeHasRhc    = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT));
+        $bhiProblemsAreCcm = ! $practiceHasBhi || $parcticeHasRhc;
+
+        if ($cpmProblem = $problem->cpmProblem) {
+            $isDual = in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
+
+            if ( ! $bhiProblemsAreCcm && ($cpmProblem->is_behavioral || $isDual)) {
+                $services[] = ChargeableService::BHI;
+            }
+
+            if ($bhiProblemsAreCcm || ! $cpmProblem->is_behavioral || $isDual) {
+                $services[] = ChargeableService::CCM;
+            }
+        }
+
+        if ($parcticeHasRhc) {
+            return $services;
+        }
         $pcmProblems = $primaryPractice->pcmProblems;
 
         if ( ! empty($pcmProblems)) {

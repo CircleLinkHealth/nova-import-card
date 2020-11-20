@@ -260,20 +260,21 @@ class Eloquent implements PatientServiceProcessorRepository
     private function chargeableServiceCodeIds(): array
     {
         return [
-            ChargeableService::CCM            => 1,
-            ChargeableService::BHI            => 2,
-            ChargeableService::CCM_PLUS_40    => 3,
-            ChargeableService::CCM_PLUS_60    => 4,
-            ChargeableService::PCM            => 5,
-            ChargeableService::AWV_INITIAL    => 6,
-            ChargeableService::AWV_SUBSEQUENT => 7,
+            ChargeableService::CCM                     => 1,
+            ChargeableService::BHI                     => 2,
+            ChargeableService::CCM_PLUS_40             => 3,
+            ChargeableService::CCM_PLUS_60             => 4,
+            ChargeableService::PCM                     => 5,
+            ChargeableService::AWV_INITIAL             => 6,
+            ChargeableService::AWV_SUBSEQUENT          => 7,
+            ChargeableService::GENERAL_CARE_MANAGEMENT => 8,
         ];
     }
 
     private function wasChargeableSummaryCreated(int $patientId, string $chargeableServiceCode, Carbon $month)
     {
         return 1 === $this->summariesCreated->where('patient_id', $patientId)
-            ->where('chargeable_service_id', $this->chargeableServiceCodeIds()[$chargeableServiceCode])
+            ->where('chargeable_service_id', $this->chargeableServiceCodeIds()[$chargeableServiceCode] ?? 0)
             ->where('chargeable_month', $month)
             ->count();
     }

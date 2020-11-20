@@ -13,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollection;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
@@ -68,6 +69,34 @@ class PatientServicesForTimeTracker
 
     private function createFauxSummariesFromLegacyData(): \Illuminate\Database\Eloquent\Collection
     {
+        $summaries = new \Illuminate\Database\Eloquent\Collection();
+
+        if ($this->patientEligibleForRHC()) {
+            $rhc               = ChargeableService::cached()->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT);
+            $rhcNullActivities = boolval(AppConfig::pull('rhc_null_activities', false));
+
+            $activitiesForMonth = Activity::wherePatientId($this->patientId)
+                ->createdThisMonth('performed_at')
+                ->where(function ($sq) use ($rhc, $rhcNullActivities) {
+                    $sq->where('chargeable_service_id', $rhc->id)
+                        ->when($rhcNullActivities, function ($q) {
+                            $q->orWhereNull('chargeable_service_id');
+                        });
+                })
+                ->get();
+
+            $newSummary                          = new ChargeablePatientMonthlySummaryView();
+            $newSummary->patient_user_id         = $this->patientId;
+            $newSummary->chargeable_service_id   = $rhc->id;
+            $newSummary->chargeable_service_code = $rhc->code;
+            $newSummary->chargeable_service_name = $rhc->display_name;
+            $newSummary->total_time              = $activitiesForMonth->sum('duration');
+
+            $summaries->push($newSummary);
+
+            return $summaries;
+        }
+
         $servicesDerivedFromPatientProblems = PatientProblemsForBillingProcessing::getCollection($this->patientId)
             ->transform(fn (PatientProblemForProcessing $p) => $p->getServiceCodes())
             ->flatten()
@@ -89,7 +118,6 @@ class PatientServicesForTimeTracker
         $activitiesForMonth = Activity::wherePatientId($this->patientId)
             ->createdThisMonth('performed_at')->get();
 
-        $summaries = new \Illuminate\Database\Eloquent\Collection();
         foreach ($chargeableServices as $service) {
             $newSummary                          = new ChargeablePatientMonthlySummaryView();
             $newSummary->patient_user_id         = $this->patientId;
@@ -155,13 +183,20 @@ class PatientServicesForTimeTracker
         return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
     }
 
+    private function patientEligibleForRHC(): bool
+    {
+        $patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId);
+
+        return $patient->primaryPractice->chargeableServices->where('code', $rhc = ChargeableService::GENERAL_CARE_MANAGEMENT)->count() > 0;
+    }
+
     private function rejectNonTimeTrackerServices(): self
     {
         $this->summaries = $this->summaries
             ->reject(function (ChargeablePatientMonthlySummaryView $summary) {
                 return in_array($summary->chargeable_service_name, self::NON_TIME_TRACKABLE_SERVICES);
             })
-            ;
+        ;
 
         return $this;
     }

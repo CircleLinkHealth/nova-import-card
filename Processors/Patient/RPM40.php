@@ -11,6 +11,13 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 class RPM40 extends AbstractProcessor
 {
+    public function clashesWith(): array
+    {
+        return [
+            new RHC(),
+        ];
+    }
+
     public function code(): string
     {
         return ChargeableService::RPM40;
