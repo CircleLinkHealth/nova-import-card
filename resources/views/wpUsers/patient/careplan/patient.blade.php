@@ -446,7 +446,7 @@ $user_info = [];
                                                     </script>
                                                 @endpush
                                             @endif
-                                            @if(! isProductionEnv())
+                                            @if(! app()->environment('production'))
                                                 <div class="form-group form-item form-item-spacing">
                                                     <div class="col-sm-12">
                                                         <div class="radio">
