@@ -64,4 +64,9 @@ class LettersHelper
             'extraAddressValuesExists' => $model->extraAddressValuesExists,
         ];
     }
+    
+    public static function getUiRequestDataFor($uiRequests, string $key)
+    {
+        return collect($uiRequests->$key)->toArray();
+    }
 }

@@ -9,9 +9,9 @@ namespace App\Http\Controllers\Enrollment\PracticeSpecificLetter;
 use App\Contracts\SelfEnrollmentLetter;
 use App\Http\Controllers\Enrollment\PracticeLetterHelper\LettersHelper;
 use App\Http\Controllers\EnrollmentLetterDefaultConfigs;
-use App\ProviderSignature;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Database\Seeders\GenerateCameronLetter;
 use Illuminate\Database\Eloquent\Model;
 
 class CameronMemorialLetter extends EnrollmentLetterDefaultConfigs implements SelfEnrollmentLetter
@@ -36,6 +36,24 @@ class CameronMemorialLetter extends EnrollmentLetterDefaultConfigs implements Se
         return $this->viewConfigurations($this->practice, $this->enrollee);
     }
 
+    public static function groupSharedSignatoryName($uiRequests, User $userProvider)
+    {
+        if ( ! empty($uiRequests)) {
+            $millersTeam = LettersHelper::getUiRequestDataFor($uiRequests, GenerateCameronLetter::MILLER_SIGNATURE);
+            $faursTeam   = LettersHelper::getUiRequestDataFor($uiRequests, GenerateCameronLetter::FAUR_SIGNATURE);
+
+            if (in_array($userProvider->id, $millersTeam)) {
+                return $millersTeam['signatory_group_name'];
+            }
+
+            if (in_array($userProvider->id, $faursTeam)) {
+                return $faursTeam['signatory_group_name'];
+            }
+        }
+        // Extreme case. Lets show something instead of nothing.
+        return $userProvider->display_name.' '.$userProvider->suffix;
+    }
+
     public function letterBladeView()
     {
         $baseLetterConfigs                  = $this->getBaseViewConfigs();
@@ -58,14 +76,20 @@ class CameronMemorialLetter extends EnrollmentLetterDefaultConfigs implements Se
     public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
     {
         $practiceSigSrc = '';
-        if ( ! empty($practiceLetter->customer_signature_src)) {
-            if (ProviderSignature::SIGNATURE_VALUE === $practiceLetter->customer_signature_src) {
-//                $practiceNameToGetSignature = $practice->name;
-//                $type                       = ProviderSignature::SIGNATURE_PIC_TYPE;
-//                $practiceSigSrc             = "<img src='/img/signatures/$practiceNameToGetSignature/$npiNumber$type' alt='$practice->dipslay_name' style='max-width: 100%;'/>";
+        $uiRequests     = json_decode($practiceLetter->ui_requests);
+        if ( ! empty($uiRequests)) {
+            $millersTeam = LettersHelper::getUiRequestDataFor($uiRequests, GenerateCameronLetter::MILLER_SIGNATURE);
+            $faursTeam   = LettersHelper::getUiRequestDataFor($uiRequests, GenerateCameronLetter::FAUR_SIGNATURE);
+
+            if (in_array($provider->id, $millersTeam)) {
+                $practiceSigSrc = "'<img src='/img/signatures/cameron-memorial/millers_signature.png' alt='$practice->dipslay_name' style='max-width: 17%;'/>";
+            }
+
+            if (in_array($provider->id, $faursTeam)) {
+                $practiceSigSrc = "</img/signatures/cameron-memorial/faurs_signature.png' alt='$practice->dipslay_name' style='max-width: 17%;'/>";
             }
         }
-    
+
         return $practiceSigSrc;
     }
 
