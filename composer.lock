@@ -1046,7 +1046,11 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/Middleware/MiddlewareTest.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -1524,7 +1528,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "5690537cdb11aec21c1ac5cbb91181c36fd8ed8f"
+                "reference": "7f4b617eafb00bfe78313315de5af11bd3b6e3b5"
             },
             "type": "laravel-module",
             "extra": {
@@ -1546,7 +1550,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-19T20:39:29+00:00"
+            "time": "2020-11-20T18:54:01+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1897,16 +1901,6 @@
                 "stream",
                 "stream_filter_append",
                 "stream_filter_register"
-            ],
-            "funding": [
-                {
-                    "url": "https://clue.engineering/support",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/clue",
-                    "type": "github"
-                }
             ],
             "time": "2020-10-02T12:38:20+00:00"
         },
@@ -2777,10 +2771,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1|^8.0"
+                "php": "^7.0|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0"
+                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
             },
             "type": "library",
             "extra": {
@@ -2814,13 +2808,7 @@
                 "cron",
                 "schedule"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/dragonmantank",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-10-12T18:35:36+00:00"
+            "time": "2020-10-13T00:52:37+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -6565,12 +6553,6 @@
             "keywords": [
                 "stream",
                 "zip"
-            ],
-            "funding": [
-                {
-                    "url": "https://opencollective.com/zipstream",
-                    "type": "open_collective"
-                }
             ],
             "time": "2020-05-30T13:11:16+00:00"
         },
@@ -12527,20 +12509,6 @@
                 "psr-17",
                 "psr-7"
             ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2020-09-29T08:17:46+00:00"
         },
         {
@@ -12917,20 +12885,6 @@
                 "interfaces",
                 "interoperability",
                 "standards"
-            ],
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-09-28T13:05:58+00:00"
         },
@@ -13756,16 +13710,16 @@
         },
         {
             "name": "clue/stdio-react",
-            "version": "v2.3.0",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clue/reactphp-stdio.git",
-                "reference": "5f42a3a5a29f52432f0f68b57890353e8ca65069"
+                "reference": "5722686d3cc0cdf2ccedb6079bfd066220611f00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/clue/reactphp-stdio/zipball/5f42a3a5a29f52432f0f68b57890353e8ca65069",
-                "reference": "5f42a3a5a29f52432f0f68b57890353e8ca65069",
+                "url": "https://api.github.com/repos/clue/reactphp-stdio/zipball/5722686d3cc0cdf2ccedb6079bfd066220611f00",
+                "reference": "5722686d3cc0cdf2ccedb6079bfd066220611f00",
                 "shasum": ""
             },
             "require": {
@@ -13778,7 +13732,7 @@
             "require-dev": {
                 "clue/arguments": "^2.0",
                 "clue/commander": "^1.2",
-                "phpunit/phpunit": "^7.0 || ^6.4 || ^5.7 || ^4.8.35"
+                "phpunit/phpunit": "^9.3 || ^5.7 || ^4.8.35"
             },
             "suggest": {
                 "ext-mbstring": "Using ext-mbstring should provide slightly better performance for handling I/O"
@@ -13796,7 +13750,7 @@
             "authors": [
                 {
                     "name": "Christian Lück",
-                    "email": "christian@lueck.tv"
+                    "email": "christian@clue.engineering"
                 }
             ],
             "description": "Async, event-driven console input & output (STDIN, STDOUT) for truly interactive CLI applications, built on top of ReactPHP",
@@ -13814,7 +13768,17 @@
                 "stdio",
                 "stdout"
             ],
-            "time": "2019-08-28T12:01:30+00:00"
+            "funding": [
+                {
+                    "url": "https://clue.engineering/support",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/clue",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-11-20T14:28:39+00:00"
         },
         {
             "name": "clue/term-react",
@@ -15065,16 +15029,6 @@
                 "laravel",
                 "nova",
                 "novaunit"
-            ],
-            "funding": [
-                {
-                    "url": "https://ko-fi.com/JoshGaber",
-                    "type": "ko_fi"
-                },
-                {
-                    "url": "https://www.patreon.com/joshgaber",
-                    "type": "patreon"
-                }
             ],
             "time": "2020-10-11T02:14:47+00:00"
         },

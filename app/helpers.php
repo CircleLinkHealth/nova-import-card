@@ -11,7 +11,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -1744,15 +1743,17 @@ if ( ! function_exists('getModelFromTable')) {
 if ( ! function_exists('measureTime')) {
     function measureTime($desc, $func)
     {
-        $startTime = Carbon::now()->toTimeString();
-        $start     = microtime(true);
+        /** @var Carbon $startTime */
+        $startTime = now();
 
         $result = $func();
 
-        $endTime = Carbon::now()->toTimeString();
-        $sec     = microtime(true) - $start;
-        $secInt  = intval($sec);
-        echo "$desc: $secInt seconds | Start: $startTime | End: $endTime\n";
+        /** @var Carbon $endTime */
+        $endTime  = now();
+        $ms       = $endTime->diffInMilliseconds($startTime);
+        $startStr = $startTime->toTimeString();
+        $endStr   = $endTime->toTimeString();
+        echo "$desc: $ms ms | Start: $startStr | End: $endStr\n";
 
         return $result;
     }
