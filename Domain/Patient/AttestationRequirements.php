@@ -106,7 +106,7 @@ class AttestationRequirements
 
         $services = $pms->allChargeableServices;
 
-        if ($services->where('code', ChargeableService::CCM)->isNotEmpty()) {
+        if ($services->where('code', ChargeableService::CCM)->isNotEmpty() || ! is_null($this->patient->primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT))) {
             $this->dto->setHasCcm(true);
         }
 
