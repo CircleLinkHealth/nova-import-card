@@ -67,18 +67,18 @@ class ChargeableService extends BaseModel
     const AWV_SUBSEQUENT = 'AWV: G0439';
     const BHI            = 'CPT 99484';
     const CCM            = 'CPT 99490';
-    const CCM_PLUS_40    = 'G2058(>40mins)';
-    const CCM_PLUS_60    = 'G2058(>60mins)';
+
+    const CCM_CODES = [
+        self::CCM,
+        self::CCM_PLUS_40,
+        self::CCM_PLUS_60,
+    ];
+    const CCM_PLUS_40 = 'G2058(>40mins)';
+    const CCM_PLUS_60 = 'G2058(>60mins)';
 
     const CCM_PLUS_CODES = [
         self::CCM_PLUS_40,
         self::CCM_PLUS_60,
-    ];
-    
-    const CCM_CODES = [
-        self::CCM,
-        self::CCM_PLUS_40,
-        self::CCM_PLUS_60
     ];
 
     const CLASHES = [
