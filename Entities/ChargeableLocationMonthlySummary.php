@@ -37,6 +37,7 @@ use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
  * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdToday($field = 'created_at')
  * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdYesterday($field = 'created_at')
  * @property string|null $status
+ * @method   static      \Illuminate\Database\Eloquent\Builder|ChargeableLocationMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  */
 class ChargeableLocationMonthlySummary extends BaseModel
 {

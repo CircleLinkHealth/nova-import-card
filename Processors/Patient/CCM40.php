@@ -15,9 +15,21 @@ class CCM40 extends AbstractProcessor
 {
     use IsPartOfSequence;
 
+    public function clashesWith(): array
+    {
+        return [
+            new RHC(),
+        ];
+    }
+
     public function code(): string
     {
         return ChargeableService::CCM_PLUS_40;
+    }
+
+    public function codeForProblems(): string
+    {
+        return ChargeableService::CCM;
     }
 
     public function featureIsEnabled(): bool

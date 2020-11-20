@@ -47,6 +47,6 @@ class PatientProblemsChanged implements CanDebounceJobForPatient
 
     public function shouldDebounce(): bool
     {
-        return true;
+        return false;
     }
 }

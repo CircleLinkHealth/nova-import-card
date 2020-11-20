@@ -19,6 +19,8 @@ interface PatientServiceProcessor
 
     public function code(): string;
 
+    public function codeForProblems(): string;
+
     public function featureIsEnabled(): bool;
 
     public function fulfill(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary;

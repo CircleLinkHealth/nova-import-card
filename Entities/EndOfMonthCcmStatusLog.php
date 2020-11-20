@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|EndOfMonthCcmStatusLog createdThisMonth($field = 'created_at')
  * @method   static                          \Illuminate\Database\Eloquent\Builder|EndOfMonthCcmStatusLog createdToday($field = 'created_at')
  * @method   static                          \Illuminate\Database\Eloquent\Builder|EndOfMonthCcmStatusLog createdYesterday($field = 'created_at')
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|EndOfMonthCcmStatusLog createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  */
 class EndOfMonthCcmStatusLog extends Model
 {

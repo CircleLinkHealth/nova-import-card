@@ -28,15 +28,14 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         ];
     }
 
+    public function codeForProblems(): string
+    {
+        return $this->code();
+    }
+
     public function fulfill(int $patientId, Carbon $chargeableMonth): ChargeablePatientMonthlySummary
     {
-        $summary = $this->repo()->fulfill($patientId, $this->code(), $chargeableMonth);
-
-        if (method_exists($this, 'attachNext')) {
-            $this->attachNext($patientId, $chargeableMonth);
-        }
-
-        return $summary;
+        return $this->repo()->fulfill($patientId, $this->code(), $chargeableMonth);
     }
 
     public function isAttached(int $patientId, Carbon $chargeableMonth): bool
@@ -89,18 +88,14 @@ abstract class AbstractProcessor implements PatientServiceProcessor
             return false;
         }
 
-        if ($this->clashesWithHigherOrderServices($patientId, $chargeableMonth)) {
-            return false;
-        }
-
-        if ($this->hasUnfulfilledPreviousService($patientId, $chargeableMonth)) {
+        if ($this->clashesWithHigherOrderServices($patientId, $chargeableMonth, ...$patientProblems)) {
             return false;
         }
 
         return collect($patientProblems)
             ->filter(
                 function (PatientProblemForProcessing $problem) use ($patientId, $chargeableMonth) {
-                    return collect($problem->getServiceCodes())->contains($this->code());
+                    return collect($problem->getServiceCodes())->contains($this->codeForProblems());
                 }
             )->count() >= $this->minimumNumberOfProblems();
     }
@@ -108,6 +103,10 @@ abstract class AbstractProcessor implements PatientServiceProcessor
     public function shouldFulfill(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
         if ( ! $this->shouldAttach($patientId, $chargeableMonth, ...$patientProblems)) {
+            return false;
+        }
+
+        if ($this->hasUnfulfilledPreviousService($patientId, $chargeableMonth)) {
             return false;
         }
 
@@ -133,10 +132,16 @@ abstract class AbstractProcessor implements PatientServiceProcessor
         return true;
     }
 
-    private function clashesWithHigherOrderServices(int $patientId, Carbon $chargeableMonth): bool
+    private function clashesWithHigherOrderServices(int $patientId, Carbon $chargeableMonth, PatientProblemForProcessing ...$patientProblems): bool
     {
         foreach ($this->clashesWith() as $clash) {
-            if ($this->repo()->isAttached($patientId, $clash->code(), $chargeableMonth)) {
+            $clashIsAttached = $this->repo->isAttached($patientId, $clash->code(), $chargeableMonth);
+
+            $hasEnoughProblemsForClash = collect($patientProblems)
+                ->filter(fn (PatientProblemForProcessing $problem) => in_array($clash->code(), $problem->getServiceCodes()))
+                ->count() >= $clash->minimumNumberOfProblems();
+
+            if ($clashIsAttached && $hasEnoughProblemsForClash) {
                 return true;
             }
         }

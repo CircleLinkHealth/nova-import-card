@@ -6,20 +6,26 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
+use App\Constants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
-class G0511 extends AbstractProcessor
+class RPM40 extends AbstractProcessor
 {
     public function clashesWith(): array
     {
         return [
-            new CCM(),
+            new RHC(),
         ];
     }
 
     public function code(): string
     {
-        return ChargeableService::GENERAL_CARE_MANAGEMENT;
+        return ChargeableService::RPM40;
+    }
+
+    public function codeForProblems(): string
+    {
+        return ChargeableService::RPM;
     }
 
     public function featureIsEnabled(): bool
@@ -34,12 +40,12 @@ class G0511 extends AbstractProcessor
 
     public function minimumNumberOfProblems(): int
     {
-        return 2;
+        return 1;
     }
 
     public function minimumTimeInSeconds(): int
     {
-        return 1200;
+        return Constants::TWENTY_MINUTES_IN_SECONDS;
     }
 
     public function requiresPatientConsent(int $patientId): bool

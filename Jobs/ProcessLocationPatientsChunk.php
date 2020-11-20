@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProcessorRepository;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientProblemsForBillingProcessing;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -78,7 +79,7 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob implements S
                     ->subscribe($this->getAvailableServiceProcessors())
                     ->forPatient($patient->id)
                     ->forMonth($this->getChargeableMonth())
-                    ->withProblems(...$patient->patientProblemsForBillingProcessing()->toArray())
+                    ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
             );
         });
     }

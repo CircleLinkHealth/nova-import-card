@@ -13,6 +13,9 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM60;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
+use CircleLinkHealth\CcmBilling\Processors\Patient\RHC;
+use CircleLinkHealth\CcmBilling\Processors\Patient\RPM;
+use CircleLinkHealth\CcmBilling\Processors\Patient\RPM40;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 
@@ -21,19 +24,24 @@ class AvailableServiceProcessors implements Arrayable
     private ?AWV1 $awv1;
 
     private ?AWV2 $awv2;
+
     private ?BHI $bhi;
 
     private ?CCM $ccm;
-
     private ?CCM40 $ccm40;
-
     private ?CCM60 $ccm60;
 
     private ?PCM $pcm;
 
+    private ?RHC $rhc;
+
+    private ?RPM $rpm;
+    private ?RPM40 $rpm40;
+
     public static function classMap(): array
     {
         return [
+            RHC::class   => 'rhc',
             CCM::class   => 'ccm',
             BHI::class   => 'bhi',
             CCM40::class => 'ccm40',
@@ -41,6 +49,8 @@ class AvailableServiceProcessors implements Arrayable
             PCM::class   => 'pcm',
             AWV1::class  => 'awv1',
             AWV2::class  => 'awv2',
+            RPM::class   => 'rpm',
+            RPM40::class => 'rpm40',
         ];
     }
 
@@ -77,6 +87,21 @@ class AvailableServiceProcessors implements Arrayable
     public function getPcm(): ?PCM
     {
         return $this->pcm ?? null;
+    }
+
+    public function getRhc(): ?RHC
+    {
+        return $this->rhc ?? null;
+    }
+
+    public function getRpm(): ?RPM
+    {
+        return $this->rpm ?? null;
+    }
+
+    public function getRpm40(): ?RPM40
+    {
+        return $this->rpm40 ?? null;
     }
 
     public static function push(array $serviceProcessors)
@@ -128,12 +153,28 @@ class AvailableServiceProcessors implements Arrayable
         $this->pcm = $pcm;
     }
 
+    public function setRhc(?RHC $rhc): void
+    {
+        $this->rhc = $rhc;
+    }
+
+    public function setRpm(?RPM $rpm): void
+    {
+        $this->rpm = $rpm;
+    }
+
+    public function setRpm40(?RPM40 $rpm40): void
+    {
+        $this->rpm40 = $rpm40;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function toArray(): array
     {
         return array_filter([
+            $this->rhc ?? null,
             $this->awv1 ?? null,
             $this->awv2 ?? null,
             $this->ccm ?? null,
@@ -141,6 +182,8 @@ class AvailableServiceProcessors implements Arrayable
             $this->ccm60 ?? null,
             $this->pcm ?? null,
             $this->bhi ?? null,
+            $this->rpm ?? null,
+            $this->rpm40 ?? null,
         ]);
     }
 

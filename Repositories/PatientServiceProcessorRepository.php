@@ -6,8 +6,10 @@
 
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
+use App\Jobs\ChargeableServiceDuration;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientServicesQuery;
+use CircleLinkHealth\CcmBilling\Builders\ApprovablePatientUsersQuery;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as Repository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
@@ -15,11 +17,41 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\Patient as PatientModel;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Database\Eloquent\Collection;
 
 class PatientServiceProcessorRepository implements Repository
 {
     use ApprovablePatientServicesQuery;
+    use ApprovablePatientUsersQuery;
+
+    /**
+     * @throws \Exception
+     */
+    public function createActivityForChargeableService(string $source, PageTimer $pageTimer, ChargeableServiceDuration $chargeableServiceDuration): Activity
+    {
+        $activity = Activity::create(
+            [
+                'type'                  => $pageTimer->activity_type,
+                'provider_id'           => $pageTimer->provider_id,
+                'is_behavioral'         => $chargeableServiceDuration->isBehavioral,
+                'performed_at'          => $pageTimer->start_time,
+                'duration'              => $chargeableServiceDuration->duration,
+                'duration_unit'         => 'seconds',
+                'patient_id'            => $pageTimer->patient_id,
+                'logged_from'           => $source,
+                'logger_id'             => $pageTimer->provider_id,
+                'page_timer_id'         => $pageTimer->id,
+                'chargeable_service_id' => $chargeableServiceDuration->id,
+            ]
+        );
+
+        $this->reloadPatientSummaryViews($pageTimer->patient_id, Carbon::parse($pageTimer->start_time)->startOfMonth());
+
+        return $activity;
+    }
 
     public function fulfill(int $patientId, string $chargeableServiceCode, Carbon $month): ChargeablePatientMonthlySummary
     {
@@ -44,6 +76,13 @@ class PatientServiceProcessorRepository implements Repository
         return ChargeablePatientMonthlySummaryView::where('patient_user_id', $patientId)
             ->where('chargeable_month', $month)
             ->where('chargeable_service_code', $chargeableServiceCode)
+            ->first();
+    }
+
+    public function getPatientWithBillingDataForMonth(int $patientId, Carbon $month = null): ?User
+    {
+        return $this
+            ->approvablePatientUserQuery($patientId, $month)
             ->first();
     }
 
@@ -77,6 +116,16 @@ class PatientServiceProcessorRepository implements Repository
             ->where('chargeable_service_code', $chargeableServiceCode)
             ->where('is_fulfilled', true)
             ->exists();
+    }
+
+    public function reloadPatientProblems(int $patientId): void
+    {
+        // TODO: Implement reloadPatientProblems() method.
+    }
+
+    public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
+    {
+        // TODO: Implement reloadPatientSummaryViews() method.
     }
 
     public function requiresPatientConsent(int $patientId, string $chargeableServiceCode, Carbon $month): bool

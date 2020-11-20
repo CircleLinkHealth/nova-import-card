@@ -14,7 +14,6 @@ use CircleLinkHealth\CcmBilling\Jobs\ProcessPatientMonthlyServices;
 use CircleLinkHealth\CcmBilling\Processors\Customer\Location;
 use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
-use CircleLinkHealth\CcmBilling\Processors\Patient\MonthlyProcessor;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Fake as FakeLocationRepository;
 use CircleLinkHealth\CcmBilling\Tests\Fakes\Repositories\Location\Stubs\ChargeableLocationMonthlySummaryStub;
@@ -72,7 +71,6 @@ class LocationSummaryProcessingTest extends TestCase
             $availableProcessors = $job->getAvailableServiceProcessors();
 
             return $job->getChargeableMonth()->equalTo($startOfMonth)
-                && is_a($job->processor(), MonthlyProcessor::class)
                 && ! is_null($bhiProcessor = $availableProcessors->getBhi())
                 && is_a($bhiProcessor, BHI::class)
                 && ! is_null($ccmProcessor = $availableProcessors->getCcm())

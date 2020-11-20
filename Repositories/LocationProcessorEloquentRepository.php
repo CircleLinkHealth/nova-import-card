@@ -36,11 +36,17 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
             ->get();
     }
 
-    public function hasServicesForMonth(int $locationId, Carbon $month): bool
+    public function getLocationSummaries(int $locationId, ?Carbon $month = null): ?Collection
     {
-        return $this->servicesForLocation($locationId)
-            ->createdOn($month, 'chargeable_month')
-            ->exist();
+        return $this->servicesForMonth($locationId, $month)->get();
+    }
+
+    public function hasServicesForMonth(int $locationId, array $chargeableServiceCodes, Carbon $month): bool
+    {
+        //todo: add test
+        return $this->servicesForMonth($locationId, $month)
+            ->whereHas('chargeableService', fn ($cs) => $cs->whereIn('code', $chargeableServiceCodes))
+            ->exists();
     }
 
     public function paginatePatients(int $locationId, Carbon $chargeableMonth, int $pageSize): LengthAwarePaginator
@@ -78,6 +84,13 @@ class LocationProcessorEloquentRepository implements LocationProcessorRepository
                         });
                 }
             );
+    }
+
+    public function servicesExistForMonth(int $locationId, Carbon $month): bool
+    {
+        return $this->servicesForLocation($locationId)
+            ->createdOn($month, 'chargeable_month')
+            ->exists();
     }
 
     public function store(int $locationId, string $chargeableServiceCode, Carbon $month, float $amount = null): ChargeableLocationMonthlySummary

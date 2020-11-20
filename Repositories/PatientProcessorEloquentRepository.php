@@ -15,6 +15,7 @@ class PatientProcessorEloquentRepository implements Repository
 {
     use ApprovablePatientUsersQuery;
 
+    //TODO: DEPRECATE, MOVE LOGIC IN PatientServiceProcessorRepository
     public function patientWithBillingDataForMonth(int $patientId, Carbon $month): Builder
     {
         return $this

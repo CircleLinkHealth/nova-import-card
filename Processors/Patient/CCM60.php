@@ -14,10 +14,22 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 class CCM60 extends AbstractProcessor
 {
     use IsPartOfSequence;
-
+    
+    public function clashesWith(): array
+    {
+        return [
+            new RHC(),
+        ];
+    }
+    
     public function code(): string
     {
         return ChargeableService::CCM_PLUS_60;
+    }
+
+    public function codeForProblems(): string
+    {
+        return ChargeableService::CCM;
     }
 
     public function featureIsEnabled(): bool

@@ -8,10 +8,10 @@ namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use App\Contracts\HasUniqueIdentifierForDebounce;
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
+use MichaelLedin\LaravelJob\Job;
 
-class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessingJob implements HasUniqueIdentifierForDebounce
+class ProcessSinglePatientMonthlyServices extends Job implements HasUniqueIdentifierForDebounce
 {
     protected string $month;
 
@@ -55,29 +55,6 @@ class ProcessSinglePatientMonthlyServices extends PatientMonthlyBillingProcessin
      */
     public function handle()
     {
-        /** @var User */
-        $patient = $this->repo()
-            ->patientWithBillingDataForMonth($this->getPatientId(), $this->getMonth())
-            ->first();
-
-        if (is_null($patient)) {
-            sendSlackMessage('#billing_alerts', "Patient ({$this->getPatientId()}) was not found. Cannot Process Billing, please investigate");
-
-            return;
-        }
-
-        if (is_null(optional($patient->patientInfo)->location)) {
-            sendSlackMessage('#billing_alerts', "Patient ({$patient->id}) does not have location attached. Cannot Process Billing, please investigate");
-
-            return;
-        }
-
-        $this->processor()->process(
-            (new PatientMonthlyBillingDTO())
-                ->subscribe($patient->patientInfo->location->availableServiceProcessors($this->getMonth()))
-                ->forPatient($patient->id)
-                ->forMonth($this->getMonth())
-                ->withProblems(...$patient->patientProblemsForBillingProcessing()->toArray())
-        );
+        (app(ProcessPatientSummaries::class))->execute($this->getPatientId(), $this->getMonth());
     }
 }

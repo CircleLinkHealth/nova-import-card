@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use Illuminate\Support\Facades\Log;
 use MichaelLedin\LaravelJob\Job;
 
 class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Job
@@ -49,6 +50,8 @@ class MigratePracticeServicesFromChargeablesToLocationSummariesTable extends Job
         $chargeableServices = $practice->chargeableServices;
 
         if ($chargeableServices->isEmpty()) {
+            Log::warning('Billing: Practice chargeable services (chargeables) do not exist. Aborting migration to location summaries.');
+
             return;
         }
 

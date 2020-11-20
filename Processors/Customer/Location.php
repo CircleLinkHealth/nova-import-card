@@ -47,7 +47,7 @@ class Location implements CustomerProcessor
 
     public function processServicesForLocation(int $locationId, Carbon $month)
     {
-        if ($this->repo()->hasServicesForMonth($locationId, $month)) {
+        if ($this->repo()->servicesExistForMonth($locationId, $month)) {
             return;
         }
 

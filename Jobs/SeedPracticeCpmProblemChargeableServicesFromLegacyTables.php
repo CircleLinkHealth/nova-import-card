@@ -6,11 +6,14 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
+use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\LocationProblemServiceRepository;
+use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\Eligibility\Entities\RpmProblem;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,6 +36,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
 
     protected int $practiceId;
     protected LocationProblemServiceRepository $repo;
+    protected ?string $rpmCodeId;
 
     /**
      * Create a new job instance.
@@ -52,13 +56,16 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
     public function handle()
     {
         /** @var Collection */
-        $practice = Practice::with(['locations', 'pcmProblems'])
+        $practice = Practice::with([
+            'locations.chargeableServiceSummaries' => fn ($s) => $s->createdOn(Carbon::now()->startOfMonth(), 'chargeable_month'),
+            'pcmProblems',
+            'rpmProblems',
+        ])
             ->findOrFail($this->practiceId);
 
-        $practicePcmProblems = $practice->pcmProblems;
         $this->setChargeableServices();
 
-        if (is_null($this->ccmCodeId) && is_null($this->bhiCodeId) && is_null($this->pcmCodeId)) {
+        if (is_null($this->ccmCodeId) && is_null($this->bhiCodeId) && is_null($this->pcmCodeId) && is_null($this->rpmCodeId)) {
             sendSlackMessage('#billing_alerts', 'Practice/Location Cpm Problem Chargeable Services seeding aborted - no Chargeable Services found.');
 
             return;
@@ -66,9 +73,17 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
 
         $this->setCpmProblems();
 
+        $practicePcmProblems = $practice->pcmProblems;
+        $practiceRpmProblems = $practice->rpmProblems;
+
         $practice
             ->locations
-            ->each(function (Location $location) use (&$toCreate, $practicePcmProblems) {
+            ->each(function (Location $location) use (&$toCreate, $practicePcmProblems, $practiceRpmProblems) {
+                LocationProblemService::where('location_id', $location->id)->delete();
+                $locationHasCcm = $location->chargeableServiceSummaries->firstWhere('chargeable_service_id', $this->ccmCodeId);
+                $locationHasBhi = $location->chargeableServiceSummaries->firstWhere('chargeable_service_id', $this->bhiCodeId);
+                $locationHasPcm = $location->chargeableServiceSummaries->firstWhere('chargeable_service_id', $this->pcmCodeId);
+                $locationHasRpm = $location->chargeableServiceSummaries->firstWhere('chargeable_service_id', $this->rpmCodeId);
                 foreach ($this->cpmProblems as $problem) {
                     $isDementia = 'Dementia' === $problem->name;
                     $isDepression = 'Depression' === $problem->name;
@@ -81,15 +96,25 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
                         }
                     )->count() > 0;
 
-                    if ($isBhi || $isDementia || $isDementia) {
+                    $isRpm = $practiceRpmProblems->filter(
+                        function (RpmProblem $rpmProblem) use ($problem) {
+                            return $rpmProblem->code === $problem->default_icd_10_code || $rpmProblem->description === $problem->name;
+                        }
+                    )->count() > 0;
+
+                    if (($isBhi || $isDementia || $isDementia) && $locationHasBhi) {
                         $this->repo()->store($location->id, $problem->id, $this->bhiCodeId);
                     }
 
-                    if ($isPcm) {
+                    if ($isPcm && $locationHasPcm) {
                         $this->repo()->store($location->id, $problem->id, $this->pcmCodeId);
                     }
 
-                    if ( ! $isBhi || $isDementia || $isDepression) {
+                    if ($isRpm && $locationHasRpm) {
+                        $this->repo()->store($location->id, $problem->id, $this->rpmCodeId);
+                    }
+
+                    if (( ! $isBhi || $isDementia || $isDepression) && $locationHasCcm) {
                         $this->repo()->store($location->id, $problem->id, $this->ccmCodeId);
                     }
                 }
@@ -107,7 +132,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
 
     private function setChargeableServices()
     {
-        $chargeableServices = ChargeableService::get();
+        $chargeableServices = ChargeableService::cached();
         if ($chargeableServices->isEmpty()) {
             return;
         }
@@ -115,6 +140,7 @@ class SeedPracticeCpmProblemChargeableServicesFromLegacyTables implements Should
         $this->pcmCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::PCM))->id;
         $this->bhiCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::BHI))->id;
         $this->ccmCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::CCM))->id;
+        $this->rpmCodeId = optional($chargeableServices->firstWhere('code', ChargeableService::RPM))->id;
     }
 
     private function setCpmProblems()

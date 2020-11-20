@@ -7,18 +7,31 @@
 namespace CircleLinkHealth\CcmBilling\Tests\Database\Repositories;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as PatientServiceProcessorRepositoryInterface;
+use CircleLinkHealth\CcmBilling\Entities\ChargeableLocationMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\CcmBilling\Repositories\LocationProcessorEloquentRepository;
 use CircleLinkHealth\CcmBilling\Repositories\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use Tests\CustomerTestCase;
 
 class PatientServiceRepositoryTest extends CustomerTestCase
 {
-    protected PatientServiceProcessorRepository $repo;
+    use PracticeHelpers;
+    use UserHelpers;
 
-    protected function setUp(): void
+    protected $location;
+
+    protected User $patient;
+
+    protected PatientServiceProcessorRepositoryInterface $repo;
+
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -27,11 +40,14 @@ class PatientServiceRepositoryTest extends CustomerTestCase
 
     public function test_if_it_checks_if_service_is_available_for_location()
     {
+        ChargeableLocationMonthlySummary::where('location_id', $locationId = $this->patient()->getPreferredContactLocation())->delete();
         (new LocationProcessorEloquentRepository())->store(
-            $locationId = $this->patient()->getPreferredContactLocation(),
+            $locationId,
             $ccmCode = ChargeableService::CCM,
             $startOfMonth = Carbon::now()->startOfMonth()
         );
+
+        BillingCache::clearPatients();
 
         self::assertTrue($this->repo->isChargeableServiceEnabledForLocationForMonth($this->patient()->id, $ccmCode, $startOfMonth));
         self::assertFalse($this->repo->isChargeableServiceEnabledForLocationForMonth($this->patient()->id, ChargeableService::BHI, $startOfMonth));
@@ -49,7 +65,6 @@ class PatientServiceRepositoryTest extends CustomerTestCase
         self::assertFalse($this->repo->requiresPatientConsent($patientId, $bhiCode, $startOfMonth));
     }
 
-    //todo: do we need an extended Customer Test case? an extended test case would include ability to pull month, all kinds of repos etc.
     public function test_it_checks_if_summary_is_attached()
     {
         $this->repo->store($patientId = $this->patient()->id, $ccmCode = ChargeableService::CCM, $startOfMonth = Carbon::now()->startOfMonth());

@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Entities;
 
 use App\Call;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
@@ -32,13 +33,15 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method   static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem newQuery()
  * @method   static                          \Illuminate\Database\Eloquent\Builder|AttestedProblem query()
  * @mixin \Eloquent
- * @property int|null $addendum_id
- * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
- * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdOn(\Carbon\Carbon $date, $field = 'created_at')
- * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdThisMonth($field = 'created_at')
- * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdToday($field = 'created_at')
- * @method   static   \Illuminate\Database\Eloquent\Builder|AttestedProblem createdYesterday($field = 'created_at')
- * @property int|null $attestor_id
+ * @property int|null                   $addendum_id
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdThisMonth($field = 'created_at')
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdToday($field = 'created_at')
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdYesterday($field = 'created_at')
+ * @property int|null                   $attestor_id
+ * @property PatientMonthlySummary|null $pms
+ * @method   static                     \Illuminate\Database\Eloquent\Builder|AttestedProblem createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  */
 class AttestedProblem extends Pivot
 {
@@ -46,12 +49,14 @@ class AttestedProblem extends Pivot
 
     protected $fillable = [
         'patient_user_id',
-        'ccd_problem_id',
+        'attestor_id',
         'call_id',
+        'ccd_problem_id',
         'ccd_problem_name',
         'ccd_problem_icd_10_code',
         'chargeable_month',
         'patient_monthly_summary_id',
+        'addendum_id',
     ];
 
     protected $table = 'call_problems';
@@ -69,5 +74,13 @@ class AttestedProblem extends Pivot
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_user_id');
+    }
+
+    /**
+     * Todo: deprecate.
+     */
+    public function pms()
+    {
+        return $this->belongsTo(PatientMonthlySummary::class, 'patient_monthly_summary_id');
     }
 }

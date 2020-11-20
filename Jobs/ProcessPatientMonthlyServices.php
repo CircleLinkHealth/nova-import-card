@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientMonthlyBillingDTO;
 use Illuminate\Bus\Queueable;
@@ -15,7 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessPatientMonthlyServices extends PatientMonthlyBillingProcessingJob implements ShouldQueue
+class ProcessPatientMonthlyServices implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -49,6 +50,6 @@ class ProcessPatientMonthlyServices extends PatientMonthlyBillingProcessingJob i
      */
     public function handle()
     {
-        $this->processor()->process($this->patient);
+        (app(ProcessPatientSummaries::class))->fromDTO($this->patient);
     }
 }
