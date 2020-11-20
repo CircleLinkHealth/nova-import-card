@@ -81,7 +81,7 @@ class PatientTimeAndCalls
                 'no_of_successful_calls' => $this->calls->where('inbound_cpm_id', $patientId)->count(),
             ];
         }
-        
+
         return $this;
     }
 }

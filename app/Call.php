@@ -87,6 +87,12 @@ use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
  * @property \App\VoiceCall[]|\Illuminate\Database\Eloquent\Collection                                                       $voiceCalls
  * @property int|null                                                                                                        $voice_calls_count
  * @property \App\CpmCallAlert|null                                                                                          $cpmCallAlert
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdThisMonth($field = 'created_at')
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdToday($field = 'created_at')
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Call createdYesterday($field = 'created_at')
  */
 class Call extends BaseModel implements AttachableToNotification
 {
