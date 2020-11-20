@@ -4,10 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\CcmBilling\Database\Seeders\CpmProblemChargeableServiceLocationSeeder;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
-class SeedLocationProblemServicesFromExistingTables extends Migration
+class FeatureFlags extends Migration
 {
     /**
      * Reverse the migrations.
@@ -16,6 +16,7 @@ class SeedLocationProblemServicesFromExistingTables extends Migration
      */
     public function down()
     {
+        Schema::drop('feature_flags');
     }
 
     /**
@@ -25,10 +26,10 @@ class SeedLocationProblemServicesFromExistingTables extends Migration
      */
     public function up()
     {
-        if (isCpm()) {
-            Artisan::call('db:seed', [
-                '--class' => CpmProblemChargeableServiceLocationSeeder::class,
-            ]);
-        }
+        Schema::create('feature_flags', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('key');
+            $table->text('variants');
+        });
     }
 }

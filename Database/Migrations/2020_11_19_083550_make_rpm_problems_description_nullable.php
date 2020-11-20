@@ -4,10 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\CcmBilling\Database\Seeders\ChargeableServiceHumanFriendlyNamesSeeder;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class SeedHumanFriendlyNamesForChargeableServices extends Migration
+class MakeRpmProblemsDescriptionNullable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -25,10 +26,8 @@ class SeedHumanFriendlyNamesForChargeableServices extends Migration
      */
     public function up()
     {
-        if (isCpm()) {
-            Artisan::call('db:seed', [
-                '--class' => ChargeableServiceHumanFriendlyNamesSeeder::class,
-            ]);
-        }
+        Schema::table('rpm_problems', function (Blueprint $table) {
+            $table->string('description')->nullable(true)->change();
+        });
     }
 }
