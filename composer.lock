@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f2ecf35519ae284c685619fea79c274",
+    "content-hash": "80e8531c8c3298e047da9cc4bcd45c94",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.162.0",
+            "version": "3.163.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "64b0468417c4a84ff5cc51a69cf2ff9d899c2e8e"
+                "reference": "7b6948915654f0f94847ccaf51172fa1a7f1cc59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/64b0468417c4a84ff5cc51a69cf2ff9d899c2e8e",
-                "reference": "64b0468417c4a84ff5cc51a69cf2ff9d899c2e8e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7b6948915654f0f94847ccaf51172fa1a7f1cc59",
+                "reference": "7b6948915654f0f94847ccaf51172fa1a7f1cc59",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-11-17T19:12:26+00:00"
+            "time": "2020-11-19T19:26:10+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1236,11 +1236,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.6.0",
+            "version": "dev-road_408_cameron_migration",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "4cc3833bd27825bfd96fb71f65d7551eca73ef40"
+                "reference": "18313ba98dc0e02503c4af3afadc6d83b84a2210"
             },
             "type": "laravel-module",
             "extra": {
@@ -1262,7 +1262,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-17T21:07:50+00:00"
+            "time": "2020-11-18T15:31:11+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1308,11 +1308,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.6.0",
+            "version": "dev-road_408_cameron_letter_eligibility",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4e4f9c1181e839aa294e1a740519ada39cf5cbe4"
+                "reference": "13c5471a30f384ed42f8a41d5743d651c53a670b"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1339,7 +1339,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-16T12:12:50+00:00"
+            "time": "2020-11-20T18:06:19+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -3581,16 +3581,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.153",
+            "version": "v0.154",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "db62bb19f32f81c9551f223c72be0682eb58ebd8"
+                "reference": "7f44a314836c444b7894d648c1c49f83fb9d37ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/db62bb19f32f81c9551f223c72be0682eb58ebd8",
-                "reference": "db62bb19f32f81c9551f223c72be0682eb58ebd8",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/7f44a314836c444b7894d648c1c49f83fb9d37ca",
+                "reference": "7f44a314836c444b7894d648c1c49f83fb9d37ca",
                 "shasum": ""
             },
             "require": {
@@ -3614,7 +3614,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-11-01T00:25:23+00:00"
+            "time": "2020-11-19T19:01:11+00:00"
         },
         {
             "name": "google/auth",
@@ -4657,21 +4657,21 @@
         },
         {
             "name": "laminas/laminas-diactoros",
-            "version": "2.4.1",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-diactoros.git",
-                "reference": "36ef09b73e884135d2059cc498c938e90821bb57"
+                "reference": "4ff7400c1c12e404144992ef43c8b733fd9ad516"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-diactoros/zipball/36ef09b73e884135d2059cc498c938e90821bb57",
-                "reference": "36ef09b73e884135d2059cc498c938e90821bb57",
+                "url": "https://api.github.com/repos/laminas/laminas-diactoros/zipball/4ff7400c1c12e404144992ef43c8b733fd9ad516",
+                "reference": "4ff7400c1c12e404144992ef43c8b733fd9ad516",
                 "shasum": ""
             },
             "require": {
                 "laminas/laminas-zendframework-bridge": "^1.0",
-                "php": "^7.1",
+                "php": "^7.3 || ~8.0.0",
                 "psr/http-factory": "^1.0",
                 "psr/http-message": "^1.0"
             },
@@ -4690,10 +4690,11 @@
                 "ext-dom": "*",
                 "ext-gd": "*",
                 "ext-libxml": "*",
-                "http-interop/http-factory-tests": "^0.5.0",
+                "http-interop/http-factory-tests": "^0.8.0",
                 "laminas/laminas-coding-standard": "~1.0.0",
-                "php-http/psr7-integration-tests": "^1.0",
-                "phpunit/phpunit": "^7.5.18"
+                "php-http/psr7-integration-tests": "^1.1",
+                "phpspec/prophecy-phpunit": "^2.0",
+                "phpunit/phpunit": "^9.1"
             },
             "type": "library",
             "extra": {
@@ -4744,7 +4745,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2020-09-03T14:29:41+00:00"
+            "time": "2020-11-18T18:39:28+00:00"
         },
         {
             "name": "laminas/laminas-zendframework-bridge",
@@ -9953,16 +9954,16 @@
         },
         {
             "name": "spatie/image-optimizer",
-            "version": "1.3.0",
+            "version": "1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/image-optimizer.git",
-                "reference": "f87f8328ca5bfabb3811241f5d35f17e146f7f83"
+                "reference": "b622d0cf29f57d7735d49f2b62471e6b788cb291"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/image-optimizer/zipball/f87f8328ca5bfabb3811241f5d35f17e146f7f83",
-                "reference": "f87f8328ca5bfabb3811241f5d35f17e146f7f83",
+                "url": "https://api.github.com/repos/spatie/image-optimizer/zipball/b622d0cf29f57d7735d49f2b62471e6b788cb291",
+                "reference": "b622d0cf29f57d7735d49f2b62471e6b788cb291",
                 "shasum": ""
             },
             "require": {
@@ -9999,7 +10000,7 @@
                 "image-optimizer",
                 "spatie"
             ],
-            "time": "2020-11-10T13:45:49+00:00"
+            "time": "2020-11-20T11:36:11+00:00"
         },
         {
             "name": "spatie/laravel-medialibrary",
@@ -13957,16 +13958,16 @@
         },
         {
             "name": "clue/stdio-react",
-            "version": "v2.3.0",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clue/reactphp-stdio.git",
-                "reference": "5f42a3a5a29f52432f0f68b57890353e8ca65069"
+                "reference": "5722686d3cc0cdf2ccedb6079bfd066220611f00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/clue/reactphp-stdio/zipball/5f42a3a5a29f52432f0f68b57890353e8ca65069",
-                "reference": "5f42a3a5a29f52432f0f68b57890353e8ca65069",
+                "url": "https://api.github.com/repos/clue/reactphp-stdio/zipball/5722686d3cc0cdf2ccedb6079bfd066220611f00",
+                "reference": "5722686d3cc0cdf2ccedb6079bfd066220611f00",
                 "shasum": ""
             },
             "require": {
@@ -13979,7 +13980,7 @@
             "require-dev": {
                 "clue/arguments": "^2.0",
                 "clue/commander": "^1.2",
-                "phpunit/phpunit": "^7.0 || ^6.4 || ^5.7 || ^4.8.35"
+                "phpunit/phpunit": "^9.3 || ^5.7 || ^4.8.35"
             },
             "suggest": {
                 "ext-mbstring": "Using ext-mbstring should provide slightly better performance for handling I/O"
@@ -13997,7 +13998,7 @@
             "authors": [
                 {
                     "name": "Christian Lück",
-                    "email": "christian@lueck.tv"
+                    "email": "christian@clue.engineering"
                 }
             ],
             "description": "Async, event-driven console input & output (STDIN, STDOUT) for truly interactive CLI applications, built on top of ReactPHP",
@@ -14015,7 +14016,17 @@
                 "stdio",
                 "stdout"
             ],
-            "time": "2019-08-28T12:01:30+00:00"
+            "funding": [
+                {
+                    "url": "https://clue.engineering/support",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/clue",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-11-20T14:28:39+00:00"
         },
         {
             "name": "clue/term-react",
@@ -16055,23 +16066,23 @@
         },
         {
             "name": "php-webdriver/webdriver",
-            "version": "1.8.3",
+            "version": "1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-webdriver/php-webdriver.git",
-                "reference": "fb0fc4cb01c70a7790a5fcc91d461b88c83174a2"
+                "reference": "e3633154554605274cc9d59837f55a7427d72003"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/fb0fc4cb01c70a7790a5fcc91d461b88c83174a2",
-                "reference": "fb0fc4cb01c70a7790a5fcc91d461b88c83174a2",
+                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/e3633154554605274cc9d59837f55a7427d72003",
+                "reference": "e3633154554605274cc9d59837f55a7427d72003",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
                 "ext-zip": "*",
-                "php": "^5.6 || ~7.0",
+                "php": "^5.6 || ~7.0 || ^8.0",
                 "symfony/polyfill-mbstring": "^1.12",
                 "symfony/process": "^2.8 || ^3.1 || ^4.0 || ^5.0"
             },
@@ -16081,12 +16092,10 @@
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.0",
                 "ondram/ci-detector": "^2.1 || ^3.5",
-                "php-coveralls/php-coveralls": "^2.0",
-                "php-mock/php-mock-phpunit": "^1.1",
+                "php-coveralls/php-coveralls": "^2.4",
+                "php-mock/php-mock-phpunit": "^1.1 || ^2.0",
                 "php-parallel-lint/php-parallel-lint": "^1.2",
-                "phpunit/phpunit": "^5.7",
-                "sebastian/environment": "^1.3.4 || ^2.0 || ^3.0",
-                "sminnee/phpunit-mock-objects": "^3.4",
+                "phpunit/phpunit": "^5.7 || ^7 || ^8 || ^9",
                 "squizlabs/php_codesniffer": "^3.5",
                 "symfony/var-dumper": "^3.3 || ^4.0 || ^5.0"
             },
@@ -16120,7 +16129,7 @@
                 "selenium",
                 "webdriver"
             ],
-            "time": "2020-10-06T19:10:04+00:00"
+            "time": "2020-11-19T15:21:05+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -18242,6 +18251,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
