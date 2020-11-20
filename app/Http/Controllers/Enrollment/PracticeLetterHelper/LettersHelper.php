@@ -48,6 +48,11 @@ class LettersHelper
         return $practiceLocation;
     }
 
+    public static function getUiRequestDataFor($uiRequests, string $key)
+    {
+        return collect($uiRequests->$key)->toArray();
+    }
+
     public static function propsWithExtraAddress($model, array $baseLetterConfigs)
     {
         return [
@@ -63,10 +68,5 @@ class LettersHelper
             'extraAddressValues'       => $model->extraAddressValues,
             'extraAddressValuesExists' => $model->extraAddressValuesExists,
         ];
-    }
-    
-    public static function getUiRequestDataFor($uiRequests, string $key)
-    {
-        return collect($uiRequests->$key)->toArray();
     }
 }

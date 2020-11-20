@@ -12,10 +12,10 @@ class CameronLetterProductionValueObject
 {
     const ANNNE_REITZ_MAIL_REAL         = 'areitz@cameronmch.com';
     const BRANDY_GERMAN_MAIL_REAL       = 'bgerman@cameronmch.com';
+    const CHRISHAWVA_SCHIEBER_MAIL_REAL = 'cschieber@cameronmch.com';
     const FAUR_MAIL_REAL                = 'lfaur@cameronmch.com';
     const MILLER_MAIL_REAL              = 'tmiller@cameronmch.com';
-    const CHRISHAWVA_SCHIEBER_MAIL_REAL = 'cschieber@cameronmch.com';
-    
+
     public function signatoryProvidersGroup()
     {
         return [
@@ -25,14 +25,14 @@ class CameronLetterProductionValueObject
                 'email'      => self::MILLER_MAIL_REAL,
                 'signature'  => GenerateCameronLetter::MILLER_SIGNATURE,
             ],
-        
+
             [
                 'first_name' => 'Lynn',
                 'last_name'  => 'Faur',
                 'email'      => self::FAUR_MAIL_REAL,
                 'signature'  => GenerateCameronLetter::FAUR_SIGNATURE,
             ],
-        
+
             [
                 'first_name' => 'Brandy',
                 'last_name'  => 'German',
@@ -45,7 +45,7 @@ class CameronLetterProductionValueObject
                 'email'      => self::ANNNE_REITZ_MAIL_REAL,
                 'signature'  => GenerateCameronLetter::MILLER_SIGNATURE,
             ],
-        
+
             [
                 'first_name' => 'Chrishawna',
                 'last_name'  => 'Schieber',

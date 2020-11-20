@@ -15,7 +15,7 @@ class CameronLetterTestValueObject
     const CHRISHAWVA_SCHIEBER_MAIL_TEST = 'chrishawnaTouSchieber@example.com';
     const FAUR_MAIL_TEST                = 'lyunToufaur@example.com';
     const MILLER_MAIL_TEST              = 'tomasTouMiller@example.com';
-    
+
     public function testingData(int $practiceId)
     {
         return [

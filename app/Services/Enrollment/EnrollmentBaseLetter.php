@@ -218,10 +218,10 @@ class EnrollmentBaseLetter extends Controller
     {
         return $this->practiceLetterView->name::signatures($practiceLetter, $this->practice, $this->provider);
     }
-    
+
     /**
      * @param $uiRequests
-     * @param User $userProvider
+     * @param  User  $userProvider
      * @return mixed
      */
     private function getSpecificGroupSignatoryName($uiRequests)
