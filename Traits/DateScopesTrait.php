@@ -29,7 +29,8 @@ trait DateScopesTrait
         $field = 'created_at'
     ) {
         $builder->where(function ($q) use (
-            $field, $date
+            $field,
+            $date
         ) {
             $q->where($field, '>=', $date->copy()->startOfMonth()->toDateTimeString())
                 ->where($field, '<=', $date->copy()->endOfMonth()->toDateTimeString());
@@ -49,10 +50,31 @@ trait DateScopesTrait
         $field = 'created_at'
     ) {
         $builder->where(function ($q) use (
-            $field, $date
+            $field,
+            $date
         ) {
             $q->where($field, '>=', $date->copy()->startOfDay()->toDateTimeString())
                 ->where($field, '<=', $date->copy()->endOfDay()->toDateTimeString());
+        });
+    }
+
+    /**
+     * Wrapper for createdOn Scope for null dates.
+     *
+     * @param $builder
+     * @param Carbon $date
+     * @param string $field
+     */
+    public function scopeCreatedOnIfNotNull(
+        $builder,
+        Carbon $date = null,
+        $field = 'created_at'
+    ) {
+        $builder->when( ! is_null($date), function ($sq) use (
+            $date,
+            $field
+        ) {
+            $sq->createdOn($date, $field);
         });
     }
 

@@ -83,6 +83,7 @@ use Illuminate\Support\Facades\DB;
  * @property int|null               $revision_history_count
  * @property int|null               $chargeable_service_id
  * @property ChargeableService|null $chargeableService
+ * @method   static                 \Illuminate\Database\Eloquent\Builder|Activity createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  */
 class Activity extends BaseModel
 {

@@ -91,6 +91,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method   static                                                                       \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer whereEnrolleeId($value)
  * @property int|null                                                                     $chargeable_service_id
  * @property ChargeableService|null                                                       $chargeableService
+ * @method   static                                                                       \Illuminate\Database\Eloquent\Builder|PageTimer createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  */
 class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
 {
