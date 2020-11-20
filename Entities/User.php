@@ -19,11 +19,13 @@ use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Entities\EndOfMonthCcmStatusLog;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
@@ -63,6 +65,7 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -662,7 +665,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function billableProblems()
     {
         $genericDiabetes = \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', 'Diabetes')->firstOrFail();
-
+        //todo: use billing repo
         return $this->ccdProblems()
             ->whereNotNull('cpm_problem_id')
             ->when($genericDiabetes, function ($p) use ($genericDiabetes) {
@@ -674,6 +677,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function billingCodes(Carbon $monthYear)
     {
+        //todo: replace with revamped code
         $summary = $this->patientSummaries()
             ->where('month_year', $monthYear->toDateString())
             ->with('chargeableServices')
@@ -1251,22 +1255,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->getAgentPhone();
     }
 
-    public function getBhiTime()
+    public function getBhiTime(): int
     {
-        if ($this->relationLoaded('patientSummaries')) {
-            $pms = $this->patientSummaries->where('month_year', '=', now()->startOfMonth())->first();
-            if ($pms) {
-                return $pms->bhi_time ?? 0;
-            }
+        if (is_null($this->id)) {
+            return 0;
         }
 
-        return optional(
-            $this->patientSummaries()
-                ->select(['bhi_time', 'id'])
-                ->orderBy('id', 'desc')
-                ->whereMonthYear(now()->startOfMonth())
-                ->first()
-        )->bhi_time ?? 0;
+        if ( ! $this->isParticipant()) {
+            return 0;
+        }
+
+        return PatientMonthlyServiceTime::bhi($this->id, Carbon::now()->startOfMonth());
     }
 
     public function getBillingProviderId()
@@ -1488,22 +1487,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->patientInfo->ccm_status;
     }
 
-    public function getCcmTime()
+    public function getCcmTime(): int
     {
-        if ($this->relationLoaded('patientSummaries')) {
-            $pms = $this->patientSummaries->where('month_year', '=', now()->startOfMonth())->first();
-            if ($pms) {
-                return $pms->ccm_time ?? 0;
-            }
+        if (is_null($this->id)) {
+            return 0;
         }
 
-        return optional(
-            $this->patientSummaries()
-                ->select(['ccm_time', 'id'])
-                ->orderBy('id', 'desc')
-                ->whereMonthYear(now()->startOfMonth())
-                ->first()
-        )->ccm_time ?? 0;
+        if ( ! $this->isParticipant()) {
+            return 0;
+        }
+
+        return PatientMonthlyServiceTime::ccm($this->id, Carbon::now()->startOfMonth());
     }
 
     public function getConsentDate()
@@ -2026,6 +2020,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->user_registered;
     }
 
+    public function getRpmTime(): int
+    {
+        if (is_null($this->id)) {
+            return 0;
+        }
+
+        return PatientMonthlyServiceTime::rpm($this->id, Carbon::now()->startOfMonth());
+    }
+
     public function getRules()
     {
         return $this->rules;
@@ -2230,15 +2233,23 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     /**
      * Determine whether the User is BHI chargeable (ie. eligible and enrolled).
-     *
-     * @return bool
      */
-    public function isBhi()
+    public function isBhi(): bool
     {
+        if (is_null($this->id)) {
+            return false;
+        }
+
+        if ( ! $this->isParticipant()) {
+            return false;
+        }
+
+        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) && empty($this->getPreferredContactLocation())) {
+            return false;
+        }
+
         return \Cache::remember("user:$this->id:is_bhi", 5, function () {
-            return User::isBhiChargeable()
-                ->where('id', $this->id)
-                ->exists();
+            return PatientIsOfServiceCode::execute($this->id, ChargeableService::BHI);
         });
     }
 
@@ -2272,9 +2283,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole(['care-center', 'care-center-external']);
     }
 
-    public function isCcm()
+    public function isCcm(): bool
     {
-        return $this->ccmNoOfMonitoredProblems() >= 1;
+        if (is_null($this->id)) {
+            return false;
+        }
+
+        if ( ! $this->isParticipant()) {
+            return false;
+        }
+
+        return PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM) || PatientIsOfServiceCode::execute($this->id, ChargeableService::PCM);
     }
 
     public function isCCMCountable(): bool
@@ -2294,12 +2313,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     /**
      * Returns true if the patient has CCM and the patient's practice has G2058 chargeable service code enabled.
-     *
-     * @return bool
      */
-    public function isCcmPlus()
+    public function isCcmPlus(): bool
     {
-        return $this->isCcm() && $this->primaryPractice->hasCCMPlusServiceCode();
+        if (is_null($this->id)) {
+            return false;
+        }
+
+        if ( ! $this->isParticipant()) {
+            return false;
+        }
+
+        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) && empty($this->getPreferredContactLocation())) {
+            return false;
+        }
+
+        return PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM_PLUS_40) || PatientIsOfServiceCode::execute($this->id, ChargeableService::CCM_PLUS_40);
     }
 
     public function isClhCcmAdmin(): bool
@@ -2347,33 +2376,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole('participant');
     }
 
-    public function isPcm()
+    public function isPcm(): bool
     {
-        if ($this->ccmNoOfMonitoredProblems() >= 2) {
+        if (is_null($this->id)) {
             return false;
         }
 
-        return User::whereHas('ccdProblems', function ($q) {
-            $q->where(function ($q) {
-                $q->whereHas('codes', function ($q) {
-                    $q->whereIn('code', function ($q) {
-                        $q->select('code')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
-                    });
-                })->orWhereHas('cpmProblem', function ($q) {
-                    $q->whereIn('default_icd_10_code', function ($q) {
-                        $q->select('code')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
-                    })->orWhereIn('name', function ($q) {
-                        $q->select('description')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
-                    });
-                });
-            })->orWhere(function ($q) {
-                $q->whereIn('name', function ($q) {
-                    $q->select('description')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
-                });
-            });
-        })
-            ->where('id', '=', $this->id)
-            ->exists();
+        return \Cache::remember("user:$this->id:is_pcm", 5, function () {
+            return PatientIsOfServiceCode::execute($this->id, ChargeableService::PCM);
+        });
     }
 
     public function isPracticeStaff(): bool
@@ -2387,6 +2398,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isProvider(): bool
     {
         return $this->hasRole('provider');
+    }
+
+    public function isRpm(): bool
+    {
+        if (is_null($this->id)) {
+            return false;
+        }
+
+        return \Cache::remember("user:$this->id:is_rpm", 5, function () {
+            return PatientIsOfServiceCode::execute($this->id, ChargeableService::RPM);
+        });
     }
 
     /**
@@ -2623,22 +2645,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(PatientNurse::class, 'patient_user_id');
     }
 
-    public function patientProblemsForBillingProcessing(): Collection
-    {
-        if ( ! $this->relationLoaded('ccdProblems')) {
-            $this->load(['ccdProblems' => function ($problems) {
-                $problems->isBillable();
-            }]);
-        }
-
-        return  $this->ccdProblems->map(function (Problem $p) {
-            return (new PatientProblemForProcessing())
-                ->setId($p->id)
-                ->setCode($p->icd10Code())
-                ->setServiceCodes($p->chargeableServiceCodesForLocation($this->patientInfo->preferred_contact_location));
-        });
-    }
-
     public function patientSummaries()
     {
         return $this->hasMany(PatientMonthlySummary::class, 'patient_id');
@@ -2774,6 +2780,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->primaryPractice->cpmSettings();
     }
 
+    public function preferredContactLocationHasServices($chargeableServiceCodes): bool
+    {
+        if ( ! $this->patientInfo) {
+            sendSlackMessage('#cpm_general_alerts', "Patient ({$this->id}) does not have patientInfo attached. Please Investigate");
+
+            return false;
+        }
+
+        return $this->patientInfo->locationHasServices($chargeableServiceCodes);
+    }
+
     public function primaryPractice()
     {
         return $this->belongsTo(Practice::class, 'program_id', 'id');
@@ -2797,7 +2814,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function problemsWithIcd10Code()
     {
         $billableProblems = new Collection();
-
+        //todo: billing repo
         $ccdProblems = $this->ccdProblems()
             ->with('icd10Codes')
             ->with('cpmProblem')
@@ -3133,6 +3150,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function scopeIsBhiChargeable($builder)
     {
+        //todo:deprecate
         return $builder->whereHas(
             'primaryPractice',
             function ($q) {
@@ -4220,6 +4238,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
+    public function shouldShowRpmBadge()
+    {
+        // cache for 24 hours
+        return Cache::remember("{$this->id}_rpm_badge", 60 * 24, function () {
+            return isPatientRpmBadgeEnabled() && $this->isRpm();
+        });
+    }
+
     /**
      * Get the indexable data array for the model.
      *
@@ -4321,6 +4347,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     private function ccmNoOfMonitoredProblems()
     {
+        //todo: replace
         return $this->ccdProblems()
             ->where('is_monitored', 1)
             ->whereHas(
@@ -4362,7 +4389,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
                 return formatPhoneNumberE164($number->number);
             }
-        } catch (NumberParseException $e) {
+        } catch (\libphonenumber\NumberParseException|NumberParseException $e) {
             Log::warning($e->getMessage());
 
             return false;
@@ -4375,7 +4402,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         try {
             return $phoneNumber->isOfCountry('CY');
-        } catch (NumberParseException $e) {
+        } catch (\libphonenumber\NumberParseException|NumberParseException $e) {
             return false;
         }
     }

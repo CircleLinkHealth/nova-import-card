@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\CcmBilling\Database\Seeders\CpmProblemChargeableServiceLocationSeeder;
+use CircleLinkHealth\CcmBilling\Database\Seeders\BillingRevampTableSeeder;
 use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
@@ -39,6 +39,6 @@ class TestSuiteSeeder extends Seeder
         $this->call(CareAmbassadorDefaultScriptsSeeder::class);
         $this->call(UserScopeTestsSeeder::class);
         $this->call(NekatostrasClinicSeeder::class);
-        $this->call(CpmProblemChargeableServiceLocationSeeder::class);
+        $this->call(BillingRevampTableSeeder::class);
     }
 }

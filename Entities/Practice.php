@@ -18,6 +18,7 @@ use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\Eligibility\Entities\RpmProblem;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Log;
@@ -143,6 +144,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Illuminate\Database\Eloquent\Collection|PcmProblem[]                                                                    $pcmProblems
  * @property int|null                                                                                                                 $pcm_problems_count
  * @method   static                                                                                                                   \Illuminate\Database\Eloquent\Builder|Practice hasImportingHookEnabled($hook, $listener)
+ * @property \Illuminate\Database\Eloquent\Collection|RpmProblem[]                                                                    $rpmProblems
+ * @property int|null                                                                                                                 $rpm_problems_count
  */
 class Practice extends BaseModel implements HasMedia
 {
@@ -542,6 +545,11 @@ class Practice extends BaseModel implements HasMedia
         return Practice::getProviders($this->id);
     }
 
+    public function rpmProblems()
+    {
+        return $this->hasMany(RpmProblem::class, 'practice_id');
+    }
+
     public function scopeActive($q)
     {
         return $q->whereActive(1);
@@ -607,12 +615,9 @@ class Practice extends BaseModel implements HasMedia
         return $query->with([
             'patients' => function ($p) use ($startOfMonth) {
                 $p->with([
-                    'patientSummaries' => function ($s) use ($startOfMonth) {
-                        $s->where('month_year', $startOfMonth);
-                    },
-                    'patientInfo.patientCcmStatusRevisions' => function ($r) use ($startOfMonth) {
-                        $r->ofDate($startOfMonth, Carbon::now());
-                    },
+                    'patientSummaries'                      => fn ($pms)                      => $pms->createdOn($startOfMonth, 'month_year'),
+                    'chargeableMonthlySummariesView'        => fn ($s)        => $s->createdOn($startOfMonth, 'chargeable_month'),
+                    'patientInfo.patientCcmStatusRevisions' => fn ($r) => $r->ofDate($startOfMonth, Carbon::now()),
                 ])
                     ->isNotDemo();
             },

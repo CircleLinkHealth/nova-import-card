@@ -73,6 +73,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method   static                                                                                      \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings whereEmailAwvReports($value)
  * @property int|null                                                                                    $revision_history_count
  * @property int                                                                                         $batch_efax_audit_reports
+ * @property int                                                                                         $include_ccda_with_dm
  */
 class Settings extends \CircleLinkHealth\Core\Entities\BaseModel
 {

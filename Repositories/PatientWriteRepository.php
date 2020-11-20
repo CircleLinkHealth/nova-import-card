@@ -64,7 +64,7 @@ class PatientWriteRepository
         if ( ! $args['code']) {
             return;
         }
-
+        //todo: update billing cache
         $newProblem = $patient->ccdProblems()->updateOrCreate([
             'name'           => $args['name'],
             'cpm_problem_id' => empty($args['cpm_problem_id'])

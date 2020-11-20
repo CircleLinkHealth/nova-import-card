@@ -344,12 +344,29 @@ class UserRepository
         }
 
         if ($params->has('careplan_status')) {
+            $approverId = optional(auth()->user())->id;
+            $toUpdate   = [
+                'status' => $cpStatus = $params->get('careplan_status'),
+                'mode'   => $params->get('careplan_mode', CarePlan::WEB),
+            ];
+
+            if (CarePlan::QA_APPROVED === $cpStatus) {
+                $toUpdate['qa_approver_id'] = $approverId;
+                $toUpdate['qa_date']        = Carbon::now()->toDateTimeString();
+            }
+
+            if (CarePlan::RN_APPROVED === $cpStatus) {
+                $toUpdate['rn_approver_id'] = $approverId;
+                $toUpdate['rn_date']        = Carbon::now()->toDateTimeString();
+            }
+
+            if (CarePlan::PROVIDER_APPROVED === $cpStatus) {
+                $toUpdate['provider_approver_id'] = $approverId;
+                $toUpdate['provider_date']        = Carbon::now()->toDateTimeString();
+            }
             CarePlan::updateOrCreate([
                 'user_id' => $user->id,
-            ], [
-                'status' => $params->get('careplan_status'),
-                'mode'   => $params->get('careplan_mode', CarePlan::WEB),
-            ]);
+            ], $toUpdate);
 
             $params->remove('careplan_status');
             $params->remove('careplan_mode');
@@ -383,6 +400,10 @@ class UserRepository
                     $user->patientInfo->$key = $params->get($key);
                 }
             }
+        }
+
+        if ($params->has('empty_location')) {
+            $user->patientInfo->preferred_contact_location = null;
         }
 
         if ($params->has('is_awv')) {

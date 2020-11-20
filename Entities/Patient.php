@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use App\Call;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Customer\LocationServices;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -529,6 +530,21 @@ class Patient extends BaseModel
     public function location()
     {
         return $this->belongsTo(Location::class, 'preferred_contact_location');
+    }
+
+    public function locationHasServices($chargeableServiceCodes): bool
+    {
+        if (is_null($this->preferred_contact_location)) {
+            sendSlackMessage('#billing_alerts', "Patient ({$this->user_id}) does not have location attached. Please investigate");
+
+            return false;
+        }
+
+        if ( ! is_array($chargeableServiceCodes)) {
+            $chargeableServiceCodes = [$chargeableServiceCodes];
+        }
+
+        return LocationServices::hasServiceCodesForMonth($this->preferred_contact_location, $chargeableServiceCodes);
     }
 
     public function notificationsAboutThisPatient()
