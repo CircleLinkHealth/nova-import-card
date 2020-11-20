@@ -8,9 +8,9 @@ namespace CircleLinkHealth\NurseInvoices\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Algorithms\VariablePayCalculator;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
-use CircleLinkHealth\NurseInvoices\TotalTimeAggregator;
-use CircleLinkHealth\NurseInvoices\VariablePayCalculator;
+use CircleLinkHealth\NurseInvoices\Time\TotalTimeAggregator;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,6 +25,15 @@ class GenerateNurseInvoice implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
+    /**
+     * The number of seconds the job can run before timing out.
+     * 20 minutes.
+     *
+     * @var int
+     */
+    public $timeout = 1200;
+
     /**
      * @var Carbon
      */
