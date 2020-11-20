@@ -1,20 +1,22 @@
 <div class="flow-text" style="max-height: 590px;">
-    <div class="header" style="margin-bottom: 20px">
+    <div style="display: inline-flex">
+        <div class="header" style="margin-bottom: 20px">
 
-        <div class="logo">
-            @include('enrollment-letters.practiceLogo')
-        </div>
+            <div class="logo">
+                @include('enrollment-letters.practiceLogo')
+            </div>
 
-        <div class="address" style="max-width: 377px;">
-            @if($extraAddressValuesExists)
-                <br>
-                {{$extraAddressValues[0]['address_line_1']}}
-                <br>
-                {{$extraAddressValues[0]['city']}}
-                {{$extraAddressValues[0]['state']}}
-                <br>
-                {{$extraAddressValues[0]['postal_code']}}
-            @endif
+            <div class="address" style="max-width: 377px;">
+                @if($extraAddressValuesExists)
+                    <br>
+                    {{$extraAddressValues[0]['address_line_1']}}
+                    <br>
+                    {{$extraAddressValues[0]['city']}}
+                    {{$extraAddressValues[0]['state']}}
+                    <br>
+                    {{$extraAddressValues[0]['postal_code']}}
+                @endif
+            </div>
         </div>
     </div>
 
