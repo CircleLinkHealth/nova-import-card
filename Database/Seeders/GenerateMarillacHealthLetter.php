@@ -15,7 +15,7 @@ use Illuminate\Database\Seeder;
 class GenerateMarillacHealthLetter extends Seeder
 {
     const SIGNATORY_NAME = 'Crystal Owens, MD <br> Chief Medical Officer, MarillacHealth';
-    
+
     /**
      * Run the database seeds.
      *
@@ -28,7 +28,7 @@ class GenerateMarillacHealthLetter extends Seeder
         $practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
         $marillacPractice     = $this->getPractice();
-        
+
         $bodyPageOne = "
 
 <p>Marillac Health has invested in a new Personalized Care Program to help patients get care at home, which is especially important given current events, and I'm inviting you to join.</p>
@@ -50,7 +50,7 @@ class GenerateMarillacHealthLetter extends Seeder
 <p>I look forward to having you join this program to continue keeping you healthy between office visits.</p>
 <p>Sincerely,</p>
 <p>$customerSignaturePic<br />$signatoryName<br/></p>";
-        
+
         EnrollmentInvitationLetter::updateOrCreate(
             [
                 'practice_id' => $marillacPractice->id,
@@ -67,7 +67,7 @@ class GenerateMarillacHealthLetter extends Seeder
                         ],
                     ]
                 ),
-                
+
                 'ui_requests' => json_encode([
                     'logo_position'        => 'text-align:left',
                     'extra_address_header' => [
@@ -82,11 +82,11 @@ class GenerateMarillacHealthLetter extends Seeder
             ]
         );
     }
-    
+
     private function getPractice()
     {
         $marillacPractice = Practice::where('name', '=', 'marillac-clinic-inc')->first();
-        
+
         if ( ! App::environment(['production'])) {
             $marillacPractice = Practice::firstOrCreate(
                 [
@@ -105,7 +105,7 @@ class GenerateMarillacHealthLetter extends Seeder
         if ( ! $marillacPractice) {
             throw new Exception('Marillac Health Practice not found in Practices');
         }
-        
+
         return $marillacPractice;
     }
 }
