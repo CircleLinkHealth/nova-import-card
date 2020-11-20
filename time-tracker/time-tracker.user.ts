@@ -174,14 +174,18 @@ export default class TimeTrackerUser {
         this.LOGOUT_TIMEOUT_CALL_MODE = Math.ceil(options.logoutTimeoutCallMode) || this.LOGOUT_TIMEOUT_CALL_MODE;
     }
 
-    findActivity(info: { isFromCaPanel?: boolean; activity: string; enrolleeId?: string | number; chargeableServiceId: number }) {
+    findActivity(info: { isFromCaPanel?: boolean; activity: string; enrolleeId?: string | number; chargeableServiceId: number; startTime: string }) {
         if (info.isFromCaPanel) {
             return this.activities.find(item => item.name == info.activity && item.enrolleeId == info.enrolleeId);
         }
-        return this.activities.find(item => {
+        const result = this.activities.find(item => {
             return (item.name == info.activity)
                 && (item.chargeableServiceId === info.chargeableServiceId)
         });
+        if (result && !result.start_time) {
+            result.start_time = info.startTime;
+        }
+        return result;
     }
 
     changeChargeableService(info) {
@@ -208,8 +212,7 @@ export default class TimeTrackerUser {
         const existing = this.chargeableServices.find(item => item.chargeable_service.id === id);
         if (existing) {
             existing.total_time += durationSeconds;
-        }
-        else {
+        } else {
             this.chargeableServices.push({
                 patient_user_id: Number(this.patientId),
                 total_time: durationSeconds,
@@ -410,6 +413,13 @@ export default class TimeTrackerUser {
         });
     }
 
+    resetStartTimeAndDurationOnActivities() {
+        this.activities.forEach(activity => {
+            activity.duration = 0;
+            activity.start_time = null;
+        });
+    }
+
     sync() {
         this.allSockets.forEach(ws => {
             let totalSeconds = 0;
@@ -528,12 +538,7 @@ export default class TimeTrackerUser {
          */
         this.inactiveSeconds = 0;
         this.resetTimeForChargeableServices();
-
-        //CPM-176 Call mode turns off when switching screens
-        //this.activities = [];
-        this.activities.forEach(activity => {
-            activity.duration = 0
-        });
+        this.resetStartTimeAndDurationOnActivities();
 
         this.isLoggingOut = null
     }
@@ -562,7 +567,8 @@ export default class TimeTrackerUser {
             const activity = this.findActivity({
                 activity: info.modifyFilter,
                 enrolleeId: info.enrolleeId,
-                chargeableServiceId: info.chargeableServiceId
+                chargeableServiceId: info.chargeableServiceId,
+                startTime: info.startTime
             })
             if (activity) {
                 activity.name = info.activity;

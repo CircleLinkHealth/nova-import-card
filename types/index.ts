@@ -32,6 +32,7 @@ export interface TimeTrackerInfo {
     chargeableServiceId: number;
     modify?: boolean;
     modifyFilter?: string;
+    startTime: string;
 }
 
 export interface Activity {

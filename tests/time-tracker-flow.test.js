@@ -390,4 +390,51 @@ describe('TimeTrackerFlow', () => {
             assert.equal(user.totalSeconds, 30)
         })
     })
+
+    describe('Activity Start Time', () => {
+
+        const startTime1 = '2017-11-21 04:01:10';
+        const startTime2 = '2017-11-21 06:01:10';
+
+        const timeTracker = new TimeTracker()
+        const info1 = { ...info, ...{ patientId: 1, chargeableServiceId: 1, startTime: startTime1 } };
+        const info2 = { ...info, ...{ patientId: 1, chargeableServiceId: 1, startTime: startTime2 } };
+        const user = timeTracker.get(info1);
+
+        it('should set new start time of activity with new websocket connection', () => {
+            user.start(info1, ws);
+            const activity = user.findActivity(info1);
+            activity.duration += 30;
+
+            const originalStartTime = activity.start_time;
+            assert.equal(originalStartTime, startTime1);
+
+            user.exit();
+            user.close();
+
+            user.start(info2, ws);
+            const sameActivity = user.findActivity(info2);
+            sameActivity.duration += 40;
+
+            assert.equal(sameActivity.start_time, startTime2);
+            assert.notEqual(originalStartTime, sameActivity.start_time);
+        });
+
+        it('should keep same start time of activity if no new websocket connection', () => {
+            user.start(info1, ws);
+            const activity = user.findActivity(info1);
+            activity.duration += 30;
+
+            const originalStartTime = activity.start_time;
+            assert.equal(originalStartTime, startTime1);
+
+            user.start(info2, ws);
+            const sameActivity = user.findActivity(info2);
+            sameActivity.duration += 40;
+
+            assert.equal(sameActivity.start_time, startTime1);
+            assert.notEqual(sameActivity.start_time, startTime2);
+            assert.equal(originalStartTime, sameActivity.start_time);
+        });
+    });
 })

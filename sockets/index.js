@@ -221,7 +221,6 @@ module.exports = app => {
     function closeSessionAndPostToCPM(user, ws) {
         user.exit(ws);
         if (user.allSockets.length === 0) {
-            //no active sessions
             user.sendToCpm(true);
             user.close();
         }
