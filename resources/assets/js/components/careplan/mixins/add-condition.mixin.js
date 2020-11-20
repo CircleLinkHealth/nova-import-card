@@ -24,30 +24,6 @@ export default {
         }
     },
     methods: {
-        /**
-         * is patient BHI, CCM or BOTH?
-         */
-        checkPatientBehavioralStatus() {
-            const problems = this.problems || [];
-            const cpmProblems = this.getAddConditionCpmProblems() || [];
-
-            const ccmCount = problems.filter(problem => {
-                if (problem.is_monitored) {
-                    const cpmProblem = cpmProblems.find(cpm => cpm.id == problem.cpm_id)
-                    return cpmProblem ? !cpmProblem.is_behavioral : false
-                }
-                return false
-            }).length;
-            const bhiCount = problems.filter(problem => {
-                const cpmProblem = cpmProblems.find(cpm => cpm.id == problem.cpm_id)
-                return cpmProblem ? cpmProblem.is_behavioral : false
-            }).length
-            console.log('ccm', ccmCount, 'bhi', bhiCount)
-            Event.$emit('careplan:bhi', {
-                hasCcm: ccmCount > 0,
-                hasBehavioral: bhiCount > 0
-            })
-        },
         getSystemCodes() {
             let codes = this.careplan().allCpmProblemCodes || null
 
@@ -62,16 +38,16 @@ export default {
                 console.error('full-conditions:get-system-codes', err)
             })
         },
-        getAddConditionCpmProblems(){
-            if(! this.cpmProblems){
+        getAddConditionCpmProblems() {
+            if (!this.cpmProblems) {
                 return this.careplan().allCpmProblems || [];
-            }else{
+            } else {
                 return this.cpmProblems;
             }
         }
     },
     mounted() {
-        if (this.patientId){
+        if (this.patientId) {
             this.patient_id = this.patientId;
         }
 

@@ -8,15 +8,21 @@ namespace App\Services;
 
 use App\Reports\OpsDashboardPracticeReportData;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
+use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Support\Facades\DB;
 
 class OpsDashboardReport
 {
     const DEFAULT_TIME_GOAL = '35';
+
+    protected bool $billingRevampIsEnabled;
 
     /**
      * @var
@@ -138,6 +144,15 @@ class OpsDashboardReport
         });
     }
 
+    private function billingRevampIsEnabled(): bool
+    {
+        if ( ! isset($this->billingRevampIsEnabled)) {
+            $this->billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
+        }
+
+        return $this->billingRevampIsEnabled;
+    }
+
     /**
      * @param bool $patientWasEnrolledPriorDay
      */
@@ -237,7 +252,9 @@ class OpsDashboardReport
         if ( ! empty($alerts)) {
             $watchers = opsDashboardAlertWatchers();
             $message  = "$watchers Warning! The following discrepancies were found for Ops dashboard report for {$this->date->toDateString()} and Practice '{$this->practice->display_name}'. \n".implode("\n", $alerts);
-            sendSlackMessage('#ops_dashboard_alerts', $message);
+
+            //todo: investigate in separate ticket - trigger table has constant discrepancies.
+//            sendSlackMessage('#ops_dashboard_alerts', $message);
         }
 
         return $this->report->toArray();
@@ -297,17 +314,28 @@ class OpsDashboardReport
                     }
                 }
 
-                $pms = $patient->patientSummaries->first();
-                if ($pms) {
-                    $totalCcmTime[] = $pms->ccm_time;
-                    $this->report->incrementTimeRangeCount($pms);
+                $patientSummaries = $this->billingRevampIsEnabled() ? $patient->chargeableMonthlySummariesView : $patient->patientSummaries;
+                if ($patientSummaries->isNotEmpty()) {
+                    if ($this->billingRevampIsEnabled()) {
+                        [$ccmSummaries, $bhiSummaries] = $patientSummaries->partition(function (ChargeablePatientMonthlySummaryView $summary) {
+                            return ChargeableService::BHI !== $summary->chargeable_service_code;
+                        });
+                        $ccmTime = $ccmSummaries->sum('total_time');
+                        $bhiTime = $bhiSummaries->sum('total_time');
+                    } else {
+                        $summary = $patientSummaries->first();
+                        $ccmTime = $summary->ccm_time ?? 0;
+                        $bhiTime = $summary->bhi_time ?? 0;
+                    }
+                    
+                    $this->report->incrementTimeRangeCount($ccmTime, $bhiTime);
                 } else {
+                    $toggle = $this->billingRevampIsEnabled() ? 'on' : 'off';
+                    sendSlackMessage('#billing_alerts', "Warning! (OpsDashboard Report:) No summaries found for Patient:{$patient->id}. Billing Revamp is {$toggle}");
                     $this->report->incrementZeroMinsCount();
                 }
             }
             $this->categorizePatientByStatusUsingRevisions($patient);
-            //categorize so we can count for totals as well. Obviously we could have used collection->whereStatus on patient collection
-            //but since we are looping the patient collection here, categorize so we can count to help with performance
             $this->categorizePatientByStatusUsingPatientInfo($patient, $patientWasEnrolledPriorDay);
         }
 

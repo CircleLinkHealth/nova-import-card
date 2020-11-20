@@ -11,7 +11,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -248,6 +247,16 @@ if ( ! function_exists('sendSlackMessage')) {
         }
 
         SendSlackMessage::dispatch($to, $message)->onQueue('default');
+    }
+}
+
+if ( ! function_exists('forceSendSlackNotifications')) {
+    /**
+     * @return mixed
+     */
+    function forceSendSlackNotifications()
+    {
+        return filter_var(AppConfig::pull('force_send_slack_notifications', false), FILTER_VALIDATE_BOOLEAN);
     }
 }
 
@@ -1734,15 +1743,17 @@ if ( ! function_exists('getModelFromTable')) {
 if ( ! function_exists('measureTime')) {
     function measureTime($desc, $func)
     {
-        $startTime = Carbon::now()->toTimeString();
-        $start     = microtime(true);
+        /** @var Carbon $startTime */
+        $startTime = now();
 
         $result = $func();
 
-        $endTime = Carbon::now()->toTimeString();
-        $sec     = microtime(true) - $start;
-        $secInt  = intval($sec);
-        echo "$desc: $secInt seconds | Start: $startTime | End: $endTime\n";
+        /** @var Carbon $endTime */
+        $endTime  = now();
+        $ms       = $endTime->diffInMilliseconds($startTime);
+        $startStr = $startTime->toTimeString();
+        $endStr   = $endTime->toTimeString();
+        echo "$desc: $ms ms | Start: $startStr | End: $endStr\n";
 
         return $result;
     }
@@ -1808,6 +1819,23 @@ if ( ! function_exists('isPatientPcmBadgeEnabled')) {
     function isPatientPcmBadgeEnabled(): bool
     {
         $key = 'enable_patient_pcm_badge';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            return AppConfig::set($key, true);
+        }
+
+        return $val;
+    }
+}
+
+if ( ! function_exists('isPatientRpmBadgeEnabled')) {
+    /**
+     * Key: enable_patient_pcm_badge
+     * Default: true.
+     */
+    function isPatientRpmBadgeEnabled(): bool
+    {
+        $key = 'enable_patient_rpm_badge';
         $val = AppConfig::pull($key, null);
         if (null === $val) {
             return AppConfig::set($key, true);
@@ -2151,33 +2179,6 @@ if ( ! function_exists('minDaysPastForCareAmbassadorNextAttempt')) {
         $key = 'min_days_past_for_care_ambassador_next_attempt';
 
         return (int) AppConfig::pull($key, 3);
-    }
-}
-if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
-    /**
-     * @param mixed $practiceId
-     */
-    function complexAttestationRequirementsEnabledForPractice($practiceId): bool
-    {
-        $key = 'complex_attestation_requirements_for_practice';
-
-        $val = AppConfig::pull($key, null);
-        if (null === $val) {
-            AppConfig::set($key, '');
-
-            $practiceIds = [];
-        } else {
-            $practiceIds = explode(',', $val);
-        }
-
-        return in_array($practiceId, $practiceIds) || in_array('all', $practiceIds);
-    }
-}
-
-if ( ! function_exists('isCpm')) {
-    function isCpm()
-    {
-        return 'CarePlan Manager' === config('app.name');
     }
 }
 

@@ -8,6 +8,7 @@ namespace App\Services;
 
 use App\Call;
 use App\CallViewNurses;
+use App\Jobs\ProcessPostmarkInboundMailJob;
 
 class CallService
 {
@@ -21,7 +22,7 @@ class CallService
     public function filterCalls($dropdownStatus, $filterPriority, string $today, $nurseId)
     {
         $calls = CallViewNurses::where('nurse_id', '=', $nurseId)
-            ->where('patient_assigned_nurse_id', '=', $nurseId);
+            ->whereIn('patient_assigned_nurse_id', [$nurseId, ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL]);
 
         if ('completed' === $dropdownStatus && 'all' === $filterPriority) {
             $calls->whereIn('status', [Call::REACHED, Call::DONE]);

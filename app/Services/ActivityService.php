@@ -11,10 +11,12 @@ use App\Repositories\CallRepository;
 use App\Repositories\Eloquent\ActivityRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Customer\LocationServices;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Nurseinvoices\TimeSplitter;
+use CircleLinkHealth\Nurseinvoices\Time\TimeSplitter;
+use Illuminate\Support\Facades\Log;
 
 class ActivityService
 {
@@ -132,56 +134,61 @@ class ActivityService
         }
     }
 
-    public function separateDurationForEachChargeableServiceId(User $patient, $duration, $isBehavioralActivity = false): array
+    public function separateDurationForEachChargeableServiceId(User $patient, $duration, int $chargeableServiceId = -1): array
     {
-        if ($isBehavioralActivity) {
-            $id = $this->getChargeServiceIdByCode($patient, ChargeableService::BHI);
+        $cs = $this->getChargeableServiceById($patient, $chargeableServiceId);
+        if ( ! $cs) {
+            Log::warning("ActivityService::getChargeableServiceById: Could not get chargeableService for patient[$patient->id] and csId[$chargeableServiceId]");
 
-            return [new ChargeableServiceDuration($id, $duration)];
+            return [new ChargeableServiceDuration(null, $duration)];
         }
 
-        if ($patient->isPcm()) {
-            $id = $this->getChargeServiceIdByCode($patient, ChargeableService::PCM);
-
-            return [new ChargeableServiceDuration($id, $duration)];
-        }
-
-        if ($patient->isCcm()) {
+        if (ChargeableService::CCM === $cs->code) {
             if ( ! $patient->isCcmPlus()) {
-                $id = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM);
-
-                return [new ChargeableServiceDuration($id, $duration)];
+                return [new ChargeableServiceDuration($chargeableServiceId, $duration)];
             }
 
             $currentTime = $patient->getCcmTime();
             $splitter    = new TimeSplitter();
-            $slots       = $splitter->split($currentTime, $duration, false, false);
+            $slots       = $splitter->split($currentTime, $duration, false, true, true);
 
             $result = [];
             if ($slots->towards20) {
-                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM);
-                $result[] = new ChargeableServiceDuration($id, $slots->towards20);
+                $result[] = new ChargeableServiceDuration($chargeableServiceId, $slots->towards20);
             }
 
             if ($slots->after20) {
-                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM_PLUS_40);
+                $id       = $this->getChargeableServiceIdByCode($patient, ChargeableService::CCM_PLUS_40);
                 $result[] = new ChargeableServiceDuration($id, $slots->after20);
             }
 
             if ($slots->after40 || $slots->after60) {
-                $id       = $this->getChargeServiceIdByCode($patient, ChargeableService::CCM_PLUS_60);
+                $id       = $this->getChargeableServiceIdByCode($patient, ChargeableService::CCM_PLUS_60);
                 $result[] = new ChargeableServiceDuration($id, $slots->after40 + $slots->after60);
             }
 
             return $result;
         }
 
-        $gcm = $this->getChargeServiceIdByCode($patient, ChargeableService::GENERAL_CARE_MANAGEMENT);
-        if ($gcm) {
-            $result[] = new ChargeableServiceDuration($gcm, $duration);
+        if (ChargeableService::RPM === $cs->code) {
+            $currentTime = $patient->getRpmTime();
+            $splitter    = new TimeSplitter();
+            $slots       = $splitter->split($currentTime, $duration, false, true, false);
+
+            $result = [];
+            if ($slots->towards20) {
+                $result[] = new ChargeableServiceDuration($chargeableServiceId, $slots->towards20);
+            }
+
+            if ($slots->after20 || $slots->after40 || $slots->after60) {
+                $id       = $this->getChargeableServiceIdByCode($patient, ChargeableService::RPM40);
+                $result[] = new ChargeableServiceDuration($id, $slots->after20 + $slots->after40 + $slots->after60);
+            }
+
+            return $result;
         }
 
-        return [new ChargeableServiceDuration(null, $duration)];
+        return [new ChargeableServiceDuration($cs->id, $duration, ChargeableService::BHI === $cs->code)];
     }
 
     /**
@@ -200,7 +207,45 @@ class ActivityService
         return $this->repo->totalCCMTime([$patientId], $monthYear)->pluck('total_time', 'patient_id');
     }
 
-    private function getChargeServiceIdByCode(User $patient, string $code): ?int
+    public function totalTimeForChargeableServiceId(int $patientId, int $chargeableServiceId, Carbon $monthYear = null)
+    {
+        $cs     = ChargeableService::cached();
+        $csCode = $cs->firstWhere('id', '=', $chargeableServiceId)->code;
+        switch ($csCode) {
+            case ChargeableService::CCM:
+            case ChargeableService::CCM_PLUS_40:
+            case ChargeableService::CCM_PLUS_60:
+                $csFiltered = $cs
+                    ->filter(fn ($cs) => in_array($cs->code, [ChargeableService::CCM, ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60]));
+                break;
+            case ChargeableService::BHI:
+                $csFiltered = $cs->filter(fn ($cs) => ChargeableService::BHI === $cs->code);
+                break;
+            case ChargeableService::PCM:
+                $csFiltered = $cs->filter(fn ($cs) => ChargeableService::PCM === $cs->code);
+                break;
+            case ChargeableService::RPM:
+            case ChargeableService::RPM40:
+                $csFiltered = $cs
+                    ->filter(fn ($cs) => in_array($cs->code, [ChargeableService::RPM, ChargeableService::RPM40]));
+                break;
+            case ChargeableService::GENERAL_CARE_MANAGEMENT:
+                $csFiltered = $cs->filter(fn ($cs) => ChargeableService::GENERAL_CARE_MANAGEMENT === $cs->code);
+                break;
+            default:
+                $csFiltered = collect();
+                break;
+        }
+
+        return $this->repo->totalTimeForChargeableServiceIds($patientId, $csFiltered->pluck('id')->toArray(), $monthYear);
+    }
+
+    private function getChargeableServiceById(User $patient, int $id): ?ChargeableService
+    {
+        return LocationServices::getUsingServiceId($patient, $id, Carbon::now()->startOfMonth());
+    }
+
+    private function getChargeableServiceIdByCode(User $patient, string $code): ?int
     {
         return optional($patient
             ->primaryPractice

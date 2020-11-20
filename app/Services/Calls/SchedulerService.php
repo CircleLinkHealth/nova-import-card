@@ -8,11 +8,12 @@ namespace App\Services\Calls;
 
 use App\Algorithms\Calls\NurseFinder\NurseFinderEloquentRepository;
 use App\Call;
-use App\Events\CallIsReadyForAttestedProblemsAttachment;
+use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Note;
 use App\Policies\CreateNoteForPatient;
 use App\Services\NoteService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Events\NurseAttestedToPatientProblems;
 use CircleLinkHealth\CcmBilling\Events\PatientSuccessfulCallCreated;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\Family;
@@ -27,6 +28,7 @@ class SchedulerService
 {
     const CALL_BACK_TYPE                              = 'Call Back';
     const CALL_TYPE                                   = 'call';
+    const NURSE_NOT_FOUND                             = 'could not find nurse for patient';
     const PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE = 'Provider Request For Care Plan Approval';
     const SCHEDULE_NEXT_CALL_PER_PATIENT_SMS          = 'Schedule Next Call per patient\'s SMS';
     const TASK_TYPE                                   = 'task';
@@ -384,12 +386,12 @@ class SchedulerService
      *
      * @throws \Exception
      */
-    public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null): Call
+    public function scheduleAsapCallbackTask(User $patient, $taskNote, $scheduler, $phoneNumber = null, string $taskSubType): Call
     {
         // check if there is already a task scheduled
         /** @var Call $existing */
         $existing = Call::where('type', '=', SchedulerService::TASK_TYPE)
-            ->where('sub_type', '=', SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS)
+            ->where('sub_type', '=', $taskSubType)
             ->where('status', '=', Call::SCHEDULED)
             ->where('inbound_cpm_id', '=', $patient->id)
             ->first();
@@ -402,24 +404,46 @@ class SchedulerService
             return $existing;
         }
 
-        $scheduledDate = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
-            $patient->patientInfo,
-            now()
-        );
+        $scheduledDate = [
+            'day' => Carbon::now()->toDateTimeString(),
+        ];
 
-        if ( ! $nurseId = app(NurseFinderEloquentRepository::class)->find($patient->id) ?? StandByNurseUser::id()) {
-            throw new \Exception("could not find nurse for patient[$patient->id]");
+        if ( ! ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL === $scheduler) {
+            $scheduledDate = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
+                $patient->patientInfo,
+                now()
+            );
         }
 
-        $nowString = now()->toDateTimeString();
+        $nurseId                    = null;
+        $nurseFinderRepository      = app(NurseFinderEloquentRepository::class);
+        $assignedNurse              = optional($nurseFinderRepository->assignedNurse($patient->id))->permanentNurse;
+        $schedulerIsInboundCallback = ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL === $scheduler;
+
+        if ( ! $assignedNurse) {
+            $standByNurseId = StandByNurseUser::id();
+            if ( ! $standByNurseId) {
+                $message = self::NURSE_NOT_FOUND;
+                throw new \Exception("$message [$patient->id]");
+            }
+            $nurseId = $standByNurseId;
+            if ($schedulerIsInboundCallback) {
+                $nurseFinderRepository->assign($patient->id, $standByNurseId);
+            }
+        } else {
+            $nurseId = $assignedNurse->id;
+        }
+
+        $now              = now();
+        $callbackDateTime = $now->toDateString().' '.$now->format('g:i A');
 
         return Call::create(
             [
                 'type'                  => SchedulerService::TASK_TYPE,
-                'sub_type'              => SchedulerService::SCHEDULE_NEXT_CALL_PER_PATIENT_SMS,
+                'sub_type'              => $taskSubType,
                 'status'                => Call::SCHEDULED,
-                'attempt_note'          => "Email/SMS Response at $nowString: $taskNote",
-                'scheduler'             => $scheduler,
+                'attempt_note'          => "Email/SMS Response at $callbackDateTime: $taskNote",
+                'scheduler'             => $schedulerIsInboundCallback ? $nurseId : $scheduler,
                 'is_manual'             => false,
                 'inbound_phone_number'  => $phoneNumber ?? '',
                 'outbound_phone_number' => '',
@@ -439,12 +463,11 @@ class SchedulerService
      * @param $scheduler
      *
      * @throws \Exception
-     *
      * @return Call|\Illuminate\Database\Eloquent\Model
      */
-    public function scheduleAsapCallbackTaskFromSms(User $patient, $phoneNumber, $taskNote, $scheduler)
+    public function scheduleAsapCallbackTaskFromSms(User $patient, $phoneNumber, $taskNote, $scheduler, string $subType)
     {
-        return $this->scheduleAsapCallbackTask($patient, $taskNote, $scheduler, $phoneNumber);
+        return $this->scheduleAsapCallbackTask($patient, $taskNote, $scheduler, $phoneNumber, $subType);
     }
 
     public function scheduledCallQuery(User $patient)
@@ -716,10 +739,14 @@ class SchedulerService
             );
         }
 
-        //If this is the first call being created for the month, the patient might not have a summary - which gets created on the 'saved' event of the call
-        //So we are dispatching an event with a delayed job to make sure that the summary will be created before we attach the problems
         if ($attestedProblems) {
-            event(new CallIsReadyForAttestedProblemsAttachment($call, $attestedProblems));
+            event(
+                new NurseAttestedToPatientProblems(
+                    collect($attestedProblems)->flatten()->toArray(),
+                    auth()->id(),
+                    $call->id
+                )
+            );
         }
 
         if (Call::REACHED === $call->status) {

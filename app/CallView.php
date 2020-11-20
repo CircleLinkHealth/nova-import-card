@@ -6,8 +6,10 @@
 
 namespace App;
 
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Core\Entities\SqlViewModel;
 use CircleLinkHealth\Core\Filters\Filterable;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
 /**
  * App\CallView.
@@ -88,19 +90,31 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property string|null                                                                                 $bhi_total_time
  * @property string|null                                                                                 $pcm_total_time
  * @property string|null                                                                                 $rpm_total_time
+ * @property string|null                                                                                 $pms_ccm_time
+ * @property int|null                                                                                    $pms_bhi_time
+ * @property int|null                                                                                    $pms_no_of_calls
+ * @property int|null                                                                                    $pms_no_of_successful_calls
  * @property int|null                                                                                    $total_no_of_calls
  * @property int|null                                                                                    $total_no_of_successful_calls
  */
 class CallView extends SqlViewModel
 {
     use Filterable;
+    const TABLE = 'calls_view';
+
+    const TABLE_TO_DEPRECATE = 'calls_view_to_deprecate';
 
     public $phi = [
         'patient',
         'state',
     ];
 
-    protected $table = 'calls_view';
+    protected $table = self::TABLE;
+
+    public function getTable()
+    {
+        return Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) ? self::TABLE : self::TABLE_TO_DEPRECATE;
+    }
 
     public function preferredCallDaysToString()
     {

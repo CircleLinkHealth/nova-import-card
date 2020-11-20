@@ -90,24 +90,26 @@
                     </div>
                 </div>
 
-                @if ($patient->isCcm() && $patient->isBhi())
-                    <div class="form-block col-md-6">
-                        <div class="row">
-                            <label class="col-md-12" for="is_behavioral">Activity Type</label>
-                            <div class="col-sm-6">
-                                <input type="radio" name="is_behavioral" style="display:inline" value="0"
-                                        {{! old('is_behavioral') ? 'checked' : ''}}/> CCM Time
-
+                <div class="form-block col-md-6">
+                    <div class="row">
+                        <label class="col-md-12">Activity Type</label>
+                        @foreach($chargeableServices as $chargeableService)
+                            <div class="{{ 'col-sm-'. (count($chargeableServices) === 3 ? '4' : (count($chargeableServices) === 2 ? '6' : '12' )) }}">
+                                <input type="radio"
+                                       name="chargeable_service_id"
+                                       required
+                                       style="display:inline"
+                                       value="{{ $chargeableService->chargeable_service_id  }}"
+                                        {{
+                                            $chargeableService->chargeable_service_id == old('chargeable_service_id') ||
+                                            (empty(old('chargeable_service_id')) && $loop->index === 0)
+                                            ? 'checked' : ''
+                                        }}/>
+                                {{ $chargeableService->chargeable_service_name  }}
                             </div>
-                            <div class="col-sm-6">
-                                <input type="radio" name="is_behavioral" style="display:inline"
-                                       value="1" {{old('is_behavioral') ? 'checked' : ''}}/>
-                                BHI Time
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
-                @endif
-
+                </div>
 
                 <div class="form-block col-md-12">
                     <div class="row">

@@ -82,7 +82,7 @@
                                             <div class="form-group">
                                                 <div class="col-sm-12">
                                                     <label for="activityValue">
-                                                        For how long?
+                                                        For how long? (Minutes)
                                                     </label>
                                                 </div>
                                                 <div class="form-group col-sm-4">
@@ -97,6 +97,25 @@
                                 </div>
                             </div>
                         </div>
+
+                        @if(!empty($activity['chargeable_service_id']))
+                        <div class="form-block col-md-6">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>
+                                        <input type="radio"
+                                               disabled
+                                               name="chargeable_service_id"
+                                               style="display:inline"
+                                               value="{{ $activity['chargeable_service_id'] }}"
+                                               checked/>
+                                        {{ $activity['chargeable_service_name']  }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
                         <div class="new-activity-item">
                             <div class="form-group">
                                 <div class="col-sm-12">

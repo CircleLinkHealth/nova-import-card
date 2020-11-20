@@ -10,6 +10,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CallView extends JsonResource
 {
+    private static bool $billingRevampIsEnabled;
+
     /**
      * Transform the resource into an array.
      *
@@ -31,9 +33,11 @@ class CallView extends JsonResource
             'preferred_contact_language' => $this->preferred_contact_language,
             'scheduled_date'             => presentDate($this->scheduled_date, false),
             'last_call'                  => presentDate($this->last_call),
-            'ccm_time'                   => $this->ccm_time,
-            'bhi_time'                   => $this->bhi_time,
-            'no_of_successful_calls'     => $this->no_of_successful_calls,
+            'ccm_total_time'             => $this->ccm_total_time,
+            'bhi_total_time'             => $this->bhi_total_time,
+            'pcm_total_time'             => $this->pcm_total_time,
+            'rpm_total_time'             => $this->rpm_total_time,
+            'no_of_successful_calls'     => $this->total_no_of_successful_calls,
             'practice_id'                => $this->practice_id,
             'practice'                   => $this->practice,
             'state'                      => $this->state,

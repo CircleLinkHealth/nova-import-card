@@ -9,7 +9,7 @@ namespace App\Reports;
 use App\Constants;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\AggregatedTotalTimePerNurse;
+use CircleLinkHealth\NurseInvoices\Time\AggregatedTotalTimePerNurse;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 
 class NurseDailyReport
