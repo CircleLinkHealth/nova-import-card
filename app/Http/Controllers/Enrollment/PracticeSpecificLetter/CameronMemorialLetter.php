@@ -75,22 +75,21 @@ class CameronMemorialLetter extends EnrollmentLetterDefaultConfigs implements Se
 
     public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string
     {
-        $practiceSigSrc = '';
-        $uiRequests     = json_decode($practiceLetter->ui_requests);
+        $uiRequests = json_decode($practiceLetter->ui_requests);
         if ( ! empty($uiRequests)) {
             $millersTeam = LettersHelper::getUiRequestDataFor($uiRequests, GenerateCameronLetter::MILLER_SIGNATURE);
             $faursTeam   = LettersHelper::getUiRequestDataFor($uiRequests, GenerateCameronLetter::FAUR_SIGNATURE);
 
             if (in_array($provider->id, $millersTeam)) {
-                $practiceSigSrc = "'<img src='/img/signatures/cameron-memorial/millers_signature.png' alt='$practice->dipslay_name' style='max-width: 17%;'/>";
+                return "'<img src='/img/signatures/cameron-memorial/millers_signature.png' alt='$practice->dipslay_name' style='max-width: 17%;'/>";
             }
 
             if (in_array($provider->id, $faursTeam)) {
-                $practiceSigSrc = "</img/signatures/cameron-memorial/faurs_signature.png' alt='$practice->dipslay_name' style='max-width: 17%;'/>";
+                return "</img/signatures/cameron-memorial/faurs_signature.png' alt='$practice->dipslay_name' style='max-width: 17%;'/>";
             }
         }
 
-        return $practiceSigSrc;
+        return $practice->display_name;
     }
 
     /**

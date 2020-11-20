@@ -188,7 +188,7 @@ class EnrollmentBaseLetter extends Controller
 
         if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP === $practiceLetter->customer_signature_src) {
             $uiRequests    = json_decode($practiceLetter->ui_requests);
-            $signatoryName = $this->getSpecificGroupSignatoryName($uiRequests, $provider);
+            $signatoryName = $this->getSpecificGroupSignatoryName($uiRequests);
         }
 
         // order has to be the same as the $varsToBeReplaced
@@ -224,9 +224,9 @@ class EnrollmentBaseLetter extends Controller
      * @param User $userProvider
      * @return mixed
      */
-    private function getSpecificGroupSignatoryName($uiRequests, User $userProvider)
+    private function getSpecificGroupSignatoryName($uiRequests)
     {
-        return $this->practiceLetterView->name::groupSharedSignatoryName($uiRequests, $userProvider);
+        return $this->practiceLetterView->name::groupSharedSignatoryName($uiRequests, $this->provider);
     }
 
     /**
