@@ -43,6 +43,29 @@ class PatientTimeAndCalls
             ->returnTimeAndCalls();
     }
 
+    private function callsForPatient(int $patientId): Collection
+    {
+        return $this->calls->where('inbound_cpm_id', $patientId)
+            ->filter(function ($c) {
+                return is_null($c->type) || 'call' === $c->type || 'Call Back' === $c->sub_type;
+            });
+    }
+
+    private function formatAndReturnData(): array
+    {
+        return collect($this->returnTimeAndCalls())->map(function ($item, $key) {
+            return (new \App\ValueObjects\PatientTimeAndCalls())
+                ->setPatientId($key)
+                ->fromArray();
+        });
+    }
+
+    private function returnTimeAndCalls(): array
+    {
+        //todo: add json resource
+        return $this->patientTimeAndCalls;
+    }
+
     private function setActivities(): self
     {
         $this->activities = Activity::whereIn('patient_id', $this->patientIds)
@@ -55,12 +78,6 @@ class PatientTimeAndCalls
     private function setCalls(): self
     {
         $this->calls = Call::whereIn('inbound_cpm_id', $this->patientIds)
-            ->where(function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', 'call')
-                    ->orWhere('sub_type', '=', 'Call Back');
-            })
-            ->where('status', 'reached')
             ->createdInMonth(Carbon::now()->startOfMonth(), 'called_date')
             ->get();
 
@@ -77,8 +94,9 @@ class PatientTimeAndCalls
                 'bhi_total_time'         => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->firstWhere('code', ChargeableService::BHI)->id)->sum('duration'),
                 'pcm_total_time'         => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->firstWhere('code', ChargeableService::PCM)->id)->sum('duration'),
                 'rpm_total_time'         => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->whereIn('code', ChargeableService::RPM_CODES)->pluck('id')->toArray())->sum('duration'),
-                'no_of_calls'            => $this->calls->where('inbound_cpm_id', $patientId)->count(),
-                'no_of_successful_calls' => $this->calls->where('inbound_cpm_id', $patientId)->count(),
+                'rhc_total_time'         => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT)->id)->sum('duration'),
+                'no_of_calls'            => ($calls = $this->callsForPatient($patientId))->count(),
+                'no_of_successful_calls' => $calls->where('status', 'reached')->count(),
             ];
         }
 
