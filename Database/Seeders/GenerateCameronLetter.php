@@ -12,17 +12,27 @@ use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Exception;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 
 class GenerateCameronLetter extends Seeder
 {
     use UserHelpers;
-    const PROVIDER_PROVIDING_SIGNATURE_1 = '';
+    const ANNNE_REITZ_MAIL_REAL         = 'areitz@cameronmch.com';
+    const ANNNE_REITZ_MAIL_TEST         = 'AnneTouReitz@example.com';
+    const BRANDY_GERMAN_MAIL_REAL       = 'bgerman@cameronmch.com';
+    const BRANDY_GERMAN_MAIL_TEST       = 'brandyToGermanou@example.com';
+    const CAMERON_LOGO                  = '/img/logos/CameronMemorial/cameron_logo.png';
+    const CHRISHAWVA_SCHIEBER_MAIL_REAL = 'cschieber@cameronmch.com';
+    const CHRISHAWVA_SCHIEBER_MAIL_TEST = 'chrishawnaTouSchieber@example.com';
+    const FAUR_MAIL_REAL                = 'lfaur@cameronmch.com';
+    const FAUR_MAIL_TEST                = 'lyunToufaur@example.com';
+    const FAUR_SIGNATURE                = '/img/signatures/cameron-memorial/faurs_signature.png';
+    const MILLER_MAIL_REAL              = 'tmiller@cameronmch.com';
+    const MILLER_MAIL_TEST              = 'tomasTouMiller@example.com';
+    const MILLER_SIGNATURE              = '/img/signatures/cameron-memorial/millers_signature.png';
+    const SIGNATORY_NAME_FAUR           = 'Dr. Lynn Faur';
+    const SIGNATORY_NAME_MILLER         = 'Dr. Thomas Miller';
 
-    const PROVIDER_PROVIDING_SIGNATURE_1_TESTER = 'tomasTouMiller@example.com';
-    const PROVIDER_PROVIDING_SIGNATURE_2        = '';
-    const PROVIDER_PROVIDING_SIGNATURE_2_TESTER = 'lyunToufaur@example.com';
     /**
      * @bool
      */
@@ -38,12 +48,13 @@ class GenerateCameronLetter extends Seeder
     private $providersProvidingSignatures;
     private $testingMode;
 
-    public function providersSignatorySignatures(int $practiceId)
+    public function getCustomUiRequest(int $practiceId)
     {
         if ($this->testingMode) {
-            $this->generateTestingData($practiceId);
+            return $this->generateTestingData($practiceId);
         }
-        $this->getProvidersProvidingSignature($practiceId);
+
+        return $this->getProvidersProvidingGroupSignature($practiceId);
     }
 
     /**
@@ -54,13 +65,13 @@ class GenerateCameronLetter extends Seeder
     public function run()
     {
         $this->environment    = App::environment();
-        $this->testingMode    = 'production' !== $this->environment;
+        $this->testingMode    = /*'production' !== $this->environment*/false;
         $practiceNumber       = EnrollmentInvitationLetter::PRACTICE_NUMBER;
         $signatoryName        = EnrollmentInvitationLetter::SIGNATORY_NAME;
         $practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
         $cameronPractice      = $this->getPractice();
-        $signatoryProviders   = $this->providersSignatorySignatures($cameronPractice->id);
+        $customUiRequest      = $this->getCustomUiRequest($cameronPractice->id);
 
         $bodyPageOne = "
 
@@ -89,8 +100,9 @@ class GenerateCameronLetter extends Seeder
                 'practice_id' => $cameronPractice->id,
             ],
             [
-                'practice_logo_src'      => '/img/logos/CameronMemorial/cameron_logo.png',
-                'customer_signature_src' => EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER,
+                'practice_logo_src'      => self::CAMERON_LOGO,
+                'customer_signature_src' => EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP,
+                'ui_requests'            => json_encode($customUiRequest),
                 'letter'                 => json_encode(
                     [
                         'page_1' => [
@@ -103,91 +115,64 @@ class GenerateCameronLetter extends Seeder
         );
     }
 
+    /**
+     * @return array
+     */
     private function generateTestingData(int $practiceId)
     {
-        $providersProvidingSignatures  = $this->generateTestingProvidersProvidingSignatures($practiceId);
-        $providersInheritingSignatures = $this->generateTestingProvidersInheritingSignatures($practiceId);
-        $this->processSaveUiRequest($practiceId, $providersProvidingSignatures, $providersInheritingSignatures);
-    }
-
-    private function generateTestingProvidersInheritingSignatures(int $practiceId)
-    {
-        $providerInheritingSignatureAttributes = [
-            [
-                'first_name' => 'Brandy',
-                'last_name'  => 'German',
-                'email'      => 'brandyToGermanou@example.com',
-                'program_id' => $practiceId,
-            ],
-            [
-                'first_name' => 'Anne',
-                'last_name'  => 'Reitz',
-                'email'      => ' AnneTouReitz@example.com',
-                'program_id' => $practiceId,
-            ],
-
-            [
-                'first_name' => 'Chrishawna',
-                'last_name'  => 'Schieber',
-                'email'      => 'chrishawnaTouSchieber@example.com',
-                'program_id' => $practiceId,
-            ],
-        ];
-
-        $providersInheritingSignature = collect();
-        foreach ($providerInheritingSignatureAttributes as $provider) {
-            $providerUser = User::firstOrCreate(
-                [
-                    'program_id' => $practiceId,
-                    'email'      => $provider['email'],
-                ],
-                [
-                    'first_name' => $provider['first_name'],
-                    'last_name'  => $provider['last_name'],
-                ]
-            );
-
-            $providerUser->providerInfo()->firstOrCreate([]);
-
-            $providerUser->fresh();
-
-            $providersInheritingSignature->push($providerUser);
-        }
-
-        return $providersInheritingSignature;
-    }
-
-    /**
-     * @return \Collection|\Illuminate\Support\Collection
-     */
-    private function generateTestingProvidersProvidingSignatures(int $practiceId)
-    {
-        $signatoryProvidersAttributes = [
+        $providersSignatureAttributesTesting = [
             [
                 'first_name' => 'Thomas',
                 'last_name'  => 'Miller',
-                'email'      => self::PROVIDER_PROVIDING_SIGNATURE_1_TESTER,
+                'email'      => self::MILLER_MAIL_TEST,
                 'program_id' => $practiceId,
+                'signature'  => self::MILLER_SIGNATURE,
             ],
 
             [
                 'first_name' => 'Lynn',
                 'last_name'  => 'Faur',
-                'email'      => 'lyunToufaur@example.com',
+                'email'      => self::FAUR_MAIL_TEST,
                 'program_id' => $practiceId,
+                'signature'  => self::FAUR_SIGNATURE,
+            ],
+
+            [
+                'first_name' => 'Brandy',
+                'last_name'  => 'German',
+                'email'      => self::BRANDY_GERMAN_MAIL_TEST,
+                'program_id' => $practiceId,
+                'signature'  => self::MILLER_SIGNATURE,
+            ],
+            [
+                'first_name' => 'Anne',
+                'last_name'  => 'Reitz',
+                'email'      => self::ANNNE_REITZ_MAIL_TEST,
+                'program_id' => $practiceId,
+                'signature'  => self::MILLER_SIGNATURE,
+            ],
+
+            [
+                'first_name' => 'Chrishawna',
+                'last_name'  => 'Schieber',
+                'email'      => self::CHRISHAWVA_SCHIEBER_MAIL_TEST,
+                'program_id' => $practiceId,
+                'signature'  => self::FAUR_SIGNATURE,
             ],
         ];
 
-        $providersProvidingSignature = collect();
-        foreach ($signatoryProvidersAttributes as $signatoryProvider) {
+        $fausSignatureProviders   = collect();
+        $millerSignatureProviders = collect();
+        foreach ($providersSignatureAttributesTesting as $providerAttr) {
             $providerUser = User::firstOrCreate(
                 [
                     'program_id' => $practiceId,
-                    'email'      => $signatoryProvider['email'],
+                    'email'      => $providerAttr['email'],
                 ],
                 [
-                    'first_name' => $signatoryProvider['first_name'],
-                    'last_name'  => $signatoryProvider['last_name'],
+                    'first_name'   => $providerAttr['first_name'],
+                    'last_name'    => $providerAttr['last_name'],
+                    'display_name' => $providerAttr['first_name'].' '.$providerAttr['last_name'],
                 ]
             );
 
@@ -195,10 +180,27 @@ class GenerateCameronLetter extends Seeder
 
             $providerUser->fresh();
 
-            $providersProvidingSignature->push($providerUser);
+            if ( ! $providerUser) {
+                if (self::FAUR_SIGNATURE === $providerAttr['signature']) {
+                    $fausSignatureProviders->push($providerUser);
+                }
+
+                if (self::MILLER_SIGNATURE === $providerAttr['signature']) {
+                    $millerSignatureProviders->push($providerUser);
+                }
+            }
         }
 
-        return $providersProvidingSignature;
+        return [
+            self::FAUR_SIGNATURE => array_merge(
+                $fausSignatureProviders->pluck('id')->toArray(),
+                ['signatory_group_name' => self::SIGNATORY_NAME_FAUR]
+            ),
+            self::MILLER_SIGNATURE => array_merge(
+                $millerSignatureProviders->pluck('id')->toArray(),
+                ['signatory_group_name' => self::SIGNATORY_NAME_MILLER]
+            ),
+        ];
     }
 
     private function getPractice()
@@ -227,38 +229,75 @@ class GenerateCameronLetter extends Seeder
         return $cameronPractice;
     }
 
-    private function getProvidersProvidingSignature(int $practiceId)
+    private function getProvidersProvidingGroupSignature(int $practiceId)
     {
-        $signatoryProvidersAttributes = [
-            'firstNames' => [
-                'Thomas',
-                'Lynn',
+        $providersSignatureAttributesReal = [
+            [
+                'first_name' => 'Thomas',
+                'last_name'  => 'Miller',
+                'email'      => self::MILLER_MAIL_REAL,
+                'signature'  => self::MILLER_SIGNATURE,
             ],
 
-            'lastNames' => [
-                'Miller',
-                'Faur',
+            [
+                'first_name' => 'Lynn',
+                'last_name'  => 'Faur',
+                'email'      => self::FAUR_MAIL_REAL,
+                'signature'  => self::FAUR_SIGNATURE,
             ],
 
-            'emails' => [
-                'tomasTouMiller@example.com',
-                'lyunToufaur@example.com',
+            [
+                'first_name' => 'Brandy',
+                'last_name'  => 'German',
+                'email'      => self::BRANDY_GERMAN_MAIL_REAL,
+                'signature'  => self::MILLER_SIGNATURE,
+            ],
+            [
+                'first_name' => 'Anne',
+                'last_name'  => 'Reitz',
+                'email'      => self::ANNNE_REITZ_MAIL_REAL,
+                'signature'  => self::MILLER_SIGNATURE,
+            ],
+
+            [
+                'first_name' => 'Chrishawna',
+                'last_name'  => 'Schieber',
+                'email'      => self::CHRISHAWVA_SCHIEBER_MAIL_REAL,
+                'signature'  => self::FAUR_SIGNATURE,
             ],
         ];
 
-        $providersProvidingSignature = User::where('program_id', $practiceId)
-            ->whereIn('email', $signatoryProvidersAttributes['emails'])
-            ->whereIn('first_name', $signatoryProvidersAttributes['firstNames'])
-            ->whereIn('last_name', $signatoryProvidersAttributes['lastNames'])
-            ->get();
-    }
+        $fausSignatureProviders   = collect();
+        $millerSignatureProviders = collect();
+        foreach ($providersSignatureAttributesReal as $providerAttr) {
+            $providerUser = User::where('program_id', $practiceId)
+                ->where('email', $providerAttr['email'])
+                ->where('first_name', $providerAttr['first_name'])
+                ->where('last_name', $providerAttr['last_name'])
+                ->first();
 
-    private function processSaveUiRequest(int $practiceId, Collection $providersProvidingSignatures, Collection $providersInheritingSignatures)
-    {
-        if ($this->testingMode) {
-            $providerProvidingSignatureOne = $providersProvidingSignatures->where('email', self::PROVIDER_PROVIDING_SIGNATURE_1_TESTER)->pluck('id');
-            $providerProvidingSignatureTwo = $providersProvidingSignatures->where('email', self::PROVIDER_PROVIDING_SIGNATURE_2_TESTER)->pluck('id');
-            $x                             = 1;
+            if ( ! is_null($providerUser)) {
+                if (self::FAUR_SIGNATURE === $providerAttr['signature']) {
+                    $fausSignatureProviders->push($providerUser);
+                }
+
+                if (self::MILLER_SIGNATURE === $providerAttr['signature']) {
+                    $millerSignatureProviders->push($providerUser);
+                }
+            } else {
+                \Log::warning("Provider with email {$providerAttr['email']} not found during Cameron letter data generation.");
+            }
         }
+
+        return [
+            self::FAUR_SIGNATURE => array_merge(
+                $fausSignatureProviders->pluck('id')->toArray(),
+                ['signatory_group_name' => self::SIGNATORY_NAME_FAUR]
+            ),
+            self::MILLER_SIGNATURE => array_merge(
+                $millerSignatureProviders->pluck('id')->toArray(),
+                ['signatory_group_name' => self::SIGNATORY_NAME_MILLER]
+            ),
+        ];
     }
 }
