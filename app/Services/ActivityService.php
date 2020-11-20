@@ -229,6 +229,9 @@ class ActivityService
                 $csFiltered = $cs
                     ->filter(fn ($cs) => in_array($cs->code, [ChargeableService::RPM, ChargeableService::RPM40]));
                 break;
+            case ChargeableService::GENERAL_CARE_MANAGEMENT:
+                $csFiltered = $cs->filter(fn ($cs) => ChargeableService::GENERAL_CARE_MANAGEMENT === $cs->code);
+                break;
             default:
                 $csFiltered = collect();
                 break;
