@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class GetOrCreateCcdaXml
 {
-    public static function forPatient(User $patient)
+    public static function forPatient(User $patient): ?string
     {
         $q = $patient->ccdas()->orderByDesc('id')->with('media');
 
