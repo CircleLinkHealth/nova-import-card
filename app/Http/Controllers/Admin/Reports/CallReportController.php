@@ -6,9 +6,11 @@
 
 namespace App\Http\Controllers\Admin\Reports;
 
+use App\Actions\PatientTimeAndCalls;
 use App\CallView;
 use App\Filters\CallViewFilters;
 use App\Http\Controllers\Controller;
+use App\ValueObjects\PatientTimeAndCalls as PatientTimeAndCallsValueObject;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
@@ -24,11 +26,6 @@ class CallReportController extends Controller
 
         $calls = CallView::filter($filters)
             ->get();
-
-        if ($request->has('json')) {
-            // interrupt request and return json
-            return response()->json($calls);
-        }
 
         $data = $this->generateXlsData($date, $calls);
 
@@ -85,15 +82,19 @@ class CallReportController extends Controller
             'BHI Time',
             'PCM Time',
             'RPM Time',
+            'RHC Time',
             'Successful Calls',
             'Billing Provider',
             'Scheduler',
         ];
 
-        $rows = [];
+        $patientTimeAndCallCounts = $calls->isNotEmpty() ? PatientTimeAndCalls::get($calls->pluck('patient_id')->toArray()) : collect();
+        $rows                     = [];
 
         foreach ($calls as $call) {
-            $rows[] = [
+            /** @var PatientTimeAndCallsValueObject */
+            $supplementaryViewDataForPatient = $patientTimeAndCallCounts->filter(fn (PatientTimeAndCallsValueObject $p) => $p->getPatientId() == $call->patient_id)->first();
+            $rows[]                          = [
                 $call->id,
                 $call->type,
                 $call->nurse,
@@ -104,11 +105,12 @@ class CallReportController extends Controller
                 $call->call_time_end,
                 $call->preferredCallDaysToString(),
                 $call->last_call,
-                $this->formatTime($call->ccm_total_time),
-                $this->formatTime($call->bhi_total_time),
-                $this->formatTime($call->pcm_total_time),
-                $this->formatTime($call->rpm_total_time),
-                $call->total_no_of_successful_calls,
+                $this->formatTime($supplementaryViewDataForPatient->getCcmTotalTime()),
+                $this->formatTime($supplementaryViewDataForPatient->getBhiTotalTime()),
+                $this->formatTime($supplementaryViewDataForPatient->getPcmTotalTime()),
+                $this->formatTime($supplementaryViewDataForPatient->getRpmTotalTime()),
+                $this->formatTime($supplementaryViewDataForPatient->getRhcTotalTime()),
+                (string)$supplementaryViewDataForPatient->getNoOfSuccessfulCalls(),
                 $call->billing_provider,
                 $call->scheduler,
             ];

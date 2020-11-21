@@ -10,8 +10,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CallView extends JsonResource
 {
-    private static bool $billingRevampIsEnabled;
-
     /**
      * Transform the resource into an array.
      *

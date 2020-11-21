@@ -10,22 +10,23 @@ use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class PatientTimeAndCalls
 {
-    protected Collection $activities;
-    protected Collection $calls;
+    protected EloquentCollection $activities;
+    protected EloquentCollection $calls;
     protected array $patientIds;
 
-    protected array $patientTimeAndCalls;
+    protected array $patientTimeAndCalls = [];
 
     public function __construct(array $patientIds)
     {
         $this->patientIds = $patientIds;
     }
 
-    public static function get(array $patientIds): array
+    public static function get(array $patientIds): Collection
     {
         return (new static($patientIds))
             ->setActivities()
@@ -51,18 +52,18 @@ class PatientTimeAndCalls
             });
     }
 
-    private function formatAndReturnData(): array
+    private function formatAndReturnData(): Collection
     {
         return collect($this->returnTimeAndCalls())->map(function ($item, $key) {
             return (new \App\ValueObjects\PatientTimeAndCalls())
                 ->setPatientId($key)
-                ->fromArray();
+                ->fromArray($item);
         });
     }
 
     private function returnTimeAndCalls(): array
     {
-        //todo: add json resource
+        //todo: add json resource?
         return $this->patientTimeAndCalls;
     }
 
