@@ -204,6 +204,12 @@
                                         setTimeTrackerValue('RPM', node.firstChild.innerHTML);
                                     }
                                 }, webix.ui.datafilter.summColumn);
+                                webix.ui.datafilter.mySummColumnRHC = webix.extend({
+                                    refresh: function (master, node, value) {
+                                        node.firstChild.innerHTML = durationSum(master, 'RHC');
+                                        setTimeTrackerValue('RHC', node.firstChild.innerHTML);
+                                    }
+                                }, webix.ui.datafilter.summColumn);
 
                             obs_alerts_dtable = new webix.ui({
                                 container: "obs_alerts_container",
@@ -220,7 +226,7 @@
                                         id: "performed_at",
                                         header: ["Date", {content: "textFilter", placeholder: "Filter"}],
                                         footer: {text: "Total Time for the Month (Min:Sec):", colspan: 3},
-                                        width: 180,
+                                        width: 120,
                                         sort: 'string'
                                     },
                                     {
@@ -250,7 +256,7 @@
                                         {
                                             id: "durationCCM",
                                             header: ["Total CCM", "(HH:MM:SS)"],
-                                            width: 130,
+                                            width: 110,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnCCM", css: "duration-footer"},
@@ -261,7 +267,7 @@
                                         {
                                             id: "durationBHI",
                                             header: ["Total BHI", "(HH:MM:SS)"],
-                                            width: 130,
+                                            width: 110,
                                             fillspace: false,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
@@ -273,7 +279,7 @@
                                     {
                                         id: "durationPCM",
                                         header: ["Total PCM", "(HH:MM:SS)"],
-                                        width: 130,
+                                        width: 110,
                                         fillspace: false,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
@@ -285,13 +291,25 @@
                                     {
                                         id: "durationRPM",
                                         header: ["Total RPM", "(HH:MM:SS)"],
-                                        width: 130,
-                                        fillspace: true,
+                                        width: 110,
+                                        fillspace: false,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
                                         footer: {content: "mySummColumnRPM", css: "duration-footer"},
                                         template: function (obj) {
                                             return durationData(obj, 'RPM');
+                                        }
+                                    },
+                                    {
+                                        id: "durationRHC",
+                                        header: ["Total RHC", "(HH:MM:SS)"],
+                                        width: 110,
+                                        fillspace: true,
+                                        sort: 'string',
+                                        css: {"color": "black", "text-align": "right"},
+                                        footer: {content: "mySummColumnRHC", css: "duration-footer"},
+                                        template: function (obj) {
+                                            return durationData(obj, 'RHC');
                                         }
                                     },
 
