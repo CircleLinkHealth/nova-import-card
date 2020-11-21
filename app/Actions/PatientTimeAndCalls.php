@@ -93,7 +93,7 @@ class PatientTimeAndCalls
                 'ccm_total_time'         => $patientActivities->whereIn('chargeable_service_id', ChargeableService::cached()->whereIn('code', ChargeableService::CCM_CODES)->pluck('id')->toArray())->sum('duration'),
                 'bhi_total_time'         => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->firstWhere('code', ChargeableService::BHI)->id)->sum('duration'),
                 'pcm_total_time'         => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->firstWhere('code', ChargeableService::PCM)->id)->sum('duration'),
-                'rpm_total_time'         => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->whereIn('code', ChargeableService::RPM_CODES)->pluck('id')->toArray())->sum('duration'),
+                'rpm_total_time'         => $patientActivities->whereIn('chargeable_service_id', ChargeableService::cached()->whereIn('code', ChargeableService::RPM_CODES)->pluck('id')->toArray())->sum('duration'),
                 'rhc_total_time'         => $patientActivities->where('chargeable_service_id', ChargeableService::cached()->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT)->id)->sum('duration'),
                 'no_of_calls'            => ($calls = $this->callsForPatient($patientId))->count(),
                 'no_of_successful_calls' => $calls->where('status', 'reached')->count(),
