@@ -196,7 +196,7 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.6",
     "circlelinkhealth/core-module": "1.8.0",
-    "circlelinkhealth/cpm-migrations-module": "2.6.1",
+    "circlelinkhealth/cpm-migrations-module": "dev-pam-split-table-data-fetch",
     "circlelinkhealth/customer-module": "dev-pam-split-table-data-fetch",
     "circlelinkhealth/eligibility-module": "3.6.1",
     "circlelinkhealth/enrollment-invites": "*",
