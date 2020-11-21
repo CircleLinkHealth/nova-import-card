@@ -63,7 +63,6 @@ class PatientTimeAndCalls
 
     private function returnTimeAndCalls(): array
     {
-        //todo: add json resource?
         return $this->patientTimeAndCalls;
     }
 

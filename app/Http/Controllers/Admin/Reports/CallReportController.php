@@ -110,7 +110,7 @@ class CallReportController extends Controller
                 $this->formatTime($supplementaryViewDataForPatient->getPcmTotalTime()),
                 $this->formatTime($supplementaryViewDataForPatient->getRpmTotalTime()),
                 $this->formatTime($supplementaryViewDataForPatient->getRhcTotalTime()),
-                (string)$supplementaryViewDataForPatient->getNoOfSuccessfulCalls(),
+                (string) $supplementaryViewDataForPatient->getNoOfSuccessfulCalls(),
                 $call->billing_provider,
                 $call->scheduler,
             ];
