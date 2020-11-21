@@ -7,14 +7,10 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Actions\PatientTimeAndCalls;
-use App\Call;
 use App\CallView;
 use App\Filters\CallViewFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\CallView as CallViewResource;
-use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Http\Request;
 
 class CallsViewController extends ApiController

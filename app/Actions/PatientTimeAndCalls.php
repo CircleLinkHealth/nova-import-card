@@ -10,8 +10,8 @@ use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 
 class PatientTimeAndCalls
 {
