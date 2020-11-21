@@ -375,8 +375,8 @@
                                            orientation:'landscape',
                                            autowidth:true,
                                            columns:{
-                                           'performed_at':       { header:'Date', width: 200, template: webix.template('#performed_at#') },
-                                           'type':             { header:'Activity',    width:150, sort:'string', template: webix.template('#type#')},
+                                           'performed_at':       { header:'Date', width: 100, template: webix.template('#performed_at#') },
+                                           'type':             { header:'Activity',    width:120, sort:'string', template: webix.template('#type#')},
                                            'provider_name':    { header:'Provider',    width:200, sort:'string', template: webix.template('#provider_name#') },
                                            'durationCCM':  { header: 'Total CCM (Min:Sec)', width: 70, sort: 'string',
                                            template: function (obj) {
@@ -398,6 +398,54 @@
                                            template: function (obj) {
                                            var type = durationType(obj);
                                            if (type === 'BHI'){
+                                           var seconds = obj.duration;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           if (ss < 10) {ss = '0'+ss;}
+                                           var time = mm+':'+ss;
+                                           return mm+':'+ss;
+                                           }else {
+                                           return '--';
+                                           }
+                                           }
+                                           },
+                                           'durationPCM':  { header: 'Total PCM (Min:Sec)', width: 70, sort: 'string',
+                                           template: function (obj) {
+                                           var type = durationType(obj);
+                                           if (type === 'PCM'){
+                                           var seconds = obj.duration;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           if (ss < 10) {ss = '0'+ss;}
+                                           var time = mm+':'+ss;
+                                           return mm+':'+ss;
+                                           }else {
+                                           return '--';
+                                           }
+                                           }
+                                           },
+                                           'durationRPM':  { header: 'Total RPM (Min:Sec)', width: 70, sort: 'string',
+                                           template: function (obj) {
+                                           var type = durationType(obj);
+                                           if (type === 'RPM'){
+                                           var seconds = obj.duration;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           if (ss < 10) {ss = '0'+ss;}
+                                           var time = mm+':'+ss;
+                                           return mm+':'+ss;
+                                           }else {
+                                           return '--';
+                                           }
+                                           }
+                                           },
+                                           'durationRHC':  { header: 'Total RHC (Min:Sec)', width: 70, sort: 'string',
+                                           template: function (obj) {
+                                           var type = durationType(obj);
+                                           if (type === 'RHC'){
                                            var seconds = obj.duration;
                                            var date = new Date(seconds * 1000);
                                            var mm = Math.floor(seconds/60);
