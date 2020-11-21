@@ -6,6 +6,8 @@
 
 namespace App\Console\Commands;
 
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Console\Command;
 
 class ManuallyCreateEnrollmentTestData extends Command
@@ -57,6 +59,28 @@ class ManuallyCreateEnrollmentTestData extends Command
             return;
         }
 
-        (new \PrepareDataForReEnrollmentTestSeeder($practiceName))->run();
+        $practice = Practice::whereName($practiceName)->first();
+
+        if ( ! $practice) {
+            $this->error("$practiceName practice model not found.");
+        }
+
+        $letter = EnrollmentInvitationLetter::wherePracticeId($practice->id)->first();
+
+        if ( ! $letter) {
+            $this->error("$practiceName practice model not found.");
+        }
+
+        $uiRequestsForThisPractice = '';
+
+        if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP === $letter->customer_signature_src) {
+            $uiRequestsForThisPractice = EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP;
+        }
+
+        if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER === $letter->customer_signature_src) {
+            $uiRequestsForThisPractice = EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER;
+        }
+
+        (new \PrepareDataForReEnrollmentTestSeeder($practiceName, $uiRequestsForThisPractice))->run();
     }
 }

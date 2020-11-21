@@ -85,7 +85,7 @@ class CameronMemorialLetter extends EnrollmentLetterDefaultConfigs implements Se
             }
 
             if (in_array($provider->id, $faursTeam)) {
-                return "</img/signatures/cameron-memorial/faurs_signature.png' alt='$practice->dipslay_name' style='max-width: 17%;'/>";
+                return "'<img src='/img/signatures/cameron-memorial/faurs_signature.png'  alt='$practice->dipslay_name' style='max-width: 14%;'/>";
             }
         }
 
