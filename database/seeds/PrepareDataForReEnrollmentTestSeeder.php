@@ -125,13 +125,13 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $this->skipIds              = collect();
 
         while ($n <= $limit) {
+            $provider = $this->randomProvider($practice->id);
             if (0 === $this->countRandomProvider && EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER === $this->uiRequestsForThisPractice) {
-                $providerConstant = $this->randomProvider($practice->id);
-                $providerConstant->providerInfo->update([
+                $provider->providerInfo->update([
                     // We need this just for Toledo.
                     'npi_number' => 1962409979,
                 ]);
-                $provider                  = $providerConstant;
+            
                 $this->countRandomProvider = 1;
             }
 
