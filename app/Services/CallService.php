@@ -6,9 +6,11 @@
 
 namespace App\Services;
 
+use App\Actions\PatientTimeAndCalls;
 use App\Call;
 use App\CallViewNurses;
 use App\Jobs\ProcessPostmarkInboundMailJob;
+use Illuminate\Support\Collection;
 
 class CallService
 {
@@ -50,8 +52,22 @@ class CallService
         }
 
         // Ordering: ASAP are always first, then Call Backs, then everything else with earlier tasks higher than later tasks.
-        $calls->orderByRaw('asap desc, FIELD(type, "Call Back") desc, scheduled_date asc, call_time_start asc, call_time_end asc');
+        $calls = $calls->orderByRaw('asap desc, FIELD(type, "Call Back") desc, scheduled_date asc, call_time_start asc, call_time_end asc')->get();
 
-        return $calls->get();
+        $patientSupplementaryData = PatientTimeAndCalls::get($calls->pluck('patient_id')->toArray());
+
+        return $calls->transform(function ($c) use ($patientSupplementaryData) {
+            $suppl = $patientSupplementaryData->filter(fn (\App\ValueObjects\PatientTimeAndCalls $d) => $d->getPatientId() === $c->patient_id)->first();
+
+            $c->ccm_total_time = $suppl->getCcmTotalTime();
+            $c->bhi_total_time = $suppl->getBhiTotalTime();
+            $c->pcm_total_time = $suppl->getPcmTotalTime();
+            $c->rpm_total_time = $suppl->getRpmTotalTime();
+            $c->rhc_total_time = $suppl->getRhcTotalTime();
+            $c->no_of_calls = $suppl->getNoOfCalls();
+            $c->no_of_successful_calls = $suppl->getNoOfSuccessfulCalls();
+
+            return $c;
+        });
     }
 }
