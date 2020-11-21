@@ -257,7 +257,7 @@
     "propaganistas/laravel-phone": "^4.2.2",
     "pusher/pusher-php-server": "^4.0",
     "seld/jsonlint": "^1.7",
-    "sentry/sentry-laravel": "^1.7",
+    "sentry/sentry-laravel": "^2.2",
     "setasign/fpdi-fpdf": "^2.2",
     "shipping-docker/vessel": "^5.0",
     "sparclex/nova-import-card": "^7.0.1",
