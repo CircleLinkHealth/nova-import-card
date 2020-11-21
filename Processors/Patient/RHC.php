@@ -21,6 +21,11 @@ class RHC extends AbstractProcessor
         return ChargeableService::GENERAL_CARE_MANAGEMENT;
     }
 
+    public function codeForProblems(): string
+    {
+        return ChargeableService::CCM;
+    }
+
     public function featureIsEnabled(): bool
     {
         return true;
@@ -44,10 +49,5 @@ class RHC extends AbstractProcessor
     public function requiresPatientConsent(int $patientId): bool
     {
         return false;
-    }
-    
-    public function codeForProblems(): string
-    {
-        return ChargeableService::CCM;
     }
 }

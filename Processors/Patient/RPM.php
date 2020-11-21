@@ -17,7 +17,7 @@ class RPM extends AbstractProcessor
             new RHC(),
         ];
     }
-    
+
     public function code(): string
     {
         return ChargeableService::RPM;
