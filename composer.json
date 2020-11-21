@@ -153,10 +153,6 @@
       "url": "git@github.com:CircleLinkHealth/short-url.git"
     },
     {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/ccda-builder-module.git"
-    },
-    {
       "type": "path",
       "url": "./nova-components/GenerateSuccessStoriesReport"
     },
@@ -201,7 +197,6 @@
     "circlelinkhealth/condition-code-lookup-module": "1.1.6",
     "circlelinkhealth/core-module": "1.7.9",
     "circlelinkhealth/cpm-migrations-module": "2.6.0",
-    "circlelinkhealth/ccda-builder-module": "dev-main",
     "circlelinkhealth/customer-module": "3.5.1",
     "circlelinkhealth/eligibility-module": "3.6.0",
     "circlelinkhealth/enrollment-invites": "*",
