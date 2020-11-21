@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\CcmBilling\Database\Seeders\BillingRevampTableSeeder;
 use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
@@ -21,6 +22,7 @@ class TestSuiteSeeder extends Seeder
 
         //Order is important here. Do not re-arrange unless you know what you are doing!
         $this->call(SaasAccountsSeeder::class);
+        $this->call(EhrSeeder::class);
         $this->call(CpmProblemsTableSeeder::class);
         $this->call(AddNewDefaultCarePlanTemplate::class);
         $this->call(MedicationGroupsTableSeeder::class);
@@ -37,5 +39,6 @@ class TestSuiteSeeder extends Seeder
         $this->call(CareAmbassadorDefaultScriptsSeeder::class);
         $this->call(UserScopeTestsSeeder::class);
         $this->call(NekatostrasClinicSeeder::class);
+        $this->call(BillingRevampTableSeeder::class);
     }
 }

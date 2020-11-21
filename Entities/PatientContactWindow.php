@@ -37,9 +37,12 @@ use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
  */
 class PatientContactWindow extends BaseModel
 {
+    const DEFAULT_WINDOW_TIME_END   = '17:00:00';
+    const DEFAULT_WINDOW_TIME_START = '09:00:00';
+
     protected $attributes = [
-        'window_time_start' => '09:00:00',
-        'window_time_end'   => '17:00:00',
+        'window_time_start' => self::DEFAULT_WINDOW_TIME_START,
+        'window_time_end'   => self::DEFAULT_WINDOW_TIME_END,
     ];
 
     protected $guarded = [];
@@ -64,8 +67,8 @@ class PatientContactWindow extends BaseModel
 
             return [
                 'day'          => $day,
-                'window_start' => Carbon::parse('09:00:00')->format('H:i'),
-                'window_end'   => Carbon::parse('17:00:00')->format('H:i'),
+                'window_start' => Carbon::parse(self::DEFAULT_WINDOW_TIME_START)->format('H:i'),
+                'window_end'   => Carbon::parse(self::DEFAULT_WINDOW_TIME_END)->format('H:i'),
             ];
         }
 

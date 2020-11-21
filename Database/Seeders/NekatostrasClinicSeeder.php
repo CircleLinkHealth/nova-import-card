@@ -5,11 +5,11 @@
  */
 
 use App\Constants;
+use App\Traits\Tests\PracticeLocation as PracticeLocationHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Database\Seeder;
 use Illuminate\Validation\ValidationException;
-use App\Traits\Tests\PracticeLocation as PracticeLocationHelpers;
 
 class NekatostrasClinicSeeder extends Seeder
 {
@@ -25,11 +25,16 @@ class NekatostrasClinicSeeder extends Seeder
             $practice = $this->firstOrCreatePractice(self::NEKATOSTRAS_PRACTICE);
             $location = $this->firstOrCreateLocation($practice->id, self::IATRO_SOPHIE_LOCATION);
 
+            $practice->chargeableServices()->sync(\CircleLinkHealth\Customer\Entities\ChargeableService::pluck('id')->toArray());
+
             foreach (array_merge(Constants::PRACTICE_STAFF_ROLE_NAMES, [
                 'care-center-external',
                 'care-ambassador',
                 'care-center',
                 'administrator',
+                'callbacks-admin',
+                'software-only',
+                'clh-ccm-admin',
             ]) as $roleName) {
                 $u                       = $this->createUser($practice, $roleName);
                 $u->first_name           = $roleName;
@@ -47,6 +52,8 @@ class NekatostrasClinicSeeder extends Seeder
                     $this->createPatients($location, $u, 10);
                 }
             }
+
+            \CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData::execute();
         } catch (ValidationException $e) {
             dd($e->validator->errors()->all());
         }

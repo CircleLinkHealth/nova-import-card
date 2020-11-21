@@ -16,10 +16,12 @@ use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Customer\Traits\HasNotificationContactPreferences;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
-use CircleLinkHealth\Eligibility\CcdaImporter\Hooks\ReplaceFieldsFromSupplementaryData;
 use CircleLinkHealth\Eligibility\CcdaImporter\Traits\HasImportingHooks;
+use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\Eligibility\Entities\RpmProblem;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Nova\Actions\Actionable;
 use Laravel\Scout\Searchable;
@@ -138,6 +140,12 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                                 $all_chargeable_services_count
  * @property \CircleLinkHealth\Customer\Entities\CustomerNotificationContactTimePreference[]|\Illuminate\Database\Eloquent\Collection $notificationContactPreferences
  * @property int|null                                                                                                                 $notification_contact_preferences_count
+ * @property string|null                                                                                                              $default_user_scope
+ * @property \Illuminate\Database\Eloquent\Collection|PcmProblem[]                                                                    $pcmProblems
+ * @property int|null                                                                                                                 $pcm_problems_count
+ * @method   static                                                                                                                   \Illuminate\Database\Eloquent\Builder|Practice hasImportingHookEnabled($hook, $listener)
+ * @property \Illuminate\Database\Eloquent\Collection|RpmProblem[]                                                                    $rpmProblems
+ * @property int|null                                                                                                                 $rpm_problems_count
  */
 class Practice extends BaseModel implements HasMedia
 {
@@ -271,7 +279,12 @@ class Practice extends BaseModel implements HasMedia
         }
 
         if (is_null($primary)) {
-            throw new \Exception("This Practice [$this->id] does not have a location.", 500);
+            Log::error("This Practice [$this->id] does not have a location.");
+
+            return [
+                'line1' => '',
+                'line2' => '',
+            ];
         }
 
         return [
@@ -290,8 +303,8 @@ class Practice extends BaseModel implements HasMedia
                 ->whereHas(
                     'roles',
                     function ($q) use (
-                    $role
-                ) {
+                        $role
+                    ) {
                         $q->whereName($role);
                     }
                 )
@@ -512,6 +525,11 @@ class Practice extends BaseModel implements HasMedia
         return $this->users()->ofType('participant')->whereHas('patientInfo');
     }
 
+    public function pcmProblems()
+    {
+        return $this->hasMany(PcmProblem::class, 'practice_id');
+    }
+
     public function pcp()
     {
         return $this->hasMany('App\CPRulesPCP', 'prov_id', 'id');
@@ -525,6 +543,11 @@ class Practice extends BaseModel implements HasMedia
     public function providers()
     {
         return Practice::getProviders($this->id);
+    }
+
+    public function rpmProblems()
+    {
+        return $this->hasMany(RpmProblem::class, 'practice_id');
     }
 
     public function scopeActive($q)
@@ -581,7 +604,7 @@ class Practice extends BaseModel implements HasMedia
             ]
         );
     }
-    
+
     public function scopeHasImportingHookEnabled($builder, string $hook, string $listener)
     {
         return $builder->where("importing_hooks->{$hook}->listener", $listener);
@@ -592,12 +615,9 @@ class Practice extends BaseModel implements HasMedia
         return $query->with([
             'patients' => function ($p) use ($startOfMonth) {
                 $p->with([
-                    'patientSummaries' => function ($s) use ($startOfMonth) {
-                        $s->where('month_year', $startOfMonth);
-                    },
-                    'patientInfo.patientCcmStatusRevisions' => function ($r) use ($startOfMonth) {
-                        $r->ofDate($startOfMonth, Carbon::now());
-                    },
+                    'patientSummaries'                      => fn ($pms)                      => $pms->createdOn($startOfMonth, 'month_year'),
+                    'chargeableMonthlySummariesView'        => fn ($s)        => $s->createdOn($startOfMonth, 'chargeable_month'),
+                    'patientInfo.patientCcmStatusRevisions' => fn ($r) => $r->ofDate($startOfMonth, Carbon::now()),
                 ])
                     ->isNotDemo();
             },

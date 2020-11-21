@@ -105,6 +105,26 @@ class RequiredPermissionsTableSeeder extends Seeder
                 'name'         => 'phi.read',
                 'display_name' => 'Can view PHI.',
             ],
+            [
+                'name'         => 'pam.view',
+                'display_name' => 'Can view Patient Activity Management page.',
+            ],
+            [
+                'name'         => 'pam.export',
+                'display_name' => 'Can view Patient Activity Management page.',
+            ],
+            [
+                'name'         => 'ca-director.view',
+                'display_name' => 'Can view Care Ambassador Director page.',
+            ],
+            [
+                'name'         => 'downloads.disable',
+                'display_name' => 'Disable downloading any content from CPM.',
+            ],
+            [
+                'name'         => 'edit-patient-chart.disable',
+                'display_name' => 'Disable making changes to a patient\'s chart.',
+            ],
         ];
 
         return array_merge($perms, $old);
@@ -173,6 +193,7 @@ class RequiredPermissionsTableSeeder extends Seeder
             'provider',
             'ccda',
             'medication',
+            'notification',
             'patientProblem',
             'patient',
             'careplan',
@@ -215,6 +236,7 @@ class RequiredPermissionsTableSeeder extends Seeder
             'offlineActivityRequest',
             'offlineActivity',
             'attestedProblems',
+            'phoneNumber',
         ]);
     }
 }

@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use App\Call;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Domain\Customer\LocationServices;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -146,11 +147,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null                                                                                                        $notifications_about_this_patient_count
  * @property \CircleLinkHealth\Customer\Entities\PatientCcmStatusRevision[]|\Illuminate\Database\Eloquent\Collection         $patientCcmStatusRevisions
  * @property int|null                                                                                                        $patient_ccm_status_revisions_count
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Patient intersectLocationsWith($user)
+ * @property string|null                                                                                                     $last_contact_time
  */
 class Patient extends BaseModel
 {
     use Filterable;
     use SoftDeletes;
+    const AGENT                   = 'agent';
     const BHI_CONSENT_NOTE_TYPE   = 'Consented to BHI';
     const BHI_REJECTION_NOTE_TYPE = 'Did Not Consent to BHI';
 
@@ -526,6 +530,21 @@ class Patient extends BaseModel
     public function location()
     {
         return $this->belongsTo(Location::class, 'preferred_contact_location');
+    }
+
+    public function locationHasServices($chargeableServiceCodes): bool
+    {
+        if (is_null($this->preferred_contact_location)) {
+            sendSlackMessage('#billing_alerts', "Patient ({$this->user_id}) does not have location attached. Please investigate");
+
+            return false;
+        }
+
+        if ( ! is_array($chargeableServiceCodes)) {
+            $chargeableServiceCodes = [$chargeableServiceCodes];
+        }
+
+        return LocationServices::hasServiceCodesForMonth($this->preferred_contact_location, $chargeableServiceCodes);
     }
 
     public function notificationsAboutThisPatient()

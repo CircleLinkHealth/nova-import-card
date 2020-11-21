@@ -10,10 +10,11 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 /**
  * CircleLinkHealth\Customer\Entities\PatientMonthlySummary.
@@ -118,9 +119,16 @@ use Illuminate\Support\Facades\DB;
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $allChargeableServices
  * @property int|null                                                                                         $all_chargeable_services_count
  * @property int                                                                                              $should_process
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOn(\Carbon\Carbon $date, $field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdThisMonth($field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdToday($field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdYesterday($field = 'created_at')
+ * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  */
 class PatientMonthlySummary extends BaseModel
 {
+    use DateScopesTrait;
     use HasChargeableServices;
 
     protected $dates = [
@@ -366,7 +374,14 @@ class PatientMonthlySummary extends BaseModel
     {
         return ! $this->hasServiceCode(ChargeableService::BHI, $includeUnfulfilledChargeableServices)
             ? $this->attestedProblems
-            : $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false);
+            : $this->attestedProblems->filter(function ($p) {
+                $cpmProblem = $p->cpmProblem;
+                if (is_null($cpmProblem)) {
+                    return true;
+                }
+
+                return false == $cpmProblem->is_behavioral || in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
+            });
     }
 
     public function createCallReportsForCurrentMonth()
@@ -558,13 +573,8 @@ class PatientMonthlySummary extends BaseModel
 
     public function syncAttestedProblems(array $attestedProblems)
     {
-        //remove summary id without detaching. We may still need the association of the problem with the call
+        //todo: deprecate
         $this->attestedProblems()->update(['call_problems.patient_monthly_summary_id' => null]);
-
-        DB::table('call_problems')
-            ->whereNull('call_id')
-            ->whereNull('patient_monthly_summary_id')
-            ->delete();
 
         $this->attestedProblems()->attach($attestedProblems);
 
@@ -604,9 +614,10 @@ class PatientMonthlySummary extends BaseModel
 
     private function getBhiProblemsForAutoAttestation()
     {
+        $bhiProblem = $this->patientProblemsSortedByWeight()->filter(fn (Problem $p) => $p->isBehavioral())->first();
+
         return [
-            optional($this->patientProblemsSortedByWeight()
-                ->first())
+            optional($bhiProblem)
                 ->id,
         ];
     }
