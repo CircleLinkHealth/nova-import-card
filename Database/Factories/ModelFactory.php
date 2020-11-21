@@ -6,6 +6,7 @@
 
 use App\Call;
 use App\DirectMailMessage;
+use App\Models\PracticePull\Demographics;
 use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;
@@ -366,3 +367,33 @@ $factory->define(DirectMailMessage::class, function (Faker\Generator $faker) {
         'direction'       => 'received',
     ];
 });
+
+$factory->define(
+    Demographics::class,
+    function (Faker\Generator $faker) {
+        return [
+            'mrn'                     => str_random(),
+            'first_name'              => $faker->firstName,
+            'last_name'               => $faker->lastName,
+            'last_encounter'          => now()->subMonths(random_int(1, 12)),
+            'dob'                     => now()->subYears(random_int(65, 95)),
+            'gender'                  => $faker->randomElement(['M', 'F']),
+            'lang'                    => $faker->randomElement(['EN', 'ES']),
+            'referring_provider_name' => $faker->name,
+            'facility_name'           => $faker->company,
+            'cell_phone'              => $faker->phoneNumber,
+            'home_phone'              => $faker->phoneNumber,
+            'other_phone'             => $faker->phoneNumber,
+            'primary_phone'           => $faker->phoneNumber,
+            'email'                   => $faker->email,
+            'street'                  => $faker->streetAddress,
+            'street2'                 => $faker->streetSuffix,
+            'city'                    => $faker->city,
+            'state'                   => $faker->state,
+            'zip'                     => $faker->postcode,
+            'primary_insurance'       => $faker->company,
+            'secondary_insurance'     => $faker->company,
+            'tertiary_insurance'      => $faker->company,
+        ];
+    }
+);
