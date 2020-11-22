@@ -589,7 +589,7 @@
                     'PCM Time': call.pcm_total_time != null ? timeDisplay(call.pcm_total_time) : null,
                     'RPM Time': call.rpm_total_time != null ? timeDisplay(call.rpm_total_time) : null,
                     'RHC Time': call.rhc_total_time != null ? timeDisplay(call.rhc_total_time) : null,
-                    'Successful Calls': call.no_of_successful_calls,
+                    'Successful Calls': call.no_of_successful_calls ?? null,
                     'Preferred Call Days': call.preferred_call_days,
                     'Patient ID': call.patient_id,
                     notesLink: rootUrl(`manage-patients/${call.patient_id}/notes`),
