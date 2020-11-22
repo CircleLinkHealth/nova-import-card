@@ -6,7 +6,9 @@
 
 namespace CircleLinkHealth\CcmBilling\Caches;
 
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Customer\Entities\User;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection;
 
 class BillingDataCache implements BillingCache
@@ -17,6 +19,8 @@ class BillingDataCache implements BillingCache
     protected array $queriedLocationSummaries = [];
 
     protected array $queriedPatients = [];
+    
+    protected bool $billingRevampIsEnabled;
 
     public function clearLocations(): void
     {
@@ -107,5 +111,19 @@ class BillingDataCache implements BillingCache
     public function setQueriedPatient(int $patientId): void
     {
         $this->queriedPatients[] = $patientId;
+    }
+    
+    public function billingRevampIsEnabled():bool
+    {
+        if (! isset($this->billingRevampIsEnabled)){
+            $this->billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
+        }
+        
+        return $this->billingRevampIsEnabled;
+    }
+    
+    public function setBillingRevampIsEnabled(bool $isEnabled) : void
+    {
+        $this->billingRevampIsEnabled = $isEnabled;
     }
 }
