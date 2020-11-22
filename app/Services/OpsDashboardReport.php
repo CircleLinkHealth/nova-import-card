@@ -327,7 +327,7 @@ class OpsDashboardReport
                         $ccmTime = $summary->ccm_time ?? 0;
                         $bhiTime = $summary->bhi_time ?? 0;
                     }
-                    
+
                     $this->report->incrementTimeRangeCount($ccmTime, $bhiTime);
                 } else {
                     $toggle = $this->billingRevampIsEnabled() ? 'on' : 'off';
