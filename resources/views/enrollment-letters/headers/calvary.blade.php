@@ -20,7 +20,7 @@
     </div>
 
     <div class="letter-head">
-        Dear {{$userEnrollee->first_name}},
+        Dear {{$userEnrollee->first_name}} {{$userEnrollee->last_name}},
     </div>
 </div>
 

@@ -11,8 +11,7 @@
                 {{$extraAddressValues[0]['postal_code']}}
             @endif
         </div>
-
-        <div class="logo col">
+        <div class="logo">
             @include('enrollment-letters.practiceLogo')
         </div>
     </div>
@@ -43,6 +42,7 @@
     .logo{
         opacity: 90%;
         margin-top: 15px;
+        margin-right: 140px;
         float: right;
     }
 
@@ -50,6 +50,13 @@
         .header{
             padding-right: 18px;
             font-size: 15px;
+        }
+
+        .logo{
+            opacity: 90%;
+            margin-top: 15px;
+            margin-right: unset;
+            float: none;
         }
 
     }

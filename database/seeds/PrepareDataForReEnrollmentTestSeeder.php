@@ -131,7 +131,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
                     // We need this just for Toledo.
                     'npi_number' => 1962409979,
                 ]);
-            
+
                 $this->countRandomProvider = 1;
             }
 
@@ -179,6 +179,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
     {
         $provider = User::ofType('provider')
             ->with('providerInfo')
+            ->whereHas('providerInfo')
             ->ofPractice($practiceId)
             ->first();
 
