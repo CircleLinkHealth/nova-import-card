@@ -58,24 +58,25 @@ class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuil
      */
     public function handle()
     {
-        $servicesToCompare = ChargeableService::cached()->whereNotIn('code', [
-            ChargeableService::SOFTWARE_ONLY,
-            ChargeableService::AWV_INITIAL,
-            ChargeableService::AWV_SUBSEQUENT,
-        ]);
+        $servicesToCompare = ChargeableService::cached()
+            ->where('display_name', '!==', null)
+            ->whereNotIn('code', [
+                ChargeableService::AWV_INITIAL,
+                ChargeableService::AWV_SUBSEQUENT,
+            ]);
 
         $this->getBuilder()->each(function ($patient) use ($servicesToCompare) {
             $toMatch = [];
             BillingCache::setBillingRevampIsEnabled(false);
 
             foreach ($servicesToCompare as $cs) {
-                $toMatch['services'][$cs->code]['off'] = PatientIsOfServiceCode::execute($patient->id, $cs->code);
+                $toMatch['services'][$cs->display_name]['off'] = PatientIsOfServiceCode::execute($patient->id, $cs->code);
             }
 
             BillingCache::setBillingRevampIsEnabled(true);
 
             foreach ($servicesToCompare as $cs) {
-                $toMatch['services'][$cs->code]['on'] = PatientIsOfServiceCode::execute($patient->id, $cs->code);
+                $toMatch['services'][$cs->display_name]['on'] = PatientIsOfServiceCode::execute($patient->id, $cs->code);
             }
 
             $mismatches = [];
@@ -85,7 +86,11 @@ class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuil
                 }
             }
 
-            echo implode(',', $mismatches);
+            if (empty($mismatches)) {
+                return;
+            }
+            $mismatches = implode(',', $mismatches);
+            sendSlackMessage('#billing_allerts', "Warning! (From Billing Toggle Compare Job:) Patient ($patient->id), has the following code mismatches between billing revamp toggle states: {$mismatches}");
         });
     }
 }
