@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
@@ -47,7 +48,7 @@ class PatientIsOfServiceCode
     private function billingRevampIsEnabled(): bool
     {
         if ( ! isset($this->billingRevampIsEnabled)) {
-            $this->billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
+            $this->billingRevampIsEnabled = BillingCache::billingRevampIsEnabled();
         }
 
         return $this->billingRevampIsEnabled;
