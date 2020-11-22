@@ -6,6 +6,9 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
@@ -23,6 +26,7 @@ class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuil
     use SerializesModels;
 
     protected int $practiceId;
+
     /**
      * Create a new job instance.
      *
@@ -54,8 +58,34 @@ class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuil
      */
     public function handle()
     {
-        //check patient is of service with both toggles
-        //check services for time tracker with billing on and if patient has relevant summary
-        //check if patient has no services at all
+        $servicesToCompare = ChargeableService::cached()->whereNotIn('code', [
+            ChargeableService::SOFTWARE_ONLY,
+            ChargeableService::AWV_INITIAL,
+            ChargeableService::AWV_SUBSEQUENT,
+        ]);
+
+        $this->getBuilder()->each(function ($patient) use ($servicesToCompare) {
+            $toMatch = [];
+            BillingCache::setBillingRevampIsEnabled(false);
+
+            foreach ($servicesToCompare as $cs) {
+                $toMatch['services'][$cs->code]['off'] = PatientIsOfServiceCode::execute($patient->id, $cs->code);
+            }
+
+            BillingCache::setBillingRevampIsEnabled(true);
+
+            foreach ($servicesToCompare as $cs) {
+                $toMatch['services'][$cs->code]['on'] = PatientIsOfServiceCode::execute($patient->id, $cs->code);
+            }
+
+            $mismatches = [];
+            foreach ($toMatch['services'] as $code => $boolPerToggleArray) {
+                if ($boolPerToggleArray['on'] !== $boolPerToggleArray['off']) {
+                    $mismatches[] = $code;
+                }
+            }
+
+            echo implode(',', $mismatches);
+        });
     }
 }
