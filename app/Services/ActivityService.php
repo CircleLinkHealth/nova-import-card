@@ -229,6 +229,9 @@ class ActivityService
                 $csFiltered = $cs
                     ->filter(fn ($cs) => in_array($cs->code, [ChargeableService::RPM, ChargeableService::RPM40]));
                 break;
+            case ChargeableService::GENERAL_CARE_MANAGEMENT:
+                $csFiltered = $cs->filter(fn ($cs) => ChargeableService::GENERAL_CARE_MANAGEMENT === $cs->code);
+                break;
             default:
                 $csFiltered = collect();
                 break;
@@ -239,7 +242,7 @@ class ActivityService
 
     private function getChargeableServiceById(User $patient, int $id): ?ChargeableService
     {
-        return LocationServices::getUsingServiceId($patient->getPreferredContactLocation(), $id, Carbon::now()->startOfMonth());
+        return LocationServices::getUsingServiceId($patient, $id, Carbon::now()->startOfMonth());
     }
 
     private function getChargeableServiceIdByCode(User $patient, string $code): ?int

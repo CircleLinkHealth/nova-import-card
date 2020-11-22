@@ -336,6 +336,7 @@
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/range-input" />
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/unresolved-callback" />
       <path value="$PROJECT_DIR$/vendor/friendsofcat/laravel-feature-flag" />
+      <path value="$PROJECT_DIR$/vendor/laracasts/cypress" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -427,7 +428,6 @@
       <extension name="cassandra" enabled="false" />
       <extension name="couchbase" enabled="false" />
       <extension name="cubrid" enabled="false" />
-      <extension name="decimal" enabled="false" />
       <extension name="enchant" enabled="false" />
       <extension name="fann" enabled="false" />
       <extension name="ffmpeg" enabled="false" />
@@ -454,7 +454,6 @@
       <extension name="ming" enabled="false" />
       <extension name="mongo" enabled="false" />
       <extension name="mongodb" enabled="false" />
-      <extension name="mosquitto-php" enabled="false" />
       <extension name="mqseries" enabled="false" />
       <extension name="mssql" enabled="false" />
       <extension name="mysql" enabled="false" />
@@ -486,6 +485,11 @@
       <extension name="zend" enabled="false" />
       <extension name="zmq" enabled="false" />
     </extensions>
+  </component>
+  <component name="PhpStepFilterConfiguration">
+    <skipped_functions>
+      <skipped_function name="CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode-&gt;isOfServiceCode" />
+    </skipped_functions>
   </component>
   <component name="PhpUnit">
     <phpunit_settings>

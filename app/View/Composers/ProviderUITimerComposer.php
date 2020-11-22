@@ -106,8 +106,14 @@ class ProviderUITimerComposer extends ServiceProvider
                 $noLiveCountTimeTracking = $params['noLiveCountTimeTracking'];
             }
 
+            $disableTimeTracking = isset($params['disableTimeTracking']) && $params['disableTimeTracking'];
+            if (app('impersonate')->isImpersonating()) {
+                $disableTimeTracking = true;
+            }
+
             $view->with(compact([
                 'noLiveCountTimeTracking',
+                'disableTimeTracking',
             ]));
         });
 

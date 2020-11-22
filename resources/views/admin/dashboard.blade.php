@@ -24,18 +24,6 @@
             </div>
 
             <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">CCD Viewer</div>
-
-                    <div class="panel-body">
-                        @include('CCDViewer.create-old-viewer')
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4">
                 <div class="panel panel-default" data-step="1"
                      data-intro="This box helps you import CCDs for patients we have already processed for eligibility in CPM. It only applies for batches of CCDs we have already processed.">
                     <div class="panel-heading">Import Eligible Patients Medical Records <span class="pull-right"><a
@@ -49,6 +37,10 @@
                     </div>
                 </div>
             </div>
+
+        </div>
+
+        <div class="row">
 
             <div class="col-md-4">
                 <div class="panel panel-default">
@@ -93,11 +85,38 @@
                         <form action="/send-sample-direct-mail" method="POST">
                             {{csrf_field()}}
                             <input type="email" name="direct_address" placeholder="mail@direct.clh.com"
-                                   required>
-                            <input type="submit" value="send">
+                                   required class="form-control">
+                            <br>
+                            <input type="submit" value="Send Sample (Demo) Note"
+                                   class="btn btn-m btn-success pull-right">
                         </form>
                     </div>
                 </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Send Patient CarePlan PDF via Direct Mail</div>
+                    <div class="panel-body">
+                        <p>Enter the patient ID and the receiver's DM address. Make sure the receiver is in the same
+                            practice as the patient.</p>
+                        <form action="{{route('forward-careplan-to-billing-provider-via-dm')}}" method="POST">
+                            {{csrf_field()}}
+                            <div class="col-sm-4">
+                                <input type="number" name="patient_id" placeholder="Patient ID"
+                                       required class="form-control">
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="email" name="dm_address" placeholder="mail@direct.clh.com"
+                                       required class="form-control">
+                            </div>
+                            <br>
+                            <br>
+                            <br>
+                            <input type="submit" value="Send PDF CarePlan" class="btn btn-m btn-danger pull-right">
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">Demo UPG G0506 Flow</div>
                     <div class="panel-body">
@@ -105,9 +124,15 @@
                             <span><span style="color: red">&#33;</span>&nbsp;Feature is disabled!</span>
                         @endif
                         <ul>
-                            <li> <strong>Both</strong> CCD and PDF must be received for the patient to be ready for import.</li>
-                            <li> If CCD is sent first, <strong>wait</strong> ~1 minute before visiting ccd-importer page.</li>
-                            <li> Open <a href="{{route('import.ccd.remix')}}">CCD Importer Page</a>. Patient "Barbara Zznigro" should be ready to be imported.</li>
+                            <li><strong>Both</strong> CCD and PDF must be received for the patient to be ready for
+                                import.
+                            </li>
+                            <li> If CCD is sent first, <strong>wait</strong> ~1 minute before visiting ccd-importer
+                                page.
+                            </li>
+                            <li> Open <a href="{{route('import.ccd.remix')}}">CCD Importer Page</a>. Patient "Barbara
+                                Zznigro" should be ready to be imported.
+                            </li>
                             <li> You can delete <strong>all created test data</strong> at any time.</li>
                         </ul>
                         @if (\Session::has('upg0506-command-success'))
@@ -115,9 +140,12 @@
                                 <span>{!! \Session::get('upg0506-command-success') !!}</span>
                             </div>
                         @endif
-                        <a class="btn btn-m btn-primary" href="{{route('upg0506.demo', ['type'=>'pdf'])}}" @if(! upg0506IsEnabled()) disabled @endif>Send PDF</a>
-                        <a class="btn btn-m btn-info" href="{{route('upg0506.demo', ['type'=> 'ccd'])}}" @if(! upg0506IsEnabled()) disabled @endif>Send CCD</a>
-                        <a class="btn btn-m btn-danger" href="{{route('upg0506.demo', ['type' => 'delete'])}}" @if(! upg0506IsEnabled()) disabled @endif>Delete Test Patient Data</a>
+                        <a class="btn btn-m btn-primary" href="{{route('upg0506.demo', ['type'=>'pdf'])}}"
+                           @if(! upg0506IsEnabled()) disabled @endif>Send PDF</a>
+                        <a class="btn btn-m btn-info" href="{{route('upg0506.demo', ['type'=> 'ccd'])}}"
+                           @if(! upg0506IsEnabled()) disabled @endif>Send CCD</a>
+                        <a class="btn btn-m btn-danger" href="{{route('upg0506.demo', ['type' => 'delete'])}}"
+                           @if(! upg0506IsEnabled()) disabled @endif>Delete Test Patient Data</a>
                     </div>
                 </div>
             </div>

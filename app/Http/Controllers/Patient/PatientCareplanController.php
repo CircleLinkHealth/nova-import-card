@@ -7,11 +7,13 @@
 namespace App\Http\Controllers\Patient;
 
 use App\CarePlanPrintListView;
+use App\Contracts\DirectMail;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
 use App\Http\Requests\DeleteAlternateContactRequest;
 use App\Http\Requests\DeletePatientPhoneRequest;
+use App\Http\Requests\DmCarePlanToBillingProviderRequest;
 use App\Http\Requests\PatientPhonesRequest;
 use App\Jobs\GeneratePatientsCarePlans;
 use App\Repositories\PatientReadRepository;
@@ -94,6 +96,30 @@ class PatientCareplanController extends Controller
         return response()->json([
             'message' => 'Phone Number Has Been Deleted!',
         ], 200);
+    }
+
+    public function forwardToBillingProviderViaDM(DmCarePlanToBillingProviderRequest $request, DirectMail $dm)
+    {
+        $patient = User::ofType('participant')
+            ->with([
+                'carePlan',
+                'primaryPractice.settings',
+            ])
+            ->find($patientId = $request->input('patient_id'));
+
+        if ( ! $patient->carePlan) {
+            return "Patient with ID $patientId does not have a CarePlan";
+        }
+
+        $dm = $dm->send(
+            $request->input('dm_address'),
+            $patient->carePlan->toPdf(),
+            now()->toDateTimeString()." - Patient ID $patientId Care Plan.pdf",
+            null,
+            $patient
+        );
+
+        dd($dm);
     }
 
     public function getPatientAgentContact(PatientPhonesRequest $request)

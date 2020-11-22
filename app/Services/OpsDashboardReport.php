@@ -324,9 +324,10 @@ class OpsDashboardReport
                         $bhiTime = $bhiSummaries->sum('total_time');
                     } else {
                         $summary = $patientSummaries->first();
-                        $ccmTime = $summary->ccm_time;
-                        $bhiTime = $summary->bhi_time;
+                        $ccmTime = $summary->ccm_time ?? 0;
+                        $bhiTime = $summary->bhi_time ?? 0;
                     }
+                    
                     $this->report->incrementTimeRangeCount($ccmTime, $bhiTime);
                 } else {
                     $toggle = $this->billingRevampIsEnabled() ? 'on' : 'off';

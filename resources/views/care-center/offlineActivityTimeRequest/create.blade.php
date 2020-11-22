@@ -100,7 +100,11 @@
                                        required
                                        style="display:inline"
                                        value="{{ $chargeableService->chargeable_service_id  }}"
-                                        {{ $chargeableService->chargeable_service_id == old('chargeable_service_id') ? 'checked' : ''}}/>
+                                        {{
+                                            $chargeableService->chargeable_service_id == old('chargeable_service_id') ||
+                                            (empty(old('chargeable_service_id')) && $loop->index === 0)
+                                            ? 'checked' : ''
+                                        }}/>
                                 {{ $chargeableService->chargeable_service_name  }}
                             </div>
                         @endforeach
@@ -146,9 +150,3 @@
         </div>
     </div>
 @endsection
-<script>
-    import Input from "../../../assets/js/components/shared/materialize/input";
-    export default {
-        components: {Input}
-    }
-</script>

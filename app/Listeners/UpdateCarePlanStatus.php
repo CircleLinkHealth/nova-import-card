@@ -99,7 +99,7 @@ class UpdateCarePlanStatus
     private function shouldBeQAApproved(User $patient, User $approver): bool
     {
         return CarePlan::DRAFT == $patient->getCarePlanStatus()
-               && $approver->hasPermissionForSite('care-plan-qa-approve', $patient->getPrimaryPracticeId());
+            && $approver->hasPermissionForSite('care-plan-qa-approve', $patient->getPrimaryPracticeId());
     }
 
     /**

@@ -170,6 +170,10 @@
                                     }
                                 }
 
+                                function setTimeTrackerValue(type, value) {
+                                    $(`#monthly-time-${type}`).html(value);
+                                }
+
                                 webix.locale.pager = {
                                     first: "<<",// the first button
                                     last: ">>",// the last button
@@ -179,21 +183,25 @@
                                 webix.ui.datafilter.mySummColumnCCM = webix.extend({
                                     refresh: function (master, node, value) {
                                         node.firstChild.innerHTML = durationSum(master, 'CCM');
+                                        setTimeTrackerValue('CCM', node.firstChild.innerHTML);
                                     }
                                 }, webix.ui.datafilter.summColumn);
                                 webix.ui.datafilter.mySummColumnBHI = webix.extend({
                                     refresh: function (master, node, value) {
                                         node.firstChild.innerHTML = durationSum(master, 'BHI');
+                                        setTimeTrackerValue('BHI', node.firstChild.innerHTML);
                                     }
                                 }, webix.ui.datafilter.summColumn);
                                 webix.ui.datafilter.mySummColumnPCM = webix.extend({
                                     refresh: function (master, node, value) {
                                         node.firstChild.innerHTML = durationSum(master, 'PCM');
+                                        setTimeTrackerValue('PCM', node.firstChild.innerHTML);
                                     }
                                 }, webix.ui.datafilter.summColumn);
                                 webix.ui.datafilter.mySummColumnRPM = webix.extend({
                                     refresh: function (master, node, value) {
                                         node.firstChild.innerHTML = durationSum(master, 'RPM');
+                                        setTimeTrackerValue('RPM', node.firstChild.innerHTML);
                                     }
                                 }, webix.ui.datafilter.summColumn);
 

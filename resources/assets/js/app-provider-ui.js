@@ -167,9 +167,6 @@ const App = new Vue({
         timeTrackerInfo: window.timeTrackerInfo || {}
     },
     mounted() {
-        if (Object.keys(this.timeTrackerInfo).length === 0) {
-            console.error("Time-Tracker: Info Object should have values");
-        }
     }
 })
 

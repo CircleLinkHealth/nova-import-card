@@ -10,10 +10,8 @@ use App\CallView;
 use App\Filters\CallViewFilters;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Http\Request;
 
 class CallReportController extends Controller
@@ -94,8 +92,6 @@ class CallReportController extends Controller
 
         $rows = [];
 
-        $billingRevampIsEnabled = Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG);
-
         foreach ($calls as $call) {
             $rows[] = [
                 $call->id,
@@ -108,11 +104,11 @@ class CallReportController extends Controller
                 $call->call_time_end,
                 $call->preferredCallDaysToString(),
                 $call->last_call,
-                $this->formatTime($billingRevampIsEnabled ? $call->ccm_total_time : $call->pms_ccm_time),
-                $this->formatTime($billingRevampIsEnabled ? $call->bhi_total_time : $call->pms_bhi_time),
-                $this->formatTime($billingRevampIsEnabled ? $call->pcm_total_time : 0),
-                $this->formatTime($billingRevampIsEnabled ? $call->rpm_total_time : 0),
-                $billingRevampIsEnabled ? $call->total_no_of_successful_calls : $call->pms_no_of_successful_calls,
+                $this->formatTime($call->ccm_total_time),
+                $this->formatTime($call->bhi_total_time),
+                $this->formatTime($call->pcm_total_time),
+                $this->formatTime($call->rpm_total_time),
+                $call->total_no_of_successful_calls,
                 $call->billing_provider,
                 $call->scheduler,
             ];

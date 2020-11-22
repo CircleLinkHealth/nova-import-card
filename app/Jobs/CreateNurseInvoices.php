@@ -20,12 +20,22 @@ class CreateNurseInvoices implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
+    /**
+     * The number of seconds the job can run before timing out.
+     * 10 minutes.
+     *
+     * @var int
+     */
+    public $timeout = 600;
+
     /**
      * The number of times the job may be attempted.
      *
      * @var int
      */
     public $tries = 2;
+
     /**
      * @var Carbon
      */
