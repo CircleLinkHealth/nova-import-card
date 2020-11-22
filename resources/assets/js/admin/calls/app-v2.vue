@@ -886,11 +886,17 @@
     div.loader.in-column {
         position: relative;
         left: 15%;
+        border-color: #f0ad4e;
+        border-top: 2px solid white;
+        border-left: 2px solid white;
     }
 
     div.loader.successful-calls {
         position: relative;
         left: 25%;
+        border-color: #f0ad4e;
+        border-top: 2px solid white;
+        border-left: 2px solid white;
     }
 
     .table-bordered > tbody > tr > td {
