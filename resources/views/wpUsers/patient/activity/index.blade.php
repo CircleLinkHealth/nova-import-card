@@ -171,7 +171,8 @@
                                 }
 
                                 function setTimeTrackerValue(type, value) {
-                                    $(`#monthly-time-${type}`).html(value);
+                                    let typeSanitized = type.replace(/[^A-Z0-9]/ig, "_");
+                                    $(`#monthly-time-${typeSanitized}`).html(value);
                                 }
 
                                 webix.locale.pager = {
