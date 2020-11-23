@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\API\Admin;
 
+use App\Actions\PatientTimeAndCalls;
 use App\CallView;
 use App\Filters\CallViewFilters;
 use App\Http\Controllers\API\ApiController;
@@ -16,6 +17,11 @@ class CallsViewController extends ApiController
 {
     public function __construct()
     {
+    }
+
+    public function getPatientTimeAndCalls(Request $request)
+    {
+        return response()->json(PatientTimeAndCalls::getRaw($request->input()));
     }
 
     /**

@@ -109,6 +109,66 @@
                         <loader class="relative" v-if="props.row.loaders.nextCall"></loader>
                     </div>
                 </template>
+                <template slot="CCM Time" slot-scope="props">
+                    <div>
+                        <div v-if="props.row['CCM Time'] === null">
+                            <loader class="in-column"></loader>
+                        </div>
+                        <div v-else>
+                            {{props.row['CCM Time']}}
+                        </div>
+                    </div>
+                </template>
+                <template slot="BHI Time" slot-scope="props">
+                    <div>
+                        <div v-if="props.row['BHI Time'] === null">
+                            <loader class="in-column"></loader>
+                        </div>
+                        <div v-else>
+                            {{props.row['BHI Time']}}
+                        </div>
+                    </div>
+                </template>
+                <template slot="PCM Time" slot-scope="props">
+                    <div>
+                        <div v-if="props.row['PCM Time'] === null">
+                            <loader class="in-column"></loader>
+                        </div>
+                        <div v-else>
+                            {{props.row['PCM Time']}}
+                        </div>
+                    </div>
+                </template>
+                <template slot="RPM Time" slot-scope="props">
+                    <div>
+                        <div v-if="props.row['RPM Time'] === null">
+                            <loader class="in-column"></loader>
+                        </div>
+                        <div v-else>
+                            {{props.row['RPM Time']}}
+                        </div>
+                    </div>
+                </template>
+                <template slot="RHC Time" slot-scope="props">
+                    <div>
+                        <div v-if="props.row['RHC Time'] === null">
+                            <loader class="in-column"></loader>
+                        </div>
+                        <div v-else>
+                            {{props.row['RHC Time']}}
+                        </div>
+                    </div>
+                </template>
+                <template slot="Successful Calls" slot-scope="props">
+                    <div>
+                        <div v-if="props.row['Successful Calls'] === null">
+                            <loader class="successful-calls"></loader>
+                        </div>
+                        <div v-else>
+                            {{props.row['Successful Calls']}}
+                        </div>
+                    </div>
+                </template>
                 <template slot="Activity Start" slot-scope="props">
                     <div>
                         <time-editable v-if="canScheduleCalls(props.row['Type'])"
@@ -208,7 +268,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
+                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time','RHC Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
                 tableData: [],
                 loaders: {
                     calls: false
@@ -246,7 +306,7 @@
                         'Patient ID': !this.isAdmin() ? 'hidden' : '',
                         'Patient': this.patientNamesClass
                     },
-                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time', 'Practice', 'State', 'Scheduler'],
+                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time', 'RHC Time', 'Practice', 'State', 'Scheduler'],
                     filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'Practice', 'State', 'Billing Provider', 'Patient\'s Care Coach'],
                     filterByColumn: true,
                     texts: {
@@ -268,6 +328,7 @@
                         'BHI Time': (ascending) => (a, b) => 0,
                         'PCM Time': (ascending) => (a, b) => 0,
                         'RPM Time': (ascending) => (a, b) => 0,
+                        'RHC Time': (ascending) => (a, b) => 0,
                         Practice: (ascending) => (a, b) => 0,
                         State: (ascending) => (a, b) => 0,
                         Scheduler: (ascending) => (a, b) => 0,
@@ -308,6 +369,7 @@
                     'BHI Time': 'bhi_total_time',
                     'PCM Time': 'pcm_total_time',
                     'RPM Time' : 'rpm_total_time',
+                    'RHC Time' : 'rhc_total_time',
                     'Successful Calls': 'no_of_successful_calls',
                     'Practice': 'practice',
                     'State': 'state',
@@ -522,11 +584,12 @@
                     Scheduler: call.scheduler,
                     'Billing Provider': call.billing_provider,
                     'Last Call': call.last_call,
-                    'CCM Time': timeDisplay(call.ccm_total_time),
-                    'BHI Time': timeDisplay(call.bhi_total_time),
-                    'PCM Time': timeDisplay(call.pcm_total_time),
-                    'RPM Time': timeDisplay(call.rpm_total_time),
-                    'Successful Calls': call.no_of_successful_calls,
+                    'CCM Time': call.ccm_total_time != null ? timeDisplay(call.ccm_total_time) : null,
+                    'BHI Time': call.bhi_total_time != null ? timeDisplay(call.bhi_total_time) : null,
+                    'PCM Time': call.pcm_total_time != null ? timeDisplay(call.pcm_total_time) : null,
+                    'RPM Time': call.rpm_total_time != null ? timeDisplay(call.rpm_total_time) : null,
+                    'RHC Time': call.rhc_total_time != null ? timeDisplay(call.rhc_total_time) : null,
+                    'Successful Calls': call.no_of_successful_calls ?? null,
                     'Preferred Call Days': call.preferred_call_days,
                     'Patient ID': call.patient_id,
                     notesLink: rootUrl(`manage-patients/${call.patient_id}/notes`),
@@ -676,6 +739,8 @@
 
                                 $vm.loaders.calls = false;
                             }, 1000);
+                            Event.$emit('calls:data-retrieved', tableCalls);
+
                             return tableCalls;
                         }
                     }
@@ -709,8 +774,38 @@
                 this.selectedPatientsNew = this.tableData.filter(row => row.selected && row.Patient);
             },
         },
+        created() {
+            self = this;
+        },
         mounted() {
             BindAppEvents(this, Event);
+
+            Event.$on('calls:data-retrieved', (tableData) =>{
+                let ids = tableData.map(function (call){
+                    return call['Patient ID'];
+                });
+
+                this.axios.post(rootUrl('api/admin/calls-v2-time-and-calls'), ids).then(function (resp){
+                    let data = resp.data;
+
+                    self.tableData = self.tableData.map(function (row) {
+                        let patientData = data[row['Patient ID']];
+
+                        if (! patientData){
+                            return row;
+                        }
+
+                        row['CCM Time']         = timeDisplay(patientData['ccm_total_time']);
+                        row['BHI Time']         = timeDisplay(patientData['bhi_total_time']);
+                        row['PCM Time']         = timeDisplay(patientData['pcm_total_time']);
+                        row['RPM Time']         = timeDisplay(patientData['rpm_total_time']);
+                        row['RHC Time']         = timeDisplay(patientData['rhc_total_time']);
+                        row['Successful Calls'] = patientData['no_of_successful_calls'];
+
+                        return row;
+                    });
+                })
+            })
 
             return Promise.all([this.next(), this.getNurses()])
         }
@@ -786,6 +881,22 @@
     div.loader.relative {
         position: relative;
         left: 0px;
+    }
+
+    div.loader.in-column {
+        position: relative;
+        left: 15%;
+        border-color: #f0ad4e;
+        border-top: 2px solid white;
+        border-left: 2px solid white;
+    }
+
+    div.loader.successful-calls {
+        position: relative;
+        left: 25%;
+        border-color: #f0ad4e;
+        border-top: 2px solid white;
+        border-left: 2px solid white;
     }
 
     .table-bordered > tbody > tr > td {
