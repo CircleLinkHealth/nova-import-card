@@ -3479,6 +3479,31 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
+    public function scopeSearchPhoneNumber($query, array $inboundPostmarkData)
+    {
+        return $query->with([
+            'patientInfo' => function ($q) {
+                return $q->select(['id', 'ccm_status', 'user_id']);
+            },
+
+            'enrollee',
+
+            'phoneNumbers' => function ($q) {
+                return $q->select(['id', 'user_id', 'number']);
+            },
+        ])
+            ->whereHas('phoneNumbers', function ($phoneNumber) use ($inboundPostmarkData) {
+            $phoneField = preg_replace('/[^0-9-()+ ]/', '', $inboundPostmarkData['phone']);
+            $callerIdFieldPhone = preg_replace('/[^0-9-()+ ]/', '', $inboundPostmarkData['callerId']);
+            $phoneNumber->whereIn('number', [
+                $phoneField,
+                $callerIdFieldPhone,
+                formatPhoneNumberE164($phoneField),
+                formatPhoneNumberE164($callerIdFieldPhone),
+            ]);
+        });
+    }
+
     public function scopeWithCareTeamOfType(
         $query,
         $type
