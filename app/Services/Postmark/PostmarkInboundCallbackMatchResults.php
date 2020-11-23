@@ -76,8 +76,8 @@ class PostmarkInboundCallbackMatchResults
             ])
             ->whereHas('phoneNumbers', function ($phoneNumber) use ($inboundPostmarkData) {
                 $phoneNumber->whereIn('number', [
-                    preg_replace('/[^0-9-()+.]/', '', $inboundPostmarkData['phone']),
-                    preg_replace('/[^0-9-()+.]/', '', $inboundPostmarkData['callerId']),
+                    preg_replace('/[^0-9-()+ ]/', '', $inboundPostmarkData['phone']),
+                    preg_replace('/[^0-9-()+ ]/', '', $inboundPostmarkData['callerId']),
                 ]);
             });
     }
