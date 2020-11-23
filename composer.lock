@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "f55e00d4785d37ac5ac007463c9c72c56a8543f0"
+                "reference": "0638d594d75b999597d9d6eca07b0a8145d62101"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-23T20:06:18+00:00"
+            "time": "2020-11-23T20:37:52+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -4064,16 +4064,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.102",
+            "version": "v1.2.103",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "346cfd72d11bb41f15e82654e532dc55360612ac"
+                "reference": "3efa2860959cc971f17624b40bf0699823f9d0f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/346cfd72d11bb41f15e82654e532dc55360612ac",
-                "reference": "346cfd72d11bb41f15e82654e532dc55360612ac",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/3efa2860959cc971f17624b40bf0699823f9d0f3",
+                "reference": "3efa2860959cc971f17624b40bf0699823f9d0f3",
                 "shasum": ""
             },
             "require": {
@@ -4108,7 +4108,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2020-11-04T19:23:01+00:00"
+            "time": "2020-11-23T19:49:25+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
