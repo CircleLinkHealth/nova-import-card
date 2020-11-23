@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "80df1711e4f721e5e0ccbc4fa35f8d03",
+    "content-hash": "06f477a9a5ca28c743ef7fc60abbc297",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1315,11 +1315,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.6.3",
+            "version": "v3.6.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "8ba7d39992d91a848fb217c5f74daeaca2ddca2c"
+                "reference": "4777facdfa2ec7e82961f3e3a41766ad2d046c3e"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1346,7 +1346,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-23T21:31:49+00:00"
+            "time": "2020-11-23T22:21:55+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -2875,10 +2875,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1|^8.0"
+                "php": "^7.0|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0"
+                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
             },
             "type": "library",
             "extra": {
@@ -2918,7 +2918,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-12T18:35:36+00:00"
+            "time": "2020-10-13T00:52:37+00:00"
         },
         {
             "name": "egulias/email-validator",
