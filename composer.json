@@ -196,7 +196,7 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.6",
     "circlelinkhealth/core-module": "dev-new-phone-number-format",
-    "circlelinkhealth/cpm-migrations-module": "dev-ca-practice-phone-number",
+    "circlelinkhealth/cpm-migrations-module": "2.6.3",
     "circlelinkhealth/customer-module": "3.5.3",
     "circlelinkhealth/eligibility-module": "dev-enrollee-phone-number-formats",
     "circlelinkhealth/enrollment-invites": "*",
