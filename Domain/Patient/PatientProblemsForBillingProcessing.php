@@ -134,8 +134,9 @@ class PatientProblemsForBillingProcessing
         if ( ! empty($rpmProblems)) {
             $hasMatchingRpmProblem = $rpmProblems->filter(
                 function (RpmProblem $rpmProblem) use ($problem) {
-                    //todo: use string contains on name?
-                    return $rpmProblem->code === $problem->icd10Code() || $rpmProblem->description === $problem->name;
+                    return $this->sanitize($rpmProblem->code) === $this->sanitize($problem->icd10Code())
+                        || $this->sanitize($rpmProblem->description) === $this->sanitize($problem->name)
+                        || $this->sanitize($rpmProblem->description) === $this->sanitize($problem->original_name);
                 }
             )->isNotEmpty();
 
