@@ -25,10 +25,6 @@ class CallsViewNurses extends BaseSqlView
             c.scheduled_date,
             c.status,
             (select max(called_date) from calls where `status` in ('reached', 'not reached', 'ignored') and calls.inbound_cpm_id = c.inbound_cpm_id) as last_call,
-            if (u5.ccm_time is null, 0, u5.ccm_time) as ccm_time,
-            if (u5.bhi_time is null, 0, u5.bhi_time) as bhi_time,
-            if (u5.no_of_calls is null, 0, u5.no_of_calls) as no_of_calls,
-            if (u5.no_of_successful_calls is null, 0, u5.no_of_successful_calls) as no_of_successful_calls,
             u7.practice,
             u1.timezone,
             c.window_start as call_time_start,
@@ -49,8 +45,6 @@ class CallsViewNurses extends BaseSqlView
 						left join patient_contact_window pcw on pi.id = pcw.patient_info_id
 						where pi.ccm_status in ('enrolled', 'paused')
 						group by pi.user_id, pi.ccm_status, pi.general_comment) as u2 on c.inbound_cpm_id = u2.patient_id
-
-            left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, pms.no_of_calls from patient_monthly_summaries pms where month_year = DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) u5 on c.inbound_cpm_id = u5.patient_id
 
 			left join (select u.id as user_id, p.id as practice_id, p.display_name as practice from practices p join users u on u.program_id = p.id where p.active = 1) u7 on c.inbound_cpm_id = u7.user_id
 			
