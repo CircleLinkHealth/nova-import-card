@@ -228,6 +228,34 @@ class AutoAssignCallbackTest extends TestCase
         ]);
     }
 
+    public function test_it_will_match_different_phone_numbers_format_from_db()
+    {
+        $phoneFormats = [
+            '527-931-9827',
+            '527-931-(9827)',
+            '+15279319827',
+            '527-931-9827 ',
+        ];
+        foreach ($phoneFormats as $phoneFormat) {
+            $patient = $this->createPatientData(Patient::ENROLLED, $this->practice->id, Enrollee::ENROLLED);
+            $nurse   = $this->createUser(Practice::firstOrFail()->id, 'care-center');
+            $this->setUpPermanentNurse($nurse, $patient);
+            $patient->phoneNumbers
+                ->first()
+                ->update(
+                    [
+                        'number' => $phoneFormat,
+                    ]
+                );
+            $patient->fresh();
+            $postmarkRecord = $this->createPostmarkCallbackData(false, false, $patient);
+
+            $patient->phoneNumbers->fresh();
+            $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord->data))->toArray(), $postmarkRecord->id);
+            $this->assertCallbackExists($patient->id);
+        }
+    }
+
     public function test_when_callback_is_created_assigned_nurse_will_get_live_notification()
     {
         Notification::fake();
@@ -263,6 +291,8 @@ class AutoAssignCallbackTest extends TestCase
         $this->dispatchPostmarkInboundMail(collect(json_decode($postmarkRecord->data))->toArray(), $postmarkRecord->id);
         $this->assertCallbackExists($patient1->id);
     }
+
+//    }
 
     private function assertCallbackExists(int $patientId)
     {
