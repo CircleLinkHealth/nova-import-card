@@ -107,6 +107,10 @@ class PatientProblemsForBillingProcessing
         }
 
         if ($practiceHasRhc) {
+            if (is_null($cpmProblem) && empty($services)) {
+                $services[] = ChargeableService::CCM;
+            }
+
             return $services;
         }
         $pcmProblems = $primaryPractice->pcmProblems;
