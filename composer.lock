@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "612dd5a1b8aea76d0c23eaf2da36cbeb",
+    "content-hash": "750d3face373f3ecfaf63581fc0e668e",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -950,11 +950,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "dev-billing-prepare-billing-revamp-toggle-on",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "062f9f84f0c64231f1012c538702c849c4c86a14"
+                "reference": "740b7d39b1fa28a32bc76f61c2c5e1d778ba09fc"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-23T11:01:50+00:00"
+            "time": "2020-11-23T11:06:38+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1231,11 +1231,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-ca-practice-phone-number",
+            "version": "v2.6.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "235fb0fcb6471ea57c4b68c4a2c2f1b9b2ba6787"
+                "reference": "574b9eb8687e2a162764f6c31d68919e42ad7259"
             },
             "type": "laravel-module",
             "extra": {
@@ -1257,7 +1257,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-22T13:42:01+00:00"
+            "time": "2020-11-23T09:51:40+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -18049,8 +18049,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/ccm-billing-module": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
