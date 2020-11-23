@@ -167,7 +167,7 @@ class ImportProblems extends BaseCcdaImportTask
                 break;
             }
             //Hotfix: HIV matches Hives
-            if (str_contains(strtolower($problemName), ['hives'])) {
+            if (str_contains(strtolower($problemName), 'hives')) {
                 break;
             }
 
