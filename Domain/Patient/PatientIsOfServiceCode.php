@@ -45,11 +45,7 @@ class PatientIsOfServiceCode
 
     private function billingRevampIsEnabled(): bool
     {
-        if ( ! isset($this->billingRevampIsEnabled)) {
-            $this->billingRevampIsEnabled = BillingCache::billingRevampIsEnabled();
-        }
-
-        return $this->billingRevampIsEnabled;
+        return BillingCache::billingRevampIsEnabled();
     }
 
     private function hasClashingService(): bool
