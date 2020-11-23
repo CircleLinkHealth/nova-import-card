@@ -227,6 +227,9 @@ function formatTime($time)
                                             <th>Last<br>Date called</th>
                                             <th>CCM<br>Time to date</th>
                                             <th>BHI<br>Time to date</th>
+                                            <th>PCM<br>Time to date</th>
+                                            <th>RPM<br>Time to date</th>
+                                            <th>RHC<br>Time to date</th>
                                             <th># Calls<br>to date</th>
                                             <th>Provider</th>
                                             <th>Practice</th>
@@ -334,16 +337,40 @@ function formatTime($time)
                                                     </td>
 
                                                     <td>
-                                                        @if( isset($call->ccm_time))
-                                                            {{ formatTime($call->ccm_time) }}
+                                                        @if( isset($call->ccm_total_time))
+                                                            {{ formatTime($call->ccm_total_time) }}
                                                         @else
                                                             <em style="color:red;">-</em>
                                                         @endif
                                                     </td>
 
                                                     <td>
-                                                        @if( isset($call->bhi_time))
-                                                            {{ formatTime($call->bhi_time) }}
+                                                        @if( isset($call->bhi_total_time))
+                                                            {{ formatTime($call->bhi_total_time) }}
+                                                        @else
+                                                            <em style="color:red;">-</em>
+                                                        @endif
+                                                    </td>
+
+                                                    <td>
+                                                        @if( isset($call->pcm_total_time))
+                                                            {{ formatTime($call->pcm_total_time) }}
+                                                        @else
+                                                            <em style="color:red;">-</em>
+                                                        @endif
+                                                    </td>
+
+                                                    <td>
+                                                        @if( isset($call->rpm_total_time))
+                                                            {{ formatTime($call->rpm_total_time) }}
+                                                        @else
+                                                            <em style="color:red;">-</em>
+                                                        @endif
+                                                    </td>
+
+                                                    <td>
+                                                        @if( isset($call->rhc_total_time))
+                                                            {{ formatTime($call->rhc_total_time) }}
                                                         @else
                                                             <em style="color:red;">-</em>
                                                         @endif

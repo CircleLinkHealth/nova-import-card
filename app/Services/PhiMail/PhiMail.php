@@ -175,7 +175,7 @@ class PhiMail implements DirectMail
 
         try {
             if ((bool) $patient->primaryPractice->cpmSettings()->include_ccda_with_dm && $patient->hasCcda()) {
-                $content = $patient->ccdas()->orderByDesc('id')->with('media')->first()->getMedia('ccd')->first()->getFile();
+                $content = GetOrCreateCcdaXml::forPatient($patient);
 
                 if ($content && ! Str::startsWith($content, ['<?xml'])) {
                     $content = '<?xml version="1.0"?>
@@ -314,30 +314,5 @@ class PhiMail implements DirectMail
 
         $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
         $this->connector->authenticateUser($phiMailUser, $phiMailPass);
-    }
-    
-    private function addCcdaIfYouShould(?User $patient)
-    {
-        if (!$patient) {
-            return null;
-        }
-        $patient->load('primaryPractice');
-        
-        try {
-            if ((bool)$patient->primaryPractice->cpmSettings()->include_ccda_with_dm && $patient->hasCcda()) {
-                $content = GetOrCreateCcdaXml::forPatient($patient);
-                
-                if ($content && !Str::startsWith($content, ['<?xml'])) {
-                    $content = '<?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="CDA.xsl"?>' . $content;
-                }
-                
-                if ($content) {
-                    return $content;
-                }
-            }
-        } catch (\Exception $e) {
-            Log::error('UPG CCDA not attached for patient ' . $patient->id);
-        }
     }
 }
