@@ -114,8 +114,9 @@ class PatientProblemsForBillingProcessing
         if ( ! empty($pcmProblems)) {
             $hasMatchingPcmProblem = $pcmProblems->filter(
                 function (PcmProblem $pcmProblem) use ($problem) {
-                    //todo: use string contains on name?
-                    return $pcmProblem->code === $problem->icd10Code() || $pcmProblem->description === $problem->name;
+                    return $this->sanitize($pcmProblem->code) === $this->sanitize($problem->icd10Code())
+                        || $this->sanitize($pcmProblem->description) === $this->sanitize($problem->name)
+                        || $this->sanitize($pcmProblem->description) === $this->sanitize($problem->original_name);
                 }
             )->isNotEmpty();
 
@@ -157,5 +158,10 @@ class PatientProblemsForBillingProcessing
             ->getPatientWithBillingDataForMonth($this->patientId, Carbon::now()->startOfMonth());
 
         return $this;
+    }
+    
+    private function sanitize(string $string): string
+    {
+        return trim(strtolower($string));
     }
 }
