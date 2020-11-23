@@ -257,7 +257,7 @@
                                         {
                                             id: "durationCCM",
                                             header: ["Total CCM", "(HH:MM:SS)"],
-                                            width: 110,
+                                            width: 100,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnCCM", css: "duration-footer"},
@@ -268,7 +268,7 @@
                                         {
                                             id: "durationBHI",
                                             header: ["Total BHI", "(HH:MM:SS)"],
-                                            width: 110,
+                                            width: 100,
                                             fillspace: false,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
@@ -280,7 +280,7 @@
                                     {
                                         id: "durationPCM",
                                         header: ["Total PCM", "(HH:MM:SS)"],
-                                        width: 110,
+                                        width: 100,
                                         fillspace: false,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
@@ -292,7 +292,7 @@
                                     {
                                         id: "durationRPM",
                                         header: ["Total RPM", "(HH:MM:SS)"],
-                                        width: 110,
+                                        width: 100,
                                         fillspace: false,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
@@ -304,7 +304,7 @@
                                     {
                                         id: "durationRHC",
                                         header: ["Total CCM (RHC/FQHC)", "(HH:MM:SS)"],
-                                        width: 110,
+                                        width: 130,
                                         fillspace: true,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
