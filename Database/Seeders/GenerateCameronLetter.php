@@ -62,7 +62,7 @@ class GenerateCameronLetter extends Seeder
 
         $bodyPageOne = "
 
-<p>Marillac Health has invested in a new Personalized Care Program to help patients get care at home, which is especially important given current events, and I'm inviting you to join.</p>
+<p>$practiceName has invested in a new Personalized Care Program to help patients get care at home, which is especially important given current events, and I'm inviting you to join.</p>
 
 <p>You are getting this invitation because you're eligible according to Medicare guidelines, and we believe you will benefit from it greatly, particularly during this pandemic.</p>
 
