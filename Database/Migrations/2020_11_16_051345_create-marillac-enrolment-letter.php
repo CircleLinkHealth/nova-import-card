@@ -24,6 +24,7 @@ class CreateMarillacEnrolmentLetter extends Migration
      */
     public function up()
     {
+        //test
         Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateMarillacHealthLetter']);
     }
 }
