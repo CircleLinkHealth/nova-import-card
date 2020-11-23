@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMarillacEnrolmentLetter extends Migration
+class DropNewCallsViewTable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -24,6 +24,7 @@ class CreateMarillacEnrolmentLetter extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateMarillacHealthLetter']);
+        \DB::statement('DROP VIEW IF EXISTS calls_view');
+        \DB::statement('DROP VIEW IF EXISTS calls_view_to_deprecate');
     }
 }
