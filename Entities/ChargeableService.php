@@ -13,8 +13,8 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\BHI;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM40;
 use CircleLinkHealth\CcmBilling\Processors\Patient\CCM60;
-use CircleLinkHealth\CcmBilling\Processors\Patient\RHC;
 use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
+use CircleLinkHealth\CcmBilling\Processors\Patient\RHC;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM40;
 use CircleLinkHealth\Core\Entities\BaseModel;
@@ -67,8 +67,14 @@ class ChargeableService extends BaseModel
     const AWV_SUBSEQUENT = 'AWV: G0439';
     const BHI            = 'CPT 99484';
     const CCM            = 'CPT 99490';
-    const CCM_PLUS_40    = 'G2058(>40mins)';
-    const CCM_PLUS_60    = 'G2058(>60mins)';
+
+    const CCM_CODES = [
+        self::CCM,
+        self::CCM_PLUS_40,
+        self::CCM_PLUS_60,
+    ];
+    const CCM_PLUS_40 = 'G2058(>40mins)';
+    const CCM_PLUS_60 = 'G2058(>60mins)';
 
     const CCM_PLUS_CODES = [
         self::CCM_PLUS_40,
