@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "56eab402651daa36055746fa2d70376f",
+    "content-hash": "4a16ed4eb7ff7a1855f3858f037b985f",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1194,11 +1194,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.8.0",
+            "version": "dev-new-phone-number-format",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "e7a83db524b2034588d28dfad4aa2599ff56a044"
+                "reference": "470990587247d1aa3cc300d8a519cf31d685d524"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1227,15 +1227,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-20T19:18:28+00:00"
+            "time": "2020-11-22T13:31:36+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-pam-split-table-data-fetch",
+            "version": "dev-ca-practice-phone-number",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "7d9c5307ee9d4ba2de130fc37662c13ad6b81461"
+                "reference": "235fb0fcb6471ea57c4b68c4a2c2f1b9b2ba6787"
             },
             "type": "laravel-module",
             "extra": {
@@ -1257,7 +1257,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-21T16:43:32+00:00"
+            "time": "2020-11-22T13:42:01+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1303,11 +1303,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.6.1",
+            "version": "dev-enrollee-phone-number-formats",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "185be6d4ae436b52a0f4aa8419926a8088e6f26b"
+                "reference": "688ddbf930088ac9a7d6ef5413df19165a844a2b"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1334,7 +1334,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-20T19:23:55+00:00"
+            "time": "2020-11-22T15:49:17+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -18054,8 +18054,10 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/sqlviews-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
