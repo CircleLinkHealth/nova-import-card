@@ -149,13 +149,13 @@
                         </div>
                     </div>
                 </template>
-                <template slot="RHC Time" slot-scope="props">
+                <template slot="CCM (RHC/FQHC) Time" slot-scope="props">
                     <div>
-                        <div v-if="props.row['RHC Time'] === null">
+                        <div v-if="props.row['CCM (RHC/FQHC) Time'] === null">
                             <loader class="in-column"></loader>
                         </div>
                         <div v-else>
-                            {{props.row['RHC Time']}}
+                            {{props.row['CCM (RHC/FQHC) Time']}}
                         </div>
                     </div>
                 </template>
@@ -268,7 +268,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time','RHC Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
+                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time','CCM (RHC/FQHC) Time', 'Successful Calls', 'Practice', 'State', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
                 tableData: [],
                 loaders: {
                     calls: false
@@ -306,7 +306,7 @@
                         'Patient ID': !this.isAdmin() ? 'hidden' : '',
                         'Patient': this.patientNamesClass
                     },
-                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time', 'RHC Time', 'Practice', 'State', 'Scheduler'],
+                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'PCM Time', 'RPM Time', 'CCM (RHC/FQHC) Time', 'Practice', 'State', 'Scheduler'],
                     filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Language', 'Activity Day', 'Last Call', 'Practice', 'State', 'Billing Provider', 'Patient\'s Care Coach'],
                     filterByColumn: true,
                     texts: {
@@ -328,7 +328,7 @@
                         'BHI Time': (ascending) => (a, b) => 0,
                         'PCM Time': (ascending) => (a, b) => 0,
                         'RPM Time': (ascending) => (a, b) => 0,
-                        'RHC Time': (ascending) => (a, b) => 0,
+                        'CCM (RHC/FQHC) Time': (ascending) => (a, b) => 0,
                         Practice: (ascending) => (a, b) => 0,
                         State: (ascending) => (a, b) => 0,
                         Scheduler: (ascending) => (a, b) => 0,
@@ -369,7 +369,7 @@
                     'BHI Time': 'bhi_total_time',
                     'PCM Time': 'pcm_total_time',
                     'RPM Time' : 'rpm_total_time',
-                    'RHC Time' : 'rhc_total_time',
+                    'CCM (RHC/FQHC) Time' : 'rhc_total_time',
                     'Successful Calls': 'no_of_successful_calls',
                     'Practice': 'practice',
                     'State': 'state',
@@ -588,7 +588,7 @@
                     'BHI Time': call.bhi_total_time != null ? timeDisplay(call.bhi_total_time) : null,
                     'PCM Time': call.pcm_total_time != null ? timeDisplay(call.pcm_total_time) : null,
                     'RPM Time': call.rpm_total_time != null ? timeDisplay(call.rpm_total_time) : null,
-                    'RHC Time': call.rhc_total_time != null ? timeDisplay(call.rhc_total_time) : null,
+                    'CCM (RHC/FQHC) Time': call.rhc_total_time != null ? timeDisplay(call.rhc_total_time) : null,
                     'Successful Calls': call.no_of_successful_calls ?? null,
                     'Preferred Call Days': call.preferred_call_days,
                     'Patient ID': call.patient_id,
@@ -799,7 +799,7 @@
                         row['BHI Time']         = timeDisplay(patientData['bhi_total_time']);
                         row['PCM Time']         = timeDisplay(patientData['pcm_total_time']);
                         row['RPM Time']         = timeDisplay(patientData['rpm_total_time']);
-                        row['RHC Time']         = timeDisplay(patientData['rhc_total_time']);
+                        row['CCM (RHC/FQHC) Time']         = timeDisplay(patientData['rhc_total_time']);
                         row['Successful Calls'] = patientData['no_of_successful_calls'];
 
                         return row;

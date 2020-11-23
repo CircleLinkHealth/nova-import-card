@@ -206,8 +206,8 @@
                                 }, webix.ui.datafilter.summColumn);
                                 webix.ui.datafilter.mySummColumnRHC = webix.extend({
                                     refresh: function (master, node, value) {
-                                        node.firstChild.innerHTML = durationSum(master, 'RHC');
-                                        setTimeTrackerValue('RHC', node.firstChild.innerHTML);
+                                        node.firstChild.innerHTML = durationSum(master, 'CCM (RHC/FQHC)');
+                                        setTimeTrackerValue('CCM (RHC/FQHC)', node.firstChild.innerHTML);
                                     }
                                 }, webix.ui.datafilter.summColumn);
 
@@ -302,14 +302,14 @@
                                     },
                                     {
                                         id: "durationRHC",
-                                        header: ["Total RHC", "(HH:MM:SS)"],
+                                        header: ["Total CCM (RHC/FQHC)", "(HH:MM:SS)"],
                                         width: 110,
                                         fillspace: true,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
                                         footer: {content: "mySummColumnRHC", css: "duration-footer"},
                                         template: function (obj) {
-                                            return durationData(obj, 'RHC');
+                                            return durationData(obj, 'CCM (RHC/FQHC)');
                                         }
                                     },
 
@@ -442,10 +442,10 @@
                                            }
                                            }
                                            },
-                                           'durationRHC':  { header: 'Total RHC (Min:Sec)', width: 70, sort: 'string',
+                                           'durationRHC':  { header: 'Total CCM (RHC/FQHC) (Min:Sec)', width: 70, sort: 'string',
                                            template: function (obj) {
                                            var type = durationType(obj);
-                                           if (type === 'RHC'){
+                                           if (type === 'CCM (RHC/FQHC)'){
                                            var seconds = obj.duration;
                                            var date = new Date(seconds * 1000);
                                            var mm = Math.floor(seconds/60);
