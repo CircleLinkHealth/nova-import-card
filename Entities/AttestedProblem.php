@@ -10,7 +10,7 @@ use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
-use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
+use CircleLinkHealth\Core\Traits\DateScopesTrait;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
