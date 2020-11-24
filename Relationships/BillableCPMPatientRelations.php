@@ -21,12 +21,12 @@ class BillableCPMPatientRelations
      * @var Carbon
      */
     protected $month;
-
+    
     public function __construct(Carbon $month)
     {
         $this->month = $month;
     }
-
+    
     public function get(
         array $with = [
             'careTeamMembers',
@@ -52,17 +52,17 @@ class BillableCPMPatientRelations
                 if (in_array($item, $with)) {
                     return false;
                 }
-
+                
                 return true;
             }
         )->all();
     }
-
+    
     public static function getDefaultWith(Carbon $month): array
     {
         return (new static($month))->get(self::DEFAULT_RELATIONSHIPS);
     }
-
+    
     private function getPatientSummariesCallback()
     {
         return function ($query) {
@@ -70,7 +70,7 @@ class BillableCPMPatientRelations
                 ->where(
                     'total_time',
                     '>=',
-                    AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS
+                    Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
                 )
                 ->where('no_of_successful_calls', '>=', 1)
                 ->with('chargeableServices')

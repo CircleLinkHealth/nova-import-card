@@ -19,25 +19,25 @@ use Illuminate\Support\Facades\DB;
 
 class NursesPerformanceReportService
 {
-    use NursePerformanceCalculations;
-
+    use \App\Traits\NursePerformanceCalculations;
+    
     const LAST_COMMITTED_DAYS_TO_GO_BACK = 10;
     const MAX_COMMITTED_DAYS_TO_GO_BACK  = 30;
     const MIN_CALL                       = 1;
-
+    
     protected $aggregatedTotalTimePerNurse;
-
+    
     protected $avgHoursWorkedLast10Sessions;
-
+    
     protected $successfulCallsMultiplier;
-
+    
     protected $timeGoal;
-
+    
     protected $unsuccessfulCallsMultiplier;
-
+    
     // @var CompanyHoliday[]
     private $companyHolidays;
-
+    
     /**
      * @param Carbon $date This is usually yesterday's date. Assuming report runs at midnight,
      *                     and generates report for the day before
@@ -47,9 +47,9 @@ class NursesPerformanceReportService
     public function collectData(Carbon $date)
     {
         $this->setReportSettings();
-
+        
         $this->companyHolidays = CompanyHoliday::query();
-
+        
         $data = [];
         User::ofType('care-center')
             ->with(
@@ -82,16 +82,16 @@ class NursesPerformanceReportService
                         $date->copy()->startOfDay(),
                         $date->copy()->endOfDay()
                     );
-
+                    
                     foreach ($nurses as $nurse) {
                         $data[] = $this->getDataForNurse($nurse, $date->copy(), $aggregatedTime->totalSystemTime($nurse->id));
                     }
                 }
             );
-
+        
         return collect($data);
     }
-
+    
     /**
      * @return mixed
      */
@@ -105,7 +105,7 @@ class NursesPerformanceReportService
                 ->first()
         )->getFile();
     }
-
+    
     /**
      * @param $nurse
      * @param $date
@@ -121,7 +121,7 @@ class NursesPerformanceReportService
         $successfulCallsDaily                 = $nurse->countSuccessfulCallsFor($date);
         //        "Case Completion" in view
         $caseLoadComplete = $this->percentageCaseLoadComplete($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
-
+        
         $data = [
             'nurse_id'        => $nurse->id,
             'nurse_full_name' => $nurse->getFullName(),
@@ -138,7 +138,7 @@ class NursesPerformanceReportService
             'totalMonthSystemTimeSeconds'    => $this->getTotalMonthSystemTimeSeconds($nurse, $date),
             'uniquePatientsAssignedForMonth' => $patientsForMonth->count(),
         ];
-
+        
         //new metrics
         $data['completionRate']  = $this->getCompletionRate($data);
         $data['efficiencyIndex'] = $this->getEfficiencyIndex($data);
@@ -151,42 +151,42 @@ class NursesPerformanceReportService
             $nurse->nurseInfo->upcomingHolidaysFrom($date),
             $date
         );
-
+        
         // V-3 metrics cpm-2085
         $data['avgCCMTimePerPatient'] = $this->estAvgCCMTimePerMonth($patientsForMonth, $totalMonthlyCompletedPatientsOfNurse);
         $data['avgCompletionTime']    = $this->getAvgCompletionTime($nurse, $date, $totalMonthlyCompletedPatientsOfNurse);
         $data['incompletePatients']   = $this->getIncompletePatientsCount($patientsForMonth);
-
+        
         //only for EmailRNDailyReport
         $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
         //only for EmailRNDailyReport v 2
         $data['completedPatients']       = $totalMonthlyCompletedPatientsOfNurse;
         $data['totalPatientsInCaseLoad'] = $patientsForMonth->count();
-
+        
         if ($nextUpcomingWindow) {
             $carbonDate              = Carbon::parse($nextUpcomingWindow->date);
             $nextUpcomingWindowLabel = clhDayOfWeekToDayName(
-                $nextUpcomingWindow->day_of_week
-            )." {$carbonDate->format('m/d/Y')}";
+                    $nextUpcomingWindow->day_of_week
+                )." {$carbonDate->format('m/d/Y')}";
         }
-
+        
         $workHours  = $nurse->nurseInfo->workhourables->first();
         $totalHours = $workHours && $nextUpcomingWindow
             ? (string) $workHours->{strtolower(
                 clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week)
             )}
             : null;
-
+        
         $data['nextUpcomingWindow']           = $nextUpcomingWindow;
         $data['totalHours']                   = $totalHours;
         $data['nextUpcomingWindowLabel']      = $nextUpcomingWindowLabel ?? null;
         $data['projectedHoursLeftInMonth']    = $this->getProjectedHoursLeftInMonth($nurse, $date->copy()) ?? 0;
         $data['avgHoursWorkedLast10Sessions'] = $this->avgHoursWorkedLast10Sessions;
         $data['surplusShortfallHours']        = $this->surplusShortfallHours($data);
-
+        
         return collect($data);
     }
-
+    
     /**
      * There are no data on S3 before this date.
      *
@@ -196,7 +196,7 @@ class NursesPerformanceReportService
     {
         return Carbon::parse('2019-02-03');
     }
-
+    
     /**
      * Data structure:
      * Nurses < Days < Data.
@@ -217,7 +217,7 @@ class NursesPerformanceReportService
                 $reports[$day->toDateString()] = [];
             }
         }
-
+        
         $nurses  = [];
         $reports = collect($reports);
         foreach ($reports as $report) {
@@ -225,7 +225,7 @@ class NursesPerformanceReportService
                 $nurses[] = $report->pluck('nurse_full_name');
             }
         }
-
+        
         $nurses = collect($nurses)
             ->flatten()
             ->unique()
@@ -259,11 +259,11 @@ class NursesPerformanceReportService
                             }
                         }
                     }
-
+                    
                     return [$nurse => $week];
                 }
             );
-
+        
         $totalsPerDay = [];
         foreach ($reports as $dayOfWeek => $reportPerDay) {
             $totalsPerDay[$dayOfWeek] = [
@@ -290,14 +290,14 @@ class NursesPerformanceReportService
                 'incompletePatients'        => $reportPerDay->sum('incompletePatients'),
             ];
         }
-
+        
         $nursesDailyTotalsForView = $this->prepareTotalsForView($totalsPerDay);
-
+        
         $nurses->put('totals', $nursesDailyTotalsForView);
-
+        
         return $nurses;
     }
-
+    
     /**
      * Prepares only the totals that will be used in the table.
      * 'nurse_full_name' must be named like this cause the "totals" array will be displayed in "nurse names"column.
@@ -335,15 +335,15 @@ class NursesPerformanceReportService
             ];
         })->toArray();
     }
-
+    
     public function setReportSettings()
     {
         $settings = DB::table('report_settings')->get();
-
+        
         $nurseSuccessful   = $settings->where('name', 'nurse_report_successful')->first();
         $nurseUnsuccessful = $settings->where('name', 'nurse_report_unsuccessful')->first();
         $timeGoal          = $settings->where('name', 'time_goal_per_billable_patient')->first();
-
+        
         $this->successfulCallsMultiplier = $nurseSuccessful
             ? $nurseSuccessful->value
             : '0.25';
@@ -353,10 +353,10 @@ class NursesPerformanceReportService
         $this->timeGoal = $timeGoal
             ? $timeGoal->value
             : '30';
-
+        
         return true;
     }
-
+    
     /**
      * @throws FileNotFoundException
      *
@@ -368,11 +368,11 @@ class NursesPerformanceReportService
             throw new FileNotFoundException('No reports exists before this date');
         }
         $json = $this->getDailyReportJson($day);
-
+        
         if ( ! $json || ! is_json($json)) {
             return collect();
         }
-
+        
         return collect(json_decode($json, true));
     }
 }
