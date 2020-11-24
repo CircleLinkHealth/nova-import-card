@@ -1424,7 +1424,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "94aa6370a379b424fb5e75b06f5009acdaf2f0db"
+                "reference": "3398453a0f0e9f3f3dfdd2cbeb1fae1698b92f90"
             },
             "type": "laravel-module",
             "extra": {
@@ -1444,7 +1444,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-11-24T03:30:12+00:00"
+            "time": "2020-11-24T04:54:36+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1547,7 +1547,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "41d1ad66b4cd62506828acd77a4dd11bac676fc3"
+                "reference": "4e30edfc72944f5419de33e1bca8f3694cf2557c"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -1574,7 +1574,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T03:30:13+00:00"
+            "time": "2020-11-24T04:54:36+00:00"
         },
         {
             "name": "clue/stream-filter",
