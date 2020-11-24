@@ -229,7 +229,7 @@ function formatTime($time)
                                             <th>BHI<br>Time to date</th>
                                             <th>PCM<br>Time to date</th>
                                             <th>RPM<br>Time to date</th>
-                                            <th>RHC<br>Time to date</th>
+                                            <th>CCM (RHC/FQHC)<br>Time to date</th>
                                             <th># Calls<br>to date</th>
                                             <th>Provider</th>
                                             <th>Practice</th>

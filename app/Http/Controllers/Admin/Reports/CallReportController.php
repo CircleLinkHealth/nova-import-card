@@ -82,7 +82,7 @@ class CallReportController extends Controller
             'BHI Time',
             'PCM Time',
             'RPM Time',
-            'RHC Time',
+            'CCM (RHC/FQHC) Time',
             'Successful Calls',
             'Billing Provider',
             'Scheduler',
