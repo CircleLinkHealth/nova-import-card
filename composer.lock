@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40077ff15409c319c6950ef437c81606",
+    "content-hash": "61edf22df0e48649d07872d7070d5434",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -120,16 +120,16 @@
         },
         {
             "name": "algolia/algoliasearch-client-php",
-            "version": "2.7.1",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/algoliasearch-client-php.git",
-                "reference": "19c0a6c1ef44c0aafaf6c6238c1509ebde2d1a35"
+                "reference": "a915109c76d5f4af67f10cd21855ea2d4c9aec9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/19c0a6c1ef44c0aafaf6c6238c1509ebde2d1a35",
-                "reference": "19c0a6c1ef44c0aafaf6c6238c1509ebde2d1a35",
+                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/a915109c76d5f4af67f10cd21855ea2d4c9aec9f",
+                "reference": "a915109c76d5f4af67f10cd21855ea2d4c9aec9f",
                 "shasum": ""
             },
             "require": {
@@ -186,20 +186,20 @@
                 "php",
                 "search"
             ],
-            "time": "2020-11-12T13:52:28+00:00"
+            "time": "2020-11-24T10:16:46+00:00"
         },
         {
             "name": "algolia/scout-extended",
-            "version": "v1.10.1",
+            "version": "1.10.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/scout-extended.git",
-                "reference": "d3932eee760f6bf205560b61152392acddbfb50f"
+                "reference": "ff39d6734b87b0ae1ba26e1752ecb0be021d9fc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/d3932eee760f6bf205560b61152392acddbfb50f",
-                "reference": "d3932eee760f6bf205560b61152392acddbfb50f",
+                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/ff39d6734b87b0ae1ba26e1752ecb0be021d9fc2",
+                "reference": "ff39d6734b87b0ae1ba26e1752ecb0be021d9fc2",
                 "shasum": ""
             },
             "require": {
@@ -263,7 +263,7 @@
                 "scout",
                 "search"
             ],
-            "time": "2020-09-23T13:38:42+00:00"
+            "time": "2020-11-24T10:23:31+00:00"
         },
         {
             "name": "amnuts/opcache-gui",
@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.163.2",
+            "version": "3.163.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ef46d2daf80f2a21809608ada7ba76dddfd103cd"
+                "reference": "f6cd8fe1334b19e1dc0d841fa1b2da7cd30a1e8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ef46d2daf80f2a21809608ada7ba76dddfd103cd",
-                "reference": "ef46d2daf80f2a21809608ada7ba76dddfd103cd",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f6cd8fe1334b19e1dc0d841fa1b2da7cd30a1e8a",
+                "reference": "f6cd8fe1334b19e1dc0d841fa1b2da7cd30a1e8a",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-11-20T19:13:16+00:00"
+            "time": "2020-11-23T20:34:30+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1231,11 +1231,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-hotfix-rhc-columns",
+            "version": "v2.6.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "2da207b7e542c6e1cdce95b6a5fe6411c277c162"
+                "reference": "b442c709d9fa2a13eaf5ff5a65f957bd470eae9b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1257,15 +1257,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-23T19:01:21+00:00"
+            "time": "2020-11-24T10:44:44+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-hotfix-rhc-columns",
+            "version": "v3.5.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f444ecfb9774cdaa2289b036d62de2b16f55bed0"
+                "reference": "acff22af317eaf73c76f890b1dcec9e66cef6b14"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-23T18:40:40+00:00"
+            "time": "2020-11-24T10:45:40+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -4064,16 +4064,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.102",
+            "version": "v1.2.103",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "346cfd72d11bb41f15e82654e532dc55360612ac"
+                "reference": "3efa2860959cc971f17624b40bf0699823f9d0f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/346cfd72d11bb41f15e82654e532dc55360612ac",
-                "reference": "346cfd72d11bb41f15e82654e532dc55360612ac",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/3efa2860959cc971f17624b40bf0699823f9d0f3",
+                "reference": "3efa2860959cc971f17624b40bf0699823f9d0f3",
                 "shasum": ""
             },
             "require": {
@@ -4108,7 +4108,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2020-11-04T19:23:01+00:00"
+            "time": "2020-11-23T19:49:25+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
@@ -18054,8 +18054,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
-        "circlelinkhealth/customer-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
