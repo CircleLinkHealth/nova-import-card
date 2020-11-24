@@ -18,7 +18,7 @@ class CreateAndPostPdfCareplan
     protected $api;
     protected $ccdas;
     
-    public function __construct(\App\Services\AthenaAPI\Calls $api)
+    public function __construct(Calls $api)
     {
         $this->api = $api;
     }
