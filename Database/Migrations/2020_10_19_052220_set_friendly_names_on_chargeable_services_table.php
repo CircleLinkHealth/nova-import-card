@@ -13,7 +13,7 @@ class SetFriendlyNamesOnChargeableServicesTable extends Migration
         'G2058(>40mins)' => 'CCM40',
         'G2058(>60mins)' => 'CCM60',
         'CPT 99484'      => 'BHI',
-        'G0511'          => 'RHC',
+        'G0511'          => 'CCM (RHC/FQHC)',
         'AWV: G0438'     => 'AWV1',
         'AWV: G0439'     => 'AWV2+',
         'G2065'          => 'PCM',
