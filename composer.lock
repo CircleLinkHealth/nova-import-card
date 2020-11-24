@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1734e7dee5756606059ba179bec62350",
+    "content-hash": "d4e394755829739fdb68805e187b1fe2",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -869,11 +869,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v1.0.5",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "740b7d39b1fa28a32bc76f61c2c5e1d778ba09fc"
+                "reference": "aab740dbebd0a1720a7f2eeb2a5ef9e7990ae94c"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -918,7 +918,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-23T11:06:38+00:00"
+            "time": "2020-11-24T03:30:13+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1086,7 +1086,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "e36f635ab8ecf00012029fdb08d0ef25b5f963e2"
+                "reference": "2e5ef0a91da59f6c07e17ffc033b77f0f2b55577"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1112,7 +1112,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-28T23:09:14+00:00"
+            "time": "2020-11-24T03:30:13+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1190,7 +1190,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "c8d7b7c58ec8c7dcc761877cfef303342778a7ab"
+                "reference": "019d34ad92386a6583d4e7e4ad2663b7d7d625a6"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1216,7 +1216,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-21T23:55:48+00:00"
+            "time": "2020-11-24T03:30:12+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -1402,7 +1402,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "71299ec8159b56b85d47703e50e0d47c5d0bf1a7"
+                "reference": "7794a73433c5daee45424afb90b8d5f952600f2b"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1416,7 +1416,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-28T23:26:13+00:00"
+            "time": "2020-11-24T03:30:12+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1424,7 +1424,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git",
-                "reference": "e171f8ae694364f45bd02c36be4835efa659f63b"
+                "reference": "94aa6370a379b424fb5e75b06f5009acdaf2f0db"
             },
             "type": "laravel-module",
             "extra": {
@@ -1444,7 +1444,7 @@
                     "email": ""
                 }
             ],
-            "time": "2020-09-28T23:02:06+00:00"
+            "time": "2020-11-24T03:30:12+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1514,7 +1514,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "fac5e67e923f86e22d918d8a2e719047e923616a"
+                "reference": "b7b6ff1b623cb9b4543579e229e2d41d5b044271"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1539,7 +1539,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-28T23:17:09+00:00"
+            "time": "2020-11-24T03:30:12+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -17894,6 +17894,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/sharedvuecomponents-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
