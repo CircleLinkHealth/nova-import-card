@@ -740,11 +740,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('reports/audit/monthly', ['uses' => 'DownloadController@downloadAuditReportsForMonth', 'as' => 'download.monthly.audit.reports'])->middleware('adminOrPracticeStaff');
     Route::get('reports/audit/make', ['uses' => 'DownloadController@makeAuditReportsForMonth', 'as' => 'make.monthly.audit.reports'])->middleware('adminOrPracticeStaff');
 
-    Route::post('forward-careplan-to-billing-provider-via-dm', [
-        'uses' => 'Patient\PatientCareplanController@forwardToBillingProviderViaDM',
-        'as'   => 'forward-careplan-to-billing-provider-via-dm',
-    ])->middleware(['patientProgramSecurity']);
-
     // **** PATIENTS (/manage-patients/
     Route::group([
         'prefix'     => 'manage-patients/',

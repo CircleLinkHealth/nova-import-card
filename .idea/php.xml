@@ -328,6 +328,27 @@
       <path value="$PROJECT_DIR$/vendor/hollodotme/fast-cgi-client" />
       <path value="$PROJECT_DIR$/vendor/riverline/multipart-parser" />
       <path value="$PROJECT_DIR$/vendor/friendsofcat/laravel-feature-flag" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/invoices-download" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/enrollment-invites" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/enrollment-invites" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
+      <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

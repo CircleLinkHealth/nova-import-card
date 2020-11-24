@@ -27,14 +27,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/brick/money" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/cakephp/chronos" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-import-card-extended" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/clh-nova-theme" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/dates-input" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/enrollment-invites" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/import-practice-staff-csv" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/invoices-download" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/circlelinkhealth/unresolved-callback" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stdio-react" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stream-filter" />
