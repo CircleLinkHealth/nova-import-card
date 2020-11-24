@@ -1,8 +1,8 @@
 <?php
-$isAdmin = auth()->user()->isAdmin();
+$isAdmin = ! Auth::guest() && Cerberus::hasPermission('admin-access');
 ?>
 
-@extends($isAdmin ? 'cpm-admin::partials.adminUI' : 'partials.providerUI')
+@extends($isAdmin ? 'partials.adminUI' : 'partials.providerUI')
 
 @section('title', 'Patient Activity Management')
 @section('activity', 'Patient Activity Management')
@@ -25,12 +25,12 @@ $isAdmin = auth()->user()->isAdmin();
 
         td.details-control {
             color: #fff;
-            background: url('{{ asset('/vendor/datatables-images/details_open.png') }}') no-repeat center center;
+            background: url('{{ mix('/vendor/datatables-images/details_open.png') }}') no-repeat center center;
             cursor: pointer;
         }
 
         tr.shown td.details-control {
-            background: url('{{ asset('/vendor/datatables-images/details_close.png') }}') no-repeat center center;
+            background: url('{{ mix('/vendor/datatables-images/details_close.png') }}') no-repeat center center;
         }
 
         div.modal-dialog {
@@ -58,11 +58,11 @@ $isAdmin = auth()->user()->isAdmin();
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <div>
-                                    @include('core::partials.errors.errors')
-                                    @include('core::partials.errors.messages')
+                                    @include('errors.errors')
+                                    @include('errors.messages')
                                 </div>
                                 <div>
-                                    <call-mgmt-app-v2 :is-admin="@json($isAdmin)" ref="callMgmtAppV2"></call-mgmt-app-v2>
+                                    <call-mgmt-app-v2 ref="callMgmtAppV2" auth-role="{{auth()->user()->practiceOrGlobalRole()->name}}"></call-mgmt-app-v2>
                                 </div>
                             </div>
                         </div>

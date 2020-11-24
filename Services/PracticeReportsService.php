@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\Exceptions\InvalidConversion;
+use Spatie\MediaLibrary\Models\Media;
 
 class PracticeReportsService
 {
@@ -26,10 +27,10 @@ class PracticeReportsService
     public function getPdfInvoiceAndPatientReport(array $practices, Carbon $date)
     {
         $invoices = [];
-
+        
         foreach ($practices as $practiceId) {
             $practice = Practice::find($practiceId);
-
+            
             try {
                 $data = (new PracticeInvoiceGenerator($practice, $date))->generatePdf();
             } catch (FileCannotBeAdded $e) {
@@ -37,13 +38,13 @@ class PracticeReportsService
             } catch (InvalidConversion $e) {
                 throw $e;
             }
-
+            
             $invoices[$practice->display_name] = $data;
         }
-
+        
         return $invoices;
     }
-
+    
     /**
      * @param $practices
      * @param $format
@@ -53,32 +54,35 @@ class PracticeReportsService
     public function getQuickbooksReport($practices, $format, Carbon $date)
     {
         $data = [];
-
+        
         $saasAccount = null;
-
+        
         foreach (Practice::with(['settings', 'chargeableServices', 'saasAccount'])->whereIn('id', $practices)->get() as $practice) {
             if ( ! $saasAccount) {
                 $saasAccount = $practice->saasAccount;
             }
-
+            
+            $patientReport = $this->generatePatientReportCsv($practice, $date);
+            $link          = shortenUrl($patientReport->getUrl());
+            
             if ('practice' == $practice->cpmSettings()->bill_to || empty($practice->cpmSettings()->bill_to)) {
                 $chargeableServices = $this->getChargeableServices($practice);
-
+                
                 foreach ($chargeableServices as $service) {
-                    $row = $this->makeRow($practice, $date, $service);
-
+                    $row = $this->makeRow($practice, $date, $service, $link);
+                    
                     if (null == ! $row) {
                         $data[] = $row->toArray();
                     }
                 }
             } else {
                 $providers = $practice->providers();
-
+                
                 foreach ($providers as $provider) {
                     $chargeableServices = $this->getChargeableServices($provider);
-
+                    
                     foreach ($chargeableServices as $service) {
-                        $row = $this->makeRow($practice, $date, $service, $provider);
+                        $row = $this->makeRow($practice, $date, $service, $link, $provider);
                         if (null == ! $row) {
                             $data[] = $row->toArray();
                         }
@@ -86,14 +90,23 @@ class PracticeReportsService
                 }
             }
         }
-
+        
         if ( ! $data) {
             return false;
         }
-
+        
         return $this->makeQuickbookReport($data, $format, $date, $saasAccount);
     }
-
+    
+    private function generatePatientReportCsv(Practice $practice, Carbon $date): Media
+    {
+        $generator = new PracticeInvoiceGenerator($practice, $date);
+        
+        $reportName = $practice->name.'-'.$date->format('Y-m').'-patients';
+        
+        return $generator->makePatientReportCsv($reportName);
+    }
+    
     /**
      * @param mixed $chargeable
      *
@@ -102,17 +115,17 @@ class PracticeReportsService
     private function getChargeableServices($chargeable)
     {
         $chargeable->loadMissing('chargeableServices');
-
+        
         $chargeableServices = $chargeable->chargeableServices;
-
+        
         //defaults to CPT 99490 if practice doesnt have a chargeableService, until further notice
         if ($chargeableServices->isEmpty()) {
             $chargeableServices = ChargeableService::where('id', 1)->get();
         }
-
+        
         return $chargeableServices;
     }
-
+    
     /**
      * @param $rows
      * @param $format
@@ -127,7 +140,7 @@ class PracticeReportsService
             "quickbooks_report_for_{$date->toDateString()}"
         );
     }
-
+    
     /**
      * @param mixed|null $requestedByUserId
      *
@@ -140,37 +153,30 @@ class PracticeReportsService
         Practice $practice,
         Carbon $date,
         ChargeableService $chargeableService,
+        string $link,
         User $provider = null
     ) {
-        $generator = new PracticeInvoiceGenerator($practice, $date);
-
-        $reportName = $practice->name.'-'.$date->format('Y-m').'-patients';
-
-        $patientReport = $generator->makePatientReportCsv($reportName);
-
-        $link = shortenUrl($patientReport->getUrl());
-
         $data = $practice->getInvoiceData($date->copy()->firstOfMonth(), $chargeableService->id);
-
+        
         if (0 == $data['billable']) {
             return null;
         }
-
+        
         $txnDate = Carbon::createFromFormat('F, Y', $data['month'])->endOfMonth()->toDateString();
-
+        
         $providerName = '';
-
+        
         if ($provider) {
             $providerName = '-'.$provider->display_name;
         }
-
+        
         $lineUnitPrice = '';
-
+        
         $chargeableServiceWithPivot = $practice->chargeableServices()->whereId($chargeableService->id)->first();
         if ($chargeableServiceWithPivot) {
             $lineUnitPrice = $chargeableServiceWithPivot->pivot->amount;
         }
-
+        
         if ( ! $lineUnitPrice) {
             if ($data['practice']->clh_pppm) {
                 $lineUnitPrice = $data['practice']->clh_pppm;
@@ -178,7 +184,7 @@ class PracticeReportsService
                 $lineUnitPrice = $chargeableService->amount;
             }
         }
-
+        
         $rowData = [
             'RefNumber'             => (string) $data['invoice_num'],
             'Customer'              => (string) $data['practice']->display_name,
@@ -200,7 +206,7 @@ Account Number: 3302397258
 Account Name: CIRCLELINK HEALTH INC.
 ',
         ];
-
+        
         return new QuickBooksRow($rowData);
     }
 }

@@ -101,7 +101,7 @@
                         ])
 
                         <div class="input-field col s6 validate">
-                            <material-select v-bind:selected="newUser.role_id" v-model="newUser.role_id" required>
+                            <material-select v-bind:selected="newUser.role_id" v-model="newUser.role_id" label-text="Role" required>
                                 <option value="" disabled selected></option>
                                 <option v-for="role in roles" v-bind:value="role.id">@{{role.display_name}}</option>
                             </material-select>

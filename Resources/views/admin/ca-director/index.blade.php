@@ -1,4 +1,7 @@
-@extends('cpm-admin::partials.adminUI')
+@extends(! Auth::guest() && Cerberus::hasPermission('admin-access') ? 'partials.adminUI' : 'partials.providerUI')
+
+@section('title', 'Care Ambassador Director Palen')
+@section('activity', 'Care Ambassador Director Palen')
 
 @push('styles')
     <style>
@@ -13,12 +16,12 @@
 
         td.details-control {
             color: #fff;
-            background: url('{{ asset('/vendor/datatables-images/details_open.png') }}') no-repeat center center;
+            background: url('{{ mix('/vendor/datatables-images/details_open.png') }}') no-repeat center center;
             cursor: pointer;
         }
 
         tr.shown td.details-control {
-            background: url('{{ asset('/vendor/datatables-images/details_close.png') }}') no-repeat center center;
+            background: url('{{ mix('/vendor/datatables-images/details_close.png') }}') no-repeat center center;
         }
 
         div.modal-dialog {
@@ -46,19 +49,21 @@
                         <div>
                             <div class="panel-body">
                                 <div>
-                                    @include('core::partials.errors.errors')
-                                    @include('core::partials.errors.messages')
+                                    @include('errors.errors')
+                                    @include('errors.messages')
                                 </div>
-                                <div class="col-md-12" style="text-align: right">
-                                    <a class="btn btn-danger btn-m"
-                                       href="{{route('ca-director.test-enrollees', ['erase' => true, 'redirect' => true])}}">Erase
-                                        Demo Patients</a>
-                                    <a class="btn btn-info btn-m"
-                                       href="{{route('ca-director.test-enrollees', ['redirect' => true])}}">Create Demo
-                                        Patients</a>
-                                </div>
+                                @if (!auth()->user()->isCallbacksAdmin())
+                                    <div class="col-md-12" style="text-align: right">
+                                        <a class="btn btn-danger btn-m"
+                                           href="{{route('ca-director.test-enrollees', ['erase' => true, 'redirect' => true])}}">Erase
+                                            Demo Patients</a>
+                                        <a class="btn btn-info btn-m"
+                                           href="{{route('ca-director.test-enrollees', ['redirect' => true])}}">Create Demo
+                                            Patients</a>
+                                    </div>
+                                @endif
                                 <div>
-                                    <ca-director-panel ref="CaDirectorPanel"></ca-director-panel>
+                                    <ca-director-panel ref="CaDirectorPanel" auth-role="{{auth()->user()->practiceOrGlobalRole()->name}}"></ca-director-panel>
                                 </div>
                             </div>
                         </div>

@@ -19,24 +19,15 @@ class CreateNewCallRequest extends FormRequest
      */
     public function authorize()
     {
-        if ( ! auth()->check()) {
-            return false;
+        $user = auth()->user();
+        
+        if ($user->isCareCoach()) {
+            return app(CreateNoteForPatient::class)->can($user->id, $this->route('patientId') ?? $this->input('0.patientId'));
         }
-        if (auth()->user()->isAdmin()) {
-            return true;
-        }
-        if ( ! auth()->user()->isCareCoach()) {
-            return false;
-        }
-        if ( ! $patientId = collect($this->input())->pluck('inbound_cpm_id')->first()) {
-            if ( ! $patientId = $this->input('inbound_cpm_id')) {
-                return false;
-            }
-        }
-
-        return app(CreateNoteForPatient::class)->can(auth()->id(), $patientId);
+        
+        return $user->hasPermission('call.create');
     }
-
+    
     /**
      * Get the validation rules that apply to the request.
      *
@@ -44,6 +35,9 @@ class CreateNewCallRequest extends FormRequest
      */
     public function rules()
     {
-        return [];
+        return [
+            'inbound_cpm_id'   => 'required_if:*.inbound_cpm_id,null|filled',
+            '*.inbound_cpm_id' => 'required_if:inbound_cpm_id,null|filled',
+        ];
     }
 }

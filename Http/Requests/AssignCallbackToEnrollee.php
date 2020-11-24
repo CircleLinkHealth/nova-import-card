@@ -18,9 +18,9 @@ class AssignCallbackToEnrollee extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->isAdmin();
+        return auth()->user()->isAdmin() || auth()->user()->isCallbacksAdmin();
     }
-
+    
     /**
      * Get the validation rules that apply to the request.
      *

@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Requests;
 
+use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -21,7 +23,7 @@ class CreateOfflineActivityTimeRequest extends FormRequest
     {
         return optional(auth()->user())->hasPermission('offlineActivityRequest.create');
     }
-
+    
     /**
      * Get the validation rules that apply to the request.
      *
@@ -31,18 +33,17 @@ class CreateOfflineActivityTimeRequest extends FormRequest
     {
         $this->merge(
             [
-                'patient_id'    => $this->route('patientId'),
-                'is_behavioral' => (bool) $this->input('is_behavioral'),
+                'patient_id' => $this->route('patientId'),
             ]
         );
-
+        
         return [
-            'type'             => ['required', Rule::in(Activity::input_activity_types())],
-            'duration_minutes' => ['required', 'numeric'],
-            'is_behavioral'    => ['boolean'],
-            'performed_at'     => ['required', 'date'],
-            'comment'          => ['required', 'string'],
-            'patient_id'       => [Rule::exists('users', 'id')],
+            'type'                  => ['required', Rule::in(Activity::input_activity_types())],
+            'duration_minutes'      => ['required', 'numeric'],
+            'performed_at'          => ['required', 'date'],
+            'comment'               => ['required', 'string'],
+            'chargeable_service_id' => ['required', Rule::exists((new ChargeableService())->getTable(), 'id')],
+            'patient_id'            => [Rule::exists((new User())->getTable(), 'id')],
         ];
     }
 }

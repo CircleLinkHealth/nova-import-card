@@ -26,13 +26,13 @@ class CallsController extends Controller
     use ApiReturnHelpers;
     private $noteService;
     private $service;
-
+    
     public function __construct(ManagementService $service, NoteService $noteService)
     {
         $this->service     = $service;
         $this->noteService = $noteService;
     }
-
+    
     /**
      * @SWG\GET(
      *     path="/admin/calls",
@@ -61,57 +61,59 @@ class CallsController extends Controller
             ->with('schedulerUser.roles')
             ->filter($filters)
             ->paginate($rows ?? 15);
-
+        
         return CallResource::collection($calls);
     }
-
+    
     public function patientsWithoutInboundCalls(PatientFilters $filters, $practiceId = null)
     {
         $patients = $this->service->getPatientsWithoutAnyInboundCalls($practiceId, Carbon::now())
             ->filter($filters)->get();
-
+        
         if ($filters->isAutocomplete()) {
             return $patients->map(function ($patient) {
                 return $patient->autocomplete();
             });
         }
-
+        
         return UserResource::collection($patients);
     }
-
+    
     public function patientsWithoutScheduledActivities(PatientFilters $filters, $practiceId = null)
     {
         $user = auth()->user();
-
+        
         if ( ! $user->isAdmin()) {
             //if we have $practiceId, make sure that user has access to it
             if ($practiceId) {
-                if ( ! $user->hasRoleForSite('software-only', $practiceId)) {
+                if ( ! $user->hasPermissionForSite('pam.view', $practiceId)) {
                     abort(403);
                 }
             } else {
                 //if no $practiceId, get all practice ids where user is software-only / practice admin
-                $roleIds    = Role::getIdsFromNames(['software-only']);
+                $roleIds = Role::whereHas('perms', function ($q) {
+                    $q->where('name', 'pam.view');
+                })->pluck('id')->all();
                 $practiceId = $user->practices(true, false, $roleIds)->pluck('id')->toArray();
             }
         }
-
+        
         $patients = $this->service->getPatientsWithoutScheduledActivities($practiceId, Carbon::now())
             ->filter($filters)->get();
-
+        
         if ($filters->isAutocomplete()) {
             return $patients->map(function ($patient) {
                 return $patient->autocomplete();
             });
         }
-
+        
         return UserResource::collection($patients);
     }
-
+    
     public function patientsWithoutScheduledCalls(PatientFilters $filters, $practiceId = null)
     {
         $user = auth()->user();
-
+        
         if ( ! $user->isAdmin()) {
             //if we have $practiceId, make sure that user has access to it
             if ($practiceId) {
@@ -124,19 +126,19 @@ class CallsController extends Controller
                 $practiceId = $user->practices(true, false, $roleIds)->pluck('id');
             }
         }
-
+        
         $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now())
             ->filter($filters)->get();
-
+        
         if ($filters->isAutocomplete()) {
             return $patients->map(function ($patient) {
                 return $patient->autocomplete();
             });
         }
-
+        
         return UserResource::collection($patients);
     }
-
+    
     /**
      * Remove the calls with IDs from storage.
      *
@@ -149,17 +151,17 @@ class CallsController extends Controller
         if (Str::contains($ids, ',')) {
             $ids = explode(',', $ids);
         }
-
+        
         if ( ! is_array($ids)) {
             $ids = [$ids];
         }
-
+        
         Call::whereIn('id', $ids)
             ->delete();
-
+        
         return response()->json($ids);
     }
-
+    
     public function show($id)
     {
         return $this->json(Call::findOrFail($id));

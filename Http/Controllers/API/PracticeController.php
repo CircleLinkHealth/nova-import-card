@@ -26,7 +26,7 @@ class PracticeController extends Controller
                 'id',
                 'display_name',
             ]);
-
+        
         //fixing up the data for vue. basically keying locations and providers by id
         $practices = $practicesCollection->keyBy('id')
             ->map(function ($practice) {
@@ -36,17 +36,17 @@ class PracticeController extends Controller
                     'locations'    => $practice->locations->map(function ($loc) {
                         //is there no better way to do this?
                         $loc = new Collection($loc);
-
+                        
                         $loc['providers'] = collect($loc['providers'])->keyBy('id');
-
+                        
                         return $loc;
                     })->keyBy('id'),
                 ];
             });
-
+        
         return response()->json($practices->all());
     }
-
+    
     /**
      * get providers within a location.
      */
@@ -67,10 +67,10 @@ class PracticeController extends Controller
         if (isset($providers) && sizeof($providers) > 0) {
             return response()->json($providers[0]);
         }
-
+        
         return response()->json(['message' => 'location not found'], 404);
     }
-
+    
     public function getNurses($practiceId)
     {
         $nurses = User::ofType(['care-center', 'care-center-external'])
@@ -93,18 +93,18 @@ class PracticeController extends Controller
             ->map(function ($nurse) use ($practiceId) {
                 $info = $nurse->nurseInfo;
                 $states = (
-                    $info
+                $info
                     ? $info->states
                     : new Collection()
                 )
                     ->map(function ($state) {
                         return $state->code;
                     });
-
+                
                 if ($nurse->state && ! $states->contains($nurse->state)) {
                     $states->push($nurse->state);
                 }
-
+                
                 return [
                     'id'    => $nurse->id,
                     'roles' => $nurse->rolesInPractice($practiceId)
@@ -122,10 +122,10 @@ class PracticeController extends Controller
                 ];
             })
             ->toArray();
-
+        
         return response()->json($nurses);
     }
-
+    
     public function getPatients($practiceId)
     {
         $patients = PracticePatientsView::where('program_id', '=', $practiceId)
@@ -135,7 +135,7 @@ class PracticeController extends Controller
                 $lastName = ucfirst(strtolower($patient->last_name));
                 $suffix = $patient->suffix ?? '';
                 $fullName = trim(ucwords("${firstName} ${lastName} ${suffix}"));
-
+                
                 return [
                     'id'                         => $patient->id,
                     'first_name'                 => $firstName,
@@ -150,10 +150,10 @@ class PracticeController extends Controller
                 ];
             })
             ->toArray();
-
+        
         return response()->json($patients);
     }
-
+    
     /**
      * get locations within a practice.
      */
@@ -179,10 +179,10 @@ class PracticeController extends Controller
                     'providers'   => collect($location['providers'])->count(),
                 ];
             });
-
+        
         return response()->json($locationCollection->toArray());
     }
-
+    
     /**
      * get providers within a practice.
      *
@@ -196,7 +196,7 @@ class PracticeController extends Controller
             return $user->safe();
         }));
     }
-
+    
     /**
      * get list of available practices.
      * If called from admin pages, we have to fetch practices that user has admin rights to
@@ -212,15 +212,18 @@ class PracticeController extends Controller
             $practicesIAmAdmin = true;
         }
         $user = auth()->user();
-
+        
         if ($practicesIAmAdmin) {
             $roleIds = $user->isAdmin()
                 ? null
-                : Role::getIdsFromNames(['software-only']);
+                : Role::getIdsFromNames([
+                    'software-only',
+                    'callbacks-admin',
+                ]);
         } else {
             $roleIds = null;
         }
-
+        
         $practicesCollection = $user
             ->practices(true, false, $roleIds)
             ->with('locations')
@@ -228,7 +231,7 @@ class PracticeController extends Controller
                 'practices.id',
                 'display_name',
             ]);
-
+        
         $practices = $practicesCollection
             ->map(function ($practice) {
                 return [
@@ -237,7 +240,7 @@ class PracticeController extends Controller
                     'locations'    => $practice->locations->count(),
                 ];
             });
-
+        
         return response()->json($practices->toArray());
     }
 }
