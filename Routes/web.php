@@ -166,3 +166,8 @@ Route::get('/downloadInvoice/{practice}/{name}', [
     'as'         => 'monthly.billing.download',
     'middleware' => ['auth'],
 ]);
+
+Route::post('forward-careplan-to-billing-provider-via-dm', [
+    'uses' => 'Patient\CareplanController@forwardToBillingProviderViaDM',
+    'as'   => 'forward-careplan-to-billing-provider-via-dm',
+])->middleware(['patientProgramSecurity']);
