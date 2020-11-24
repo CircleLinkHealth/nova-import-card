@@ -171,7 +171,8 @@
                                 }
 
                                 function setTimeTrackerValue(type, value) {
-                                    $(`#monthly-time-${type}`).html(value);
+                                    let typeSanitized = type.replace(/[^A-Z0-9]/ig, "_");
+                                    $(`#monthly-time-${typeSanitized}`).html(value);
                                 }
 
                                 webix.locale.pager = {
@@ -206,8 +207,8 @@
                                 }, webix.ui.datafilter.summColumn);
                                 webix.ui.datafilter.mySummColumnRHC = webix.extend({
                                     refresh: function (master, node, value) {
-                                        node.firstChild.innerHTML = durationSum(master, 'RHC');
-                                        setTimeTrackerValue('RHC', node.firstChild.innerHTML);
+                                        node.firstChild.innerHTML = durationSum(master, 'CCM (RHC/FQHC)');
+                                        setTimeTrackerValue('CCM (RHC/FQHC)', node.firstChild.innerHTML);
                                     }
                                 }, webix.ui.datafilter.summColumn);
 
@@ -256,7 +257,7 @@
                                         {
                                             id: "durationCCM",
                                             header: ["Total CCM", "(HH:MM:SS)"],
-                                            width: 110,
+                                            width: 100,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnCCM", css: "duration-footer"},
@@ -267,7 +268,7 @@
                                         {
                                             id: "durationBHI",
                                             header: ["Total BHI", "(HH:MM:SS)"],
-                                            width: 110,
+                                            width: 100,
                                             fillspace: false,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
@@ -279,7 +280,7 @@
                                     {
                                         id: "durationPCM",
                                         header: ["Total PCM", "(HH:MM:SS)"],
-                                        width: 110,
+                                        width: 100,
                                         fillspace: false,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
@@ -291,7 +292,7 @@
                                     {
                                         id: "durationRPM",
                                         header: ["Total RPM", "(HH:MM:SS)"],
-                                        width: 110,
+                                        width: 100,
                                         fillspace: false,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
@@ -302,14 +303,14 @@
                                     },
                                     {
                                         id: "durationRHC",
-                                        header: ["Total RHC", "(HH:MM:SS)"],
-                                        width: 110,
+                                        header: ["Total CCM (RHC/FQHC)", "(HH:MM:SS)"],
+                                        width: 130,
                                         fillspace: true,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
                                         footer: {content: "mySummColumnRHC", css: "duration-footer"},
                                         template: function (obj) {
-                                            return durationData(obj, 'RHC');
+                                            return durationData(obj, 'CCM (RHC/FQHC)');
                                         }
                                     },
 
@@ -442,10 +443,10 @@
                                            }
                                            }
                                            },
-                                           'durationRHC':  { header: 'Total RHC (Min:Sec)', width: 70, sort: 'string',
+                                           'durationRHC':  { header: 'Total CCM (RHC/FQHC) (Min:Sec)', width: 70, sort: 'string',
                                            template: function (obj) {
                                            var type = durationType(obj);
-                                           if (type === 'RHC'){
+                                           if (type === 'CCM (RHC/FQHC)'){
                                            var seconds = obj.duration;
                                            var date = new Date(seconds * 1000);
                                            var mm = Math.floor(seconds/60);
