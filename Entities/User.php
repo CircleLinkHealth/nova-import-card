@@ -3479,7 +3479,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
-    public function scopeSearchPhoneNumber($query, array $inboundPostmarkData)
+    public function scopeSearchPhoneNumber($query, string $phoneOne, string $phoneTwo = '')
     {
         return $query->with([
             'patientInfo' => function ($q) {
@@ -3492,16 +3492,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 return $q->select(['id', 'user_id', 'number']);
             },
         ])
-            ->whereHas('phoneNumbers', function ($phoneNumber) use ($inboundPostmarkData) {
-            $phoneField = preg_replace('/[^0-9-()+ ]/', '', $inboundPostmarkData['phone']);
-            $callerIdFieldPhone = preg_replace('/[^0-9-()+ ]/', '', $inboundPostmarkData['callerId']);
-            $phoneNumber->whereIn('number', [
-                $phoneField,
-                $callerIdFieldPhone,
-                formatPhoneNumberE164($phoneField),
-                formatPhoneNumberE164($callerIdFieldPhone),
-            ]);
-        });
+            ->whereHas('phoneNumbers', function ($phoneNumber) use ($phoneOne, $phoneTwo) {
+                $phoneField = preg_replace('/[^0-9-()+ ]/', '', $phoneOne);
+                $callerIdFieldPhone = preg_replace('/[^0-9-()+ ]/', '', $phoneTwo);
+                $phoneNumber->whereIn('number', [
+                    $phoneField,
+                    $callerIdFieldPhone,
+                    formatPhoneNumberE164($phoneField),
+                    formatPhoneNumberE164($callerIdFieldPhone),
+                ]);
+            });
     }
 
     public function scopeWithCareTeamOfType(
