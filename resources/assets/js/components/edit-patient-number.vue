@@ -140,14 +140,14 @@
 
 
 <script>
-    import LoaderComponent from "./loader";
-    import axios from "../bootstrap-axios";
-    import EventBus from '../admin/time-tracker/comps/event-bus'
+    import LoaderComponent from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader';
+    import axios from "../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/bootstrap-axios";
+    import EventBus from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
     import CallNumber from "./call-number";
     import EditPatientAgentContact from "./edit-patient-agent-contact";
     import VueSelect from "vue-select";
     import {mapActions} from 'vuex';
-    import {addNotification} from '../../../../resources/assets/js/store/actions.js';
+    import {addNotification} from '../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store/actions.js';
 
     const AGENT = 'agent';
 

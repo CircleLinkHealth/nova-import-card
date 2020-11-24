@@ -133,11 +133,11 @@
 </template>
 
 <script>
-    import {rootUrl} from '../../app.config.js'
+    import {rootUrl} from "../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/app.config";
     import {Event} from 'vue-tables-2'
     import {CancelToken} from 'axios'
     import moment from 'moment'
-    import loader from '../loader'
+    import loader from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
     import UserRolesHelperMixin from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/mixins/user-roles-helpers.mixin'
 
     /**
