@@ -295,8 +295,7 @@
     ],
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-      "@php artisan vapor-ui:publish --ansi",
-      "@php artisan horizon:publish"
+      "@php artisan vapor-ui:publish --ansi"
     ],
     "unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
