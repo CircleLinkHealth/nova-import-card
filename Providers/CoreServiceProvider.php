@@ -24,6 +24,7 @@ class CoreServiceProvider extends ServiceProvider
         $this->registerViews();
         $this->registerConfig();
         $this->registerFactories();
+        
         $this->app->register(RouteServiceProvider::class);
     }
 
