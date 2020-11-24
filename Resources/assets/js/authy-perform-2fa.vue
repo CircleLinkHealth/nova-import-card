@@ -82,9 +82,9 @@
     </div>
 </template>
 <script>
-    import LoaderComponent from '../../../../Sharedvuecomponents/Resources/assets/js/components/loader';
-    import {rootUrl} from "../../../../Sharedvuecomponents/Resources/assets/js/app.config";
-    import Errors from "../../../../Sharedvuecomponents/Resources/assets/js/components/src/Errors";
+    import LoaderComponent from './loader';
+    import {rootUrl} from "../app.config";
+    import Errors from "./src/Errors";
 
     export default {
         name: 'authy-perform-2fa',
@@ -148,11 +148,20 @@
 
                         console.error("VerifyToken error: ", err);
 
-                        let errors = err.response.data.errors ? err.response.data.errors : [];
+                        let bannerText = '';
+                        let errors = [];
+                        if (err.response && err.response.data) {
+                            if (err.response.data.errors) {
+                                errors = err.response.data.errors;
+                            }
+                            if (err.response.data.message) {
+                                bannerText = err.response.data.message;
+                            }
+                        }
 
                         this.errors.setErrors(errors);
 
-                        self.bannerText = err.response.data.message;
+                        self.bannerText = bannerText;
                         self.bannerType = 'danger';
                         self.showBanner = true;
                     });
@@ -184,7 +193,10 @@
 
                         console.error("Sms error: ", err);
 
-                        let message = err.response.data.errors.message ? err.response.data.errors.message : '';
+                        let message = '';
+                        if (err.response && err.response.data && err.response.data.errors && err.response.data.errors.message) {
+                            message = err.response.data.errors.message;
+                        }
                         message += 'Please try another method.';
 
                         self.bannerText = 'Could not send SMS. ' + message;
