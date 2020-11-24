@@ -54,6 +54,8 @@ class MigrateSqlViews extends Command
      */
     public function handle()
     {
+        //todo: what if we have deleted a view
+        //maybe drop all views before creating again
         $this->getViewFiles(scandir($this->getViewsDir()))->each(function ($filePath) {
             $class = $this->resolve($filePath);
 

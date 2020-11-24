@@ -18,6 +18,7 @@ class ChargeablePatientMonthlySummariesView extends BaseSqlView
         AS
         SELECT cpms.*,
 cs.code as chargeable_service_code,
+cs.display_name as chargeable_service_name,
 
 coalesce((
 SELECT COUNT(*)
