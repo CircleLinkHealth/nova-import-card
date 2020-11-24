@@ -45,7 +45,6 @@ Route::get('home', [
     'as'   => 'home',
 ]);
 
-Route::get('login', 'Auth\LoginController@showLoginForm', ['as' => 'login']);
 Route::post('browser-check', [
     'uses' => 'Auth\LoginController@storeBrowserCompatibilityCheckPreference',
     'as'   => 'store.browser.compatibility.check.preference',

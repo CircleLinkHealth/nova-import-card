@@ -12,9 +12,9 @@ use CircleLinkHealth\Core\Providers\AuthServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\Core\Providers\HtmlToPdfServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
+use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
-use CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use CircleLinkHealth\Synonyms\Providers\SynonymsServiceProvider;
 use Illuminate\Support\Arr;
@@ -232,6 +232,7 @@ return [
         SynonymsServiceProvider::class,
         Macellan\Zip\ZipServiceProvider::class,
         FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider::class,
+        CustomerAuthServiceProvider::class,
     ],
 
     /*
