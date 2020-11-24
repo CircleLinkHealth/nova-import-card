@@ -198,7 +198,6 @@
     "laracasts/utilities": "~3.0",
     "laravel-notification-channels/twilio": "^2.1",
     "laravel/framework": "^7.6",
-    "laravel/horizon": "^4.0",
     "laravel/scout": "^8.0",
     "laravel/tinker": "^2.0",
     "laravel/ui": "^2.0",

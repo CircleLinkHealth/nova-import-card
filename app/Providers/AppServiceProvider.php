@@ -68,13 +68,7 @@ class AppServiceProvider extends ServiceProvider
         } else {
             \Log::warning('Class Swift_Preferences does not exist.');
         }
-
-        Horizon::auth(
-            function ($request) {
-                return optional(auth()->user())->hasRole(['administrator', 'developer']);
-            }
-        );
-
+        
         Queue::looping(
             function () {
                 //Rollback any transactions that were left open by a previously failed job
