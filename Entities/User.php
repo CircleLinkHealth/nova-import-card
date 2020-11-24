@@ -3486,14 +3486,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         foreach ($phones as $phone) {
             $numericValidatedPhone = preg_replace('/[^0-9-()+ ]/', '', $phone);
             $e164Formatted         = formatPhoneNumberE164($phone);
-
-            if (! $phoneNumbersFormatted->contains($numericValidatedPhone)) {
+    
+            if ( ! $phoneNumbersFormatted->contains($numericValidatedPhone)) {
                 $phoneNumbersFormatted->push(
                     $numericValidatedPhone
                 );
             }
-    
-            if (  ! $phoneNumbersFormatted->contains($e164Formatted)) {
+
+            if ( ! $phoneNumbersFormatted->contains($e164Formatted)) {
                 $phoneNumbersFormatted->push(
                     $e164Formatted
                 );
