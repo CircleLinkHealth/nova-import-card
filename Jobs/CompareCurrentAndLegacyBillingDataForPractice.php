@@ -58,6 +58,6 @@ class CompareCurrentAndLegacyBillingDataForPractice extends Job
                 CarePlan::RN_APPROVED,
                 CarePlan::PROVIDER_APPROVED,
             ]))
-            ->chunkIntoJobs(50, new CompareCurrentAndLegacyBillingDataPracticeChunk($this->getPracticeId()));
+            ->chunkIntoJobs(10, new CompareCurrentAndLegacyBillingDataPracticeChunk($this->getPracticeId()));
     }
 }
