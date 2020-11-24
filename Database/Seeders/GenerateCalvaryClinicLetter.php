@@ -14,7 +14,8 @@ use Illuminate\Database\Seeder;
 
 class GenerateCalvaryClinicLetter extends Seeder
 {
-    const UI_REQUESTS = 'ui_requests';
+    const PRACTICE_SIGNATORY_NAME = 'Joseph E. Goin, MD <br> Medical Director';
+    const UI_REQUESTS             = 'ui_requests';
 
     /**
      * Run the database seeds.
@@ -51,7 +52,7 @@ class GenerateCalvaryClinicLetter extends Seeder
 <p>I look forward to having you join this program to continue keeping you healthy between office visits.</p>
 <p>Sincerely,</p>
 <p>$customerSignaturePic<br />$signatoryName<br/></p>";
-    
+
         EnrollmentInvitationLetter::updateOrCreate(
             [
                 'practice_id' => $calvaryPractice->id,
@@ -59,6 +60,7 @@ class GenerateCalvaryClinicLetter extends Seeder
             [
                 'practice_logo_src'      => '/img/logos/Calvary/calvary_logo.png',
                 'customer_signature_src' => '/img/signatures/calvary-clinic/calvary_signature.png',
+                'signatory_name'         => self::PRACTICE_SIGNATORY_NAME,
                 'letter'                 => json_encode(
                     [
                         'page_1' => [
@@ -67,7 +69,7 @@ class GenerateCalvaryClinicLetter extends Seeder
                         ],
                     ]
                 ),
-            
+
                 self::UI_REQUESTS => json_encode([
                     'logo_position'        => 'text-align:right',
                     'extra_address_header' => [

@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\App;
 
 class GenerateCommonwealthPainAssociatesPllcLetter extends Seeder
 {
+    const PRACTICE_SIGNATORY_NAME = 'Jeff Ellison <br> Chief Operating Officer';
+
     /**
      * Run the database seeds.
      *
@@ -128,7 +130,9 @@ class GenerateCommonwealthPainAssociatesPllcLetter extends Seeder
             [
                 'practice_logo_src'      => '/img/logos/CommonWealth/commonwealth_logo.png',
                 'customer_signature_src' => '/img/logos/CommonWealth/commonwealth_signature.png',
-                'letter'                 => json_encode([
+                'signatory_name'         => self::PRACTICE_SIGNATORY_NAME,
+
+                'letter' => json_encode([
                     'page_1' => [
                         'identifier' => 'letter_main_subject',
                         'body'       => $bodyPageOne,

@@ -6,16 +6,15 @@
 
 namespace CircleLinkHealth\Eligibility\Database\Seeders;
 
-use App;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Exception;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
-class GenerateWoodlandInternistsClinicLetter extends Seeder
+class GenerateDavisCountyLetter extends Seeder
 {
-    const PRACTICE_SIGNATORY_NAME = 'Nadeem Jamil, MD';
-    const UI_REQUESTS             = 'ui_requests';
+    const PRACTICE_SIGNATORY_NAME = 'Robert D Floyd, DO <br> Davis County Medical Associates, Medical Director';
 
     /**
      * Run the database seeds.
@@ -29,7 +28,7 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
         $practiceName         = EnrollmentInvitationLetter::PRACTICE_NAME;
         $customerSignaturePic = EnrollmentInvitationLetter::CUSTOMER_SIGNATURE_PIC;
 
-        $woodlandsPractice = $this->getPractice();
+        $davisCountyPractice = $this->getPractice();
 
         $bodyPageOne = "
 
@@ -44,10 +43,10 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
 <li>You can avoid being on hold when you need something: your nurse can help with prescription refills, appointment scheduling, transportation assistance, and any general questions.</li><br>
 <li>You can disenroll at any time. This is a voluntary program meant to provide assistance and benefits outside of our physical office.</li>
 
-<p>What's the Cost?</p>
+<p style='text-decoration: underline;'>What's the Cost?</p>
 <p>The program is covered by Medicare. If you have Medicaid or a supplemental insurance, it will likely cover the copay, which means you'll have $0 out-of-pocket costs. In addition, during this crisis, your Dr. may waive co-pays for this kind of remote care. Medicare has invested in this program because it saves them money by keeping people like you healthy.</p>
 
-<p>What's Next?</p>
+<p style='text-decoration: underline;'>What's Next?</p>
 <p>In a few days, you'll get a call from one of our care coordinators from $practiceNumber. They'll be happy to answer your questions, and help you get started if you decide to join during that call.</p>
 <p>I look forward to having you join this program to continue keeping you healthy between office visits.</p>
 <p>Sincerely,</p>
@@ -55,11 +54,11 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
 
         EnrollmentInvitationLetter::updateOrCreate(
             [
-                'practice_id' => $woodlandsPractice->id,
+                'practice_id' => $davisCountyPractice->id,
             ],
             [
-                'practice_logo_src'      => '/img/logos/Woodlands/woodlands_logo.png',
-                'customer_signature_src' => '/img/signatures/woodlands-clinic/woodlands_signature.png',
+                'practice_logo_src'      => '/img/logos/DavisCounty/davis_logo.png',
+                'customer_signature_src' => '/img/signatures/davisCounty-clinic/davisCounty_signature.png',
                 'signatory_name'         => self::PRACTICE_SIGNATORY_NAME,
                 'letter'                 => json_encode(
                     [
@@ -70,10 +69,10 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
                     ]
                 ),
 
-                self::UI_REQUESTS => json_encode([
-                    'logo_position'        => 'text-align:left',
+                'ui_requests' => json_encode([
+                    'logo_position'        => 'text-align:right',
                     'extra_address_header' => [
-                        $woodlandsPractice->name => [
+                        $davisCountyPractice->name => [
                             'address_line_1',
                             'city',
                             'state',
@@ -87,26 +86,27 @@ class GenerateWoodlandInternistsClinicLetter extends Seeder
 
     private function getPractice()
     {
-        $woodlandsPractice = Practice::where('name', '=', 'woodlands-internists-pa')->first();
+        $davisCountyPractice = Practice::where('name', '=', 'davis-county')->first();
+
         if ( ! App::environment(['production'])) {
-            $woodlandsPractice = Practice::firstOrCreate(
+            $davisCountyPractice = Practice::firstOrCreate(
                 [
-                    'name' => 'woodlands-internists-pa',
+                    'name' => 'davis-county',
                 ],
                 [
                     'active'                => 1,
-                    'display_name'          => ucfirst(str_replace('-', ' ', 'woodlands-internists')),
+                    'display_name'          => ucfirst(str_replace('-', ' ', 'davis-county')),
                     'is_demo'               => 1,
                     'clh_pppm'              => 0,
                     'term_days'             => 30,
-                    'outgoing_phone_number' => 9362720989,
+                    'outgoing_phone_number' => +16419544560,
                 ]
             );
         }
-        if ( ! $woodlandsPractice) {
+        if ( ! $davisCountyPractice) {
             throw new Exception('Woodlands Internists Practice not found in Practices');
         }
 
-        return $woodlandsPractice;
+        return $davisCountyPractice;
     }
 }

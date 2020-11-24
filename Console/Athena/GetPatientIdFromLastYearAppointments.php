@@ -13,6 +13,7 @@ use Psr\Log\InvalidArgumentException;
 
 class GetPatientIdFromLastYearAppointments extends Command
 {
+    const MAX_DAYS_TO_PULL_AT_ONCE = 5;
     /**
      * The console command description.
      *
@@ -87,13 +88,15 @@ class GetPatientIdFromLastYearAppointments extends Command
             );
         }
 
-        // If the date range passed is greater than 31 days, we will perform a separate API call for each month.
-        if ($startDate->diffInDays($endDate) > 31) {
-            //initialize currentDate
+        if ($startDate->diffInDays($endDate) > self::MAX_DAYS_TO_PULL_AT_ONCE) {
             $currentDate = $startDate->copy();
             do {
                 $chunkStartDate = $currentDate->copy();
-                $chunkEndDate   = $chunkStartDate->isSameMonth($endDate, true) ? $endDate->copy() : $chunkStartDate->copy()->endOfMonth();
+                $chunkEndDate   = $chunkStartDate->copy()->addDays(self::MAX_DAYS_TO_PULL_AT_ONCE);
+
+                if ($chunkEndDate->isAfter($endDate)) {
+                    $chunkEndDate = $endDate;
+                }
 
                 $this->line('Getting appointments for');
                 $this->warn("Athena Practice Id: $athenaPracticeId");
@@ -102,8 +105,7 @@ class GetPatientIdFromLastYearAppointments extends Command
 
                 $this->service->getPatientIdFromAppointments($athenaPracticeId, $chunkStartDate, $chunkEndDate, $offset, $batchId);
 
-                //increment currentDate
-                $currentDate = $currentDate->addMonth();
+                $currentDate = $chunkEndDate->copy()->addDay();
             } while ($currentDate->lt($endDate));
         }
 

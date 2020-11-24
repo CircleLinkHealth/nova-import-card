@@ -200,6 +200,10 @@ class EligibilityChecker
 
         $isValid = null;
 
+        if (isset($this->getEligibilityJob()->data['patient_demographics']['status'])) {
+            $isValid = $this->validatePatientStatus($this->getEligibilityJob()->data['patient_demographics']['status']);
+        }
+
         if ($this->filterProblems) {
             $isValid = $this->validateProblems();
         }
@@ -750,8 +754,8 @@ class EligibilityChecker
             $args
         ) && ! empty($args['primary_insurance']))) {
             $insurances = is_array($args['insurances'])
-                ? collect($args['insurances'])
-                : $args['insurances'];
+                ? collect($args['insurances'])->toArray()
+                : (array) $args['insurances'];
 
             if (array_key_exists(0, $insurances) && array_keys_exist(
                 ['insurancetype', 'insuranceplanname'],
@@ -1157,5 +1161,19 @@ class EligibilityChecker
         }
 
         return true;
+    }
+
+    private function validatePatientStatus(string $status)
+    {
+        return tap('active' === strtolower($status), function ($isValid) use ($status) {
+            if (false === $isValid) {
+                $this->setEligibilityJobStatus(
+                    3,
+                    ['patient_status' => "Patient status is `$status`. The patient is not `active`."],
+                    EligibilityJob::INELIGIBLE,
+                    'problems'
+                );
+            }
+        });
     }
 }

@@ -179,6 +179,12 @@ class CcdaImporterWrapper
             return $this;
         }
 
+        $this->setPracticeAndLocationFromDocumentCustodianName();
+
+        if ($this->ccda->location_id) {
+            return $this;
+        }
+
         //Check if we have any locations whose address line 1 matches that in documentation of
         $this->setLocationFromDocumentationOfAddressInCcda($this->ccda);
 
@@ -495,7 +501,7 @@ class CcdaImporterWrapper
     private function setLocationFromDocumentLocationName()
     {
         if ( ! empty($this->ccda->practice_id) && $locationName = $this->ccda->bluebuttonJson()->document->location->name) {
-            return Location::where('name', $locationName)->where('practice_id', $this->ccda->practice_id)->value('id');
+            $this->ccda->setLocationId(Location::where('name', $locationName)->where('practice_id', $this->ccda->practice_id)->value('id'));
         }
 
         return null;
@@ -559,5 +565,22 @@ class CcdaImporterWrapper
             $ccda->location_id     = $location->id;
             $enrollee->location_id = $location->id;
         }
+    }
+
+    private function setPracticeAndLocationFromDocumentCustodianName()
+    {
+        if ($custodianName = $this->ccda->bluebuttonJson()->document->custodian->name) {
+            $location = Location::whereColumnOrSynonym('name', $custodianName)->first();
+
+            if ($location) {
+                $this->ccda->setLocationId($location->id);
+
+                if ( ! $this->ccda->practice_id) {
+                    $this->ccda->setPracticeId($location->practice_id);
+                }
+            }
+        }
+
+        return null;
     }
 }

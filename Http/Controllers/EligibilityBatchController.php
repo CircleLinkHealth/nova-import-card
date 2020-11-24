@@ -67,11 +67,13 @@ class EligibilityBatchController extends Controller
                 $firstIteration = true;
 
                 $batch->eligibilityJobs()
+                    ->with('enrollee')
                     ->chunk(
                         500,
                         function ($jobs) use ($handle, &$firstIteration) {
                             foreach ($jobs as $job) {
                                 $data = $job->data;
+                                $data['eligible_patient_id'] = optional($job->enrollee)->id;
 
                                 if ($firstIteration) {
                                     // Add CSV headers
@@ -225,6 +227,8 @@ class EligibilityBatchController extends Controller
 
     public function downloadEligibleCsv(EligibilityBatch $batch)
     {
+        ini_set('max_execution_time', 300);
+
         $practice = Practice::findOrFail($batch->practice_id);
         $fileName = $practice->display_name.'_'.Carbon::now()->toAtomString();
 
@@ -279,7 +283,7 @@ class EligibilityBatchController extends Controller
                     ->where('enrollees.batch_id', $batch->id)
                     ->whereNull('user_id')
                     ->chunk(
-                        500,
+                        200,
                         function ($enrollees) use ($handle, &$firstIteration) {
                             foreach ($enrollees as $enrollee) {
                                 $data = [
