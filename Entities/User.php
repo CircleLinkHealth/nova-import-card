@@ -3479,8 +3479,27 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
-    public function scopeSearchPhoneNumber($query, string $phoneOne, string $phoneTwo = '')
+    public function scopeSearchPhoneNumber($query, array $phones)
     {
+        $phoneNumbersFormatted = collect();
+
+        foreach ($phones as $phone) {
+            $numericValidatedPhone = preg_replace('/[^0-9-()+ ]/', '', $phone);
+            $e164Formatted         = formatPhoneNumberE164($phone);
+
+            if (! $phoneNumbersFormatted->contains($numericValidatedPhone)) {
+                $phoneNumbersFormatted->push(
+                    $numericValidatedPhone
+                );
+            }
+    
+            if (  ! $phoneNumbersFormatted->contains($e164Formatted)) {
+                $phoneNumbersFormatted->push(
+                    $e164Formatted
+                );
+            }
+        }
+
         return $query->with([
             'patientInfo' => function ($q) {
                 return $q->select(['id', 'ccm_status', 'user_id']);
@@ -3492,15 +3511,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 return $q->select(['id', 'user_id', 'number']);
             },
         ])
-            ->whereHas('phoneNumbers', function ($phoneNumber) use ($phoneOne, $phoneTwo) {
-                $phoneField = preg_replace('/[^0-9-()+ ]/', '', $phoneOne);
-                $callerIdFieldPhone = preg_replace('/[^0-9-()+ ]/', '', $phoneTwo);
-                $phoneNumber->whereIn('number', [
-                    $phoneField,
-                    $callerIdFieldPhone,
-                    formatPhoneNumberE164($phoneField),
-                    formatPhoneNumberE164($callerIdFieldPhone),
-                ]);
+            ->whereHas('phoneNumbers', function ($phoneNumber) use ($phoneNumbersFormatted) {
+                $phoneNumber->whereIn('number', $phoneNumbersFormatted->toArray());
             });
     }
 
