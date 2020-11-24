@@ -2019,6 +2019,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->user_registered;
     }
 
+    public function getRhcTime(): int
+    {
+        if (is_null($this->id)) {
+            return 0;
+        }
+
+        return PatientMonthlyServiceTime::rhc($this->id, Carbon::now()->startOfMonth());
+    }
+
     public function getRpmTime(): int
     {
         if (is_null($this->id)) {
@@ -3476,6 +3485,32 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->whereIn('practice_role_user.role_id', $roleIds);
             }
         );
+    }
+
+    public function scopeSearchPhoneNumber($query, array $phones)
+    {
+        $phoneNumbersFormatted = collect();
+
+        foreach ($phones as $phone) {
+            $numericValidatedPhone = preg_replace('/[^0-9-()+ ]/', '', $phone);
+            $e164Formatted         = formatPhoneNumberE164($phone);
+
+            if ( ! $phoneNumbersFormatted->contains($numericValidatedPhone)) {
+                $phoneNumbersFormatted->push(
+                    $numericValidatedPhone
+                );
+            }
+
+            if ( ! $phoneNumbersFormatted->contains($e164Formatted)) {
+                $phoneNumbersFormatted->push(
+                    $e164Formatted
+                );
+            }
+        }
+
+        return $query->whereHas('phoneNumbers', function ($phoneNumber) use ($phoneNumbersFormatted) {
+            $phoneNumber->whereIn('number', $phoneNumbersFormatted->toArray());
+        });
     }
 
     public function scopeWithCareTeamOfType(
