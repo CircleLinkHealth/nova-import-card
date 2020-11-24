@@ -9,6 +9,9 @@ namespace CircleLinkHealth\TimeTracking\Jobs;
 use App\Jobs\ProcessCareAmbassadorTime;
 use App\Jobs\ProcessMonthltyPatientTime;
 use App\Jobs\ProcessNurseMonthlyLogs;
+use App\Services\PageTimerService;
+use App\ValueObjects\CreatePageTimerParams;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
@@ -55,6 +58,7 @@ class StoreTimeTracking implements ShouldQueue
     private ActivityService $activityService;
     
     private ?bool $isPatientBhi = null;
+    private PageTimerService $pageTimerService;
     
     /**
      * Create a new job instance.
@@ -69,7 +73,8 @@ class StoreTimeTracking implements ShouldQueue
      */
     public function handle()
     {
-        $this->activityService = app(ActivityService::class);
+        $this->activityService  = app(ActivityService::class);
+        $this->pageTimerService = app(PageTimerService::class);
         
         /** @var User $provider */
         $provider = User::findOrFail($this->params->get('providerId', null));
@@ -78,14 +83,10 @@ class StoreTimeTracking implements ShouldQueue
         $patient   = $this->getPatient($patientId);
         
         foreach ($this->params->get('activities', []) as $activity) {
-            $isBehavioral = isset($activity['is_behavioral'])
-                ? (bool) $activity['is_behavioral'] && $this->isPatientBhi($patient)
-                : false;
-            
             $pageTimer = $this->createPageTimer($activity);
             
             if ($this->isBillableActivity($pageTimer, $activity, $provider) && ! is_null($patient)) {
-                $this->processBillableActivity($patient, $pageTimer, $isBehavioral);
+                $this->processBillableActivity($patient, $pageTimer, $activity['chargeable_service_id'] ?? -1);
             }
             
             if ($this->isProcessableCareAmbassadorActivity($activity, $provider)) {
@@ -108,47 +109,18 @@ class StoreTimeTracking implements ShouldQueue
         ];
     }
     
-    /**
-     * Create a PageTimer.
-     *
-     * @param $activity
-     *
-     * @return PageTimer
-     */
-    private function createPageTimer(array $activity)
+    private function createPageTimer(array $activity): PageTimer
     {
-        $duration = $activity['duration'];
+        $params = (new CreatePageTimerParams())
+            ->setActivity($activity)
+            ->setIpAddr($this->params->get('ipAddr', null))
+            ->setPatientId($this->params->get('patientId', null))
+            ->setProgramId($this->params->get('programId', null))
+            ->setProviderId($this->params->get('providerId', null))
+            ->setUserAgent($this->params->get('userAgent', null))
+            ->setRedirectLocation($this->params->get('redirectLocation', null));
         
-        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['start_time']);
-        $endTime   = $startTime->copy()->addSeconds($duration);
-        if (isset($activity['end_time'])) {
-            try {
-                $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['end_time']);
-            } catch (\Throwable $e) {
-                Log::warning('Could not read activity[end_time]: '.$e->getMessage());
-            }
-        }
-        
-        $pageTimer                    = new PageTimer();
-        $pageTimer->redirect_to       = $this->params->get('redirectLocation', null);
-        $pageTimer->billable_duration = $duration;
-        $pageTimer->duration          = $duration;
-        $pageTimer->duration_unit     = 'seconds';
-        $pageTimer->patient_id        = $this->params->get('patientId');
-        $pageTimer->enrollee_id       = empty($activity['enrolleeId']) ? null : $activity['enrolleeId']; //0 is null
-        $pageTimer->provider_id       = $this->params->get('providerId', null);
-        $pageTimer->start_time        = $startTime->toDateTimeString();
-        $pageTimer->end_time          = $endTime->toDateTimeString();
-        $pageTimer->url_full          = $activity['url'];
-        $pageTimer->url_short         = $activity['url_short'];
-        $pageTimer->program_id        = empty($this->params->get('programId', null)) ? null : $this->params->get('programId', null);
-        $pageTimer->ip_addr           = $this->params->get('ipAddr');
-        $pageTimer->activity_type     = $activity['name'];
-        $pageTimer->title             = $activity['title'];
-        $pageTimer->user_agent        = $this->params->get('userAgent', null);
-        $pageTimer->save();
-        
-        return $pageTimer;
+        return $this->pageTimerService->createPageTimer($params);
     }
     
     private function getPatient($patientUserId): ?User
@@ -180,17 +152,6 @@ class StoreTimeTracking implements ShouldQueue
             || $forceSkip);
     }
     
-    private function isPatientBhi(User $patient = null): bool
-    {
-        if ( ! is_null($this->isPatientBhi)) {
-            return $this->isPatientBhi;
-        }
-        
-        $this->isPatientBhi = ! empty($patient) && $patient->isBhi();
-        
-        return $this->isPatientBhi;
-    }
-    
     /**
      * If user is a care ambassador, then we should process their time in CA logs.
      * Unless activity is marked in {@link UNTRACKED_CA_ACTIVITIES}.
@@ -211,28 +172,22 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @return Activity|\Illuminate\Database\Eloquent\Model
      */
-    private function processBillableActivity(User $patient, PageTimer $pageTimer, $isBehavioral = false): void
+    private function processBillableActivity(User $patient, PageTimer $pageTimer, int $chargeableServiceId = -1): void
     {
-        $chargeableServicesDuration = $this->activityService->separateDurationForEachChargeableServiceId($patient, $pageTimer->duration, $isBehavioral);
-        foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
-            $activity = Activity::create(
-                [
-                    'type'                  => $pageTimer->activity_type,
-                    'provider_id'           => $pageTimer->provider_id,
-                    'is_behavioral'         => $isBehavioral,
-                    'performed_at'          => $pageTimer->start_time,
-                    'duration'              => $chargeableServiceDuration->duration,
-                    'duration_unit'         => 'seconds',
-                    'patient_id'            => $pageTimer->patient_id,
-                    'logged_from'           => 'pagetimer',
-                    'logger_id'             => $pageTimer->provider_id,
-                    'page_timer_id'         => $pageTimer->id,
-                    'chargeable_service_id' => $chargeableServiceDuration->id,
-                ]
-            );
-            ProcessMonthltyPatientTime::dispatchNow($patient->id);
-            ProcessNurseMonthlyLogs::dispatchNow($activity);
-            event(new PatientActivityCreated($patient->id));
-        }
+        Cache::lock("time_tracking_$patient->id")
+            ->get(function () use ($patient, $pageTimer, $chargeableServiceId) {
+                $chargeableServicesDuration = $this->activityService->separateDurationForEachChargeableServiceId($patient, $pageTimer->duration, $chargeableServiceId);
+                foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
+                    $activity = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('pagetimer', $pageTimer, $chargeableServiceDuration);
+                    
+                    if ( ! $chargeableServiceDuration->id && $patient->chargeableServices()->count() > 0) {
+                        sendSlackMessage('#time-tracking-issues', "Could not assign activity[{$activity->id}] to chargeable service. Original csId[{$chargeableServiceId}]. See page timer entry {$pageTimer->id}. Patient[$patient->id].");
+                    }
+                    
+                    ProcessMonthltyPatientTime::dispatchNow($patient->id);
+                    ProcessNurseMonthlyLogs::dispatchNow($activity);
+                    event(new PatientActivityCreated($patient->id));
+                }
+            });
     }
 }
