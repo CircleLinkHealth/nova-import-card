@@ -55,14 +55,24 @@ class PostmarkInboundCallbackMatchResults
                 ->tryToMatchByName($inboundDataMatchedWithPhone->get(), $this->postmarkCallbackData, $this->recordId);
         }
     }
-    
+
     /**
-     * @param string $phone
-     * @param string $callerIdField
+     * @param  string       $phone
+     * @param  string       $callerIdField
      * @return Builder|User
      */
     private function matchByPhone(string $phoneNumber, string $callerIdFieldPhone)
     {
-        return User::withTrashed()->ofType('participant')->searchPhoneNumber([$phoneNumber, $callerIdFieldPhone]);
+        return User::withTrashed()->ofType('participant')->with([
+            'patientInfo' => function ($q) {
+                return $q->select(['id', 'ccm_status', 'user_id']);
+            },
+
+            'enrollee',
+
+            'phoneNumbers' => function ($q) {
+                return $q->select(['id', 'user_id', 'number']);
+            },
+        ])->searchPhoneNumber([$phoneNumber, $callerIdFieldPhone]);
     }
 }
