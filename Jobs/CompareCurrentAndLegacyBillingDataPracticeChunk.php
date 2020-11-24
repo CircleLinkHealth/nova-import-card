@@ -82,7 +82,7 @@ class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuil
             $mismatches = [];
             foreach ($toMatch['services'] as $code => $boolPerToggleArray) {
                 if ($boolPerToggleArray['on'] !== $boolPerToggleArray['off']) {
-                    $mismatches[] = $code;
+                    $mismatches[] = $code.': toggle on:'.$boolPerToggleArray['on'].',toggle off:'.$boolPerToggleArray['off'];
                 }
             }
 
@@ -90,7 +90,7 @@ class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuil
                 return;
             }
             $mismatches = implode(',', $mismatches);
-            sendSlackMessage('#billing_allerts', "Warning! (From Billing Toggle Compare Job:) Patient ($patient->id), has the following code mismatches between billing revamp toggle states: {$mismatches}");
+            sendSlackMessage('#billing_alerts', "Warning! (From Billing Toggle Compare Job:) Patient ($patient->id), has the following code mismatches between billing revamp toggle states: {$mismatches}");
         });
     }
 }
