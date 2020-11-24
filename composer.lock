@@ -69,16 +69,16 @@
         },
         {
             "name": "algolia/algoliasearch-client-php",
-            "version": "2.7.1",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/algoliasearch-client-php.git",
-                "reference": "19c0a6c1ef44c0aafaf6c6238c1509ebde2d1a35"
+                "reference": "a915109c76d5f4af67f10cd21855ea2d4c9aec9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/19c0a6c1ef44c0aafaf6c6238c1509ebde2d1a35",
-                "reference": "19c0a6c1ef44c0aafaf6c6238c1509ebde2d1a35",
+                "url": "https://api.github.com/repos/algolia/algoliasearch-client-php/zipball/a915109c76d5f4af67f10cd21855ea2d4c9aec9f",
+                "reference": "a915109c76d5f4af67f10cd21855ea2d4c9aec9f",
                 "shasum": ""
             },
             "require": {
@@ -135,20 +135,20 @@
                 "php",
                 "search"
             ],
-            "time": "2020-11-12T13:52:28+00:00"
+            "time": "2020-11-24T10:16:46+00:00"
         },
         {
             "name": "algolia/scout-extended",
-            "version": "v1.10.1",
+            "version": "1.10.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/algolia/scout-extended.git",
-                "reference": "d3932eee760f6bf205560b61152392acddbfb50f"
+                "reference": "ff39d6734b87b0ae1ba26e1752ecb0be021d9fc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/d3932eee760f6bf205560b61152392acddbfb50f",
-                "reference": "d3932eee760f6bf205560b61152392acddbfb50f",
+                "url": "https://api.github.com/repos/algolia/scout-extended/zipball/ff39d6734b87b0ae1ba26e1752ecb0be021d9fc2",
+                "reference": "ff39d6734b87b0ae1ba26e1752ecb0be021d9fc2",
                 "shasum": ""
             },
             "require": {
@@ -212,7 +212,7 @@
                 "scout",
                 "search"
             ],
-            "time": "2020-09-23T13:38:42+00:00"
+            "time": "2020-11-24T10:23:31+00:00"
         },
         {
             "name": "amnuts/opcache-gui",
@@ -481,16 +481,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.163.3",
+            "version": "3.164.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "f6cd8fe1334b19e1dc0d841fa1b2da7cd30a1e8a"
+                "reference": "39ecf57d828eb50ab23fd70255a68b8996392ac9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f6cd8fe1334b19e1dc0d841fa1b2da7cd30a1e8a",
-                "reference": "f6cd8fe1334b19e1dc0d841fa1b2da7cd30a1e8a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/39ecf57d828eb50ab23fd70255a68b8996392ac9",
+                "reference": "39ecf57d828eb50ab23fd70255a68b8996392ac9",
                 "shasum": ""
             },
             "require": {
@@ -562,7 +562,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-11-23T20:34:30+00:00"
+            "time": "2020-11-24T19:18:22+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1148,7 +1148,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "017f5681d6d0e8b50f54e20956edb5e9aa1da88a"
+                "reference": "7b787f9472e6af15b1b26bcc3e388c41333ef9a4"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1182,7 +1182,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T05:42:53+00:00"
+            "time": "2020-11-24T21:36:42+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
