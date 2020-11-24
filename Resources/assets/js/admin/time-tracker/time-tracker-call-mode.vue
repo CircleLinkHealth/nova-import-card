@@ -34,7 +34,7 @@
 
 <script>
     import EventBus from './comps/event-bus'
-    import LoaderComponent from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
+    import LoaderComponent from '../../components/loader'
     import {rootUrl} from "../../app.config";
     import {sendRequest, registerHandler} from "../../components/bc-job-manager";
 
@@ -86,7 +86,7 @@
                 sendRequest("end_call", null)
                     .then(msg => {
                     })
-                    .catch(err => console.error(err));
+                    .catch(err => console.warn(err));
             },
             checkForCallStatus() {
                 sendRequest("call_status", null, 5000)

@@ -66,8 +66,8 @@
     import Modal from '../../../common/modal'
     import {Event} from 'vue-tables-2'
     import {rootUrl} from '../../../../app.config'
-    import Notifications from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications'
-    import Loader from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
+    import Notifications from '../../../../components/notifications'
+    import Loader from '../../../../components/loader'
     import VueCache from '../../../../util/vue-cache'
 
     export default {
@@ -145,12 +145,24 @@
                                 .catch(err => {
                                     let reason = err.toString();
                                     if (err.response) {
-                                        if (err.response && err.response.data && err.response.data.message) {
-                                            reason = err.response.data.message;
-                                        } else {
+                                        if (err.response && err.response.data) {
+                                            if (typeof err.response.data === 'string') {
+                                                reason = err.response.data;
+                                            }
+                                            else {
+                                                reason = err.response.data.message;
+                                            }
+                                        }
+
+                                        if (!reason) {
                                             reason = err.response.statusText;
                                         }
                                     }
+
+                                    if (!reason) {
+                                        reason = err.toString();
+                                    }
+
                                     Event.$emit('notifications-select-nurse:create', {
                                         type: 'error',
                                         text: reason,

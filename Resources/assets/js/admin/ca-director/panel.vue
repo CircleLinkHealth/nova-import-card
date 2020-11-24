@@ -6,25 +6,27 @@
                     <notifications ref="notificationsComponent" name="ca-panel"></notifications>
                 </div>
             </div>
-<!--            Not actually being used - leaving here in case anyone needs something similar-->
-<!--            <div class="col-sm-12 text-left">-->
-<!--                <button class="btn btn-primary btn-s"-->
-<!--                        @click="addCustomFilter">Add Custom Filter-->
-<!--                </button>-->
-<!--            </div>-->
+            <!--            Not actually being used - leaving here in case anyone needs something similar-->
+            <!--            <div class="col-sm-12 text-left">-->
+            <!--                <button class="btn btn-primary btn-s"-->
+            <!--                        @click="addCustomFilter">Add Custom Filter-->
+            <!--                </button>-->
+            <!--            </div>-->
         </div>
         <div class="row">
             <div class="row">
             </div>
-            <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 20px">
-                <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': this.hideAssigned}"
-                        @click="showAssigned">{{this.showAssignedLabel}}
-                </button>
-            </div>
-            <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 10px">
-                <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': this.isolateUploadedViaCsv}"
-                        @click="isolatePatientsUploadedViaCsv">{{this.showIsolatedViaCsvLabel}}
-                </button>
+            <div v-if="!isCallbacksAdmin()">
+                <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 20px">
+                    <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': this.hideAssigned}"
+                            @click="showAssigned">{{this.showAssignedLabel}}
+                    </button>
+                </div>
+                <div class="col-sm-12 text-left" style="margin-bottom: 10px; margin-top: 10px">
+                    <button class="btn btn-info btn-s" v-bind:class="{'btn-selected': this.isolateUploadedViaCsv}"
+                            @click="isolatePatientsUploadedViaCsv">{{this.showIsolatedViaCsvLabel}}
+                    </button>
+                </div>
             </div>
             <div class="col-sm-12 text-right" style="margin-bottom: 10px">
                 <button class="btn btn-success btn-s" @click="assignCallback">Assign Callback</button>
@@ -35,14 +37,16 @@
             <div class="col-sm-2">
                 <loader style="margin-top:20px; margin-left: 80px" v-if="loading"/>
             </div>
-            <div class="col-sm-5 text-right" v-if="enrolleesAreSelected">
-                <button class="btn btn-primary btn-s" @click="assignSelectedToCa">Assign To CA</button>
-                <button class="btn btn-warning btn-s" @click="unassignSelectedFromCa">Unassign From CA</button>
-                <button class="btn btn-danger btn-s" @click="markSelectedAsIneligible">Mark as Ineligible</button>
-            </div>
-            <div class="col-sm-12" style="margin-top: 1%">
-                <button class="btn btn-primary btn-xs" @click="clearSelected">Clear Selected Patients</button>
-            </div>
+            <template v-if="!isCallbacksAdmin()">
+                <div class="col-sm-5 text-right" v-if="enrolleesAreSelected">
+                    <button class="btn btn-primary btn-s" @click="assignSelectedToCa">Assign To CA</button>
+                    <button class="btn btn-warning btn-s" @click="unassignSelectedFromCa">Unassign From CA</button>
+                    <button class="btn btn-danger btn-s" @click="markSelectedAsIneligible">Mark as Ineligible</button>
+                </div>
+                <div class="col-sm-12" style="margin-top: 1%">
+                    <button class="btn btn-primary btn-xs" @click="clearSelected">Clear Selected Patients</button>
+                </div>
+            </template>
         </div>
         <div class="panel-body" id="enrollees">
             <v-server-table class="table" v-on:filter="listenTo" :url="getUrl()" :columns="columns" :options="options"
@@ -109,8 +113,8 @@
     import AssignCallbackModal from "./comps/modals/assign-callback.modal";
     import AddCustomFilterModal from "./comps/modals/add-custom-filter.modal";
     import EditPatientModal from "./comps/modals/edit-patient.modal";
-    import Loader from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader';
-    import Notifications from '../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications';
+    import Loader from '../../components/loader';
+    import Notifications from '../../components/notifications';
     import Multiselect from 'vue-multiselect';
 
     let self;
@@ -129,8 +133,19 @@
             'notifications': Notifications,
             'vue-multiselect': Multiselect
         },
-        props: [],
+        props: [
+            'authRole'
+        ],
         data() {
+
+            const columns = ['id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'invited', 'practice_name', 'provider_name', 'requested_callback', 'callback_note', 'total_time_spent', 'attempt_count', 'last_attempt_at',
+                'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone', 'dob', 'preferred_days', 'preferred_window',
+                'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'provider_pronunciation', 'provider_sex', 'last_encounter', 'eligibility_job_id', 'medical_record_id', 'created_at'];
+
+            if (!this.isCallbacksAdmin()) {
+                columns.unshift('select', 'edit');
+            }
+
             return {
                 statusFilter: [
                     {id: 'call_queue', text: 'Call Queue'},
@@ -140,9 +155,7 @@
                 selectedEnrolleeIds: [],
                 hideAssigned: false,
                 isolateUploadedViaCsv: false,
-                columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'source', 'enrollment_non_responsive', 'auto_enrollment_triggered', 'invited', 'practice_name', 'provider_name', 'requested_callback', 'callback_note', 'total_time_spent', 'attempt_count', 'last_attempt_at',
-                    'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'home_phone', 'cell_phone', 'other_phone', 'dob', 'preferred_days', 'preferred_window',
-                    'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'provider_pronunciation', 'provider_sex', 'last_encounter', 'eligibility_job_id', 'medical_record_id', 'created_at'],
+                columns: columns,
                 options: {
                     requestAdapter(data) {
                         if (typeof (self) !== 'undefined') {
@@ -197,6 +210,7 @@
 
         },
         computed: {
+
             enrolleesAreSelected() {
                 return this.selectedEnrolleeIds.length !== 0;
             },
@@ -208,6 +222,9 @@
             }
         },
         methods: {
+            isCallbacksAdmin() {
+                return this.authRole === 'callbacks-admin';
+            },
             formatSecondsToHHMMSS(seconds) {
                 return new Date(1000 * seconds).toISOString().substr(11, 8);
             },
@@ -410,6 +427,10 @@
 
     .edit-button{
         margin: 3px;
+    }
+
+    tr {
+        height: 30px;
     }
 
 </style>

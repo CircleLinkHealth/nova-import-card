@@ -76,7 +76,7 @@
                                 <v-select :disabled="action.disabled"
                                           max-height="200px" class="form-control"
                                           v-model="action.selectedSubTypeData"
-                                          :options="subTypesForSelect"
+                                          :options="subTypesForSelect()"
                                           @input="function (type) {changeSubType(index, type)}">
                                 </v-select>
                             </td>
@@ -211,10 +211,10 @@
 <script>
     import {Event} from 'vue-tables-2'
     import Modal from '../../../common/modal'
-    import LoaderComponent from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/loader'
+    import LoaderComponent from '../../../../components/loader'
     import {rootUrl} from '../../../../app.config'
     import {today} from '../../../../util/today'
-    import notifications from '../../../../../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/components/shared/notifications/notifications'
+    import notifications from '../../../../components/notifications'
     import VueSelect from 'vue-select'
     import VueCache from '../../../../util/vue-cache'
 
@@ -306,17 +306,6 @@
                     nurses: false
                 },
 
-                subTypesForSelect: [
-                    UNASSIGNED_VALUE,
-                    {label: 'Call', value: 'call'},
-                    {label: 'Call back', value: 'Call Back'},
-                    {label: 'Refill', value: 'Refill'},
-                    {label: 'Send Info', value: 'Send Info'},
-                    {label: 'Get appt.', value: 'Get Appt.'},
-                    {label: 'CP Review', value: 'CP Review'},
-                    {label: 'Other Task', value: 'Other Task'}
-                ],
-
                 practices: [],
                 practicesForSelect: [],
 
@@ -341,10 +330,28 @@
             },
             showPracticeColumn() {
                 return this.practices.length > 1;
-            },
+            }
         },
 
         methods: {
+            subTypesForSelect() {
+                if (this.$parent.isAdmin() || this.$parent.isSoftwareOnly()) {
+                    return [
+                        UNASSIGNED_VALUE,
+                        {label: 'Call', value: 'call'},
+                        {label: 'Call back', value: 'Call Back'},
+                        {label: 'Refill', value: 'Refill'},
+                        {label: 'Send Info', value: 'Send Info'},
+                        {label: 'Get appt.', value: 'Get Appt.'},
+                        {label: 'CP Review', value: 'CP Review'},
+                        {label: 'Other Task', value: 'Other Task'}
+                    ];
+                } else if (this.$parent.isCallbacksAdmin()) {
+                    return [
+                        {label: 'Call back', value: 'Call Back'}
+                    ]
+                };
+            },
             setNursesForSelect(actionIndex) {
                 this.actions[actionIndex].nursesForSelect = [
                     UNASSIGNED_VALUE,
@@ -659,7 +666,8 @@
                             attempt_note: data.text,
                             is_manual: data.isManual,
                             asap: data.asapChecked,
-                            family_override: data.familyOverride
+                            family_override: data.familyOverride,
+                            patientId: data.patientId,
                         };
                     });
 
@@ -753,7 +761,7 @@
 
                             } else {
                                 this.resetForm();
-                                Event.$emit("modal-add-action:hide");
+                                Event.$emit("modal-add-action:hide", actions);
                                 actions.forEach(action => {
                                     Event.$emit('actions:add', action);
                                 });
@@ -838,19 +846,41 @@
                 if (data) {
                     if (data.practiceId) {
                         this.actions[this.actions.length - 1].skipRefreshingPatients = true;
-                        this.actions[this.actions.length - 1].data.patientId = data.practiceId;
+                        this.actions[this.actions.length - 1].data.practiceId = data.practiceId;
                         this.actions[this.actions.length - 1].selectedPracticeData = {
                             label: data.practiceName,
                             value: data.practiceId
                         };
                     }
                     if (data.patientId) {
-                        console.log(data);
                         this.actions[this.actions.length - 1].data.patientId = data.patientId;
                         this.actions[this.actions.length - 1].selectedPatientData = {
                             label: data.patientName,
                             value: data.patientId
                         };
+                    }
+                    if (data.type) {
+                        this.actions[this.actions.length - 1].data.type = data.type;
+                    }
+                    if (data.subType) {
+                        this.actions[this.actions.length - 1].data.subType = data.subType;
+                        this.actions[this.actions.length - 1].selectedSubTypeData = {
+                            label: data.subType,
+                            value: data.subType
+                        };
+                    }
+                    if (data.careCoachName && data.careCoachId) {
+                        this.actions[this.actions.length - 1].data.nurseId = data.careCoachId;
+                        this.actions[this.actions.length - 1].selectedNurseData = {
+                            label: data.careCoachName,
+                            value: data.careCoachId
+                        };
+                        this.actions[this.actions.length - 1].nursesForSelect = [
+                            {
+                                label: data.careCoachName,
+                                value: data.careCoachId
+                            }
+                        ];
                     }
                 }
             })

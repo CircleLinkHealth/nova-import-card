@@ -7,6 +7,7 @@ import Errors from '../components/src/Errors'
 
 Vue.use(Vuex)
 
+// const debug = process.env.NODE_ENV !== 'production'
 const debug = true
 Vue.config.debug = true
 
@@ -37,7 +38,10 @@ const state = {
     },
     practiceLocations: [],
     practiceStaff: [],
-    practiceStaffIsUpdating: false
+    practiceStaffIsLoading: false,
+    practiceStaffIsUpdating: false,
+    ehrPlatforms: [],
+    ehrPlatformsIsLoading: false
 }
 
 export default new Vuex.Store({

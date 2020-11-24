@@ -3,6 +3,8 @@ import practiceLocationsApi from "../api/practice-location";
 import practiceStaffApi from "../api/practice-staff";
 import carePersonApi from "../api/care-person";
 import carePlanApi from "../api/patient-care-plan";
+import ehrPlatformsApi from "../api/ehr-platforms";
+
 
 export const addNotification = ({commit}, notification) => {
     commit('ADD_NOTIFICATION', notification);
@@ -208,6 +210,20 @@ export const uploadPdfCarePlan = ({commit}, payload) => {
     }, error => {
         console.log(error)
     }, payload)
+}
+
+export const getEhrPlatforms = ({commit, state}) => {
+    if (state.ehrPlatforms && state.ehrPlatforms.length) {
+        commit('GET_EHR_PLATFORMS', state.ehrPlatforms);
+        return;
+    }
+
+    commit('GET_EHR_PLATFORMS_WAITING');
+
+    ehrPlatformsApi.get(
+        ehrs => commit('GET_EHR_PLATFORMS', ehrs),
+        errors => commit('SET_ERRORS', errors)
+    );
 }
 
 export const clearErrors = ({commit}, field) => {
