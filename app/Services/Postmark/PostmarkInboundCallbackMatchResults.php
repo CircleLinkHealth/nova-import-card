@@ -61,6 +61,6 @@ class PostmarkInboundCallbackMatchResults
      */
     private function matchByPhone(array $inboundPostmarkData)
     {
-        return User::withTrashed()->ofType('participant')->searchPhoneNumber($inboundPostmarkData['phone'], $inboundPostmarkData['callerId']);
+        return User::withTrashed()->ofType('participant')->searchPhoneNumber([$inboundPostmarkData['phone'], $inboundPostmarkData['callerId']]);
     }
 }
