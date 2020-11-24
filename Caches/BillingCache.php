@@ -12,7 +12,7 @@ interface BillingCache
 {
     public function billingRevampIsEnabled(): bool;
 
-    public function clearPatients(): void;
+    public function clearPatients(array $patientIds = []): void;
 
     public function forgetPatient(int $patientId): void;
 
