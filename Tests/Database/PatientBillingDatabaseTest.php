@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Tests\Database;
 
-use App\Call;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\LogPatientCcmStatusForEndOfMonth;
