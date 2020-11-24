@@ -61,7 +61,7 @@
     </style>
     @stack('styles')
     @include('modules.raygun.partials.real-user-monitoring')
-    @include('partials.new-relic-tracking')
+    @include('core::partials.new-relic-tracking')
 </head>
 <body>
 
@@ -78,7 +78,7 @@
 </div> <!-- end #app -->
 
 @if(!isset($isPdf))
-    @include('partials.footer')
+    @include('footer')
 
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->
@@ -165,7 +165,7 @@
     @endif
 @endauth
 
-@include('partials.sentry-js')
+@include('core::partials.sentry-js')
 </body>
 
 </html>

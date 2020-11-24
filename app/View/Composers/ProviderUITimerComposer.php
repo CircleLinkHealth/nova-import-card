@@ -6,8 +6,6 @@
 
 namespace App\View\Composers;
 
-use App\Jobs\StoreTimeTracking;
-use App\Policies\CreateNoteForPatient;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummary;
@@ -15,6 +13,8 @@ use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollectio
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Policies\CreateNoteForPatient;
+use CircleLinkHealth\TimeTracking\Jobs\StoreTimeTracking;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
