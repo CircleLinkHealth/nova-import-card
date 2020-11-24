@@ -28,11 +28,11 @@ class GenerateNurseInvoice implements ShouldQueue
 
     /**
      * The number of seconds the job can run before timing out.
-     * 20 minutes.
+     * 40 minutes.
      *
      * @var int
      */
-    public $timeout = 1200;
+    public $timeout = 2400;
 
     /**
      * @var Carbon
