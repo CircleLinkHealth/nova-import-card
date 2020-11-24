@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 
 class NursesPerformanceReportService
 {
-    use \App\Traits\NursePerformanceCalculations;
+    use NursePerformanceCalculations;
     
     const LAST_COMMITTED_DAYS_TO_GO_BACK = 10;
     const MAX_COMMITTED_DAYS_TO_GO_BACK  = 30;
