@@ -23,6 +23,10 @@ class HomeController extends Controller
      */
     public function index()
     {
+        if (auth()-> guest() || ! auth()->user()->isAdmin()) {
+            return redirect()->to(config('core.apps.cpm-provider.url'));
+        }
+        
         return view('cpm-admin::dashboard');
     }
 }
