@@ -41,7 +41,7 @@ class PostmarkInboundCallbackMatchResults
     public function matchedPatientsData()
     {
         /** @var Builder $inboundDataMatchedWithPhone */
-        $inboundDataMatchedWithPhone = $this->matchByPhone($this->postmarkCallbackData);
+        $inboundDataMatchedWithPhone = $this->matchByPhone($this->postmarkCallbackData['phone'], $this->postmarkCallbackData['callerId']);
 
         if (1 === $inboundDataMatchedWithPhone->count()) {
             /** @var User $matchedPatient */
@@ -55,12 +55,14 @@ class PostmarkInboundCallbackMatchResults
                 ->tryToMatchByName($inboundDataMatchedWithPhone->get(), $this->postmarkCallbackData, $this->recordId);
         }
     }
-
+    
     /**
+     * @param string $phone
+     * @param string $callerIdField
      * @return Builder|User
      */
-    private function matchByPhone(array $inboundPostmarkData)
+    private function matchByPhone(string $phoneNumber, string $callerIdFieldPhone)
     {
-        return User::withTrashed()->ofType('participant')->searchPhoneNumber([$inboundPostmarkData['phone'], $inboundPostmarkData['callerId']]);
+        return User::withTrashed()->ofType('participant')->searchPhoneNumber([$phoneNumber, $callerIdFieldPhone]);
     }
 }
