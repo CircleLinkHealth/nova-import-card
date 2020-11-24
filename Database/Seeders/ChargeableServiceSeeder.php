@@ -61,7 +61,7 @@ class ChargeableServiceSeeder extends Seeder
             'is_enabled'   => true,
             'description'  => 'FQHC / RHC General Care Management (1 month)',
             'amount'       => null,
-            'display_name' => 'RHC',
+            'display_name' => 'CCM (RHC/FQHC)',
         ]);
 
         ChargeableService::updateOrCreate([
