@@ -3479,6 +3479,32 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
+    public function scopeSearchPhoneNumber($query, array $phones)
+    {
+        $phoneNumbersFormatted = collect();
+
+        foreach ($phones as $phone) {
+            $numericValidatedPhone = preg_replace('/[^0-9-()+ ]/', '', $phone);
+            $e164Formatted         = formatPhoneNumberE164($phone);
+    
+            if ( ! $phoneNumbersFormatted->contains($numericValidatedPhone)) {
+                $phoneNumbersFormatted->push(
+                    $numericValidatedPhone
+                );
+            }
+
+            if ( ! $phoneNumbersFormatted->contains($e164Formatted)) {
+                $phoneNumbersFormatted->push(
+                    $e164Formatted
+                );
+            }
+        }
+
+        return $query->whereHas('phoneNumbers', function ($phoneNumber) use ($phoneNumbersFormatted) {
+                $phoneNumber->whereIn('number', $phoneNumbersFormatted->toArray());
+            });
+    }
+
     public function scopeWithCareTeamOfType(
         $query,
         $type
