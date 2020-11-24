@@ -7,9 +7,15 @@
 namespace CircleLinkHealth\Customer\Traits;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
+use App\Services\CCD\CcdProblemService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
+use CircleLinkHealth\CcmBilling\Jobs\SeedPracticeCpmProblemChargeableServicesFromLegacyTables;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -21,9 +27,12 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
+use CircleLinkHealth\Eligibility\Entities\RpmProblem;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
+use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Faker\Factory;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -228,8 +237,10 @@ trait UserHelpers
                 //phones
                 'home_phone_number' => $workPhone,
 
-                'ccm_status' => $ccmStatus,
-                'birth_date' => $faker->date('Y-m-d'),
+                'ccm_status'                 => $ccmStatus,
+                'preferred_contact_location' => optional(Location::wherePracticeId($practiceId)->first())->id,
+                'consent_date'               => Patient::ENROLLED === $ccmStatus ? Carbon::now() : null,
+                'birth_date'                 => $faker->date('Y-m-d'),
             ]
         );
 
@@ -328,10 +339,17 @@ trait UserHelpers
         return $nurse;
     }
 
-    private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false)
+    private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false, bool $addRpm = false)
     {
         $patient = $this->createUser($practice->id, 'participant');
-        $patient->setPreferredContactLocation($this->location->id);
+
+        /** @var Location $location */
+        $location = $practice->locations()->first();
+        if ( ! $location) {
+            $location = factory(Location::class)->create(['practice_id' => $practice->id]);
+        }
+
+        $patient->setPreferredContactLocation($location->id);
 
         if ($isBhi) {
             $consentDate = Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI);
@@ -341,39 +359,79 @@ trait UserHelpers
 
         $patient->patientInfo->ccm_status = Patient::ENROLLED;
         $patient->patientInfo->save();
-        $cpmProblems = CpmProblem::get();
+        $cpmProblems = CpmProblem::notGenericDiabetes()->get();
 
-        //$pcmOnly means one ccm condition only
+        if ($addRpm) {
+            $cpmProb = $cpmProblems->get(1);
+
+            RpmProblem::create([
+                'practice_id' => $practice->id,
+                'code'        => $icd10 = 'rpm_test',
+                'description' => $cpmProb->name,
+            ]);
+
+            (app(CcdProblemService::class))->addPatientCcdProblem(
+                (new CcdProblemInput())
+                    ->setCpmProblemId($cpmProb->id)
+                    ->setUserId($patient->id)
+                    ->setName($cpmProb->name)
+                    ->setIsMonitored(true)
+                    ->setIcd10($icd10)
+            );
+        }
+
+        $ccdProblems = collect();
         if ($pcmOnly) {
-            $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test'.Str::random(5), 'code' => 'pcm_test'],
-            ]);
-            $patient->ccdProblems()->first()->codes()->create([
-                'code' => 'pcm_test',
-            ]);
+            $cpmProb = $cpmProblems->get(2);
             PcmProblem::create([
                 'practice_id' => $practice->id,
-                'code'        => 'pcm_test',
+                'code'        => $icd10 = 'pcm_test',
+                'description' => $cpmProb->name,
             ]);
+
+            (app(CcdProblemService::class))->addPatientCcdProblem(
+                (new CcdProblemInput())
+                    ->setCpmProblemId($cpmProb->id)
+                    ->setUserId($patient->id)
+                    ->setName($cpmProb->name)
+                    ->setIsMonitored(true)
+                    ->setIcd10($icd10)
+            );
         } else {
             $ccdProblems = $patient->ccdProblems()->createMany([
                 ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
-                ['name' => 'test'.Str::random(5)],
-                ['name' => 'test'.Str::random(5)],
+                ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
+                ['name' => 'test'.Str::random(5), 'is_monitored' => 1],
             ]);
         }
 
-        $len = $ccdProblems->count();
-        for ($i = 0; $i < $len; ++$i) {
-            $problem = $ccdProblems->get($i);
-            $isLast  = $i === $len - 1;
-            if ($isLast && $isBhi) {
-                $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
-            } else {
-                $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 0));
-            }
-            $problem->save();
+        if (($pcmOnly || $addRpm) && Feature::isEnabled(BillingConstants::LOCATION_PROBLEM_SERVICES_FLAG)) {
+            SeedPracticeCpmProblemChargeableServicesFromLegacyTables::dispatch($practice->id);
         }
+
+        //todo:revisit/cleanup in next iteration of billing
+        if ($ccdProblems->isNotEmpty()) {
+            $len = $ccdProblems->count();
+            for ($i = 0; $i < $len; ++$i) {
+                $problem = $ccdProblems->get($i);
+                $isLast  = $i === $len - 1;
+                if ($isLast && $isBhi) {
+                    $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
+                } else {
+                    $method = '';
+                    if (0 == $i) {
+                        $method = 'first';
+                    } else {
+                        $method = 'last';
+                    }
+                    $problem->cpmProblem()->associate($cpmProblems->where('is_behavioral', '=', 0)->$method());
+                }
+                $problem->save();
+            }
+        }
+
+        BillingCache::clearPatients();
+        ProcessSinglePatientMonthlyServices::dispatch($patient->id);
 
         return $patient;
     }

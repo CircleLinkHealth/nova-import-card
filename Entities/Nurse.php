@@ -281,8 +281,9 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
      */
     public function nurseHolidaysWithCompanyHolidays($startDate, $endDate)
     {
-        $startCarbon     = Carbon::parse($startDate);
-        $endCarbon       = Carbon::parse($endDate);
+        $startCarbon = Carbon::parse($startDate);
+        $endCarbon   = Carbon::parse($endDate);
+
         $companyHolidays = CompanyHoliday::where('holiday_date', '>=', $startCarbon)
             ->get()
             ->map(function ($holiday) {
@@ -292,7 +293,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
                     'date'         => Carbon::parse($holiday->holiday_date)->toDateString(),
                     'eventType'    => NurseCalendarService::COMPANY_HOLIDAY,
                 ];
-            });
+            })->collect();
 
         $nurseHolidays = $this->holidays->where('date', '>=', $startCarbon->copy()->startOfDay())
             ->where('date', '<=', $endCarbon->copy()->endOfDay())->toArray();

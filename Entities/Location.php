@@ -12,6 +12,7 @@ use CircleLinkHealth\CcmBilling\Entities\LocationProblemService;
 use CircleLinkHealth\CcmBilling\ValueObjects\AvailableServiceProcessors;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
+use CircleLinkHealth\Synonyms\Traits\Synonymable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 
@@ -87,6 +88,9 @@ use Laravel\Scout\Searchable;
  * @property int|null                                                                                                        $chargeable_service_summaries_count
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection                $cpmProblemServices
  * @property int|null                                                                                                        $cpm_problem_services_count
+ * @property \CircleLinkHealth\Synonyms\Entities\Synonym[]|\Illuminate\Database\Eloquent\Collection                          $synonyms
+ * @property int|null                                                                                                        $synonyms_count
+ * @method   static                                                                                                          \Illuminate\Database\Eloquent\Builder|Location whereColumnOrSynonym($column, $synonym)
  */
 class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -94,6 +98,7 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     use Notifiable;
     use Searchable;
     use SoftDeletes;
+    use Synonymable;
 
     /**
      * Mass assignable attributes.
@@ -133,6 +138,7 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
                 ->map(function (ChargeableLocationMonthlySummary $summary) {
                     return $summary->chargeableService->processor();
                 })
+                ->filter()
                 ->toArray()
         );
     }

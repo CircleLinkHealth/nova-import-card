@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
+use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -17,39 +18,49 @@ trait PracticeHelpers
         bool $addCcmService = false,
         bool $addCcmPlusServices = false,
         bool $addBhiService = false,
-        bool $addPcmService = false
+        bool $addPcmService = false,
+        bool $addRpmService = false
     ) {
-        $this->location = Location::where('practice_id', $practice->id)->first();
-
-        if ( ! $this->location) {
-            $this->location = factory(Location::class)->create(['practice_id' => $practice->id]);
+        if ( ! Location::where('practice_id', $practice->id)->exists()) {
+            factory(Location::class)->create(['practice_id' => $practice->id]);
         }
 
         $sync = [];
 
+        $cached = ChargeableService::cached();
+
         if ($addCcmService) {
-            $ccmService            = ChargeableService::where('code', '=', ChargeableService::CCM)->first();
+            $ccmService            = $cached->where('code', '=', ChargeableService::CCM)->first();
             $sync[$ccmService->id] = ['amount' => 29.0];
         }
 
         if ($addCcmPlusServices) {
-            $ccmPlus40            = ChargeableService::where('code', '=', ChargeableService::CCM_PLUS_40)->first();
-            $ccmPlus60            = ChargeableService::where('code', '=', ChargeableService::CCM_PLUS_60)->first();
+            $ccmPlus40            = $cached->where('code', '=', ChargeableService::CCM_PLUS_40)->first();
+            $ccmPlus60            = $cached->where('code', '=', ChargeableService::CCM_PLUS_60)->first();
             $sync[$ccmPlus40->id] = ['amount' => 28.0];
             $sync[$ccmPlus60->id] = ['amount' => 28.0];
         }
 
         if ($addBhiService) {
-            $bhi            = ChargeableService::where('code', '=', ChargeableService::BHI)->first();
+            $bhi            = $cached->where('code', '=', ChargeableService::BHI)->first();
             $sync[$bhi->id] = ['amount' => 28.0];
         }
 
         if ($addPcmService) {
-            $bhi            = ChargeableService::where('code', '=', ChargeableService::PCM)->first();
+            $bhi            = $cached->where('code', '=', ChargeableService::PCM)->first();
             $sync[$bhi->id] = ['amount' => 27.0];
         }
 
+        if ($addRpmService) {
+            $rpm              = $cached->where('code', '=', ChargeableService::RPM)->first();
+            $rpm40            = $cached->where('code', '=', ChargeableService::RPM40)->first();
+            $sync[$rpm->id]   = ['amount' => 29.0];
+            $sync[$rpm40->id] = ['amount' => 29.0];
+        }
+
         $practice->chargeableServices()->sync($sync);
+
+        SetupPracticeBillingData::sync($practice->id);
 
         return $practice;
     }
@@ -58,7 +69,8 @@ trait PracticeHelpers
         bool $addCcmService = false,
         bool $addCcmPlusServices = false,
         bool $addBhiService = false,
-        bool $addPcmService = false
+        bool $addPcmService = false,
+        bool $addRpmService = false
     ): Practice {
         $practice = factory(Practice::class)->create();
 
@@ -67,7 +79,8 @@ trait PracticeHelpers
             $addCcmService,
             $addCcmPlusServices,
             $addBhiService,
-            $addPcmService
+            $addPcmService,
+            $addRpmService
         );
     }
 }
