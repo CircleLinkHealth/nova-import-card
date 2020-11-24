@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use App\Search\LocationByName;
-use App\Search\ProviderByName;
+use CircleLinkHealth\Customer\ScoutSearches\ProviderByName;
 use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Location;
