@@ -24,7 +24,7 @@ class ProcessPostmarkInboundMailCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'process:postmark-inbound-mail {recordId}';
+    protected $signature = 'process:postmark-inbound-mail {recordIds}';
 
     /**
      * Create a new command instance.
@@ -43,12 +43,17 @@ class ProcessPostmarkInboundMailCommand extends Command
      */
     public function handle()
     {
-        $item = PostmarkInboundMail::findOrFail($this->argument('recordId'));
+        PostmarkInboundMail::findMany((array) $this->argument('recordIds'))
+            ->each(fn ($item) => $this->processData($item));
+
+        return 0;
+    }
+
+    private function processData(PostmarkInboundMail $item)
+    {
         ProcessPostmarkInboundMailJob::dispatch(new PostmarkInboundMailRequest([
             'From'     => $item->from,
             'TextBody' => $item->body,
         ]), $item->id);
-
-        return 0;
     }
 }

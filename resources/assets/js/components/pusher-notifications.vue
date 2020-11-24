@@ -150,7 +150,7 @@ export default {
     width: 430px;
     z-index: 100;
     max-height: 702%;
-    word-spacing: 5px;
+    /*word-spacing: 5px;*/
     padding-bottom: unset;
 }
 

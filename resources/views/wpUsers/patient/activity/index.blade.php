@@ -14,7 +14,7 @@
         </style>
     @endpush
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2 col-xs-10 col-xs-offset-1">
+        <div class="main-form-container col-lg-10 col-lg-offset-1 col-xs-10 col-xs-offset-1">
             <div class="row">
                 <div class="main-form-title">
                     Patient Activity Report
@@ -30,7 +30,9 @@
                 )) !!}
 
                 <div class="col-sm-3 col-xs-3" style="top: 20px">
-                    <input type="submit" value="Audit Report" name="download-audit-report" id="download-audit-report" class="btn btn-primary">
+                    @if(! auth()->user()->hasPermission('downloads.disable'))
+                        <input type="submit" value="Audit Report" name="download-audit-report" id="download-audit-report" class="btn btn-primary">
+                    @endif
 
                 @if ($data && $month_selected_text === \Carbon\Carbon::now()->format('F'))
                         <button id="refresh-activity" type="button" class="btn btn-primary">
@@ -98,10 +100,26 @@
                                 }
 
                                 function durationType(obj) {
-                                    return obj.is_behavioral ? 'BHI' : 'CCM';
+                                    if (!obj) {
+                                        return null;
+                                    }
+
+                                    switch (obj.chargeable_service_name) {
+                                        case 'CCM':
+                                        case 'CCM40':
+                                        case 'CCM60':
+                                            return 'CCM';
+
+                                        case 'RPM':
+                                        case 'RPM40':
+                                            return 'RPM';
+
+                                        default:
+                                            return obj.chargeable_service_name;
+                                    }
                                 }
 
-                                function durationSumm(master, type) {
+                                function durationSum(master, type) {
                                     var seconds = 0;
                                     master.data.each(function (obj) {
                                         if (durationType(obj) == type) {
@@ -152,6 +170,10 @@
                                     }
                                 }
 
+                                function setTimeTrackerValue(type, value) {
+                                    $(`#monthly-time-${type}`).html(value);
+                                }
+
                                 webix.locale.pager = {
                                     first: "<<",// the first button
                                     last: ">>",// the last button
@@ -160,12 +182,32 @@
                                 };
                                 webix.ui.datafilter.mySummColumnCCM = webix.extend({
                                     refresh: function (master, node, value) {
-                                        node.firstChild.innerHTML = durationSumm(master, 'CCM');
+                                        node.firstChild.innerHTML = durationSum(master, 'CCM');
+                                        setTimeTrackerValue('CCM', node.firstChild.innerHTML);
                                     }
                                 }, webix.ui.datafilter.summColumn);
                                 webix.ui.datafilter.mySummColumnBHI = webix.extend({
                                     refresh: function (master, node, value) {
-                                        node.firstChild.innerHTML = durationSumm(master, 'BHI');
+                                        node.firstChild.innerHTML = durationSum(master, 'BHI');
+                                        setTimeTrackerValue('BHI', node.firstChild.innerHTML);
+                                    }
+                                }, webix.ui.datafilter.summColumn);
+                                webix.ui.datafilter.mySummColumnPCM = webix.extend({
+                                    refresh: function (master, node, value) {
+                                        node.firstChild.innerHTML = durationSum(master, 'PCM');
+                                        setTimeTrackerValue('PCM', node.firstChild.innerHTML);
+                                    }
+                                }, webix.ui.datafilter.summColumn);
+                                webix.ui.datafilter.mySummColumnRPM = webix.extend({
+                                    refresh: function (master, node, value) {
+                                        node.firstChild.innerHTML = durationSum(master, 'RPM');
+                                        setTimeTrackerValue('RPM', node.firstChild.innerHTML);
+                                    }
+                                }, webix.ui.datafilter.summColumn);
+                                webix.ui.datafilter.mySummColumnRHC = webix.extend({
+                                    refresh: function (master, node, value) {
+                                        node.firstChild.innerHTML = durationSum(master, 'RHC');
+                                        setTimeTrackerValue('RHC', node.firstChild.innerHTML);
                                     }
                                 }, webix.ui.datafilter.summColumn);
 
@@ -184,7 +226,7 @@
                                         id: "performed_at",
                                         header: ["Date", {content: "textFilter", placeholder: "Filter"}],
                                         footer: {text: "Total Time for the Month (Min:Sec):", colspan: 3},
-                                        width: 180,
+                                        width: 120,
                                         sort: 'string'
                                     },
                                     {
@@ -193,13 +235,13 @@
 
                                             template: function (obj) {
                                                 if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                    return `<a href="/manage-patients/${patientId}/view/${obj.id}">${obj.type}</a>`;
+                                                    return `<a href="/manage-patients/${patientId}/activities/view/${obj.id}">${obj.type}</a>`;
                                                 else
                                                     return obj.type;
                                             },
 
-                                            fillspace: true,
-                                            width: 202,
+                                            fillspace: false,
+                                            width: 250,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "left"}
                                         },
@@ -214,7 +256,7 @@
                                         {
                                             id: "durationCCM",
                                             header: ["Total CCM", "(HH:MM:SS)"],
-                                            width: 150,
+                                            width: 110,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnCCM", css: "duration-footer"},
@@ -225,15 +267,52 @@
                                         {
                                             id: "durationBHI",
                                             header: ["Total BHI", "(HH:MM:SS)"],
-                                            width: 150,
-                                            fillspace: true,
+                                            width: 110,
+                                            fillspace: false,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnBHI", css: "duration-footer"},
                                             template: function (obj) {
                                                 return durationData(obj, 'BHI');
                                             }
+                                        },
+                                    {
+                                        id: "durationPCM",
+                                        header: ["Total PCM", "(HH:MM:SS)"],
+                                        width: 110,
+                                        fillspace: false,
+                                        sort: 'string',
+                                        css: {"color": "black", "text-align": "right"},
+                                        footer: {content: "mySummColumnPCM", css: "duration-footer"},
+                                        template: function (obj) {
+                                            return durationData(obj, 'PCM');
                                         }
+                                    },
+                                    {
+                                        id: "durationRPM",
+                                        header: ["Total RPM", "(HH:MM:SS)"],
+                                        width: 110,
+                                        fillspace: false,
+                                        sort: 'string',
+                                        css: {"color": "black", "text-align": "right"},
+                                        footer: {content: "mySummColumnRPM", css: "duration-footer"},
+                                        template: function (obj) {
+                                            return durationData(obj, 'RPM');
+                                        }
+                                    },
+                                    {
+                                        id: "durationRHC",
+                                        header: ["Total RHC", "(HH:MM:SS)"],
+                                        width: 110,
+                                        fillspace: true,
+                                        sort: 'string',
+                                        css: {"color": "black", "text-align": "right"},
+                                        footer: {content: "mySummColumnRHC", css: "duration-footer"},
+                                        template: function (obj) {
+                                            return durationData(obj, 'RHC');
+                                        }
+                                    },
+
                                     ],
                                     ready: function () {
                                         this.adjustRowHeight("type");
@@ -272,8 +351,6 @@
                                         },
                                         data: {},
                                         success: function (data) {
-                                            $('#monthly-time-static').html(data.monthlyTime);
-                                            $('#monthly-bhi-time-static').html(data.monthlyBhiTime);
                                             const scrollPosition = $(document).scrollTop();
                                             obs_alerts_dtable.clearAll();
                                             obs_alerts_dtable.parse(data.table);
@@ -291,15 +368,15 @@
 
                             </script>
                         @endpush
-                        @if(auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)))
+                        @if( (auth()->user()->hasRole(array_merge(['administrator', 'software-only'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES))) && (! auth()->user()->hasPermission('downloads.disable')) )
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
                                            header:'CarePlanManager.com - Patient Activity Report <?= date('M d,Y'); ?>',
                                            orientation:'landscape',
                                            autowidth:true,
                                            columns:{
-                                           'performed_at':       { header:'Date', width: 200, template: webix.template('#performed_at#') },
-                                           'type':             { header:'Activity',    width:150, sort:'string', template: webix.template('#type#')},
+                                           'performed_at':       { header:'Date', width: 100, template: webix.template('#performed_at#') },
+                                           'type':             { header:'Activity',    width:120, sort:'string', template: webix.template('#type#')},
                                            'provider_name':    { header:'Provider',    width:200, sort:'string', template: webix.template('#provider_name#') },
                                            'durationCCM':  { header: 'Total CCM (Min:Sec)', width: 70, sort: 'string',
                                            template: function (obj) {
@@ -321,6 +398,54 @@
                                            template: function (obj) {
                                            var type = durationType(obj);
                                            if (type === 'BHI'){
+                                           var seconds = obj.duration;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           if (ss < 10) {ss = '0'+ss;}
+                                           var time = mm+':'+ss;
+                                           return mm+':'+ss;
+                                           }else {
+                                           return '--';
+                                           }
+                                           }
+                                           },
+                                           'durationPCM':  { header: 'Total PCM (Min:Sec)', width: 70, sort: 'string',
+                                           template: function (obj) {
+                                           var type = durationType(obj);
+                                           if (type === 'PCM'){
+                                           var seconds = obj.duration;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           if (ss < 10) {ss = '0'+ss;}
+                                           var time = mm+':'+ss;
+                                           return mm+':'+ss;
+                                           }else {
+                                           return '--';
+                                           }
+                                           }
+                                           },
+                                           'durationRPM':  { header: 'Total RPM (Min:Sec)', width: 70, sort: 'string',
+                                           template: function (obj) {
+                                           var type = durationType(obj);
+                                           if (type === 'RPM'){
+                                           var seconds = obj.duration;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           if (ss < 10) {ss = '0'+ss;}
+                                           var time = mm+':'+ss;
+                                           return mm+':'+ss;
+                                           }else {
+                                           return '--';
+                                           }
+                                           }
+                                           },
+                                           'durationRHC':  { header: 'Total RHC (Min:Sec)', width: 70, sort: 'string',
+                                           template: function (obj) {
+                                           var type = durationType(obj);
+                                           if (type === 'RHC'){
                                            var seconds = obj.duration;
                                            var date = new Date(seconds * 1000);
                                            var mm = Math.floor(seconds/60);

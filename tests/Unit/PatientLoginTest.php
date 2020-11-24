@@ -324,5 +324,7 @@ class PatientLoginTest extends CustomerTestCase
         })->toArray();
 
         $this->patient->ccdProblems()->createMany($problemsToAdd);
+
+        //todo: deprecate, update billing cache
     }
 }

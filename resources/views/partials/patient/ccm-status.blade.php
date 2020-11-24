@@ -6,8 +6,11 @@ $ccmStatus = $patient->getCcmStatus();
 $statusesForDropdown = [
 //option: value => display
      Patient::ENROLLED => 'Enrolled',
-     Patient::PAUSED => 'Paused',
 ];
+
+if (auth()->user()->isAdmin()) {
+    $statusesForDropdown[Patient::PAUSED] = 'Paused';
+}
 
 //It's either withdrawn first call or withdrawn
 if ($ccmStatus == Patient::WITHDRAWN_1ST_CALL){

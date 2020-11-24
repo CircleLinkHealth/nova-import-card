@@ -41,7 +41,10 @@ class NotificationStatusUpdateTest extends CustomerTestCase
     public function test_it_updates_notification_status_in_db()
     {
         // 1. create notification
-        $patient = $this->patient();
+        $patient  = $this->patient();
+        $provider = $this->createUser($patient->primaryPractice->id, 'provider');
+        $patient->setBillingProviderId($provider->id);
+        $patient->fresh();
         $patient->clearAllPhonesAndAddNewPrimary('+12025550193', 'mobile', true);
 
         //id field has 36 length in db

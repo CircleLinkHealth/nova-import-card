@@ -8,15 +8,18 @@ namespace App\Http\Controllers\Patient;
 
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use App\CarePlanPrintListView;
+use App\Contracts\DirectMail;
 use CircleLinkHealth\Customer\CpmConstants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
 use App\Http\Requests\DeleteAlternateContactRequest;
 use App\Http\Requests\DeletePatientPhoneRequest;
+use App\Http\Requests\DmCarePlanToBillingProviderRequest;
 use App\Http\Requests\PatientPhonesRequest;
-use App\Relationships\PatientCareplanRelations;
+use App\Jobs\GeneratePatientsCarePlans;
 use CircleLinkHealth\Customer\Services\PatientReadRepository;
+use App\Services\CarePlanGeneratorService;
 use App\Services\CareplanService;
 use App\Services\PatientService;
 use Auth;
@@ -64,7 +67,7 @@ class PatientCareplanController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteAlternateContact(DeleteAlternateContactRequest $request)
+    public function deleteAgentContact(DeleteAlternateContactRequest $request)
     {
         $valuesToDelete = [
             'agent_telephone' => null,
@@ -82,7 +85,7 @@ class PatientCareplanController extends Controller
         $request->get('patient')->update($valuesToDelete);
 
         return response()->json([
-            'message' => 'Alternate Contact has been deleted',
+            'message' => 'Agent Contact has been deleted',
         ], 200);
     }
 
@@ -93,15 +96,39 @@ class PatientCareplanController extends Controller
         $phoneNumber->delete();
 
         return response()->json([
-            'message' => 'Phone Number Has Been Deleted',
+            'message' => 'Phone Number Has Been Deleted!',
         ], 200);
     }
 
-    public function getPatientAlternateContact(PatientPhonesRequest $request)
+    public function forwardToBillingProviderViaDM(DmCarePlanToBillingProviderRequest $request, DirectMail $dm)
+    {
+        $patient = User::ofType('participant')
+            ->with([
+                'carePlan',
+                'primaryPractice.settings',
+            ])
+            ->find($patientId = $request->input('patient_id'));
+
+        if ( ! $patient->carePlan) {
+            return "Patient with ID $patientId does not have a CarePlan";
+        }
+
+        $dm = $dm->send(
+            $request->input('dm_address'),
+            $patient->carePlan->toPdf(),
+            now()->toDateTimeString()." - Patient ID $patientId Care Plan.pdf",
+            null,
+            $patient
+        );
+
+        dd($dm);
+    }
+
+    public function getPatientAgentContact(PatientPhonesRequest $request)
     {
         /** @var User $patient */
         $patient            = $request->get('patientUser');
-        $agentContactFields = $this->getAlternateContactData($patient);
+        $agentContactFields = $this->getAgentContactData($patient);
 
         return response()->json([
             'agentContactFields' => $agentContactFields,
@@ -124,7 +151,7 @@ class PatientCareplanController extends Controller
             ];
         });
 
-        $agentContactFields = $this->getAlternateContactData($patient)->first();
+        $agentContactFields = $this->getAgentContactData($patient)->first();
 
         if ($isRequestFromCallPage && ! empty($agentContactFields)
             && ! empty($agentContactFields['agentTelephone']['number'])) {
@@ -134,7 +161,7 @@ class PatientCareplanController extends Controller
         $phoneTypes = $this->getPhoneTypes();
 
         return response()->json([
-            'phoneNumbers'       => $phoneNumbers,
+            'phoneNumbers'       => $phoneNumbers->values()->toArray(),
             'phoneTypes'         => $phoneTypes,
             'agentContactFields' => $agentContactFields,
         ], 200);
@@ -242,17 +269,13 @@ class PatientCareplanController extends Controller
         PatientService $patientService
     ) {
         if ( ! $request['users']) {
-            return response()->json('Something went wrong..');
-        }
-
-        //Welcome Letter Check
-        $letter = false;
-
-        if (isset($request['letter'])) {
-            $letter = true;
+            return response()->json('Something went wrong.. Missing users from request.', 400);
         }
 
         $userIds = explode(',', $request['users']);
+        if (empty($userIds)) {
+            return response()->json('Something went wrong.. Missing users from request.', 400);
+        }
 
         if ($request->input('final')) {
             foreach ($userIds as $userId) {
@@ -261,109 +284,15 @@ class PatientCareplanController extends Controller
             }
         }
 
-        $storageDirectory = 'storage/pdfs/careplans/';
-        $pageFileNames    = [];
-
-        $fileNameWithPathBlankPage = $this->pdfService->blankPage();
-
-        $users = User::with(
-            array_merge(PatientCareplanRelations::get(), [
-                'patientInfo',
-                'primaryPractice',
-                'inboundCalls' => function ($c) {
-                    $c->with(['outboundUser'])
-                        ->where('status', 'scheduled')
-                        ->where('called_date', '=', null);
-                }, ])
-        )
-            ->has('patientInfo')
-            ->has('billingProvider.user')
-            ->findMany($userIds);
-
-        // create pdf for each user
-        $p = 1;
-        foreach ($users as $user) {
-            $careplan = $this->formatter->formatDataForViewPrintCareplanReport($user);
-            $careplan = $careplan[$user->id];
-            if (empty($careplan)) {
-                return false;
-            }
-
-            $pageCount         = 0;
-            $gender            = $user->patientInfo->gender;
-            $title             = 'm' === strtolower($gender) ? 'Mr.' : ('f' === strtolower($gender) ? 'Ms.' : null);
-            $practiceNumber    = $user->primaryPractice->number_with_dashes;
-            $assignedNurseName = optional(app(NurseFinderEloquentRepository::class)->find($user->id))->first_name;
-
-            //if permanent assigned nurse does not exist, get nurse from scheduled call - CPM-1829
-            if ( ! $assignedNurseName) {
-                $call              = $user->inboundCalls->first();
-                $assignedNurseName = $call ? optional($call->outboundUser)->first_name : null;
-            }
-
-            $viewParams = [
-                'careplans'         => [$user->id => $careplan],
-                'isPdf'             => true,
-                'letter'            => $letter,
-                'problemNames'      => $careplan['problem'],
-                'patient'           => $user,
-                'careTeam'          => $user->careTeamMembers,
-                'data'              => $careplanService->careplan($user->id),
-                'billingDoctor'     => $user->billingProviderUser(),
-                'regularDoctor'     => $user->regularDoctorUser(),
-                'title'             => $title,
-                'practiceNumber'    => $practiceNumber,
-                'assignedNurseName' => $assignedNurseName,
-            ];
-
-            if ($request->filled('render') && 'html' == $request->input('render')) {
-                return view('wpUsers.patient.multiview', $viewParams);
-            }
-
-            $pdfCareplan = null;
-            if (true == $letter && 'pdf' == $user->carePlan->mode) {
-                $viewParams['pdfCarePlan'] = $user->carePlan->pdfs->sortByDesc('created_at')->first();
-            }
-
-            $fileNameWithPath = $this->pdfService->createPdfFromView(
-                'wpUsers.patient.multiview',
-                $viewParams,
-                null,
-                CpmConstants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
-            );
-
-            $pageCount = $this->pdfService->countPages($fileNameWithPath);
-            // append blank page if needed
-            if ((count($users) > 1) && 0 != $pageCount % 2) {
-                $fileNameWithPath = $this->pdfService->mergeFiles(
-                    [
-                        $fileNameWithPath,
-                        $fileNameWithPathBlankPage,
-                    ],
-                    $fileNameWithPath
-                );
-            }
-
-            // add to array
-            $pageFileNames[] = $fileNameWithPath;
-
-            if (auth()->user()->isAdmin() && true == $letter) {
-                $careplanObj               = $user->carePlan;
-                $careplanObj->last_printed = Carbon::now()->toDateTimeString();
-                if ( ! $careplanObj->first_printed) {
-                    $careplanObj->first_printed    = Carbon::now()->toDateTimeString();
-                    $careplanObj->first_printed_by = auth()->id();
-                }
-                $careplanObj->save();
-            }
-
-            ++$p;
+        $letter = isset($request['letter']);
+        $render = $request->filled('render') && 'html' == $request->input('render');
+        if ($render) {
+            return app(CarePlanGeneratorService::class)->renderForUser(auth()->id(), $userIds[0], $letter);
         }
 
-        // merge to final file
-        $mergedFileNameWithPath = $this->pdfService->mergeFiles($pageFileNames);
+        GeneratePatientsCarePlans::dispatch(auth()->id(), now(), $userIds, $letter);
 
-        return response()->file($mergedFileNameWithPath);
+        return response()->json('The Care Plan(s) are being generated. You will receive an email when they are ready!');
     }
 
     public function showPatientDemographics(
@@ -516,7 +445,9 @@ class PatientCareplanController extends Controller
             ];
         });
 
-        $phoneTypes = getPhoneTypes();
+        $phoneTypes = $this->getPhoneTypes();
+
+        $allowNonUsPhones = allowNonUsPhones();
 
         return view(
             'wpUsers.patient.careplan.patient',
@@ -540,6 +471,7 @@ class PatientCareplanController extends Controller
                     'contactWindows',
                     'withdrawnReasons',
                     'patientWithdrawnReason',
+                    'allowNonUsPhones',
                 ]
             )
         );
@@ -548,7 +480,7 @@ class PatientCareplanController extends Controller
     /**
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function getAlternateContactData(User $patient)
+    private function getAgentContactData(User $patient)
     {
         return $patient
             ->patientInfo()
@@ -580,6 +512,7 @@ class PatientCareplanController extends Controller
         return [
             ucfirst(PhoneNumber::MOBILE),
             ucfirst(PhoneNumber::HOME),
+            ucfirst(PhoneNumber::ALTERNATE),
         ];
     }
 

@@ -1,21 +1,8 @@
 <?php
 
-use CircleLinkHealth\Customer\Services\NurseCalendarService;
-
 $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-if (isset($patient)) {
-    //$patient can be a User or Patient model.
-    $seconds     = $patient->getCcmTime();
-    $H           = floor($seconds / 3600);
-    $i           = ($seconds / 60) % 60;
-    $s           = $seconds % 60;
-    $monthlyTime = sprintf('%02d:%02d:%02d', $H, $i, $s);
-} else {
-    $monthlyTime = '';
-}
-
-$patientListDropdown = getPatientListDropdown($user);
-$isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
+$patientListDropdown     = getPatientListDropdown($user);
+$isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings.manage']);
 ?>
 @push('styles')
     <style>
@@ -82,7 +69,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                 <div class="row">
                     <div class="col-md-3 col-xs-12">
                         <a class="navbar-brand" href="{{ url('/') }}" style="padding: 5px 15px; border: none"><img
-                                    src="{{asset('/img/logos/LogoHorizontal_White.svg')}}"
+                                    src="{{mix('/img/logos/LogoHorizontal_White.svg')}}"
                                     alt="Care Plan Manager"
                                     style="position:relative;top:-7px"
                                     height="50"
@@ -109,8 +96,21 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
             <div class="col-lg-8 col-sm-12 col-xs-12">
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        @if(!$isTwoFaRoute)
-                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(\CircleLinkHealth\Customer\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
+                        @if (auth()->user()->isCallbacksAdmin())
+                                    <li>
+                                        <a href="{{ route('patientCallManagement.v2.index') }}" style="color: #fff;">
+                                            Patient Activity Management
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('ca-director.index') }}" style="color: #fff;">
+                                            Care Ambassador Panel
+                                        </a>
+                                    </li>
+                        @endif
+
+                        @if(!$isTwoFaRoute && ! auth()->user()->isCallbacksAdmin())
+                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
                                 <li>
                                     <time-tracker-call-mode ref="timeTrackerCallMode"
                                                             :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
@@ -148,6 +148,26 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                 </li>
                             @endif
 
+                            @if($user->isClhCcmAdmin())
+                                <li class="dropdown">
+                                    <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                         aria-expanded="false">
+                                        Admin
+                                        <span class="caret text-white"></span>
+                                    </div>
+                                    <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                                        <li>
+                                            <a href="{{ route('patient.note.listing') }}">Notes Report</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('patientCallManagement.v2.index') }}">
+                                                Patient Activity Management
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endif
+
                             @if ( ! auth()->guest()
                                  && $user->isNotSaas()
                                  && $user->hasRole('software-only'))
@@ -159,7 +179,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                     </div>
                                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
                                         <li>
-                                            <a href="{{ route('admin.patientCallManagement.v2.index') }}">
+                                            <a href="{{ route('patientCallManagement.v2.index') }}">
                                                 Patient Activity Management
                                             </a>
                                         </li>
@@ -173,17 +193,13 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                             @endif
 
                             @if (!isset($patient))
-                                <li data-monthly-time="{{$monthlyTime}}"
-                                    style="line-height: 20px;">
-                                    <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
-                                                  :twilio-enabled="@json(config('services.twilio.enabled'))"
-                                                  :no-live-count="@json($noLiveCountTimeTracking)"
-                                                  :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
+                                <li style="line-height: 20px;">
+                                    @include('partials.providerUItimerComponent', ['hideTracker' => true])
                                 </li>
                             @endif
 
 
-                            @if(! $userIsCareCoach)
+                            @if(! $userIsCareCoach && !auth()->user()->isCallbacksAdmin() && !auth()->user()->isClhCcmAdmin())
                                 <li>
                                     <a href="{{ route('patients.dashboard') }}" class="text-white"><i
                                                 class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
@@ -252,6 +268,7 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
 
                         @endif
 
+                            @if(!auth()->user()->isCallbacksAdmin() && !auth()->user()->isClhCcmAdmin())
                             <li class="dropdown">
                                 <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
                                      aria-expanded="false"><i
@@ -272,8 +289,18 @@ $isTwoFaRoute        = Route::is(['user.2fa.show.token.form', 'user.settings.man
                                 <li>
                                     <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                                 </li>
+                                @if($user->hasRole('developer') || $user->isAdmin())
+                                    <li>
+                                        <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.reports.nurse.metrics') }}">
+                                            Nurse Performance Report</a>
+                                    </li>
+                                @endif
                             </ul>
                         </li>
+                                @endif
                         {{--Live Notifications--}}
                         <li class="dropdown">
                             <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"

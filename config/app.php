@@ -7,15 +7,16 @@
 use App\Providers\CpmArtisanServiceProvider;
 use App\Providers\PrimaryNavComposer;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
-use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
-use CircleLinkHealth\Core\Providers\CoreServiceProvider;
+use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
+use CircleLinkHealth\Core\Providers\AuthServiceProvider;
+use CircleLinkHealth\Core\Providers\FaxServiceProvider;
+use CircleLinkHealth\Core\Providers\HtmlToPdfServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
-use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
-use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
-use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
+use CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
+use CircleLinkHealth\Synonyms\Providers\SynonymsServiceProvider;
 use Illuminate\Support\Arr;
 
 $appUrl = env('APP_URL', 'http://cpm.dev');
@@ -196,8 +197,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         \App\Providers\RouteServiceProvider::class,
-        \CircleLinkHealth\Core\Providers\VaporUiServiceProvider::class,
-        \CircleLinkHealth\Core\Providers\AuthServiceProvider::class,
+        AuthServiceProvider::class,
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,
 
@@ -208,9 +208,9 @@ return [
 
         App\Providers\BroadcastServiceProvider::class,
 
-        \CircleLinkHealth\Core\Providers\HtmlToPdfServiceProvider::class,
+        HtmlToPdfServiceProvider::class,
         App\Providers\DirectMailServiceProvider::class,
-        \CircleLinkHealth\Core\Providers\FaxServiceProvider::class,
+        FaxServiceProvider::class,
         App\Providers\TwilioClientServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
 
@@ -225,14 +225,13 @@ return [
         EligibilityServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
-        CoreServiceProvider::class,
-        CoreDeferredBindingsServiceProvider::class,
+        CcmBillingServiceProvider::class,
         \CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider::class,
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
-        CustomerAuthServiceProvider::class,
-        VaporUiServiceProvider::class,
-        CpmMigrationsServiceProvider::class,
+        SynonymsServiceProvider::class,
+        Macellan\Zip\ZipServiceProvider::class,
+        FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider::class,
     ],
 
     /*
@@ -282,6 +281,8 @@ return [
         'View'         => Illuminate\Support\Facades\View::class,
 
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
+
+        'BillingCache' => \CircleLinkHealth\CcmBilling\Facades\BillingCache::class,
 
         'DataTables'   => Yajra\DataTables\Facades\DataTables::class,
         'Form'         => \Collective\Html\FormFacade::class,

@@ -42,7 +42,7 @@
                             <input id='firstName_btn' type='button' class='btn btn-primary' value='Show by First Name'
                                    style='display:none;margin:15px;'
                                    onclick='obs_alerts_dtable.hideColumn("last_name");obs_alerts_dtable.showColumn("first_name");obs_alerts_dtable.sort("#first_name#");this.style.display = "none";getElementById("lastName_btn").style.display = "inline-block";'>
-                            @if(auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)))
+                            @if( (auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES))) && (! auth()->user()->hasPermission('downloads.disable')) )
                                 <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                        onclick="webix.toPDF($$(obs_alerts_dtable), {
         header:'CarePlanManager.com - Patient CarePlan Print List',
@@ -81,6 +81,7 @@
 @stop
 
 @push('scripts')
+    <script src="{{ asset('js/notify.min.js') }}"></script>
     <script>
         function filterText(text) {
             // var text = node;
@@ -208,8 +209,10 @@
             },
             on: {
                 onSelectChange: function () {
-                    var text = obs_alerts_dtable.getSelectedId(true).join();
-                    var textmsg = "<a href='{!! route('patients.careplan.multi')!!}?users=" + text + "&letter' class='btn btn-primary'>Print Selected</a>";
+                    var textmsg = `<a onclick='printSelected(this)' class='btn btn-primary'>
+Print Selected
+<div style="float: right"><div id="print-selected-loader" class="loader"></div></div>
+</a>`;
                     document.getElementById('print_list').innerHTML = textmsg + '\n<BR>';
                 }
             },
@@ -225,10 +228,41 @@
         obs_alerts_dtable.filter("#careplan_printed#", "No");
         obs_alerts_dtable.hideColumn("last_name");
 
+        function printSelected(button) {
+            const buttonElem = $(button);
+            const loaderElem = $('#print-selected-loader');
+            buttonElem.addClass('disabled');
+            loaderElem.show();
+            const data = obs_alerts_dtable.getSelectedId(true).join();
+            const route = `{{ route('patients.careplan.multi') }}?users=${data}&letter`;
+            $.get(route)
+                .done(resp => {
+                    $.notify(resp, 'success');
+                })
+                .fail(resp => {
+                    $.notify(resp.responseText, 'error');
+                })
+                .always(() => {
+                    buttonElem.removeClass('disabled');
+                    loaderElem.hide();
+                });
+        }
+
         // window.onload=filterText('#careplan_last_printed#','X');
         // obs_alerts_dtable.hideColumn("status_ccm");
 
         // window.onload=filterText('');
         // obs_alerts_dtable.hideColumn("ccm_status");
     </script>
+@endpush
+
+@push('styles')
+    <style>
+        #print-selected-loader {
+            display: none;
+            width: 14px;
+            height: 14px;
+            border-width: 3px;
+        }
+    </style>
 @endpush

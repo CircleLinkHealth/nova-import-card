@@ -48,16 +48,15 @@ class ProcessNurseMonthlyLogs implements ShouldQueue
      */
     public function handle()
     {
-        $this->activity->load('patient.patientInfo');
+        $this->activity->load('patient');
         $this->activity->load('provider.nurseInfo');
 
         $nurse = $this->activity->provider->nurseInfo;
-
         if ( ! is_a($nurse, Nurse::class)) {
             return;
         }
 
-        (new AlternativeCareTimePayableCalculator($nurse))
-            ->adjustNursePayForActivity($this->activity);
+        (new AlternativeCareTimePayableCalculator())
+            ->adjustNursePayForActivity($nurse->id, $this->activity);
     }
 }

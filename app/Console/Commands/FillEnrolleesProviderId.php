@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Search\ProviderByName;
+use CircleLinkHealth\Customer\ScoutSearches\ProviderByName;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 

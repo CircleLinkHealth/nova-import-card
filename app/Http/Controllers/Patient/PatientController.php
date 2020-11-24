@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use App\Contracts\ReportFormatter;
 use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use App\Http\Controllers\Controller;
@@ -17,10 +18,10 @@ use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
@@ -62,14 +63,7 @@ class PatientController extends Controller
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
 
-        /** @var PhoneNumber $currentPrimaryPhone */
-        $currentPrimaryPhone = $patientUser->phoneNumbers
-            ->where('is_primary', true)
-            ->first();
-
-        if ( ! empty($currentPrimaryPhone)) {
-            $this->unsetCurrentPrimaryNumber($currentPrimaryPhone);
-        }
+        $this->unsetCurrentPrimaryNumbers($patientUser);
 
         $patientUser->phoneNumbers()
             ->where('id', $newPrimaryPhoneId)->update(
@@ -134,15 +128,20 @@ class PatientController extends Controller
 
         foreach ($searchTerms as $term) {
             $query->where(function ($q) use ($term) {
+                $phoneNumberTerm = extractNumbers($term);
+
                 $q->where('first_name', 'like', "%${term}%")
                     ->orWhere('last_name', 'like', "%${term}%")
+                    ->orWhere('display_name', 'like', "%${term}%")
                     ->orWhere('id', 'like', "%${term}%")
                     ->orWhereHas('patientInfo', function ($query) use ($term) {
                         $query->where('mrn_number', 'like', "%${term}%")
                             ->orWhere('birth_date', 'like', "%${term}%");
                     })
-                    ->orWhereHas('phoneNumbers', function ($query) use ($term) {
-                        $query->where('number', 'like', "%${term}%");
+                    ->when( ! empty($phoneNumberTerm), function ($q) use ($phoneNumberTerm) {
+                        $q->orWhereHas('phoneNumbers', function ($query) use ($phoneNumberTerm) {
+                            $query->where('number', 'like', "%${phoneNumberTerm}%");
+                        });
                     });
             });
         }
@@ -155,7 +154,9 @@ class PatientController extends Controller
             $dob                  = new Carbon(($d->getBirthDate()));
             $patients[$i]['dob']  = $dob->format('m-d-Y');
             $patients[$i]['mrn']  = $d->getMRN();
-            $patients[$i]['link'] = route('patient.summary', ['patientId' => $d->id]);
+            $patients[$i]['link'] = auth()->user()->isCallbacksAdmin()
+                ? route('patient.schedule.activity', [$d->program_id, $d->id])
+                : route('patient.summary', ['patientId' => $d->id]);
 
             $programObj = Practice::find($d->program_id);
 
@@ -167,7 +168,7 @@ class PatientController extends Controller
         return response()->json($patients);
     }
 
-    public function saveNewAlternatePhoneNumber(ContactDetailsRequest $request)
+    public function saveNewAgentPhoneNumber(ContactDetailsRequest $request)
     {
         $altPhoneNumber = $request->input('phoneNumber');
         $altPhoneNumber = formatPhoneNumberE164($altPhoneNumber);
@@ -184,7 +185,7 @@ class PatientController extends Controller
         );
 
         return response()->json([
-            'message' => 'Alternate phone number has been saved!',
+            'message' => 'Agent phone number has been saved!',
         ], 200);
     }
 
@@ -194,17 +195,16 @@ class PatientController extends Controller
         $phoneNumber = $request->input('phoneNumber');
         $userId      = $request->input('patientUserId');
 
-        $phoneNumber = formatPhoneNumberE164($phoneNumber);
+        if ( ! allowNonUsPhones()) {
+            $phoneNumber = formatPhoneNumberE164($phoneNumber);
+        }
+
         /** @var User $patientUser */
         $patientUser = $request->get('patientUser');
         $locationId  = $request->get('locationId');
 
-        $existingPrimaryNumber = $patientUser->phoneNumbers
-            ->where('is_primary', '=', true)
-            ->first();
-
-        if ($request->input('makePrimary') && ! empty($existingPrimaryNumber)) {
-            $this->unsetCurrentPrimaryNumber($existingPrimaryNumber);
+        if ($request->input('makePrimary')) {
+            $this->unsetCurrentPrimaryNumbers($patientUser);
         }
 
         /** @var PhoneNumber $newPhoneNumber */
@@ -223,6 +223,22 @@ class PatientController extends Controller
         return response()->json([
             'message' => 'Phone number has been saved!',
         ], 200);
+    }
+
+    public function scheduleActivity($practiceId, $patientId)
+    {
+        $practice  = Practice::findOrFail($practiceId);
+        $patient   = User::findOrFail($patientId);
+        $careCoach = optional(app(NurseFinderEloquentRepository::class)->assignedNurse($patientId))->permanentNurse;
+
+        return view('patient.schedule-task', [
+            'practiceId'    => $practice->id,
+            'practiceName'  => $practice->display_name,
+            'patientId'     => $patient->id,
+            'patientName'   => $patient->getFullName(),
+            'careCoachId'   => optional($careCoach)->id,
+            'careCoachName' => optional($careCoach)->getFullName(),
+        ]);
     }
 
     public function showCallPatientPage(CallPatientRequest $request, $patientId)
@@ -254,6 +270,7 @@ class PatientController extends Controller
                 'patient'                  => $user,
                 'clinicalEscalationNumber' => $clinicalEscalationNumber,
                 'cpmToken'                 => $cpmToken,
+                'allowNonUsPhones'         => allowNonUsPhones(),
             ]);
     }
 
@@ -338,17 +355,29 @@ class PatientController extends Controller
         return view('wpUsers.patient.listing');
     }
 
-    public function showPatientListingPdf(PdfService $pdfService)
+    public function showPatientListingPdf(Request $request, PdfService $pdfService)
     {
         if (auth()->user()->isCareCoach()) {
             abort(403);
+        }
+
+        $showPracticePatientsInput = $request->input('showPracticePatients', null);
+        $isProvider                = auth()->user()->isProvider();
+        $showPracticePatients      = true;
+        $carePlanStatus            = null;
+        if ($isProvider) {
+            // CPM-1790, non-admins should only see rn_approved, and provider_approved
+            $carePlanStatus = [CarePlan::PROVIDER_APPROVED, CarePlan::RN_APPROVED];
+            if (User::SCOPE_LOCATION === auth()->user()->scope || 'false' === $showPracticePatientsInput) {
+                $showPracticePatients = false;
+            }
         }
 
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
         $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';
         $file             = $pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
-            'patients' => $this->formatter->patients(),
+            'patients' => $this->formatter->patients(null, $showPracticePatients, $carePlanStatus),
         ], null, [
             'orientation'  => 'Landscape',
             'margin-left'  => '3',
@@ -623,6 +652,15 @@ class PatientController extends Controller
         return PhoneNumber::whereUserId($patientUserId)->get();
     }
 
+    /**
+     * @return bool
+     */
+    private function hasOtherPrimaryNumbers(User $patientUser)
+    {
+        return $patientUser->phoneNumbers()
+            ->where('is_primary', true)->count() > 0;
+    }
+
     private function prepareForWebix($observation)
     {
         return [
@@ -640,9 +678,14 @@ class PatientController extends Controller
         ];
     }
 
-    private function unsetCurrentPrimaryNumber(PhoneNumber $currentPrimaryPhone)
+    private function unsetCurrentPrimaryNumbers(User $patientUser)
     {
-        $currentPrimaryPhone->is_primary = false;
-        $currentPrimaryPhone->save();
+        $patientUser->phoneNumbers()
+            ->where('is_primary', true)
+            ->update(
+                [
+                    'is_primary' => false,
+                ]
+            );
     }
 }

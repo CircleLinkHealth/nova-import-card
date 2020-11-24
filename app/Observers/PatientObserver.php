@@ -32,6 +32,8 @@ class PatientObserver
 
     public function saved(Patient $patient)
     {
+        $this->processPatientSummariesIfYouShould($patient);
+
         if ($patient->isDirty('ccm_status')) {
             if (Patient::UNREACHABLE === $patient->ccm_status
                 && ! $patient->user->hasRole('survey-only')) {
@@ -63,7 +65,6 @@ class PatientObserver
     {
         if ($this->statusChangedToEnrolled($patient)) {
             $patient->no_call_attempts_since_last_success = 0;
-            ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
         }
     }
 
@@ -124,6 +125,35 @@ class PatientObserver
                 $patient->loadMissing('user');
                 AssignPatientToStandByNurse::assign($patient->user);
             }
+        }
+    }
+
+    private function locationChanged(Patient $patient): bool
+    {
+        $oldValue = $patient->getOriginal('preferred_contact_location');
+        $newValue = $patient->preferred_contact_location;
+
+        if (is_null($newValue)) {
+            sendSlackMessage('#billing_alerts', "Warning! (PatientObserver:) Patient ({$patient->user_id}) does not have a preferred contact location.");
+
+            return false;
+        }
+
+        if ($oldValue == $newValue) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function processPatientSummariesIfYouShould(Patient $patient): void
+    {
+        if (is_null($patient->preferred_contact_location)) {
+            return;
+        }
+
+        if ($this->locationChanged($patient) || $this->statusChangedToEnrolled($patient)) {
+            ProcessSinglePatientMonthlyServices::dispatch($patient->user_id, Carbon::now()->startOfMonth());
         }
     }
 

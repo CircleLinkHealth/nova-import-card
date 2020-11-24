@@ -4,17 +4,17 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Constants;
 use App\Jobs\SendSlackMessage;
 use AshAllenDesign\ShortURL\Classes\Builder as ShortUrlBuilder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
-use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
@@ -116,6 +116,50 @@ if ( ! function_exists('str_contains_unsafe_characters')) {
     }
 }
 
+if ( ! function_exists('parseIds')) {
+    /**
+     * Get all of the IDs from the given mixed value.
+     *
+     * @param mixed $value
+     *
+     * @return array
+     */
+    function parseIds($value)
+    {
+        if (empty($value)) {
+            return [];
+        }
+
+        if ($value instanceof Model) {
+            return [$value->getKey()];
+        }
+
+        if ($value instanceof EloquentCollection) {
+            return $value->modelKeys();
+        }
+
+        if (is_array($value)) {
+            $value = collect($value);
+        }
+
+        if ($value instanceof Collection) {
+            return $value->map(
+                function ($el) {
+                    $id = parseIds($el);
+
+                    return $id[0] ?? null;
+                }
+            )->values()->toArray();
+        }
+
+        if (is_string($value) && Str::contains($value, ',')) {
+            return explode(',', $value);
+        }
+
+        return array_filter((array) $value);
+    }
+}
+
 if ( ! function_exists('safeStartOfMonthQuery')) {
     /**
      * Return a start of month query compadible with both sqlite and mysql.
@@ -203,6 +247,16 @@ if ( ! function_exists('sendSlackMessage')) {
         }
 
         SendSlackMessage::dispatch($to, $message)->onQueue('default');
+    }
+}
+
+if ( ! function_exists('forceSendSlackNotifications')) {
+    /**
+     * @return mixed
+     */
+    function forceSendSlackNotifications()
+    {
+        return filter_var(AppConfig::pull('force_send_slack_notifications', false), FILTER_VALIDATE_BOOLEAN);
     }
 }
 
@@ -1007,21 +1061,21 @@ if ( ! function_exists('getProblemCodeSystemName')) {
                 '2.16.840.1.113883.6.96' == $clue
                 || Str::contains(strtolower($clue), ['snomed'])
             ) {
-                return CpmConstants::SNOMED_NAME;
+                return Constants::SNOMED_NAME;
             }
 
             if (
                 '2.16.840.1.113883.6.103' == $clue
                 || Str::contains(strtolower($clue), ['9'])
             ) {
-                return CpmConstants::ICD9_NAME;
+                return Constants::ICD9_NAME;
             }
 
             if (
                 '2.16.840.1.113883.6.3' == $clue
                 || Str::contains(strtolower($clue), ['10'])
             ) {
-                return CpmConstants::ICD10_NAME;
+                return Constants::ICD10_NAME;
             }
         }
 
@@ -1039,7 +1093,7 @@ if ( ! function_exists('getProblemCodeSystemCPMId')) {
     {
         $name = getProblemCodeSystemName($clues);
 
-        $map = CpmConstants::CODE_SYSTEM_NAME_ID_MAP;
+        $map = Constants::CODE_SYSTEM_NAME_ID_MAP;
 
         if (array_key_exists($name, $map)) {
             return $map[$name];
@@ -1259,17 +1313,39 @@ if ( ! function_exists('read_file_using_generator')) {
         fclose($handle);
     }
 }
-
-if ( ! function_exists('getPhoneTypes')) {
-    /**
-     * @return array
-     */
-    function getPhoneTypes()
+if ( ! function_exists('getEhrReportWritersFolderUrl')) {
+    function getEhrReportWritersFolderUrl()
     {
-        return [
-            ucfirst(PhoneNumber::MOBILE),
-            ucfirst(PhoneNumber::HOME),
-        ];
+        //this is to make local environments faster for devs
+        //comment out this if section to use the feature
+        if (app()->environment('local')) {
+            return null;
+        }
+
+        $key = 'ehr_report_writers_folder_url';
+
+        return \Cache::remember($key, 2, function () use ($key) {
+            return AppConfig::pull($key, null);
+        });
+
+//        Commenting out due to Heroku migration
+//        $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
+//
+//        if ( ! $dir) {
+//            return null;
+//        }
+//
+//        return "https://drive.google.com/drive/folders/{$dir['path']}";
+    }
+}
+
+if ( ! function_exists('allowNonUsPhones')) {
+    /**
+     * @return bool
+     */
+    function allowNonUsPhones()
+    {
+        return ! isProductionEnv() && boolval(AppConfig::pull('allow_non_us_phone', false));
     }
 }
 
@@ -1338,6 +1414,56 @@ if ( ! function_exists('is_falsey')) {
     function is_falsey($value)
     {
         return is_null($value) || empty($value) || 0 === strcasecmp($value, 'null');
+    }
+}
+
+if ( ! function_exists('isAllowedToSee2FA')) {
+    function isAllowedToSee2FA(User $user = null)
+    {
+        $twoFaEnabled = (bool) config('auth.two_fa_enabled');
+        if ( ! $twoFaEnabled) {
+            return false;
+        }
+
+        if ( ! $user) {
+            $user = auth()->user();
+        }
+
+        if ( ! $user || $user->isParticipant()) {
+            return false;
+        }
+
+        return $user->isAdmin() || isTwoFaEnabledForPractice($user->program_id);
+    }
+}
+
+if ( ! function_exists('isTwoFaEnabledForPractice')) {
+    /**
+     * Key: two_fa_enabled_practices
+     * Default: false.
+     *
+     * @param mixed $practiceId
+     */
+    function isTwoFaEnabledForPractice($practiceId): bool
+    {
+        $key = 'two_fa_enabled_practices';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            AppConfig::set($key, '');
+
+            $twoFaEnabledPractices = [];
+        } else {
+            $twoFaEnabledPractices = explode(',', $val);
+        }
+
+        return in_array($practiceId, $twoFaEnabledPractices);
+    }
+}
+
+if ( ! function_exists('isSelfEnrollmentTestModeEnabled')) {
+    function isSelfEnrollmentTestModeEnabled(): bool
+    {
+        return filter_var(AppConfig::pull('testing_enroll_sms', true), FILTER_VALIDATE_BOOLEAN);
     }
 }
 
@@ -1617,15 +1743,17 @@ if ( ! function_exists('getModelFromTable')) {
 if ( ! function_exists('measureTime')) {
     function measureTime($desc, $func)
     {
-        $startTime = Carbon::now()->toTimeString();
-        $start     = microtime(true);
+        /** @var Carbon $startTime */
+        $startTime = now();
 
         $result = $func();
 
-        $endTime = Carbon::now()->toTimeString();
-        $sec     = microtime(true) - $start;
-        $secInt  = intval($sec);
-        echo "$desc: $secInt seconds | Start: $startTime | End: $endTime\n";
+        /** @var Carbon $endTime */
+        $endTime  = now();
+        $ms       = $endTime->diffInMilliseconds($startTime);
+        $startStr = $startTime->toTimeString();
+        $endStr   = $endTime->toTimeString();
+        echo "$desc: $ms ms | Start: $startStr | End: $endStr\n";
 
         return $result;
     }
@@ -1640,7 +1768,7 @@ if ( ! function_exists('stripNonTrixTags')) {
      */
     function stripNonTrixTags($trixString)
     {
-        return strip_tags($trixString, CpmConstants::TRIX_ALLOWABLE_TAGS_STRING);
+        return strip_tags($trixString, Constants::TRIX_ALLOWABLE_TAGS_STRING);
     }
 }
 
@@ -1697,6 +1825,40 @@ if ( ! function_exists('isPatientPcmBadgeEnabled')) {
         }
 
         return $val;
+    }
+}
+
+if ( ! function_exists('isPatientRpmBadgeEnabled')) {
+    /**
+     * Key: enable_patient_pcm_badge
+     * Default: true.
+     */
+    function isPatientRpmBadgeEnabled(): bool
+    {
+        $key = 'enable_patient_rpm_badge';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            return AppConfig::set($key, true);
+        }
+
+        return $val;
+    }
+}
+
+if ( ! function_exists('upg0506IsEnabled')) {
+    /**
+     * Key: upg0506_is_enabled
+     * Default: false.
+     */
+    function upg0506IsEnabled(): bool
+    {
+        $key = 'upg0506_is_enabled';
+        $val = AppConfig::pull($key, null);
+        if (null === $val) {
+            return 'true' === AppConfig::set($key, false);
+        }
+
+        return 'true' === $val;
     }
 }
 
@@ -2017,33 +2179,6 @@ if ( ! function_exists('minDaysPastForCareAmbassadorNextAttempt')) {
         $key = 'min_days_past_for_care_ambassador_next_attempt';
 
         return (int) AppConfig::pull($key, 3);
-    }
-}
-if ( ! function_exists('complexAttestationRequirementsEnabledForPractice')) {
-    /**
-     * @param mixed $practiceId
-     */
-    function complexAttestationRequirementsEnabledForPractice($practiceId): bool
-    {
-        $key = 'complex_attestation_requirements_for_practice';
-
-        $val = AppConfig::pull($key, null);
-        if (null === $val) {
-            AppConfig::set($key, '');
-
-            $practiceIds = [];
-        } else {
-            $practiceIds = explode(',', $val);
-        }
-
-        return in_array($practiceId, $practiceIds) || in_array('all', $practiceIds);
-    }
-}
-
-if ( ! function_exists('isCpm')) {
-    function isCpm()
-    {
-        return 'CarePlan Manager' === config('app.name');
     }
 }
 

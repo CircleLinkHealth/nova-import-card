@@ -133,8 +133,8 @@ class CareTeamController extends Controller
             ->orderBy('type')
             ->get()
             ->map(function ($member) use (
-                                  $patient
-                              ) {
+                $patient
+            ) {
                 $type = $member->type;
 
                 if ($member->user->practice($patient->primaryPractice->id) && ! in_array(
@@ -343,7 +343,7 @@ class CareTeamController extends Controller
                 } else {
                     $phone = PhoneNumber::updateOrCreate([
                         'user_id' => $providerUser->id,
-                        'type'    => 'work',
+                        'type'    => PhoneNumber::ALTERNATE,
                         'number'  => (new StringManipulation())->formatPhoneNumber($phone['number']),
                     ]);
                 }

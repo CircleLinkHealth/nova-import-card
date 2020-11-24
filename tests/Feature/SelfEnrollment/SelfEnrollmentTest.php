@@ -6,22 +6,26 @@
 
 namespace Tests\Feature\SelfEnrollment;
 
+use App\Constants\ProviderClinicalTypes;
 use App\EnrollmentInvitationsBatch;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
+use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Jobs\LogSuccessfulLoginToDB;
 use App\LoginLogout;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Constants;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\InvitePracticeEnrollees;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\RemindEnrollees;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\UnreachablesFinalAction;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendReminder;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use CircleLinkHealth\Eligibility\SelfEnrollment\AppConfig\Reminders;
+use App\SelfEnrollment\Constants;
+use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
+use App\SelfEnrollment\Domain\RemindEnrollees;
+use App\SelfEnrollment\Domain\UnreachablesFinalAction;
+use App\SelfEnrollment\Helpers;
+use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
+use App\SelfEnrollment\Jobs\SendInvitation;
+use App\SelfEnrollment\Jobs\SendReminder;
+use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
+use App\Traits\EnrollableNotificationContent;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -33,6 +37,7 @@ use Tests\Concerns\TwilioFake\Twilio;
 
 class SelfEnrollmentTest extends TestCase
 {
+    use EnrollableNotificationContent;
     /**
      * @var
      */
@@ -231,6 +236,16 @@ class SelfEnrollmentTest extends TestCase
         $this->assertFalse(in_array('mail', (new SelfEnrollmentInviteNotification('hello'))->via($enrollee->user)));
     }
 
+    public function test_it_returns_false_if_key_practice_disable_self_enrolment_reminders_set()
+    {
+        $enrollee = $this->createEnrollees($number = 1);
+        /** @var User $patient */
+        $patient  = $enrollee->user;
+        $practice = $patient->primaryPractice;
+        $this->disableReminders($practice->name);
+        self::assertFalse(Reminders::areEnabledFor($practice->name));
+    }
+
     public function test_it_saves_different_enrollment_link_in_db_when_sending_reminder()
     {
         $enrollee = $this->createEnrollees($number = 1);
@@ -299,6 +314,7 @@ class SelfEnrollmentTest extends TestCase
             SelfEnrollmentController::DEFAULT_BUTTON_COLOR,
             ['mail', 'twilio']
         );
+
         Notification::assertTimesSent($number, SelfEnrollmentInviteNotification::class);
     }
 
@@ -433,6 +449,107 @@ class SelfEnrollmentTest extends TestCase
         });
     }
 
+    public function test_it_will_not_send_reminder_if_disable_config_is_on()
+    {
+        $enrollee = $this->createEnrollees($number = 1);
+        /** @var User $patient */
+        $patient  = $enrollee->user;
+        $practice = $patient->primaryPractice;
+        $this->disableReminders($practice->name);
+        self::assertFalse((new SendReminder($patient))->shouldRun());
+        self::assertFalse(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
+    }
+
+    public function test_it_will_send_invitation_if_disable_config_is_on()
+    {
+        $enrollee = $this->createEnrollees($number = 1);
+        /** @var User $patient */
+        $patient  = $enrollee->user;
+        $practice = $patient->primaryPractice;
+        $this->disableReminders($practice->name);
+
+        SendInvitation::dispatchNow($patient, EnrollmentInvitationsBatch::firstOrCreateAndRemember(
+            $enrollee->practice_id,
+            now()->format(EnrollmentInvitationsBatch::TYPE_FIELD_DATE_HUMAN_FORMAT).':'.EnrollmentInvitationsBatch::MANUAL_INVITES_BATCH_TYPE
+        )->id);
+
+        self::assertTrue(User::hasSelfEnrollmentInvite()->where('id', $patient->id)->exists());
+    }
+
+    public function test_it_will_show_the_correct_medical_type_do_suffix_on_letter()
+    {
+        $enrollee = $this->createEnrollees($number = 1);
+        /** @var User $patient */
+        $patient                                = $enrollee->user;
+        $patient->billingProviderUser()->suffix = ProviderClinicalTypes::DO_SUFFIX;
+        $patient->save();
+        $patient->fresh();
+        $specialty = Helpers::providerMedicalType($patient->billingProviderUser()->suffix);
+
+        self::assertTrue(ProviderClinicalTypes::DR === $specialty);
+
+        $emailContent     = $this->getEnrolleeMessageContent($patient, false);
+        $providerLastName = $emailContent['providerLastName'];
+        $nameWithType     = "$specialty $providerLastName";
+
+        self::assertTrue(Str::contains($emailContent['line2'], $nameWithType));
+    }
+
+    public function test_it_will_show_the_correct_medical_type_lpn_suffix_on_letter()
+    {
+        $enrollee = $this->createEnrollees($number = 1);
+        /** @var User $patient */
+        $patient                                = $enrollee->user;
+        $patient->billingProviderUser()->suffix = ProviderClinicalTypes::LPN_SUFFIX;
+        $patient->save();
+        $patient->fresh();
+        $specialty = Helpers::providerMedicalType($patient->billingProviderUser()->suffix);
+        self::assertTrue(ProviderClinicalTypes::LPN === $specialty);
+
+        $emailContent     = $this->getEnrolleeMessageContent($patient, false);
+        $providerLastName = $emailContent['providerLastName'];
+        $nameWithType     = "$specialty $providerLastName";
+
+        self::assertTrue(Str::contains($emailContent['line2'], $nameWithType));
+    }
+
+    public function test_it_will_show_the_correct_medical_type_md_suffix_on_letter()
+    {
+        $enrollee = $this->createEnrollees($number = 1);
+        /** @var User $patient */
+        $patient                                = $enrollee->user;
+        $patient->billingProviderUser()->suffix = ProviderClinicalTypes::MD_SUFFIX;
+        $patient->save();
+        $patient->fresh();
+        $specialty = Helpers::providerMedicalType($patient->billingProviderUser()->suffix);
+
+        self::assertTrue(ProviderClinicalTypes::DR === $specialty);
+
+        $emailContent     = $this->getEnrolleeMessageContent($patient, false);
+        $providerLastName = $emailContent['providerLastName'];
+        $nameWithType     = "$specialty $providerLastName";
+
+        self::assertTrue(Str::contains($emailContent['line2'], $nameWithType));
+    }
+
+    public function test_it_will_show_the_correct_medical_type_np_suffix_on_letter()
+    {
+        $enrollee = $this->createEnrollees($number = 1);
+        /** @var User $patient */
+        $patient                                = $enrollee->user;
+        $patient->billingProviderUser()->suffix = ProviderClinicalTypes::NP_SUFFIX;
+        $patient->save();
+        $patient->fresh();
+        $specialty = Helpers::providerMedicalType($patient->billingProviderUser()->suffix);
+        self::assertTrue(ProviderClinicalTypes::NP === $specialty);
+
+        $emailContent     = $this->getEnrolleeMessageContent($patient, false);
+        $providerLastName = $emailContent['providerLastName'];
+        $nameWithType     = "$specialty $providerLastName";
+
+        self::assertTrue(Str::contains($emailContent['line2'], $nameWithType));
+    }
+
     public function test_patient_has_clicked_get_my_care_coach()
     {
         $enrollee       = $this->createEnrollees(1);
@@ -539,6 +656,18 @@ class SelfEnrollmentTest extends TestCase
         self::createSurveyConditions($userId, $surveyInstanceId, $surveyId, $status);
 
         return DB::table('survey_instances')->where('id', '=', $surveyInstanceId)->first();
+    }
+
+    private function disableReminders(string $practiceName)
+    {
+        AppConfig::clearCache();
+
+        AppConfig::create(
+            [
+                'config_key'   => 'practice_disable_self_enrolment_reminders',
+                'config_value' => $practiceName,
+            ]
+        );
     }
 
     private function factory()

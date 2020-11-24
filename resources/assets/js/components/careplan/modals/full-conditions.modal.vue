@@ -49,7 +49,7 @@
                                         <div class="col-sm-2 text-right">
                                             <loader class="absolute" v-if="loaders.editProblem"></loader>
                                             <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Edit"
-                                                title="Edit this problem" :disabled="selectedProblem.name.length === 0 || !(selectedProblem.cpm || {}).value" />
+                                                title="Edit this problem"/>
                                         </div>
                                     </div>
                                 </form>

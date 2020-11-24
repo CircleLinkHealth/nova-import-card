@@ -172,17 +172,21 @@
                     is_monitored: this.newProblem.is_monitored,
                     icd10: this.newProblem.icd10
                 }).then(response => {
+                    let responseData = response.data
                     this.loaders.addProblem = false
                     Event.$emit('problems:updated', {})
 
                     //If another condition is created and is attested for the patient from admin/billing/index.vue,
                     //we need patient id to add it to the patient's existing problems in the client table
-                    response.data.patient_id = this.patient_id;
-                    Event.$emit('full-conditions:add', response.data)
+                    //todo: test in attestation
+                    responseData.problem.patient_id = this.patient_id;
+                    Event.$emit('full-conditions:add', responseData.problem)
 
                     this.reset()
-                    this.selectedProblem = response.data
-                    setImmediate(() => this.checkPatientBehavioralStatus())
+                    this.selectedProblem = responseData.problem
+                    if (responseData.chargeable_services && responseData.chargeable_services.data) {
+                        Event.$emit('careplan:ccd-problems-update', responseData.chargeable_services.data);
+                    }
                 }).catch(err => {
                     console.error('full-conditions:add', err)
                     this.loaders.addProblem = false
@@ -198,7 +202,7 @@
             },
             checkForIcd10CodeDuplicates() {
                 let isNotCareAreasModal = this.isNotesPage || this.isApproveBillablePage;
-                if (isNotCareAreasModal && !this.showNoProblemSelected && this.newProblem.icd10.length > 0) {
+                if (isNotCareAreasModal && !this.showNoProblemSelected && this.newProblem.icd10 && this.newProblem.icd10.length > 0) {
                     let matchingProblem = this.problems.find(p => p.code == this.newProblem.icd10)
 
                     if (matchingProblem) {

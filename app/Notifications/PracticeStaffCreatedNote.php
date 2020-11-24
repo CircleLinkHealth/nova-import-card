@@ -76,10 +76,10 @@ class PracticeStaffCreatedNote extends Notification implements LiveNotification,
     public function toArray($notifiable): array
     {
         return [
-            'subject'      => $this->getSubject($notifiable),
-            'description'  => $this->description($notifiable),
-            'redirectLink' => $this->redirectLink($notifiable),
-            'noteId'       => $this->note->id,
+            'subject'       => $this->getSubject($notifiable),
+            'description'   => $this->description($notifiable),
+            'redirect_link' => $this->redirectLink($notifiable),
+            'noteId'        => $this->note->id,
         ];
     }
 

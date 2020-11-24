@@ -630,10 +630,10 @@
             mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification', 'clearNotifications', 'updateCarePerson']),
             {
                 attachExistingUser(user) {
-                    this.newCarePerson.user = user
-                    this.newCarePerson.user.phone_numbers = user.phone_numbers
-                    this.newCarePerson.user.primary_practice = user.primary_practice
-                    this.newCarePerson.user.provider_info = user.provider_info
+                    this.newCarePerson.user = user;
+                    this.newCarePerson.user.phone_numbers = user.phone_numbers || this.getDefaultEmptyPhoneNumbersData();
+                    this.newCarePerson.user.primary_practice = user.primary_practice || this.getDefaultEmptyPractice();
+                    this.newCarePerson.user.provider_info = user.provider_info || this.getDefaultEmptyProviderInfo();
                 },
                 setSelectedSuffix(input) {
                     this.newCarePerson.user.suffix = input
@@ -680,8 +680,31 @@
                     if ((field.$touched || field.$submitted) && field.$invalid) {
                         return 'has-danger';
                     }
+                },
+
+                getDefaultEmptyPhoneNumbersData() {
+                    return {
+                        0: {
+                            id: '',
+                            number: '',
+                        }
+                    };
+                },
+
+                getDefaultEmptyPractice() {
+                    return {
+                        id: '',
+                        display_name: ''
+                    };
+                },
+
+                getDefaultEmptyProviderInfo() {
+                    return {
+                        id: '',
+                        is_clinical: '',
+                        specialty: '',
+                    };
                 }
-                ,
             }
         ),
 
@@ -709,21 +732,9 @@
                         city: '',
                         state: '',
                         zip: '',
-                        phone_numbers: {
-                            0: {
-                                id: '',
-                                number: '',
-                            }
-                        },
-                        primary_practice: {
-                            id: '',
-                            display_name: ''
-                        },
-                        provider_info: {
-                            id: '',
-                            is_clinical: '',
-                            specialty: '',
-                        }
+                        phone_numbers: this.getDefaultEmptyPhoneNumbersData(),
+                        primary_practice: this.getDefaultEmptyPractice(),
+                        provider_info: this.getDefaultEmptyProviderInfo()
                     }
                 },
                 specialtiesOptions: specialtiesOptions,

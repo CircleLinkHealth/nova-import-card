@@ -4,7 +4,7 @@
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
                     Allergies
-                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                    <span v-if="!disableEditing()" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
         </div>
@@ -20,7 +20,7 @@
                 </ul>
             </div>
         </div>
-        <allergies-modal ref="allergiesModal" :patient-id="patientId" :allergies="allergies"></allergies-modal>
+        <allergies-modal v-if="!disableEditing()" ref="allergiesModal" :patient-id="patientId" :allergies="allergies"></allergies-modal>
     </div>
 </template>
 
@@ -29,6 +29,8 @@
     import { Event } from 'vue-tables-2'
     import AllergiesModal from './modals/allergies.modal'
     import CareplanMixin from './mixins/careplan.mixin'
+    import DisableEditingMixin from './mixins/disable-editing.mixin'
+
 
     export default {
         name: 'allergies',
@@ -39,7 +41,7 @@
         components: {
             'allergies-modal': AllergiesModal
         },
-        mixins: [ CareplanMixin ],
+        mixins: [ CareplanMixin, DisableEditingMixin ],
         data() {
             return {
                  allergies: []

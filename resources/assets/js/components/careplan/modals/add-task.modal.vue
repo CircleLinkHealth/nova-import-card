@@ -182,7 +182,7 @@
                 default: false
             },
             patientId: {
-                type: Number,
+                type: String,
                 default: false
             }
         },
@@ -345,7 +345,8 @@
                                 attempt_note: data.text,
                                 is_manual: data.isManual,
                                 asap: data.asapChecked,
-                                family_override: data.familyOverride
+                                family_override: data.familyOverride,
+                                patientId: data.patientId,
                             };
                         });
 

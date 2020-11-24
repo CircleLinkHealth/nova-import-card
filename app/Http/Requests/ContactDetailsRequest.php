@@ -36,14 +36,14 @@ class ContactDetailsRequest extends FormRequest
         return [
             'patientUserId'     => 'required',
             'phoneNumber'       => 'required|numeric',
-            'agentRelationship' => 'sometimes|alpha',
-            'agentName'         => 'sometimes|alpha',
+            'agentRelationship' => 'sometimes|regex:/^[\pL\s\-]+$/u', // allow only text-letters with spaces
+            'agentName'         => 'sometimes|regex:/^[\pL\s\-]+$/u',
             'agentEmail'        => 'sometimes|email',
             'phoneType'         => 'sometimes|required',
         ];
     }
 
-    public static function validateUser(User $patientUser, Validator $validator)
+    public static function validateUser(?User $patientUser, Validator $validator)
     {
         if (empty($patientUser)) {
             Log::error("User [$patientUser->id] not found");
@@ -72,11 +72,15 @@ class ContactDetailsRequest extends FormRequest
                 ?? $patientUser->primaryPractice->primary_location_id
                 ?? null;
 
-            if ( ! is_null($phoneType) && $patientUser->phoneNumbers()->where('type', $phoneType)->whereNotNull('number')->exists()) {
+            if ( ! is_null($phoneType) && $patientUser->phoneNumbers()
+                ->where('type', $phoneType)
+                ->where('number', '!=', '')
+                ->whereNotNull('number')
+                ->exists()) {
                 $validator->errors()->add('phoneNumber', "Phone type '$phoneType' already exists for patient");
             }
 
-            if ( ! ImportPhones::validatePhoneNumber($input['phoneNumber'])) {
+            if ( ! allowNonUsPhones() && ! ImportPhones::validatePhoneNumber($input['phoneNumber'])) {
                 $validator->errors()->add('phoneNumber', 'Phone number is not a valid US number');
             }
 
@@ -94,6 +98,6 @@ class ContactDetailsRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->json($validator->errors()->first(), 422));
+        throw new HttpResponseException(response()->json($validator->errors()->getMessages(), 422));
     }
 }

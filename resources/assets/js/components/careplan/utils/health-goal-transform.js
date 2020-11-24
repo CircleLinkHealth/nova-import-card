@@ -14,7 +14,7 @@ const transformHealthGoal = (goal) => {
         //if smoking (goal.type === 3) then show 0 instead of N/A
         goal.end = () => (goal.type === 3 ? goal.info.target : (goal.info.target == '0') ? 'N/A' : (goal.info.target || 'N/A'))
         goal.active = () => !!(goal.info.starting && goal.info.target)
-        
+
         const start = (goal.start().split('/')[0] || 0)
         const end = (goal.end().split('/')[0] || 0)
 
@@ -33,7 +33,7 @@ const transformHealthGoal = (goal) => {
                 get () {
                     const start = (goal.start().split('/')[0] || 0)
                     const end = (goal.end().split('/')[0] || 0)
-                    
+
                     if (parseInt(start) > 130) {
                         return 'Decrease'
                     }
@@ -59,7 +59,7 @@ const transformHealthGoal = (goal) => {
                 get () {
                     const start = (goal.start().split('/')[0] || 0)
                     const end = (goal.end().split('/')[0] || 0)
-                    
+
                     if (goal.info.starting == 'N/A' || goal.info.target == 'TBD' || !goal.info.starting || parseInt(start) < 130) {
                         return 'Regulate'
                     }
@@ -118,6 +118,11 @@ const transformHealthGoal = (goal) => {
             goal.info.starting_a1c = 0
             goal.info.target = '120'
         }
+
+        goal.start = () => (goal.info.starting || 'N/A')
+        //if smoking (goal.type === 3) then show 0 instead of N/A
+        goal.end = () => (goal.type === 3 ? goal.info.target : (goal.info.target == '0') ? 'N/A' : (goal.info.target || 'N/A'))
+        goal.active = () => !!(goal.info.starting && goal.info.target)
     }
 
     const text = JSON.stringify(goal)

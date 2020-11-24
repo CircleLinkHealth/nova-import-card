@@ -319,7 +319,7 @@
                             </script>
                         @endpush
 
-                        @if(auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)))
+                        @if( (auth()->user()->hasRole(array_merge(['administrator', 'software-only'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES))) && (! auth()->user()->hasPermission('downloads.disable')) )
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
                                            header:'CarePlanManager.com - Patients Under 20 Minutes CCM Time <?= date('M d,Y'); ?>',

@@ -37,10 +37,10 @@ class PatientCallListController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View|Response
      */
     public function index(Request $request, NoteService $noteService)
-    {//note:here nurseId is actually userId.
+    {
         $nurseId        = \Auth::user()->id;
         $today          = Carbon::parse(now())->copy()->toDateString();
         $draftNotes     = $noteService->getUserDraftNotes($nurseId);

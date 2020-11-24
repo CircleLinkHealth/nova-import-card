@@ -6,10 +6,10 @@
 
 namespace Tests\Feature;
 
-use CircleLinkHealth\Customer\CpmConstants;
-use App\Traits\Tests\PracticeHelpers;
+use App\Constants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -48,7 +48,7 @@ class ImportPcmCcd extends CustomerTestCase
             PcmProblem::firstOrCreate([
                 'description' => $problem->name,
             ], [
-                'code_type'   => CpmConstants::ICD10_NAME,
+                'code_type'   => Constants::ICD10_NAME,
                 'code'        => $problem->default_icd_10_code,
                 'description' => $problem->name,
                 'practice_id' => $practice->id,

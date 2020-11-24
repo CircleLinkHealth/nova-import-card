@@ -48,9 +48,9 @@ class IncomingMessageHandler
     /**
      * @return mixed
      */
-    public function handleMessageAttachment(DirectMailMessage $dm, ShowResult $showRes)
+    public function handleMessageAttachment(DirectMailMessage $dm, string $mimeType, string $attachment)
     {
-        return IncomingMessageHandlerFactory::create($dm, $showRes)->handle();
+        return IncomingMessageHandlerFactory::create($dm, $mimeType, $attachment)->handle();
     }
 
     public function processCcdas(DirectMailMessage $dm)

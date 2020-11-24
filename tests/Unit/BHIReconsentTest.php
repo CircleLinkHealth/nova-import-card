@@ -9,6 +9,12 @@ namespace Tests\Unit;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Domain\Customer\SetupPracticeBillingData;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
+use CircleLinkHealth\CcmBilling\Events\PatientConsentedToService;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
+use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -72,7 +78,7 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, false);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
-        $this->assertTrue($bhiPatient->isBhi());
+        $this->assertTrue(PatientIsOfServiceCode::execute($bhiPatient->id, ChargeableService::BHI));
     }
 
     public function test_it_is_bhi_for_before_cutoff_consent_date()
@@ -89,6 +95,8 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, true);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
+        ProcessSinglePatientMonthlyServices::dispatch($bhiPatient->id);
+
         $this->assertTrue($bhiPatient->isBhi());
     }
 
@@ -98,6 +106,10 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, false);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
+        //todo next iteration: is this a realistic scenario to happen say in the middle of the month? I think not, still try and cleanup either code or test
+        $bhiPatient->chargeableMonthlySummaries()->delete();
+        BillingCache::clearPatients();
+        ProcessSinglePatientMonthlyServices::dispatch($bhiPatient->id);
         $this->assertFalse($bhiPatient->isBhi());
     }
 
@@ -115,7 +127,9 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
         AppConfig::set(PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY, $bhiPractice->name);
 
-        $this->assertFalse($bhiPatient->isBhi());
+        BillingCache::clearPatients();
+
+        $this->assertFalse(PatientIsOfServiceCode::execute($bhiPatient->id, ChargeableService::BHI));
     }
 
     public function test_it_is_not_bhi_if_patient_does_not_have_bhi_consent_note()
@@ -147,6 +161,8 @@ class BHIReconsentTest extends CustomerTestCase
         $bhiPractice = $this->createPractice(false);
         $bhiPatient  = $this->createPatient($bhiPractice->id);
 
+        $bhiPatient->chargeableMonthlySummaries()->delete();
+        ProcessSinglePatientMonthlyServices::dispatch($bhiPatient->id);
         $this->assertFalse($bhiPatient->isBhi());
     }
 
@@ -222,6 +238,7 @@ class BHIReconsentTest extends CustomerTestCase
                     'type'         => Patient::BHI_CONSENT_NOTE_TYPE,
                     'performed_at' => $now->toDateTimeString(),
                 ]);
+            event(new PatientConsentedToService($patient->id, ChargeableService::BHI));
         }
 
         if ($hasBhiProblem) {
@@ -232,8 +249,12 @@ class BHIReconsentTest extends CustomerTestCase
                 ->create([
                     'cpm_problem_id' => $bhiProblem->id,
                     'name'           => $bhiProblem->name,
+                    'is_monitored'   => true,
                 ]);
+            (app(PatientServiceProcessorRepository::class))->reloadPatientProblems($patient->id);
         }
+
+        ProcessSinglePatientMonthlyServices::dispatch($patient->id);
 
         return $patient;
     }
@@ -242,8 +263,12 @@ class BHIReconsentTest extends CustomerTestCase
     {
         if ($bhi) {
             $this->practice()->chargeableServices()
-                ->attach(ChargeableService::whereCode('CPT 99484')->firstOrFail()->id);
+                ->sync([ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::BHI)]);
+        } else {
+            $this->practice()->chargeableServices()
+                ->sync([ChargeableService::getChargeableServiceIdUsingCode(ChargeableService::CCM)]);
         }
+        SetupPracticeBillingData::sync($this->practice()->id);
 
         return $this->practice();
     }

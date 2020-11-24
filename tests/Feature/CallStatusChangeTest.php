@@ -8,38 +8,32 @@ namespace Tests\Feature;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Jobs\CreateNurseInvoices;
-use App\Traits\Tests\PracticeHelpers;
-use App\Traits\Tests\TimeHelpers;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
-use Tests\CustomerTestCase;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use Tests\TestCase;
 
-class CallStatusChangeTest extends CustomerTestCase
+class CallStatusChangeTest extends TestCase
 {
     use PracticeHelpers;
     use TimeHelpers;
     use UserHelpers;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
     }
 
     public function test_create_note_with_successful_call_change_to_unsuccessful()
     {
-        $practice = $this->practice();
-        $this->setupExistingPractice($practice, true);
+        $practice = $this->setupPractice(true);
+        $patient  = $this->setupPatient($practice);
+        $nurse    = $this->setupNurse($this->createUser($practice->id, 'care-center'), true, 30, true, 12.50);
 
-        /** @var User $patient */
-        $patient = $this->patient();
-
-        /** @var User $nurse */
-        $nurse = $this->careCoach();
-        $this->setupNurse($nurse, true, 30, true, 12.50);
-
-        $note = $this->addTime($nurse, $patient, 20, true, true, false, null, 0, 'Patient Note Creation', false, true);
+        $note = $this->addTime($nurse, $patient, 20, true, true, null, null, 0, 'Patient Note Creation', false, true);
 
         $invoice         = $this->generateInvoice($nurse);
         $invoiceData     = $invoice->invoice_data;
@@ -59,8 +53,7 @@ class CallStatusChangeTest extends CustomerTestCase
         self::assertEquals(2, $pms->no_of_calls);
         self::assertEquals(2, $pms->no_of_successful_calls);
 
-        /** @var User $admin */
-        $admin = $this->superadmin();
+        $admin = $this->createUser($practice->id, 'administrator');
         $this->be($admin);
         $this->patch(route('CallsDashboard.edit', [
             'callId'  => $note->call->id,
@@ -86,17 +79,11 @@ class CallStatusChangeTest extends CustomerTestCase
 
     public function test_create_note_with_unsuccessful_call_change_to_successful()
     {
-        $practice = $this->practice();
-        $this->setupExistingPractice($practice, true);
+        $practice = $this->setupPractice(true);
+        $patient  = $this->setupPatient($practice);
+        $nurse    = $this->setupNurse($this->createUser($practice->id, 'care-center'), true, 30, true, 12.50);
 
-        /** @var User $patient */
-        $patient = $this->patient();
-
-        /** @var User $nurse */
-        $nurse = $this->careCoach();
-        $this->setupNurse($nurse, true, 30, true, 12.50);
-
-        $note = $this->addTime($nurse, $patient, 20, true, false, false, null, 0, 'Patient Note Creation', false, true);
+        $note = $this->addTime($nurse, $patient, 20, true, false, null, null, 0, 'Patient Note Creation', false, true);
 
         $invoice         = $this->generateInvoice($nurse);
         $invoiceData     = $invoice->invoice_data;
@@ -116,8 +103,7 @@ class CallStatusChangeTest extends CustomerTestCase
         self::assertEquals(2, $pms->no_of_calls);
         self::assertEquals(1, $pms->no_of_successful_calls);
 
-        /** @var User $admin */
-        $admin = $this->superadmin();
+        $admin = $this->createUser($practice->id, 'administrator');
         $this->be($admin);
         $this->patch(route('CallsDashboard.edit', [
             'callId'  => $note->call->id,
@@ -143,17 +129,11 @@ class CallStatusChangeTest extends CustomerTestCase
 
     public function test_create_note_without_call_change_to_successful()
     {
-        $practice = $this->practice();
-        $this->setupExistingPractice($practice, true);
+        $practice = $this->setupPractice(true);
+        $patient  = $this->setupPatient($practice);
+        $nurse    = $this->setupNurse($this->createUser($practice->id, 'care-center'), true, 30, true, 12.50);
 
-        /** @var User $patient */
-        $patient = $this->patient();
-
-        /** @var User $nurse */
-        $nurse = $this->careCoach();
-        $this->setupNurse($nurse, true, 30, true, 12.50);
-
-        $note = $this->addTime($nurse, $patient, 20, true, false, false, null, 0, 'Patient Note Creation', false, false);
+        $note = $this->addTime($nurse, $patient, 20, true, false, null, null, 0, 'Patient Note Creation', false, false);
 
         $invoice         = $this->generateInvoice($nurse);
         $invoiceData     = $invoice->invoice_data;
@@ -173,8 +153,7 @@ class CallStatusChangeTest extends CustomerTestCase
         self::assertEquals(1, $pms->no_of_calls);
         self::assertEquals(1, $pms->no_of_successful_calls);
 
-        /** @var User $admin */
-        $admin = $this->superadmin();
+        $admin = $this->createUser($practice->id, 'administrator');
         $this->be($admin);
         $this->post(route('CallsDashboard.create-call', [
             'noteId'    => $note->id,
@@ -200,17 +179,11 @@ class CallStatusChangeTest extends CustomerTestCase
 
     public function test_create_note_without_call_change_to_unsuccessful()
     {
-        $practice = $this->practice();
-        $this->setupExistingPractice($practice, true);
+        $practice = $this->setupPractice(true);
+        $patient  = $this->setupPatient($practice);
+        $nurse    = $this->setupNurse($this->createUser($practice->id, 'care-center'), true, 30, true, 12.50);
 
-        /** @var User $patient */
-        $patient = $this->patient();
-
-        /** @var User $nurse */
-        $nurse = $this->careCoach();
-        $this->setupNurse($nurse, true, 30, true, 12.50);
-
-        $note = $this->addTime($nurse, $patient, 20, true, false, false, null, 0, 'Patient Note Creation', false, false);
+        $note = $this->addTime($nurse, $patient, 20, true, false, null, null, 0, 'Patient Note Creation', false, false);
 
         $invoice         = $this->generateInvoice($nurse);
         $invoiceData     = $invoice->invoice_data;
@@ -230,8 +203,7 @@ class CallStatusChangeTest extends CustomerTestCase
         self::assertEquals(1, $pms->no_of_calls);
         self::assertEquals(1, $pms->no_of_successful_calls);
 
-        /** @var User $admin */
-        $admin = $this->superadmin();
+        $admin = $this->createUser($practice->id, 'administrator');
         $this->be($admin);
         $this->post(route('CallsDashboard.create-call', [
             'noteId'    => $note->id,

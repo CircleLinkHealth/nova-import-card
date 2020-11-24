@@ -8,15 +8,17 @@ namespace Tests\Unit;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Tests\TestCase;
 
 class ProtectPHITest extends TestCase
 {
+    use PracticeHelpers;
     use UserHelpers;
+
     protected $admin;
     protected $enrollee;
     protected $info;
@@ -30,17 +32,17 @@ class ProtectPHITest extends TestCase
 
     private $facadeMocks = [];
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->practice = factory(Practice::class)->create();
+        $this->practice = $this->setupPractice(true, true, true, true);
 
         $this->admin = $this->createUser($this->practice->id, 'administrator');
         //admin has the phi.read permission so we have to deactivate
         $this->disablePHIForUser($this->admin);
 
-        $this->patient = $this->createUser($this->practice->id, 'participant');
+        $this->patient = $this->setupPatient($this->practice, true);
 
         //add fixed names to prevent random failures
         $this->patient->first_name = 'Testfirstname';

@@ -54,6 +54,7 @@
                                     }
                                 </style>
                             @endpush
+                            @if(! auth()->user()->hasPermission('downloads.disable'))
                             <i class="fa fa-print" onclick="webix.toPDF($$({{ $section['id'] }}), {
                                     header:'CarePlanManager.com - Patient {{$section['title']}} Report {{date('M d,Y')}}',
                                     orientation:'landscape',
@@ -73,7 +74,7 @@
                                     }
                                     }
                                     );"></i> &nbsp;
-
+                            @endif
                             @if (!empty($detailSection))
                                 <a href="{{route('patient.summary', ['patientId' => $wpUser->id])}}"><< Return</a>
                             @else

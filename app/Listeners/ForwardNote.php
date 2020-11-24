@@ -16,6 +16,13 @@ class ForwardNote implements ShouldQueue
     use InteractsWithQueue;
 
     /**
+     * The name of the queue the job should be sent to.
+     *
+     * @var string|null
+     */
+    public $queue = 'high';
+
+    /**
      * @var NoteService
      */
     protected $noteService;

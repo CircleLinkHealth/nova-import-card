@@ -38,7 +38,7 @@
                     Email
                 </button>
             </div>
-            <div class="col-md-12 panel-section" style="margin-top: 10px">
+            <div v-if="!disableDownloads" class="col-md-12 panel-section" style="margin-top: 10px">
                 <a class="blue-link" v-bind:class="{'isDisabled': !doc, 'disabled': !doc}" :href="downloadApi()">Download</a>
             </div>
         </div>
@@ -118,9 +118,16 @@
             patientId: {
                 type: String,
                 required: true
+            },
+            authRole: {
+                type: String,
+                required: true
             }
         },
         computed: {
+            disableDownloads() {
+                return this.authRole === 'clh-ccm-admin'
+            },
             docDate() {
                 if (!this.doc) {
                     return null;

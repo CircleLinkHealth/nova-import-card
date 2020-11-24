@@ -6,7 +6,9 @@
 
 namespace Tests\Feature;
 
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\Note;
+use App\Services\Calls\SchedulerService;
 use Tests\CustomerTestCase;
 
 class NotesTest extends CustomerTestCase
@@ -48,6 +50,58 @@ class NotesTest extends CustomerTestCase
         $this->createNote($patient->id, $draftNoteId, 'complete');
     }
 
+    public function test_should_create_new_call_even_scheduled_call_for_another_nurse_from_successful_clinical_call_note()
+    {
+        $practice = $this->practice();
+        $patient  = $this->patient();
+        $nurses   = $this->careCoach(2);
+        $nurse1   = $nurses[0];
+        $nurse2   = $nurses[1];
+
+        /** @var SchedulerService $schedulerService */
+        $schedulerService = app(SchedulerService::class);
+        $call             = $schedulerService->storeScheduledCall($patient->id, '09:00', '17:00', now(), 'testing', $nurse1->id);
+
+        $this->be($nurse2);
+
+        $this->createNote($patient->id, null, 'complete', true);
+        self::assertEquals(Call::SCHEDULED, $call->fresh()->status);
+        self::assertTrue(Call::whereInboundCpmId($patient->id)
+            ->whereOutboundCpmId($nurse2->id)
+            ->where('status', Call::REACHED)
+            ->exists());
+    }
+
+    public function test_should_create_new_call_from_successful_clinical_call_note()
+    {
+        $practice = $this->practice();
+        $patient  = $this->patient();
+        $nurse    = $this->careCoach();
+
+        self::assertFalse(Call::whereInboundCpmId($patient->id)->exists());
+
+        $this->be($nurse);
+
+        $this->createNote($patient->id, null, 'complete', true);
+        self::assertTrue(Call::whereInboundCpmId($patient->id)->exists());
+    }
+
+    public function test_should_mark_scheduled_call_successful_from_successful_clinical_call_note()
+    {
+        $practice = $this->practice();
+        $patient  = $this->patient();
+        $nurse    = $this->careCoach();
+
+        /** @var SchedulerService $schedulerService */
+        $schedulerService = app(SchedulerService::class);
+        $call             = $schedulerService->storeScheduledCall($patient->id, '09:00', '17:00', now(), 'testing', $nurse->id);
+
+        $this->be($nurse);
+
+        $this->createNote($patient->id, null, 'complete', true);
+        self::assertEquals(Call::REACHED, $call->fresh()->status);
+    }
+
     public function test_should_not_allow_edit_complete_note()
     {
         $practice = $this->practice();
@@ -76,24 +130,35 @@ class NotesTest extends CustomerTestCase
         );
     }
 
-    private function createNote($patientId, $noteId = null, $status = 'draft')
+    private function createNote($patientId, $noteId = null, $status = 'draft', bool $withPhoneSession = false)
     {
         $isEditing = null !== $noteId;
         $route     = 'draft' === $status ? 'patient.note.store.draft' : 'patient.note.store';
 
+        $args = [
+            'status'     => $status,
+            'note_id'    => $noteId,
+            'body'       => $isEditing ? 'test-edit' : 'test',
+            'patient_id' => $patientId,
+        ];
+
+        if ($withPhoneSession) {
+            $args['phone']       = 1;
+            $args['call_status'] = 'reached';
+        }
+
         $resp = $this->call(
             'POST',
             route($route, ['patientId' => $patientId]),
-            [
-                'status'     => $status,
-                'note_id'    => $noteId,
-                'body'       => $isEditing ? 'test-edit' : 'test',
-                'patient_id' => $patientId,
-            ]
+            $args
         );
 
         if ('patient.note.store' === $route) {
-            $resp->assertRedirect(route('patient.note.index', ['patientId' => $patientId]));
+            if ($withPhoneSession) {
+                $resp->assertRedirect(route('manual.call.create', ['patientId' => $patientId]));
+            } else {
+                $resp->assertRedirect(route('patient.note.index', ['patientId' => $patientId]));
+            }
 
             return;
         }

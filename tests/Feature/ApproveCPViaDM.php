@@ -173,7 +173,8 @@ class ApproveCPViaDM extends CustomerTestCase
         Notification::assertSentTo(
             $this->provider(),
             SendCarePlanForDirectMailApprovalNotification::class,
-            function (SendCarePlanForDirectMailApprovalNotification $notification, $channels, $notifiable) use ($patient
+            function (SendCarePlanForDirectMailApprovalNotification $notification, $channels, $notifiable) use (
+                $patient
             ) {
                 $this->assertContains(DirectMailChannel::class, $channels);
                 $this->assertStringContainsString(

@@ -18,11 +18,13 @@ class CreateNoteRequest extends FormRequest
      */
     public function authorize()
     {
-        if ( ! auth()->user()->isCareCoach()) {
-            return true;
+        $user = auth()->user();
+
+        if ($user->isCareCoach()) {
+            return app(CreateNoteForPatient::class)->can(auth()->id(), $this->route('patientId'));
         }
 
-        return app(CreateNoteForPatient::class)->can(auth()->id(), $this->route('patientId'));
+        return $user->hasPermission('note.create');
     }
 
     /**

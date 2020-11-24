@@ -21,6 +21,7 @@
                                 <th scope="col">Request ID</th>
                                 <th scope="col">Duration (Minutes)</th>
                                 <th scope="col">Patient</th>
+                                <th scope="col">Activity Type</th>
                                 <th scope="col">Performed At</th>
                                 <th scope="col">Comment</th>
                                 @if(auth()->user()->isAdmin())
@@ -42,6 +43,7 @@
                                             Deleted patient [{{$r->patient_id}}]
                                         @endif
                                     </td>
+                                    <td>{{optional($r->chargeableService)->display_name ?? 'n/a'}}</td>
                                     <td>{{$r->performed_at}}</td>
                                     <td>{{$r->comment}}</td>
                                     @if(auth()->user()->isAdmin())

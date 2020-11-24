@@ -75,8 +75,7 @@
                                                 <input type="submit"
                                                        class="btn btn-secondary margin-0 instruction-add selected"
                                                        value="Save"
-                                                       title="Edit this problem"
-                                                       :disabled="(selectedProblem.name || '').length === 0 || patientHasSelectedProblem"/>
+                                                       title="Edit this problem"/>
                                             </div>
                                         </div>
 
@@ -155,6 +154,7 @@
     import CareplanMixin from '../mixins/careplan.mixin'
     import AddConditionMixin from '../mixins/add-condition.mixin'
     import AddCondition from '../add-condition'
+    import DisableEditingMixin from '../mixins/disable-editing.mixin'
 
     export default {
         name: 'care-areas-modal',
@@ -164,7 +164,8 @@
         },
         mixins: [
             CareplanMixin,
-            AddConditionMixin
+            AddConditionMixin,
+            DisableEditingMixin
         ],
         components: {
             'add-condition': AddCondition,
@@ -239,7 +240,7 @@
                         Event.$emit(`care-areas:remove-${this.selectedProblem.type}-problem`, this.selectedProblem.id)
                         Event.$emit('problems:updated', {})
                         this.selectedProblem = null
-                        setImmediate(() => this.checkPatientBehavioralStatus())
+                        this.raiseUpdatedChargeableServicesEvent(response);
                     }).catch(err => {
                         console.error('care-areas:remove-problems', err)
                         this.loaders.removeProblem = false
@@ -260,10 +261,9 @@
                     icd10: this.selectedProblem.icd10,
                     instruction: this.selectedInstruction
                 }).then(response => {
-                    this.loaders.editProblem = false
-                    Event.$emit('problems:updated', {})
-                    Event.$emit('full-conditions:edit', response.data)
-                    setImmediate(() => this.checkPatientBehavioralStatus())
+                    this.loaders.editProblem = false;
+                    this.raiseUpdatedProblemEvents(response);
+                    this.raiseUpdatedChargeableServicesEvent(response);
                 }).catch(err => {
                     console.error('full-conditions:edit', err)
                     this.loaders.editProblem = false
@@ -303,29 +303,20 @@
             getProblemAutoCompleteTemplate(item) {
                 return (item || {}).name
             },
-            /**
-             * is patient BHI, CCM or BOTH?
-             */
-            checkPatientBehavioralStatus() {
-                const problems = this.problems || [];
-                const cpmProblems = this.getAddConditionCpmProblems() || [];
 
-                const ccmCount = problems.filter(problem => {
-                    if (problem.is_monitored) {
-                        const cpmProblem = cpmProblems.find(cpm => cpm.id == problem.cpm_id)
-                        return cpmProblem ? !cpmProblem.is_behavioral : false
+            raiseUpdatedProblemEvents(response) {
+                Event.$emit('problems:updated', {});
+
+                if (response && response.data && response.data.problem) {
+                    Event.$emit('full-conditions:edit', response.data.problem);
+                }
+            },
+            raiseUpdatedChargeableServicesEvent(response) {
+                setImmediate(() => {
+                    if (response && response.data && response.data.chargeable_services && response.data.chargeable_services.data) {
+                        Event.$emit('careplan:ccd-problems-update', response.data.chargeable_services.data);
                     }
-                    return false
-                }).length
-                const bhiCount = problems.filter(problem => {
-                    const cpmProblem = cpmProblems.find(cpm => cpm.id == problem.cpm_id)
-                    return cpmProblem ? cpmProblem.is_behavioral : false
-                }).length
-                console.log('ccm', ccmCount, 'bhi', bhiCount)
-                Event.$emit('careplan:bhi', {
-                    hasCcm: ccmCount > 0,
-                    hasBehavioral: bhiCount > 0
-                })
+                });
             }
         },
     }

@@ -4,7 +4,7 @@
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
                     <a :href="url">Medications</a>
-                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                    <span  v-if="!disableEditing()" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                     <span class="btn btn-primary" @click="toggleShowAll" style="margin-top: 6px; float: right;">
                         {{showAll ? 'Show Active Only' : 'Show Active & Inactive'}}
                     </span>
@@ -40,7 +40,7 @@
                 </ul>
             </div>
         </div>
-        <medications-modal ref="medicationsModal" :patient-id="patientId" :medications="medications"
+        <medications-modal v-if="!disableEditing()" ref="medicationsModal" :patient-id="patientId" :medications="medications"
                            :groups="groups"></medications-modal>
     </div>
 </template>
@@ -50,6 +50,7 @@
     import {Event} from 'vue-tables-2'
     import MedicationsModal from './modals/medications.modal'
     import CareplanMixin from './mixins/careplan.mixin'
+    import DisableEditingMixin from "./mixins/disable-editing.mixin";
 
     export default {
         name: 'medications',
@@ -60,7 +61,7 @@
         components: {
             'medications-modal': MedicationsModal
         },
-        mixins: [CareplanMixin],
+        mixins: [CareplanMixin, DisableEditingMixin],
         computed: {
             medicationsFiltered() {
                 return this.showAll ? this.medications.slice(0) : this.medications.filter(m => m.active);

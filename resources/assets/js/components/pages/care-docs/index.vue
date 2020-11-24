@@ -142,27 +142,27 @@
             <!--</div>-->
             <div v-if="careDocs['PPP']">
                 <div v-for="doc in careDocs['PPP']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'PPP'" :patientId="patientId"></care-document-box>
+                    <care-document-box :doc="doc" :type="'PPP'" :patientId="patientId" :auth-role="authRole"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'PPP'" :patientId="patientId"></care-document-box>
+                    <care-document-box :type="'PPP'" :patientId="patientId" :auth-role="authRole"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Provider Report']">
                 <div v-for="doc in careDocs['Provider Report']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Provider Report'" :patientId="patientId"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Provider Report'" :patientId="patientId" :auth-role="authRole"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'Provider Report'" :patientId="patientId"></care-document-box>
+                    <care-document-box :type="'Provider Report'" :patientId="patientId" :auth-role="authRole"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Lab Results']">
                 <div v-for="doc in careDocs['Lab Results']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Lab Results'" :patientId="patientId"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Lab Results'" :patientId="patientId" :auth-role="authRole"></care-document-box>
                 </div>
             </div>
         </div>
@@ -263,6 +263,10 @@
                 required: true,
             },
             awvUrl: {
+                type: String,
+                required: true
+            },
+            authRole: {
                 type: String,
                 required: true
             }

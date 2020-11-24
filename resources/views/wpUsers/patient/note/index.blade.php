@@ -15,22 +15,22 @@
 
     <div class="col-lg-8 col-lg-offset-2">
         <div>
-            @include('core::partials.errors.messages')
+            @include('errors.messages')
         </div>
         <div>
-            @include('core::partials.errors.errors')
+            @include('errors.errors')
         </div>
     </div>
 
 
     <div class="row main-form-block" style="margin-top:30px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2 col-xs-12">
+        <div class="main-form-container col-lg-10 col-lg-offset-1 col-xs-12">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     Notes and Activities
                 </div>
                 @include('partials.userheader')
-                @if(! auth()->user()->isCareCoach() || (auth()->user()->isCareCoach() && app(\CircleLinkHealth\Customer\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id)))
+                @if((! auth()->user()->isCareCoach() && auth()->user()->hasPermission('note.create')) || (auth()->user()->isCareCoach() && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id)))
                     <div class="col-sm-6 col-xs-4">
                         <a href="{{ route('patient.note.create', [$patient->id]) }}"
                            class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">
@@ -271,7 +271,7 @@
                                 </li>
 
                             </div>
-                            @if(auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)) )
+                            @if( (auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)) && (! auth()->user()->hasPermission('downloads.disable')) ) )
 
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'

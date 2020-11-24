@@ -69,7 +69,7 @@ class VoiceCallsTest extends CustomerTestCase
         ]);
 
         // this will create a note, and update the $call->status to reached, which will eventually trigger the logic to match TwilioCall and Call (CallObserver.php)
-        $this->addTime($nurse, $patient, 5, true, false, false, null, 0, 'Patient Note Creation', false, true);
+        $this->addTime($nurse, $patient, 5, true, false, null, null, 0, 'Patient Note Creation', false, true);
 
         $call = $call->fresh();
         self::assertTrue(Call::NOT_REACHED === $call->status);
@@ -152,7 +152,7 @@ class VoiceCallsTest extends CustomerTestCase
         ]);
 
         // this will create a note, and update the $call->status to reached, which will eventually trigger the logic to match TwilioCall and Call (CallObserver.php)
-        $this->addTime($nurse, $patient, 5, true, true, false, null, 0, 'Patient Note Creation', false, true);
+        $this->addTime($nurse, $patient, 5, true, true, null, null, 0, 'Patient Note Creation', false, true);
 
         $call = $call->fresh();
         self::assertTrue(Call::REACHED === $call->status);
@@ -197,7 +197,7 @@ class VoiceCallsTest extends CustomerTestCase
         ]);
 
         // this will create a note, and update the $call->status to reached, which will eventually trigger the logic to match TwilioCall and Call (CallObserver.php)
-        $this->addTime($nurse, $patient, 5, true, false, false, null, 0, 'Patient Note Creation', false, true);
+        $this->addTime($nurse, $patient, 5, true, false, null, null, 0, 'Patient Note Creation', false, true);
 
         $this->artisan(CheckVoiceCalls::class, ['from' => now()->subDay()]);
 
@@ -235,7 +235,7 @@ class VoiceCallsTest extends CustomerTestCase
         ]);
 
         // this will create a note, and update the $call->status to reached, which will eventually trigger the logic to match TwilioCall and Call (CallObserver.php)
-        $this->addTime($nurse, $patient, 5, true, true, false, null, 0, 'Patient Note Creation', false, true);
+        $this->addTime($nurse, $patient, 5, true, true, null, null, 0, 'Patient Note Creation', false, true);
 
         $this->artisan(CheckVoiceCalls::class, ['from' => now()->subDay()]);
 
@@ -271,7 +271,7 @@ class VoiceCallsTest extends CustomerTestCase
         ]);
 
         // this will create a note, and update the $call->status to reached, which will eventually trigger the logic to match TwilioCall and Call (CallObserver.php)
-        $this->addTime($nurse, $patient, 5, true, false, false, null, 0, 'Patient Note Creation', false, true);
+        $this->addTime($nurse, $patient, 5, true, false, null, null, 0, 'Patient Note Creation', false, true);
 
         $this->artisan(CheckVoiceCalls::class, ['from' => now()->subDay()]);
 
@@ -327,7 +327,7 @@ class VoiceCallsTest extends CustomerTestCase
         ]);
 
         // this will create a note, and update the $call->status to reached, which will eventually trigger the logic to match TwilioCall and Call (CallObserver.php)
-        $this->addTime($nurse, $patient, 5, true, true, false, null, 0, 'Patient Note Creation', false, true);
+        $this->addTime($nurse, $patient, 5, true, true, null, null, 0, 'Patient Note Creation', false, true);
 
         $call = $call->fresh();
         self::assertTrue(Call::REACHED === $call->status);
@@ -377,7 +377,7 @@ class VoiceCallsTest extends CustomerTestCase
         ]);
 
         // this will create a note, and update the $call->status to reached, which will eventually trigger the logic to match TwilioCall and Call (CallObserver.php)
-        $this->addTime($nurse, $patient, 5, true, true, false, null, 0, 'Patient Note Creation', false, true);
+        $this->addTime($nurse, $patient, 5, true, true, null, null, 0, 'Patient Note Creation', false, true);
 
         $call = $call->fresh();
         self::assertTrue(Call::REACHED === $call->status);
@@ -426,7 +426,7 @@ class VoiceCallsTest extends CustomerTestCase
         ]);
 
         // this will create a note, and update the $call->status to reached, which will eventually trigger the logic to match TwilioCall and Call (CallObserver.php)
-        $note = $this->addTime($nurse, $patient, 5, true, true, false, null, 0, 'Patient Note Creation', false, true);
+        $note = $this->addTime($nurse, $patient, 5, true, true, null, null, 0, 'Patient Note Creation', false, true);
 
         $call = $note->call;
         self::assertTrue(Call::REACHED === $call->status);
@@ -470,7 +470,7 @@ class VoiceCallsTest extends CustomerTestCase
         $call             = $schedulerService->storeScheduledCall($patient->id, '09:00', '17:00', now(), 'test', $nurse->id);
 
         // this will create a note, and update the $call->status to reached, which will eventually trigger the logic to match TwilioCall and Call (CallObserver.php)
-        $this->addTime($nurse, $patient, 5, true, true, false, null, 0, 'Patient Note Creation', false, true);
+        $this->addTime($nurse, $patient, 5, true, true, null, null, 0, 'Patient Note Creation', false, true);
 
         $twilioCall = TwilioCall::create([
             'call_sid'                 => 'test',
@@ -545,7 +545,7 @@ class VoiceCallsTest extends CustomerTestCase
         ]);
 
         // this will create a note, and update the $call->status to reached, which will eventually trigger the logic to match TwilioCall and Call (CallObserver.php)
-        $this->addTime($nurse, $patient, 5, true, true, false, null, 0, 'Patient Note Creation', false, true);
+        $this->addTime($nurse, $patient, 5, true, true, null, null, 0, 'Patient Note Creation', false, true);
 
         $call = $call->fresh();
         self::assertTrue(Call::REACHED === $call->status);
@@ -610,7 +610,7 @@ class VoiceCallsTest extends CustomerTestCase
         ]);
 
         // this will create a note, and update the $call->status to reached, which will eventually trigger the logic to match TwilioCall and Call (CallObserver.php)
-        $this->addTime($nurse, $patient, 5, true, true, false, null, 0, 'Patient Note Creation', false, true);
+        $this->addTime($nurse, $patient, 5, true, true, null, null, 0, 'Patient Note Creation', false, true);
 
         $twilioCall2 = TwilioCall::create([
             'call_sid'                 => 'test',

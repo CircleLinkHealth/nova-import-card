@@ -29,7 +29,7 @@
     @endpush
 
     <div class="row main-form-block" style="margin-top:30px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2 col-xs-12 col-xs-offset-0">
+        <div class="main-form-container col-lg-10 col-lg-offset-1 col-xs-12 col-xs-offset-0">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     All Patient Notes
@@ -121,7 +121,7 @@
                      style="border-top: 3px solid #50b2e2">
 
                     <div style="margin-top:2px">
-                        @include('core::partials.errors.errors')
+                        @include('errors.errors')
                     </div>
 
                     @if($isProviderSelected)
@@ -332,7 +332,7 @@
                                     </li>
                                 </div>
                                 <div class="col-sm-6">
-                                    @if(auth()->user()->hasRole(array_merge(['administrator'], \CircleLinkHealth\Customer\CpmConstants::PRACTICE_STAFF_ROLE_NAMES)))
+                                    @if( auth()->user()->hasRole(array_merge(['administrator', 'software-only'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)) && (! auth()->user()->hasPermission('downloads.disable')) )
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toExcel($$(obs_alerts_dtable), {

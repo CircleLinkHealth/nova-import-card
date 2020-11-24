@@ -216,6 +216,7 @@ class AutomateCallSchedulingTest extends TestCase
                     'cpm_problem_id' => $bhiProblem->id,
                     'name'           => $bhiProblem->name,
                 ]);
+            //todo: update cache
         }
 
         return $patient;

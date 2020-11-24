@@ -4,12 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Customer\NurseTimeAlgorithms\AlternativeCareTimePayableCalculator;
 use CircleLinkHealth\SharedModels\Entities\Call;
-use CircleLinkHealth\Customer\Traits\UserHelpers;
+use App\Constants;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Database\Seeder;
 
@@ -24,6 +24,7 @@ class PatientMonthlySummarySeeder extends Seeder
      */
     public function run()
     {
+        //todo: revisit and clean/deprecate
         $practice = Practice::whereName('demo')
             ->where('is_demo', true)
             ->first();
@@ -69,8 +70,8 @@ class PatientMonthlySummarySeeder extends Seeder
             ],
             [
                 'month_year'             => now()->startOfMonth()->toDate(),
-                'total_time'             => AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS,
-                'ccm_time'               => AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS,
+                'total_time'             => Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS,
+                'ccm_time'               => Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS,
                 'bhi_time'               => 0,
                 'no_of_calls'            => 10,
                 'no_of_successful_calls' => 10,

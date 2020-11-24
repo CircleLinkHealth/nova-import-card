@@ -3,14 +3,14 @@
         <div class="row">
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">Your Health Goals
-                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                    <span v-if="!disableEditing()" class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
         </div>
         <div class="row gutter">
             <div class="col-xs-12">
                 <div class="row top-10">
-                    <div :class="{ 'col-sm-12': !loaders.editNote && !loaders.getNote, 'col-sm-11': loaders.editNote }">
+                    <div :class="{ 'col-sm-12': !loaders.editNote && !loaders.getNote, 'col-sm-11': loaders.editNote, 'hide': disableEditing() }">
                         <form @submit="editNote">
                             <textarea class="form-control free-note" v-model="note.body" placeholder="Enter Note and press ENTER" @change="editNote"  @keydown.enter.exact.prevent @keyup.enter.exact="editNote"></textarea>
                         </form>
@@ -42,17 +42,21 @@
     import HealthGoalsModal from './modals/health-goals.modal'
     import NoteTypes from '../../../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/constants/note.types'
     import CareplanMixin from './mixins/careplan.mixin'
+    import DisableEditingMixin from './mixins/disable-editing.mixin'
     import transformHealthGoal from './utils/health-goal-transform'
 
     export default {
         name: 'care-areas',
-        props: [
-            'patient-id'
-        ],
+        props: {
+            patientId: {
+                type: String,
+                required: true,
+            },
+        },
         components: {
             'health-goals-modal': HealthGoalsModal
         },
-        mixins: [ CareplanMixin ],
+        mixins: [ CareplanMixin, DisableEditingMixin ],
         computed: {
             
         },

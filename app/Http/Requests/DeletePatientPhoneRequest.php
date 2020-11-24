@@ -44,11 +44,11 @@ class DeletePatientPhoneRequest extends FormRequest
             $phoneNumber = PhoneNumber::whereId($input['phoneId'])->first();
 
             if (empty($phoneNumber)) {
-                $validator->errors()->add('phoneId', 'Phone number not found');
+                $validator->errors()->add('message', 'Phone number not found');
             }
 
             if ($phoneNumber->is_primary) {
-                $validator->errors()->add('phoneId', 'You cannot delete a primary number');
+                $validator->errors()->add('message', 'You cannot delete a primary number');
             }
 
             $this->request->add([
@@ -59,6 +59,6 @@ class DeletePatientPhoneRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->json($validator->errors()->first(), 422));
+        throw new HttpResponseException(response()->json($validator->errors()->getMessages(), 422));
     }
 }
