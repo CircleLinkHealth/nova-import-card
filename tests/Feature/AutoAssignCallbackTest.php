@@ -292,8 +292,6 @@ class AutoAssignCallbackTest extends TestCase
         $this->assertCallbackExists($patient1->id);
     }
 
-//    }
-
     private function assertCallbackExists(int $patientId)
     {
         $this->assertDatabaseHas('calls', [
