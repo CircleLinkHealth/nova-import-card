@@ -1122,43 +1122,6 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix' => 'admin',
     ], function () {
         Route::get('opcache', 'Admin\OPCacheGUIController@index');
-
-        Route::group([
-            'prefix' => 'reports',
-        ], function () {
-            Route::group([
-                'prefix' => 'monthly-billing/v2',
-            ], function () {
-                Route::get('/make', [
-                    'uses' => 'Billing\PracticeInvoiceController@make',
-                    'as'   => 'monthly.billing.make',
-                ])->middleware('permission:patientSummary.read,patientProblem.read,chargeableService.read,practice.read');
-
-                Route::post('/data', [
-                    'uses' => 'Billing\PracticeInvoiceController@data',
-                    'as'   => 'monthly.billing.data',
-                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
-
-                Route::get('/counts', [
-                    'uses' => 'Billing\PracticeInvoiceController@counts',
-                ])->middleware('permission:patientSummary.read');
-
-                Route::post('/close', [
-                    'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',
-                    'as'   => 'monthly.billing.close.month',
-                ])->middleware('permission:patientSummary.update');
-
-                Route::post('/open', [
-                    'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
-                    'as'   => 'monthly.billing.open.month',
-                ])->middleware('permission:patientSummary.update');
-
-                Route::post('/status/update', [
-                    'uses' => 'Billing\PracticeInvoiceController@updateStatus',
-                    'as'   => 'monthly.billing.status.update',
-                ])->middleware('permission:patientSummary.update');
-            });
-        });
     });
 
     Route::group([
@@ -1561,11 +1524,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Billing\PracticeInvoiceController@createInvoices',
                 'as'   => 'practice.billing.create',
             ])->middleware('permission:practiceInvoice.read');
-
-            Route::post('make', [
-                'uses' => 'Billing\PracticeInvoiceController@makeInvoices',
-                'as'   => 'practice.billing.make',
-            ])->middleware('permission:practiceInvoice.create');
         });
 
         // excel reports
@@ -2068,25 +2026,6 @@ Route::group([
             'edit'   => 'saas-admin.practices.edit',
         ],
     ]);
-
-    Route::group(['prefix' => 'monthly-billing'], function () {
-        Route::get('make', [
-            'uses' => 'Billing\PracticeInvoiceController@make',
-            'as'   => 'saas-admin.monthly.billing.make',
-        ]);
-
-        Route::post('data', [
-            'uses' => 'Billing\PracticeInvoiceController@data',
-            'as'   => 'saas-admin.monthly.billing.data',
-        ]);
-    });
-
-    Route::group(['prefix' => 'practice/billing'], function () {
-        Route::get('create', [
-            'uses' => 'Billing\PracticeInvoiceController@createInvoices',
-            'as'   => 'saas-admin.practices.billing.create',
-        ]);
-    });
 });
 
 Route::get('notifications/{id}', [
