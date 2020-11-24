@@ -6,7 +6,7 @@
                     <small>{{ csSummary.chargeable_service.display_name }}</small>
                 </div>
                 <div>
-                    <a :href="routeActivities" :id="'monthly-time-' + csSummary.chargeable_service.display_name">
+                    <a :href="routeActivities" :id="'monthly-time-' + sanitizeCsName(csSummary.chargeable_service.display_name)">
                         {{ formatTime(csSummary.total_time) }}
                     </a>
                 </div>
@@ -38,6 +38,9 @@ export default {
                 default:
                     return 'col';
             }
+        },
+        sanitizeCsName(csName){
+            return csName.replace(/[^A-Z0-9]/ig, "_");
         }
     }
 }
