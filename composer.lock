@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d6a4d5518c32d1ff2e769d2192dc666",
+    "content-hash": "009ad8aa7bb8b5a2d018fc95cb496247",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -724,7 +724,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "c2058bea01267e36720b57b5ed6d9ae508fd0bd3"
+                "reference": "bdfe97841406e74d14c0b0b100936ff34be1504d"
             },
             "require": {
                 "laravel/passport": "^8.0",
@@ -757,7 +757,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-22T19:24:09+00:00"
+            "time": "2020-11-24T05:42:53+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -799,7 +799,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "5a1a187dac5e8bc8ce009b9a1ae60ce72576f700"
+                "reference": "017f5681d6d0e8b50f54e20956edb5e9aa1da88a"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -833,7 +833,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T03:34:47+00:00"
+            "time": "2020-11-24T05:42:53+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -841,10 +841,11 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "41120a5ca7fa7591b4253ee0f10a1496d3602881"
+                "reference": "a9b355a797ef77492b0e440f0715689d1fd05bc1"
             },
             "require": {
-                "circlelinkhealth/customer-module": "*"
+                "circlelinkhealth/customer-module": "*",
+                "circlelinkhealth/synonyms-module": "*"
             },
             "type": "laravel-module",
             "extra": {
@@ -867,7 +868,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T03:34:47+00:00"
+            "time": "2020-11-24T05:40:05+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1175,7 +1176,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "7794a73433c5daee45424afb90b8d5f952600f2b"
+                "reference": "bf3732350633cd4cb4f6ccbb5e65dc3e2342b3ea"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1189,7 +1190,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T03:30:12+00:00"
+            "time": "2020-11-24T05:40:48+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1225,7 +1226,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "054424c9d043b3c8ab52b8b9b7f11f763f321821"
+                "reference": "1ec887c752884f292ef9774422a7b53a130e86dd"
             },
             "type": "laravel-module",
             "extra": {
@@ -1250,7 +1251,36 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-09-28T23:25:10+00:00"
+            "time": "2020-11-24T05:40:58+00:00"
+        },
+        {
+            "name": "circlelinkhealth/synonyms-module",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/synonyms.git",
+                "reference": "e0bb71dd5c8e897bfc9da0f1f47960bf01088a96"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\Synonyms\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@circlelinkhealth.com"
+                }
+            ],
+            "description": "Add synonyms for a specific Model and Field.",
+            "time": "2020-09-30T13:48:52+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",

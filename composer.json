@@ -89,6 +89,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/saml-sp-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/synonyms.git"
         }
     ],
     "require": {
@@ -124,6 +128,7 @@
         "circlelinkhealth/sharedvuecomponents-module": "dev-vaporizing-admin",
         "circlelinkhealth/sqlviews-module": "dev-vaporizing-admin",
         "circlelinkhealth/twofa-module": "dev-vaporizing-admin",
+        "circlelinkhealth/synonyms-module": "*",
         "daltcore/lara-pdf-merger": "1.1.2",
         "danielme85/laravel-log-to-db": "^2.3",
         "dillingham/nova-button": "^1.0",
