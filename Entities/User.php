@@ -3500,18 +3500,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             }
         }
 
-        return $query->with([
-            'patientInfo' => function ($q) {
-                return $q->select(['id', 'ccm_status', 'user_id']);
-            },
-
-            'enrollee',
-
-            'phoneNumbers' => function ($q) {
-                return $q->select(['id', 'user_id', 'number']);
-            },
-        ])
-            ->whereHas('phoneNumbers', function ($phoneNumber) use ($phoneNumbersFormatted) {
+        return $query->whereHas('phoneNumbers', function ($phoneNumber) use ($phoneNumbersFormatted) {
                 $phoneNumber->whereIn('number', $phoneNumbersFormatted->toArray());
             });
     }
