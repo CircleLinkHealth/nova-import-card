@@ -214,7 +214,7 @@
     import LoaderComponent from '../../../../components/loader'
     import {rootUrl} from '../../../../app.config'
     import {today} from '../../../../util/today'
-    import notifications from '../../../../components/notifications'
+    import notifications from '../../../../components/shared/notifications/notifications'
     import VueSelect from 'vue-select'
     import VueCache from '../../../../util/vue-cache'
 
