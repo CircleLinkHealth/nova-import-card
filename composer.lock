@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "06f477a9a5ca28c743ef7fc60abbc297",
+    "content-hash": "b40c213b3cad39d67557546c86c4dd73",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1231,11 +1231,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.6.3",
+            "version": "v2.6.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "5c49504ea6392126d3072e1da66a3b16315bff03"
+                "reference": "b442c709d9fa2a13eaf5ff5a65f957bd470eae9b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1257,15 +1257,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-23T12:37:35+00:00"
+            "time": "2020-11-24T10:44:44+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.5.3",
+            "version": "v3.5.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "2b73461262cb19da6254bbf57c1f166f118a3d7f"
+                "reference": "acff22af317eaf73c76f890b1dcec9e66cef6b14"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1299,7 +1299,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-23T12:40:51+00:00"
+            "time": "2020-11-24T10:45:40+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
