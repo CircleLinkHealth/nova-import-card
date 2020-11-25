@@ -161,7 +161,7 @@ class CallsDashboardController extends Controller
     
     public function index()
     {
-        return view('admin.CallsDashboard.index');
+        return view('cpm-admin::admin.CallsDashboard.index');
     }
     
     private function modifyNurseCareRateLogs(User $nurse, Note $note, string $oldStatus, string $newStatus)
