@@ -9,7 +9,7 @@ namespace App\Services\Enrollment;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Artisan;

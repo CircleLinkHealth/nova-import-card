@@ -11,7 +11,7 @@ use App\Traits\Tests\PostmarkCallbackHelpers;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Faker\Factory;
 
 class InboundCallbackDataForTesterService
