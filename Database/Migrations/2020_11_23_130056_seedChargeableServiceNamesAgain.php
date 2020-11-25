@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMarillacEnrolmentLetter extends Migration
+class SeedChargeableServiceNamesAgain extends Migration
 {
     /**
      * Reverse the migrations.
@@ -24,6 +24,8 @@ class CreateMarillacEnrolmentLetter extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateMarillacHealthLetter']);
+        Artisan::call('db:seed', [
+            '--class' => ChargeableServiceSeeder::class,
+        ]);
     }
 }
