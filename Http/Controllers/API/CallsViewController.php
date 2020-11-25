@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API;
 
 use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls;
-
 use CircleLinkHealth\SharedModels\Entities\CallView;
 use CircleLinkHealth\SharedModels\Filters\CallViewFilters;
 use CircleLinkHealth\CpmAdmin\Http\Resources\CallView as CallViewResource;
