@@ -221,11 +221,11 @@ function formatTime($time)
                                             <th>Task</th>
                                             <th>Patient</th>
                                             <th>Activity<br>Date</th>
-                                            <th>Activity<br>Time Start</th>
-                                            <th>Activity<br>Time End</th>
+                                            <th>Activity<br>Time<br>Start</th>
+                                            <th>Activity<br>Time<br>End</th>
                                             <th>Time<br>Zone</th>
                                             <th>Last<br>Date called</th>
-                                            <th>Time to date</th>
+                                            <th>Total<br>Time</th>
                                             <th># Calls<br>to date</th>
                                             <th>Provider</th>
                                             <th>Practice</th>
