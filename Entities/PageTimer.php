@@ -130,6 +130,9 @@ class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
      */
     protected $table = 'lv_page_timer';
 
+    /**
+     * @deprecated Left here for old records in DB. We register one activity with a patient now.
+     */
     public function activities()
     {
         return $this->hasMany('CircleLinkHealth\TimeTracking\Entities\Activity', 'page_timer_id');

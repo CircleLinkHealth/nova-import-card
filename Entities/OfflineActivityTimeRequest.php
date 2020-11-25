@@ -133,37 +133,29 @@ class OfflineActivityTimeRequest extends Model
 
         app(TimeTrackerServerService::class)->syncOfflineTime($this);
 
-        $activityId                 = null;
-        $nurse                      = optional($this->requester)->nurseInfo;
-        $activityService            = app(ActivityService::class);
-        $chargeableServicesDuration = $activityService->separateDurationForEachChargeableServiceId($this->patient, $this->duration_seconds, $this->chargeable_service_id);
-        foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
-            $pageTimer                = new PageTimer();
-            $pageTimer->activity_type = $this->type;
-            $pageTimer->patient_id    = $this->patient_id;
-            $pageTimer->provider_id   = $this->requester_id;
-            $pageTimer->start_time    = $this->performed_at->toDateTimeString();
-            $activity                 = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $pageTimer, $chargeableServiceDuration);
+        $nurse                     = optional($this->requester)->nurseInfo;
+        $activityService           = app(ActivityService::class);
+        $chargeableServiceDuration = $activityService->getChargeableServiceIdDuration($this->patient, $this->duration_seconds, $this->chargeable_service_id);
+        $pageTimer                 = new PageTimer();
+        $pageTimer->activity_type  = $this->type;
+        $pageTimer->patient_id     = $this->patient_id;
+        $pageTimer->provider_id    = $this->requester_id;
+        $pageTimer->start_time     = $this->performed_at->toDateTimeString();
+        $activity                  = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('manual_input', $pageTimer, $chargeableServiceDuration);
 
-            if ( ! empty($this->comment)) {
-                $meta = new ActivityMeta(['meta_key' => 'comment', 'meta_value' => $this->comment]);
-                $activity->meta()->save($meta);
-            }
-
-            if ( ! $activityId) {
-                $activityId = $activity->id;
-            }
-            ProcessMonthltyPatientTime::dispatchNow($this->patient_id);
-            if ($nurse) {
-                ProcessNurseMonthlyLogs::dispatchNow($activity);
-            }
-            event(new PatientActivityCreated($this->patient_id));
+        if ( ! empty($this->comment)) {
+            $meta = new ActivityMeta(['meta_key' => 'comment', 'meta_value' => $this->comment]);
+            $activity->meta()->save($meta);
         }
+
+        ProcessMonthltyPatientTime::dispatchNow($this->patient_id);
+        if ($nurse) {
+            ProcessNurseMonthlyLogs::dispatchNow($activity);
+        }
+        event(new PatientActivityCreated($this->patient_id));
 
         $this->is_approved = true;
-        if ($activityId) {
-            $this->activity_id = $activityId;
-        }
+        $this->activity_id = $activity->id;
 
         $this->save();
     }
@@ -241,6 +233,8 @@ class OfflineActivityTimeRequest extends Model
             $code = ChargeableService::PCM;
         } elseif ($patient->isRpm()) {
             $code = ChargeableService::RPM;
+        } elseif ($patient->isRhc()) {
+            $code = ChargeableService::GENERAL_CARE_MANAGEMENT;
         }
 
         if ( ! $code) {
