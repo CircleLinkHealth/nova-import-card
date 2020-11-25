@@ -62,6 +62,8 @@ class PatientMonthlyServiceTime
             case ChargeableService::RPM:
             case ChargeableService::RPM40:
                 return PatientMonthlyServiceTime::rpm($patientId, $month);
+            case ChargeableService::GENERAL_CARE_MANAGEMENT:
+                return PatientMonthlyServiceTime::rhc($patientId, $month);
             default:
                 return 0;
         }
@@ -72,6 +74,13 @@ class PatientMonthlyServiceTime
         return app(PatientMonthlyServiceTime::class)
             ->setSummaries($patientId, $month)
             ->getTimeForServices([ChargeableService::PCM]);
+    }
+
+    public static function rhc(int $patientId, Carbon $month): int
+    {
+        return app(PatientMonthlyServiceTime::class)
+            ->setSummaries($patientId, $month)
+            ->getTimeForServices([ChargeableService::GENERAL_CARE_MANAGEMENT]);
     }
 
     public static function rpm(int $patientId, Carbon $month): int
