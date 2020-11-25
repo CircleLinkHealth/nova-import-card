@@ -5,7 +5,7 @@
  */
 
 use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SqlViews\BaseSqlView;
 
 class UnresolvedPostmarkCallbackView extends BaseSqlView
