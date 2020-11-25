@@ -49,7 +49,7 @@ class InboundCallbackMultimatchService
         $callerIdFieldName = $this->sanitizedPatientFieldName($inboundPostmarkData['callerId']);
 
         if (PostmarkInboundCallbackMatchResults::SELF === $inboundPostmarkData['ptn']) {
-            return $this->matchByCallerField($matchedWithPhone, $inboundPostmarkData, $recordId,$callerIdFieldName);
+            return $this->matchByCallerField($matchedWithPhone, $inboundPostmarkData, $recordId, $callerIdFieldName);
         }
 
         $matchedInboundPtnFieldName = $this->getMatchedPatientsUsingName($matchedWithPhone, [$patientFieldName, $callerIdFieldName]);
@@ -87,12 +87,8 @@ class InboundCallbackMultimatchService
 
         return $matchedMatientsResults;
     }
-    
+
     /**
-     * @param Collection $patientsMatchedByPhone
-     * @param array $inboundPostmarkData
-     * @param int $recordId
-     * @param string $callerFieldNameSanitised
      * @return array|void
      */
     private function matchByCallerField(Collection $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId, string $callerFieldNameSanitised)

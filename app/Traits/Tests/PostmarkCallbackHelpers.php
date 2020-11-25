@@ -15,20 +15,26 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 trait PostmarkCallbackHelpers
 {
     /**
+     * @param  bool   $testWeirdFormatInputCases
      * @return string
      */
-    public function getCallbackMailData(User $patient, bool $requestsToWithdraw, bool $nameIsSelf = false, string $number)
+    public function getCallbackMailData(User $patient, bool $requestsToWithdraw, bool $nameIsSelf = false, string $number, $testWeirdFormatInputCases = false)
     {
-        $name = $nameIsSelf ? 'SELF' : $patient->display_name;
+        $name  = $nameIsSelf ? 'SELF' : $patient->display_name;
+        $clrId = $number.' '.$patient->display_name;
+
+        if ($testWeirdFormatInputCases) {
+            $name  = $name.' '.$patient->display_name.' '.'*';
+            $clrId = $number.' '.$number.' '.'Pavlos Tsokkos';
+        }
 
         $inboundMailDomain = ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL_DOMAIN;
         $primary           = $patient->getBillingProviderName() ?: 'Salah';
-        $clrId             = $number.' '.$patient->display_name;
 
         $callbackMailData = "For: GROUP DISTRIBUTION
         From:| $inboundMailDomain |
         Phone:| $number |
-        Ptn:| $name  |
+        Ptn:| $name |
         Primary:| $primary |
         Msg:| titolos pomolos lorem calypsum |
         Msg ID: Not relevant
@@ -96,7 +102,7 @@ trait PostmarkCallbackHelpers
         return $patient;
     }
 
-    private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient, ?string $forcePhone = '')
+    private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient, ?string $forcePhone = '', bool $testWeirdFormatInputCases = false)
     {
         $this->phone = $forcePhone;
         $number      = $this->phone;
@@ -111,7 +117,7 @@ trait PostmarkCallbackHelpers
                 'data' => json_encode(
                     [
                         'From'     => 'message.dispatch@callcenterusa.net',
-                        'TextBody' => $this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf, $number),
+                        'TextBody' => $this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf, $number, $testWeirdFormatInputCases),
                     ]
                 ),
             ]
