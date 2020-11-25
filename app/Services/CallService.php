@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\Actions\PatientTimeAndCalls;
+use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use App\CallViewNurses;
 use App\Jobs\ProcessPostmarkInboundMailJob;
