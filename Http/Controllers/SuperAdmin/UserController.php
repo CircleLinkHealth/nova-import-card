@@ -398,7 +398,7 @@ class UserController extends Controller
         $invalidUsers = [];
 
         return view(
-            'wpUsers.index',
+            'cpm-admin::admin.users.index',
             compact(
                 [
                     'messages',
