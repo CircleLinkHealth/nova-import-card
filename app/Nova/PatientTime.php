@@ -61,6 +61,38 @@ class PatientTime extends Resource
     }
 
     /**
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request)
+    {
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authorizedToView(Request $request)
+    {
+        return auth()->user()->isAdmin();
+    }
+
+    /**
      * Get the cards available for the request.
      *
      * @return array
