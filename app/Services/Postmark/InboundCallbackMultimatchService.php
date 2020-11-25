@@ -49,13 +49,38 @@ class InboundCallbackMultimatchService
             return $this->matchByCallerField($matchedWithPhone, $inboundPostmarkData, $recordId);
         }
 
-        $matchedWithInboundName = $matchedWithPhone->where('display_name', '=', $inboundPostmarkData['ptn']);
+        $patientFieldName           = $this->sanitizedPatientFieldName($inboundPostmarkData['ptn']);
+        $callerIdFieldName          = $this->sanitizedPatientFieldName($inboundPostmarkData['callerId']);
+        $matchedInboundPtnFieldName = $this->getMatchedPatientsUsingName($matchedWithPhone, $patientFieldName, $callerIdFieldName);
 
-        if ($matchedWithInboundName->isEmpty() || 1 !== $matchedWithInboundName->count()) {
+        if (is_null($matchedInboundPtnFieldName)) {
+            Log::critical("Couldn't match sanitized patient name for record_id:$recordId in postmark_inbound_mail");
+            sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient sanitized name match for record_id:[$recordId] in postmark_inbound_mail");
+
+            return;
+        }
+
+        if ($matchedInboundPtnFieldName->isEmpty() || 1 !== $matchedInboundPtnFieldName->count()) {
             return $this->multimatchResult($matchedWithPhone, PostmarkInboundCallbackMatchResults::MULTIPLE_PATIENT_MATCHES);
         }
 
-        return $this->resolveSingleMatchResult($matchedWithInboundName->first(), $inboundPostmarkData);
+        return $this->resolveSingleMatchResult($matchedInboundPtnFieldName->first(), $inboundPostmarkData);
+    }
+
+    /**
+     * @return Collection
+     */
+    private function getMatchedPatientsUsingName(Collection $matchedWithPhone, string $patientFieldName, string $callerIdFieldName)
+    {
+        return $matchedWithPhone->transform(function ($patientUser) use ($patientFieldName, $callerIdFieldName) {
+            $dbPatientName = $this->sanitizedPatientFieldName($patientUser->display_name);
+            if ($patientFieldName === $dbPatientName
+                || $callerIdFieldName === $dbPatientName) {
+                return $patientUser;
+            }
+        });
+        
+        
     }
 
     /**
@@ -91,5 +116,17 @@ class InboundCallbackMultimatchService
     private function parsePostmarkInboundField(string $string)
     {
         return preg_split('/(?=[A-Z])/', preg_replace('/[^a-zA-Z]+/', '', $string));
+    }
+
+    /**
+     * @return string
+     */
+    private function sanitizedPatientFieldName(string $name)
+    {
+        $patientName      = trim(preg_replace('/[^A-Za-z ]/', '', strtolower($name)));
+        $patientNameSplit = str_split($patientName);
+        sort($patientNameSplit);
+
+        return implode('', $patientNameSplit);
     }
 }

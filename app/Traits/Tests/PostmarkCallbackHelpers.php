@@ -14,11 +14,12 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 trait PostmarkCallbackHelpers
 {
-    public function getCallbackMailData(User $patient, bool $requestsToWithdraw, bool $nameIsSelf = false)
+    /**
+     * @return string
+     */
+    public function getCallbackMailData(User $patient, bool $requestsToWithdraw, bool $nameIsSelf = false, string $number)
     {
-        $this->phone = $patient->phoneNumbers->first();
-        $number      = $this->phone->number;
-        $name        = $nameIsSelf ? 'SELF' : $patient->display_name;
+        $name = $nameIsSelf ? 'SELF' : $patient->display_name;
 
         $inboundMailDomain = ProcessPostmarkInboundMailJob::FROM_CALLBACK_EMAIL_DOMAIN;
         $primary           = $patient->getBillingProviderName() ?: 'Salah';
@@ -95,14 +96,22 @@ trait PostmarkCallbackHelpers
         return $patient;
     }
 
-    private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient)
+    private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient, ?string $forcePhone = '')
     {
+        $this->phone = $forcePhone;
+        $number      = $this->phone;
+
+        if ('' === $this->phone) {
+            $this->phone = $patient->phoneNumbers->first();
+            $number      = $this->phone->number;
+        }
+
         return PostmarkInboundMail::create(
             [
                 'data' => json_encode(
                     [
                         'From'     => 'message.dispatch@callcenterusa.net',
-                        'TextBody' => $this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf),
+                        'TextBody' => $this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf, $number),
                     ]
                 ),
             ]
@@ -126,6 +135,6 @@ trait PostmarkCallbackHelpers
      */
     private function generatePostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient)
     {
-        return $this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf);
+        return $this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf, $patient->phoneNumbers->first()->number);
     }
 }
