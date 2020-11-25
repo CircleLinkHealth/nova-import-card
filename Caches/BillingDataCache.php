@@ -36,10 +36,15 @@ class BillingDataCache implements BillingCache
         $this->queriedLocationSummaries = [];
     }
 
-    public function clearPatients(): void
+    public function clearPatients(array $patientIds = []): void
     {
-        $this->patientCache    = [];
-        $this->queriedPatients = [];
+        if (empty($patientIds)) {
+            $this->patientCache    = [];
+            $this->queriedPatients = [];
+        } else {
+            $this->patientCache    = array_filter($this->patientCache, fn ($p) => ! in_array($p->id, $patientIds));
+            $this->queriedPatients = array_filter($this->queriedPatients, fn ($pId) => ! in_array($pId, $patientIds));
+        }
     }
 
     public function forgetLocationSummaries(int $locationId): void
