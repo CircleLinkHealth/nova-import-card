@@ -87,6 +87,8 @@ class ChargeableService extends BaseModel
             self::CCM,
             self::CCM_PLUS_40,
             self::CCM_PLUS_60,
+            self::RPM,
+            self::RPM40,
         ],
     ];
 
@@ -178,7 +180,11 @@ class ChargeableService extends BaseModel
             return [];
         }
 
-        return self::CLASHES[$service] ?? [self::GENERAL_CARE_MANAGEMENT];
+        return self::CLASHES[$service] ?? [
+            self::GENERAL_CARE_MANAGEMENT,
+            self::RPM,
+            self::RPM40,
+        ];
     }
 
     public static function getCodeForPatientProblems(string $code): string
