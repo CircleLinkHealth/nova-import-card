@@ -6,6 +6,7 @@
 
 namespace App\Services\Postmark;
 
+use App\ValueObjects\PostmarkCallback\FirstNameLastNameValueObject;
 use App\ValueObjects\PostmarkCallback\PostmarkMultipleMatchData;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
@@ -20,10 +21,7 @@ class InboundCallbackMultimatchService
     {
         $patientNameArray = $this->parsePostmarkInboundField($callerField);
 
-        return [
-            'firstName' => isset($patientNameArray[1]) ? $patientNameArray[1] : '',
-            'lastName'  => isset($patientNameArray[2]) ? $patientNameArray[2] : '',
-        ];
+        return (new FirstNameLastNameValueObject())->firstsLastNameArray($patientNameArray);
     }
 
     public function multimatchResult(Collection $patientsMatched, string $reasoning)
