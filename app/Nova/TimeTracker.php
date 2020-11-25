@@ -8,6 +8,7 @@ namespace App\Nova;
 
 use App\Constants;
 use App\Entities\PatientTime;
+use App\Nova\Actions\ModifyTimeTracker;
 use App\Nova\Filters\BillableTimeFilter;
 use App\Nova\Filters\PageTimerDurationFilter;
 use App\Nova\Filters\TimestampFilter;
@@ -82,8 +83,8 @@ class TimeTracker extends Resource
     public function actions(Request $request)
     {
         return [
-            (new Actions\ModifyTimeTracker())
-                ->confirmText("Modifying the duration may have side-effects on patient's ccm/bhi time and care coach's compensation. Are you sure you want to proceed?")
+            (new ModifyTimeTracker())
+                ->confirmText("Modifying the duration may have side-effects on patient's time and care coach's compensation. Are you sure you want to proceed?")
                 ->confirmButtonText('Done')
                 ->cancelButtonText('Cancel')
                 ->onlyOnDetail(true),
