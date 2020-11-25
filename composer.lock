@@ -724,7 +724,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "bdfe97841406e74d14c0b0b100936ff34be1504d"
+                "reference": "658668419b9f4183cd4e664f04a0179637bc7339"
             },
             "require": {
                 "laravel/passport": "^8.0",
@@ -757,7 +757,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T05:42:53+00:00"
+            "time": "2020-11-25T04:51:49+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -841,7 +841,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "f38b77ec5e28f7939d35ae2982b029cffe698f95"
+                "reference": "9ec6492505442caa76aef10eb86a08a6b342f83b"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -868,7 +868,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-25T01:59:39+00:00"
+            "time": "2020-11-25T04:35:58+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1176,7 +1176,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "11d91d2f270a94f7cc13fcddb36c10c94206a602"
+                "reference": "03b8abd24b95eaaefa9c29f520a6bd388ffcfcbb"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1190,7 +1190,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-25T01:59:39+00:00"
+            "time": "2020-11-25T04:51:18+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
