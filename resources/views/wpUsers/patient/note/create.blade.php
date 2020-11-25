@@ -1002,6 +1002,13 @@
                             }
                         }
 
+                        console.log({
+                            user_is_care_coach : userIsCareCoach,
+                            call_is_success: callIsSuccess,
+                            should_rn_approve: shouldRnApprove,
+                            has_rn_approved_care_plan: hasRnApprovedCarePlan
+                        });
+
                         // ROAD-39 RN must approve care plan before making a successful welcome call
                         if (userIsCareCoach && callIsSuccess && shouldRnApprove && !hasRnApprovedCarePlan) {
                             showSavingDraftModal();
