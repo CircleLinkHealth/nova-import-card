@@ -302,7 +302,7 @@ class AutoAssignCallbackTest extends TestCase
         $patient1 = $this->createPatientData(Patient::ENROLLED, $this->practice->id, Enrollee::ENROLLED);
         $nurse    = $this->createUser(Practice::firstOrFail()->id, 'care-center');
         $this->setUpPermanentNurse($nurse, $patient1);
-        $postmarkRecord = $this->createPostmarkCallbackData(false, false, $patient1);
+        $postmarkRecord = $this->createPostmarkCallbackData(false, true, $patient1);
 
         /** @var PhoneNumber $phone */
         $phone = $this->phone;
