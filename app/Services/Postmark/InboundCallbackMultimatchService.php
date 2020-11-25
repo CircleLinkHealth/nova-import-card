@@ -23,16 +23,11 @@ class InboundCallbackMultimatchService
     }
 
     /**
-     * @return string[]
+     * @return string
      */
     public function parseNameFromCallerField(string $callerField)
     {
-        $patientNameArray = $this->parsePostmarkInboundField($callerField);
-
-        return [
-            'firstName' => isset($patientNameArray[1]) ? $patientNameArray[1] : '',
-            'lastName'  => isset($patientNameArray[2]) ? $patientNameArray[2] : '',
-        ];
+        return $this->sanitizedPatientFieldName($callerField);
     }
 
     public function resolveSingleMatchResult(User $matchedPatient, array $inboundPostmarkData)
@@ -51,7 +46,7 @@ class InboundCallbackMultimatchService
 
         $patientFieldName           = $this->sanitizedPatientFieldName($inboundPostmarkData['ptn']);
         $callerIdFieldName          = $this->sanitizedPatientFieldName($inboundPostmarkData['callerId']);
-        $matchedInboundPtnFieldName = $this->getMatchedPatientsUsingName($matchedWithPhone, $patientFieldName, $callerIdFieldName);
+        $matchedInboundPtnFieldName = $this->getMatchedPatientsUsingName($matchedWithPhone, [$patientFieldName, $callerIdFieldName]);
 
         if (is_null($matchedInboundPtnFieldName)) {
             Log::critical("Couldn't match sanitized patient name for record_id:$recordId in postmark_inbound_mail");
@@ -70,31 +65,33 @@ class InboundCallbackMultimatchService
     /**
      * @return Collection
      */
-    private function getMatchedPatientsUsingName(Collection $matchedWithPhone, string $patientFieldName, string $callerIdFieldName)
+    private function getMatchedPatientsUsingName(Collection $matchedWithPhone, array $fieldsToCompare)
     {
-        return $matchedWithPhone->transform(function ($patientUser) use ($patientFieldName, $callerIdFieldName) {
+        $results = collect();
+        $matchedWithPhone->transform(function ($patientUser) use (&$results, $fieldsToCompare) {
             $dbPatientName = $this->sanitizedPatientFieldName($patientUser->display_name);
-            if ($patientFieldName === $dbPatientName
-                || $callerIdFieldName === $dbPatientName) {
-                return $patientUser;
+            foreach ($fieldsToCompare as $fieldToCompare) {
+                if ($fieldToCompare === $dbPatientName) {
+                    if ( ! in_array($patientUser->id, $results->pluck('id')->toArray())) {
+                        $results->push($patientUser);
+                    }
+                }
             }
         });
-        
-        
+    
+        return $results;
     }
-
+    
     /**
-     * @return array
+     * @param Collection $patientsMatchedByPhone
+     * @param array $inboundPostmarkData
+     * @param int $recordId
+     * @return array|void
      */
     private function matchByCallerField(Collection $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId)
     {
-        $fullName  = $this->parseNameFromCallerField($inboundPostmarkData['callerId']);
-        $firstName = $fullName['firstName'];
-        $lastName  = $fullName['lastName'];
-
-        $patientsMatchedByCallerFieldName = $patientsMatchedByPhone
-            ->where('first_name', '=', $firstName)
-            ->where('last_name', '=', $lastName);
+        $fullName                         = $this->parseNameFromCallerField($inboundPostmarkData['callerId']);
+        $patientsMatchedByCallerFieldName = $this->getMatchedPatientsUsingName($patientsMatchedByPhone, [$fullName]);
 
         if (0 === $patientsMatchedByCallerFieldName->count()) {
             Log::critical("Couldn't match patient for record_id:$recordId in postmark_inbound_mail");
@@ -124,7 +121,7 @@ class InboundCallbackMultimatchService
     private function sanitizedPatientFieldName(string $name)
     {
         $patientName      = trim(preg_replace('/[^A-Za-z ]/', '', strtolower($name)));
-        $patientNameSplit = str_split($patientName);
+        $patientNameSplit = str_split(implode('', array_unique(explode(' ', $patientName))));
         sort($patientNameSplit);
 
         return implode('', $patientNameSplit);

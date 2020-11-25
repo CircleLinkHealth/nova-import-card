@@ -43,14 +43,14 @@ class PostmarkInboundCallbackMatchResults
         /** @var Builder $inboundDataMatchedWithPhone */
         $inboundDataMatchedWithPhone = $this->matchByPhone($this->postmarkCallbackData['phone'], $this->postmarkCallbackData['callerId']);
 
-//        if (1 === $inboundDataMatchedWithPhone->count()) {
-//            /** @var User $matchedPatient */
-//            $matchedPatient = $inboundDataMatchedWithPhone->first();
-//
-//            return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackResult($matchedPatient, $this->postmarkCallbackData);
-//        }
+        if (1 === $inboundDataMatchedWithPhone->count()) {
+            /** @var User $matchedPatient */
+            $matchedPatient = $inboundDataMatchedWithPhone->first();
 
-        if (/*$inboundDataMatchedWithPhone->count() > 1*/ true) {
+            return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackResult($matchedPatient, $this->postmarkCallbackData);
+        }
+
+        if ($inboundDataMatchedWithPhone->count() > 1) {
             return app(InboundCallbackMultimatchService::class)
                 ->tryToMatchByName($inboundDataMatchedWithPhone->get(), $this->postmarkCallbackData, $this->recordId);
         }
