@@ -841,7 +841,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "a9b355a797ef77492b0e440f0715689d1fd05bc1"
+                "reference": "f38b77ec5e28f7939d35ae2982b029cffe698f95"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -868,7 +868,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T05:40:05+00:00"
+            "time": "2020-11-25T01:59:39+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1176,7 +1176,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "bf3732350633cd4cb4f6ccbb5e65dc3e2342b3ea"
+                "reference": "11d91d2f270a94f7cc13fcddb36c10c94206a602"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1190,7 +1190,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T05:40:48+00:00"
+            "time": "2020-11-25T01:59:39+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1226,7 +1226,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "4a84d307fba17d9afb7163e4951b116322d9173c"
+                "reference": "b21e60fc62da220d707951046eda333f11bdb074"
             },
             "type": "laravel-module",
             "extra": {
@@ -1251,7 +1251,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T22:33:26+00:00"
+            "time": "2020-11-25T01:59:39+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
