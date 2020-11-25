@@ -98,7 +98,7 @@ class AutoResolveCallbackRequestService
     private function constructCallbackMessage(array $postmarkCallbackData)
     {
         $callerId       = $postmarkCallbackData['callerId'];
-        $fullName       = app(InboundCallbackMultimatchService::class)->parseNameFromCallerField($callerId);
+        $fullName       = app(InboundCallbackMultimatchService::class)->getFirstLastName($callerId);
         $firstName      = $fullName['firstName'];
         $lastName       = $fullName['lastName'];
         $phone          = $postmarkCallbackData['phone'];

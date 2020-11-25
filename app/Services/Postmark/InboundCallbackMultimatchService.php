@@ -13,6 +13,19 @@ use Illuminate\Support\Facades\Log;
 
 class InboundCallbackMultimatchService
 {
+    /**
+     * @return array|string|string[]
+     */
+    public function getFirstLastName(string $callerField)
+    {
+        $patientNameArray = $this->parsePostmarkInboundField($callerField);
+
+        return [
+            'firstName' => isset($patientNameArray[1]) ? $patientNameArray[1] : '',
+            'lastName'  => isset($patientNameArray[2]) ? $patientNameArray[2] : '',
+        ];
+    }
+
     public function multimatchResult(Collection $patientsMatched, string $reasoning)
     {
         return (new PostmarkMultipleMatchData(
@@ -20,14 +33,6 @@ class InboundCallbackMultimatchService
             $reasoning
         ))
             ->getMatchedData();
-    }
-
-    /**
-     * @return string
-     */
-    public function parseNameFromCallerField(string $callerField)
-    {
-        return $this->sanitizedPatientFieldName($callerField);
     }
 
     public function resolveSingleMatchResult(User $matchedPatient, array $inboundPostmarkData)
@@ -40,18 +45,18 @@ class InboundCallbackMultimatchService
      */
     public function tryToMatchByName(Collection $matchedWithPhone, array $inboundPostmarkData, int $recordId)
     {
-        if (PostmarkInboundCallbackMatchResults::SELF === $inboundPostmarkData['ptn']) {
-            return $this->matchByCallerField($matchedWithPhone, $inboundPostmarkData, $recordId);
-        }
+        $patientFieldName  = $this->sanitizedPatientFieldName($inboundPostmarkData['ptn']);
+        $callerIdFieldName = $this->sanitizedPatientFieldName($inboundPostmarkData['callerId']);
 
-        $patientFieldName           = $this->sanitizedPatientFieldName($inboundPostmarkData['ptn']);
-        $callerIdFieldName          = $this->sanitizedPatientFieldName($inboundPostmarkData['callerId']);
+        if (PostmarkInboundCallbackMatchResults::SELF === $inboundPostmarkData['ptn']) {
+            return $this->matchByCallerField($matchedWithPhone, $callerIdFieldName, $recordId);
+        }
+        
         $matchedInboundPtnFieldName = $this->getMatchedPatientsUsingName($matchedWithPhone, [$patientFieldName, $callerIdFieldName]);
 
         if (is_null($matchedInboundPtnFieldName)) {
             Log::critical("Couldn't match sanitized patient name for record_id:$recordId in postmark_inbound_mail");
             sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient sanitized name match for record_id:[$recordId] in postmark_inbound_mail");
-
             return;
         }
 
@@ -61,37 +66,35 @@ class InboundCallbackMultimatchService
 
         return $this->resolveSingleMatchResult($matchedInboundPtnFieldName->first(), $inboundPostmarkData);
     }
-
+    
     /**
+     * @param Collection $matchedWithPhone
+     * @param array $namesToCompare
      * @return Collection
      */
-    private function getMatchedPatientsUsingName(Collection $matchedWithPhone, array $fieldsToCompare)
+    private function getMatchedPatientsUsingName(Collection $matchedWithPhone, array $namesToCompare)
     {
-        $results = collect();
-        $matchedWithPhone->transform(function ($patientUser) use (&$results, $fieldsToCompare) {
+        $matchedMatientsResults = collect();
+        $matchedWithPhone->transform(function ($patientUser) use (&$matchedMatientsResults, $namesToCompare) {
             $dbPatientName = $this->sanitizedPatientFieldName($patientUser->display_name);
-            foreach ($fieldsToCompare as $fieldToCompare) {
+            foreach ($namesToCompare as $fieldToCompare) {
                 if ($fieldToCompare === $dbPatientName) {
-                    if ( ! in_array($patientUser->id, $results->pluck('id')->toArray())) {
-                        $results->push($patientUser);
+                    if ( ! in_array($patientUser->id, $matchedMatientsResults->pluck('id')->toArray())) {
+                        $matchedMatientsResults->push($patientUser);
                     }
                 }
             }
         });
-    
-        return $results;
+
+        return $matchedMatientsResults;
     }
-    
+
     /**
-     * @param Collection $patientsMatchedByPhone
-     * @param array $inboundPostmarkData
-     * @param int $recordId
      * @return array|void
      */
-    private function matchByCallerField(Collection $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId)
+    private function matchByCallerField(Collection $patientsMatchedByPhone, string $callerFieldSanitised, int $recordId)
     {
-        $fullName                         = $this->parseNameFromCallerField($inboundPostmarkData['callerId']);
-        $patientsMatchedByCallerFieldName = $this->getMatchedPatientsUsingName($patientsMatchedByPhone, [$fullName]);
+        $patientsMatchedByCallerFieldName = $this->getMatchedPatientsUsingName($patientsMatchedByPhone, [$callerFieldSanitised]);
 
         if (0 === $patientsMatchedByCallerFieldName->count()) {
             Log::critical("Couldn't match patient for record_id:$recordId in postmark_inbound_mail");

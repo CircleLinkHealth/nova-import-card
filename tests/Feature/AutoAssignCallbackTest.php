@@ -114,7 +114,7 @@ class AutoAssignCallbackTest extends TestCase
             }
         }
     }
-    
+
     public function test_it_saves_as_unresolved_callback_if_patient_consented_but_not_enrolled()
     {
         $patient = $this->createPatientData(Patient::TO_ENROLL, $this->practice->id, Enrollee::CONSENTED);
@@ -138,6 +138,7 @@ class AutoAssignCallbackTest extends TestCase
         $phone1 = $this->phone;
 
         $patient2 = $this->createPatientData(Patient::ENROLLED, $this->practice->id, Enrollee::ENROLLED);
+
         $patient2->phoneNumbers
             ->first()
             ->update(
@@ -146,8 +147,9 @@ class AutoAssignCallbackTest extends TestCase
                 ]
             );
 
-        $patient2->first_name = $patient1->first_name;
-        $patient2->last_name  = $patient1->last_name;
+        $patient2->first_name   = $patient1->first_name;
+        $patient2->last_name    = $patient1->last_name;
+        $patient2->display_name = $patient1->first_name.' '.$patient1->last_name;
         $patient2->save();
         $patient2->fresh();
         $this->createPostmarkCallbackData(false, true, $patient2);
@@ -214,7 +216,7 @@ class AutoAssignCallbackTest extends TestCase
         $this->assertUnresolvedReason(PostmarkInboundCallbackMatchResults::WITHDRAW_REQUEST, $postmarkRecord->id);
     }
 
-    public function test_it_wil_accept_correct_phone_with_different_format_and_create_callback()
+    public function test_it_wil_sanitize_phone_with_correct_format_and_create_callback()
     {
         $phoneFormatsCases = [
             '527-931-9827',
@@ -257,7 +259,7 @@ class AutoAssignCallbackTest extends TestCase
         ]);
     }
 
-    public function test_it_will_transform_non_accepted_phones_from_postmark_phone_number_and_create_callback()
+    public function test_it_will_transform_non_accepted_phones_formats_and_create_callback()
     {
         $phoneFormatsCaseA = [
             '527-931-9827',
