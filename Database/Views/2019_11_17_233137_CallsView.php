@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\SharedModels\Entities\CallView;
 use CircleLinkHealth\SqlViews\BaseSqlView;
 
 /**
@@ -95,24 +96,24 @@ class CallsView extends BaseSqlView
             # tasks can be in the past
             c.type != 'call'
       ");
-
+        
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
         // because we store scheduled_date in New York time (EST), but we the timezone in database can be anything (UTC or local)
-
+        
         // removed where clause: c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York'))
         // calls table is now an actions table.
         // we have tasks that may be due in the past
         // assuming that re-scheduler service is dropping past calls, we will only have type `task` that are in the past
-
+        
         // update:
         // modified where clause to optimize query and cover comments above
     }
-
+    
     /**
      * Get the name of the sql view.
      */
     public function getViewName(): string
     {
-        return 'calls_view';
+        return CallView::TABLE;
     }
 }
