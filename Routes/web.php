@@ -92,6 +92,11 @@ Route::prefix('api')->group(function() {
                 'user.outbound-calls',
                 'API\UserOutboundCallController@store'
             )->middleware('permission:call.create');
+    
+            Route::post('calls-v2-time-and-calls', [
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsViewController@getPatientTimeAndCalls',
+                'as'   => 'calls.v2.time-and-calls',
+            ])->middleware('permission:call.read');
         });
     });
 

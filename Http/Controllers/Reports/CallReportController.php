@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Reports;
 
-use App\Actions\PatientTimeAndCalls;
+use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls;
 use App\Http\Controllers\CallController;
 use App\ValueObjects\PatientTimeAndCalls as PatientTimeAndCallsValueObject;
 use Carbon\Carbon;
