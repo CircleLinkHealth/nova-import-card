@@ -34,9 +34,19 @@ class PostmarkInboundCallbackRequest
         ];
     }
 
+    /**
+     * @return array|void
+     */
     public function run(string $inboundCallback, int $postmarkId)
     {
         $inboundCallbackArray = $this->getArrayFromStringWithBreaks($inboundCallback, $postmarkId);
+
+        if (count($inboundCallbackArray) > 30) {
+//            I dont see any other way in current code to distinguish this. A usual email has 19 - 22 count in Production
+            sendSlackMessage('#carecoach_ops_alerts', "[$postmarkId] in postmark_inbound_mail, has lot of emails in body. Probably it is the daily callback
+            report.");
+            exit;
+        }
 
         return  $this->arrayWithKeys($inboundCallbackArray);
     }
