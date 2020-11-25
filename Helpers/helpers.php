@@ -12,6 +12,9 @@ use Illuminate\Support\Str;
 
 if ( ! function_exists('isProductionEnv')) {
     /**
+     *
+     *
+     *
      * Returns whether or not this is a Production server, ie. used by real users.
      *
      * @return \Illuminate\Config\Repository|mixed
@@ -180,5 +183,12 @@ if ( ! function_exists('parseIds')) {
         }
 
         return array_filter((array) $value);
+    }
+}
+
+if ( ! function_exists('isCpm')) {
+    function isCpm()
+    {
+        return 'CarePlan Manager' === config('app.name');
     }
 }
