@@ -167,7 +167,7 @@ class CcdaImporterWrapper
             $provider = self::searchBillingProvider($term, $this->ccda->practice_id);
         }
 
-        if ( ! $provider && $this->ccda->bluebuttonJson()->document->author->name && $name = $this->ccda->bluebuttonJson()->document->author->name->given) {
+        if ( ! $provider && $this->ccda->bluebuttonJson()->document && $this->ccda->bluebuttonJson()->document->author->name && $name = $this->ccda->bluebuttonJson()->document->author->name->given) {
             $provider = $name[0].' '.$this->ccda->bluebuttonJson()->document->author->name->family;
         }
 
@@ -463,7 +463,9 @@ class CcdaImporterWrapper
 
     private function setLocationFromAuthorAddressInCcda(Ccda $ccda)
     {
-        //Get address line 1 from documentation_of section of ccda
+        if ( ! $this->ccda->bluebuttonJson()->document) {
+            return;
+        }
         $address = ((array) $ccda->bluebuttonJson()->document->author->address)['street'][0] ?? null;
 
         if (empty($address)) {
@@ -477,7 +479,10 @@ class CcdaImporterWrapper
 
     private function setLocationFromDocumentationOfAddressInCcda(Ccda $ccda)
     {
-        //Get address line 1 from documentation_of section of ccda
+        if ( ! $this->ccda->bluebuttonJson()->document) {
+            return;
+        }
+        
         $addresses = collect($ccda->bluebuttonJson()->document->documentation_of)->map(function ($address) {
             $address = ((array) $address->address)['street'] ?? null;
 
@@ -569,6 +574,10 @@ class CcdaImporterWrapper
 
     private function setPracticeAndLocationFromDocumentCustodianName()
     {
+        if ( ! $this->ccda->bluebuttonJson()->document) {
+            return;
+        }
+        
         if ($custodianName = $this->ccda->bluebuttonJson()->document->custodian->name) {
             $location = Location::whereColumnOrSynonym('name', $custodianName)->first();
 
