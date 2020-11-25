@@ -577,14 +577,15 @@ class WebixFormatter implements ReportFormatter
                         ).'"><strong>Approve Now</strong></a>';
                     }
                 } elseif (CarePlan::QA_APPROVED == $careplanStatus) {
-                    $careplanStatus     = 'RN Approve';
+                    $isRpm              = $patient->isRpm();
+                    $careplanStatus     = $isRpm ? 'Approve Now' : 'RN Approve';
                     $tooltip            = $careplanStatus;
-                    $careplanStatusLink = 'RN Approve';
+                    $careplanStatusLink = $isRpm ? 'Approve Now' : 'RN Approve';
                     if ($canApproveCarePlans) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
                             'patient.demographics.show',
                             [$patient->id]
-                        ).'"><strong>RN Approve</strong></a>';
+                        ).'"><strong>'.($isRpm ? 'Approve Now' : 'RN Approve').'</strong></a>';
                     }
                 } elseif (CarePlan::DRAFT == $careplanStatus) {
                     $careplanStatus     = 'CLH Approve';
