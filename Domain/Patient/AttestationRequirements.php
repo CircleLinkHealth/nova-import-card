@@ -101,18 +101,9 @@ class AttestationRequirements
 
         if ($pms->allchargeableServices->isEmpty()) {
             $pms->attachChargeableServicesToFulfill();
-            $pms->load('allChargeableServices');
         }
 
-        $services = $pms->allChargeableServices;
-
-        if ($services->where('code', ChargeableService::CCM)->isNotEmpty() || ! is_null($this->patient->primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT))) {
-            $this->dto->setHasCcm(true);
-        }
-
-        if ($services->where('code', ChargeableService::PCM)->isNotEmpty()) {
-            $this->dto->setHasPcm(true);
-        }
+        $this->hasCcm()->hasPcm();
 
         $this->dto->setAttestedCcmProblemsCount($pms->ccmAttestedProblems(true)->count());
         $this->dto->setAttestedBhiProblemsCount($pms->bhiAttestedProblems(true)->count());
