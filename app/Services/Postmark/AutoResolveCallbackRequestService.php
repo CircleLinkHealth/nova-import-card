@@ -10,6 +10,7 @@ use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;

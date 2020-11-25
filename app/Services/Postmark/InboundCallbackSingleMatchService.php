@@ -9,6 +9,7 @@ namespace App\Services\Postmark;
 use App\ValueObjects\PostmarkCallback\PostmarkSingleMatchData;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;

@@ -8,6 +8,7 @@ namespace App\Services\Postmark;
 
 use App\ValueObjects\PostmarkCallback\PostmarkMultipleMatchData;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 

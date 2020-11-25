@@ -12,7 +12,7 @@ use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Notifications\CallCreated;
 use App\PostmarkInboundMail;
 use App\Services\Calls\SchedulerService;
-use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
+use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use App\Traits\Tests\PostmarkCallbackHelpers;
 use App\UnresolvedPostmarkCallback;
 use Carbon\Carbon;
