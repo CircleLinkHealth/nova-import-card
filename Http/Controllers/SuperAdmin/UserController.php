@@ -85,7 +85,7 @@ class UserController extends Controller
 
         // display view
         return view(
-            'wpUsers.create',
+            'cpm-admin::admin.users.create',
             [
                 'wpUser'        => $wpUser,
                 'states_arr'    => $states_arr,
