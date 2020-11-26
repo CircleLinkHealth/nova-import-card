@@ -53,7 +53,8 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-customer.git"
-    },{
+    },
+    {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
     },
