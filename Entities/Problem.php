@@ -177,7 +177,11 @@ class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contra
 
     public function scopeForBilling(Builder $query)
     {
-        return $query->isMonitored()
+        return $query->with([
+            'codes',
+            'cpmProblem',
+        ])
+            ->isMonitored()
 //                    ->withPatientLocationProblemChargeableServices()
         ;
     }
