@@ -103,7 +103,7 @@ class AttestationRequirements
             $pms->attachChargeableServicesToFulfill();
         }
 
-        $this->hasCcm()->hasPcm();
+        $this->setHasCcm()->setHasPcm()->setHasRpm();
 
         $this->dto->setAttestedCcmProblemsCount($pms->ccmAttestedProblems(true)->count());
         $this->dto->setAttestedBhiProblemsCount($pms->bhiAttestedProblems(true)->count());
@@ -115,30 +115,12 @@ class AttestationRequirements
     {
         return $this->setPatient()
             ->isEnabled()
-            ->hasCcm()
-            ->hasPcm()
+            ->setHasCcm()
+            ->setHasPcm()
+            ->setHasRpm()
             ->attestedCcmProblemsCount()
             ->attestedBhiProblemsCount()
             ->getDto();
-    }
-
-    private function hasCcm(): self
-    {
-        $this->dto->setHasCcm(
-            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::CCM) ||
-            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::GENERAL_CARE_MANAGEMENT)
-        );
-
-        return $this;
-    }
-
-    private function hasPcm(): self
-    {
-        $this->dto->setHasPcm(
-            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::PCM)
-        );
-
-        return $this;
     }
 
     private function isEnabled(): self
@@ -157,6 +139,34 @@ class AttestationRequirements
         }
 
         return $this->repo;
+    }
+
+    private function setHasCcm(): self
+    {
+        $this->dto->setHasCcm(
+            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::CCM) ||
+            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::GENERAL_CARE_MANAGEMENT)
+        );
+
+        return $this;
+    }
+
+    private function setHasPcm(): self
+    {
+        $this->dto->setHasPcm(
+            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::PCM)
+        );
+
+        return $this;
+    }
+
+    private function setHasRpm(): self
+    {
+        $this->dto->setHasRpm(
+            PatientIsOfServiceCode::execute($this->patientId, ChargeableService::RPM)
+        );
+
+        return $this;
     }
 
     private function setPatient(): self

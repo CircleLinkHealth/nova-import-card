@@ -14,6 +14,7 @@ class AttestationRequirementsDTO
     protected bool $disabled                = true;
     protected bool $hasCcm                  = false;
     protected bool $hasPcm                  = false;
+    protected bool $hasRpm                  = false;
 
     public function getAttestedBhiProblemsCount(): int
     {
@@ -33,6 +34,11 @@ class AttestationRequirementsDTO
     public function hasPcm(): bool
     {
         return $this->hasPcm;
+    }
+
+    public function hasRpm(): bool
+    {
+        return $this->hasRpm;
     }
 
     public function isDisabled(): bool
@@ -65,12 +71,18 @@ class AttestationRequirementsDTO
         $this->hasPcm = $hasPcm;
     }
 
+    public function setHasRpm(bool $hasRpm): void
+    {
+        $this->hasRpm = $hasRpm;
+    }
+
     public function toArray(): array
     {
         return [
             'disabled'              => $this->isDisabled(),
             'has_ccm'               => $this->hasCcm(),
             'has_pcm'               => $this->hasPcm(),
+            'has_rpm'               => $this->hasRpm(),
             'ccm_problems_attested' => $this->getAttestedCcmProblemsCount(),
             'bhi_problems_attested' => $this->getAttestedBhiProblemsCount(),
         ];
