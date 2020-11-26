@@ -9,8 +9,7 @@ namespace App\Nova;
 use App\Nova\Actions\ArchiveUnresolvedCallback;
 use App\Nova\Filters\UnresolvedCallbacksFilter;
 use App\Nova\Filters\UnresolvedCallbacksRangeFilter;
-use App\UnresolvedCallbacksView;
-use Circlelinkhealth\UnresolvedCallback\UnresolvedCallback;
+use CircleLinkHealth\SharedModels\Entities\UnresolvedCallbacksView;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
@@ -86,7 +85,7 @@ class UnresolvedPostmarkCallbackResource extends Resource
     public function cards(Request $request)
     {
         return [
-            //            (new UnresolvedCallback()),
+        
         ];
     }
 
