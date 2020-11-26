@@ -8,11 +8,14 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 
 class PatientMonthlyServiceTime
 {
+    protected int $patientId;
     protected PatientServiceProcessorRepository $repo;
     protected Collection $summaries;
 
@@ -24,21 +27,24 @@ class PatientMonthlyServiceTime
     public static function allNonBhi(int $patientId, Carbon $month): int
     {
         return app(PatientMonthlyServiceTime::class)
-            ->setSummaries($patientId, $month)
+            ->setPatientId($patientId)
+            ->setSummaries($month)
             ->getTimeForServices([ChargeableService::BHI], false);
     }
 
     public static function bhi(int $patientId, Carbon $month): int
     {
         return app(PatientMonthlyServiceTime::class)
-            ->setSummaries($patientId, $month)
+            ->setPatientId($patientId)
+            ->setSummaries($month)
             ->getTimeForServices([ChargeableService::BHI]);
     }
 
     public static function ccm(int $patientId, Carbon $month): int
     {
         return app(PatientMonthlyServiceTime::class)
-            ->setSummaries($patientId, $month)
+            ->setPatientId($patientId)
+            ->setSummaries($month)
             ->getTimeForServices([ChargeableService::CCM, ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60]);
     }
 
@@ -72,26 +78,38 @@ class PatientMonthlyServiceTime
     public static function pcm(int $patientId, Carbon $month): int
     {
         return app(PatientMonthlyServiceTime::class)
-            ->setSummaries($patientId, $month)
+            ->setPatientId($patientId)
+            ->setSummaries($month)
             ->getTimeForServices([ChargeableService::PCM]);
     }
 
     public static function rhc(int $patientId, Carbon $month): int
     {
         return app(PatientMonthlyServiceTime::class)
-            ->setSummaries($patientId, $month)
+            ->setPatientId($patientId)
+            ->setSummaries($month)
             ->getTimeForServices([ChargeableService::GENERAL_CARE_MANAGEMENT]);
     }
 
     public static function rpm(int $patientId, Carbon $month): int
     {
         return app(PatientMonthlyServiceTime::class)
-            ->setSummaries($patientId, $month)
+            ->setPatientId($patientId)
+            ->setSummaries($month)
             ->getTimeForServices([ChargeableService::RPM, ChargeableService::RPM40]);
     }
 
     private function getTimeForServiceIds(array $chargeableServiceIds, $include = true): int
     {
+        if ( ! BillingCache::billingRevampIsEnabled()) {
+            return Activity::select('duration')
+                ->wherePatientId($this->patientId)
+                ->createdInMonth(Carbon::now()->startOfMonth(), 'performed_at')
+                ->whereIn('chargeable_service_id', $chargeableServiceIds)
+                ->get()
+                ->sum('duration');
+        }
+
         if ($include) {
             return $this->summaries->whereIn('chargeable_service_id', $chargeableServiceIds)
                 ->sum('total_time') ?? 0;
@@ -112,9 +130,16 @@ class PatientMonthlyServiceTime
         return $this->getTimeForServiceIds($csIds, $include);
     }
 
-    private function setSummaries(int $patientId, Carbon $month): self
+    private function setPatientId(int $patientId): self
     {
-        $this->summaries = $this->repo->getChargeablePatientSummaries($patientId, $month);
+        $this->patientId = $patientId;
+
+        return $this;
+    }
+
+    private function setSummaries(Carbon $month): self
+    {
+        $this->summaries = $this->repo->getChargeablePatientSummaries($this->patientId, $month);
 
         return  $this;
     }
