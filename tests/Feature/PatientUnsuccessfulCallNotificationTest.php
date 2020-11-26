@@ -9,7 +9,7 @@ namespace Tests\Feature;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Console\Commands\SendUnsuccessfulCallPatientsReminderNotification;
 use CircleLinkHealth\CpmAdmin\Notifications\PatientUnsuccessfulCallNotification;
-use App\NotificationsExclusion;
+use CircleLinkHealth\SharedModels\Entities\NotificationsExclusion;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
