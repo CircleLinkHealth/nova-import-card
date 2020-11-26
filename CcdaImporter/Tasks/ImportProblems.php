@@ -166,6 +166,10 @@ class ImportProblems extends BaseCcdaImportTask
             if (0 === strcasecmp($problemName, 'cancer')) {
                 break;
             }
+            //Hotfix: HIV matches Hives
+            if (str_contains(strtolower($problemName), 'hives')) {
+                break;
+            }
 
             foreach (array_filter(array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name])) as $keyword) {
                 if ( ! $keyword || empty($keyword)) {
