@@ -7,7 +7,7 @@
 namespace App\Services;
 
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Contracts\ReportFormatter;
 use App\Relationships\PatientCareplanRelations;
 use App\Repositories\PatientReadRepository;
@@ -64,7 +64,7 @@ class CarePlanGeneratorService
                 'wpUsers.patient.multiview',
                 $viewParams,
                 null,
-                Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
+                CpmConstants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
             );
 
             if ($users->count() > 1) {

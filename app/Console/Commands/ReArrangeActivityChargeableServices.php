@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use App\Jobs\ChargeableServiceDuration;
 use App\Jobs\ProcessMonthltyPatientTime;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
@@ -179,10 +179,10 @@ class ReArrangeActivityChargeableServices extends Command
 
         ChargeablePatientMonthlySummaryView::where('chargeable_month', '=', $this->month())
             ->whereIn('chargeable_service_id', $ids)
-            ->where('total_time', '>', Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS)
+            ->where('total_time', '>', CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS)
             ->chunk(100, function (Collection $summaries) {
                 $summaries->each(function (ChargeablePatientMonthlySummaryView $summary) {
-                    $timeToRemove = $summary->total_time - Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+                    $timeToRemove = $summary->total_time - CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
                     $activitiesToModify = collect();
                     Activity::where('chargeable_service_id', '=', $summary->chargeable_service_id)
                         ->where('patient_id', '=', $summary->patient_user_id)

@@ -358,9 +358,9 @@ class SelfEnrollmentTest extends TestCase
         });
 
         $initialInviteSentAt  = now();
-        $firstReminderSentAt  = $initialInviteSentAt->copy()->addDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER);
-        $secondReminderSentAt = $initialInviteSentAt->copy()->addDays(Constants::DAYS_AFTER_FIRST_INVITE_TO_SEND_SECOND_REMINDER);
-        $finalActionRunsAt    = $initialInviteSentAt->copy()->addDays(Constants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION);
+        $firstReminderSentAt  = $initialInviteSentAt->copy()->addDays(CpmConstants::DAYS_AFTER_FIRST_INVITE_TO_SEND_FIRST_REMINDER);
+        $secondReminderSentAt = $initialInviteSentAt->copy()->addDays(CpmConstants::DAYS_AFTER_FIRST_INVITE_TO_SEND_SECOND_REMINDER);
+        $finalActionRunsAt    = $initialInviteSentAt->copy()->addDays(CpmConstants::DAYS_DIFF_FROM_FIRST_INVITE_TO_FINAL_ACTION);
 
         Carbon::setTestNow($firstReminderSentAt);
         RemindEnrollees::dispatchNow($initialInviteSentAt, $toMarkAsInvited->first()->practice_id);

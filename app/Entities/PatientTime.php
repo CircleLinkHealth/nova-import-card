@@ -6,7 +6,7 @@
 
 namespace App\Entities;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
@@ -47,22 +47,22 @@ class PatientTime
                 /** @var ChargeableService $ccmCs */
                 $ccmCs = $chargeableServices->firstWhere('code', '=', ChargeableService::CCM);
                 if ($ccmCs) {
-                    $result->setTime($ccmCs->code, $ccmTime > Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS ? Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS : $ccmTime);
+                    $result->setTime($ccmCs->code, $ccmTime > CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS ? CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS : $ccmTime);
                 }
 
-                if ($ccmTime > Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
+                if ($ccmTime > CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
                     /** @var ChargeableService $ccm40Cs */
                     $ccm40Cs = $chargeableServices->firstWhere('code', '=', ChargeableService::CCM_PLUS_40);
                     if ($ccm40Cs) {
-                        $time = $ccmTime > Constants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS ? Constants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS : $ccmTime - Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+                        $time = $ccmTime > CpmConstants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS ? CpmConstants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS : $ccmTime - CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
                         $result->setTime($ccm40Cs->code, $time);
                     }
                 }
-                if ($ccmTime > Constants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS) {
+                if ($ccmTime > CpmConstants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS) {
                     /** @var ChargeableService $ccm60Cs */
                     $ccm60Cs = $chargeableServices->firstWhere('code', '=', ChargeableService::CCM_PLUS_60);
                     if ($ccm60Cs) {
-                        $time = $ccmTime - Constants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS;
+                        $time = $ccmTime - CpmConstants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS;
                         $result->setTime($ccm60Cs->code, $time);
                     }
                 }
@@ -89,13 +89,13 @@ class PatientTime
         $time = $this->getTime($csCode);
         switch ($csCode) {
             case ChargeableService::CCM:
-                return $time >= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+                return $time >= CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
             case ChargeableService::CCM_PLUS_40:
-                return $time >= Constants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS;
+                return $time >= CpmConstants::MONTHLY_BILLABLE_CCM_40_TIME_TARGET_IN_SECONDS;
             case ChargeableService::CCM_PLUS_60:
-                return $time >= Constants::MONTHLY_BILLABLE_CCM_60_TIME_TARGET_IN_SECONDS;
+                return $time >= CpmConstants::MONTHLY_BILLABLE_CCM_60_TIME_TARGET_IN_SECONDS;
             case ChargeableService::PCM:
-                return $time >= Constants::MONTHLY_BILLABLE_PCM_TIME_TARGET_IN_SECONDS;
+                return $time >= CpmConstants::MONTHLY_BILLABLE_PCM_TIME_TARGET_IN_SECONDS;
         }
 
         return false;
