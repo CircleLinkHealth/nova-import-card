@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d73ff731e068a4abc5385b4a865bf548",
+    "content-hash": "c2974428dec2ffe6168bb991eea69eca",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -950,11 +950,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v1.0.9",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "d04d2481d640d2730e8d89b4ecc2de01840d00a9"
+                "reference": "5bb444f7c88d7e49caea3027817cd2658a63a2e5"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -999,7 +999,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-25T15:13:09+00:00"
+            "time": "2020-11-26T18:40:14+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1265,11 +1265,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.5.6",
+            "version": "v3.5.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "e2e32429637cd13ab9c4300afc1328fd7e5f1677"
+                "reference": "7636940420eb52c2aeea6dc7d4ce94fc32ae8232"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1303,7 +1303,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T16:00:11+00:00"
+            "time": "2020-11-26T18:41:53+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1702,11 +1702,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-ROAD-417_skip_rn_approval",
+            "version": "v1.8.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "75e363f1c6648e19546ab0b53cbc2c801d50441f"
+                "reference": "e8fe2dfd5ad011aeaaddf5599df4e9b835114e67"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1720,7 +1720,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-26T10:36:50+00:00"
+            "time": "2020-11-26T18:42:54+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -3824,24 +3824,25 @@
         },
         {
             "name": "hashids/hashids",
-            "version": "4.0.0",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vinkla/hashids.git",
-                "reference": "43bb2407f16a631f0128f47bcb67ff986c63dde2"
+                "reference": "8cab111f78e0bd9c76953b082919fc9e251761be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vinkla/hashids/zipball/43bb2407f16a631f0128f47bcb67ff986c63dde2",
-                "reference": "43bb2407f16a631f0128f47bcb67ff986c63dde2",
+                "url": "https://api.github.com/repos/vinkla/hashids/zipball/8cab111f78e0bd9c76953b082919fc9e251761be",
+                "reference": "8cab111f78e0bd9c76953b082919fc9e251761be",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
-                "php": "^7.2"
+                "php": "^7.2 || ^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^8.0"
+                "phpunit/phpunit": "^8.0 || ^9.4",
+                "squizlabs/php_codesniffer": "^3.5"
             },
             "suggest": {
                 "ext-bcmath": "Required to use BC Math arbitrary precision mathematics (*).",
@@ -3850,7 +3851,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.0-dev"
+                    "dev-master": "4.1-dev"
                 }
             },
             "autoload": {
@@ -3865,17 +3866,15 @@
             "authors": [
                 {
                     "name": "Ivan Akimov",
-                    "email": "ivan@barreleye.com",
-                    "homepage": "https://twitter.com/IvanAkimov"
+                    "email": "ivan@barreleye.com"
                 },
                 {
                     "name": "Vincent Klaiber",
-                    "email": "hello@doubledip.se",
-                    "homepage": "https://doubledip.se"
+                    "email": "hello@doubledip.se"
                 }
             ],
             "description": "Generate short, unique, non-sequential ids (like YouTube and Bitly) from numbers",
-            "homepage": "http://hashids.org/php",
+            "homepage": "https://hashids.org/php",
             "keywords": [
                 "bitly",
                 "decode",
@@ -3887,7 +3886,7 @@
                 "obfuscate",
                 "youtube"
             ],
-            "time": "2019-04-03T13:40:29+00:00"
+            "time": "2020-11-26T19:24:33+00:00"
         },
         {
             "name": "http-interop/http-factory-guzzle",
@@ -6253,16 +6252,16 @@
         },
         {
             "name": "league/oauth2-server",
-            "version": "8.2.0",
+            "version": "8.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/oauth2-server.git",
-                "reference": "8837ed92b9d9db054b2d513ddb1de08b1e77c517"
+                "reference": "284c2b5125ac71c6564e96d6e3c2d6eef3a1ae24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/oauth2-server/zipball/8837ed92b9d9db054b2d513ddb1de08b1e77c517",
-                "reference": "8837ed92b9d9db054b2d513ddb1de08b1e77c517",
+                "url": "https://api.github.com/repos/thephpleague/oauth2-server/zipball/284c2b5125ac71c6564e96d6e3c2d6eef3a1ae24",
+                "reference": "284c2b5125ac71c6564e96d6e3c2d6eef3a1ae24",
                 "shasum": ""
             },
             "require": {
@@ -6332,7 +6331,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-25T23:27:52+00:00"
+            "time": "2020-11-26T11:18:21+00:00"
         },
         {
             "name": "lorisleiva/cron-translator",
@@ -18078,7 +18077,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/shared-models-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
