@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\NurseTimeAlgorithms;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientMonthlyServiceTime;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
@@ -64,14 +64,14 @@ class AlternativeCareTimePayableCalculator
         $add_to_accrued_towards_ccm = 0;
         $add_to_accrued_after_ccm   = 0;
         
-        $was_above_20 = $totalTimeBefore >= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
-        $is_above_20  = $totalTimeAfter >= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+        $was_above_20 = $totalTimeBefore >= CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+        $is_above_20  = $totalTimeAfter >= CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
         
         if ($was_above_20) {
             $add_to_accrued_after_ccm = $duration;
         } elseif ($is_above_20) {
-            $add_to_accrued_after_ccm   = $totalTimeAfter - Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
-            $add_to_accrued_towards_ccm = Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS - $totalTimeBefore;
+            $add_to_accrued_after_ccm   = $totalTimeAfter - CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
+            $add_to_accrued_towards_ccm = CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS - $totalTimeBefore;
         } else {
             $add_to_accrued_towards_ccm = $duration;
         }

@@ -70,7 +70,7 @@ class BillableCPMPatientRelations
                 ->where(
                     'total_time',
                     '>=',
-                    Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
+                    CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
                 )
                 ->where('no_of_successful_calls', '>=', 1)
                 ->with('chargeableServices')
