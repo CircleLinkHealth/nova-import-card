@@ -1085,6 +1085,13 @@
                             app.$emit('show-attest-call-conditions-modal');
                             return;
                         }
+                        if(patientIsRpm){
+                            $("<input>")
+                                .attr("id", "patient_is_rpm")
+                                .attr("type", "hidden")
+                                .attr("name", "patient_is_rpm").val('true').appendTo(form);
+                        }
+
                         if (isSavingDraft) {
                             setTimeout(() => confirmSubmitForm(), 500);
                             return;
