@@ -19,7 +19,7 @@ class ProblemCodeSystemsSeeder extends Seeder
             'ICD-10',
             'SNOMED CT',
         ])->each(function ($name) {
-            ProblemCodeSystem::create([
+            ProblemCodeSystem::updateOrCreate([
                 'name' => $name,
             ]);
         });
