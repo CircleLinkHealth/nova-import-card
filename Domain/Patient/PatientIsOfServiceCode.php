@@ -57,6 +57,7 @@ class PatientIsOfServiceCode
         }
 
         foreach ($clashes as $clashingService) {
+            //turn into patient has enough problems?
             if (PatientIsOfServiceCode::execute($this->patientId, $clashingService)) {
                 return true;
             }
