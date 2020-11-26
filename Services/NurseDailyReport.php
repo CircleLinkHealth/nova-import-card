@@ -78,7 +78,7 @@ class NurseDailyReport
             
             $diff = $carbon_now->diffInSeconds($carbon_last_act);
             
-            if ($diff <= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
+            if ($diff <= CpmConstants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
                 $nurses[$i]['lessThan20MinsAgo'] = true;
             }
             
