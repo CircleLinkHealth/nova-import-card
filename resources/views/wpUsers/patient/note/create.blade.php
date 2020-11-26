@@ -676,6 +676,7 @@
             const disableAutoSave = @json(!empty($note) && $note->status == \App\Note::STATUS_COMPLETE);
             const hasRnApprovedCarePlan = @json($hasRnApprovedCarePlan);
             const shouldRnApprove = @json($shouldRnApprove);
+            const patientIsRpm = @json($attestationRequirements['has_rpm']);
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
@@ -1080,7 +1081,7 @@
 
                     function confirmSubmitForm() {
 
-                        if (!conditionsAttested && callIsSuccess && userIsCareCoach) {
+                        if (!conditionsAttested && callIsSuccess && userIsCareCoach && ! patientIsRpm) {
                             app.$emit('show-attest-call-conditions-modal');
                             return;
                         }
