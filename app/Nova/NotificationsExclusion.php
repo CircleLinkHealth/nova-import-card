@@ -22,7 +22,7 @@ class NotificationsExclusion extends Resource
      *
      * @var string
      */
-    public static $model = \App\NotificationsExclusion::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\NotificationsExclusion::class;
 
     /**
      * The columns that should be searched.

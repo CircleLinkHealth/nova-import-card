@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\ImportPcmProblems;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
 use Laravel\Nova\Fields\BelongsTo;
@@ -20,7 +21,7 @@ class PcmProblem extends Resource
      *
      * @var string
      */
-    public static $group = \App\Constants::NOVA_GROUP_PRACTICES;
+    public static $group = CpmConstants::NOVA_GROUP_PRACTICES;
 
     /**
      * The model the resource corresponds to.

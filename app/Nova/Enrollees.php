@@ -6,14 +6,14 @@
 
 namespace App\Nova;
 
-use App\Constants;
 use App\Nova\Actions\ImportEnrollee;
 use App\Nova\Actions\ImportEnrollees;
 use App\Nova\Actions\SelfEnrollmentManualInvite;
 use App\Nova\Filters\EnrolleeStatus;
 use App\Nova\Filters\PatientAutoEnrollmentStatus;
 use App\Nova\Filters\PracticeFilter;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
 use Laravel\Nova\Fields\BelongsTo;
@@ -29,7 +29,7 @@ class Enrollees extends Resource
      *
      * @var string
      */
-    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
+    public static $group = CpmConstants::NOVA_GROUP_ENROLLMENT;
 
     /**
      * The model the resource corresponds to.
