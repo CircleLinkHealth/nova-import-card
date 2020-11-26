@@ -199,7 +199,7 @@ class NotesController extends Controller
         }
 
         // RN Approval Flow - session must have SESSION_RN_APPROVED_KEY
-        $shouldRnApprove = ! $patient->isRpm() && optional($patient->carePlan)->shouldRnApprove($author);
+        $shouldRnApprove = optional($patient->carePlan)->shouldRnApprove($author);
         $hasRnApprovedCp = false;
         if ($shouldRnApprove) {
             $approvedId      = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
@@ -587,7 +587,7 @@ class NotesController extends Controller
 
         // RN Approval Flow - session must have SESSION_RN_APPROVED_KEY
         $hasRnApprovedCp = false;
-        if ( ! $patient->isRpm() && optional($patient->carePlan)->shouldRnApprove($author) &&
+        if (optional($patient->carePlan)->shouldRnApprove($author) &&
             $successfulClinicalCall) {
             $approvedId      = $request->session()->get(ProviderController::SESSION_RN_APPROVED_KEY, null);
             $hasRnApprovedCp = $approvedId && $approvedId == auth()->id();

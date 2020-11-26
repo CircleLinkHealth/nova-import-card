@@ -90,12 +90,7 @@ class UpdateCarePlanStatus
      */
     private function shouldBeProviderApproved(User $patient, User $approver): bool
     {
-        if ( ! $approver->canQAApproveCarePlans()) {
-            return false;
-        }
-        $cpStatus = $patient->getCarePlanStatus();
-
-        return $patient->isRpm() ? CarePlan::QA_APPROVED == $cpStatus : CarePlan::RN_APPROVED == $cpStatus;
+        return CarePlan::RN_APPROVED == $patient->getCarePlanStatus() && $approver->canApproveCarePlans();
     }
 
     /**
@@ -112,10 +107,6 @@ class UpdateCarePlanStatus
      */
     private function shouldBeRNApproved(User $patient, User $approver): bool
     {
-        if ($patient->isRpm()) {
-            return false;
-        }
-
         return CarePlan::QA_APPROVED == $patient->getCarePlanStatus()
             && $approver->hasPermissionForSite('care-plan-rn-approve', $patient->getPrimaryPracticeId());
     }

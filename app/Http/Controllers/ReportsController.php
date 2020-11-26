@@ -701,7 +701,7 @@ class ReportsController extends Controller
 
         /** @var User $user */
         $user                           = auth()->user();
-        $showReadyForDrButton           = ! $patient->isRpm() && $patient->carePlan->shouldRnApprove($user);
+        $showReadyForDrButton           = $patient->carePlan->shouldRnApprove($user);
         $readyForDrButtonDisabled       = false;
         $readyForDrButtonAlreadyClicked = false;
         if ($showReadyForDrButton) {
