@@ -6,14 +6,13 @@
 
 namespace App\Nova;
 
-use App\Constants;
-use App\Entities\PatientTime;
 use App\Nova\Filters\BillableTimeFilter;
 use App\Nova\Filters\PageTimerDurationFilter;
 use App\Nova\Filters\TimestampFilter;
 use Carbon\Carbon;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\Customer\CpmConstants;
+use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
@@ -35,7 +34,7 @@ class TimeTracker extends Resource
      *
      * @var string
      */
-    public static $group = Constants::NOVA_GROUP_CARE_COACHES;
+    public static $group = CpmConstants::NOVA_GROUP_CARE_COACHES;
 
     /**
      * The model the resource corresponds to.
@@ -277,7 +276,7 @@ class TimeTracker extends Resource
         return $fields;
     }
 
-    private function isModifiable(PatientTime $patientTime, string $csCode)
+    private function isModifiable(\CircleLinkHealth\SharedModels\Entities\PatientTime $patientTime, string $csCode)
     {
         if (\CircleLinkHealth\Customer\Entities\ChargeableService::CCM_PLUS_60 === $csCode) {
             return true;
