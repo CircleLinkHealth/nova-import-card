@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Events;
 
-use App\Constants;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\CcmBilling\Contracts\CanDebounceJobForPatient;
 use Illuminate\Queue\SerializesModels;
 
@@ -42,7 +42,7 @@ class PatientActivityCreated implements CanDebounceJobForPatient
 
     public function debounceDuration(): int
     {
-        return Constants::FIVE_MINUTES_IN_SECONDS;
+        return CpmConstants::FIVE_MINUTES_IN_SECONDS;
     }
 
     public function getPatientId(): int
