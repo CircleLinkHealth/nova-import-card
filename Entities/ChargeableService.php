@@ -90,6 +90,12 @@ class ChargeableService extends BaseModel
             self::RPM,
             self::RPM40,
         ],
+        self::RPM => [
+            self::GENERAL_CARE_MANAGEMENT,
+        ],
+        self::RPM40 => [
+            self::GENERAL_CARE_MANAGEMENT,
+        ],
     ];
 
     const CODES_THAT_CAN_HAVE_PROBLEMS = [
