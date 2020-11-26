@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Core\Notifications\Channels;
 
-use CircleLinkHealth\Core\Exceptions\CannotSendNotificationException;
+use  CircleLinkHealth\Core\Exceptions\CannotSendNotificationException;
 use CircleLinkHealth\SharedModels\Entities\NotificationsExclusion;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Notifications\Channels\MailChannel;
