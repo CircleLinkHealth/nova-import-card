@@ -92,6 +92,10 @@
         },
         {
             "type": "git",
+            "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git"
+        },
+        {
+            "type": "git",
             "url": "git@github.com:CircleLinkHealth/synonyms.git"
         }
     ],
@@ -112,6 +116,7 @@
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/clh-import-card-extended": "*",
         "circlelinkhealth/clh-nova-theme": "*",
+        "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
         "circlelinkhealth/core-module": "dev-vaporizing-admin",
         "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
         "circlelinkhealth/customer-module": "dev-vaporizing-admin",

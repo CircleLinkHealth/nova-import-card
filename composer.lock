@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "009ad8aa7bb8b5a2d018fc95cb496247",
+    "content-hash": "bf40b50b89c39ee4af3e98ab5e18d20c",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -562,6 +562,59 @@
                 "time"
             ],
             "time": "2020-08-22T02:42:12+00:00"
+        },
+        {
+            "name": "circlelinkhealth/ccm-billing-module",
+            "version": "dev-vaporizing-admin",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
+                "reference": "4dd78c283095d44961e1413b5385cf43a1e245d1"
+            },
+            "require": {
+                "circlelinkhealth/core-module": "*",
+                "circlelinkhealth/customer-module": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\CcmBilling\\Providers\\CcmBillingServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CcmBilling\\": ""
+                },
+                "files": [
+                    "Helpers/helpers.php"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Antonis Antoniou",
+                    "email": "antonis@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Constantinos Kakoushias",
+                    "email": "constantinos@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@cirlelinkhealth.com",
+                    "role": "Lead Developer"
+                }
+            ],
+            "time": "2020-11-26T02:31:01+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -12273,6 +12326,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/customer-module": 20,
