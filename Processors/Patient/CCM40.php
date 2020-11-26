@@ -19,6 +19,8 @@ class CCM40 extends AbstractProcessor
     {
         return [
             new RHC(),
+            new RPM(),
+            new RPM40(),
         ];
     }
 
