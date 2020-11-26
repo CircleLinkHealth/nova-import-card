@@ -240,6 +240,7 @@ namespace App;
  * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User hasBhiConsent()
  * @property \CircleLinkHealth\SamlSp\Entities\SamlUser[]|\Illuminate\Database\Eloquent\Collection                                $samlUsers
  * @property int|null                                                                                                             $saml_users_count
+ * @method   static                                                                                                               \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {

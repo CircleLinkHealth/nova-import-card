@@ -183,6 +183,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'calls.v2.index',
             ])->middleware('permission:call.read');
 
+            Route::post('calls-v2-time-and-calls', [
+                'uses' => 'API\Admin\CallsViewController@getPatientTimeAndCalls',
+                'as'   => 'calls.v2.time-and-calls',
+            ])->middleware('permission:call.read');
+
             Route::group(['prefix' => 'calls'], function () {
                 Route::get('', [
                     'uses' => 'API\Admin\CallsController@index',

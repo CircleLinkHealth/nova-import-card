@@ -94,6 +94,42 @@ class CallViewNurses extends SqlViewModel
 
     protected $table = 'calls_view_nurses';
 
+    public function getTotalPatientTime()
+    {
+        return secondsToHMS(array_sum([
+            $this->ccm_total_time ?? 0,
+            $this->bhi_total_time ?? 0,
+            $this->pcm_total_time ?? 0,
+            $this->rpm_total_time ?? 0,
+            $this->rhc_total_time ?? 0,
+        ]));
+    }
+
+    public function patientTimePerServiceToExpandedString()
+    {
+        $times = [];
+
+        if ( ! empty($ccmTime = $this->ccm_total_time)) {
+            $times[] = 'CCM: '.secondsToHMS($ccmTime).'<br/>';
+        }
+        if ( ! empty($bhiTime = $this->bhi_total_time)) {
+            $times[] = 'BHI: '.secondsToHMS($bhiTime).'<br/>';
+        }
+        if ( ! empty($rpmTime = $this->rpm_total_time)) {
+            $times[] = 'RPM: '.secondsToHMS($rpmTime).'<br/>';
+        }
+        if ( ! empty($pcmTime = $this->pcm_total_time)) {
+            $times[] = 'PCM: '.secondsToHMS($pcmTime).'<br/>';
+        }
+        if ( ! empty($rhcTime = $this->rhc_total_time)) {
+            $times[] = 'CCM (RHC/FQHC): '.secondsToHMS($rhcTime).'<br/>';
+        }
+
+        return empty($times)
+            ? 'Patient does not have any time specific to a service yet.'
+            : implode($times);
+    }
+
     /**
      * @return string
      */

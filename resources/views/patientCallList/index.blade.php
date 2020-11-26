@@ -221,12 +221,11 @@ function formatTime($time)
                                             <th>Task</th>
                                             <th>Patient</th>
                                             <th>Activity<br>Date</th>
-                                            <th>Activity<br>Time Start</th>
-                                            <th>Activity<br>Time End</th>
+                                            <th>Activity<br>Time<br>Start</th>
+                                            <th>Activity<br>Time<br>End</th>
                                             <th>Time<br>Zone</th>
                                             <th>Last<br>Date called</th>
-                                            <th>CCM<br>Time to date</th>
-                                            <th>BHI<br>Time to date</th>
+                                            <th>Total<br>Time</th>
                                             <th># Calls<br>to date</th>
                                             <th>Provider</th>
                                             <th>Practice</th>
@@ -334,19 +333,17 @@ function formatTime($time)
                                                     </td>
 
                                                     <td>
-                                                        @if( isset($call->ccm_time))
-                                                            {{ formatTime($call->ccm_time) }}
-                                                        @else
-                                                            <em style="color:red;">-</em>
-                                                        @endif
-                                                    </td>
-
-                                                    <td>
-                                                        @if( isset($call->bhi_time))
-                                                            {{ formatTime($call->bhi_time) }}
-                                                        @else
-                                                            <em style="color:red;">-</em>
-                                                        @endif
+                                                        <a
+                                                           class="patientNameLink"
+                                                           style="font-weight:bold;"
+                                                           data-template='<div class="tooltip" style="text-align:left" role="tooltip"><div class="arrow"></div><div class="tooltip-inner" style="text-align:left"></div></div>'
+                                                           data-toggle="tooltip"
+                                                           data-container="body"
+                                                           data-placement="right"
+                                                           data-html="true"
+                                                           title="{{$call->patientTimePerServiceToExpandedString()}}">
+                                                            {{$call->getTotalPatientTime()}}
+                                                        </a>
                                                     </td>
 
                                                     <td>

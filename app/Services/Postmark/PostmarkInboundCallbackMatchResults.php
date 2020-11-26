@@ -41,7 +41,7 @@ class PostmarkInboundCallbackMatchResults
     public function matchedPatientsData()
     {
         /** @var Builder $inboundDataMatchedWithPhone */
-        $inboundDataMatchedWithPhone = $this->matchByPhone($this->postmarkCallbackData);
+        $inboundDataMatchedWithPhone = $this->matchByPhone($this->postmarkCallbackData['phone'], $this->postmarkCallbackData['callerId']);
 
         if (1 === $inboundDataMatchedWithPhone->count()) {
             /** @var User $matchedPatient */
@@ -57,25 +57,22 @@ class PostmarkInboundCallbackMatchResults
     }
 
     /**
+     * @param  string       $phone
+     * @param  string       $callerIdField
      * @return Builder|User
      */
-    private function matchByPhone(array $inboundPostmarkData)
+    private function matchByPhone(string $phoneNumber, string $callerIdFieldPhone)
     {
-        return User::withTrashed()
-            ->ofType('participant')
-            ->with([
-                'patientInfo' => function ($q) {
-                    return $q->select(['id', 'ccm_status', 'user_id']);
-                },
+        return User::withTrashed()->ofType('participant')->with([
+            'patientInfo' => function ($q) {
+                return $q->select(['id', 'ccm_status', 'user_id']);
+            },
 
-                'enrollee',
+            'enrollee',
 
-                'phoneNumbers' => function ($q) {
-                    return $q->select(['id', 'user_id', 'number']);
-                },
-            ])
-            ->whereHas('phoneNumbers', function ($phoneNumber) use ($inboundPostmarkData) {
-                $phoneNumber->where('number', $inboundPostmarkData['phone']);
-            });
+            'phoneNumbers' => function ($q) {
+                return $q->select(['id', 'user_id', 'number']);
+            },
+        ])->searchPhoneNumber([$phoneNumber, $callerIdFieldPhone]);
     }
 }
