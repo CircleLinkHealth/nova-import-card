@@ -50,27 +50,27 @@ class ManuallyCreateEnrollmentTestData extends Command
         if (isProductionEnv()) {
             $this->warn('You cannot execute this action in production environment');
 
-            return;
+            return "You cannot execute this action in production environment";
         }
 
         if (is_null($practiceName)) {
             $this->warn('Practice input is required');
 
-            return;
+            return "Practice input is required";
         }
 
         $practice = Practice::whereName($practiceName)->first();
 
         if ( ! $practice) {
             $this->error("$practiceName practice model not found.");
-            return;
+            return "$practiceName practice model not found.";
         }
 
         $letter = EnrollmentInvitationLetter::wherePracticeId($practice->id)->first();
 
         if ( ! $letter) {
             $this->error("$practiceName practice model not found.");
-            return;
+            return "$practiceName practice model not found.";
         }
 
         $uiRequestsForThisPractice = '';
