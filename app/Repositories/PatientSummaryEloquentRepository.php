@@ -7,6 +7,7 @@
 namespace App\Repositories;
 
 use Cache;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
@@ -234,22 +235,19 @@ class PatientSummaryEloquentRepository
         return $this->chargeableServicesByCode[$practiceId];
     }
 
-    /**
-     * Decide whether or not to attach a chargeable service to a patient summary.
-     *
-     * @return bool
-     */
-    private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
+    private function hasEnoughTime(ChargeableService $service, PatientMonthlySummary $summary)
     {
         switch ($service->code) {
             case ChargeableService::BHI:
                 return $summary->bhi_time >= self::MINUTES_20;
             case ChargeableService::CCM:
             case ChargeableService::GENERAL_CARE_MANAGEMENT:
+            case ChargeableService::RPM:
                 return $summary->ccm_time >= self::MINUTES_20;
             case ChargeableService::PCM:
                 return $summary->ccm_time >= self::MINUTES_30;
             case ChargeableService::CCM_PLUS_40:
+            case ChargeableService::RPM40:
                 return $summary->ccm_time >= self::MINUTES_40;
             case ChargeableService::CCM_PLUS_60:
                 return $summary->ccm_time >= self::MINUTES_60;
@@ -258,6 +256,16 @@ class PatientSummaryEloquentRepository
             default:
                 return false;
         }
+    }
+
+    /**
+     * Decide whether or not to attach a chargeable service to a patient summary.
+     *
+     * @return bool
+     */
+    private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
+    {
+        return PatientIsOfServiceCode::execute($summary->patient_id, $service->code) && $this->hasEnoughTime($service, $summary);
     }
 
     /**
