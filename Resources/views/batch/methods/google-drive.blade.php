@@ -37,9 +37,9 @@
 
                     <div class="panel-body">
                         @if(isset($action) && $action == 'edit')
-                            @include('partials.editWelcomeCallListGoogleDrivePanel')
+                            @include('eligibility::partials.makeWelcomeCallListGoogleDrivePanel')
                         @else
-                            @include('partials.makeWelcomeCallListGoogleDrivePanel')
+                            @include('eligibility::partials.makeWelcomeCallListGoogleDrivePanel')
                         @endif
                     </div>
                 </div>
