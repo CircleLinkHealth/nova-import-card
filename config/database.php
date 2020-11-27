@@ -73,6 +73,33 @@ if (getenv('CI')) {
     $mysqlDBName = getenv('HEROKU_TEST_RUN_ID');
 }
 
+$mysqlConfig = [
+    'driver'         => 'mysql',
+    'url'            => env('DATABASE_URL'),
+    'host'           => env('DB_HOST', '127.0.0.1'),
+    'port'           => env('DB_PORT', '3306'),
+    'database'       => $mysqlDBName,
+    'username'       => env('DB_USERNAME', 'forge'),
+    'password'       => env('DB_PASSWORD', ''),
+    'unix_socket'    => env('DB_SOCKET', ''),
+    'charset'        => 'utf8mb4',
+    'collation'      => 'utf8mb4_unicode_ci',
+    'prefix'         => '',
+    'prefix_indexes' => true,
+    'strict'         => false,
+    'engine'         => null,
+];
+
+if (true === env('MYSQL_CLUSTER_MODE')) {
+    $mysqlConfig['read'] = [
+        'host' => explode(',', env('MYSQL_CLUSTER_READ_HOSTS')),
+    ];
+    $mysqlConfig['write'] = [
+        'host' => explode(',', env('MYSQL_CLUSTER_WRITE_HOSTS')),
+    ];
+    $mysqlConfig['sticky'] = true;
+}
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -114,22 +141,7 @@ return [
 
         'cleardb' => $clearDBConfig ?? [],
 
-        'mysql' => [
-            'driver'         => 'mysql',
-            'url'            => env('DATABASE_URL'),
-            'host'           => env('DB_HOST', '127.0.0.1'),
-            'port'           => env('DB_PORT', '3306'),
-            'database'       => $mysqlDBName,
-            'username'       => env('DB_USERNAME', 'forge'),
-            'password'       => env('DB_PASSWORD', ''),
-            'unix_socket'    => env('DB_SOCKET', ''),
-            'charset'        => 'utf8mb4',
-            'collation'      => 'utf8mb4_unicode_ci',
-            'prefix'         => '',
-            'prefix_indexes' => true,
-            'strict'         => false,
-            'engine'         => null,
-        ],
+        'mysql' => $mysqlConfig,
 
         'test_suite' => [
             'driver'      => 'mysql',
