@@ -676,6 +676,7 @@
             const disableAutoSave = @json(!empty($note) && $note->status == \App\Note::STATUS_COMPLETE);
             const hasRnApprovedCarePlan = @json($hasRnApprovedCarePlan);
             const shouldRnApprove = @json($shouldRnApprove);
+            const patientIsRpm = @json($attestationRequirements['has_rpm']);
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
@@ -1002,6 +1003,13 @@
                             }
                         }
 
+                        console.log({
+                            user_is_care_coach : userIsCareCoach,
+                            call_is_success: callIsSuccess,
+                            should_rn_approve: shouldRnApprove,
+                            has_rn_approved_care_plan: hasRnApprovedCarePlan
+                        });
+
                         // ROAD-39 RN must approve care plan before making a successful welcome call
                         if (userIsCareCoach && callIsSuccess && shouldRnApprove && !hasRnApprovedCarePlan) {
                             showSavingDraftModal();
@@ -1073,10 +1081,17 @@
 
                     function confirmSubmitForm() {
 
-                        if (!conditionsAttested && callIsSuccess && userIsCareCoach) {
+                        if (!conditionsAttested && callIsSuccess && userIsCareCoach && ! patientIsRpm) {
                             app.$emit('show-attest-call-conditions-modal');
                             return;
                         }
+                        if(patientIsRpm){
+                            $("<input>")
+                                .attr("id", "patient_is_rpm")
+                                .attr("type", "hidden")
+                                .attr("name", "patient_is_rpm").val('true').appendTo(form);
+                        }
+
                         if (isSavingDraft) {
                             setTimeout(() => confirmSubmitForm(), 500);
                             return;
