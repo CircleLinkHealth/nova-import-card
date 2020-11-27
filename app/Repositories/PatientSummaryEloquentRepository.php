@@ -218,6 +218,7 @@ class PatientSummaryEloquentRepository
 
     private function hasEnoughTime(ChargeableService $service, PatientMonthlySummary $summary)
     {
+        //todo: remove
         switch ($service->code) {
             case ChargeableService::BHI:
                 return $summary->bhi_time >= self::MINUTES_20;
