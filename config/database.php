@@ -6,7 +6,6 @@
 
 // for heroku
 use CircleLinkHealth\Core\Config\CpmAppMySqlConfig;
-use Illuminate\Support\Str;
 
 if (getenv('DATABASE_URL')) {
     $pgsqlUrl = parse_url(getenv('DATABASE_URL'));
