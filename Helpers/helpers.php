@@ -39,3 +39,10 @@ if ( ! function_exists('isUnitTestingEnv')) {
         return app()->environment(['testing']);
     }
 }
+
+if ( ! function_exists('isCpm')) {
+    function isCpm()
+    {
+        return 'CarePlan Manager' === config('app.name');
+    }
+}

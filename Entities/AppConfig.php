@@ -63,6 +63,11 @@ class AppConfig extends BaseModel
         });
     }
 
+    public static function clearCache()
+    {
+        static::$config = null;
+    }
+
     /**
      * Returns the AppConfig value for the given key.
      *
