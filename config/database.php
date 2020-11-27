@@ -76,7 +76,6 @@ if (getenv('CI')) {
 $mysqlConfig = [
     'driver'         => 'mysql',
     'url'            => env('DATABASE_URL'),
-    'host'           => env('DB_HOST', '127.0.0.1'),
     'port'           => env('DB_PORT', '3306'),
     'database'       => $mysqlDBName,
     'username'       => env('DB_USERNAME', 'forge'),
@@ -98,6 +97,8 @@ if (true === env('MYSQL_CLUSTER_MODE')) {
         'host' => explode(',', env('MYSQL_CLUSTER_WRITE_HOSTS')),
     ];
     $mysqlConfig['sticky'] = true;
+} else {
+    $mysqlConfig['host'] = env('DB_HOST', '127.0.0.1');
 }
 
 return [
