@@ -8,11 +8,11 @@ namespace App\Repositories;
 
 use Cache;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesToAttachForLegacyABP;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
-use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository
 {
@@ -95,40 +95,21 @@ class PatientSummaryEloquentRepository
 
         $chargeableServices = $this->chargeableServicesByCode($summary);
 
-        $hasCcm = false;
-        $hasPcm = false;
+        $candidates = PatientServicesToAttachForLegacyABP::getCollection($summary, $chargeableServices);
 
-        /** @var Collection $candidates */
-        $candidates = $chargeableServices
-            ->filter(
-                function ($service) use ($summary) {
-                    return $this->shouldAttachChargeableService($service, $summary);
-                }
-            )
-            ->each(
-                function ($entry) use (&$hasCcm, &$hasPcm) {
-                    if (ChargeableService::CCM === $entry->code) {
-                        $hasCcm = true;
-                    }
-                    if (ChargeableService::PCM === $entry->code) {
-                        $hasPcm = true;
-                    }
-                }
-            );
-
-        //    if patient is eligible for both PCM and CCM we choose CCM
-        if ($hasCcm && $hasPcm) {
-            $candidates = $candidates->filter(
-                function ($service) {
-                    return ChargeableService::PCM !== $service->code;
-                }
-            );
-        }
+        //improve -> create other attribute
+        $summary->ccm_time = $candidates->filter(function ($value, $key) {
+            return in_array($key, [
+                ChargeableService::CCM,
+                ChargeableService::PCM,
+                ChargeableService::RPM,
+                ChargeableService::GENERAL_CARE_MANAGEMENT, ]);
+        })->first()['time'] ?? 0;
 
         $attach = $candidates
             ->map(
                 function ($service) {
-                    return $service->id;
+                    return $service['id'];
                 }
             )
             ->values()
