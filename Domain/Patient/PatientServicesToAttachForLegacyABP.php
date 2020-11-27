@@ -47,6 +47,11 @@ class PatientServicesToAttachForLegacyABP
             ->returnFulfilledServicesWithTime();
     }
 
+    public static function getCollection(PatientMonthlySummary $summary, EloquentCollection $practiceServices): Collection
+    {
+        return collect((new static($summary, $practiceServices))->get());
+    }
+
     private function repo(): PatientServiceProcessorRepository
     {
         if ( ! isset($this->repo)) {
@@ -60,42 +65,44 @@ class PatientServicesToAttachForLegacyABP
     {
         $servicesWithTime = [];
 
-        foreach ($this->eligibleServices as $service) {
+        $eligibleServices = $this->eligibleServices;
+
+        foreach ($eligibleServices as $service) {
             $servicesWithTime[$service->code] = [
                 'id'   => $service->id,
                 'time' => $time = $this->timeForService($service->id),
             ];
         }
 
-        foreach ($servicesWithTime as $service) {
-            if (in_array($service->code, ChargeableService::CCM_PLUS_CODES)) {
+        foreach ($servicesWithTime as $code => $service) {
+            if (in_array($code, ChargeableService::CCM_PLUS_CODES)) {
                 //make sure of order
                 $servicesWithTime[ChargeableService::CCM]['time'] += $service['time'];
 
                 continue;
             }
 
-            if (ChargeableService::RPM40 === $service->code) {
+            if (ChargeableService::RPM40 === $code) {
                 $servicesWithTime[ChargeableService::RPM]['time'] += $service['time'];
                 continue;
             }
         }
 
-        foreach ($servicesWithTime as $key => $service) {
-            if (in_array($service->code, ChargeableService::CCM_PLUS_CODES)) {
+        foreach ($servicesWithTime as $code => $service) {
+            if (in_array($code, ChargeableService::CCM_PLUS_CODES)) {
                 //make sure of order
-                $service['is_fulfilled'] = $servicesWithTime[ChargeableService::CCM]['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$key] ?? 0;
+                $servicesWithTime[$code]['is_fulfilled'] = $servicesWithTime[ChargeableService::CCM]['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$code] ?? 0;
 
                 continue;
             }
 
-            if (ChargeableService::RPM40 === $service->code) {
+            if (ChargeableService::RPM40 === $code) {
                 //make sure of order
-                $service['is_fulfilled'] = $servicesWithTime[ChargeableService::RPM]['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$key] ?? 0;
+                $servicesWithTime[$code]['is_fulfilled'] = $servicesWithTime[ChargeableService::RPM]['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$code] ?? 0;
                 continue;
             }
-
-            $service['is_fulfilled'] = $service['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$key] ?? 0;
+    
+            $servicesWithTime[$code]['is_fulfilled'] = $service['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$code] ?? 0;
         }
 
         return array_filter($servicesWithTime, fn ($s) => $s['is_fulfilled']);
@@ -105,7 +112,7 @@ class PatientServicesToAttachForLegacyABP
     {
         $this->activities = Activity::wherePatientId($this->patientId)
             ->createdInMonth(Carbon::now()->startOfMonth(), 'performed_at')
-            ->whereIn('chargeable_service_id', $this->eligibleServices)
+            ->whereIn('chargeable_service_id', collect($this->eligibleServices)->pluck('id')->toArray())
             ->get()
             ->collect();
 
@@ -126,17 +133,20 @@ class PatientServicesToAttachForLegacyABP
             ->filter()
             ->unique();
 
-        foreach ($servicesDerivedFromPatientProblems as $service) {
-            if (PatientIsOfServiceCode::execute($this->patientId, $service)) {
+        $services = $this->practiceServices->filter(fn ($cs) => in_array($cs->code, $servicesDerivedFromPatientProblems->all()));
+
+        foreach ($services as $service) {
+            if (PatientIsOfServiceCode::execute($this->patientId, $service->code)) {
                 $this->eligibleServices[] = $service;
             }
 
-            if (ChargeableService::RPM === $service) {
-                $this->eligibleServices[] = ChargeableService::RPM40;
+            if (ChargeableService::RPM === $service && ($rpm40 = $this->practiceServices->firstWhere('code', ChargeableService::RPM40))) {
+                $this->eligibleServices[] = $rpm40;
             }
 
             if (ChargeableService::CCM === $service) {
-                $this->eligibleServices = array_merge($this->eligibleServices, ChargeableService::CCM_PLUS_CODES);
+                $plus                   = $this->practiceServices->whereIn('code', ChargeableService::CCM_PLUS_CODES)->all();
+                $this->eligibleServices = array_merge($this->eligibleServices, $plus);
             }
         }
 
