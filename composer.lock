@@ -777,7 +777,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "6ea27bae9d79adf632f7b32047e3b8ec32e141b2"
+                "reference": "552934ac037223a921c8111798e1af21e2a1631a"
             },
             "require": {
                 "laravel/passport": "^8.0",
@@ -810,7 +810,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-26T03:12:30+00:00"
+            "time": "2020-11-27T00:27:53+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -818,7 +818,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "056bd298983b57563280a3b37d219784d308c7e2"
+                "reference": "5aba927dfddcb77f3fedf2c00d065119026a6cb7"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -840,11 +840,27 @@
             },
             "authors": [
                 {
-                    "name": "",
-                    "email": ""
+                    "name": "Antonis Antoniou",
+                    "email": "antonis@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Constantinos Kakoushias",
+                    "email": "constantinos@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@cirlelinkhealth.com",
+                    "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-26T02:31:55+00:00"
+            "time": "2020-11-27T01:09:23+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -852,7 +868,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "512e00870c22f7b24172e516bd9e022366cfd7e7"
+                "reference": "03f794d68cf4ed3cf6edefba60ce47e4d3afbc35"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -886,7 +902,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-26T02:31:01+00:00"
+            "time": "2020-11-26T04:23:53+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -894,7 +910,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "6bdd2702748098ea1ecf364877b5874e60de5a22"
+                "reference": "d13912ea3d64addd80f204ee703bc805d10bf141"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -921,7 +937,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-26T02:31:01+00:00"
+            "time": "2020-11-27T00:42:48+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -4864,16 +4880,16 @@
         },
         {
             "name": "league/oauth2-server",
-            "version": "8.2.0",
+            "version": "8.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/oauth2-server.git",
-                "reference": "8837ed92b9d9db054b2d513ddb1de08b1e77c517"
+                "reference": "284c2b5125ac71c6564e96d6e3c2d6eef3a1ae24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/oauth2-server/zipball/8837ed92b9d9db054b2d513ddb1de08b1e77c517",
-                "reference": "8837ed92b9d9db054b2d513ddb1de08b1e77c517",
+                "url": "https://api.github.com/repos/thephpleague/oauth2-server/zipball/284c2b5125ac71c6564e96d6e3c2d6eef3a1ae24",
+                "reference": "284c2b5125ac71c6564e96d6e3c2d6eef3a1ae24",
                 "shasum": ""
             },
             "require": {
@@ -4943,7 +4959,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-25T23:27:52+00:00"
+            "time": "2020-11-26T11:18:21+00:00"
         },
         {
             "name": "maatwebsite/excel",
