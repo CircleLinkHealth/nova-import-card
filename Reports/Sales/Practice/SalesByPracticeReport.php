@@ -4,13 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Practice;
+namespace CircleLinkHealth\CpmAdmin\Reports\Sales\Practice;
 
-use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Practice\Sections\EnrollmentSummary;
-use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Practice\Sections\FinancialSummary;
-use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Practice\Sections\PracticeDemographics;
-use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Practice\Sections\RangeSummary;
-use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\SalesReport;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\Practice\Sections\EnrollmentSummary;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\Practice\Sections\FinancialSummary;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\Practice\Sections\PracticeDemographics;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\Practice\Sections\RangeSummary;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\SalesReport;
 use Carbon\Carbon;
 
 class SalesByPracticeReport extends SalesReport

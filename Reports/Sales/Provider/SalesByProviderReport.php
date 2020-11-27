@@ -4,13 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider;
+namespace CircleLinkHealth\CpmAdmin\Reports\Sales\Provider;
 
-use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider\Sections\EnrollmentSummary;
-use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider\Sections\FinancialSummary;
-use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider\Sections\PracticeDemographics;
-use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider\Sections\RangeSummary;
-use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\SalesReport;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\Provider\Sections\EnrollmentSummary;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\Provider\Sections\FinancialSummary;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\Provider\Sections\PracticeDemographics;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\Provider\Sections\RangeSummary;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\SalesReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 

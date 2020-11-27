@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Location;
+namespace CircleLinkHealth\CpmAdmin\Reports\Sales\Location;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Services\PdfService;

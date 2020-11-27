@@ -52,7 +52,7 @@ class SalesPracticeReport extends Mailable
      */
     public function build()
     {
-        return $this->view('sales.by-practice.report')
+        return $this->view('cpm-admin::sales.by-practice.report')
             ->with(['data' => $this->data])
             ->to($this->recipientEmail)
             ->from('notifications@careplanmanager.com', 'CircleLink Health')

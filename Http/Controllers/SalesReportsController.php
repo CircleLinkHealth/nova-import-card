@@ -41,7 +41,7 @@ class SalesReportsController extends Controller
         ];
 
         return view(
-            'sales.by-location.create',
+            'cpm-admin::sales.by-location.create',
             [
                 'programs' => $programs,
                 'sections' => $sections,
@@ -58,7 +58,7 @@ class SalesReportsController extends Controller
         $sections = SalesByPracticeReport::SECTIONS;
 
         return view(
-            'sales.by-practice.create',
+            'cpm-admin::sales.by-practice.create',
             [
                 'sections'  => $sections,
                 'practices' => $practices,
@@ -75,7 +75,7 @@ class SalesReportsController extends Controller
         $sections = SalesByProviderReport::SECTIONS;
 
         return view(
-            'sales.by-provider.create',
+            'cpm-admin::sales.by-provider.create',
             [
                 'sections'  => $sections,
                 'providers' => $providers,
@@ -148,7 +148,7 @@ class SalesReportsController extends Controller
             $name = $practice->display_name.'-'.Carbon::now()->toDateString();
             $path = storage_path("download/${name}.pdf");
 
-            $pdf = $this->pdfService->createPdfFromView('sales.by-practice.report', ['data' => $data], $path);
+            $pdf = $this->pdfService->createPdfFromView('cpm-admin::sales.by-practice.report', ['data' => $data], $path);
 
             return response()->download($path, $name, ['Content-Length: '.filesize($path)]);
         }
@@ -181,7 +181,7 @@ class SalesReportsController extends Controller
             $name = $provider->getLastName().'-'.Carbon::now()->toDateString();
             $path = storage_path("download/${name}.pdf");
 
-            $pdf = $this->pdfService->createPdfFromView('sales.by-provider.report', ['data' => $data], $path);
+            $pdf = $this->pdfService->createPdfFromView('cpm-admin::sales.by-provider.report', ['data' => $data], $path);
 
             return response()->download($path, $name, [
                 'Content-Length: '.filesize($path),
