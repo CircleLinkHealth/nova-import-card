@@ -123,9 +123,10 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $this->countRandomProvider  = 0;
         $this->uiRequestedProviders = collect();
         $this->skipIds              = collect();
-
+        
+        $provider = $this->randomProvider($practice->id);
+        
         while ($n <= $limit) {
-            $provider = $this->randomProvider($practice->id);
             if (0 === $this->countRandomProvider && EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER === $this->uiRequestsForThisPractice) {
                 $provider->providerInfo->update([
                     // We need this just for Toledo.
