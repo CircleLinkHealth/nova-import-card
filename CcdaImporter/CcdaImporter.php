@@ -417,7 +417,7 @@ class CcdaImporter
 
         return User::ofType(['participant', 'survey-only'])
             ->where('email', $email)
-            ->where('first_name', '!=', $this->ccda->patient_fist_name)
+            ->where('first_name', '!=', $this->ccda->patient_first_name)
             ->whereHas('phoneNumbers', function ($q) use ($phones) {
                 $q->whereIn('number', $phones);
             })
