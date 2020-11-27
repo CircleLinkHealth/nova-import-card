@@ -425,8 +425,23 @@ class CcdaImporter
         return User::ofType(['participant', 'survey-only'])
             ->where('email', $email)
             ->where('first_name', '!=', $this->ccda->patient_first_name)
-            ->whereHas('phoneNumbers', function ($q) use ($phones) {
-                $q->whereIn('number', $phones);
+            ->where(function ($q) use ($phones, $demographics) {
+                $q->whereHas('phoneNumbers', function ($q) use ($phones) {
+                    $q->whereIn('number', $phones);
+                })->orWhere(function ($q) use ($demographics) {
+                    $wheres = [
+                        ['last_name', '=', $this->ccda->patient_last_name],
+                    ];
+
+                    if ($street = $demographics->address->street[0]) {
+                        $wheres[] = ['address', '=', $street];
+                    }
+
+                    if ($city = $demographics->address->city) {
+                        $wheres[] = ['city', '=', $city];
+                    }
+                    $q->where($wheres);
+                });
             })
             ->exists();
     }
