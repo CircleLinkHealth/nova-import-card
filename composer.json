@@ -196,7 +196,7 @@
     "circlelinkhealth/clh-nova-theme": "*",
     "circlelinkhealth/condition-code-lookup-module": "1.1.7",
     "circlelinkhealth/core-module": "1.8.1",
-    "circlelinkhealth/cpm-migrations-module": "2.6.4",
+    "circlelinkhealth/cpm-migrations-module": "dev-billing-abp-toggle-off",
     "circlelinkhealth/customer-module": "dev-billing-abp-toggle-off",
     "circlelinkhealth/eligibility-module": "3.6.5",
     "circlelinkhealth/enrollment-invites": "*",

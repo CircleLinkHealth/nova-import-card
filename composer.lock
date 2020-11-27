@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b27f34ddc7c0293ae8e6c3a11eefe6ef",
+    "content-hash": "cca69ceb9b0391ac24b8c20b8ff7839f",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1231,11 +1231,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.6.4",
+            "version": "dev-billing-abp-toggle-off",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "b442c709d9fa2a13eaf5ff5a65f957bd470eae9b"
+                "reference": "1d13c7453c56cb88976cef7c2bbb08d20829bbda"
             },
             "type": "laravel-module",
             "extra": {
@@ -1257,7 +1257,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T10:44:44+00:00"
+            "time": "2020-11-27T20:03:35+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -18151,6 +18151,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccm-billing-module": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
