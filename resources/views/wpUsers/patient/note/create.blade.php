@@ -676,6 +676,7 @@
             const disableAutoSave = @json(!empty($note) && $note->status == \CircleLinkHealth\SharedModels\Entities\Note::STATUS_COMPLETE);
             const hasRnApprovedCarePlan = @json($hasRnApprovedCarePlan);
             const shouldRnApprove = @json($shouldRnApprove);
+            const patientIsRpm = @json($attestationRequirements['has_rpm']);
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
@@ -1080,10 +1081,17 @@
 
                     function confirmSubmitForm() {
 
-                        if (!conditionsAttested && callIsSuccess && userIsCareCoach) {
+                        if (!conditionsAttested && callIsSuccess && userIsCareCoach && ! patientIsRpm) {
                             app.$emit('show-attest-call-conditions-modal');
                             return;
                         }
+                        if(patientIsRpm){
+                            $("<input>")
+                                .attr("id", "patient_is_rpm")
+                                .attr("type", "hidden")
+                                .attr("name", "patient_is_rpm").val('true').appendTo(form);
+                        }
+
                         if (isSavingDraft) {
                             setTimeout(() => confirmSubmitForm(), 500);
                             return;

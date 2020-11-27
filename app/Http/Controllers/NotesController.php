@@ -610,8 +610,13 @@ class NotesController extends Controller
         $attestedProblems = isset($input['attested_problems'])
             ? $input['attested_problems']
             : null;
+        
+        $patientIsRpm = isset($input['patient_is_rpm'])
+            ? $input['patient_is_rpm']
+            : null;
+        
         //attestation validation
-        if ($successfulClinicalCall) {
+        if ($successfulClinicalCall && ! $patientIsRpm) {
             $this->service->validateAttestation($request, $patientId, $attestedProblems);
         }
 

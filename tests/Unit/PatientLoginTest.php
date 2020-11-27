@@ -35,7 +35,7 @@ class PatientLoginTest extends CustomerTestCase
      */
     protected $provider;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
