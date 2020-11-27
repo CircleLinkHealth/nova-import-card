@@ -24,8 +24,6 @@ class SeedChargeableServiceNamesAgain extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', [
-            '--class' => ChargeableServiceSeeder::class,
-        ]);
+        Artisan::call('billing:seed-chargeable-services');
     }
 }
