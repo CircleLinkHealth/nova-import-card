@@ -12,8 +12,8 @@ use Illuminate\Support\Str;
 
 class PostmarkInboundCallbackRequest
 {
+    const INBOUND_CALLBACK_DAILY_REPORT            = 'Inbound callback daily report, will not process';
     const INBOUND_CALLBACK_REQUEST_MAX_ARRAY_ITEMS = 16;
-    const INBOUND_CALLBACK_DAILY_REPORT = "Inbound callback daily report";
 
     /**
      * @return string[]
@@ -36,10 +36,10 @@ class PostmarkInboundCallbackRequest
             'Msg:',
         ];
     }
-    
+
     /**
-     * @return array|void
      * @throws \Exception
+     * @return array|void
      */
     public function run(string $inboundCallback, int $postmarkId)
     {
