@@ -7,27 +7,26 @@
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
 use App\Constants;
-use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessor;
-use CircleLinkHealth\CcmBilling\Traits\IsPartOfSequence;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
-class CCM extends AbstractProcessor
+class RPM60 extends AbstractProcessor
 {
-    use IsPartOfSequence;
-
+    //todo: change fulfillment to happen with base service time
     public function clashesWith(): array
     {
         return [
             new RHC(),
-            new RPM(),
-            new RPM40(),
-            new RPM60(),
         ];
     }
 
     public function code(): string
     {
-        return ChargeableService::CCM;
+        return ChargeableService::RPM60;
+    }
+
+    public function codeForProblems(): string
+    {
+        return ChargeableService::RPM;
     }
 
     public function featureIsEnabled(): bool
@@ -42,22 +41,12 @@ class CCM extends AbstractProcessor
 
     public function minimumNumberOfProblems(): int
     {
-        return 2;
+        return 1;
     }
 
     public function minimumTimeInSeconds(): int
     {
         return Constants::TWENTY_MINUTES_IN_SECONDS;
-    }
-
-    public function next(): ?PatientServiceProcessor
-    {
-        return new CCM40();
-    }
-
-    public function previous(): ?PatientServiceProcessor
-    {
-        return null;
     }
 
     public function requiresPatientConsent(int $patientId): bool

@@ -18,6 +18,7 @@ class PCM extends AbstractProcessor
             new RHC(),
             new RPM(),
             new RPM40(),
+            new RPM60(),
         ];
     }
 
