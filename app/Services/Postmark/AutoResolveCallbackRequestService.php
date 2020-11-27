@@ -6,6 +6,7 @@
 
 namespace App\Services\Postmark;
 
+use App\Entities\PostmarkInboundCallbackRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Services\Calls\SchedulerService;
 use App\ValueObjects\PostmarkCallback\AutomatedCallbackMessageValueObject;
@@ -56,6 +57,15 @@ class AutoResolveCallbackRequestService
 
                 return;
             }
+            if (Str::contains($e->getMessage(), PostmarkInboundCallbackRequest::INBOUND_CALLBACK_DAILY_REPORT)) {
+                sendSlackMessage(
+                    '#carecoach_ops_alerts',
+                    "[$recordId] in postmark_inbound_mail, has lot of emails in body. Probably it is the daily callback report."
+                );
+
+                return;
+            }
+
             Log::error($e->getMessage());
             sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See inbound_postmark_mail id [$recordId]");
         }
