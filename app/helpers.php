@@ -82,23 +82,6 @@ if ( ! function_exists('getStringValueFromAnswerAwvUser')) {
         return $val;
     }
 }
-if ( ! function_exists('getIpAddress')) {
-    /**
-     * Get the IP address. This also works with Heroku, where we are behind a load balancer.
-     *
-     * @return string
-     */
-    function getIpAddress()
-    {
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ipAddresses = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-
-            return trim(end($ipAddresses));
-        }
-
-        return $_SERVER['REMOTE_ADDR'] ?? null;
-    }
-}
 
 if ( ! function_exists('abort_if_str_contains_unsafe_characters')) {
     function abort_if_str_contains_unsafe_characters(string $string)
