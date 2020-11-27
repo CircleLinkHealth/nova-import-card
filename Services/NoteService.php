@@ -521,7 +521,6 @@ class NoteService
     
     public function validateAttestation(SafeRequest $request, $patientId, $attestedProblems)
     {
-        // validating attested problems by nurse. Checking existence since we are about to attach them below
         $request->validate([
             'attested_problems.ccd_problem_id' => 'exists:ccd_problems',
         ]);
