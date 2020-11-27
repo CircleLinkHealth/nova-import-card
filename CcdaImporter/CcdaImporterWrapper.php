@@ -124,7 +124,7 @@ class CcdaImporterWrapper
 
             if ( ! $this->ccda->location_id && $ehrPracticeId = optional($this->ccda->targetPatient)->ehr_practice_id) {
                 $aLoc = \Cache::remember("paid_api_pull:athena_ehrPracticeId_departments_{$ehrPracticeId}", 60, function () use ($ehrPracticeId) {
-                    return app(AthenaApiImplementation::class)->getDepartments($ehrPracticeId);
+                    return collect(app(AthenaApiImplementation::class)->getDepartments($ehrPracticeId));
                 })->where('departmentid', $deptId)->first();
 
                 if ($aLoc) {
