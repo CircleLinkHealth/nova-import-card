@@ -328,6 +328,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User hasBhiConsent()
  * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLogs
  * @property int|null                                                                                                $end_of_month_ccm_status_logs_count
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {

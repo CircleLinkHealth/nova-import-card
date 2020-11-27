@@ -139,7 +139,19 @@ class ChargeableService extends BaseModel
         self::RPM40,
     ];
 
-    const PCM   = 'G2065';
+    const PCM = 'G2065';
+
+    const REQUIRED_TIME_PER_SERVICE = [
+        self::CCM         => 20,
+        self::CCM_PLUS_40 => 40,
+        self::CCM_PLUS_60 => 60,
+        self::PCM         => 30,
+        self::RPM         => 20,
+        self::RPM40       => 40,
+        //TODO:ADD RPM60
+        self::GENERAL_CARE_MANAGEMENT => 20,
+        self::BHI                     => 20,
+    ];
     const RPM   = 'CPT 99457';
     const RPM40 = 'CPT 99458';
 
