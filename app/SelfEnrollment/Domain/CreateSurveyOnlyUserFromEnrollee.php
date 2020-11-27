@@ -164,6 +164,7 @@ class CreateSurveyOnlyUserFromEnrollee
             'n/a',
             '123@yahoo.com',
             '1234@yahoo.com',
+            'donthaveone@yahoo.com',
         ];
     }
 
