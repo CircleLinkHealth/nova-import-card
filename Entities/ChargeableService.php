@@ -81,11 +81,6 @@ class ChargeableService extends BaseModel
         self::CCM_PLUS_40,
         self::CCM_PLUS_60,
     ];
-    
-    const RPM_PLUS_CODES = [
-        self::RPM40,
-        self::RPM60
-    ];
 
     const CLASHES = [
         self::PCM => [
@@ -170,7 +165,12 @@ class ChargeableService extends BaseModel
     const RPM_CODES = [
         self::RPM,
         self::RPM40,
-        self::RPM60
+        self::RPM60,
+    ];
+
+    const RPM_PLUS_CODES = [
+        self::RPM40,
+        self::RPM60,
     ];
     const SOFTWARE_ONLY = 'Software-Only';
 
@@ -215,6 +215,7 @@ class ChargeableService extends BaseModel
             self::GENERAL_CARE_MANAGEMENT,
             self::RPM,
             self::RPM40,
+            self::RPM60,
         ];
     }
 
