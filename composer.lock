@@ -770,7 +770,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "4dd78c283095d44961e1413b5385cf43a1e245d1"
+                "reference": "bd3ab6efadf8342b58a86336f153953314ed4dc1"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -815,7 +815,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-26T02:31:01+00:00"
+            "time": "2020-11-27T09:54:22+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1011,7 +1011,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "ea705ef8331b8074dc86eb13ed144b4cfb2100c9"
+                "reference": "66f271a82773c5789ec8ad4c371908b690340a46"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1045,7 +1045,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-27T01:51:12+00:00"
+            "time": "2020-11-27T09:54:14+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -9523,24 +9523,24 @@
         },
         {
             "name": "spatie/laravel-rate-limited-job-middleware",
-            "version": "1.4.1",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-rate-limited-job-middleware.git",
-                "reference": "0310489f108b7f805776239d0b330209a444996c"
+                "reference": "7b72592e0d823e2948c413f5e661de0fd3431db5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-rate-limited-job-middleware/zipball/0310489f108b7f805776239d0b330209a444996c",
-                "reference": "0310489f108b7f805776239d0b330209a444996c",
+                "url": "https://api.github.com/repos/spatie/laravel-rate-limited-job-middleware/zipball/7b72592e0d823e2948c413f5e661de0fd3431db5",
+                "reference": "7b72592e0d823e2948c413f5e661de0fd3431db5",
                 "shasum": ""
             },
             "require": {
                 "illuminate/redis": "^6.0|^7.0|^8.0",
-                "php": "^7.3"
+                "php": "^7.3|^8.0"
             },
             "require-dev": {
-                "mockery/mockery": "1.3.1",
+                "mockery/mockery": "^1.4",
                 "orchestra/testbench": "^4.0|^5.0|^6.0",
                 "phpunit/phpunit": "^8.2|^9.0",
                 "symfony/var-dumper": "^4.3|^5.0"
@@ -9575,7 +9575,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-09-08T17:25:19+00:00"
+            "time": "2020-11-27T09:36:55+00:00"
         },
         {
             "name": "spatie/laravel-schedule-monitor",
@@ -9832,20 +9832,20 @@
         },
         {
             "name": "spatie/pdf-to-text",
-            "version": "1.3.0",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/pdf-to-text.git",
-                "reference": "9c11b44c6469f6e1d9b097e30f0f1d44aa65a8e8"
+                "reference": "a7a9268a216f3cece08d1fd4d9c3a2663e2f2882"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/pdf-to-text/zipball/9c11b44c6469f6e1d9b097e30f0f1d44aa65a8e8",
-                "reference": "9c11b44c6469f6e1d9b097e30f0f1d44aa65a8e8",
+                "url": "https://api.github.com/repos/spatie/pdf-to-text/zipball/a7a9268a216f3cece08d1fd4d9c3a2663e2f2882",
+                "reference": "a7a9268a216f3cece08d1fd4d9c3a2663e2f2882",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.3",
+                "php": "^7.3|^8.0",
                 "symfony/process": "^4.0|^5.0"
             },
             "require-dev": {
@@ -9881,7 +9881,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2020-03-11T17:11:25+00:00"
+            "time": "2020-11-27T07:31:27+00:00"
         },
         {
             "name": "spatie/temporary-directory",
@@ -15410,16 +15410,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "7.0.10",
+            "version": "7.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "f1884187926fbb755a9aaf0b3836ad3165b478bf"
+                "reference": "52f55786aa2e52c26cd9e2db20aff2981e0f7399"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/f1884187926fbb755a9aaf0b3836ad3165b478bf",
-                "reference": "f1884187926fbb755a9aaf0b3836ad3165b478bf",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/52f55786aa2e52c26cd9e2db20aff2981e0f7399",
+                "reference": "52f55786aa2e52c26cd9e2db20aff2981e0f7399",
                 "shasum": ""
             },
             "require": {
@@ -15469,7 +15469,13 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-11-20T13:55:58+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/sebastianbergmann",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-11-27T06:08:35+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -15663,16 +15669,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.5.9",
+            "version": "8.5.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f5c8a5dd5e7e8d68d7562bfb48d47287d33937d6"
+                "reference": "ebd3963f9ba330f98a8fe6ccf5390839e868af75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f5c8a5dd5e7e8d68d7562bfb48d47287d33937d6",
-                "reference": "f5c8a5dd5e7e8d68d7562bfb48d47287d33937d6",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/ebd3963f9ba330f98a8fe6ccf5390839e868af75",
+                "reference": "ebd3963f9ba330f98a8fe6ccf5390839e868af75",
                 "shasum": ""
             },
             "require": {
@@ -15688,7 +15694,7 @@
                 "phar-io/version": "^2.0.1",
                 "php": "^7.2",
                 "phpspec/prophecy": "^1.10.3",
-                "phpunit/php-code-coverage": "^7.0.10",
+                "phpunit/php-code-coverage": "^7.0.11",
                 "phpunit/php-file-iterator": "^2.0.2",
                 "phpunit/php-text-template": "^1.2.1",
                 "phpunit/php-timer": "^2.1.2",
@@ -15752,7 +15758,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-10T12:51:38+00:00"
+            "time": "2020-11-27T05:24:14+00:00"
         },
         {
             "name": "react/event-loop",
