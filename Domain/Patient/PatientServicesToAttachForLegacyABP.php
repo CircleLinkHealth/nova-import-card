@@ -141,7 +141,7 @@ class PatientServicesToAttachForLegacyABP
             }
 
             if (ChargeableService::RPM === $service->code) {
-                $rpmPlus                  = $this->practiceServices->whereIn('code', ChargeableService::RPM_PLUS_CODES)->filter()->all();
+                $rpmPlus                = $this->practiceServices->whereIn('code', ChargeableService::RPM_PLUS_CODES)->filter()->all();
                 $this->eligibleServices = array_merge($this->eligibleServices, $rpmPlus);
             }
 
