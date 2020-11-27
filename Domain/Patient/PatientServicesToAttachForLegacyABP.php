@@ -6,11 +6,14 @@
 
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
+use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 class PatientServicesToAttachForLegacyABP
@@ -23,13 +26,13 @@ class PatientServicesToAttachForLegacyABP
 
     protected int $patientId;
 
-    protected array $practiceServices;
+    protected EloquentCollection $practiceServices;
 
     protected PatientServiceProcessorRepository $repo;
 
     protected PatientMonthlySummary $summary;
 
-    public function __construct(PatientMonthlySummary $summary, array $practiceServices = [])
+    public function __construct(PatientMonthlySummary $summary, EloquentCollection $practiceServices)
     {
         $this->summary          = $summary;
         $this->patientId        = $summary->patient_id;
@@ -53,21 +56,65 @@ class PatientServicesToAttachForLegacyABP
         return $this->repo;
     }
 
-    private function returnFulfilledServicesWithTime()
+    private function returnFulfilledServicesWithTime(): array
     {
-        return [];
+        $servicesWithTime = [];
+
+        foreach ($this->eligibleServices as $service) {
+            $servicesWithTime[$service->code] = [
+                'id'   => $service->id,
+                'time' => $time = $this->timeForService($service->id),
+            ];
+        }
+
+        foreach ($servicesWithTime as $service) {
+            if (in_array($service->code, ChargeableService::CCM_PLUS_CODES)) {
+                //make sure of order
+                $servicesWithTime[ChargeableService::CCM]['time'] += $service['time'];
+
+                continue;
+            }
+
+            if (ChargeableService::RPM40 === $service->code) {
+                $servicesWithTime[ChargeableService::RPM]['time'] += $service['time'];
+                continue;
+            }
+        }
+
+        foreach ($servicesWithTime as $key => $service) {
+            if (in_array($service->code, ChargeableService::CCM_PLUS_CODES)) {
+                //make sure of order
+                $service['is_fulfilled'] = $servicesWithTime[ChargeableService::CCM]['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$key] ?? 0;
+
+                continue;
+            }
+
+            if (ChargeableService::RPM40 === $service->code) {
+                //make sure of order
+                $service['is_fulfilled'] = $servicesWithTime[ChargeableService::RPM]['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$key] ?? 0;
+                continue;
+            }
+
+            $service['is_fulfilled'] = $service['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$key] ?? 0;
+        }
+
+        return array_filter($servicesWithTime, fn ($s) => $s['is_fulfilled']);
     }
 
     private function setActivities(): self
     {
-        //set activities and group by chargeable service id. pluck and return?
+        $this->activities = Activity::wherePatientId($this->patientId)
+            ->createdInMonth(Carbon::now()->startOfMonth(), 'performed_at')
+            ->whereIn('chargeable_service_id', $this->eligibleServices)
+            ->get()
+            ->collect();
 
         return $this;
     }
 
     private function setEligibleServices(): self
     {
-        if (in_array(ChargeableService::GENERAL_CARE_MANAGEMENT, $this->practiceServices)) {
+        if ($this->practiceServices->contains('code', '=', ChargeableService::GENERAL_CARE_MANAGEMENT)) {
             $this->eligibleServices[] = ChargeableService::GENERAL_CARE_MANAGEMENT;
 
             return $this;
@@ -99,21 +146,14 @@ class PatientServicesToAttachForLegacyABP
     private function setPatient(): self
     {
         if ( ! isset($this->patient)) {
-            $this->patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId, $this->month);
+            $this->patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId);
         }
 
         return $this;
     }
 
-    private function setSummaries(): self
+    private function timeForService(int $chargeableServiceId): int
     {
-        $this->summaries = $this->newBillingIsEnabled() ?
-            $this->repo()
-                ->getChargeablePatientSummaries($this->patientId, $this->month)
-                //create copies of the models because we are modifying them in groupSimilarCodes()
-                ->transform(fn ($entry) => $entry->replicate()) :
-            $this->createFauxSummariesFromLegacyData();
-
-        return $this;
+        return $this->activities->where('chargeable_service_id', $chargeableServiceId)->sum('duration') ?? 0;
     }
 }
