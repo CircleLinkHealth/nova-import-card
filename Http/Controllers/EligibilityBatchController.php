@@ -48,7 +48,7 @@ class EligibilityBatchController extends Controller
 
     public function csvCreate()
     {
-        return view('eligibilityBatch.methods.single-csv');
+        return view('eligibility::batch.methods.single-csv');
     }
 
     public function downloadAllPatientsCsv(EligibilityBatch $batch)
@@ -395,18 +395,18 @@ class EligibilityBatchController extends Controller
             $batch->type,
             [EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS]
         )) {
-            return view('eligibilityBatch.methods.google-drive')
+            return view('eligibility::batch.methods.google-drive')
                 ->with('batch', $batch)
                 ->with('action', 'edit');
         }
         if (EligibilityBatch::TYPE_ONE_CSV == $batch->type) {
-            return view('eligibilityBatch.methods.single-csv');
+            return view('eligibility::batch.methods.single-csv');
         }
     }
 
     public function googleDriveCreate()
     {
-        return view('eligibilityBatch.methods.google-drive');
+        return view('eligibility::batch.methods.google-drive');
     }
 
     public function index()
@@ -417,7 +417,7 @@ class EligibilityBatchController extends Controller
             ->get();
 
         return view(
-            'eligibilityBatch.index',
+            'eligibility::batch.index',
             compact(['batches'])
         );
     }

@@ -16,7 +16,7 @@ class EligibilityBatchViewComposerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::composer(['eligibilityBatch.index'], function ($view) {
+        View::composer(['eligibility::batch.index'], function ($view) {
             $data = collect($view->getData());
 
             $batches = $data->get('batches')->map(function ($b) {
