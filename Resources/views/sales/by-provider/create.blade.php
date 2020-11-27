@@ -1,4 +1,4 @@
-@extends('resources.views.partials.adminUI')
+@extends('cpm-admin::partials.adminUI')
 
 @section('content')
 
