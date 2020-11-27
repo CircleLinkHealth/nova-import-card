@@ -15,15 +15,15 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 trait PostmarkCallbackHelpers
 {
     /**
-     * @param  bool   $testWeirdFormatInputCases
+     * @param  bool   $testForUnsanitisedInputCases
      * @return string
      */
-    public function getCallbackMailData(User $patient, bool $requestsToWithdraw, bool $nameIsSelf = false, string $number, $testWeirdFormatInputCases = false)
+    public function getCallbackMailData(User $patient, bool $requestsToWithdraw, bool $nameIsSelf = false, string $number, $testForUnsanitisedInputCases = false)
     {
         $name  = $nameIsSelf ? 'SELF' : $patient->display_name;
         $clrId = $number.' '.$patient->display_name;
 
-        if ($testWeirdFormatInputCases) {
+        if ($testForUnsanitisedInputCases) {
             $name  = $name.' '.$patient->display_name.' '.'*';
             $clrId = $number.' '.$number.' '.'Pavlos Tsokkos';
         }
@@ -102,7 +102,7 @@ trait PostmarkCallbackHelpers
         return $patient;
     }
 
-    private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient, ?string $forcePhone = '', bool $testWeirdFormatInputCases = false)
+    private function createPostmarkCallbackData(bool $requestToWithdraw, bool $nameIsSelf, User $patient, ?string $forcePhone = '', bool $testForUnsanitisedInputCases = false)
     {
         $this->phone = $forcePhone;
         $number      = $this->phone;
@@ -117,7 +117,7 @@ trait PostmarkCallbackHelpers
                 'data' => json_encode(
                     [
                         'From'     => 'message.dispatch@callcenterusa.net',
-                        'TextBody' => $this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf, $number, $testWeirdFormatInputCases),
+                        'TextBody' => $this->getCallbackMailData($patient, $requestToWithdraw, $nameIsSelf, $number, $testForUnsanitisedInputCases),
                     ]
                 ),
             ]

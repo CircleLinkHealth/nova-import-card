@@ -14,16 +14,6 @@ use Illuminate\Support\Facades\Log;
 
 class InboundCallbackMultimatchService
 {
-    /**
-     * @return array|string|string[]
-     */
-    public function getFirstLastName(string $callerField)
-    {
-        $patientNameArray = $this->parsePostmarkInboundField($callerField);
-
-        return (new FirstNameLastNameValueObject())->firstsLastNameArray($patientNameArray);
-    }
-
     public function multimatchResult(Collection $patientsMatched, string $reasoning)
     {
         return (new PostmarkMultipleMatchData(
@@ -105,14 +95,6 @@ class InboundCallbackMultimatchService
         }
 
         return $this->multimatchResult($patientsMatchedByCallerFieldName, PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF);
-    }
-
-    /**
-     * @return array|false|string[]
-     */
-    private function parsePostmarkInboundField(string $string)
-    {
-        return preg_split('/(?=[A-Z])/', preg_replace('/[^a-zA-Z]+/', '', $string));
     }
 
     /**

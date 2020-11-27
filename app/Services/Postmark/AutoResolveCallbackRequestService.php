@@ -8,6 +8,7 @@ namespace App\Services\Postmark;
 
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Services\Calls\SchedulerService;
+use App\ValueObjects\PostmarkCallback\AutomatedCallbackMessageValueObject;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -88,24 +89,16 @@ class AutoResolveCallbackRequestService
         $service = app(SchedulerService::class);
         $service->scheduleAsapCallbackTask(
             $user,
-            $this->constructCallbackMessage($postmarkCallbackData),
+            (new AutomatedCallbackMessageValueObject(
+                $postmarkCallbackData['phone'],
+                $postmarkCallbackData['message'],
+                $user->first_name,
+                $user->last_name
+            ))->constructCallbackMessage(),
             ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
             null,
             SchedulerService::CALL_BACK_TYPE,
         );
-    }
-
-    private function constructCallbackMessage(array $postmarkCallbackData)
-    {
-        $callerId       = $postmarkCallbackData['callerId'];
-        $fullName       = app(InboundCallbackMultimatchService::class)->getFirstLastName($callerId);
-        $firstName      = $fullName['firstName'];
-        $lastName       = $fullName['lastName'];
-        $phone          = $postmarkCallbackData['phone'];
-        $phoneFormatted = formatPhoneNumberE164($phone);
-        $message        = $postmarkCallbackData['message'];
-
-        return 'From'.' '."[$phoneFormatted $firstName $lastName]: $message.".' '."Callback Number: $phone";
     }
 
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)

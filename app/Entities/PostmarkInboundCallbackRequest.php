@@ -12,6 +12,8 @@ use Illuminate\Support\Str;
 
 class PostmarkInboundCallbackRequest
 {
+    const INBOUND_CALLBACK_REQUEST_MAX_ARRAY_ITEMS = 16;
+    
     /**
      * @return string[]
      */
@@ -41,7 +43,7 @@ class PostmarkInboundCallbackRequest
     {
         $inboundCallbackArray = $this->getArrayFromStringWithBreaks($inboundCallback, $postmarkId);
 
-        if (count($inboundCallbackArray) > 30) {
+        if (count($inboundCallbackArray) > self::INBOUND_CALLBACK_REQUEST_MAX_ARRAY_ITEMS) {
 //            I dont see any other way in current code to distinguish this. A usual email has 19 - 22 count in Production
             sendSlackMessage('#carecoach_ops_alerts', "[$postmarkId] in postmark_inbound_mail, has lot of emails in body. Probably it is the daily callback
             report.");
