@@ -25,7 +25,8 @@ class GenerateCameronLetter extends Seeder
     const MILLER_SIGNATURE      = '/img/signatures/cameron-memorial/millers_signature.png';
     const SIGNATORY_NAME_FAUR   = 'Dr. Lynn Faur';
     const SIGNATORY_NAME_MILLER = 'Dr. Thomas Miller';
-
+    const CAMERON_DB_NAME = 'cameron-memorial';
+    
     /**
      * @var
      */
@@ -115,12 +116,12 @@ class GenerateCameronLetter extends Seeder
 
     private function getPractice()
     {
-        $cameronPractice = Practice::where('name', '=', 'cameron-memorial')->first();
+        $cameronPractice = Practice::where('name', '=', self::CAMERON_DB_NAME)->first();
 
         if ($this->testingMode) {
             $cameronPractice = Practice::firstOrCreate(
                 [
-                    'name' => 'cameron-memorial',
+                    'name' => self::CAMERON_DB_NAME,
                 ],
                 [
                     'active'                => 1,
