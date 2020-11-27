@@ -129,7 +129,7 @@ class CcdaImporter
 
         $demographics = $this->ccda->bluebuttonJson()->demographics;
 
-        if ($this->isFamily($email, $demographics)) {
+        if ($this->isFamily($email, $demographics, $this->enrollee)) {
             $email = self::convertToFamilyEmail($email);
         }
 
@@ -403,11 +403,18 @@ class CcdaImporter
         return $this;
     }
 
-    private function isFamily(string $email, object $demographics)
+    private function isFamily(string $email, object $demographics, Enrollee $enrollee)
     {
         $phones = collect($demographics->phones)
             ->pluck('number')
             ->map(fn ($num) => formatPhoneNumberE164($num))
+            ->merge([
+                formatPhoneNumberE164($enrollee->primary_phone),
+                formatPhoneNumberE164($enrollee->cell_phone),
+                formatPhoneNumberE164($enrollee->home_phone),
+                formatPhoneNumberE164($enrollee->other_phone),
+            ])
+            ->unique()
             ->filter()
             ->all();
 
