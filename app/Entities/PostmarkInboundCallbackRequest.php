@@ -12,6 +12,9 @@ use Illuminate\Support\Str;
 
 class PostmarkInboundCallbackRequest
 {
+    const INBOUND_CALLBACK_DAILY_REPORT            = 'Inbound callback daily report, will not process';
+    const INBOUND_CALLBACK_REQUEST_MAX_ARRAY_ITEMS = 16;
+
     /**
      * @return string[]
      */
@@ -34,9 +37,17 @@ class PostmarkInboundCallbackRequest
         ];
     }
 
+    /**
+     * @throws \Exception
+     * @return array|void
+     */
     public function run(string $inboundCallback, int $postmarkId)
     {
         $inboundCallbackArray = $this->getArrayFromStringWithBreaks($inboundCallback, $postmarkId);
+
+        if (count($inboundCallbackArray) > self::INBOUND_CALLBACK_REQUEST_MAX_ARRAY_ITEMS) {
+            throw new \Exception(self::INBOUND_CALLBACK_DAILY_REPORT);
+        }
 
         return  $this->arrayWithKeys($inboundCallbackArray);
     }

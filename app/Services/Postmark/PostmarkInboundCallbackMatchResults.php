@@ -47,7 +47,8 @@ class PostmarkInboundCallbackMatchResults
             /** @var User $matchedPatient */
             $matchedPatient = $inboundDataMatchedWithPhone->first();
 
-            return app(InboundCallbackSingleMatchService::class)->singleMatchCallbackResult($matchedPatient, $this->postmarkCallbackData);
+            return app(InboundCallbackSingleMatchService::class)
+                ->singleMatchCallbackResult($matchedPatient, $this->postmarkCallbackData);
         }
 
         if ($inboundDataMatchedWithPhone->count() > 1) {
