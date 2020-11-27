@@ -106,7 +106,6 @@ class PatientMonthlyServiceTime
                 ->wherePatientId($this->patientId)
                 ->createdInMonth(Carbon::now()->startOfMonth(), 'performed_at')
                 ->whereIn('chargeable_service_id', $chargeableServiceIds)
-                ->get()
                 ->sum('duration');
         }
 
