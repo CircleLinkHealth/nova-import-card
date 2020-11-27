@@ -82,7 +82,7 @@ class PatientServicesToAttachForLegacyABP
                 continue;
             }
 
-            if (ChargeableService::RPM40 === $code) {
+            if (in_array($code, ChargeableService::RPM_PLUS_CODES)) {
                 $servicesWithTime[ChargeableService::RPM]['time'] += $service['time'];
                 continue;
             }
@@ -96,12 +96,12 @@ class PatientServicesToAttachForLegacyABP
                 continue;
             }
 
-            if (ChargeableService::RPM40 === $code) {
+            if (in_array($code, ChargeableService::RPM_PLUS_CODES)) {
                 //make sure of order
                 $servicesWithTime[$code]['is_fulfilled'] = $servicesWithTime[ChargeableService::RPM]['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$code] ?? 0;
                 continue;
             }
-    
+
             $servicesWithTime[$code]['is_fulfilled'] = $service['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$code] ?? 0;
         }
 
@@ -140,8 +140,9 @@ class PatientServicesToAttachForLegacyABP
                 $this->eligibleServices[] = $service;
             }
 
-            if (ChargeableService::RPM === $service->code && ($rpm40 = $this->practiceServices->firstWhere('code', ChargeableService::RPM40))) {
-                $this->eligibleServices[] = $rpm40;
+            if (ChargeableService::RPM === $service->code) {
+                $rpmPlus                  = $this->practiceServices->whereIn('code', ChargeableService::RPM_PLUS_CODES)->filter()->all();
+                $this->eligibleServices = array_merge($this->eligibleServices, $rpmPlus);
             }
 
             if (ChargeableService::CCM === $service->code) {

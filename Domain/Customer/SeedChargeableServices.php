@@ -150,6 +150,7 @@ class SeedChargeableServices
         ChargeableService::updateOrCreate([
             'code' => 'CPT 99458(>60mins)',
         ], [
+            //todo: figure out why 12 is not saved
             'order'        => 12,
             'is_enabled'   => true,
             'description'  => 'Remote Patient Monitoring over 60 minutes',
