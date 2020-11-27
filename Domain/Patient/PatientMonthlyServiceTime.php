@@ -102,8 +102,7 @@ class PatientMonthlyServiceTime
     private function getTimeForServiceIds(array $chargeableServiceIds, $include = true): int
     {
         if ( ! BillingCache::billingRevampIsEnabled()) {
-            return Activity::select('duration')
-                ->wherePatientId($this->patientId)
+            return Activity::wherePatientId($this->patientId)
                 ->createdInMonth(Carbon::now()->startOfMonth(), 'performed_at')
                 ->whereIn('chargeable_service_id', $chargeableServiceIds)
                 ->sum('duration');
