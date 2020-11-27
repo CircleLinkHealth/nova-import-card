@@ -40,6 +40,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-core.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-ccm-billing.git"
         }
     ]
 }
