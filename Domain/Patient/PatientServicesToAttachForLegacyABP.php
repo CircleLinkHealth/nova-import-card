@@ -140,11 +140,11 @@ class PatientServicesToAttachForLegacyABP
                 $this->eligibleServices[] = $service;
             }
 
-            if (ChargeableService::RPM === $service && ($rpm40 = $this->practiceServices->firstWhere('code', ChargeableService::RPM40))) {
+            if (ChargeableService::RPM === $service->code && ($rpm40 = $this->practiceServices->firstWhere('code', ChargeableService::RPM40))) {
                 $this->eligibleServices[] = $rpm40;
             }
 
-            if (ChargeableService::CCM === $service) {
+            if (ChargeableService::CCM === $service->code) {
                 $plus                   = $this->practiceServices->whereIn('code', ChargeableService::CCM_PLUS_CODES)->all();
                 $this->eligibleServices = array_merge($this->eligibleServices, $plus);
             }
