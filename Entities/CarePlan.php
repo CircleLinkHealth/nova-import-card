@@ -303,7 +303,7 @@ class CarePlan extends BaseModel implements PdfReport
 
     public function isRnApprovalEnabled(): bool
     {
-        return $this->created_at->isAfter(self::RN_APPROVAL_RELEASE_DATE);
+        return ! $this->patient->isRpm() && $this->created_at->isAfter(self::RN_APPROVAL_RELEASE_DATE);
     }
 
     public function isRnApproved()
