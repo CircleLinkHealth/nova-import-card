@@ -818,7 +818,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "5aba927dfddcb77f3fedf2c00d065119026a6cb7"
+                "reference": "23c644b0e5fd169dc22eb2cca259cf9ef4ade7a7"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -860,7 +860,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-27T01:09:23+00:00"
+            "time": "2020-11-27T01:14:52+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -868,7 +868,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "03f794d68cf4ed3cf6edefba60ce47e4d3afbc35"
+                "reference": "ea705ef8331b8074dc86eb13ed144b4cfb2100c9"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -902,7 +902,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-26T04:23:53+00:00"
+            "time": "2020-11-27T01:51:12+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
