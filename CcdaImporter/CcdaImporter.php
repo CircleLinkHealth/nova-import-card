@@ -432,15 +432,15 @@ class CcdaImporter
                     $wheres = [
                         ['last_name', '=', $this->ccda->patient_last_name],
                     ];
-
                     if ($street = $demographics->address->street[0]) {
                         $wheres[] = ['address', '=', $street];
                     }
-
                     if ($city = $demographics->address->city) {
                         $wheres[] = ['city', '=', $city];
                     }
-                    $q->where($wheres);
+                    if (3 === count($wheres)) {
+                        $q->where($wheres);
+                    }
                 });
             })
             ->exists();
