@@ -21,6 +21,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\Boolean;
@@ -32,6 +33,13 @@ class ModifyPatientTime extends Action implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
+    private bool $allowLessThan20Minutes = false;
+    private ?int $chargeableServiceId    = null;
+    private ?int $currentTimeSeconds     = 0;
+    private ?Carbon $monthYear           = null;
+    private ?int $newTimeSeconds         = 0;
+    private ?int $patientId              = null;
 
     /**
      * Get the fields available on the action.
@@ -65,43 +73,37 @@ class ModifyPatientTime extends Action implements ShouldQueue
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $monthYear = now()->startOfMonth();
-
-        $allowLessThan20Minutes = $fields->get('allow_accrued_towards', false);
+        $this->monthYear              = now()->startOfMonth();
+        $this->allowLessThan20Minutes = $fields->get('allow_accrued_towards', false);
+        $this->newTimeSeconds         = $fields->get('durationMinutes') * 60;
 
         /** @var string $chargeableServiceCode */
-        $chargeableServiceCode = $fields->get('chargeable_service');
-
-        /** @var int $newDuration */
-        $newDuration = $fields->get('durationMinutes') * 60;
-
-        /** @var int $chargeableServiceId */
-        $chargeableServiceId = ChargeableService::cached()
+        $chargeableServiceCode     = $fields->get('chargeable_service');
+        $this->chargeableServiceId = ChargeableService::cached()
             ->where('code', '=', $chargeableServiceCode)
             ->first()
             ->id;
 
         /** @var User $patient */
-        $patient     = $models->first();
-        $pageTimers  = $this->getPageTimers($patient->id, $chargeableServiceId, $monthYear);
-        $currentTime = PatientMonthlyServiceTime::forChargeableServiceId($chargeableServiceId, $patient->id, $monthYear);
+        $patient                  = $models->first();
+        $this->patientId          = $patient->id;
+        $this->currentTimeSeconds = PatientMonthlyServiceTime::forChargeableServiceId($this->chargeableServiceId, $this->patientId, $this->monthYear);
+        $pageTimers               = $this->getPageTimers();
 
-        $errorMsg = $this->validate($models, $chargeableServiceCode, $currentTime, $newDuration, $allowLessThan20Minutes, $pageTimers);
+        $errorMsg = $this->validate($models);
         if ($errorMsg) {
             $this->markAsFailed($models->first(), $errorMsg);
 
             return;
         }
 
-        $pageTimerIds        = $this->modifyPageTimers($pageTimers, $currentTime, $newDuration);
+        $pageTimerIds        = $this->modifyPageTimers($pageTimers);
         $activityIds         = $this->modifyActivities($pageTimerIds);
         $nurseCareRateLogIds = $this->modifyNurseCareRateLogs($activityIds);
 
-        if (in_array($chargeableServiceCode, [ChargeableService::CCM, ChargeableService::BHI])) {
-            $this->modifyPatientMonthlySummary($patient->id, $chargeableServiceCode, $newDuration);
-        }
+        $this->modifyPatientMonthlySummary($chargeableServiceCode);
 
-        $valid = $this->verifyChanges($patient->id, $chargeableServiceId, $monthYear);
+        $valid = $this->verifyChanges();
         if ( ! $valid) {
             $pageTimerIdsStr        = json_encode($pageTimerIds);
             $activityIdsStr         = json_encode($activityIds);
@@ -120,37 +122,48 @@ class ModifyPatientTime extends Action implements ShouldQueue
         $this->markAsFinished($models->first());
     }
 
-    private function getActivities(int $patientId, int $chargeableServiceId, Carbon $monthYear): Collection
+    private function getActivities(): Collection
     {
-        return Activity::wherePatientId($patientId)
-            ->where('chargeable_service_id', '=', $chargeableServiceId)
+        return $this->getActivitiesQuery()->get();
+    }
+
+    private function getActivitiesQuery()
+    {
+        return Activity::wherePatientId($this->patientId)
+            ->where('chargeable_service_id', '=', $this->chargeableServiceId)
             ->whereBetween('performed_at', [
-                $monthYear->copy()->startOfMonth(),
-                $monthYear->copy()->endOfMonth(),
+                $this->monthYear->copy()->startOfMonth(),
+                $this->monthYear->copy()->endOfMonth(),
             ])
-            ->orderBy('performed_at', 'desc')
+            ->orderBy('performed_at', 'desc');
+    }
+
+    private function getManualActivities()
+    {
+        return $this->getActivitiesQuery()
+            ->where('logged_from', '=', 'manual_input')
             ->get();
     }
 
-    private function getNurseCareRateLogs(int $patientId, int $chargeableServiceId, Carbon $monthYear): Collection
+    private function getNurseCareRateLogs(): Collection
     {
-        return NurseCareRateLog::wherePatientUserId($patientId)
-            ->where('chargeable_service_id', '=', $chargeableServiceId)
+        return NurseCareRateLog::wherePatientUserId($this->patientId)
+            ->where('chargeable_service_id', '=', $this->chargeableServiceId)
             ->whereBetween('performed_at', [
-                $monthYear->copy()->startOfMonth(),
-                $monthYear->copy()->endOfMonth(),
+                $this->monthYear->copy()->startOfMonth(),
+                $this->monthYear->copy()->endOfMonth(),
             ])
             ->orderBy('time_before', 'asc')
             ->get();
     }
 
-    private function getPageTimers(int $patientId, int $chargeableServiceId, Carbon $monthYear): Collection
+    private function getPageTimers(): Collection
     {
-        return PageTimer::wherePatientId($patientId)
-            ->where('chargeable_service_id', '=', $chargeableServiceId)
+        return PageTimer::wherePatientId($this->patientId)
+            ->where('chargeable_service_id', '=', $this->chargeableServiceId)
             ->whereBetween('start_time', [
-                $monthYear->copy()->startOfMonth(),
-                $monthYear->copy()->endOfMonth(),
+                $this->monthYear->copy()->startOfMonth(),
+                $this->monthYear->copy()->endOfMonth(),
             ])
             ->orderBy('start_time', 'desc')
             ->get();
@@ -158,27 +171,48 @@ class ModifyPatientTime extends Action implements ShouldQueue
 
     private function modifyActivities(array $pageTimerIds): array
     {
-        $result = collect();
+        $remaining = $this->currentTimeSeconds - $this->newTimeSeconds;
+        $result    = collect();
         Activity::with([
             'pageTime' => fn ($q) => $q->select(['id', 'duration']),
         ])
             ->whereIn('page_timer_id', $pageTimerIds)
             ->orderByDesc('performed_at')
-            ->each(function (Activity $activity) use ($result) {
+            ->each(function (Activity $activity) use ($result, &$remaining) {
+                $remaining = $remaining - ($activity->pageTime->duration - $activity->duration);
                 $result->push($activity->id);
                 $activity->duration = $activity->pageTime->duration;
                 $activity->save();
             });
+
+        if ($remaining > 0) {
+            $this->getManualActivities()
+                ->each(function (Activity $activity) use ($result, &$remaining) {
+                    if ($remaining <= 0) {
+                        return false;
+                    }
+                    if ($activity->duration >= $remaining) {
+                        $activity->duration = $activity->duration - $remaining;
+                        $remaining = 0;
+                    } else {
+                        $remaining -= $activity->duration;
+                        $activity->duration = 0;
+                    }
+                    $activity->save();
+                    $result->push($activity->id);
+                });
+        }
+
+        if ($remaining > 0) {
+            Log::warning("Something's wrong modifying this patient's time.");
+        }
 
         return $result->toArray();
     }
 
     private function modifyNurseCareRateLogs(array $activityIds): array
     {
-        $patientId           = null;
-        $monthYear           = null;
-        $chargeableServiceId = null;
-        $result              = collect();
+        $result = collect();
         NurseCareRateLog::with([
             'activity' => fn ($q) => $q->select(['id', 'duration']),
         ])
@@ -186,16 +220,10 @@ class ModifyPatientTime extends Action implements ShouldQueue
             ->orderByDesc('performed_at')
             ->get()
             ->groupBy('activity_id')
-            ->each(function (Collection $group) use ($result, &$patientId, &$monthYear, &$chargeableServiceId) {
+            ->each(function (Collection $group) use ($result) {
                 $hasMoreThanOne = $group->count() > 1;
                 $remainingTime = $group->first()->activity->duration;
-                $group->each(function (NurseCareRateLog $nurseCareRateLog) use ($result, $hasMoreThanOne, &$remainingTime, &$patientId, &$monthYear, &$chargeableServiceId) {
-                    if ( ! $patientId) {
-                        $patientId = $nurseCareRateLog->patient_user_id;
-                        $monthYear = $nurseCareRateLog->performed_at->startOfMonth();
-                        $chargeableServiceId = $nurseCareRateLog->chargeable_service_id;
-                    }
-
+                $group->each(function (NurseCareRateLog $nurseCareRateLog) use ($result, $hasMoreThanOne, &$remainingTime) {
                     if ($hasMoreThanOne) {
                         if ('accrued_towards_ccm' === $nurseCareRateLog->ccm_type
                             && ($nurseCareRateLog->time_before + $remainingTime) > Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
@@ -213,25 +241,23 @@ class ModifyPatientTime extends Action implements ShouldQueue
                 });
             });
 
-        if ($patientId) {
-            $timeBefore = 0;
-            $this->getNurseCareRateLogs($patientId, $chargeableServiceId, $monthYear)
-                ->each(function (NurseCareRateLog $nurseCareRateLog) use (&$timeBefore) {
-                    if ($nurseCareRateLog->time_before !== $timeBefore) {
-                        $nurseCareRateLog->time_before = $timeBefore;
-                        $nurseCareRateLog->save();
-                    }
-                    $timeBefore += $nurseCareRateLog->increment;
-                });
-        }
+        $timeBefore = 0;
+        $this->getNurseCareRateLogs()
+            ->each(function (NurseCareRateLog $nurseCareRateLog) use (&$timeBefore) {
+                if ($nurseCareRateLog->time_before !== $timeBefore) {
+                    $nurseCareRateLog->time_before = $timeBefore;
+                    $nurseCareRateLog->save();
+                }
+                $timeBefore += $nurseCareRateLog->increment;
+            });
 
         return $result->toArray();
     }
 
-    private function modifyPageTimers(Collection $pageTimers, int $currentDuration, int $newDuration): array
+    private function modifyPageTimers(Collection $pageTimers): array
     {
         $result    = collect();
-        $remaining = $currentDuration - $newDuration;
+        $remaining = $this->currentTimeSeconds - $this->newTimeSeconds;
         $pageTimers->each(function (PageTimer $pageTimer) use (&$remaining, $result) {
             if ($remaining <= 0) {
                 return false;
@@ -250,35 +276,37 @@ class ModifyPatientTime extends Action implements ShouldQueue
         return $result->toArray();
     }
 
-    private function modifyPatientMonthlySummary(int $patientId, string $chargeableServiceCode, int $newDuration)
+    private function modifyPatientMonthlySummary(string $chargeableServiceCode)
     {
         /** @var PatientMonthlySummary $pms */
-        $pms = PatientMonthlySummary::where('patient_id', '=', $patientId)
+        $pms = PatientMonthlySummary::where('patient_id', '=', $this->patientId)
             ->where('month_year', '=', now()->startOfMonth()->toDateString())
             ->first();
 
-        if (ChargeableService::CCM === $chargeableServiceCode) {
-            $pms->ccm_time = $newDuration;
+        if (in_array($chargeableServiceCode, [ChargeableService::CCM, ChargeableService::GENERAL_CARE_MANAGEMENT, ChargeableService::PCM, ChargeableService::RPM])) {
+            $pms->ccm_time = $this->newTimeSeconds;
         } else {
-            $pms->bhi_time = $newDuration;
+            $pms->bhi_time = $this->newTimeSeconds;
         }
+
+        $pms->total_time = $pms->ccm_time + $pms->bhi_time;
         $pms->save();
     }
 
-    private function validate(Collection $models, string $chargeableService, int $currentTime, int $newTime, bool $allowLessThan20Minutes, Collection $pageTimers): ?string
+    private function validate(Collection $models): ?string
     {
         if ($models->count() > 1) {
             return 'Please run this action for a single patient at a time.';
         }
 
-        if ($currentTime < $newTime) {
-            $currentTimeMinutes = round($currentTime / 60);
+        if ($this->currentTimeSeconds < $this->newTimeSeconds) {
+            $currentTimeMinutes = round($this->currentTimeSeconds / 60);
 
             return "You cannot add time to the patient. Current time is $currentTimeMinutes minutes.";
         }
 
         $minimum = Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
-        if ( ! $allowLessThan20Minutes && $newTime < $minimum) {
+        if ( ! $this->allowLessThan20Minutes && $this->newTimeSeconds < $minimum) {
             $minMinutes = round($minimum / 60);
 
             return "You cannot reduce time to less than $minMinutes minutes.";
@@ -287,11 +315,11 @@ class ModifyPatientTime extends Action implements ShouldQueue
         return null;
     }
 
-    private function verifyChanges(int $patientId, int $chargeableServiceId, Carbon $monthYear): bool
+    private function verifyChanges(): bool
     {
-        $pageTimerDuration         = $this->getPageTimers($patientId, $chargeableServiceId, $monthYear)->sum('duration');
-        $activitiesDuration        = $this->getActivities($patientId, $chargeableServiceId, $monthYear)->sum('duration');
-        $nurseCareRateLogsDuration = $this->getNurseCareRateLogs($patientId, $chargeableServiceId, $monthYear)->sum('increment');
+        $pageTimerDuration         = $this->getPageTimers()->sum('duration');
+        $activitiesDuration        = $this->getActivities()->sum('duration');
+        $nurseCareRateLogsDuration = $this->getNurseCareRateLogs()->sum('increment');
 
         return $pageTimerDuration === $activitiesDuration && $pageTimerDuration === $nurseCareRateLogsDuration;
     }
