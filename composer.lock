@@ -942,7 +942,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "552934ac037223a921c8111798e1af21e2a1631a"
+                "reference": "9afa0ecff10641149a18aa64ea712001a0635ea2"
             },
             "require": {
                 "laravel/passport": "^8.0",
@@ -975,7 +975,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-27T00:27:53+00:00"
+            "time": "2020-11-27T02:40:40+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1053,7 +1053,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "d13912ea3d64addd80f204ee703bc805d10bf141"
+                "reference": "6a0248390c136fc9c1ef9ab0ce43c52dc69755ac"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1080,7 +1080,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-27T00:42:48+00:00"
+            "time": "2020-11-27T02:34:04+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
