@@ -251,3 +251,17 @@ if ( ! function_exists('usStatesArrayForDropdown')) {
         ];
     }
 }
+
+if ( ! function_exists('snakeToSentenceCase')) {
+    /**
+     * Convert Snake to Sentence Case.
+     *
+     * @param $string
+     *
+     * @return mixed
+     */
+    function snakeToSentenceCase($string)
+    {
+        return ucwords(str_replace('_', ' ', $string));
+    }
+}
