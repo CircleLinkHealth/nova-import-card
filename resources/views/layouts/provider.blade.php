@@ -58,6 +58,9 @@
             color: #fff;
             font-size: 12px;
         }
+        .provider-app input[type=checkbox] {
+            display: none;
+        }
     </style>
     @stack('styles')
     @include('modules.raygun.partials.real-user-monitoring')
@@ -65,7 +68,7 @@
 </head>
 <body>
 
-<div id="app">
+<div id="app" class="provider-app">
     <!--[if lt IE 8]>
     <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a
             href="http://browsehappy.com/">upgrade
