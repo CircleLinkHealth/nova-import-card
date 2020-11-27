@@ -17,6 +17,7 @@ use CircleLinkHealth\CcmBilling\Processors\Patient\PCM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RHC;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM;
 use CircleLinkHealth\CcmBilling\Processors\Patient\RPM40;
+use CircleLinkHealth\CcmBilling\Processors\Patient\RPM60;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -80,6 +81,11 @@ class ChargeableService extends BaseModel
         self::CCM_PLUS_40,
         self::CCM_PLUS_60,
     ];
+    
+    const RPM_PLUS_CODES = [
+        self::RPM40,
+        self::RPM60
+    ];
 
     const CLASHES = [
         self::PCM => [
@@ -94,6 +100,9 @@ class ChargeableService extends BaseModel
             self::GENERAL_CARE_MANAGEMENT,
         ],
         self::RPM40 => [
+            self::GENERAL_CARE_MANAGEMENT,
+        ],
+        self::RPM60 => [
             self::GENERAL_CARE_MANAGEMENT,
         ],
     ];
@@ -129,6 +138,7 @@ class ChargeableService extends BaseModel
         self::PCM                     => 'PCM',
         self::RPM                     => 'RPM',
         self::RPM40                   => 'RPM40',
+        self::RPM60                   => 'RPM60',
     ];
 
     const GENERAL_CARE_MANAGEMENT = 'G0511';
@@ -137,27 +147,30 @@ class ChargeableService extends BaseModel
         self::CCM_PLUS_40,
         self::CCM_PLUS_60,
         self::RPM40,
+        self::RPM60,
     ];
 
     const PCM = 'G2065';
 
     const REQUIRED_TIME_PER_SERVICE = [
-        self::CCM         => (20 * 60),
-        self::CCM_PLUS_40 => (40 * 60),
-        self::CCM_PLUS_60 => (60 * 60),
-        self::PCM         => (30 * 60),
-        self::RPM         => (20 * 60),
-        self::RPM40       => (40 * 60),
-        //TODO:ADD RPM60
+        self::CCM                     => (20 * 60),
+        self::CCM_PLUS_40             => (40 * 60),
+        self::CCM_PLUS_60             => (60 * 60),
+        self::PCM                     => (30 * 60),
+        self::RPM                     => (20 * 60),
+        self::RPM40                   => (40 * 60),
+        self::RPM60                   => (60 * 60),
         self::GENERAL_CARE_MANAGEMENT => (20 * 60),
         self::BHI                     => (20 * 60),
     ];
     const RPM   = 'CPT 99457';
-    const RPM40 = 'CPT 99458';
+    const RPM40 = 'CPT 99458(>40mins)';
+    const RPM60 = 'CPT 99458(>60mins)';
 
     const RPM_CODES = [
         self::RPM,
         self::RPM40,
+        self::RPM60
     ];
     const SOFTWARE_ONLY = 'Software-Only';
 
@@ -216,7 +229,7 @@ class ChargeableService extends BaseModel
             return self::CCM;
         }
 
-        if (self::RPM40 === $code) {
+        if (in_array($code, self::RPM_PLUS_CODES)) {
             return self::RPM;
         }
 
@@ -258,6 +271,7 @@ class ChargeableService extends BaseModel
             self::GENERAL_CARE_MANAGEMENT => new RHC(),
             self::RPM                     => new RPM(),
             self::RPM40                   => new RPM40(),
+            self::RPM60                   => new RPM60(),
         ];
     }
 
