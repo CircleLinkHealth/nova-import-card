@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3274cc40f8380bc1bedb2379a1e4c793",
+    "content-hash": "6c44026bcb536ffa0c190800ea015796",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -962,11 +962,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "5bb444f7c88d7e49caea3027817cd2658a63a2e5"
+                "reference": "2b9197a026627c115d2066f5a88db127618ca687"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1011,7 +1011,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-26T18:40:14+00:00"
+            "time": "2020-11-27T08:43:07+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1532,11 +1532,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "1.6.4",
+            "version": "v1.6.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "01303a9ab7b0a6f1d1499514bef5c1583d9ea638"
+                "reference": "60a0b39ebe9d4beb83dc8a182e19e00c428cf45d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1558,7 +1558,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-24T21:58:03+00:00"
+            "time": "2020-11-27T08:43:07+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -10639,20 +10639,20 @@
         },
         {
             "name": "spatie/pdf-to-text",
-            "version": "1.3.0",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/pdf-to-text.git",
-                "reference": "9c11b44c6469f6e1d9b097e30f0f1d44aa65a8e8"
+                "reference": "a7a9268a216f3cece08d1fd4d9c3a2663e2f2882"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/pdf-to-text/zipball/9c11b44c6469f6e1d9b097e30f0f1d44aa65a8e8",
-                "reference": "9c11b44c6469f6e1d9b097e30f0f1d44aa65a8e8",
+                "url": "https://api.github.com/repos/spatie/pdf-to-text/zipball/a7a9268a216f3cece08d1fd4d9c3a2663e2f2882",
+                "reference": "a7a9268a216f3cece08d1fd4d9c3a2663e2f2882",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.3",
+                "php": "^7.3|^8.0",
                 "symfony/process": "^4.0|^5.0"
             },
             "require-dev": {
@@ -10688,7 +10688,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2020-03-11T17:11:25+00:00"
+            "time": "2020-11-27T07:31:27+00:00"
         },
         {
             "name": "spatie/temporary-directory",
