@@ -85,7 +85,7 @@ class WelcomeController extends Controller
 
         if ($user->isEhrReportWriter()) {
             if ( ! isProductionEnv()) {
-                return \App::call('App\Http\Controllers\EhrReportWriterController@index');
+                return \App::call('CircleLinkHealth\Eligibility\Http\Controllers\EhrReportWriterController@index');
             }
 
             return redirect()->route('login')->with(

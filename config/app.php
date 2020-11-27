@@ -217,7 +217,6 @@ return [
         App\View\Composers\ProviderUITimerComposer::class,
         App\View\Composers\FabComposer::class,
         App\View\Composers\SAAS\Admin\ManageInternalUser::class,
-        App\Providers\EligibilityBatchViewComposerServiceProvider::class,
         PrimaryNavComposer::class,
 
         NurseInvoicesServiceProvider::class,

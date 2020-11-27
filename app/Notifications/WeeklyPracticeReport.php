@@ -63,7 +63,7 @@ class WeeklyPracticeReport extends Notification
             ? $notifiable->saasAccountName()
             : 'CircleLink Health';
 
-        return (new MailMessage())->view('sales.by-practice.report', ['data' => $this->data])
+        return (new MailMessage())->view('cpm-admin::sales.by-practice.report', ['data' => $this->data])
             ->from('notifications@careplanmanager.com', $saasAccountName)
             ->subject($this->subject);
     }

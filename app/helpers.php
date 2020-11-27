@@ -920,20 +920,6 @@ if ( ! function_exists('authUserCanSendPatientEmail')) {
     }
 }
 
-if ( ! function_exists('snakeToSentenceCase')) {
-    /**
-     * Convert Snake to Sentence Case.
-     *
-     * @param $string
-     *
-     * @return mixed
-     */
-    function snakeToSentenceCase($string)
-    {
-        return ucwords(str_replace('_', ' ', $string));
-    }
-}
-
 if ( ! function_exists('linkToDownloadFile')) {
     /**
      * Generate a file to download a file.

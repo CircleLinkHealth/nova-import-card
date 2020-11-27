@@ -28,4 +28,4 @@
 
 <p style="text-align: center"><img style="width: 200px" src="{{ $message->embed(asset('/img/forgot.png')) }}"></p>
 
-<p>@include('sales.partials.footer')</p>
+<p>@include('CircleLinkHealth.Customer.Resources.views.sales.partials.footer')</p>
