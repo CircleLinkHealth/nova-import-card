@@ -91,8 +91,8 @@ class PatientProblemsForBillingProcessing
         $services = [];
         //todo: clear logic with a clearer mind
         $practiceHasBhi    = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::BHI));
-        $parcticeHasRhc    = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT));
-        $bhiProblemsAreCcm = ! $practiceHasBhi || $parcticeHasRhc;
+        $practiceHasRhc    = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT));
+        $bhiProblemsAreCcm = ! $practiceHasBhi || $practiceHasRhc;
 
         if ($cpmProblem = $problem->cpmProblem) {
             $isDual = in_array($cpmProblem->name, CpmProblem::DUAL_CCM_BHI_CONDITIONS);
@@ -106,7 +106,11 @@ class PatientProblemsForBillingProcessing
             }
         }
 
-        if ($parcticeHasRhc) {
+        if ($practiceHasRhc) {
+            if (is_null($cpmProblem) && empty($services)) {
+                $services[] = ChargeableService::CCM;
+            }
+
             return $services;
         }
         $pcmProblems = $primaryPractice->pcmProblems;
@@ -114,8 +118,9 @@ class PatientProblemsForBillingProcessing
         if ( ! empty($pcmProblems)) {
             $hasMatchingPcmProblem = $pcmProblems->filter(
                 function (PcmProblem $pcmProblem) use ($problem) {
-                    //todo: use string contains on name?
-                    return $pcmProblem->code === $problem->icd10Code() || $pcmProblem->description === $problem->name;
+                    return $this->sanitize($pcmProblem->code) === $this->sanitize($problem->icd10Code())
+                        || $this->sanitize($pcmProblem->description) === $this->sanitize($problem->name)
+                        || $this->sanitize($pcmProblem->description) === $this->sanitize($problem->original_name);
                 }
             )->isNotEmpty();
 
@@ -129,14 +134,19 @@ class PatientProblemsForBillingProcessing
         if ( ! empty($rpmProblems)) {
             $hasMatchingRpmProblem = $rpmProblems->filter(
                 function (RpmProblem $rpmProblem) use ($problem) {
-                    //todo: use string contains on name?
-                    return $rpmProblem->code === $problem->icd10Code() || $rpmProblem->description === $problem->name;
+                    return $this->sanitize($rpmProblem->code) === $this->sanitize($problem->icd10Code())
+                        || $this->sanitize($rpmProblem->description) === $this->sanitize($problem->name)
+                        || $this->sanitize($rpmProblem->description) === $this->sanitize($problem->original_name);
                 }
             )->isNotEmpty();
 
             if ($hasMatchingRpmProblem) {
                 $services[] = ChargeableService::RPM;
             }
+        }
+
+        if (is_null($cpmProblem) && empty($services)) {
+            $services[] = ChargeableService::CCM;
         }
 
         return $services;
@@ -149,6 +159,11 @@ class PatientProblemsForBillingProcessing
         }
 
         return $this->repo;
+    }
+
+    private function sanitize(string $string): string
+    {
+        return trim(strtolower($string));
     }
 
     private function setPatient(): self
