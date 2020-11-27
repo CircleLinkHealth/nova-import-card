@@ -137,7 +137,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
 
             if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP === $this->uiRequestsForThisPractice) {
                 if ($this->uiRequestedProviders->isEmpty()) {
-                    $providers = $this->uiRequestedProvider($practice->id);
+                    $providers = $this->getUiRequestedProviders($practice->id);
                     $this->uiRequestedProviders->push(...$providers);
                 }
                 $provider = $this->filterProvider();
@@ -190,7 +190,7 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         return $provider;
     }
 
-    private function uiRequestedProvider(int $practiceId)
+    private function getUiRequestedProviders(int $practiceId)
     {
         return User::with('providerInfo')
             ->whereHas('providerInfo')
