@@ -365,7 +365,7 @@ class CcdaImporter
      */
     private function importPhones()
     {
-        ImportPhones::for($this->ccda->patient, $this->ccda);
+        ImportPhones::for($this->ccda->patient, $this->ccda, $this->enrollee);
 
         return $this;
     }
