@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Providers;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use View;
 
 class EligibilityBatchViewComposerServiceProvider extends ServiceProvider
 {
