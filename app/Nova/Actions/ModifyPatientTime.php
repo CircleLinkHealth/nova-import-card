@@ -41,14 +41,19 @@ class ModifyPatientTime extends Action implements ShouldQueue
     public function fields()
     {
         return [
-            Select::make('Chargeable Service', 'chargeable_service')->options([
-                ChargeableService::CCM                     => 'CCM',
-                ChargeableService::GENERAL_CARE_MANAGEMENT => 'CCM (RHC/FQHC)',
-                ChargeableService::BHI                     => 'BHI',
-                ChargeableService::PCM                     => 'PCM',
-                ChargeableService::RPM                     => 'RPM',
-            ]),
-            Number::make('Enter new duration (seconds)', 'duration'),
+            Select::make('Chargeable Service', 'chargeable_service')
+                ->required(true)
+                ->options([
+                    ChargeableService::CCM                     => 'CCM',
+                    ChargeableService::GENERAL_CARE_MANAGEMENT => 'CCM (RHC/FQHC)',
+                    ChargeableService::BHI                     => 'BHI',
+                    ChargeableService::PCM                     => 'PCM',
+                    ChargeableService::RPM                     => 'RPM',
+                ]),
+
+            Number::make('Enter new duration (minutes)', 'durationMinutes')
+                ->required(true),
+
             Boolean::make('Force (even if less than 20 minutes)', 'allow_accrued_towards'),
         ];
     }
@@ -68,7 +73,7 @@ class ModifyPatientTime extends Action implements ShouldQueue
         $chargeableServiceCode = $fields->get('chargeable_service');
 
         /** @var int $newDuration */
-        $newDuration = $fields->get('duration');
+        $newDuration = $fields->get('durationMinutes') * 60;
 
         /** @var int $chargeableServiceId */
         $chargeableServiceId = ChargeableService::cached()
@@ -267,19 +272,16 @@ class ModifyPatientTime extends Action implements ShouldQueue
         }
 
         if ($currentTime < $newTime) {
-            return "You cannot add time to the patient. Current time is $currentTime seconds.";
+            $currentTimeMinutes = round($currentTime / 60);
+
+            return "You cannot add time to the patient. Current time is $currentTimeMinutes minutes.";
         }
 
         $minimum = Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
         if ( ! $allowLessThan20Minutes && $newTime < $minimum) {
-            return "You cannot reduce time to less than $minimum seconds.";
-        }
+            $minMinutes = round($minimum / 60);
 
-        $currentDuration = $pageTimers->sum('duration');
-        if ($currentDuration < $newTime) {
-            $max = $currentDuration - 1;
-
-            return "You cannot add time to patient. Max new duration: $max.";
+            return "You cannot reduce time to less than $minMinutes minutes.";
         }
 
         return null;
