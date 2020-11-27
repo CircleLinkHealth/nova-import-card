@@ -5,6 +5,7 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Artisan;
 
 class CreateCameronEnrolmentLetter extends Migration
 {
@@ -24,6 +25,6 @@ class CreateCameronEnrolmentLetter extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateCameronLetter']);
+        Artisan::call('create:cameronLetter');
     }
 }
