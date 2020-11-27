@@ -5,6 +5,7 @@
  */
 
 // for heroku
+use CircleLinkHealth\Core\Config\CpmAppMySqlConfig;
 use Illuminate\Support\Str;
 
 if (getenv('DATABASE_URL')) {
@@ -63,16 +64,6 @@ if (getenv('REDIS_URL')) {
     putenv('REDIS_PASSWORD='.$redisUrl['pass']);
 }
 
-$mysqlDBName = env('DB_DATABASE', 'nothing');
-
-if ('nothing' === $mysqlDBName) {
-    $mysqlDBName = Str::snake(getenv('HEROKU_BRANCH'));
-}
-
-if (getenv('CI')) {
-    $mysqlDBName = getenv('HEROKU_TEST_RUN_ID');
-}
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -114,22 +105,7 @@ return [
 
         'cleardb' => $clearDBConfig ?? [],
 
-        'mysql' => [
-            'driver'         => 'mysql',
-            'url'            => env('DATABASE_URL'),
-            'host'           => env('DB_HOST', '127.0.0.1'),
-            'port'           => env('DB_PORT', '3306'),
-            'database'       => $mysqlDBName,
-            'username'       => env('DB_USERNAME', 'forge'),
-            'password'       => env('DB_PASSWORD', ''),
-            'unix_socket'    => env('DB_SOCKET', ''),
-            'charset'        => 'utf8mb4',
-            'collation'      => 'utf8mb4_unicode_ci',
-            'prefix'         => '',
-            'prefix_indexes' => true,
-            'strict'         => false,
-            'engine'         => null,
-        ],
+        'mysql' => CpmAppMySqlConfig::toArray(),
 
         'test_suite' => [
             'driver'      => 'mysql',

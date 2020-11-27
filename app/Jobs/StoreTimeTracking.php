@@ -20,6 +20,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
+use Spatie\RateLimitedMiddleware\RateLimited;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class StoreTimeTracking implements ShouldQueue
@@ -185,5 +186,20 @@ class StoreTimeTracking implements ShouldQueue
                     event(new PatientActivityCreated($patient->id));
                 }
             });
+    }
+    
+    public function middleware()
+    {
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(150)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(10);
+        
+        return [$rateLimitedMiddleware];
+    }
+    
+    public function retryUntil(): \DateTime
+    {
+        return now()->addWeek();
     }
 }
