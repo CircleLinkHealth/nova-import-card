@@ -6,8 +6,10 @@
 
 namespace App\Services\Postmark;
 
+use App\Entities\PostmarkInboundCallbackRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Services\Calls\SchedulerService;
+use App\ValueObjects\PostmarkCallback\AutomatedCallbackMessageValueObject;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
@@ -56,6 +58,15 @@ class AutoResolveCallbackRequestService
 
                 return;
             }
+            if (Str::contains($e->getMessage(), PostmarkInboundCallbackRequest::INBOUND_CALLBACK_DAILY_REPORT)) {
+                sendSlackMessage(
+                    '#carecoach_ops_alerts',
+                    "[$recordId] in postmark_inbound_mail, has lot of emails in body. Probably it is the daily callback report."
+                );
+
+                return;
+            }
+
             Log::error($e->getMessage());
             sendSlackMessage('#carecoach_ops_alerts', "{$e->getMessage()}. See inbound_postmark_mail id [$recordId]");
         }
@@ -89,24 +100,16 @@ class AutoResolveCallbackRequestService
         $service = app(SchedulerService::class);
         $service->scheduleAsapCallbackTask(
             $user,
-            $this->constructCallbackMessage($postmarkCallbackData),
+            (new AutomatedCallbackMessageValueObject(
+                $postmarkCallbackData['phone'],
+                $postmarkCallbackData['message'],
+                $user->first_name,
+                $user->last_name
+            ))->constructCallbackMessage(),
             ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
             null,
             SchedulerService::CALL_BACK_TYPE,
         );
-    }
-
-    private function constructCallbackMessage(array $postmarkCallbackData)
-    {
-        $callerId       = $postmarkCallbackData['callerId'];
-        $fullName       = app(InboundCallbackMultimatchService::class)->parseNameFromCallerField($callerId);
-        $firstName      = $fullName['firstName'];
-        $lastName       = $fullName['lastName'];
-        $phone          = $postmarkCallbackData['phone'];
-        $phoneFormatted = formatPhoneNumberE164($phone);
-        $message        = $postmarkCallbackData['message'];
-
-        return 'From'.' '."[$phoneFormatted $firstName $lastName]: $message.".' '."Callback Number: $phone";
     }
 
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)
