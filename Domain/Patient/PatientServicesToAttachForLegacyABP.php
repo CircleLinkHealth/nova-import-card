@@ -22,6 +22,8 @@ class PatientServicesToAttachForLegacyABP
 
     protected array $eligibleServices = [];
 
+    protected array $fulfilledServices = [];
+
     protected User $patient;
 
     protected int $patientId;
@@ -44,12 +46,19 @@ class PatientServicesToAttachForLegacyABP
         return $this->setPatient()
             ->setActivities()
             ->setEligibleServices()
-            ->returnFulfilledServicesWithTime();
+            ->setFulfilledServicesWithTime()
+            ->updatePmsBillableCcmTime()
+            ->getFulfilledServices();
     }
 
     public static function getCollection(PatientMonthlySummary $summary, EloquentCollection $practiceServices): Collection
     {
         return collect((new static($summary, $practiceServices))->get());
+    }
+
+    private function getFulfilledServices(): array
+    {
+        return $this->fulfilledServices;
     }
 
     private function repo(): PatientServiceProcessorRepository
@@ -59,29 +68,6 @@ class PatientServicesToAttachForLegacyABP
         }
 
         return $this->repo;
-    }
-
-    private function returnFulfilledServicesWithTime(): array
-    {
-        $servicesWithTime = [];
-
-        foreach ($this->eligibleServices as $service) {
-            if (in_array($service->code, ChargeableService::CCM_PLUS_CODES)) {
-                $time = $servicesWithTime[ChargeableService::CCM]['time'] ?? 0;
-            } elseif (in_array($service->code, ChargeableService::RPM_PLUS_CODES)) {
-                $time = $servicesWithTime[ChargeableService::RPM]['time'] ?? 0;
-            } else {
-                $time = $this->timeForService($service);
-            }
-
-            $servicesWithTime[$service->code] = [
-                'id'           => $service->id,
-                'time'         => $time,
-                'is_fulfilled' => $time >= (ChargeableService::REQUIRED_TIME_PER_SERVICE[$service->code] ?? 0),
-            ];
-        }
-
-        return array_filter($servicesWithTime, fn ($s) => $s['is_fulfilled']);
     }
 
     private function setActivities(): self
@@ -132,6 +118,31 @@ class PatientServicesToAttachForLegacyABP
         return $this;
     }
 
+    private function setFulfilledServicesWithTime(): self
+    {
+        $servicesWithTime = [];
+
+        foreach ($this->eligibleServices as $service) {
+            if (in_array($service->code, ChargeableService::CCM_PLUS_CODES)) {
+                $time = $servicesWithTime[ChargeableService::CCM]['time'] ?? 0;
+            } elseif (in_array($service->code, ChargeableService::RPM_PLUS_CODES)) {
+                $time = $servicesWithTime[ChargeableService::RPM]['time'] ?? 0;
+            } else {
+                $time = $this->timeForService($service);
+            }
+
+            $servicesWithTime[$service->code] = [
+                'id'           => $service->id,
+                'time'         => $time,
+                'is_fulfilled' => $time >= (ChargeableService::REQUIRED_TIME_PER_SERVICE[$service->code] ?? 0),
+            ];
+        }
+
+        $this->fulfilledServices = array_filter($servicesWithTime, fn ($s) => $s['is_fulfilled']);
+
+        return $this;
+    }
+
     private function setPatient(): self
     {
         if ( ! isset($this->patient)) {
@@ -164,5 +175,20 @@ class PatientServicesToAttachForLegacyABP
         }
 
         return $this->activities->where('chargeable_service_id', $service->id)->sum('duration') ?? 0;
+    }
+
+    private function updatePmsBillableCcmTime(): self
+    {
+        $this->summary->ccm_time_for_billable_ccm_cs = collect($this->fulfilledServices)->filter(function ($value, $key) {
+            return in_array($key, [
+                ChargeableService::CCM,
+                ChargeableService::PCM,
+                ChargeableService::RPM,
+                ChargeableService::GENERAL_CARE_MANAGEMENT,
+            ]);
+        })->first()['time'] ?? 0;
+        $this->summary->save();
+
+        return $this;
     }
 }

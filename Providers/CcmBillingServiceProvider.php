@@ -49,9 +49,9 @@ class CcmBillingServiceProvider extends ServiceProvider implements DeferrablePro
     {
         $this->commands([
             SeedChargeableServices::class,
-            ResetPMSChargeableServicesForMonth::class
+            ResetPMSChargeableServicesForMonth::class,
         ]);
-        
+
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->app->singleton(PatientMonthlyBillingProcessor::class, MonthlyProcessor::class);
