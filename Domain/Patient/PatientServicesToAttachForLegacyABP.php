@@ -42,8 +42,8 @@ class PatientServicesToAttachForLegacyABP
     public function get(): array
     {
         return $this->setPatient()
-            ->setEligibleServices()
             ->setActivities()
+            ->setEligibleServices()
             ->returnFulfilledServicesWithTime();
     }
 
@@ -67,42 +67,22 @@ class PatientServicesToAttachForLegacyABP
 
         $eligibleServices = $this->eligibleServices;
 
+        //order by order
         foreach ($eligibleServices as $service) {
+            if (in_array($service->code, ChargeableService::CCM_PLUS_CODES)) {
+                //make sure of order
+                $time = $servicesWithTime[ChargeableService::CCM]['time'] ?? 0;
+            } elseif (in_array($service->code, ChargeableService::RPM_PLUS_CODES)) {
+                $time = $servicesWithTime[ChargeableService::RPM]['time'] ?? 0;
+            } else {
+                $time = $this->timeForService($service);
+            }
+
             $servicesWithTime[$service->code] = [
-                'id'   => $service->id,
-                'time' => $time = $this->timeForService($service->id),
+                'id'           => $service->id,
+                'time'         => $time,
+                'is_fulfilled' => $time >= (ChargeableService::REQUIRED_TIME_PER_SERVICE[$service->code] ?? 0),
             ];
-        }
-
-        foreach ($servicesWithTime as $code => $service) {
-            if (in_array($code, ChargeableService::CCM_PLUS_CODES)) {
-                //make sure of order
-                $servicesWithTime[ChargeableService::CCM]['time'] += $service['time'];
-
-                continue;
-            }
-
-            if (in_array($code, ChargeableService::RPM_PLUS_CODES)) {
-                $servicesWithTime[ChargeableService::RPM]['time'] += $service['time'];
-                continue;
-            }
-        }
-
-        foreach ($servicesWithTime as $code => $service) {
-            if (in_array($code, ChargeableService::CCM_PLUS_CODES)) {
-                //make sure of order
-                $servicesWithTime[$code]['is_fulfilled'] = $servicesWithTime[ChargeableService::CCM]['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$code] ?? 0;
-
-                continue;
-            }
-
-            if (in_array($code, ChargeableService::RPM_PLUS_CODES)) {
-                //make sure of order
-                $servicesWithTime[$code]['is_fulfilled'] = $servicesWithTime[ChargeableService::RPM]['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$code] ?? 0;
-                continue;
-            }
-
-            $servicesWithTime[$code]['is_fulfilled'] = $service['time'] >= ChargeableService::REQUIRED_TIME_PER_SERVICE[$code] ?? 0;
         }
 
         return array_filter($servicesWithTime, fn ($s) => $s['is_fulfilled']);
@@ -112,7 +92,6 @@ class PatientServicesToAttachForLegacyABP
     {
         $this->activities = Activity::wherePatientId($this->patientId)
             ->createdInMonth(Carbon::now()->startOfMonth(), 'performed_at')
-            ->whereIn('chargeable_service_id', collect($this->eligibleServices)->pluck('id')->toArray())
             ->get()
             ->collect();
 
@@ -122,7 +101,7 @@ class PatientServicesToAttachForLegacyABP
     private function setEligibleServices(): self
     {
         if ($this->practiceServices->contains('code', '=', ChargeableService::GENERAL_CARE_MANAGEMENT)) {
-            $this->eligibleServices[] = ChargeableService::GENERAL_CARE_MANAGEMENT;
+            $this->eligibleServices[] = $this->practiceServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT);
 
             return $this;
         }
@@ -133,7 +112,10 @@ class PatientServicesToAttachForLegacyABP
             ->filter()
             ->unique();
 
-        $services = $this->practiceServices->filter(fn ($cs) => in_array($cs->code, $servicesDerivedFromPatientProblems->all()));
+        $services = $this->practiceServices->filter(
+            fn ($cs) => in_array($cs->code, $servicesDerivedFromPatientProblems->all())
+        )
+            ->sortBy('order');
 
         foreach ($services as $service) {
             if (PatientIsOfServiceCode::execute($this->patientId, $service->code)) {
@@ -163,8 +145,28 @@ class PatientServicesToAttachForLegacyABP
         return $this;
     }
 
-    private function timeForService(int $chargeableServiceId): int
+    private function timeForService(ChargeableService $service): int
     {
-        return $this->activities->where('chargeable_service_id', $chargeableServiceId)->sum('duration') ?? 0;
+        if (ChargeableService::CCM === $service->code) {
+            return $this->activities->whereIn(
+                'chargeable_service_id',
+                ChargeableService::cached()
+                    ->whereIn('code', ChargeableService::CCM_CODES)
+                    ->pluck('id')
+                    ->toArray()
+            )->sum('duration') ?? 0;
+        }
+
+        if (ChargeableService::RPM === $service->code) {
+            return $this->activities->whereIn(
+                'chargeable_service_id',
+                ChargeableService::cached()
+                    ->whereIn('code', ChargeableService::RPM_CODES)
+                    ->pluck('id')
+                    ->toArray()
+            )->sum('duration') ?? 0;
+        }
+
+        return $this->activities->where('chargeable_service_id', $service->id)->sum('duration') ?? 0;
     }
 }
