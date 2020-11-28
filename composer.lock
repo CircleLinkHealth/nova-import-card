@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6d21304687e28c42648697962f414869",
+    "content-hash": "120dfcd6cbd7340f9d8e0994dae3e711",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1224,11 +1224,11 @@
         },
         {
             "name": "circlelinkhealth/saml-sp-module",
-            "version": "v1.0.7",
+            "version": "dev-vaporizing-admin",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/saml-sp-module.git",
-                "reference": "4dfc85966f8507b18badcd57c42c5521f9207d6e"
+                "reference": "dc78f70d0ce2de04e2230a782e6c5019e87d0d5c"
             },
             "require": {
                 "aacotroneo/laravel-saml2": "^2.1",
@@ -1258,7 +1258,7 @@
                     "email": "pangratios@circlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-10T22:31:27+00:00"
+            "time": "2020-11-28T04:51:40+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -17276,6 +17276,7 @@
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/patientapi-module": 20,
+        "circlelinkhealth/saml-sp-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/sharedvuecomponents-module": 20,
         "circlelinkhealth/sqlviews-module": 20,
