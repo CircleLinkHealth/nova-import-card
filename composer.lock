@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "fb2289f57dd3ef45d92eb8b04748882c480f7d5b"
+                "reference": "def490027a55c2c10e330f6362945e4e2d28cc33"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1002,7 +1002,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-28T15:53:52+00:00"
+            "time": "2020-11-28T18:58:03+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1238,7 +1238,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "34f6435410b7e950cdfc8cf4864bbce15c893550"
+                "reference": "848a76468758d44ec83e521ba584ab6fe03d6793"
             },
             "type": "laravel-module",
             "extra": {
@@ -1260,7 +1260,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-27T21:43:56+00:00"
+            "time": "2020-11-28T18:58:03+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1268,7 +1268,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "65b3f183178f25cf61d38a3bd9bb4b9b357b945e"
+                "reference": "843aa3d3a7765b41d31010c721eb7d9aec84de05"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
@@ -1303,7 +1303,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-28T15:36:39+00:00"
+            "time": "2020-11-28T18:58:03+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
