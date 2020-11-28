@@ -175,6 +175,7 @@ class ChargeableService extends BaseModel
     const SOFTWARE_ONLY = 'Software-Only';
 
     protected $fillable = [
+        'order',
         'code',
         'display_name',
         'description',
