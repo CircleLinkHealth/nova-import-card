@@ -2,15 +2,18 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CcmBilling" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Core" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CpmAdmin" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Customer" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Eligibility" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Raygun" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Revisionable" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SamlSp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SharedModels" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Sharedvuecomponents" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Sqlviews" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Synonyms" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Twofa" vcs="Git" />
   </component>
 </project>
