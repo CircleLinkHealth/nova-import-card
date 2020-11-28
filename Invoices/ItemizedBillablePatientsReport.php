@@ -79,7 +79,7 @@ class ItemizedBillablePatientsReport
                             $u = $summary->patient;
 
                             $patientData = new PatientReportData();
-                            $patientData->setCcmTime(round($summary->ccm_time / 60, 2));
+                            $patientData->setCcmTime(round($summary->getBillableCcmCs() / 60, 2));
                             $patientData->setBhiTime(round($summary->bhi_time / 60, 2));
                             $patientData->setName($u->getFullName());
                             $patientData->setDob($u->getBirthDate());
@@ -200,7 +200,7 @@ class ItemizedBillablePatientsReport
 
                             $patientData = new PatientReportData();
                             $patientData->setCcmTime(
-                                round($summary->ccm_time / 60, 2)
+                                round($summary->getBillableCcmCs() / 60, 2)
                             );
                             $patientData->setBhiTime(
                                 round($summary->bhi_time / 60, 2)
