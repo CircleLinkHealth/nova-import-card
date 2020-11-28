@@ -27,3 +27,4 @@ public/*.js.map
 .php_cs.cache
 CLHPackages/
 .phpunit.result.cache
+.vapor/
