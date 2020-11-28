@@ -56,7 +56,7 @@ class ResetPMSChargeableServicesForMonth extends Command
                 : Carbon::now()->startOfMonth();
 
         $this->info('Deleting PMS CS for month:'.$monthYear->toDateString());
-        $this->deleteAllPmsCs($monthYear);
+        $this->resetPmsForABP($monthYear);
         $this->info('Deletion completed.');
     }
 
@@ -84,8 +84,16 @@ class ResetPMSChargeableServicesForMonth extends Command
         ];
     }
 
-    private function deleteAllPmsCs(Carbon $month)
+    private function resetPmsForABP(Carbon $month)
     {
+        PatientMonthlySummary::createdOn($month, 'month_year')
+            ->update([
+                'actor_id' => null,
+                'approved' => 0,
+                'rejected' => null,
+                'needs_qa' => null,
+            ]);
+
         $pmsIds = PatientMonthlySummary::createdOn($month, 'month_year')
             ->pluck('id')
             ->toArray();
