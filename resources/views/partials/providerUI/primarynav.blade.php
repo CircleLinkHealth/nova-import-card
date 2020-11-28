@@ -69,7 +69,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                 <div class="row">
                     <div class="col-md-3 col-xs-12">
                         <a class="navbar-brand" href="{{ url('/') }}" style="padding: 5px 15px; border: none"><img
-                                    src="{{mix('/img/logos/LogoHorizontal_White.svg')}}"
+                                    src="{{asset('/img/logos/LogoHorizontal_White.svg')}}"
                                     alt="Care Plan Manager"
                                     style="position:relative;top:-7px"
                                     height="50"
