@@ -246,6 +246,9 @@
       "App\\": "app/",
       "CircleLinkHealth\\": "CircleLinkHealth/"
     },
+    "files": [
+      "app/helpers.php"
+    ],
     "classmap": [
       "database/seeds",
       "database/factories"
@@ -254,11 +257,20 @@
   "autoload-dev": {
     "psr-4": {
       "Tests\\": "tests/"
-    }
+    },
+    "files": [
+      "CircleLinkHealth/Core/Helpers/helpers.php"
+    ]
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "scripts": {
+    "lint-php": [
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff --verbose --config=.php_cs.dist"
+    ],
+    "lint-views": [
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff --verbose --config=.php_cs_views.php"
+    ],
     "post-autoload-dump": [
       "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
       "@php artisan package:discover --ansi"
@@ -270,7 +282,46 @@
       "@php artisan key:generate --ansi"
     ],
     "post-update-cmd": [
-
+      "Illuminate\\Foundation\\ComposerScripts::postUpdate"
+    ],
+    "unit-tests": [
+      "php artisan --env=testing test:prepare-test_suite-db",
+      "APP_ENV=testing ./vendor/phpunit/phpunit/phpunit --testsuite=Unit --colors"
+    ],
+    "feature-tests": [
+      "php artisan --env=testing test:prepare-test_suite-db",
+      "APP_ENV=testing ./vendor/phpunit/phpunit/phpunit --testsuite=Feature --colors"
+    ],
+    "test": [
+      "php artisan --env=testing test:prepare-test_suite-db",
+      "php artisan --env=testing migrate:fresh",
+      "php artisan --env=testing migrate:views",
+      "php artisan --env=testing db:seed --class=TestSuiteSeeder",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=SamlSpModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=NurseInvoicesModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=CcmBillingModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=EligibilityModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=Feature --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --colors --testdox"
+    ],
+    "run-tests": [
+      "./vendor/phpunit/phpunit/phpunit --testsuite=SamlSpModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=NurseInvoicesModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=CcmBillingModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=EligibilityModule --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=Feature --colors --testdox",
+      "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --colors --testdox"
+    ],
+    "clear": [
+      "php artisan clear-compiled",
+      "composer dump-autoload"
+    ],
+    "ide": [
+      "php artisan ide-helper:generate",
+      "php artisan -vvv ide-helper:models -W",
+      "php artisan ide-helper:meta",
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --using-cache=no --show-progress=dots --diff --verbose --config=.php_cs.dist",
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --using-cache=no --show-progress=dots --diff --verbose --config=.php_cs_views.php"
     ]
   }
 }
