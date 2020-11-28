@@ -428,20 +428,7 @@ class CcdaImporter
             ->where(function ($q) use ($phones, $demographics) {
                 $q->whereHas('phoneNumbers', function ($q) use ($phones) {
                     $q->whereIn('number', $phones);
-                })->orWhere(function ($q) use ($demographics) {
-                    $wheres = [
-                        ['last_name', '=', $this->ccda->patient_last_name],
-                    ];
-                    if ($street = $demographics->address->street[0]) {
-                        $wheres[] = ['address', '=', $street];
-                    }
-                    if ($city = $demographics->address->city) {
-                        $wheres[] = ['city', '=', $city];
-                    }
-                    if (3 === count($wheres)) {
-                        $q->where($wheres);
-                    }
-                });
+                })->orWhere('last_name', '=', $this->ccda->patient_last_name);
             })
             ->exists();
     }
