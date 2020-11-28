@@ -71,7 +71,7 @@
     <div class="container">
 {{--        Currently not in use, remove until and if needed--}}
 {{--        <div class="col-md-12">--}}
-{{--            @include('admin.opsDashboard.panel')--}}
+{{--            @include('cpm-admin::admin.opsDashboard.panel')--}}
 {{--        </div>--}}
         <div class="col-md-4">
             <form action="{{route('OpsDashboard.index')}}" method="GET">

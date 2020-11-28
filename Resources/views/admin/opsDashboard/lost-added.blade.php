@@ -26,7 +26,7 @@
 
     <div class="container">
         <div class="col-md-12">
-            @include('admin.opsDashboard.panel')
+            @include('cpm-admin::admin.opsDashboard.panel')
         </div>
         <div class="input-group input-group-sm">
             <div>

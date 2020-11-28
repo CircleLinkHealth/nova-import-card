@@ -176,7 +176,7 @@ class OpsDashboardController extends Controller
             }
         }
 
-        return view('admin.opsDashboard.daily', compact([
+        return view('cpm-admin::admin.opsDashboard.daily', compact([
             'date',
             'maxDate',
             'hoursBehind',

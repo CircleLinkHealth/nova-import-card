@@ -14,7 +14,7 @@
         <h3 align="center">Patient Pipeline</h3>
         <div class="row">
             <div class="col-md-12">
-                @include('admin.opsDashboard.tables.total-patients')
+                @include('cpm-admin::admin.opsDashboard.tables.total-patients')
             </div>
         </div>
         <br>
@@ -39,7 +39,7 @@
         <hr><br>
         <div>
             <div class="col-md-12">
-                @include('admin.opsDashboard.tables.patients-by-practice')
+                @include('cpm-admin::admin.opsDashboard.tables.patients-by-practice')
             </div>
         </div>
     </div>
