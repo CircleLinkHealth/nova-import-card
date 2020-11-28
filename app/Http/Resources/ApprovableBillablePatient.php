@@ -63,7 +63,7 @@ class ApprovableBillablePatient extends JsonResource
             'ccm'                    => round($this->ccm_time / 60, 2),
             'total_time'             => $this->total_time,
             'bhi_time'               => $this->bhi_time,
-            'ccm_time'               => $this->ccm_time,
+            'ccm_time'               => $this->getBillableCcmCs(),
             'problems'               => $problems,
             'no_of_successful_calls' => $this->no_of_successful_calls,
             'status'                 => $status,

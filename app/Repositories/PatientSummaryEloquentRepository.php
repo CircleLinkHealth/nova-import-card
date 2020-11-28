@@ -97,14 +97,9 @@ class PatientSummaryEloquentRepository
 
         $candidates = PatientServicesToAttachForLegacyABP::getCollection($summary, $chargeableServices);
 
-        //improve -> create other attribute
-        $summary->ccm_time = $candidates->filter(function ($value, $key) {
-            return in_array($key, [
-                ChargeableService::CCM,
-                ChargeableService::PCM,
-                ChargeableService::RPM,
-                ChargeableService::GENERAL_CARE_MANAGEMENT, ]);
-        })->first()['time'] ?? 0;
+        //improve -> create other attribute, maybe in DB so it can be used in invoices
+        //add software-only code logic
+        //cs_specific_billable_ccm_time => json -> so it can be updated if offline activity is added? TODO: see what happens in reprocessing for offline activity
 
         $attach = $candidates
             ->map(
