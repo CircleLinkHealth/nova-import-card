@@ -65,12 +65,8 @@ class PatientServicesToAttachForLegacyABP
     {
         $servicesWithTime = [];
 
-        $eligibleServices = $this->eligibleServices;
-
-        //order by order
-        foreach ($eligibleServices as $service) {
+        foreach ($this->eligibleServices as $service) {
             if (in_array($service->code, ChargeableService::CCM_PLUS_CODES)) {
-                //make sure of order
                 $time = $servicesWithTime[ChargeableService::CCM]['time'] ?? 0;
             } elseif (in_array($service->code, ChargeableService::RPM_PLUS_CODES)) {
                 $time = $servicesWithTime[ChargeableService::RPM]['time'] ?? 0;
