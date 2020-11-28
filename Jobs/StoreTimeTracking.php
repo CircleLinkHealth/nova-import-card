@@ -12,18 +12,17 @@ use App\Jobs\ProcessNurseMonthlyLogs;
 use App\Services\PageTimerService;
 use App\ValueObjects\CreatePageTimerParams;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
-use CircleLinkHealth\TimeTracking\Services\ActivityService;
-use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
+use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
+use Spatie\RateLimitedMiddleware\RateLimited;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class StoreTimeTracking implements ShouldQueue
@@ -93,6 +92,21 @@ class StoreTimeTracking implements ShouldQueue
                 ProcessCareAmbassadorTime::dispatchNow($provider->id, $activity);
             }
         }
+    }
+    
+    public function middleware()
+    {
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(150)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(10);
+        
+        return [$rateLimitedMiddleware];
+    }
+    
+    public function retryUntil(): \DateTime
+    {
+        return now()->addWeek();
     }
     
     /**
