@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Timetracking\Services;
 
-use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
+use CircleLinkHealth\SharedModels\Entities\OfflineActivityTimeRequest;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 
