@@ -14,8 +14,6 @@ Route::post('webhooks/on-sent-fax', [
     'as'   => 'webhook.on-fax-sent',
 ]);
 
-Route::get('hirefire/{token}/info', 'HireFireController@getQueueSize');
-
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
 Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
@@ -413,12 +411,6 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download.care-doc',
     ]);
     
-    Route::patch(
-        'work-hours/{id}',
-        '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@updateDailyHours'
-    )->middleware('permission:workHours.update');
-    // end API
-    
     Route::resource(
         'settings/email',
         'EmailSettingsController'
@@ -526,14 +518,6 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'ccd-old-viewer.post',
     ])->middleware('permission:ccda.read');
     
-    Route::get(
-        '{id}/destroy',
-        [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\SuperAdmin\UserController@destroy',
-            'as'   => 'admin.users.destroy',
-        ]
-    )->middleware('permission:user.delete');
-    
     // CCD Importer Routes
     Route::group([
         'middleware' => [
@@ -563,13 +547,6 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'manage-patients/',
         'middleware' => ['patientProgramSecurity'],
     ], function () {
-        Route::group(['prefix' => 'offline-activity-time-requests'], function () {
-            Route::get('', [
-                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@index',
-                'as'   => 'offline-activity-time-requests.index',
-            ])->middleware('permission:patient.read,offlineActivityRequest.read');
-        });
-        
         Route::get('demographics/create', [
             'uses' => 'Patient\PatientCareplanController@createPatientDemographics',
             'as'   => 'patient.demographics.create',
@@ -855,17 +832,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.reports.progress',
         ])->middleware('permission:patient.read,provider.read,biometric.read,biometric.update,medication.read,medication.update');
         
-        Route::group(['prefix' => 'offline-activity-time-requests'], function () {
-            Route::get('create', [
-                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@create',
-                'as'   => 'offline-activity-time-requests.create',
-            ])->middleware('permission:patient.read,offlineActivityRequest.create');
-            Route::post('store', [
-                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@store',
-                'as'   => 'offline-activity-time-requests.store',
-            ])->middleware('permission:offlineActivityRequest.create');
-        });
-        
         Route::group(['prefix' => 'manual-call', 'middleware' => 'permission:call.create'], function () {
             Route::get('create', [
                 'uses' => 'ManualCallController@create',
@@ -876,11 +842,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'manual.call.store',
             ]);
         });
-        
-        Route::get('family-members', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\FamilyController@getMembers',
-            'as'   => 'family.get',
-        ])->middleware('permission:patient.read');
     });
 });
 
@@ -1075,11 +1036,6 @@ Route::get('all-notifications-pages/{page}/{resultsPerPage}', [
     'as'   => 'notifications.all.paginated',
 ])->middleware('permission:provider.read,note.read');
 
-Route::get('nurses/holidays', [
-    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@getHolidays',
-    'as'   => 'get.admin.nurse.schedules.holidays',
-])->middleware('permission:nurse.read');
-
 Route::group([
     'prefix'     => 'auth',
     'middleware' => ['web'],
@@ -1135,11 +1091,6 @@ Route::get('/notification-subscriptions-dashboard', [
     'uses' => 'SubscriptionsDashboardController@subscriptionsIndex',
     'as'   => 'subscriptions.notification.mail',
 ])->middleware('auth');
-
-Route::post('nurses/nurse-calendar-data', [
-    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
-    'as'   => 'get.nurse.schedules.selectedNurseCalendar',
-])->middleware('permission:nurse.read');
 
 Route::get('login-enrollees-survey/{user}/{survey}', '\CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController@sendToSurvey')
     ->name('enrollee.login.signed')
