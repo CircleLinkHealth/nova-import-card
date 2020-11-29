@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\Notifications;
+namespace CircleLinkHealth\CcmBilling\Notifications;
 
 use App\Mail\PracticeInvoice as PracticeInvoiceMailable;
 use Illuminate\Bus\Queueable;

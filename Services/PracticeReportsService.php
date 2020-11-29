@@ -4,11 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\Services;
+namespace CircleLinkHealth\CcmBilling\Services;
 
-use CircleLinkHealth\CpmAdmin\DTO\QuickBooksRow;
+use CircleLinkHealth\CcmBilling\DTO\QuickBooksRow;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
+use CircleLinkHealth\CcmBilling\Services\PracticeInvoiceGenerator;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;

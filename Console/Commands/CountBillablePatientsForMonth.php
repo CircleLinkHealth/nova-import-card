@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Console\Commands;
 
-use CircleLinkHealth\CpmAdmin\Services\ApproveBillablePatientsService;
+use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use Illuminate\Console\Command;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -27,7 +27,7 @@ class CountBillablePatientsForMonth extends Command
     protected $signature = 'count:billable-patients';
 
     /**
-     * @var ApproveBillablePatientsService
+     * @var \CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService
      */
     private $service;
 

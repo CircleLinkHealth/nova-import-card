@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Console\Commands;
 
-use CircleLinkHealth\CpmAdmin\Repositories\PatientSummaryEloquentRepository;
+use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Console\Command;

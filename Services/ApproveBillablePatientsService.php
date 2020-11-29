@@ -4,11 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\Services;
+namespace CircleLinkHealth\CcmBilling\Services;
 
-use CircleLinkHealth\CpmAdmin\Http\Resources\ApprovableBillablePatient;
+use CircleLinkHealth\CcmBilling\Http\Resources\ApprovableBillablePatient;
 use CircleLinkHealth\SharedModels\Repositories\BillablePatientsEloquentRepository;
-use CircleLinkHealth\CpmAdmin\Repositories\PatientSummaryEloquentRepository;
+use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
 
 class ApproveBillablePatientsService
