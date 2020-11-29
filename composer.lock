@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "120dfcd6cbd7340f9d8e0994dae3e711",
+    "content-hash": "012f13b4b9ba3d82d1cc4fe8510ff26a",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -979,6 +979,56 @@
             "time": "2020-11-29T22:14:45+00:00"
         },
         {
+            "name": "circlelinkhealth/cpm-admin-module",
+            "version": "dev-vaporizing-admin",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
+                "reference": "04dcbb8a511056c27931df3249f1c37c41c50fd0"
+            },
+            "require": {
+                "circlelinkhealth/core-module": "*",
+                "circlelinkhealth/customer-module": "*",
+                "circlelinkhealth/raygun-module": "*",
+                "circlelinkhealth/shared-models-module": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CpmAdmin\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Antonis Antoniou",
+                    "email": "antonis@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Constantinos Kakoushias",
+                    "email": "constantinos@cirlelinkhealth.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@cirlelinkhealth.com",
+                    "role": "Lead Developer"
+                }
+            ],
+            "time": "2020-11-29T22:01:42+00:00"
+        },
+        {
             "name": "circlelinkhealth/cpm-migrations-module",
             "version": "dev-vaporizing-admin",
             "source": {
@@ -1267,7 +1317,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "0eacb2cd967563a5b3c50ad3db2667d5bfb4f65c"
+                "reference": "55ad152e9547de0576f3817a346ec207e6c4a881"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1281,7 +1331,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-29T22:26:42+00:00"
+            "time": "2020-11-29T22:31:48+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1379,7 +1429,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "1a62afb201a6d4b7ca3213d573c2ad2ded6a6b08"
+                "reference": "872eae87b6d23b087d968892ed447ff281ee4ac2"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1404,7 +1454,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-29T22:26:42+00:00"
+            "time": "2020-11-29T22:36:02+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -17270,6 +17320,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
