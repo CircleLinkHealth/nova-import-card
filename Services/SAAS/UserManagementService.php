@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Services\SAAS;
 
-use CircleLinkHealth\CpmAdmin\DTO\InternalUser;
+use CircleLinkHealth\Customer\DTO\InternalUser;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 
