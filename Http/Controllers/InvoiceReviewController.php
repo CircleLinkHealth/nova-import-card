@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Services\AttachDisputesToTimePerDay;
+use CircleLinkHealth\NurseInvoices\Services\AttachDisputesToTimePerDay;
 use Carbon\Carbon;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
@@ -23,7 +23,7 @@ use Illuminate\View\View;
 class InvoiceReviewController extends Controller
 {
     /**
-     * @var AttachDisputesToTimePerDay
+     * @var \CircleLinkHealth\NurseInvoices\Services\AttachDisputesToTimePerDay
      */
     private $attachDisputes;
     /**

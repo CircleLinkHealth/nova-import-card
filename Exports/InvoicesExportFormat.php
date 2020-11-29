@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Exports;
 
-use App\Services\AttachDisputesToTimePerDay;
+use CircleLinkHealth\NurseInvoices\Services\AttachDisputesToTimePerDay;
 use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
