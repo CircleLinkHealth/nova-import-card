@@ -88,7 +88,7 @@ class ItemizedBillablePatientsReport
                             $patientData->setBillingCodes($u->billingCodes($this->month));
 
                             $patientData->setCcmProblemCodes(
-                                $this->getCcmAttestedConditions($summary)
+                                $this->getCcmAttestedConditions($summary, $u)
                             );
 
                             $patientData->setAllCcmProblemCodes($summary);
@@ -213,7 +213,7 @@ class ItemizedBillablePatientsReport
                             $patientData->setBillingCodes(
                                 $patientUser->billingCodes($this->month)
                             );
-                            $patientData->setCcmProblemCodes($this->getCcmAttestedConditions($summary));
+                            $patientData->setCcmProblemCodes($this->getCcmAttestedConditions($summary, $patientUser));
 
                             $patientData->setAllCcmProblemCodes($this->getAllCcmConditions(
                                 $patientUser,
@@ -312,8 +312,12 @@ class ItemizedBillablePatientsReport
         return $this->formatProblemCodesForReport($summary->bhiAttestedProblems()->filter());
     }
 
-    private function getCcmAttestedConditions(PatientMonthlySummary $summary)
+    private function getCcmAttestedConditions(PatientMonthlySummary $summary, User $patient)
     {
+        if ($summary->hasServiceCode(ChargeableService::RPM)) {
+            return $this->getAllCcmConditions($patient, $summary);
+        }
+
         return $this->formatProblemCodesForReport($summary->ccmAttestedProblems()->filter());
     }
 
