@@ -19,7 +19,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function boot()
     {
         parent::boot();
-
+        
         /*
          * Nova Assumes UTC in Eloquent. Below makes it show the time as we store it in the DB (EST).
          *
@@ -28,31 +28,31 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         Nova::userTimezone(function () {
             return '+00:00';
         });
-
+        
         \Laravel\Nova\Fields\Field::macro('withModel', function ($model, $modelKey = null) {
             $this->withMeta([
                 'model'    => $model,
                 'modelKey' => $modelKey
                     ?: 'id',
             ]);
-
+            
             return $this;
         });
-
+        
         \Laravel\Nova\Fields\Field::macro('inputRules', function ($rules) {
             $this->withMeta(['inputRules' => $rules]);
-
+            
             return $this;
         });
     }
-
+    
     /**
      * Register any application services.
      */
     public function register()
     {
     }
-
+    
     /**
      * Get the tools that should be listed in the Nova sidebar.
      *
@@ -64,7 +64,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             new NovaImport(),
         ];
     }
-
+    
     /**
      * Get the cards that should be displayed on the Nova dashboard.
      *
@@ -80,7 +80,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             new \Kreitje\NovaHorizonStats\Workload(),
         ];
     }
-
+    
     /**
      * Get the extra dashboards that should be displayed on the Nova dashboard.
      *
@@ -91,7 +91,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         return [
         ];
     }
-
+    
     /**
      * Register the Nova gate.
      *
@@ -103,7 +103,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             return $user->isAdmin();
         });
     }
-
+    
     /**
      * Register the Nova routes.
      */
