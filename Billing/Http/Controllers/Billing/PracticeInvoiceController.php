@@ -4,17 +4,17 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Customer\Billing\Http\Controllers\Billing;
+namespace CircleLinkHealth\CcmBilling\Http\Controllers;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
-use CircleLinkHealth\CpmAdmin\Http\Resources\ApprovableBillablePatient;
-use CircleLinkHealth\CpmAdmin\Jobs\CreatePracticeInvoice;
-use CircleLinkHealth\CpmAdmin\Notifications\PracticeInvoice;
-use CircleLinkHealth\CpmAdmin\Repositories\PatientSummaryEloquentRepository;
-use CircleLinkHealth\CpmAdmin\Services\ApproveBillablePatientsService;
-use CircleLinkHealth\CpmAdmin\Services\PracticeReportsService;
+use CircleLinkHealth\CcmBilling\Http\Resources\ApprovableBillablePatient;
+use CircleLinkHealth\CcmBilling\Jobs\CreatePracticeInvoice;
+use CircleLinkHealth\CcmBilling\Notifications\PracticeInvoice;
+use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
+use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
+use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
