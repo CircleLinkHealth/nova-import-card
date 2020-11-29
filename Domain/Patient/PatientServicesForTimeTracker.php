@@ -15,7 +15,7 @@ use CircleLinkHealth\CcmBilling\Http\Resources\PatientChargeableSummaryCollectio
 use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Support\Collection;
 
 class PatientServicesForTimeTracker

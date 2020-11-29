@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 
 class PatientMonthlyServiceTime

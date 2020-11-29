@@ -23,7 +23,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Patientapi\ValueObjects\CcdProblemInput;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use Tests\CustomerTestCase;
 
 class PatientBillingDatabaseTest extends CustomerTestCase
