@@ -18,6 +18,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Spatie\RateLimitedMiddleware\RateLimited;
 
 class ImportAndApproveEnrollee implements ShouldQueue
 {
@@ -86,5 +87,20 @@ class ImportAndApproveEnrollee implements ShouldQueue
             $enrollee->user_id = $user->id;
             $enrollee->setRelation('user', $user);
         }
+    }
+    
+    public function middleware()
+    {
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(12)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(30);
+        
+        return [$rateLimitedMiddleware];
+    }
+    
+    public function retryUntil(): \DateTime
+    {
+        return now()->addDay();
     }
 }
