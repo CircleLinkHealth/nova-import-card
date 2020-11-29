@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "29e4f4bfcd0bfe81e47d7c7bfb32f9e9",
+    "content-hash": "039cc5d48f59945348322af250f09750",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1120,6 +1120,36 @@
             "transport-options": {
                 "relative": true
             }
+        },
+        {
+            "name": "circlelinkhealth/nurseinvoices-module",
+            "version": "dev-vaporizing-admin",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
+                "reference": "24f98fd71951902725f62f808715d706f5c65b23"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\NurseInvoices\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-11-29T21:52:01+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -12447,6 +12477,7 @@
         "circlelinkhealth/sharedvuecomponents-module": 20,
         "circlelinkhealth/sqlviews-module": 20,
         "circlelinkhealth/timetracking-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/twofa-module": 20
     },
     "prefer-stable": true,

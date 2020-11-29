@@ -101,6 +101,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-time-tracking.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
         }
     ],
     "require": {
@@ -137,6 +141,7 @@
         "circlelinkhealth/sharedvuecomponents-module": "dev-vaporizing-admin",
         "circlelinkhealth/sqlviews-module": "dev-vaporizing-admin",
         "circlelinkhealth/timetracking-module": "dev-vaporizing-admin",
+        "circlelinkhealth/nurseinvoices-module": "dev-vaporizing-admin",
         "circlelinkhealth/twofa-module": "dev-vaporizing-admin",
         "circlelinkhealth/synonyms-module": "*",
         "daltcore/lara-pdf-merger": "1.1.2",
