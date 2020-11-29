@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Http\Controllers\Admin\Reports;
+namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls as PatientTimeAndCallsValueObject;
