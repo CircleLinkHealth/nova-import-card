@@ -6,15 +6,15 @@
 
 namespace App\Http\Controllers\SAAS\Admin\CRUD;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\SAAS\StoreInternalUser;
-use CircleLinkHealth\CpmAdmin\Notifications\SAAS\SendInternalUserSignupInvitation;
-use CircleLinkHealth\CpmAdmin\DTO\InternalUser;
 use Auth;
+use CircleLinkHealth\Customer\DTO\InternalUser;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Notifications\SAAS\SendInternalUserSignupInvitation;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Session;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
