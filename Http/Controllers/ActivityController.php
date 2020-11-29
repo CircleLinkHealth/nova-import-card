@@ -10,8 +10,8 @@ use CircleLinkHealth\Customer\NurseTimeAlgorithms\AlternativeCareTimePayableCalc
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShowPatientActivities;
 use App\Jobs\ChargeableServiceDuration;
-use App\Jobs\ProcessMonthltyPatientTime;
-use App\Jobs\ProcessNurseMonthlyLogs;
+use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
+use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
 use App\Reports\PatientDailyAuditReport;
 use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Carbon\Carbon;

@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\TimeTracking\Jobs;
 
 use App\Jobs\ProcessCareAmbassadorTime;
-use App\Jobs\ProcessMonthltyPatientTime;
-use App\Jobs\ProcessNurseMonthlyLogs;
+use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
+use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
 use App\Services\PageTimerService;
 use App\ValueObjects\CreatePageTimerParams;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
@@ -198,7 +198,7 @@ class StoreTimeTracking implements ShouldQueue
                         sendSlackMessage('#time-tracking-issues', "Could not assign activity[{$activity->id}] to chargeable service. Original csId[{$chargeableServiceId}]. See page timer entry {$pageTimer->id}. Patient[$patient->id].");
                     }
                     
-                    ProcessMonthltyPatientTime::dispatchNow($patient->id);
+                    \CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime::dispatchNow($patient->id);
                     ProcessNurseMonthlyLogs::dispatchNow($activity);
                     event(new PatientActivityCreated($patient->id));
                 }
