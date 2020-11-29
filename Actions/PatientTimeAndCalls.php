@@ -9,7 +9,7 @@ namespace CircleLinkHealth\Customer\Actions;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
