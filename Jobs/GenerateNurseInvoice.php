@@ -18,6 +18,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Spatie\RateLimitedMiddleware\RateLimited;
 
 class GenerateNurseInvoice implements ShouldQueue
 {
@@ -136,5 +137,20 @@ class GenerateNurseInvoice implements ShouldQueue
                 'invoice_data' => $viewModel->toArray(),
             ]
         );
+    }
+    
+    public function middleware()
+    {
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(2)
+            ->everySeconds(90)
+            ->releaseAfterSeconds(20);
+        
+        return [$rateLimitedMiddleware];
+    }
+    
+    public function retryUntil(): \DateTime
+    {
+        return now()->addDay();
     }
 }
