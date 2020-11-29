@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Console\Commands;
 
-use CircleLinkHealth\CpmAdmin\Repositories\CallRepository;
+use CircleLinkHealth\SharedModels\Repositories\CallRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Console\Command;
@@ -26,7 +26,7 @@ class CountPatientMonthlySummaryCalls extends Command
      */
     protected $signature = 'count:calls {date? : the month we are counting for in format YYYY-MM-DD} {userIds? : comma separated. leave empty to check for all}';
     /**
-     * @var CallRepository
+     * @var \CircleLinkHealth\SharedModels\Repositories\CallRepository
      */
     private $callRepository;
 

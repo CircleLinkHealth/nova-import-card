@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
+use CircleLinkHealth\SharedModels\Repositories\CallRepository;
 use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository

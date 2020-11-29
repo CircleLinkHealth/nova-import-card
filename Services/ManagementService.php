@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CpmAdmin\Services;
 
-use CircleLinkHealth\CpmAdmin\Repositories\CallRepository;
+use CircleLinkHealth\SharedModels\Repositories\CallRepository;
 use Carbon\Carbon;
 
 class ManagementService

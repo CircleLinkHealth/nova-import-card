@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\CpmAdmin\Filters;
 
 use CircleLinkHealth\Core\Filters\QueryFilters;
-use CircleLinkHealth\CpmAdmin\Repositories\CallRepository;
+use CircleLinkHealth\SharedModels\Repositories\CallRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
