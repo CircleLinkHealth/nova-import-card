@@ -8,7 +8,7 @@ namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\CpmConstants;
 use App\Jobs\ChargeableServiceDuration;
-use App\Jobs\ProcessMonthltyPatientTime;
+use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;

@@ -8,8 +8,8 @@ namespace Tests\Feature;
 
 use App\Console\Commands\ReArrangeActivityChargeableServices;
 use App\Jobs\ChargeableServiceDuration;
-use App\Jobs\ProcessMonthltyPatientTime;
-use App\Jobs\ProcessNurseMonthlyLogs;
+use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
+use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
 use App\Services\PageTimerService;
 use App\ValueObjects\CreatePageTimerParams;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
