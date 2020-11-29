@@ -97,6 +97,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/synonyms.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-time-tracking.git"
         }
     ],
     "require": {
@@ -132,6 +136,7 @@
         "circlelinkhealth/shared-models-module": "dev-vaporizing-admin",
         "circlelinkhealth/sharedvuecomponents-module": "dev-vaporizing-admin",
         "circlelinkhealth/sqlviews-module": "dev-vaporizing-admin",
+        "circlelinkhealth/timetracking-module": "dev-vaporizing-admin",
         "circlelinkhealth/twofa-module": "dev-vaporizing-admin",
         "circlelinkhealth/synonyms-module": "*",
         "daltcore/lara-pdf-merger": "1.1.2",
