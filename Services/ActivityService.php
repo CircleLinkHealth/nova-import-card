@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\TimeTracking\Services;
 
-use App\Jobs\ChargeableServiceDuration;
+use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use App\Repositories\Eloquent\ActivityRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Customer\LocationServices;
