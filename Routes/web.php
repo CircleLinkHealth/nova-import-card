@@ -122,6 +122,11 @@ Route::prefix('api')->group(function() {
         ],
         'prefix' => 'admin',
     ], function () {
+        Route::get('family-members', [
+            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\FamilyController@getMembers',
+            'as'   => 'family.get',
+        ])->middleware('permission:patient.read');
+        
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
             Route::get('', [
                 'uses' => 'OfflineActivityTimeRequestController@adminIndex',
@@ -131,6 +136,14 @@ Route::prefix('api')->group(function() {
                 'uses' => 'OfflineActivityTimeRequestController@adminRespond',
                 'as'   => 'admin.offline-activity-time-requests.respond',
             ])->middleware('permission:patient.read,offlineActivityRequest.read');
+            Route::get('create', [
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@create',
+                'as'   => 'offline-activity-time-requests.create',
+            ])->middleware('permission:patient.read,offlineActivityRequest.create');
+            Route::post('store', [
+                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@store',
+                'as'   => 'offline-activity-time-requests.store',
+            ])->middleware('permission:offlineActivityRequest.create');
         });
 
         Route::group(['prefix' => 'direct-mail'], function () {
@@ -893,3 +906,20 @@ Route::post('callcreate-multi', [
     'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@createMulti',
     'as'   => 'api.callcreate-multi',
 ]);
+Route::group([
+    'middleware' => 'auth'
+], function () {
+    Route::patch(
+        'work-hours/{id}',
+        '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@updateDailyHours'
+    )->middleware(['permission:workHours.update', 'auth']);
+    Route::get('nurses/holidays', [
+        'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@getHolidays',
+        'as'   => 'get.admin.nurse.schedules.holidays',
+    ])->middleware('permission:nurse.read');
+    Route::post('nurses/nurse-calendar-data', [
+        'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
+        'as'   => 'get.nurse.schedules.selectedNurseCalendar',
+    ])->middleware('permission:nurse.read');
+    
+});
