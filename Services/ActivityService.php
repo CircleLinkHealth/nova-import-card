@@ -6,12 +6,10 @@
 
 namespace CircleLinkHealth\TimeTracking\Services;
 
-use App\Jobs\ChargeableServiceDuration;
-use App\Repositories\Eloquent\ActivityRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Customer\LocationServices;
-use CircleLinkHealth\CpmAdmin\Repositories\CallRepository;
-use CircleLinkHealth\CpmAdmin\Repositories\PatientSummaryEloquentRepository;
+use CircleLinkHealth\SharedModels\Repositories\CallRepository;
+use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
