@@ -8,7 +8,7 @@ import axios from '../../../CircleLinkHealth/Sharedvuecomponents/Resources/asset
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/store";
-import {ClientTable} from 'vue-tables-2'
+import {ClientTable, ServerTable} from 'vue-tables-2'
 import "vue-trix"
 import EventBus from '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/comps/event-bus'
 import {BindWindowFocusChange, BindWindowVisibilityChange} from '../../../CircleLinkHealth/Sharedvuecomponents/Resources/assets/js/admin/time-tracker/events/window.event'
