@@ -29,6 +29,7 @@
     },
     "require": {
         "laravel/passport": "^8.0",
+        "lcobucci/jwt": "3.3.3",
         "maatwebsite/excel": "^3.1",
         "laravel/vapor-core": "^2.9",
         "laravelcollective/html": "^6.1",
