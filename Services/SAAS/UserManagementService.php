@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CpmAdmin\Services\SAAS;
+namespace CircleLinkHealth\Customer\Services\SAAS;
 
 use CircleLinkHealth\Customer\DTO\InternalUser;
 use CircleLinkHealth\Customer\Entities\Role;
