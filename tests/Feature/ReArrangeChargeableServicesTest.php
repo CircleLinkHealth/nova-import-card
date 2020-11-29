@@ -7,7 +7,7 @@
 namespace Tests\Feature;
 
 use App\Console\Commands\ReArrangeActivityChargeableServices;
-use App\Jobs\ChargeableServiceDuration;
+use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
 use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
 use App\Services\PageTimerService;
@@ -23,7 +23,7 @@ use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\NurseInvoices\Algorithms\VisitFeePaymentAlgorithm;
 use CircleLinkHealth\NurseInvoices\ValueObjects\TimeRangeEntry;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Support\Collection;
 use ReflectionMethod;
 use Tests\TestCase;
