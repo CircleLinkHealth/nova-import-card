@@ -28,7 +28,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
     const FROM_CALLBACK_EMAIL_DOMAIN      = 'callcenterusa.net';
     const FROM_CALLBACK_MAIL              = 'message.dispatch@callcenterusa.net';
     const FROM_ETHAN_MAIL                 = 'ethan@circlelinkhealth.com';
-    const SCHEDULER_POSTMARK_INBOUND_MAIL = 'postmark_inbound_mail';
+    const SCHEDULER_POSTMARK_INBOUND_MAIL = 'postmark_callback_inbound_mail';
 
     public int $tries = 1;
 
@@ -67,13 +67,13 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         if ( ! $emailParts) {
             Log::error("Email Splitting Failed for inbound_postmark_mail [$recordId]");
             sendSlackMessage('#carecoach_ops_alerts', "Email Splitting Failed for inbound_postmark_mail [$recordId]");
+
             return;
         }
 
         if (self::FROM_ETHAN_MAIL === $email || self::FROM_CALLBACK_EMAIL_DOMAIN === $emailParts->domain) {
             $autoScheduleCallbackService = app(AutoResolveCallbackRequestService::class);
             $autoScheduleCallbackService->processCreateCallback($recordId);
-
             return;
         }
 
