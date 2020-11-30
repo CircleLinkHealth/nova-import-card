@@ -73,6 +73,7 @@ class PatientServicesToAttachForLegacyABP
     private function setActivities(): self
     {
         $this->activities = Activity::wherePatientId($this->patientId)
+            ->with(['provider.roles'])
             ->createdInMonth(Carbon::now()->startOfMonth(), 'performed_at')
             ->get()
             ->collect();
@@ -82,6 +83,10 @@ class PatientServicesToAttachForLegacyABP
 
     private function setEligibleServices(): self
     {
+        if ($this->practiceServices->contains('code', '=', ChargeableService::SOFTWARE_ONLY)) {
+            $this->eligibleServices[] = $this->practiceServices->firstWhere('code', ChargeableService::SOFTWARE_ONLY);
+        }
+
         if ($this->practiceServices->contains('code', '=', ChargeableService::GENERAL_CARE_MANAGEMENT)) {
             $this->eligibleServices[] = $this->practiceServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT);
 
