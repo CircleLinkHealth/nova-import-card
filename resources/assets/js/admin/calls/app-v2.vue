@@ -7,7 +7,7 @@
                 </div>
 
                 <div v-if="isAdmin() || isSoftwareOnly()"  class="inline">
-                    <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
+                    <input type="button" class="btn btn-primary btn-xs" :class="{ disabled: loaders.excel }" @click="exportExcel" :value="exportCSVText">
                     <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
                     <button  class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
                         <span v-if="showOnlyCompletedTasks">Show All Scheduled Activities</span>
@@ -284,6 +284,7 @@
 
                 selectedPatients: [],
                 selectedPatientsNew: [],
+                exportCSVText: 'Export Records'
             }
         },
         computed: {
@@ -398,9 +399,33 @@
                 return this.$refs.tblCalls.query || {}
             },
             exportExcel() {
-                const url = rootUrl(`pam/export?excel${this.urlFilterSuffix()}`)
-                console.log('calls:excel', url)
-                document.location.href = url
+                var patients = []
+                this.loaders.excel = true
+
+                const download = (page = 1) => {
+                    return this.axios.get(rootUrl(`pam/export?rows=10&page=${page}&excel${this.urlFilterSuffix()}`)).then(response => {
+                        const pagination = response.data
+                        patients = patients.concat(pagination.data)
+                        this.exportCSVText = `Export Records (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`
+                        if (pagination.meta.to < pagination.meta.total) return download(page + 1)
+                        return pagination
+                    }).catch(err => {
+                        console.log('pam:csv:export', err)
+                    })
+                }
+                return download().then(res => {
+
+                    const str = 'id,Type,Nurse,Patient,Practice,Activity Date,Activity Start,Activity End,Preferred Call Days,Last Call,CCM Time,BHI time,PCM Time,RPM Time,CCM (RHC/FQHC) Time,Successful Calls,Billing Provider,Scheduler\n'
+                        + patients.join('\n');
+                    const csvData = new Blob([str], {type: 'text/csv'});
+                    const csvUrl = URL.createObjectURL(csvData);
+                    const link = document.createElement('a');
+                    link.download = `pam-${Date.now()}.csv`;
+                    link.href = csvUrl;
+                    link.click();
+                    this.exportCSVText = 'Export Records';
+                    this.loaders.excel = false
+                })
             },
             today,
             isInThePast(date) {
