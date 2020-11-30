@@ -7,7 +7,6 @@
 namespace App\Repositories;
 
 use Cache;
-use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesToAttachForLegacyABP;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -206,7 +205,7 @@ class PatientSummaryEloquentRepository
 
         return $this->chargeableServicesByCode[$practiceId];
     }
-    
+
     /**
      * Is it ok for the system to process this record?
      */
