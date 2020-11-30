@@ -11,6 +11,17 @@ use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 
 class CpmConstants
 {
+    public const PRACTICE_STAFF_ROLES = [
+        'practice-lead',
+        'med_assistant',
+        'office_admin',
+        'provider',
+        'registered-nurse',
+        'specialist',
+        'software-only',
+        'care-center-external',
+    ];
+    
     const CACHE_USER_HAS_CCDA = 'user:{$userId}:has_ccda';
     /**
      * Redis Cache Keys.

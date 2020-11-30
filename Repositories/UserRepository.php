@@ -10,6 +10,7 @@ use CircleLinkHealth\CpmAdmin\Http\Controllers\API\PracticeStaffController;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\CareAmbassador;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -692,7 +693,7 @@ class UserRepository
     {
         $isPracticeStaff = Role::allRoles()
             ->whereIn('id', $roleIds)
-            ->whereIn('name', PracticeStaffController::PRACTICE_STAFF_ROLES)
+            ->whereIn('name', CpmConstants::PRACTICE_STAFF_ROLES)
             ->isNotEmpty();
 
         if ($isPracticeStaff) {
