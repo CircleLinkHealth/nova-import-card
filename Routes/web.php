@@ -184,7 +184,7 @@ Route::group([
                 'as'   => 'family.get',
             ])->middleware('permission:patient.read');
     
-            Route::get('next', [
+            Route::get('calls/next', [
                 'uses' => 'CallController@getPatientNextScheduledCallJson',
                 'as'   => 'call.next',
             ])->middleware('permission:call.read');
