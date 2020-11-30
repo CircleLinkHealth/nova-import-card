@@ -22,7 +22,7 @@
 
     <div class="row" style="margin-top: 5px">
         <div class="col-lg-10 col-lg-offset-1">
-            @include('errors.errors')
+            @include('core::partials.errors.messages')
         </div>
     </div>
 
