@@ -569,7 +569,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "19c496763f1d21c747fe221fc853b4d2ae8dd4b9"
+                "reference": "519f94e9ddb35abd6087b05760e0234b3be7c272"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -614,7 +614,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-29T22:26:42+00:00"
+            "time": "2020-11-30T00:04:58+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -819,7 +819,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "0f7f893e239d6deb09d3f4001fd5f9f5732f2ab0"
+                "reference": "ea04bb94dc3359e996fe9bfdb0bcb8eedf714beb"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -861,7 +861,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-29T23:52:00+00:00"
+            "time": "2020-11-30T00:05:35+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -869,7 +869,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "915b11d86bb4e21816549cfa1014a2b257d00323"
+                "reference": "e8657d0f92bca58f2205f041a268bd5c53d23b01"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -903,7 +903,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-29T23:52:00+00:00"
+            "time": "2020-11-30T00:04:58+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
