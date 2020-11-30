@@ -17,4 +17,9 @@ class RedirectToAdminApp extends Controller
     {
         return redirect()->to(config('core.apps.cpm-admin.url')."/practices/$practiceSlug/practice");
     }
+    
+    public function getPAM()
+    {
+        return redirect()->to(config('core.apps.cpm-admin.url')."/admin/calls-v2");
+    }
 }

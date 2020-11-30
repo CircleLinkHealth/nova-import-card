@@ -20,3 +20,8 @@ Route::group([
         'as'   => 'provider.dashboard.manage.practice',
     ]);
 });
+
+Route::get('calls-v2', [
+    'uses' => 'RedirectToAdminApp@getPAM',
+    'as'   => 'patientCallManagement.v2.index',
+]);
