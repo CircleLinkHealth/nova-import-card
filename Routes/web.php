@@ -39,6 +39,25 @@ Route::group([
 Route::group([
     'middleware' => ['web','auth'],
 ], function () {
+    Route::group(['prefix' => 'calls'], function () {
+        Route::get('', [
+            'uses' => 'CallController@index',
+            'as'   => 'call.index',
+        ])->middleware('permission:call.read');
+        Route::get('create', [
+            'uses' => 'CallController@create',
+            'as'   => 'call.create',
+        ])->middleware('permission:call.create');
+        Route::get('edit/{actId}', [
+            'uses' => 'CallController@edit',
+            'as'   => 'call.edit',
+        ]);
+        Route::post('reschedule', [
+            'uses' => 'CallController@reschedule',
+            'as'   => 'call.reschedule',
+        ])->middleware('permission:call.update');
+    });
+    
     Route::group([
         'prefix' => 'reports',
     ], function () {
@@ -111,7 +130,7 @@ Route::group([
         'middleware' => ['permission:has-schedule'],
         'prefix'     => 'care-center',
     ], function () {
-        Route::resource('work-schedule', '\CircleLinkHealth\Customer\Http\Controllers\CareCenter\WorkScheduleController', [
+        Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [
             'only' => [
                 'index',
                 'store',
@@ -123,32 +142,32 @@ Route::group([
         ])->middleware('permission:nurseContactWindow.read,nurseContactWindow.create');
         
         Route::get('work-schedule/get-calendar-data', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\CareCenter\WorkScheduleController@calendarEvents',
+            'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
             'as'   => 'care.center.work.schedule.getCalendarData',
         ])->middleware('permission:nurseContactWindow.read');
         
         Route::get('work-schedule/get-daily-report', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\CareCenter\WorkScheduleController@dailyReportsForNurse',
+            'uses' => 'CareCenter\WorkScheduleController@dailyReportsForNurse',
             'as'   => 'care.center.work.schedule.getDailyReport',
         ])->middleware('permission:nurseContactWindow.read');
         
         Route::get('work-schedule/get-nurse-calendar-data', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\CareCenter\WorkScheduleController@calendarWorkEventsForAuthNurse',
+            'uses' => 'CareCenter\WorkScheduleController@calendarWorkEventsForAuthNurse',
             'as'   => 'care.center.work.schedule.calendarWorkEventsForAuthNurse',
         ])->middleware('permission:nurseContactWindow.read');
         
         Route::get('work-schedule/destroy/{id}', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\CareCenter\WorkScheduleController@destroy',
+            'uses' => 'CareCenter\WorkScheduleController@destroy',
             'as'   => 'care.center.work.schedule.destroy',
         ])->middleware('permission:nurseContactWindow.delete');
         
         Route::post('work-schedule/holidays', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\CareCenter\WorkScheduleController@storeHoliday',
+            'uses' => 'CareCenter\WorkScheduleController@storeHoliday',
             'as'   => 'care.center.work.schedule.holiday.store',
         ])->middleware('permission:nurseHoliday.create');
         
         Route::get('work-schedule/holidays/destroy/{id}', [
-            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\CareCenter\WorkScheduleController@destroyHoliday',
+            'uses' => 'CareCenter\WorkScheduleController@destroyHoliday',
             'as'   => 'care.center.work.schedule.holiday.destroy',
         ])->middleware('permission:nurseHoliday.delete');
     });
@@ -157,10 +176,17 @@ Route::group([
         'prefix'     => 'manage-patients',
         'middleware' => ['patientProgramSecurity'],
     ], function () {
-        Route::get('{patientId}/family-members', [
-            'uses' => 'FamilyController@getMembers',
-            'as'   => 'family.get',
-        ])->middleware('permission:patient.read');
+        Route::group('{patientId}', function () {
+            Route::get('family-members', [
+                'uses' => 'FamilyController@getMembers',
+                'as'   => 'family.get',
+            ])->middleware('permission:patient.read');
+    
+            Route::get('next', [
+                'uses' => 'CallController@getPatientNextScheduledCallJson',
+                'as'   => 'call.next',
+            ])->middleware('permission:call.read');
+        });
     
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
             Route::get('', [
