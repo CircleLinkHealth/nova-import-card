@@ -73,6 +73,7 @@ class PatientServicesToAttachForLegacyABP
     private function setActivities(): self
     {
         $this->activities = Activity::wherePatientId($this->patientId)
+            ->with(['provider.roles'])
             ->createdInMonth(Carbon::now()->startOfMonth(), 'performed_at')
             ->get()
             ->collect();
@@ -82,6 +83,10 @@ class PatientServicesToAttachForLegacyABP
 
     private function setEligibleServices(): self
     {
+        if ($this->practiceServices->contains('code', '=', ChargeableService::SOFTWARE_ONLY)) {
+            $this->eligibleServices[] = $this->practiceServices->firstWhere('code', ChargeableService::SOFTWARE_ONLY);
+        }
+
         if ($this->practiceServices->contains('code', '=', ChargeableService::GENERAL_CARE_MANAGEMENT)) {
             $this->eligibleServices[] = $this->practiceServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT);
 
@@ -123,6 +128,15 @@ class PatientServicesToAttachForLegacyABP
         $servicesWithTime = [];
 
         foreach ($this->eligibleServices as $service) {
+            if (ChargeableService::SOFTWARE_ONLY === $service->code) {
+                $servicesWithTime[$service->code] = [
+                    'id'           => $service->id,
+                    'time'         => 0,
+                    'is_fulfilled' => 0 === $this->timeFromClhCareCoaches(),
+                ];
+                continue;
+            }
+
             if (in_array($service->code, ChargeableService::CCM_PLUS_CODES)) {
                 $time = $servicesWithTime[ChargeableService::CCM]['time'] ?? 0;
             } elseif (in_array($service->code, ChargeableService::RPM_PLUS_CODES)) {
@@ -175,6 +189,13 @@ class PatientServicesToAttachForLegacyABP
         }
 
         return $this->activities->where('chargeable_service_id', $service->id)->sum('duration') ?? 0;
+    }
+
+    private function timeFromClhCareCoaches(): int
+    {
+        return $this->activities
+            ->filter(fn ($a) => optional($a->provider)->isCareCoach())
+            ->sum('duration') ?? 0;
     }
 
     private function updatePmsBillableCcmTime(): self
