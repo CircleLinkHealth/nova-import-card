@@ -20,17 +20,6 @@ use CircleLinkHealth\SamlSp\Console\RegisterSamlUserMapping;
 
 class PracticeStaffController extends Controller
 {
-    public const PRACTICE_STAFF_ROLES = [
-        'practice-lead',
-        'med_assistant',
-        'office_admin',
-        'provider',
-        'registered-nurse',
-        'specialist',
-        'software-only',
-        'care-center-external',
-    ];
-    
     /**
      * Remove the specified resource from storage.
      *
