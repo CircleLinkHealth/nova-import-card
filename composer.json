@@ -52,14 +52,6 @@
             "packagist": false
         },
         {
-            "type": "path",
-            "url": "./nova-components/ImportPracticeStaffCsv"
-        },
-        {
-            "type": "path",
-            "url": "./nova-components/GeneratePatientCallDataCsv"
-        },
-        {
             "type": "git",
             "url": "git@github.com:circlelinkhealth/revisionable-module.git"
         },
@@ -84,10 +76,6 @@
             "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
         },
         {
-            "type": "path",
-            "url": "./nova-components/ClhImportCardExtended"
-        },
-        {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git"
         },
@@ -110,18 +98,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
-        },
-        {
-            "type": "path",
-            "url": "./nova-components/GenerateSuccessStoriesReport"
-        },
-        {
-            "type": "path",
-            "url": "./nova-components/ClhNovaTheme"
         }
     ],
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",
@@ -134,12 +114,12 @@
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/cerberus-gatekeeper-module": "3.1.6",
         "circlelinkhealth/core-module": "1.7.0",
-        "circlelinkhealth/cpm-migrations-module": "2.5.2",
+        "circlelinkhealth/cpm-migrations-module": "2.6.4",
         "circlelinkhealth/customer-module": "2.9.7",
         "circlelinkhealth/eligibility-module": "3.0.4",
         "circlelinkhealth/revisionable-module": "6.1.1",
         "circlelinkhealth/shared-models-module": "1.6.8",
-        "circlelinkhealth/sqlviews-module": "1.3.5",
+        "circlelinkhealth/sqlviews-module": "1.3.9",
         "circlelinkhealth/timetracking-module": "1.2.4",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.2",
