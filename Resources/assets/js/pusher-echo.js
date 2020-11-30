@@ -1,3 +1,5 @@
+import {rootUrl} from "./app.config";
+
 window.Echo = require('laravel-echo');
 window.Pusher = require('pusher-js');
 const options = {
@@ -5,7 +7,8 @@ const options = {
     key: process.env.MIX_PUSHER_KEY,
     cluster: process.env.MIX_PUSHER_CLUSTER,
     encrypted: true,
-    forceTLS: ! ['local', 'testing'].includes(process.env.MIX_APP_ENV)
+    forceTLS: ! ['local', 'testing'].includes(process.env.MIX_APP_ENV),
+    authEndpoint: rootUrl('/broadcasting/auth')
 };
 
 let keyExists = options.key !== undefined && options.key !== null
