@@ -26,7 +26,7 @@ class AutoResolveCallbackRequestService
             /** @var array $matchedResultsFromDB */
             $matchedResultsFromDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
                 ->matchedPatientsData();
-
+            
             if (empty($matchedResultsFromDB)) {
                 $mainMessage = "Could not find a patient match for record_id:[$recordId] in postmark_inbound_mail";
                 Log::warning($mainMessage);
@@ -49,7 +49,14 @@ class AutoResolveCallbackRequestService
                 return;
             }
 
-            $this->createUnresolvedInboundCallback($matchedResultsFromDB, $recordId);
+            $saveUnresolvedCallback = $this->createUnresolvedInboundCallback($matchedResultsFromDB, $recordId);
+
+            if ( ! $saveUnresolvedCallback) {
+                Log::error("Failed to create Unresolved Callback for:[$recordId] in postmark_inbound_mail");
+                sendSlackMessage('#carecoach_ops_alerts', "Failed to create Unresolved Callback for:[$recordId] in postmark_inbound_mail");
+            }
+
+            return;
         } catch (\Exception $e) {
             if (Str::contains($e->getMessage(), SchedulerService::NURSE_NOT_FOUND)) {
                 Log::error($e->getMessage());
@@ -113,6 +120,6 @@ class AutoResolveCallbackRequestService
 
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)
     {
-        (new ProcessUnresolvedPostmarkCallback($matchedResultsFromDB, $recordId))->handleUnresolved();
+        return (new ProcessUnresolvedPostmarkCallback($matchedResultsFromDB, $recordId))->handleUnresolved();
     }
 }
