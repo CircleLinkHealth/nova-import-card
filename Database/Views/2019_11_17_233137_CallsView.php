@@ -106,6 +106,6 @@ class CallsView extends BaseSqlView
      */
     public function getViewName(): string
     {
-        return CallView::TABLE;
+        return 'calls_view';
     }
 }
