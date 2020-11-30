@@ -9,7 +9,7 @@ namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
 use CircleLinkHealth\CpmAdmin\Filters\CallFilters;
-use CircleLinkHealth\CpmAdmin\Http\Resources\Call as CallResource;
+use CircleLinkHealth\Customer\Http\Resources\Call as CallResource;
 use CircleLinkHealth\CpmAdmin\Services\ManagementService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Role;

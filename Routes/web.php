@@ -3,24 +3,24 @@
 Route::prefix('api')->group(function() {
     Route::group(['prefix' => 'practices'], function () {
         Route::get('{practiceId}/patients/without-scheduled-activities', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutScheduledActivities',
+            'uses' => 'API\CallsController@patientsWithoutScheduledActivities',
             'as'   => 'practice.patients.without-scheduled-activities',
         ])->middleware('permission:patient.read,careplan.read');
         
         Route::get('{practiceId}/patients/without-inbound-calls', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutInboundCalls',
+            'uses' => 'API\CallsController@patientsWithoutInboundCalls',
             'as'   => 'practice.patients.without-inbound-calls',
         ])->middleware('permission:patient.read');
     });
     
     Route::prefix('patients')->group(function () {
         Route::get('without-scheduled-activities', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutScheduledActivities',
+            'uses' => 'API\CallsController@patientsWithoutScheduledActivities',
             'as'   => 'patients.without-scheduled-activities',
         ])->middleware('permission:patient.read,careplan.read,call.read');
         
         Route::get('without-inbound-calls', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsController@patientsWithoutInboundCalls',
+            'uses' => 'API\CallsController@patientsWithoutInboundCalls',
             'as'   => 'patients.without-inbound-calls',
         ])->middleware('permission:patient.read,call.read');
     });
@@ -68,7 +68,7 @@ Route::prefix('api')->group(function() {
             )->middleware('permission:call.create');
     
             Route::post('calls-v2-time-and-calls', [
-                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\API\CallsViewController@getPatientTimeAndCalls',
+                'uses' => 'API\CallsViewController@getPatientTimeAndCalls',
                 'as'   => 'calls.v2.time-and-calls',
             ])->middleware('permission:call.read');
         });
@@ -588,47 +588,47 @@ Route::prefix('api')->group(function() {
         ],
     ], function () {
         Route::get('/send-enrollee-reminder-test', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@sendEnrolleesReminderTestMethod',
+            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendEnrolleesReminderTestMethod',
             'as'   => 'send.reminder.enrollee.qa',
         ])->middleware('auth');
 
         Route::get('/send-patient-reminder-test', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@sendPatientsReminderTestMethod',
+            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendPatientsReminderTestMethod',
             'as'   => 'send.reminder.patient.qa',
         ])->middleware('auth');
 
         Route::get('/final-action-unreachables-test', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@finalActionTest',
+            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@finalActionTest',
             'as'   => 'final.action.qa',
         ])->middleware('auth');
 
         Route::get('/evaluate-enrolled-from-survey', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@evaluateEnrolledForSurveyTest',
+            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@evaluateEnrolledForSurveyTest',
             'as'   => 'evaluate.survey.completed',
         ])->middleware('auth');
 
         Route::get('/reset-enrollment-test', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@resetEnrollmentTest',
+            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@resetEnrollmentTest',
             'as'   => 'reset.test.qa',
         ])->middleware('auth');
 
         Route::get('/send-enrollee-invites', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@inviteEnrolleesToEnrollTest',
+            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@inviteEnrolleesToEnrollTest',
             'as'   => 'send.enrollee.invitations',
         ])->middleware('auth');
 
         Route::get('/send-unreachable-invites', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@inviteUnreachablesToEnrollTest',
+            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@inviteUnreachablesToEnrollTest',
             'as'   => 'send.unreachable.invitations',
         ])->middleware('auth');
 
         Route::get('/trigger-enrolldata-test', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@triggerEnrollmentSeederTest',
+            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@triggerEnrollmentSeederTest',
             'as'   => 'trigger.enrolldata.test',
         ])->middleware('auth');
 
         Route::get('/invite-unreachable', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\Enrollment\AutoEnrollmentTestDashboard@sendInvitesPanelTest',
+            'uses' => 'Enrollment\AutoEnrollmentTestDashboard@sendInvitesPanelTest',
             'as'   => 'send.invitates.panel',
         ])->middleware('auth');
         //---------------------------------------
@@ -636,29 +636,6 @@ Route::prefix('api')->group(function() {
 
     Route::prefix('admin')->group(
         function () {
-            Route::group(['prefix' => 'calls'], function () {
-                Route::get('', [
-                    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@index',
-                    'as'   => 'call.index',
-                ])->middleware('permission:call.read');
-                Route::get('create', [
-                    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@create',
-                    'as'   => 'call.create',
-                ])->middleware('permission:call.create');
-                Route::get('edit/{actId}', [
-                    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@edit',
-                    'as'   => 'call.edit',
-                ]);
-                Route::get('next', [
-                    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@getPatientNextScheduledCallJson',
-                    'as'   => 'call.next',
-                ])->middleware('permission:call.read');
-                Route::post('reschedule', [
-                    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@reschedule',
-                    'as'   => 'call.reschedule',
-                ])->middleware('permission:call.update');
-            });
-            
             Route::prefix('users')->group(
                 function () {
                     Route::get(
@@ -849,11 +826,11 @@ Route::resource(
 )->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete')->only(['destroy', 'index', 'update']);
 
 Route::post('callupdate', [
-    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@update',
+    'uses' => '\CircleLinkHealth\Customer\Http\Controllers\CallController@update',
     'as'   => 'api.callupdate',
 ]);
 Route::post('callcreate-multi', [
-    'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CallController@createMulti',
+    'uses' => '\CircleLinkHealth\Customer\Http\Controllers\CallController@createMulti',
     'as'   => 'api.callcreate-multi',
 ]);
 Route::group([
@@ -861,14 +838,14 @@ Route::group([
 ], function () {
     Route::patch(
         'work-hours/{id}',
-        '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@updateDailyHours'
+        'CareCenter\WorkScheduleController@updateDailyHours'
     )->middleware(['permission:workHours.update', 'auth']);
     Route::get('nurses/holidays', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@getHolidays',
+        'uses' => 'CareCenter\WorkScheduleController@getHolidays',
         'as'   => 'get.admin.nurse.schedules.holidays',
     ])->middleware('permission:nurse.read');
     Route::post('nurses/nurse-calendar-data', [
-        'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
+        'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
         'as'   => 'get.nurse.schedules.selectedNurseCalendar',
     ])->middleware('permission:nurse.read');
     
