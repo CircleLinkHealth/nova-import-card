@@ -403,7 +403,7 @@
                 this.loaders.excel = true
 
                 const download = (page = 1) => {
-                    return this.axios.get(rootUrl(`pam/export?rows=10&page=${page}&excel${this.urlFilterSuffix()}`)).then(response => {
+                    return this.axios.get(rootUrl(`pam/export?rows=40&page=${page}&excel${this.urlFilterSuffix()}`)).then(response => {
                         const pagination = response.data
                         patients = patients.concat(pagination.data)
                         this.exportCSVText = `Export Records (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`
