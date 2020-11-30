@@ -4,9 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Artisan;
 
-class SeedChargeableServiceNamesAgain extends Migration
+class SeedRpm60ChargeableService extends Migration
 {
     /**
      * Reverse the migrations.
@@ -24,8 +26,11 @@ class SeedChargeableServiceNamesAgain extends Migration
      */
     public function up()
     {
-        Artisan::call('db:seed', [
-            '--class' => ChargeableServiceSeeder::class,
-        ]);
+        ChargeableService::whereCode('CPT 99458')
+            ->update([
+                'code' => ChargeableService::RPM40,
+            ]);
+
+        Artisan::call('billing:seed-chargeable-services');
     }
 }
