@@ -8,7 +8,7 @@ namespace App\Services\Postmark;
 
 use App\Entities\PostmarkInboundCallbackRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\ValueObjects\PostmarkCallback\AutomatedCallbackMessageValueObject;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;

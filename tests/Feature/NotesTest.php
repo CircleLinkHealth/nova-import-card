@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\Note;
-use App\Services\Calls\SchedulerService;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Tests\CustomerTestCase;
 
 class NotesTest extends CustomerTestCase
