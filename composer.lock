@@ -822,7 +822,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "228eac96916163db3d03281b232bc5a063a88267"
+                "reference": "6456d1d0a32b88624e8a3729ecd5b258960cb0c8"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -864,7 +864,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-30T16:13:55+00:00"
+            "time": "2020-11-30T17:05:16+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -872,7 +872,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "99ed1246142375d7a407f77926de319c6d84182a"
+                "reference": "90566bb8b666a8b5c68455c296d7d0e20e63bca0"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
@@ -908,7 +908,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-30T16:13:55+00:00"
+            "time": "2020-11-30T17:05:16+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1281,7 +1281,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "0d3c1125e28e6ec12b958004c2b92cbd9647d6fc"
+                "reference": "a86cfda2244182e8543965728ab2fa9b2bc0b97c"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1295,7 +1295,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-30T16:00:28+00:00"
+            "time": "2020-11-30T16:55:57+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
