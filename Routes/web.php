@@ -126,25 +126,6 @@ Route::prefix('api')->group(function() {
             'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\FamilyController@getMembers',
             'as'   => 'family.get',
         ])->middleware('permission:patient.read');
-        
-        Route::group(['prefix' => 'offline-activity-time-requests'], function () {
-            Route::get('', [
-                'uses' => 'OfflineActivityTimeRequestController@adminIndex',
-                'as'   => 'admin.offline-activity-time-requests.index',
-            ])->middleware('permission:patient.read,offlineActivityRequest.read');
-            Route::post('respond', [
-                'uses' => 'OfflineActivityTimeRequestController@adminRespond',
-                'as'   => 'admin.offline-activity-time-requests.respond',
-            ])->middleware('permission:patient.read,offlineActivityRequest.read');
-            Route::get('create', [
-                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@create',
-                'as'   => 'offline-activity-time-requests.create',
-            ])->middleware('permission:patient.read,offlineActivityRequest.create');
-            Route::post('store', [
-                'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@store',
-                'as'   => 'offline-activity-time-requests.store',
-            ])->middleware('permission:offlineActivityRequest.create');
-        });
 
         Route::group(['prefix' => 'direct-mail'], function () {
             Route::get('{directMailId}', [
