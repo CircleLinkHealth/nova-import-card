@@ -33,7 +33,7 @@ class GenerateCameronLetterCommand extends Command
     {
         parent::__construct();
     }
-    
+
     public function handle()
     {
         Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateCameronLetter']);

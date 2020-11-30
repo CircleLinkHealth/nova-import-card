@@ -52,55 +52,6 @@ class TimeTrackingAndChargeableServiceTest extends TestCase
         self::assertEquals($activity->chargeable_service_id, $cs->id);
     }
 
-    public function test_activity_created_with_ccm_plus_40_cs()
-    {
-        $practice = $this->setupPractice(true, true);
-        $nurse    = $this->getNurse($practice->id, true);
-        $patient  = $this->setupPatient($practice);
-
-        /** @var ChargeableService $cs */
-        $ccmCs = ChargeableService::firstWhere('code', '=', ChargeableService::CCM);
-
-        $this->addTime($nurse, $patient, 15, true, false, $ccmCs->id);
-        $this->addTime($nurse, $patient, 15, true, false, $ccmCs->id);
-        $sum = $patient->activities->sum(function (Activity $activity) {
-            return $activity->duration;
-        });
-        self::assertEquals($sum, 30 * 60);
-
-        /** @var ChargeableService $cs */
-        $cs = ChargeableService::firstWhere('code', '=', ChargeableService::CCM_PLUS_40);
-        /** @var Activity $activity */
-        $activity = $patient->activities()->where('chargeable_service_id', '=', $cs->id)->first();
-        self::assertNotNull($activity);
-        self::assertEquals(10 * 60, $activity->duration);
-    }
-
-    public function test_activity_created_with_ccm_plus_60_cs()
-    {
-        $practice = $this->setupPractice(true, true);
-        $nurse    = $this->getNurse($practice->id, true);
-        $patient  = $this->setupPatient($practice);
-
-        /** @var ChargeableService $cs */
-        $ccmCs = ChargeableService::firstWhere('code', '=', ChargeableService::CCM);
-
-        $this->addTime($nurse, $patient, 15, true, false, $ccmCs->id);
-        $this->addTime($nurse, $patient, 15, true, false, $ccmCs->id);
-        $this->addTime($nurse, $patient, 15, true, true, $ccmCs->id);
-        $sum = $patient->activities->sum(function (Activity $activity) {
-            return $activity->duration;
-        });
-        self::assertEquals($sum, 45 * 60);
-
-        /** @var ChargeableService $cs */
-        $cs = ChargeableService::firstWhere('code', '=', ChargeableService::CCM_PLUS_60);
-        /** @var Activity $activity */
-        $activity = $patient->activities()->where('chargeable_service_id', '=', $cs->id)->first();
-        self::assertNotNull($activity);
-        self::assertEquals(5 * 60, $activity->duration);
-    }
-
     public function test_activity_created_with_pcm_cs()
     {
         $practice = $this->setupPractice(true, true, true, true);

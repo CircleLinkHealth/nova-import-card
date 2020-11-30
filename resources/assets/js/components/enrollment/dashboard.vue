@@ -5,6 +5,8 @@
                           :hide-tracker="true"
                           :twilio-enabled="true"
                           :info="getTimeTrackerInfo()"
+                          route-activities=""
+                          :disable-time-tracking="false"
                           :no-live-count="false"
                           :override-timeout="false">
             </time-tracker>

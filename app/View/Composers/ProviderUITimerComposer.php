@@ -6,6 +6,7 @@
 
 namespace App\View\Composers;
 
+use App\CareAmbassadorLog;
 use App\Jobs\StoreTimeTracking;
 use App\Policies\CreateNoteForPatient;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
@@ -28,6 +29,9 @@ class ProviderUITimerComposer extends ServiceProvider
     public function boot()
     {
         View::composer(['partials.providerUItimer'], function ($view) {
+            $params = $view->getData();
+            $isForEnrollment = $params['forEnrollment'] ?? false;
+
             if ( ! isset($activity)) {
                 $activity = 'Undefined';
             }
@@ -37,7 +41,7 @@ class ProviderUITimerComposer extends ServiceProvider
 
             //fall back to uri if route name is null
             $title = empty($routeName) ? $route->uri : $routeName;
-            $forceSkip = in_array($title, StoreTimeTracking::UNTRACKED_ROUTES);
+            $forceSkip = $isForEnrollment ? false : in_array($title, StoreTimeTracking::UNTRACKED_ROUTES);
 
             $ipAddr = Request::ip();
 
@@ -81,7 +85,9 @@ class ProviderUITimerComposer extends ServiceProvider
                 $noLiveCountTimeTracking = ! auth()->user()->isCCMCountable();
             }
 
-            $chargeableServices = $this->getChargeableServices($patientId);
+            $chargeableServices = $this->getChargeableServices($patientId, $isForEnrollment);
+            $enrolleeId = $isForEnrollment ? '0' : null;
+            $isFromCaPanel = $isForEnrollment;
 
             $view->with(compact([
                 'patientId',
@@ -95,6 +101,8 @@ class ProviderUITimerComposer extends ServiceProvider
                 'noLiveCountTimeTracking',
                 'chargeableServices',
                 'noBhiSwitch',
+                'enrolleeId',
+                'isFromCaPanel',
             ]));
         });
 
@@ -171,10 +179,22 @@ class ProviderUITimerComposer extends ServiceProvider
     {
     }
 
-    private function getChargeableServices($patientId)
+    private function getChargeableServices($patientId, bool $isForEnrollment = false)
     {
         if ( ! empty($patientId)) {
             $chargeableServices = (new PatientServicesForTimeTracker((int) $patientId, now()))->get();
+        } elseif ($isForEnrollment) {
+            /** @var User $user */
+            $user                             = auth()->user();
+            $record1                          = new ChargeablePatientMonthlySummaryView();
+            $record1->patient_user_id         = $patientId;
+            $record1->chargeable_service_id   = -1;
+            $record1->chargeable_service_code = 'NONE';
+            $record1->chargeable_service_name = 'NONE';
+            $record1->total_time              = optional(CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
+            $chargeableServices               = new PatientChargeableSummaryCollection(collect([
+                new PatientChargeableSummary($record1),
+            ]));
         } else {
             $record1                          = new ChargeablePatientMonthlySummaryView();
             $record1->patient_user_id         = $patientId;
