@@ -297,15 +297,8 @@ class ActivityController extends Controller
         $fakePageTimer->start_time    = $request->input('performed_at');
         $fakePageTimer->patient_id    = $patientId;
 
-        /** @var Activity $activity */
-        $activity                   = null;
-        $chargeableServicesDuration = app(ActivityService::class)->separateDurationForEachChargeableServiceId($patient, $durationSeconds, $cs->id);
-        foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
-            $anActivity = $this->processNewActivity($fakePageTimer, $chargeableServiceDuration, null !== $nurse, $metaData);
-            if ( ! $activity) {
-                $activity = $anActivity;
-            }
-        }
+        $chargeableServiceDuration = app(ActivityService::class)->getChargeableServiceIdDuration($patient, $durationSeconds, $cs->id);
+        $activity                  = $this->processNewActivity($fakePageTimer, $chargeableServiceDuration, null !== $nurse, $metaData);
 
         return redirect()->route(
             'patient.activity.view',
