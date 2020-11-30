@@ -6,7 +6,6 @@
 
 namespace App\Services\Postmark;
 
-use App\ValueObjects\PostmarkCallback\FirstNameLastNameValueObject;
 use App\ValueObjects\PostmarkCallback\PostmarkMultipleMatchData;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;

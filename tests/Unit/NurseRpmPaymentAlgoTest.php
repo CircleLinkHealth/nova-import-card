@@ -91,12 +91,12 @@ class NurseRpmPaymentAlgoTest extends TestCase
      * - Hourly Rate = $17
      * - Visit Fee = $13.
      *
-     * - Patient 1 -> 60 minutes
+     * - Patient 1 -> 55 minutes
      * - Patient 2 -> 35 minutes
-     * - Total CPM time = 95 minutes (2 patients)
+     * - Total CPM time = 90 minutes (2 patients)
      *
      * Result:
-     * Fixed rate: $34 (95 minutes rounded to 2 hours * $17)
+     * Fixed rate: $34 (90 minutes rounded to 2 hours * $17)
      * Visit fee rate: $38 => Patient 1: $13 + $12 | Patient 2: $13
      *
      * @throws \Exception
@@ -110,7 +110,7 @@ class NurseRpmPaymentAlgoTest extends TestCase
 
         $this->addTime($nurse, $patient1, 20, true, 1, $this->rpmChargeableServiceId);
         $this->addTime($nurse, $patient1, 20, true, 1, $this->rpmChargeableServiceId);
-        $this->addTime($nurse, $patient1, 20, true, 1, $this->rpmChargeableServiceId);
+        $this->addTime($nurse, $patient1, 15, true, 1, $this->rpmChargeableServiceId);
 
         $this->addTime($nurse, $patient2, 20, true, 1, $this->rpmChargeableServiceId);
         $this->addTime($nurse, $patient2, 15, true, 1, $this->rpmChargeableServiceId);
