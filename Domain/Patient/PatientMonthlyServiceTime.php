@@ -67,6 +67,7 @@ class PatientMonthlyServiceTime
                 return PatientMonthlyServiceTime::pcm($patientId, $month);
             case ChargeableService::RPM:
             case ChargeableService::RPM40:
+            case ChargeableService::RPM60:
                 return PatientMonthlyServiceTime::rpm($patientId, $month);
             case ChargeableService::GENERAL_CARE_MANAGEMENT:
                 return PatientMonthlyServiceTime::rhc($patientId, $month);
