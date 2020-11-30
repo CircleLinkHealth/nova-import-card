@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Session;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use CircleLinkHealth\Customer\Services\SAAS\UserManagementService;
 
 class InternalUserController extends Controller
 {
@@ -25,7 +26,7 @@ class InternalUserController extends Controller
      */
     private $userManagementService;
 
-    public function __construct(\CircleLinkHealth\CpmAdmin\Services\SAAS\UserManagementService $userManagementService)
+    public function __construct(UserManagementService $userManagementService)
     {
         $this->userManagementService = $userManagementService;
     }
