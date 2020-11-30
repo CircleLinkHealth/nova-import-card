@@ -98,14 +98,13 @@ use CircleLinkHealth\Core\Filters\Filterable;
 class CallView extends SqlViewModel
 {
     use Filterable;
-    const TABLE = 'calls_view';
 
     public $phi = [
         'patient',
         'state',
     ];
 
-    protected $table = self::TABLE;
+    protected $table = 'calls_view';
 
     public function preferredCallDaysToString()
     {
