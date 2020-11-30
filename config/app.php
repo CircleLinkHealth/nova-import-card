@@ -12,6 +12,7 @@ use CircleLinkHealth\Core\Providers\AuthServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\Core\Providers\HtmlToPdfServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
+use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityDeferrableServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
@@ -232,6 +233,7 @@ return [
         Macellan\Zip\ZipServiceProvider::class,
         FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider::class,
         CustomerAuthServiceProvider::class,
+        CpmMigrationsServiceProvider::class,
     ],
 
     /*
