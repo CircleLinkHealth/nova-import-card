@@ -227,6 +227,7 @@ class PatientSummaryEloquentRepository
             case ChargeableService::RPM40:
                 return $summary->ccm_time >= self::MINUTES_40;
             case ChargeableService::CCM_PLUS_60:
+            case ChargeableService::RPM60:
                 return $summary->ccm_time >= self::MINUTES_60;
             case ChargeableService::SOFTWARE_ONLY:
                 return 0 == $summary->timeFromClhCareCoaches();

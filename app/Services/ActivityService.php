@@ -15,7 +15,6 @@ use CircleLinkHealth\CcmBilling\Domain\Customer\LocationServices;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Nurseinvoices\Time\TimeSplitter;
 use Illuminate\Support\Facades\Log;
 
 class ActivityService
@@ -52,6 +51,18 @@ class ActivityService
 
         return $this->repo->ccmTimeBetween($providerId, $patientIds, $monthYear)
             ->pluck('total_time', 'patient_id');
+    }
+
+    public function getChargeableServiceIdDuration(User $patient, int $duration, int $chargeableServiceId = -1): ChargeableServiceDuration
+    {
+        $cs = $this->getChargeableServiceById($patient, $chargeableServiceId);
+        if ( ! $cs) {
+            Log::warning("ActivityService::getChargeableServiceById: Could not get chargeableService for patient[$patient->id] and csId[$chargeableServiceId]");
+
+            return new ChargeableServiceDuration(null, $duration);
+        }
+
+        return new ChargeableServiceDuration($cs->id, $duration, ChargeableService::BHI === $cs->code);
     }
 
     /**
@@ -132,63 +143,6 @@ class ActivityService
                 $summary->save();
             }
         }
-    }
-
-    public function separateDurationForEachChargeableServiceId(User $patient, $duration, int $chargeableServiceId = -1): array
-    {
-        $cs = $this->getChargeableServiceById($patient, $chargeableServiceId);
-        if ( ! $cs) {
-            Log::warning("ActivityService::getChargeableServiceById: Could not get chargeableService for patient[$patient->id] and csId[$chargeableServiceId]");
-
-            return [new ChargeableServiceDuration(null, $duration)];
-        }
-
-        if (ChargeableService::CCM === $cs->code) {
-            if ( ! $patient->isCcmPlus()) {
-                return [new ChargeableServiceDuration($chargeableServiceId, $duration)];
-            }
-
-            $currentTime = $patient->getCcmTime();
-            $splitter    = new TimeSplitter();
-            $slots       = $splitter->split($currentTime, $duration, false, true, true);
-
-            $result = [];
-            if ($slots->towards20) {
-                $result[] = new ChargeableServiceDuration($chargeableServiceId, $slots->towards20);
-            }
-
-            if ($slots->after20) {
-                $id       = $this->getChargeableServiceIdByCode($patient, ChargeableService::CCM_PLUS_40);
-                $result[] = new ChargeableServiceDuration($id, $slots->after20);
-            }
-
-            if ($slots->after40 || $slots->after60) {
-                $id       = $this->getChargeableServiceIdByCode($patient, ChargeableService::CCM_PLUS_60);
-                $result[] = new ChargeableServiceDuration($id, $slots->after40 + $slots->after60);
-            }
-
-            return $result;
-        }
-
-        if (ChargeableService::RPM === $cs->code) {
-            $currentTime = $patient->getRpmTime();
-            $splitter    = new TimeSplitter();
-            $slots       = $splitter->split($currentTime, $duration, false, true, false);
-
-            $result = [];
-            if ($slots->towards20) {
-                $result[] = new ChargeableServiceDuration($chargeableServiceId, $slots->towards20);
-            }
-
-            if ($slots->after20 || $slots->after40 || $slots->after60) {
-                $id       = $this->getChargeableServiceIdByCode($patient, ChargeableService::RPM40);
-                $result[] = new ChargeableServiceDuration($id, $slots->after20 + $slots->after40 + $slots->after60);
-            }
-
-            return $result;
-        }
-
-        return [new ChargeableServiceDuration($cs->id, $duration, ChargeableService::BHI === $cs->code)];
     }
 
     /**
