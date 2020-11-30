@@ -59,31 +59,7 @@ class ResetPMSChargeableServicesForMonth extends Command
         $this->resetPmsForABP($monthYear);
         $this->info('Deletion completed.');
     }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            ['example', InputArgument::REQUIRED, 'An example argument.'],
-        ];
-    }
-
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return [
-            ['example', null, InputOption::VALUE_OPTIONAL, 'An example option.', null],
-        ];
-    }
-
+    
     private function resetPmsForABP(Carbon $month)
     {
         PatientMonthlySummary::createdOn($month, 'month_year')
