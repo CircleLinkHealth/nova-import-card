@@ -8,7 +8,7 @@ namespace Tests\Unit\CallSchedulingAlgo;
 
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\SharedModels\Entities\Call;
-use CircleLinkHealth\CpmAdmin\Http\Controllers\CallController;
+use CircleLinkHealth\Customer\Http\Controllers\CallController;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
