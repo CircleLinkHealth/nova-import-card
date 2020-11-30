@@ -33,6 +33,7 @@ export interface TimeTrackerInfo {
     modify?: boolean;
     modifyFilter?: string;
     startTime: string;
+    forceSkip?: boolean;
 }
 
 export interface Activity {

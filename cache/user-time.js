@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTimeForCsId = exports.getTime = exports.storeTime = void 0;
+exports.getTimeForCsId = exports.getTime = exports.getAll = exports.storeTime = void 0;
 const UNTRACKED_ROUTES = [
     'patient.activity.create',
     'patient.activity.providerUIIndex',
@@ -27,6 +27,10 @@ function storeTime(key, activities, times) {
     _usersTime[key] = times;
 }
 exports.storeTime = storeTime;
+function getAll() {
+    return _usersTime;
+}
+exports.getAll = getAll;
 function getTime(key) {
     if (!_usersTime[key]) {
         return [];
