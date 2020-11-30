@@ -188,20 +188,15 @@ class StoreTimeTracking implements ShouldQueue
      */
     private function processBillableActivity(User $patient, PageTimer $pageTimer, int $chargeableServiceId = -1): void
     {
-        Cache::lock("time_tracking_$patient->id")
-            ->get(function () use ($patient, $pageTimer, $chargeableServiceId) {
-                $chargeableServicesDuration = $this->activityService->separateDurationForEachChargeableServiceId($patient, $pageTimer->duration, $chargeableServiceId);
-                foreach ($chargeableServicesDuration as $chargeableServiceDuration) {
-                    $activity = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('pagetimer', $pageTimer, $chargeableServiceDuration);
-                    
-                    if ( ! $chargeableServiceDuration->id && $patient->chargeableServices()->count() > 0) {
-                        sendSlackMessage('#time-tracking-issues', "Could not assign activity[{$activity->id}] to chargeable service. Original csId[{$chargeableServiceId}]. See page timer entry {$pageTimer->id}. Patient[$patient->id].");
-                    }
-                    
-                    \CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime::dispatchNow($patient->id);
-                    ProcessNurseMonthlyLogs::dispatchNow($activity);
-                    event(new PatientActivityCreated($patient->id));
-                }
-            });
+        $chargeableServiceDuration = $this->activityService->getChargeableServiceIdDuration($patient, $pageTimer->duration, $chargeableServiceId);
+        $activity                  = app(PatientServiceProcessorRepository::class)->createActivityForChargeableService('pagetimer', $pageTimer, $chargeableServiceDuration);
+        
+        if ( ! $chargeableServiceDuration->id && $patient->chargeableServices()->count() > 0) {
+            sendSlackMessage('#time-tracking-issues', "Could not assign activity[{$activity->id}] to chargeable service. Original csId[{$chargeableServiceId}]. See page timer entry {$pageTimer->id}. Patient[$patient->id].");
+        }
+        
+        ProcessMonthltyPatientTime::dispatchNow($patient->id);
+        ProcessNurseMonthlyLogs::dispatchNow($activity);
+        event(new PatientActivityCreated($patient->id));
     }
 }
