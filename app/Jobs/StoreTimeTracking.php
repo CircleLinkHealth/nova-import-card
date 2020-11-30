@@ -92,6 +92,21 @@ class StoreTimeTracking implements ShouldQueue
         }
     }
 
+    public function middleware()
+    {
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(150)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(10);
+
+        return [$rateLimitedMiddleware];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addWeek();
+    }
+
     /**
      * Get the tags that should be assigned to the job.
      *
@@ -186,20 +201,5 @@ class StoreTimeTracking implements ShouldQueue
                     event(new PatientActivityCreated($patient->id));
                 }
             });
-    }
-    
-    public function middleware()
-    {
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(150)
-            ->everySeconds(60)
-            ->releaseAfterSeconds(10);
-        
-        return [$rateLimitedMiddleware];
-    }
-    
-    public function retryUntil(): \DateTime
-    {
-        return now()->addWeek();
     }
 }
