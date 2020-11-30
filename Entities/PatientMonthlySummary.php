@@ -125,6 +125,7 @@ use Illuminate\Support\Collection;
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdToday($field = 'created_at')
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdYesterday($field = 'created_at')
  * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
+ * @property int                                                                                              $ccm_time_for_billable_ccm_cs
  */
 class PatientMonthlySummary extends BaseModel
 {
@@ -153,6 +154,7 @@ class PatientMonthlySummary extends BaseModel
         'billable_problem1_code', //@todo: Deprecate in favor of billableProblems()
         'billable_problem2', //@todo: Deprecate in favor of billableProblems()
         'billable_problem2_code', //@todo: Deprecate in favor of billableProblems()
+        'ccm_time_for_billable_ccm_cs',
     ];
 
     public function actor()
@@ -460,6 +462,11 @@ class PatientMonthlySummary extends BaseModel
         return (new static())->where('patient_id', $patientId)
             ->where('month_year', Carbon::now()->startOfMonth())
             ->exists();
+    }
+
+    public function getBillableCcmCs()
+    {
+        return 0 !== $this->ccm_time_for_billable_ccm_cs ? $this->ccm_time_for_billable_ccm_cs : $this->ccm_time;
     }
 
     public static function getPatientQACountForPracticeForMonth(
