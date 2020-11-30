@@ -15,20 +15,18 @@ class TimeSplitter
         int $totalTimeBefore,
         int $duration,
         bool $splitFor30Minutes = false,
-        bool $upTo40Minutes = false,
         bool $upTo60Minutes = false
     ): TimeSlots {
         if ($splitFor30Minutes) {
             return $this->splitFor30MinuteIntervals($totalTimeBefore, $duration);
         }
 
-        return $this->splitFor20MinuteIntervals($totalTimeBefore, $duration, $upTo40Minutes, $upTo60Minutes);
+        return $this->splitFor20MinuteIntervals($totalTimeBefore, $duration, $upTo60Minutes);
     }
 
     private function splitFor20MinuteIntervals(
         int $totalTimeBefore,
-        $duration,
-        bool $upTo40Minutes = false,
+        int $duration,
         bool $upTo60Minutes = false
     ): TimeSlots {
         $totalTimeAfter = $totalTimeBefore + $duration;
@@ -88,14 +86,9 @@ class TimeSplitter
         $result->towards20 = $add_to_accrued_towards_20;
         $result->after20   = $add_to_accrued_after_20;
 
-        if ($upTo40Minutes || $upTo60Minutes) {
+        if ($upTo60Minutes) {
             $result->after40 = $add_to_accrued_after_40;
-
-            if ($upTo60Minutes) {
-                $result->after60 = $add_to_accrued_after_60;
-            } else {
-                $result->after40 += $add_to_accrued_after_60;
-            }
+            $result->after60 = $add_to_accrued_after_60;
         } else {
             $result->after20 += $add_to_accrued_after_40 + $add_to_accrued_after_60;
         }

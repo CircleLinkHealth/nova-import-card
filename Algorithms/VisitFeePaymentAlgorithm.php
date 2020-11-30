@@ -101,13 +101,13 @@ class VisitFeePaymentAlgorithm extends NursePaymentAlgorithm
                             ++$noOfBillableEvents;
                             $lastBillableCode = $csCode;
                         }
-                        if ($totalTimeForMonth >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
-                            if (($this->practiceHasCcmPlus && ChargeableService::CCM === $csCode) || ChargeableService::RPM) {
-                                ++$noOfBillableEvents;
-                                $lastBillableCode = $csCode;
-                            }
+                        if ($totalTimeForMonth >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS
+                            && (($this->practiceHasCcmPlus && ChargeableService::CCM === $csCode) || ChargeableService::RPM === $csCode)) {
+                            ++$noOfBillableEvents;
+                            $lastBillableCode = $csCode;
                         }
-                        if ($totalTimeForMonth >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS && $this->practiceHasCcmPlus && ChargeableService::CCM === $csCode) {
+                        if ($totalTimeForMonth >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS
+                            && (($this->practiceHasCcmPlus && ChargeableService::CCM === $csCode) || ChargeableService::RPM === $csCode)) {
                             ++$noOfBillableEvents;
                             $lastBillableCode = $csCode;
                         }
@@ -265,14 +265,14 @@ class VisitFeePaymentAlgorithm extends NursePaymentAlgorithm
                         }
                         break;
                     case 1:
-                        if ($totalTime >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
-                            if (($this->practiceHasCcmPlus && ChargeableService::CCM === $csCode) || ChargeableService::RPM === $csCode) {
-                                $rate = $this->nurseInfo->visit_fee_2;
-                            }
+                        if ($totalTime >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS
+                            && (($this->practiceHasCcmPlus && ChargeableService::CCM === $csCode) || ChargeableService::RPM === $csCode)) {
+                            $rate = $this->nurseInfo->visit_fee_2;
                         }
                         break;
                     case 2:
-                        if (ChargeableService::CCM === $csCode && $this->practiceHasCcmPlus && $totalTime >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
+                        if ($totalTime >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS
+                            && (($this->practiceHasCcmPlus && ChargeableService::CCM === $csCode) || ChargeableService::RPM === $csCode)) {
                             $rate = $this->nurseInfo->visit_fee_3;
                         }
                         break;
