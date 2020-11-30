@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7a29d39aa9236ce7b1a2db1bb891f2f0",
+    "content-hash": "5c3ca590de6302b3ffb0bccd3759baea",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -950,11 +950,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "dev-billing-abp-toggle-off",
+            "version": "dev-abp-software-only",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "74e7d2e9ef642065168572ec0e3685a058b17b9d"
+                "reference": "de86baa67e6ec566e9ea21d37f5b292cce1af2b1"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1002,7 +1002,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-28T19:31:23+00:00"
+            "time": "2020-11-30T12:58:28+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
