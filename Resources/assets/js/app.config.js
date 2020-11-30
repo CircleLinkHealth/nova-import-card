@@ -1,8 +1,8 @@
 export function rootUrl(url, nameVal) {
     const bases = Array.from(document.getElementsByTagName('base'));
-    let baseElem = bases.filter(function (elem) { return (elem.getAttribute('name') == (nameVal || 'root')) })[0];
+    let baseElem = document.querySelector('meta[name="base-url"]');
+    if (!baseElem) baseElem = bases.filter(function (elem) { return (elem.getAttribute('name') == (nameVal || 'root')) })[0];
     if (!baseElem) baseElem = bases.filter(function (elem) { return !elem.getAttribute('name') })[0];
-    if (!baseElem) baseElem = document.querySelector('meta[name="base-url"]');
     if (baseElem) {
         let ret = baseElem.getAttribute('href') || baseElem.getAttribute('content');
 
