@@ -1,6 +1,6 @@
 @extends('layouts.EnrollmentSurvey.enrollmentLetterMaster')
-@section('title', 'Marillac Invitation')
-@section('activity', 'Marillac Invitation')
+@section('title', 'Cameron Invitation')
+@section('activity', 'Cameron Invitation')
 @section('content')
     <div class="container">
         <div class="letter-view">
@@ -10,7 +10,7 @@
                 </div>
             @endif
 
-            @include('enrollment-letters.headers.marillac')
+            @include('enrollment-letters.headers.cameron')
 
             @include('enrollment-letters.baseLetter')
 

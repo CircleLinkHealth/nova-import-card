@@ -23,7 +23,7 @@ class AutomatedCallbackMessageValueObject
         $this->firstName = $firstName;
         $this->lastName  = $lastName;
     }
-    
+
     /**
      * @param $callbackMessage
      * @return string
@@ -31,6 +31,7 @@ class AutomatedCallbackMessageValueObject
     public function constructCallbackMessage()
     {
         $phoneFormatted = formatPhoneNumberE164($this->phone);
+
         return 'From'.' '."[$phoneFormatted $this->firstName $this->lastName]: $this->message.".' '."Callback Number: $phoneFormatted";
     }
 }
