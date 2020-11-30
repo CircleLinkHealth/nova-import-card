@@ -153,28 +153,34 @@ Route::group([
         ])->middleware('permission:nurseHoliday.delete');
     });
     
-    Route::group(['prefix' => 'offline-activity-time-requests'], function () {
-        Route::get('', [
-            'uses' => 'OfflineActivityTimeRequestController@adminIndex',
-            'as'   => 'admin.offline-activity-time-requests.index',
-        ])->middleware('permission:patient.read,offlineActivityRequest.read');
-        Route::post('respond', [
-            'uses' => 'OfflineActivityTimeRequestController@adminRespond',
-            'as'   => 'admin.offline-activity-time-requests.respond',
-        ])->middleware('permission:patient.read,offlineActivityRequest.read');
-        Route::get('create', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@create',
-            'as'   => 'offline-activity-time-requests.create',
-        ])->middleware('permission:patient.read,offlineActivityRequest.create');
-        Route::post('store', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\OfflineActivityTimeRequestController@store',
-            'as'   => 'offline-activity-time-requests.store',
-        ])->middleware('permission:offlineActivityRequest.create');
+    Route::group([
+        'prefix'     => 'manage-patients/',
+        'middleware' => ['patientProgramSecurity'],
+    ], function () {
+        Route::get('family-members', [
+            'uses' => 'FamilyController@getMembers',
+            'as'   => 'family.get',
+        ])->middleware('permission:patient.read');
+    
+        Route::group(['prefix' => 'offline-activity-time-requests'], function () {
+            Route::get('', [
+                'uses' => 'OfflineActivityTimeRequestController@adminIndex',
+                'as'   => 'admin.offline-activity-time-requests.index',
+            ])->middleware('permission:patient.read,offlineActivityRequest.read');
+            Route::post('respond', [
+                'uses' => 'OfflineActivityTimeRequestController@adminRespond',
+                'as'   => 'admin.offline-activity-time-requests.respond',
+            ])->middleware('permission:patient.read,offlineActivityRequest.read');
+            Route::get('create', [
+                'uses' => 'OfflineActivityTimeRequestController@create',
+                'as'   => 'offline-activity-time-requests.create',
+            ])->middleware('permission:patient.read,offlineActivityRequest.create');
+            Route::post('store', [
+                'uses' => 'OfflineActivityTimeRequestController@store',
+                'as'   => 'offline-activity-time-requests.store',
+            ])->middleware('permission:offlineActivityRequest.create');
+        });
     });
-    Route::get('family-members', [
-        'uses' => 'FamilyController@getMembers',
-        'as'   => 'family.get',
-    ])->middleware('permission:patient.read');
 });
 
 //This route was replaced by route with url '/downloadInvoice/{practice}/{name}', and name 'monthly.billing.download'.
