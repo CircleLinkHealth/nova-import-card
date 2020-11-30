@@ -328,7 +328,7 @@ Route::prefix('api')->group(function() {
         ])->middleware('permission:call.update,call.create');
 
         Route::get('families/create', [
-            'uses' => 'FamilyController@create',
+            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@create',
             'as'   => 'family.create',
         ])->middleware('permission:patient.read');
 
@@ -496,27 +496,27 @@ Route::prefix('api')->group(function() {
         Route::group([
         ], function () {
             Route::get('families', [
-                'uses' => 'FamilyController@index',
+                'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@index',
                 'as'   => 'admin.families.index',
             ])->middleware('permission:family.read');
             Route::post('families', [
-                'uses' => 'FamilyController@store',
+                'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@store',
                 'as'   => 'admin.families.store',
             ])->middleware('permission:family.create,family.delete');
             Route::get('families/create', [
-                'uses' => 'FamilyController@create',
+                'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@create',
                 'as'   => 'admin.families.create',
             ])->middleware('permission:patient.read');
             Route::get('families/{id}/edit', [
-                'uses' => 'FamilyController@edit',
+                'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@edit',
                 'as'   => 'admin.families.edit',
             ]);
             Route::get('families/{id}/destroy', [
-                'uses' => 'FamilyController@destroy',
+                'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@destroy',
                 'as'   => 'admin.families.destroy',
             ]);
             Route::post('families/{id}/edit', [
-                'uses' => 'FamilyController@update',
+                'uses' => '\CircleLinkHealth\Customer\Http\Controllers\FamilyController@update',
                 'as'   => 'admin.families.update',
             ]);
         });
