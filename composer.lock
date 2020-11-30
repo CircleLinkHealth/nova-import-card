@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "74e7d2e9ef642065168572ec0e3685a058b17b9d"
+                "reference": "9941a884e6c91c55bc2918a5f4a9f6bb243b122a"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1002,7 +1002,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-11-28T19:31:23+00:00"
+            "time": "2020-11-30T15:30:52+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -1049,11 +1049,7 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1905,6 +1901,16 @@
                 "stream",
                 "stream_filter_append",
                 "stream_filter_register"
+            ],
+            "funding": [
+                {
+                    "url": "https://clue.engineering/support",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/clue",
+                    "type": "github"
+                }
             ],
             "time": "2020-10-02T12:38:20+00:00"
         },
@@ -2775,10 +2781,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0|^8.0"
+                "php": "^7.1|^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
+                "phpunit/phpunit": "^6.4|^7.0"
             },
             "type": "library",
             "extra": {
@@ -2812,7 +2818,13 @@
                 "cron",
                 "schedule"
             ],
-            "time": "2020-10-13T00:52:37+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/dragonmantank",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-10-12T18:35:36+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -6255,16 +6267,16 @@
         },
         {
             "name": "league/oauth2-server",
-            "version": "8.2.1",
+            "version": "8.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/oauth2-server.git",
-                "reference": "284c2b5125ac71c6564e96d6e3c2d6eef3a1ae24"
+                "reference": "e87248ffcd905c3dd91ca58d002caa0ec1381c2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/oauth2-server/zipball/284c2b5125ac71c6564e96d6e3c2d6eef3a1ae24",
-                "reference": "284c2b5125ac71c6564e96d6e3c2d6eef3a1ae24",
+                "url": "https://api.github.com/repos/thephpleague/oauth2-server/zipball/e87248ffcd905c3dd91ca58d002caa0ec1381c2c",
+                "reference": "e87248ffcd905c3dd91ca58d002caa0ec1381c2c",
                 "shasum": ""
             },
             "require": {
@@ -6334,7 +6346,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-26T11:18:21+00:00"
+            "time": "2020-11-30T10:10:52+00:00"
         },
         {
             "name": "lorisleiva/cron-translator",
@@ -6635,6 +6647,12 @@
             "keywords": [
                 "stream",
                 "zip"
+            ],
+            "funding": [
+                {
+                    "url": "https://opencollective.com/zipstream",
+                    "type": "open_collective"
+                }
             ],
             "time": "2020-05-30T13:11:16+00:00"
         },
@@ -12652,6 +12670,20 @@
                 "psr-17",
                 "psr-7"
             ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-09-29T08:17:46+00:00"
         },
         {
@@ -13031,6 +13063,20 @@
                 "interfaces",
                 "interoperability",
                 "standards"
+            ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-09-28T13:05:58+00:00"
         },
@@ -15176,6 +15222,16 @@
                 "nova",
                 "novaunit"
             ],
+            "funding": [
+                {
+                    "url": "https://ko-fi.com/JoshGaber",
+                    "type": "ko_fi"
+                },
+                {
+                    "url": "https://www.patreon.com/joshgaber",
+                    "type": "patreon"
+                }
+            ],
             "time": "2020-10-11T02:14:47+00:00"
         },
         {
@@ -15777,28 +15833,29 @@
         },
         {
             "name": "phar-io/manifest",
-            "version": "1.0.3",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phar-io/manifest.git",
-                "reference": "7761fcacf03b4d4f16e7ccb606d4879ca431fcf4"
+                "reference": "85265efd3af7ba3ca4b2a2c34dbfc5788dd29133"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phar-io/manifest/zipball/7761fcacf03b4d4f16e7ccb606d4879ca431fcf4",
-                "reference": "7761fcacf03b4d4f16e7ccb606d4879ca431fcf4",
+                "url": "https://api.github.com/repos/phar-io/manifest/zipball/85265efd3af7ba3ca4b2a2c34dbfc5788dd29133",
+                "reference": "85265efd3af7ba3ca4b2a2c34dbfc5788dd29133",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-phar": "*",
-                "phar-io/version": "^2.0",
-                "php": "^5.6 || ^7.0"
+                "ext-xmlwriter": "*",
+                "phar-io/version": "^3.0.1",
+                "php": "^7.2 || ^8.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "2.0.x-dev"
                 }
             },
             "autoload": {
@@ -15828,24 +15885,24 @@
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
-            "time": "2018-07-08T19:23:20+00:00"
+            "time": "2020-06-27T14:33:11+00:00"
         },
         {
             "name": "phar-io/version",
-            "version": "2.0.1",
+            "version": "3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phar-io/version.git",
-                "reference": "45a2ec53a73c70ce41d55cedef9063630abaf1b6"
+                "reference": "726c026815142e4f8677b7cb7f2249c9ffb7ecae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phar-io/version/zipball/45a2ec53a73c70ce41d55cedef9063630abaf1b6",
-                "reference": "45a2ec53a73c70ce41d55cedef9063630abaf1b6",
+                "url": "https://api.github.com/repos/phar-io/version/zipball/726c026815142e4f8677b7cb7f2249c9ffb7ecae",
+                "reference": "726c026815142e4f8677b7cb7f2249c9ffb7ecae",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.6 || ^7.0"
+                "php": "^7.2 || ^8.0"
             },
             "type": "library",
             "autoload": {
@@ -15875,7 +15932,7 @@
                 }
             ],
             "description": "Library for handling version information and constraints",
-            "time": "2018-07-08T19:19:57+00:00"
+            "time": "2020-11-30T09:21:21+00:00"
         },
         {
             "name": "php-cs-fixer/diff",
@@ -16539,16 +16596,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.5.11",
+            "version": "8.5.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3123601e3b29339b20129acc3f989cfec3274566"
+                "reference": "f40cf5be80a7d177494592ad1b2db3f64ea1dee3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3123601e3b29339b20129acc3f989cfec3274566",
-                "reference": "3123601e3b29339b20129acc3f989cfec3274566",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f40cf5be80a7d177494592ad1b2db3f64ea1dee3",
+                "reference": "f40cf5be80a7d177494592ad1b2db3f64ea1dee3",
                 "shasum": ""
             },
             "require": {
@@ -16560,9 +16617,9 @@
                 "ext-xml": "*",
                 "ext-xmlwriter": "*",
                 "myclabs/deep-copy": "^1.10.0",
-                "phar-io/manifest": "^1.0.3",
-                "phar-io/version": "^2.0.1",
-                "php": "^7.2",
+                "phar-io/manifest": "^2.0.1",
+                "phar-io/version": "^3.0.2",
+                "php": ">=7.2",
                 "phpspec/prophecy": "^1.10.3",
                 "phpunit/php-code-coverage": "^7.0.12",
                 "phpunit/php-file-iterator": "^2.0.2",
@@ -16628,7 +16685,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-27T12:46:45+00:00"
+            "time": "2020-11-30T12:23:30+00:00"
         },
         {
             "name": "react/event-loop",
@@ -17547,32 +17604,32 @@
         },
         {
             "name": "spatie/phpunit-watcher",
-            "version": "1.23.0",
+            "version": "1.23.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/phpunit-watcher.git",
-                "reference": "8a8e0c3c8f3f03dfdb6bf62abf89c1b7273fc0b3"
+                "reference": "0c70d569658a1cad9a6869716a4351d2ccfec4d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/phpunit-watcher/zipball/8a8e0c3c8f3f03dfdb6bf62abf89c1b7273fc0b3",
-                "reference": "8a8e0c3c8f3f03dfdb6bf62abf89c1b7273fc0b3",
+                "url": "https://api.github.com/repos/spatie/phpunit-watcher/zipball/0c70d569658a1cad9a6869716a4351d2ccfec4d1",
+                "reference": "0c70d569658a1cad9a6869716a4351d2ccfec4d1",
                 "shasum": ""
             },
             "require": {
                 "clue/stdio-react": "^2.0",
                 "jolicode/jolinotif": "^2.0",
-                "php": "^7.2",
-                "symfony/console": "^4.0|^5.0",
-                "symfony/process": "^4.0|^5.0",
-                "symfony/yaml": "^4.0|^5.0",
+                "php": "^7.2 | ^8.0",
+                "symfony/console": "^5.0",
+                "symfony/process": "^5.0",
+                "symfony/yaml": "^5.0",
                 "yosymfony/resource-watcher": "^2.0"
             },
             "conflict": {
                 "yosymfony/resource-watcher": "<2.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^8.0"
+                "phpunit/phpunit": "^8.0 | ^9.0"
             },
             "bin": [
                 "phpunit-watcher"
@@ -17601,7 +17658,7 @@
                 "phpunit-watcher",
                 "spatie"
             ],
-            "time": "2020-10-27T07:36:25+00:00"
+            "time": "2020-10-31T17:47:29+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
