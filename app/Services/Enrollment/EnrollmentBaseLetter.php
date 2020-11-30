@@ -186,6 +186,11 @@ class EnrollmentBaseLetter extends Controller
             }
         }
 
+        if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP === $practiceLetter->customer_signature_src) {
+            $uiRequests    = json_decode($practiceLetter->ui_requests);
+            $signatoryName = $this->getSpecificGroupSignatoryName($uiRequests);
+        }
+
         // order has to be the same as the $varsToBeReplaced
         $replacementVars = [
             $provider->last_name,
@@ -214,6 +219,19 @@ class EnrollmentBaseLetter extends Controller
         return $this->practiceLetterView->name::signatures($practiceLetter, $this->practice, $this->provider);
     }
 
+    /**
+     * @param $uiRequests
+     * @param  User  $userProvider
+     * @return mixed
+     */
+    private function getSpecificGroupSignatoryName($uiRequests)
+    {
+        return $this->practiceLetterView->name::groupSharedSignatoryName($uiRequests, $this->provider);
+    }
+
+    /**
+     * @return array
+     */
     private function letterPages(object $letter, array $varsToBeReplaced, array $replacementVars)
     {
         $letterPages = [];

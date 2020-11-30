@@ -48,6 +48,11 @@ class LettersHelper
         return $practiceLocation;
     }
 
+    public static function getUiRequestDataFor($uiRequests, string $key)
+    {
+        return collect($uiRequests->$key)->toArray();
+    }
+
     public static function propsWithExtraAddress($model, array $baseLetterConfigs)
     {
         return [
