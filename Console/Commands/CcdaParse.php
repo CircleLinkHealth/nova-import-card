@@ -104,7 +104,7 @@ class CcdaParse extends Command
             'path'             => dirname(__FILE__).'/../../nodejs/index.js',
             'storeResultsInDb' => true === $this->config->get('ccda-parser.store_results_in_db') ? 'true' : 'false',
             'dbJsonTable'      => $this->config->get('ccda-parser.db_table'),
-            'dbHost'           => $dbConnectionData['host'],
+            'dbHost'           => $dbConnectionData['host'] ?? $dbConnectionData['write']['host'][0],
             'dbPort'           => $dbConnectionData['port'],
             'dbDatabase'       => $dbConnectionData['database'],
             'dbUsername'       => $dbConnectionData['username'],
