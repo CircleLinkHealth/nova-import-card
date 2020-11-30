@@ -200,3 +200,33 @@ Route::post('forward-careplan-to-billing-provider-via-dm', [
     'uses' => 'Patient\CareplanController@forwardToBillingProviderViaDM',
     'as'   => 'forward-careplan-to-billing-provider-via-dm',
 ])->middleware(['patientProgramSecurity']);
+
+Route::prefix('api')->group(function() {
+    Route::group(['prefix' => 'practices'], function () {
+        Route::get('', 'API\PracticeController@getPractices')->middleware('permission:practice.read');
+        Route::get(
+            '{practiceId}/providers',
+            'API\PracticeController@getPracticeProviders'
+        )->middleware('permission:provider.read');
+        Route::get(
+            '{practiceId}/locations',
+            'API\PracticeController@getPracticeLocations'
+        )->middleware('permission:location.read');
+        Route::get(
+            '{practiceId}/locations/{locationId}/providers',
+            [
+                'uses' => 'API\PracticeController@getLocationProviders',
+                'as' => 'api.get.location.providers',
+            ]
+        )->middleware('permission:provider.read');
+        Route::get(
+            'all',
+            'API\PracticeController@allPracticesWithLocationsAndStaff'
+        )->middleware('permission:practice.read,location.read,provider.read');
+        Route::get(
+            '{practiceId}/patients',
+            'API\PracticeController@getPatients'
+        )->middleware('permission:patient.read');
+        Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses')->middleware('permission:nurse.read');
+    });
+});
