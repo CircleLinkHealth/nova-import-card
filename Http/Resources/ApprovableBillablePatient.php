@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
 use CircleLinkHealth\CcmBilling\Http\Resources\ChargeableService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,7 +25,7 @@ class ApprovableBillablePatient extends JsonResource
             ];
         });
     }
-
+    
     /**
      * Transform the resource into an array.
      *
@@ -38,18 +39,18 @@ class ApprovableBillablePatient extends JsonResource
             ->careTeamMembers
             ->where('type', '=', 'billing_provider')
             ->first();
-
+        
         $name = $this->patient->getFullName();
         $url  = route('patient.note.index', [
             $this->patient->id,
         ]);
-
+        
         $status = $this->closed_ccm_status;
         if (null == $status) {
             $status = $this->patient->patientInfo->getCcmStatusForMonth(Carbon::parse($this->month_year));
         }
         $problems = $this->allCcdProblems($this->patient)->unique('code')->filter()->values();
-
+        
         return [
             'id'       => $this->patient->id,
             'mrn'      => $this->patient->getMRN(),
@@ -61,10 +62,10 @@ class ApprovableBillablePatient extends JsonResource
             'practice'               => $this->patient->primaryPractice->display_name,
             'practice_id'            => $this->patient->primaryPractice->id,
             'dob'                    => $this->patient->getBirthDate(),
-            'ccm'                    => round($this->ccm_time / 60, 2),
+            'ccm'                    => round($this->getBillableCcmCs() / 60, 2),
             'total_time'             => $this->total_time,
             'bhi_time'               => $this->bhi_time,
-            'ccm_time'               => $this->ccm_time,
+            'ccm_time'               => $this->getBillableCcmCs(),
             'problems'               => $problems,
             'no_of_successful_calls' => $this->no_of_successful_calls,
             'status'                 => $status,
@@ -73,9 +74,9 @@ class ApprovableBillablePatient extends JsonResource
             'report_id'              => $this->id,
             'actor_id'               => $this->actor_id,
             'qa'                     => $this->needs_qa && ! $this->approved && ! $this->rejected,
-            'attested_ccm_problems'  => $this->ccmAttestedProblems()->unique()->pluck('id'),
+            'attested_ccm_problems'  => $this->hasServiceCode(ChargeableServiceModel::RPM) ? $problems->pluck('id')->toArray() : $this->ccmAttestedProblems()->unique()->pluck('id')->toArray(),
             'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
-            'attested_bhi_problems'  => $this->bhiAttestedProblems()->unique()->pluck('id'),
+            'attested_bhi_problems'  => $this->bhiAttestedProblems()->unique()->pluck('id')->toArray(),
         ];
     }
 }
