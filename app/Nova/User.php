@@ -13,6 +13,7 @@ use App\Nova\Actions\UserWithdraw;
 use App\Nova\Filters\UserPracticeFilter;
 use App\Nova\Filters\UserRoleFilter;
 use App\User as CpmUser;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
@@ -155,7 +156,7 @@ class User extends Resource
             }),
 
             Text::make('Edit', function () {
-                if ($this->hasRole(PracticeStaffController::PRACTICE_STAFF_ROLES)) {
+                if ($this->hasRole(CpmConstants::PRACTICE_STAFF_ROLES)) {
                     $practiceSlug = $this->primaryPractice->name;
                     $url = route('provider.dashboard.manage.staff', ['practiceSlug' => $practiceSlug]);
                 } else {
