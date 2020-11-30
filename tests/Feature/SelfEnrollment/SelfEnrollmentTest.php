@@ -17,7 +17,7 @@ use App\SelfEnrollment\Domain\InvitePracticeEnrollees;
 use App\SelfEnrollment\Domain\RemindEnrollees;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\SelfEnrollment\Helpers;
-use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Jobs\SendInvitation;
 use App\SelfEnrollment\Jobs\SendReminder;
 use App\SelfEnrollment\Notifications\SelfEnrollmentInviteNotification;
