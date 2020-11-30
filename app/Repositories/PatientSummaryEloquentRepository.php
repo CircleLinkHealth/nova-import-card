@@ -7,7 +7,6 @@
 namespace App\Repositories;
 
 use Cache;
-use CircleLinkHealth\CcmBilling\Domain\Patient\PatientIsOfServiceCode;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesToAttachForLegacyABP;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -97,10 +96,6 @@ class PatientSummaryEloquentRepository
 
         $candidates = PatientServicesToAttachForLegacyABP::getCollection($summary, $chargeableServices);
 
-        //improve -> create other attribute, maybe in DB so it can be used in invoices
-        //add software-only code logic
-        //cs_specific_billable_ccm_time => json -> so it can be updated if offline activity is added? TODO: see what happens in reprocessing for offline activity
-
         $attach = $candidates
             ->map(
                 function ($service) {
@@ -145,7 +140,12 @@ class PatientSummaryEloquentRepository
 
         $hasCcm = $summary->hasServiceCode(ChargeableService::CCM);
         if ($hasCcm && $summary->ccmAttestedProblems()->isEmpty()) {
-            $needsQA[] = 'Patient has CCM service but 0 CCM attested condition';
+            $needsQA[] = 'Patient has CCM service but 0 CCM attested conditions.';
+        }
+
+        $hasPcm = $summary->hasServiceCode(ChargeableService::PCM);
+        if ($hasPcm && $summary->ccmAttestedProblems()->isEmpty()) {
+            $needsQA[] = 'Patient has PCM service but 0 CCM attested conditions.';
         }
 
         if ($summary->approved && $summary->rejected) {
@@ -209,41 +209,6 @@ class PatientSummaryEloquentRepository
         }
 
         return $this->chargeableServicesByCode[$practiceId];
-    }
-
-    private function hasEnoughTime(ChargeableService $service, PatientMonthlySummary $summary)
-    {
-        //todo: remove
-        switch ($service->code) {
-            case ChargeableService::BHI:
-                return $summary->bhi_time >= self::MINUTES_20;
-            case ChargeableService::CCM:
-            case ChargeableService::GENERAL_CARE_MANAGEMENT:
-            case ChargeableService::RPM:
-                return $summary->ccm_time >= self::MINUTES_20;
-            case ChargeableService::PCM:
-                return $summary->ccm_time >= self::MINUTES_30;
-            case ChargeableService::CCM_PLUS_40:
-            case ChargeableService::RPM40:
-                return $summary->ccm_time >= self::MINUTES_40;
-            case ChargeableService::CCM_PLUS_60:
-            case ChargeableService::RPM60:
-                return $summary->ccm_time >= self::MINUTES_60;
-            case ChargeableService::SOFTWARE_ONLY:
-                return 0 == $summary->timeFromClhCareCoaches();
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Decide whether or not to attach a chargeable service to a patient summary.
-     *
-     * @return bool
-     */
-    private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
-    {
-        return PatientIsOfServiceCode::execute($summary->patient_id, $service->code) && $this->hasEnoughTime($service, $summary);
     }
 
     /**
