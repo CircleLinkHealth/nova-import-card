@@ -1482,49 +1482,6 @@ if ( ! function_exists('tryDropForeignKey')) {
     }
 }
 
-if ( ! function_exists('presentDate')) {
-    /**
-     * Use this function to have a single presentation layer for all user facing dates in CPM.
-     *
-     * Due to the fact that we don't have a way to sort dates m-d-Y dates in tables yet, we are using $forceHumanForm so that developers can choose when to "force" m-d-Y format.
-     *
-     * @param $date
-     *
-     * @return string
-     */
-    function presentDate($date, bool $withTime = true, bool $withTimezone = false, bool $forceHumanForm = false)
-    {
-        $dateFormat = 'Y-m-d';
-        $timeFormat = $withTimezone
-            ? 'h:iA T'
-            : 'h:iA';
-
-        if ( ! is_a($date, Carbon::class)) {
-            $validator = Validator::make(['date' => $date], ['date' => 'date']);
-
-            if ($validator->fails()) {
-                return 'N/A';
-            }
-
-            $carbonDate = Carbon::parse($date);
-        } else {
-            $carbonDate = $date;
-        }
-
-        if ($carbonDate->year < 1) {
-            return 'N/A';
-        }
-
-        if ($forceHumanForm) {
-            $dateFormat = 'm-d-Y';
-        }
-
-        return $withTime
-            ? $carbonDate->format("$dateFormat $timeFormat")
-            : $carbonDate->format($dateFormat);
-    }
-}
-
 if ( ! function_exists('calculateWeekdays')) {
     /**
      * Returns the number of working days for the date range given.
