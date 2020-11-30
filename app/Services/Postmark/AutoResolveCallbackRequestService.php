@@ -43,12 +43,13 @@ class AutoResolveCallbackRequestService
                     Log::error("Failed to created callback assigned to Nurse. See [$recordId] in inbound_postmark_mail");
                     sendSlackMessage('#carecoach_ops_alerts', "Failed to created callback assigned to Nurse. See [$recordId] in inbound_postmark_mail");
                 }
+
                 return;
             }
 
             if (PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_ASSIGNED === $matchedResultsFromDB['reasoning']) {
                 $callBackAssignedToCa = $this->assignCallbackToCareAmbassador($matchedResultsFromDB['matchUsersResult'], $recordId);
-                if (! $callBackAssignedToCa){
+                if ( ! $callBackAssignedToCa) {
                     Log::error("Failed to created callback assigned to CA. See [$recordId] in inbound_postmark_mail");
                     sendSlackMessage('#carecoach_ops_alerts', "Failed to created callback assigned to CA. See [$recordId] in inbound_postmark_mail");
                 }
@@ -87,10 +88,8 @@ class AutoResolveCallbackRequestService
         Log::error("Unexpected error. Should have not reached here. See $recordId.");
         sendSlackMessage('#carecoach_ops_alerts', "{Unexpected error. See inbound_postmark_mail id [$recordId]");
     }
-    
+
     /**
-     * @param User $user
-     * @param int $recordId
      * @return bool
      */
     private function assignCallbackToCareAmbassador(User $user, int $recordId)
