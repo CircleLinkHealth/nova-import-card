@@ -11,8 +11,8 @@ use App\Console\Commands\CheckVoiceCalls;
 use CircleLinkHealth\SharedModels\Entities\CpmCallAlert;
 use App\Nova\Filters\TwilioCallSourceFilter;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
-use App\Traits\Tests\PracticeHelpers;
-use App\Traits\Tests\TimeHelpers;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
 use CircleLinkHealth\SharedModels\Entities\TwilioCall;
 use CircleLinkHealth\SharedModels\Entities\VoiceCall;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -24,7 +24,7 @@ class VoiceCallsTest extends CustomerTestCase
     use PracticeHelpers;
     use TimeHelpers;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         AppConfig::set('enable_unsuccessful_call_patient_notification', false);
