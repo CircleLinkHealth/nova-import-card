@@ -297,7 +297,7 @@ Route::prefix('api')->group(function() {
         Route::get('athena/ccdas/{practiceId}/{departmentId}', 'CcdApi\Athena\AthenaApiController@fetchCcdas');
 
         Route::post('calls/import', [
-            'uses' => 'CallController@import',
+            'uses' => '\CircleLinkHealth\Customer\Http\Controllers\CallController@import',
             'as'   => 'post.CallController.import',
         ])->middleware('permission:call.update,call.create');
 
@@ -311,7 +311,7 @@ Route::prefix('api')->group(function() {
             'as'   => 'post.GeneralCommentsCsv',
         ])->middleware('permission:patient.update');
 
-        Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
+        Route::get('calls/{patientId}', '\CircleLinkHealth\Customer\Http\Controllers\CallController@showCallsForPatient');
 
         Route::group([
             'prefix' => 'reports',
