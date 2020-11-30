@@ -140,7 +140,12 @@ class PatientSummaryEloquentRepository
 
         $hasCcm = $summary->hasServiceCode(ChargeableService::CCM);
         if ($hasCcm && $summary->ccmAttestedProblems()->isEmpty()) {
-            $needsQA[] = 'Patient has CCM service but 0 CCM attested condition';
+            $needsQA[] = 'Patient has CCM service but 0 CCM attested conditions.';
+        }
+
+        $hasPcm = $summary->hasServiceCode(ChargeableService::PCM);
+        if ($hasPcm && $summary->ccmAttestedProblems()->isEmpty()) {
+            $needsQA[] = 'Patient has PCM service but 0 CCM attested conditions.';
         }
 
         if ($summary->approved && $summary->rejected) {
