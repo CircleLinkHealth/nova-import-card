@@ -17604,32 +17604,32 @@
         },
         {
             "name": "spatie/phpunit-watcher",
-            "version": "1.23.0",
+            "version": "1.23.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/phpunit-watcher.git",
-                "reference": "8a8e0c3c8f3f03dfdb6bf62abf89c1b7273fc0b3"
+                "reference": "0c70d569658a1cad9a6869716a4351d2ccfec4d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/phpunit-watcher/zipball/8a8e0c3c8f3f03dfdb6bf62abf89c1b7273fc0b3",
-                "reference": "8a8e0c3c8f3f03dfdb6bf62abf89c1b7273fc0b3",
+                "url": "https://api.github.com/repos/spatie/phpunit-watcher/zipball/0c70d569658a1cad9a6869716a4351d2ccfec4d1",
+                "reference": "0c70d569658a1cad9a6869716a4351d2ccfec4d1",
                 "shasum": ""
             },
             "require": {
                 "clue/stdio-react": "^2.0",
                 "jolicode/jolinotif": "^2.0",
-                "php": "^7.2",
-                "symfony/console": "^4.0|^5.0",
-                "symfony/process": "^4.0|^5.0",
-                "symfony/yaml": "^4.0|^5.0",
+                "php": "^7.2 | ^8.0",
+                "symfony/console": "^5.0",
+                "symfony/process": "^5.0",
+                "symfony/yaml": "^5.0",
                 "yosymfony/resource-watcher": "^2.0"
             },
             "conflict": {
                 "yosymfony/resource-watcher": "<2.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^8.0"
+                "phpunit/phpunit": "^8.0 | ^9.0"
             },
             "bin": [
                 "phpunit-watcher"
@@ -17658,7 +17658,7 @@
                 "phpunit-watcher",
                 "spatie"
             ],
-            "time": "2020-10-27T07:36:25+00:00"
+            "time": "2020-10-31T17:47:29+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
