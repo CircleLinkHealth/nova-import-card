@@ -157,7 +157,7 @@ Route::group([
         'prefix'     => 'manage-patients',
         'middleware' => ['patientProgramSecurity'],
     ], function () {
-        Route::get('family-members', [
+        Route::get('{patientId}/family-members', [
             'uses' => 'FamilyController@getMembers',
             'as'   => 'family.get',
         ])->middleware('permission:patient.read');
