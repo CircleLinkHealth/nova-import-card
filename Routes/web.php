@@ -176,7 +176,9 @@ Route::group([
         'prefix'     => 'manage-patients',
         'middleware' => ['patientProgramSecurity'],
     ], function () {
-        Route::group('{patientId}', function () {
+        Route::group([
+            'prefix' => '{patientId}'
+        ], function () {
             Route::get('family-members', [
                 'uses' => 'FamilyController@getMembers',
                 'as'   => 'family.get',
