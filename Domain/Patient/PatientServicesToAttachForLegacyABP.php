@@ -194,7 +194,7 @@ class PatientServicesToAttachForLegacyABP
     private function timeFromClhCareCoaches(): int
     {
         return $this->activities
-            ->filter(fn ($a) => $a->provider->isCareCoach())
+            ->filter(fn ($a) => optional($a->provider)->isCareCoach())
             ->sum('duration') ?? 0;
     }
 
