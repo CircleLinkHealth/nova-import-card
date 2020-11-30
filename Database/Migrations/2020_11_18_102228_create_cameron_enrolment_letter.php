@@ -5,8 +5,9 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Artisan;
 
-class CreateMarillacEnrolmentLetter extends Migration
+class CreateCameronEnrolmentLetter extends Migration
 {
     /**
      * Reverse the migrations.
@@ -24,7 +25,6 @@ class CreateMarillacEnrolmentLetter extends Migration
      */
     public function up()
     {
-        //test
-        Artisan::call('db:seed', ['--class' => 'CircleLinkHealth\Eligibility\Database\Seeders\GenerateMarillacHealthLetter']);
+        Artisan::call('create:cameronLetter');
     }
 }
