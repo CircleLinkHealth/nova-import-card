@@ -6,6 +6,8 @@
 
 namespace App\Console\Commands;
 
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use Illuminate\Console\Command;
 
 class ManuallyCreateEnrollmentTestData extends Command
@@ -48,15 +50,39 @@ class ManuallyCreateEnrollmentTestData extends Command
         if (isProductionEnv()) {
             $this->warn('You cannot execute this action in production environment');
 
-            return;
+            return "You cannot execute this action in production environment";
         }
 
         if (is_null($practiceName)) {
             $this->warn('Practice input is required');
 
-            return;
+            return "Practice input is required";
         }
 
-        (new \PrepareDataForReEnrollmentTestSeeder($practiceName))->run();
+        $practice = Practice::whereName($practiceName)->first();
+
+        if ( ! $practice) {
+            $this->error("$practiceName practice model not found.");
+            return "$practiceName practice model not found.";
+        }
+
+        $letter = EnrollmentInvitationLetter::wherePracticeId($practice->id)->first();
+
+        if ( ! $letter) {
+            $this->error("$practiceName practice model not found.");
+            return "$practiceName practice model not found.";
+        }
+
+        $uiRequestsForThisPractice = '';
+
+        if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP === $letter->customer_signature_src) {
+            $uiRequestsForThisPractice = EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER_GROUP;
+        }
+
+        if (EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER === $letter->customer_signature_src) {
+            $uiRequestsForThisPractice = EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER;
+        }
+
+        (new \PrepareDataForReEnrollmentTestSeeder($practiceName, $uiRequestsForThisPractice))->run();
     }
 }
