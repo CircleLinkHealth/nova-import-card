@@ -107,7 +107,7 @@ class PatientServicesForTimeTracker
         }
 
         if ($servicesDerivedFromPatientProblems->contains(ChargeableService::RPM)) {
-            $servicesDerivedFromPatientProblems->push(ChargeableService::RPM40);
+            $servicesDerivedFromPatientProblems->push(...ChargeableService::RPM_PLUS_CODES);
         }
 
         $chargeableServices = ChargeableService::cached()
@@ -156,9 +156,9 @@ class PatientServicesForTimeTracker
                 if (in_array($code, [ChargeableService::CCM, ChargeableService::RPM])) {
                     return;
                 }
-                if ($ccmChargeableService && in_array($code, [ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60])) {
+                if ($ccmChargeableService && in_array($code, ChargeableService::CCM_PLUS_CODES)) {
                     $ccmChargeableService->total_time += $entry->total_time;
-                } elseif ($rpmChargeableService && ChargeableService::RPM40 === $code) {
+                } elseif ($rpmChargeableService && in_array($code, ChargeableService::RPM_PLUS_CODES)) {
                     $rpmChargeableService->total_time += $entry->total_time;
                 } else {
                     $patientChargeableSummaries->push($entry);

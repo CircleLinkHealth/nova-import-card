@@ -35,6 +35,9 @@
         }
     },
     "autoload": {
+        "classmap": [
+            "Database/Seeders"
+        ],
         "psr-4": {
             "CircleLinkHealth\\CcmBilling\\": ""
         },

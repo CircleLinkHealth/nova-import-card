@@ -6,25 +6,27 @@
 
 namespace CircleLinkHealth\CcmBilling\Processors\Patient;
 
-use CircleLinkHealth\Customer\CpmConstants;
+use App\Constants;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 
-class PCM extends AbstractProcessor
+class RPM60 extends AbstractProcessor
 {
+    //todo: change fulfillment to happen with base service time
     public function clashesWith(): array
     {
         return [
-            new CCM(),
             new RHC(),
-            new RPM(),
-            new RPM40(),
-            new RPM60(),
         ];
     }
 
     public function code(): string
     {
-        return ChargeableService::PCM;
+        return ChargeableService::RPM60;
+    }
+
+    public function codeForProblems(): string
+    {
+        return ChargeableService::RPM;
     }
 
     public function featureIsEnabled(): bool
@@ -44,7 +46,7 @@ class PCM extends AbstractProcessor
 
     public function minimumTimeInSeconds(): int
     {
-        return CpmConstants::THIRTY_MINUTES_IN_SECONDS;
+        return Constants::TWENTY_MINUTES_IN_SECONDS;
     }
 
     public function requiresPatientConsent(int $patientId): bool
