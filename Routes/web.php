@@ -122,11 +122,6 @@ Route::prefix('api')->group(function() {
         ],
         'prefix' => 'admin',
     ], function () {
-        Route::get('family-members', [
-            'uses' => '\CircleLinkHealth\CpmAdmin\Http\Controllers\FamilyController@getMembers',
-            'as'   => 'family.get',
-        ])->middleware('permission:patient.read');
-
         Route::group(['prefix' => 'direct-mail'], function () {
             Route::get('{directMailId}', [
                 'uses' => 'DirectMailController@show',
