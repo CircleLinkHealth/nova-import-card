@@ -17,7 +17,7 @@ if (!keyExists) {
     console.log('pusher app key not found')
 }
 
-module.exports = {
+export default {
     init: () => {
         if (keyExists) {
             window.EchoPusher = new window.Echo.default(options);
