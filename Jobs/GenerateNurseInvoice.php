@@ -103,6 +103,25 @@ class GenerateNurseInvoice implements ShouldQueue
         );
     }
 
+    public function middleware()
+    {
+        if (isUnitTestingEnv()) {
+            return [];
+        }
+        
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(2)
+            ->everySeconds(90)
+            ->releaseAfterSeconds(20);
+
+        return [$rateLimitedMiddleware];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addDay();
+    }
+
     /**
      * @return Invoice
      */
@@ -137,20 +156,5 @@ class GenerateNurseInvoice implements ShouldQueue
                 'invoice_data' => $viewModel->toArray(),
             ]
         );
-    }
-    
-    public function middleware()
-    {
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(2)
-            ->everySeconds(90)
-            ->releaseAfterSeconds(20);
-        
-        return [$rateLimitedMiddleware];
-    }
-    
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
     }
 }

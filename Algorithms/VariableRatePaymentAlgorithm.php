@@ -111,7 +111,7 @@ class VariableRatePaymentAlgorithm extends NursePaymentAlgorithm
             }
             break;
         case 2:
-            if (ChargeableService::CCM === $csCode && $hasSuccessfulCall && $this->practiceHasCcmPlus &&
+            if (in_array($csCode, [ChargeableService::CCM, ChargeableService::RPM]) && $hasSuccessfulCall && $this->practiceHasCcmPlus &&
                 $totalTime >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
                 $rate = $this->nurseInfo->high_rate_3;
             }

@@ -179,10 +179,9 @@ abstract class NursePaymentAlgorithm
     ): TimeSlots {
         $splitter                  = new TimeSplitter();
         $splitFor30MinuteIntervals = ChargeableService::PCM === $csCode;
-        $splitUpTo40Plus           = ChargeableService::RPM || ChargeableService::RPM40;
-        $splitUpTo60Plus           = ChargeableService::CCM || ChargeableService::CCM_PLUS_40 || ChargeableService::CCM_PLUS_60;
+        $splitUpTo60Plus           = in_array($csCode, array_merge(ChargeableService::RPM_CODES, ChargeableService::CCM_CODES));
 
-        return $splitter->split($totalTimeBefore, $duration, $splitFor30MinuteIntervals, $splitUpTo40Plus, $splitUpTo60Plus);
+        return $splitter->split($totalTimeBefore, $duration, $splitFor30MinuteIntervals, $splitUpTo60Plus);
     }
 
     protected function getTotalTimeForMonth(string $csCode): int
@@ -227,10 +226,15 @@ abstract class NursePaymentAlgorithm
          * 0 => 0-30
          * 1 => 30+.
          *
-         * RPM (+ RPM40)
+         * RHC
+         * 0 => 0-20
+         * 1 => 20+.
+         *
+         * RPM (+ RPM40, RPM60)
          * 0 => 0-20
          * 1 => 20-40
-         * 2 => 40+
+         * 2 => 40-60
+         * 3 => 60+.
          */
         $timeEntryPerCsCodePerRangePerNurseInfoId = collect();
         $chargeableServices                       = ChargeableService::cached();
