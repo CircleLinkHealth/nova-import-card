@@ -1055,7 +1055,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "bfe5ec28431d5be2eaded7047dff87fdc060f04a"
+                "reference": "af9485d4479409f9591186d59f3f5d7c2d5829bb"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1082,7 +1082,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-29T22:04:37+00:00"
+            "time": "2020-11-30T01:22:38+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
