@@ -985,7 +985,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "0ac82b59ee1b10f18c9fee1f871e899fc4f54cf7"
+                "reference": "588767bc03b42cc45c7a6f2ae963e8ac53f2863f"
             },
             "type": "laravel-module",
             "extra": {
@@ -1005,7 +1005,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-29T22:26:42+00:00"
+            "time": "2020-11-30T01:41:26+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1013,7 +1013,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "ff112f18285a5f0b36b4b0e879c1af0012762a46"
+                "reference": "9d9881fceb3ee6064d3050b20b36f52114f1630d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1047,7 +1047,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-30T00:37:29+00:00"
+            "time": "2020-11-30T02:13:10+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1055,7 +1055,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "af9485d4479409f9591186d59f3f5d7c2d5829bb"
+                "reference": "d02042a39301a4c88f9ad7dd84974ad1f286db01"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1082,7 +1082,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-30T01:22:38+00:00"
+            "time": "2020-11-30T02:36:56+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
