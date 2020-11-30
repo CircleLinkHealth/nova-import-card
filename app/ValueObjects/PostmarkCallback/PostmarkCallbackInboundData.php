@@ -27,7 +27,7 @@ class PostmarkCallbackInboundData
         if (isset($inboundDataArray['Cancel/Withdraw Reason'])) {
             $inboundDataFormatted = Arr::add($inboundDataFormatted, 'cancelReason', $inboundDataArray['Cancel/Withdraw Reason']);
         }
-        
+
         return $inboundDataFormatted;
     }
 }

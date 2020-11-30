@@ -74,6 +74,7 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
         if (self::FROM_ETHAN_MAIL === $email || self::FROM_CALLBACK_EMAIL_DOMAIN === $emailParts->domain) {
             $autoScheduleCallbackService = app(AutoResolveCallbackRequestService::class);
             $autoScheduleCallbackService->processCreateCallback($recordId);
+
             return;
         }
 

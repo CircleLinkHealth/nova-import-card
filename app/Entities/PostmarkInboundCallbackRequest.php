@@ -86,6 +86,7 @@ class PostmarkInboundCallbackRequest
             $message = $e->getMessage();
             Log::error("Inbound Callback could not be parsed. id:$postmarkId. [$message]");
             sendSlackMessage('#carecoach_ops_alerts', "Inbound Callback could not be parsed. id:$postmarkId. [$message]");
+
             return null;
         }
     }
