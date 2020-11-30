@@ -337,6 +337,10 @@
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/unresolved-callback" />
       <path value="$PROJECT_DIR$/vendor/friendsofcat/laravel-feature-flag" />
       <path value="$PROJECT_DIR$/vendor/laracasts/cypress" />
+      <path value="$PROJECT_DIR$/vendor/laravel/vapor-core" />
+      <path value="$PROJECT_DIR$/vendor/laravel/vapor-ui" />
+      <path value="$PROJECT_DIR$/vendor/hollodotme/fast-cgi-client" />
+      <path value="$PROJECT_DIR$/vendor/riverline/multipart-parser" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
