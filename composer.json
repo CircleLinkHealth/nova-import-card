@@ -120,6 +120,7 @@
     }
   ],
   "require": {
+    "lcobucci/jwt": "3.3.3",
     "php": "^7.4",
     "ext-bcmath": "*",
     "ext-dom": "*",
