@@ -171,6 +171,10 @@ Route::group([
             'as'   => 'offline-activity-time-requests.store',
         ])->middleware('permission:offlineActivityRequest.create');
     });
+    Route::get('family-members', [
+        'uses' => 'FamilyController@getMembers',
+        'as'   => 'family.get',
+    ])->middleware('permission:patient.read');
 });
 
 //This route was replaced by route with url '/downloadInvoice/{practice}/{name}', and name 'monthly.billing.download'.
