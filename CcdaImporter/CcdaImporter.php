@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use App\Events\PatientUserCreated;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -27,10 +26,11 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -403,17 +403,19 @@ class CcdaImporter
         return $this;
     }
 
-    private function isFamily(string $email, object $demographics, Enrollee $enrollee)
+    private function isFamily(string $email, object $demographics, ?Enrollee $enrollee)
     {
         $phones = collect($demographics->phones)
             ->pluck('number')
             ->map(fn ($num) => formatPhoneNumberE164($num))
-            ->merge([
-                formatPhoneNumberE164($enrollee->primary_phone),
-                formatPhoneNumberE164($enrollee->cell_phone),
-                formatPhoneNumberE164($enrollee->home_phone),
-                formatPhoneNumberE164($enrollee->other_phone),
-            ])
+            ->when( ! is_null($enrollee), function ($coll) use ($enrollee) {
+                return $coll->merge([
+                    formatPhoneNumberE164($enrollee->primary_phone),
+                    formatPhoneNumberE164($enrollee->cell_phone),
+                    formatPhoneNumberE164($enrollee->home_phone),
+                    formatPhoneNumberE164($enrollee->other_phone),
+                ]);
+            })
             ->unique()
             ->filter()
             ->all();
