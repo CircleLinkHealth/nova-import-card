@@ -93,7 +93,7 @@ class PatientProblemsForBillingProcessing
         }
 
         $services = [];
-        //todo: clear logic with a clearer mind
+        
         $practiceHasBhi    = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::BHI));
         $practiceHasRhc    = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT));
         $bhiProblemsAreCcm = ! $practiceHasBhi || $practiceHasRhc;
