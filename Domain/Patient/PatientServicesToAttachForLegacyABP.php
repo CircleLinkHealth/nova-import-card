@@ -76,6 +76,9 @@ class PatientServicesToAttachForLegacyABP
 
         $activityCs = $this->activities->pluck('chargeable_service_id')->unique()->toArray();
 
+        if (empty($activityCs)) {
+            return;
+        }
         $matchingCcmCodes = array_intersect($practiceCcmCs, $activityCs);
         //get viable CCM CS method if check below passes
         if (count($matchingCcmCodes) > 1) {
