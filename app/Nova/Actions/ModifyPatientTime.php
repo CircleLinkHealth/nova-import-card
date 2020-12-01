@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\Timetracking\Services\TimeTrackerServerService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -102,6 +103,8 @@ class ModifyPatientTime extends Action implements ShouldQueue
         $nurseCareRateLogIds = $this->modifyNurseCareRateLogs($activityIds);
 
         $this->modifyPatientMonthlySummary($chargeableServiceCode);
+
+        app(TimeTrackerServerService::class)->clearCache($this->patientId);
 
         $valid = $this->verifyChanges();
         if ( ! $valid) {
