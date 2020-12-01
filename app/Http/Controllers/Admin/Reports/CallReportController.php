@@ -25,7 +25,7 @@ class CallReportController extends Controller
 
         $calls = CallView::filter($filters)
             ->paginate($filters->filters()['rows']);
-        
+
         return PamCsvResource::collection($calls);
     }
 
