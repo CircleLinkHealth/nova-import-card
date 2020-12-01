@@ -482,6 +482,7 @@ class TwilioController extends Controller
         ]);
 
         if ($validation->fails()) {
+            \Log::critical('Validation failed:' . json_encode($validation->errors()->all()));
             return $this->responseWithXmlData($validation->errors()->all(), 400);
         }
 
