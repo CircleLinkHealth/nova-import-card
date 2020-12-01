@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
-use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -25,8 +24,6 @@ class PatientServicesToAttachForLegacyABP
     protected int $patientId;
 
     protected EloquentCollection $practiceServices;
-
-    protected PatientServiceProcessorRepository $repo;
 
     protected PatientMonthlySummary $summary;
 
@@ -54,15 +51,6 @@ class PatientServicesToAttachForLegacyABP
     private function getFulfilledServices(): array
     {
         return $this->fulfilledServices;
-    }
-
-    private function repo(): PatientServiceProcessorRepository
-    {
-        if ( ! isset($this->repo)) {
-            $this->repo = app(PatientServiceProcessorRepository::class);
-        }
-
-        return $this->repo;
     }
 
     private function setActivities(): self
