@@ -209,6 +209,11 @@ Route::group([
             ])->middleware('permission:offlineActivityRequest.create');
         });
     });
+    
+    Route::post('nurses/nurse-calendar-data', [
+        'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
+        'as'   => 'get.nurse.schedules.selectedNurseCalendar',
+    ])->middleware('permission:nurse.read');
 });
 
 //This route was replaced by route with url '/downloadInvoice/{practice}/{name}', and name 'monthly.billing.download'.
