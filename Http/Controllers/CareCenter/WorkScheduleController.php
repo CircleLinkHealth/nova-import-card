@@ -322,7 +322,7 @@ class WorkScheduleController extends Controller
         //Temporary fix
         $disableTimeTracking = true; // @todo: we need this ?  it wasnt used in view
 
-        return view('cpm-admin::care-center.work-schedule', compact('authData', 'today'));
+        return view('care-center.work-schedule', compact('authData', 'today'));
     }
 
     /**

@@ -191,7 +191,12 @@ Route::group([
         });
     
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
-            Route::get('', [
+            Route::get('care-coach', [
+                'uses' => 'OfflineActivityTimeRequestController@index',
+                'as'   => 'offline-activity-time-requests.index',
+            ])->middleware('permission:patient.read,offlineActivityRequest.read');
+            
+            Route::get('admin', [
                 'uses' => 'OfflineActivityTimeRequestController@adminIndex',
                 'as'   => 'admin.offline-activity-time-requests.index',
             ])->middleware('permission:patient.read,offlineActivityRequest.read');
