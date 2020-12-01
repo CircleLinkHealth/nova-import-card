@@ -87,13 +87,13 @@ class PatientProblemsForBillingProcessing
 
             return [];
         }
-        
-        if (empty($problem->icd10Code())){
+
+        if (empty($problem->icd10Code()) || ! $problem->is_monitored) {
             return [];
         }
 
         $services = [];
-        
+
         $practiceHasBhi    = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::BHI));
         $practiceHasRhc    = ! is_null($primaryPractice->chargeableServices->firstWhere('code', ChargeableService::GENERAL_CARE_MANAGEMENT));
         $bhiProblemsAreCcm = ! $practiceHasBhi || $practiceHasRhc;
