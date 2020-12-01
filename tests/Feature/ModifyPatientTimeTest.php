@@ -47,7 +47,7 @@ class ModifyPatientTimeTest extends TestCase
         $action = NovaActionTest::novaAction(ModifyPatientTime::class);
         $action->handle([
             'chargeable_service'    => ChargeableService::CCM,
-            'duration'              => 25 * 60,
+            'durationMinutes'       => 25,
             'allow_accrued_towards' => true,
         ], $patient);
 
@@ -72,7 +72,7 @@ class ModifyPatientTimeTest extends TestCase
         $action = NovaActionTest::novaAction(ModifyPatientTime::class);
         $action->handle([
             'chargeable_service'    => ChargeableService::CCM,
-            'duration'              => 25 * 60,
+            'durationMinutes'       => 25,
             'allow_accrued_towards' => true,
         ], $patient);
 
@@ -97,7 +97,7 @@ class ModifyPatientTimeTest extends TestCase
         $action = NovaActionTest::novaAction(ModifyPatientTime::class);
         $action->handle([
             'chargeable_service'    => ChargeableService::CCM,
-            'duration'              => 1 * 60,
+            'durationMinutes'       => 1,
             'allow_accrued_towards' => true,
         ], $patient);
 
@@ -120,7 +120,7 @@ class ModifyPatientTimeTest extends TestCase
         $action = NovaActionTest::novaAction(ModifyPatientTime::class);
         $action->handle([
             'chargeable_service'    => ChargeableService::CCM,
-            'duration'              => 19 * 60,
+            'durationMinutes'       => 19,
             'allow_accrued_towards' => true,
         ], $patient);
 
@@ -142,7 +142,7 @@ class ModifyPatientTimeTest extends TestCase
         $action = NovaActionTest::novaAction(ModifyPatientTime::class);
         $action->handle([
             'chargeable_service'    => ChargeableService::CCM,
-            'duration'              => 4 * 60,
+            'durationMinutes'       => 4,
             'allow_accrued_towards' => true,
         ], $patient);
 

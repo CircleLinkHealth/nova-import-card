@@ -89,7 +89,6 @@ class ModifyPatientTime extends Action implements ShouldQueue
         $patient                  = $models->first();
         $this->patientId          = $patient->id;
         $this->currentTimeSeconds = PatientMonthlyServiceTime::forChargeableServiceId($this->chargeableServiceId, $this->patientId, $this->monthYear);
-        $pageTimers               = $this->getPageTimers();
 
         $errorMsg = $this->validate($models);
         if ($errorMsg) {
@@ -98,8 +97,8 @@ class ModifyPatientTime extends Action implements ShouldQueue
             return;
         }
 
-        $pageTimerIds        = $this->modifyPageTimers($pageTimers);
-        $activityIds         = $this->modifyActivities($pageTimerIds);
+        $activityIds         = $this->modifyActivities();
+        $pageTimerIds        = $this->modifyPageTimers($activityIds);
         $nurseCareRateLogIds = $this->modifyNurseCareRateLogs($activityIds);
 
         $this->modifyPatientMonthlySummary($chargeableServiceCode);
@@ -127,24 +126,13 @@ class ModifyPatientTime extends Action implements ShouldQueue
 
     private function getActivities(): Collection
     {
-        return $this->getActivitiesQuery()->get();
-    }
-
-    private function getActivitiesQuery()
-    {
         return Activity::wherePatientId($this->patientId)
             ->where('chargeable_service_id', '=', $this->chargeableServiceId)
             ->whereBetween('performed_at', [
                 $this->monthYear->copy()->startOfMonth(),
                 $this->monthYear->copy()->endOfMonth(),
             ])
-            ->orderBy('performed_at', 'desc');
-    }
-
-    private function getManualActivities()
-    {
-        return $this->getActivitiesQuery()
-            ->where('logged_from', '=', 'manual_input')
+            ->orderBy('performed_at', 'desc')
             ->get();
     }
 
@@ -172,39 +160,26 @@ class ModifyPatientTime extends Action implements ShouldQueue
             ->get();
     }
 
-    private function modifyActivities(array $pageTimerIds): array
+    private function modifyActivities(): array
     {
         $remaining = $this->currentTimeSeconds - $this->newTimeSeconds;
         $result    = collect();
-        Activity::with([
-            'pageTime' => fn ($q) => $q->select(['id', 'duration']),
-        ])
-            ->whereIn('page_timer_id', $pageTimerIds)
-            ->orderByDesc('performed_at')
-            ->each(function (Activity $activity) use ($result, &$remaining) {
-                $remaining = $remaining - ($activity->pageTime->duration - $activity->duration);
-                $result->push($activity->id);
-                $activity->duration = $activity->pageTime->duration;
-                $activity->save();
-            });
 
-        if ($remaining > 0) {
-            $this->getManualActivities()
-                ->each(function (Activity $activity) use ($result, &$remaining) {
-                    if ($remaining <= 0) {
-                        return false;
-                    }
-                    if ($activity->duration >= $remaining) {
-                        $activity->duration = $activity->duration - $remaining;
-                        $remaining = 0;
-                    } else {
-                        $remaining -= $activity->duration;
-                        $activity->duration = 0;
-                    }
-                    $activity->save();
-                    $result->push($activity->id);
-                });
-        }
+        $this->getActivities()
+            ->each(function (Activity $activity) use ($result, &$remaining) {
+                if ($remaining <= 0) {
+                    return false;
+                }
+                if ($activity->duration >= $remaining) {
+                    $activity->duration = $activity->duration - $remaining;
+                    $remaining = 0;
+                } else {
+                    $remaining -= $activity->duration;
+                    $activity->duration = 0;
+                }
+                $activity->save();
+                $result->push($activity->id);
+            });
 
         if ($remaining > 0) {
             Log::warning("Something's wrong modifying this patient's time.");
@@ -257,24 +232,19 @@ class ModifyPatientTime extends Action implements ShouldQueue
         return $result->toArray();
     }
 
-    private function modifyPageTimers(Collection $pageTimers): array
+    private function modifyPageTimers(array $activityIds): array
     {
-        $result    = collect();
-        $remaining = $this->currentTimeSeconds - $this->newTimeSeconds;
-        $pageTimers->each(function (PageTimer $pageTimer) use (&$remaining, $result) {
-            if ($remaining <= 0) {
-                return false;
-            }
-            if ($pageTimer->duration >= $remaining) {
-                $pageTimer->duration = $pageTimer->duration - $remaining;
-                $remaining = 0;
-            } else {
-                $remaining -= $pageTimer->duration;
-                $pageTimer->duration = 0;
-            }
-            $pageTimer->save();
-            $result->push($pageTimer->id);
-        });
+        $result = collect();
+
+        PageTimer::with('activity')
+            ->whereHas('activity', function ($q) use ($activityIds) {
+                $q->whereIn('id', $activityIds);
+            })
+            ->each(function (PageTimer $pageTimer) use (&$remaining, $result) {
+                $pageTimer->duration = $pageTimer->activity->duration;
+                $pageTimer->save();
+                $result->push($pageTimer->id);
+            });
 
         return $result->toArray();
     }
