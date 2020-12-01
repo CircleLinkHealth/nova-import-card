@@ -213,7 +213,7 @@ class PracticeInvoiceController extends Controller
 
         $oldestSummary = PatientMonthlySummary::orderBy('created_at', 'asc')->first();
 
-        $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at) ?? 12;
+        $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at->copy()->startOfMonth()) ?? 12;
 
         for ($i = 0; $i <= $numberOfMonths; ++$i) {
             $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
