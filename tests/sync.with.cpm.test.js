@@ -1,4 +1,5 @@
 const {setQueueInterval, setHttpRequestCreator, getQueue, ignorePatientTimeSync, syncPatientTimeWithCPM, setNumberOfSyncAttempts} = require('../sockets/sync.with.cpm');
+const userCache = require('../cache/user-time');
 
 const {assert} = require('chai');
 
@@ -71,6 +72,20 @@ describe('Sync With CPM', () => {
             }, queueInterval + requestResolveTime + 5);
         }, queueInterval + requestResolveTime + 5);
     });
+
+    it('should cache patient time and clear patient time', function (done) {
+        const info = {providerId: 1, patientId: 3};
+        const key = userCache.getCacheKey(info);
+        userCache.storeTime(key, [], [{time: 10, chargeable_service_id: 1}]);
+        const cached = userCache.getTime(key);
+        assert.equal(cached[0].chargeable_service_id, 1);
+        assert.equal(cached[0].time, 10);
+
+        userCache.clearForPatient(3);
+        assert.equal(Object.keys(userCache.getAll()).length, 0);
+
+        done();
+    })
 
     after(function (done) {
         ignorePatientTimeSync(url, patientId, providerId);

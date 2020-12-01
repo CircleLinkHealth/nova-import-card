@@ -43,14 +43,7 @@ class TimeTrackerUser {
     }
     setup(info) {
         utils_fn_1.validateInfo(info);
-        let key;
-        if (info.isFromCaPanel) {
-            key = `${info.providerId}`;
-        }
-        else {
-            key = `${info.providerId}-${info.patientId}`;
-        }
-        this.key = key;
+        this.key = user_time_1.getCacheKey(info);
         this.inactiveSeconds = 0;
         this.activities = [];
         this.patientId = info.patientId;

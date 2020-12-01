@@ -1,12 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTimeForCsId = exports.getTime = exports.getAll = exports.storeTime = void 0;
+exports.clearForPatient = exports.getTimeForCsId = exports.getTime = exports.getAll = exports.storeTime = exports.getCacheKey = void 0;
 const UNTRACKED_ROUTES = [
     'patient.activity.create',
     'patient.activity.providerUIIndex',
     'patient.reports.progress',
 ];
 const _usersTime = {};
+function getCacheKey(info) {
+    if (info.isFromCaPanel) {
+        return `${info.providerId}`;
+    }
+    else {
+        return `${info.providerId}-${info.patientId}`;
+    }
+}
+exports.getCacheKey = getCacheKey;
 function storeTime(key, activities, times) {
     const removeTimeFromCs = (csId, timeToRemove) => {
         for (let i = 0; i < times.length; i++) {
@@ -44,4 +53,19 @@ function getTimeForCsId(key, csId) {
     return result ? result.time : 0;
 }
 exports.getTimeForCsId = getTimeForCsId;
+function clearForPatient(patientId) {
+    for (let key in _usersTime) {
+        if (!_usersTime.hasOwnProperty(key)) {
+            continue;
+        }
+        const parts = key.split('-');
+        if (parts.length < 2) {
+            continue;
+        }
+        if (+parts[1] === patientId) {
+            delete _usersTime[key];
+        }
+    }
+}
+exports.clearForPatient = clearForPatient;
 //# sourceMappingURL=user-time.js.map

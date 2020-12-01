@@ -1,6 +1,6 @@
 //copied from StoreTimeTracking.php
 //todo: delete these, should not be needed after force_skip
-import {TimeEntity, UsersTimeCollection} from "../types";
+import {TimeEntity, TimeTrackerInfo, UsersTimeCollection} from "../types";
 
 const UNTRACKED_ROUTES = [
     'patient.activity.create',
@@ -9,6 +9,14 @@ const UNTRACKED_ROUTES = [
 ];
 
 const _usersTime: UsersTimeCollection = {};
+
+export function getCacheKey(info: TimeTrackerInfo): string {
+    if (info.isFromCaPanel) {
+        return `${info.providerId}`;
+    } else {
+        return `${info.providerId}-${info.patientId}`;
+    }
+}
 
 export function storeTime(key: string, activities: { title: string, chargeable_service_id: number; force_skip: boolean; duration: number }[], times: TimeEntity[]) {
     const removeTimeFromCs = (csId: number, timeToRemove: number) => {
@@ -42,8 +50,23 @@ export function getTime(key: string): TimeEntity[] {
     return _usersTime[key];
 }
 
-export function getTimeForCsId(key:string, csId: number): number {
+export function getTimeForCsId(key: string, csId: number): number {
     const times = getTime(key);
     const result = times.filter(t => t.chargeable_service_id === csId)[0];
     return result ? result.time : 0;
+}
+
+export function clearForPatient(patientId: number) {
+    for (let key in _usersTime) {
+        if (!_usersTime.hasOwnProperty(key)) {
+            continue;
+        }
+        const parts = key.split('-');
+        if (parts.length < 2) {
+            continue;
+        }
+        if (+parts[1] === patientId) {
+            delete _usersTime[key];
+        }
+    }
 }
