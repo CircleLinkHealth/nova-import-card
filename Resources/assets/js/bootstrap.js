@@ -16,6 +16,8 @@ try {
 
 require('./bootstrap-axios');
 require('./logger-logdna').init();
-require('./pusher-echo').init();
+// Commented out because on vapor it chooses the cloudfront asset URL as the base URL, instead of CPM.
+// As a result, instead of auth requests going to cpm.com/broadcasting/auth, they go to cloudfronturl.com/broadcasting/auth
+// require('./pusher-echo').init();
 
 
