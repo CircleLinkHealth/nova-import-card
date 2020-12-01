@@ -31,6 +31,10 @@ export function storeTime(key: string, activities: { title: string, chargeable_s
     _usersTime[key] = times;
 }
 
+export function getAll() {
+    return _usersTime;
+}
+
 export function getTime(key: string): TimeEntity[] {
     if (!_usersTime[key]) {
         return [];

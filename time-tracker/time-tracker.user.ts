@@ -573,6 +573,7 @@ export default class TimeTrackerUser {
             if (activity) {
                 activity.name = info.activity;
                 activity.enrolleeId = info.enrolleeId;
+                activity.forceSkip = info.forceSkip;
             }
             return;
         }

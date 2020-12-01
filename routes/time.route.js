@@ -1,3 +1,5 @@
+const userCache = require('../cache/user-time');
+
 var express = require('express');
 var router = express.Router();
 
@@ -73,8 +75,7 @@ router.put('/:providerId/:patientId', userExistsValidator, addTimeToChargeableSe
         const data = req.body;
         user.addToChargeableService(+data.chargeable_service_id, data.chargeable_service_code, data.chargeable_service_name, +data.duration_seconds);
         res.send(user.report())
-    }
-    else res.status(404).send({
+    } else res.status(404).send({
         error: 'user not found'
     })
 })
@@ -156,6 +157,10 @@ router.get('/active-no-live-count', function (req, res, next) {
         });
     res.send(result);
 })
+
+router.get('/cache', function (req, res, next) {
+    res.send(userCache.getAll());
+});
 
 router.get('/', (req, res) => {
     res.send({message: 'Time Tracker'})
