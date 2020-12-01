@@ -36,7 +36,7 @@
         "ext-simplexml": "*",
         "ext-redis": "*",
         "barryvdh/laravel-cors": "^0.11.3",
-        "circlelinkhealth/core-module": "1.5.5",
+        "circlelinkhealth/core-module": "dev-vaporizing-admin",
         "circlelinkhealth/customer-module": "1.9.3",
         "circlelinkhealth/revisionable-module": "^6.1",
         "circlelinkhealth/shared-models-module": "1.5.6",
