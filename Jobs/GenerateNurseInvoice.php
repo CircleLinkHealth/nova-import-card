@@ -108,7 +108,7 @@ class GenerateNurseInvoice implements ShouldQueue
         if (isUnitTestingEnv()) {
             return [];
         }
-        
+
         $rateLimitedMiddleware = (new RateLimited())
             ->allow(2)
             ->everySeconds(90)
