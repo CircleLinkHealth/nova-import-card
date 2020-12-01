@@ -8,10 +8,8 @@ namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
-use CircleLinkHealth\CcmBilling\ValueObjects\PatientProblemForProcessing;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -23,8 +21,6 @@ class PatientServicesToAttachForLegacyABP
     protected array $eligibleServices = [];
 
     protected array $fulfilledServices = [];
-
-    protected User $patient;
 
     protected int $patientId;
 
@@ -43,8 +39,7 @@ class PatientServicesToAttachForLegacyABP
 
     public function get(): array
     {
-        return $this->setPatient()
-            ->setActivities()
+        return $this->setActivities()
             ->setEligibleServices()
             ->setFulfilledServicesWithTime()
             ->updatePmsBillableCcmTime()
@@ -81,6 +76,44 @@ class PatientServicesToAttachForLegacyABP
         return $this;
     }
 
+    private function setEligibleCcmCode(): void
+    {
+        $practiceCcmCs = $this->practiceServices->whereIn('code', [
+            ChargeableService::CCM,
+            ChargeableService::PCM,
+            ChargeableService::RPM,
+        ])
+            ->pluck('id')
+            ->toArray();
+
+        $activityCs = $this->activities->pluck('chargeable_service_id')->unique()->toArray();
+
+        $matchingCcmCodes = array_intersect($practiceCcmCs, $activityCs);
+        //get viable CCM CS method if check below passes
+        if (count($matchingCcmCodes) > 1) {
+            //get latest
+
+            $mostRecentCcmCode = $this->activities
+                ->sortByDesc('performed_at')
+                ->whereIn('chargeable_service_id', $practiceCcmCs)
+                ->first()
+                ->chargeable_service_id;
+
+            $csService = $this->practiceServices->firstWhere('id', $mostRecentCcmCode);
+            if (ChargeableService::CCM === $csService->code) {
+                $this->eligibleServices = array_merge($this->eligibleServices, $this->practiceServices->whereIn('code', ChargeableService::CCM_CODES)->all());
+            } elseif (ChargeableService::RPM === $csService->code) {
+                $this->eligibleServices = array_merge($this->eligibleServices, $this->practiceServices->whereIn('code', ChargeableService::RPM_CODES)->all());
+            } else {
+                $this->eligibleServices[] = $csService;
+            }
+
+            return;
+        }
+
+        $this->eligibleServices[] = $this->practiceServices->firstWhere('id', $matchingCcmCodes[0]);
+    }
+
     private function setEligibleServices(): self
     {
         if ($this->practiceServices->contains('code', '=', ChargeableService::SOFTWARE_ONLY)) {
@@ -93,31 +126,10 @@ class PatientServicesToAttachForLegacyABP
             return $this;
         }
 
-        $servicesDerivedFromPatientProblems = PatientProblemsForBillingProcessing::getCollection($this->patientId)
-            ->transform(fn (PatientProblemForProcessing $p) => $p->getServiceCodes())
-            ->flatten()
-            ->filter()
-            ->unique();
+        $this->setEligibleCcmCode();
 
-        $services = $this->practiceServices->filter(
-            fn ($cs) => in_array($cs->code, $servicesDerivedFromPatientProblems->all())
-        )
-            ->sortBy('order');
-
-        foreach ($services as $service) {
-            if (PatientIsOfServiceCode::execute($this->patientId, $service->code)) {
-                $this->eligibleServices[] = $service;
-            }
-
-            if (ChargeableService::RPM === $service->code) {
-                $rpmPlus                = $this->practiceServices->whereIn('code', ChargeableService::RPM_PLUS_CODES)->filter()->all();
-                $this->eligibleServices = array_merge($this->eligibleServices, $rpmPlus);
-            }
-
-            if (ChargeableService::CCM === $service->code) {
-                $plus                   = $this->practiceServices->whereIn('code', ChargeableService::CCM_PLUS_CODES)->all();
-                $this->eligibleServices = array_merge($this->eligibleServices, $plus);
-            }
+        if ($this->practiceServices->contains('code', '=', ChargeableService::BHI)) {
+            $this->eligibleServices[] = $this->practiceServices->firstWhere('code', ChargeableService::BHI);
         }
 
         return $this;
@@ -153,15 +165,6 @@ class PatientServicesToAttachForLegacyABP
         }
 
         $this->fulfilledServices = array_filter($servicesWithTime, fn ($s) => $s['is_fulfilled']);
-
-        return $this;
-    }
-
-    private function setPatient(): self
-    {
-        if ( ! isset($this->patient)) {
-            $this->patient = $this->repo()->getPatientWithBillingDataForMonth($this->patientId);
-        }
 
         return $this;
     }
