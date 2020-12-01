@@ -92,9 +92,19 @@ class PatientServicesToAttachForLegacyABP
 
             $csService = $this->practiceServices->firstWhere('id', $mostRecentCcmCode);
             if (ChargeableService::CCM === $csService->code) {
-                $this->eligibleServices = array_merge($this->eligibleServices, $this->practiceServices->whereIn('code', ChargeableService::CCM_CODES)->all());
+                $this->eligibleServices = array_merge(
+                    $this->eligibleServices,
+                    $this->practiceServices->sortBy('order')
+                        ->whereIn('code', ChargeableService::CCM_CODES)
+                        ->all()
+                );
             } elseif (ChargeableService::RPM === $csService->code) {
-                $this->eligibleServices = array_merge($this->eligibleServices, $this->practiceServices->whereIn('code', ChargeableService::RPM_CODES)->all());
+                $this->eligibleServices = array_merge(
+                    $this->eligibleServices,
+                    $this->practiceServices->sortBy('order')
+                        ->whereIn('code', ChargeableService::RPM_CODES)
+                        ->all()
+                );
             } else {
                 $this->eligibleServices[] = $csService;
             }
