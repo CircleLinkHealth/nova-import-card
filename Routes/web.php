@@ -844,9 +844,4 @@ Route::group([
         'uses' => 'CareCenter\WorkScheduleController@getHolidays',
         'as'   => 'get.admin.nurse.schedules.holidays',
     ])->middleware('permission:nurse.read');
-    Route::post('nurses/nurse-calendar-data', [
-        'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
-        'as'   => 'get.nurse.schedules.selectedNurseCalendar',
-    ])->middleware('permission:nurse.read');
-    
 });
