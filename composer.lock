@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dcb9bd172a2b6a04e6de75ea90c5ffd3",
+    "content-hash": "b058344c73509ca55a62d5895b3ee5af",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1790,11 +1790,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.3.2",
+            "version": "dev-ROAD-389_modify_patient_time_new",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "02ae528ccc23b2bf2bf4bd115459c39764037041"
+                "reference": "5f162427a3213eda1840c2bc2ea9eaf0140b163f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1819,7 +1819,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-30T18:28:47+00:00"
+            "time": "2020-12-01T14:18:16+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -18148,6 +18148,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/timetracking-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
