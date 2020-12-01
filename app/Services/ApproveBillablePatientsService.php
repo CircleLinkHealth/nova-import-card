@@ -10,6 +10,7 @@ use App\Http\Resources\ApprovableBillablePatient;
 use App\Repositories\BillablePatientsEloquentRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 
 class ApproveBillablePatientsService
 {
@@ -91,7 +92,7 @@ class ApproveBillablePatientsService
     {
         // 1. this will fetch billable patients that have
         //    ccm > 1200 and/or bhi > 1200
-        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(30);
+        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(AppConfig::pull('abp-pagination-size', 20));
 
         //note: this only applies to the paginated results, not the whole collection. not sure if intended
         $summaries->getCollection()->transform(
