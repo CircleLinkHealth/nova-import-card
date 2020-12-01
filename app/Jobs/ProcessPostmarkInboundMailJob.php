@@ -64,6 +64,13 @@ class ProcessPostmarkInboundMailJob implements ShouldQueue
 
         $emailParts = $this->splitEmail($email);
 
+        if ( ! $emailParts) {
+            Log::error("Email Splitting Failed for inbound_postmark_mail [$recordId]");
+            sendSlackMessage('#carecoach_ops_alerts', "Email Splitting Failed for inbound_postmark_mail [$recordId]");
+
+            return;
+        }
+
         if (self::FROM_ETHAN_MAIL === $email || self::FROM_CALLBACK_EMAIL_DOMAIN === $emailParts->domain) {
             $autoScheduleCallbackService = app(AutoResolveCallbackRequestService::class);
             $autoScheduleCallbackService->processCreateCallback($recordId);

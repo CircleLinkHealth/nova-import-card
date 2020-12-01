@@ -170,7 +170,7 @@ class ActivityService
             case ChargeableService::CCM_PLUS_40:
             case ChargeableService::CCM_PLUS_60:
                 $csFiltered = $cs
-                    ->filter(fn ($cs) => in_array($cs->code, [ChargeableService::CCM, ChargeableService::CCM_PLUS_40, ChargeableService::CCM_PLUS_60]));
+                    ->filter(fn ($cs) => in_array($cs->code, ChargeableService::CCM_CODES));
                 break;
             case ChargeableService::BHI:
                 $csFiltered = $cs->filter(fn ($cs) => ChargeableService::BHI === $cs->code);
@@ -180,8 +180,9 @@ class ActivityService
                 break;
             case ChargeableService::RPM:
             case ChargeableService::RPM40:
+            case ChargeableService::RPM60:
                 $csFiltered = $cs
-                    ->filter(fn ($cs) => in_array($cs->code, [ChargeableService::RPM, ChargeableService::RPM40]));
+                    ->filter(fn ($cs) => in_array($cs->code, ChargeableService::RPM_CODES));
                 break;
             case ChargeableService::GENERAL_CARE_MANAGEMENT:
                 $csFiltered = $cs->filter(fn ($cs) => ChargeableService::GENERAL_CARE_MANAGEMENT === $cs->code);

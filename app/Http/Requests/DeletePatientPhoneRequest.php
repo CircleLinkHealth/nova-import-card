@@ -45,6 +45,8 @@ class DeletePatientPhoneRequest extends FormRequest
 
             if (empty($phoneNumber)) {
                 $validator->errors()->add('message', 'Phone number not found');
+
+                return;
             }
 
             if ($phoneNumber->is_primary) {

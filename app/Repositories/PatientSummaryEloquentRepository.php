@@ -7,11 +7,11 @@
 namespace App\Repositories;
 
 use Cache;
+use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesToAttachForLegacyABP;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
-use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository
 {
@@ -94,40 +94,12 @@ class PatientSummaryEloquentRepository
 
         $chargeableServices = $this->chargeableServicesByCode($summary);
 
-        $hasCcm = false;
-        $hasPcm = false;
-
-        /** @var Collection $candidates */
-        $candidates = $chargeableServices
-            ->filter(
-                function ($service) use ($summary) {
-                    return $this->shouldAttachChargeableService($service, $summary);
-                }
-            )
-            ->each(
-                function ($entry) use (&$hasCcm, &$hasPcm) {
-                    if (ChargeableService::CCM === $entry->code) {
-                        $hasCcm = true;
-                    }
-                    if (ChargeableService::PCM === $entry->code) {
-                        $hasPcm = true;
-                    }
-                }
-            );
-
-        //    if patient is eligible for both PCM and CCM we choose CCM
-        if ($hasCcm && $hasPcm) {
-            $candidates = $candidates->filter(
-                function ($service) {
-                    return ChargeableService::PCM !== $service->code;
-                }
-            );
-        }
+        $candidates = PatientServicesToAttachForLegacyABP::getCollection($summary, $chargeableServices);
 
         $attach = $candidates
             ->map(
                 function ($service) {
-                    return $service->id;
+                    return $service['id'];
                 }
             )
             ->values()
@@ -168,7 +140,12 @@ class PatientSummaryEloquentRepository
 
         $hasCcm = $summary->hasServiceCode(ChargeableService::CCM);
         if ($hasCcm && $summary->ccmAttestedProblems()->isEmpty()) {
-            $needsQA[] = 'Patient has CCM service but 0 CCM attested condition';
+            $needsQA[] = 'Patient has CCM service but 0 CCM attested conditions.';
+        }
+
+        $hasPcm = $summary->hasServiceCode(ChargeableService::PCM);
+        if ($hasPcm && $summary->ccmAttestedProblems()->isEmpty()) {
+            $needsQA[] = 'Patient has PCM service but 0 CCM attested conditions.';
         }
 
         if ($summary->approved && $summary->rejected) {
@@ -232,32 +209,6 @@ class PatientSummaryEloquentRepository
         }
 
         return $this->chargeableServicesByCode[$practiceId];
-    }
-
-    /**
-     * Decide whether or not to attach a chargeable service to a patient summary.
-     *
-     * @return bool
-     */
-    private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
-    {
-        switch ($service->code) {
-            case ChargeableService::BHI:
-                return $summary->bhi_time >= self::MINUTES_20;
-            case ChargeableService::CCM:
-            case ChargeableService::GENERAL_CARE_MANAGEMENT:
-                return $summary->ccm_time >= self::MINUTES_20;
-            case ChargeableService::PCM:
-                return $summary->ccm_time >= self::MINUTES_30;
-            case ChargeableService::CCM_PLUS_40:
-                return $summary->ccm_time >= self::MINUTES_40;
-            case ChargeableService::CCM_PLUS_60:
-                return $summary->ccm_time >= self::MINUTES_60;
-            case ChargeableService::SOFTWARE_ONLY:
-                return 0 == $summary->timeFromClhCareCoaches();
-            default:
-                return false;
-        }
     }
 
     /**

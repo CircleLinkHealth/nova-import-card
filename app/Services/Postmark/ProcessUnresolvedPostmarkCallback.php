@@ -20,6 +20,7 @@ class ProcessUnresolvedPostmarkCallback
 
     /**
      * ManageUnresolvedPostmarkCallback constructor.
+     *
      * @param $matchedUsersDataFromDb
      */
     public function __construct(array $matchedUsersDataFromDb, int $recordId)
@@ -62,13 +63,16 @@ class ProcessUnresolvedPostmarkCallback
     {
         $suggestedPatientUsersIds = $this->getSuggestedPatientUserIds();
 
-        $this->saveAsUnresolved($suggestedPatientUsersIds->toArray());
+        return $this->saveAsUnresolved($suggestedPatientUsersIds->toArray());
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Model|UnresolvedPostmarkCallback|void
+     */
     public function saveAsUnresolved(array $suggestedUsersIds)
     {
         try {
-            UnresolvedPostmarkCallback::firstOrCreate(
+            return  UnresolvedPostmarkCallback::firstOrCreate(
                 [
                     'postmark_id' => $this->recordId,
                 ],

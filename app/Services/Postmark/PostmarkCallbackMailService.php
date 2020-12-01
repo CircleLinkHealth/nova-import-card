@@ -19,6 +19,7 @@ class PostmarkCallbackMailService
     public function postmarkInboundData(int $postmarkRecordId)
     {
         $postmarkRecord = PostmarkInboundMail::where('id', $postmarkRecordId)->first();
+
         if ( ! $postmarkRecord) {
             Log::critical("Record with id:$postmarkRecordId does not exist in postmark_inbound_mail");
             sendSlackMessage('#carecoach_ops_alerts', "Could not locate inbound mail with id:[$postmarkRecordId] in postmark_inbound_mail");
@@ -30,6 +31,7 @@ class PostmarkCallbackMailService
 
         if (empty($inboundDataArray)) {
             Log::error("Inbound Callback data is empty for inbound_postmark_mail id: [$postmarkRecordId]");
+            sendSlackMessage('#carecoach_ops_alerts', "Inbound Callback data is empty for inbound_postmark_mail id: [$postmarkRecordId]");
 
             return;
         }

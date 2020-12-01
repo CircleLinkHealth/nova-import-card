@@ -10,6 +10,7 @@ use App\Actions\PatientTimeAndCalls;
 use App\CallView;
 use App\Filters\CallViewFilters;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PamCsvResource;
 use App\ValueObjects\PatientTimeAndCalls as PatientTimeAndCallsValueObject;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
@@ -20,16 +21,12 @@ class CallReportController extends Controller
 {
     public function exportXlsV2(Request $request, CallViewFilters $filters)
     {
-        ini_set('memory_limit', '512M');
-
         $date = Carbon::now()->startOfMonth();
 
         $calls = CallView::filter($filters)
-            ->get();
+            ->paginate($filters->filters()['rows']);
 
-        $data = $this->generateXlsData($date, $calls);
-
-        return $data->download($data->getFilename());
+        return PamCsvResource::collection($calls);
     }
 
     /**
