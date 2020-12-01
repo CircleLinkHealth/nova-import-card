@@ -87,6 +87,10 @@ class PatientProblemsForBillingProcessing
 
             return [];
         }
+        
+        if (empty($problem->icd10Code())){
+            return [];
+        }
 
         $services = [];
         //todo: clear logic with a clearer mind
