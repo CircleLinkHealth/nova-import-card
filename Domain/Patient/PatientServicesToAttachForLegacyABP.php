@@ -84,45 +84,39 @@ class PatientServicesToAttachForLegacyABP
         if (empty($matchingCcmCodes)) {
             return;
         }
-        //get viable CCM CS method if check below passes
-        if (count($matchingCcmCodes) > 1) {
-            //get latest
 
-            $mostRecentCcmCode = $this->activities
+        if (count($matchingCcmCodes) > 1) {
+            $code = $this->activities
                 ->sortByDesc('performed_at')
                 ->whereIn('chargeable_service_id', $practiceCcmCs)
                 ->first()
                 ->chargeable_service_id;
+        } else {
+            $code = collect($matchingCcmCodes)->first() ?? null;
 
-            $csService = $this->practiceServices->firstWhere('id', $mostRecentCcmCode);
-            if (ChargeableService::CCM === $csService->code) {
-                $this->eligibleServices = array_merge(
-                    $this->eligibleServices,
-                    $this->practiceServices->whereIn('code', ChargeableService::CCM_CODES)
-                        ->sortBy('order')
-                        ->all()
-                );
-            } elseif (ChargeableService::RPM === $csService->code) {
-                $this->eligibleServices = array_merge(
-                    $this->eligibleServices,
-                    $this->practiceServices->whereIn('code', ChargeableService::RPM_CODES)
-                        ->sortBy('order')
-                        ->all()
-                );
-            } else {
-                $this->eligibleServices[] = $csService;
+            if (is_null($code)) {
+                return;
             }
-
-            return;
         }
 
-        $codeLeft = collect($matchingCcmCodes)->first() ?? null;
-
-        if (is_null($codeLeft)) {
-            return;
+        $csService = $this->practiceServices->firstWhere('id', $code);
+        if (ChargeableService::CCM === $csService->code) {
+            $this->eligibleServices = array_merge(
+                $this->eligibleServices,
+                $this->practiceServices->whereIn('code', ChargeableService::CCM_CODES)
+                    ->sortBy('order')
+                    ->all()
+            );
+        } elseif (ChargeableService::RPM === $csService->code) {
+            $this->eligibleServices = array_merge(
+                $this->eligibleServices,
+                $this->practiceServices->whereIn('code', ChargeableService::RPM_CODES)
+                    ->sortBy('order')
+                    ->all()
+            );
+        } else {
+            $this->eligibleServices[] = $csService;
         }
-
-        $this->eligibleServices[] = $this->practiceServices->firstWhere('id', $codeLeft);
     }
 
     private function setEligibleServices(): self
