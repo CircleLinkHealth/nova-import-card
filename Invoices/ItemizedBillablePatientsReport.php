@@ -290,11 +290,7 @@ class ItemizedBillablePatientsReport
 
     private function getAllCcmConditions(User $patient, PatientMonthlySummary $summary)
     {
-        $problems = $patient->ccdProblems->where(
-            'cpm_problem_id',
-            '!=',
-            genericDiabetes()->id
-        );
+        $problems = $patient->ccdProblems;
 
         if ($summary->hasServiceCode(ChargeableService::BHI)) {
             $problems = $problems->where('cpmProblem.is_behavioral', '=', false);
