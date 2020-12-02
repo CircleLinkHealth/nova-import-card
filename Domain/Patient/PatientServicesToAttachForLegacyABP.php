@@ -139,6 +139,10 @@ class PatientServicesToAttachForLegacyABP
 
         $this->setEligibleCcmCode();
 
+        if (collect($this->eligibleServices)->filter(fn ($s) => ChargeableService::RPM === $s->code)->count() > 0) {
+            return $this;
+        }
+
         if ($this->practiceServices->contains('code', '=', ChargeableService::BHI)) {
             $this->eligibleServices[] = $this->practiceServices->firstWhere('code', ChargeableService::BHI);
         }
