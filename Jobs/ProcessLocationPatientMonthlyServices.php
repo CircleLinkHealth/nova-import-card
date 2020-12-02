@@ -13,6 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Spatie\RateLimitedMiddleware\RateLimited;
 
 class ProcessLocationPatientMonthlyServices implements ShouldQueue
 {
@@ -62,5 +63,24 @@ class ProcessLocationPatientMonthlyServices implements ShouldQueue
     public function handle()
     {
         $this->getProcessor()->processServicesForAllPatients($this->getLocationId(), $this->getChargeableMonth());
+    }
+    
+    public function middleware()
+    {
+        if (isUnitTestingEnv()) {
+            return [];
+        }
+        
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(20)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(20);
+        
+        return [$rateLimitedMiddleware];
+    }
+    
+    public function retryUntil(): \DateTime
+    {
+        return now()->addDay();
     }
 }

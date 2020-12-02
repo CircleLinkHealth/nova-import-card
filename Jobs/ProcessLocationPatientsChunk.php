@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Spatie\RateLimitedMiddleware\RateLimited;
 
 class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob implements ShouldQueue
 {
@@ -82,6 +83,25 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob implements S
                     ->withProblems(...PatientProblemsForBillingProcessing::getArray($patient->id))
             );
         });
+    }
+    
+    public function middleware()
+    {
+        if (isUnitTestingEnv()) {
+            return [];
+        }
+        
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(20)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(20);
+        
+        return [$rateLimitedMiddleware];
+    }
+    
+    public function retryUntil(): \DateTime
+    {
+        return now()->addDay();
     }
 
     public function repo(): LocationProcessorRepository
