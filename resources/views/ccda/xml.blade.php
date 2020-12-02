@@ -22,7 +22,18 @@
                 <postalCode>{{$zip}}</postalCode>
                 <country>US</country>
             </addr>
-            <telecom use="HP" value="tel:+1-270-7651848"/>
+            @if($homePhone)
+                <telecom use="HP" value="tel:{{$homePhone}}"/>
+            @endif
+            @if($workPhone)
+                <telecom use="WP" value="tel:{{$workPhone}}"/>
+            @endif
+            @if($cellPhone)
+                <telecom use="MC" value="tel:{{$cellPhone}}"/>
+            @endif
+            @if($email)
+                <telecom use="HP" value="mailto:{{$email}}"/>
+            @endif
             <patient>
                 <name>
                     <given>{{$firstName}}</given>
@@ -30,6 +41,9 @@
                 </name>
                 <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1"/>
                 <birthTime value="{{$dob}}"/>
+                @if($ethnicity)
+                    <raceCode code="{{$raceCode}}" codeSystem="2.16.840.1.113883.6.238" displayName="{{$ethnicity}}"/>
+                @endif
                 <languageCommunication>
                     <languageCode code="{{$language}}"/>
                 </languageCommunication>

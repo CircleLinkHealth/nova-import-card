@@ -6,6 +6,7 @@
 
 namespace App\Adapters\Ccda;
 
+use App\ValueObjects\CcdaEthnicityCodeMap;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
@@ -29,7 +30,7 @@ class PracticePullMedicalRecordToXmlAdapter
         $transformer = new CcdToLogTranformer();
         $demos       = $transformer->demographics($bb->demographics);
 
-        return view('ccda.xml', [
+        return view('ccda.xml', array(
             'mrn'       => $bb->demographics->mrn_number,
             'street'    => $demos['street'],
             'street2'   => $demos['street2'],
@@ -40,7 +41,14 @@ class PracticePullMedicalRecordToXmlAdapter
             'lastName'  => $demos['last_name'],
             'dob'       => $demos['dob'],
             'language'  => $demos['language'] ?? 'eng',
-        ])->render();
+            'cellPhone'    => formatPhoneNumberE164($demos['cell_phone']),
+            'homePhone'    => formatPhoneNumberE164($demos['home_phone']),
+            'workPhone'    => formatPhoneNumberE164($demos['work_phone']),
+            'primaryPhone' => formatPhoneNumberE164($demos['primary_phone']),
+            'email'         => $demos['email'],
+            'ethnicity'     => $demos['ethnicity'],
+            'raceCode'     => CcdaEthnicityCodeMap::codeFromText($demos['ethnicity']),
+        ))->render();
     }
 
     private function storeMedia(Ccda $ccda, string $doc)
