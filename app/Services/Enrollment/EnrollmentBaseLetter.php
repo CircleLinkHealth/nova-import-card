@@ -221,7 +221,8 @@ class EnrollmentBaseLetter extends Controller
 
     /**
      * @param $uiRequests
-     * @param  User  $userProvider
+     * @param User $userProvider
+     *
      * @return mixed
      */
     private function getSpecificGroupSignatoryName($uiRequests)

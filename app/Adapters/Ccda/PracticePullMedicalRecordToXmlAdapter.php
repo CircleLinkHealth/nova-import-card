@@ -30,25 +30,25 @@ class PracticePullMedicalRecordToXmlAdapter
         $transformer = new CcdToLogTranformer();
         $demos       = $transformer->demographics($bb->demographics);
 
-        return view('ccda.xml', array(
-            'mrn'       => $bb->demographics->mrn_number,
-            'street'    => $demos['street'],
-            'street2'   => $demos['street2'],
-            'city'      => $demos['city'],
-            'state'     => $demos['state'],
-            'zip'       => $demos['zip'],
-            'firstName' => $demos['first_name'],
-            'lastName'  => $demos['last_name'],
-            'dob'       => $demos['dob'],
-            'language'  => $demos['language'] ?? 'eng',
+        return view('ccda.xml', [
+            'mrn'          => $bb->demographics->mrn_number,
+            'street'       => $demos['street'],
+            'street2'      => $demos['street2'],
+            'city'         => $demos['city'],
+            'state'        => $demos['state'],
+            'zip'          => $demos['zip'],
+            'firstName'    => $demos['first_name'],
+            'lastName'     => $demos['last_name'],
+            'dob'          => $demos['dob'],
+            'language'     => $demos['language'] ?? 'eng',
             'cellPhone'    => formatPhoneNumberE164($demos['cell_phone']),
             'homePhone'    => formatPhoneNumberE164($demos['home_phone']),
             'workPhone'    => formatPhoneNumberE164($demos['work_phone']),
             'primaryPhone' => formatPhoneNumberE164($demos['primary_phone']),
-            'email'         => $demos['email'],
-            'ethnicity'     => $demos['ethnicity'],
+            'email'        => $demos['email'],
+            'ethnicity'    => $demos['ethnicity'],
             'raceCode'     => CcdaEthnicityCodeMap::codeFromText($demos['ethnicity']),
-        ))->render();
+        ])->render();
     }
 
     private function storeMedia(Ccda $ccda, string $doc)

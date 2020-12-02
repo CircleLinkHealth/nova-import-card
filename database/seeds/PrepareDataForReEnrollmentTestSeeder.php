@@ -123,9 +123,9 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         $this->countRandomProvider  = 0;
         $this->uiRequestedProviders = collect();
         $this->skipIds              = collect();
-        
+
         $provider = $this->randomProvider($practice->id);
-        
+
         while ($n <= $limit) {
             if (0 === $this->countRandomProvider && EnrollmentInvitationLetter::DEPENDED_ON_PROVIDER === $this->uiRequestsForThisPractice) {
                 $provider->providerInfo->update([
@@ -176,6 +176,14 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         return $user;
     }
 
+    private function getUiRequestedProviders(int $practiceId)
+    {
+        return User::with('providerInfo')
+            ->whereHas('providerInfo')
+            ->where('program_id', $practiceId)
+            ->get();
+    }
+
     private function randomProvider(int $practiceId)
     {
         $provider = User::ofType('provider')
@@ -189,13 +197,5 @@ class PrepareDataForReEnrollmentTestSeeder extends Seeder
         }
 
         return $provider;
-    }
-
-    private function getUiRequestedProviders(int $practiceId)
-    {
-        return User::with('providerInfo')
-            ->whereHas('providerInfo')
-            ->where('program_id', $practiceId)
-            ->get();
     }
 }
