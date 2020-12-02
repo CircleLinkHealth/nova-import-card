@@ -133,7 +133,7 @@ class PatientServicesToAttachForLegacyABP
 
         $this->setEligibleCcmCode();
 
-        if (collect($this->eligibleServices)->filter(fn ($s) => ChargeableService::RPM === $s->code)->count() > 0) {
+        if (collect($this->eligibleServices)->contains('code', ChargeableService::RPM)) {
             return $this;
         }
 
