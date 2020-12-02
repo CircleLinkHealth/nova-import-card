@@ -87,11 +87,15 @@ class TimeSplitter
         $result->after20   = $add_to_accrued_after_20;
 
         if ($upTo60Minutes) {
+            $current         = $is_above_60 ? 'after_60' : ($is_above_40 ? 'after_40' : ($is_above_20 ? 'after_20' : 'towards_20'));
             $result->after40 = $add_to_accrued_after_40;
             $result->after60 = $add_to_accrued_after_60;
         } else {
+            $current = $is_above_20 ? 'after_20' : 'towards_20';
             $result->after20 += $add_to_accrued_after_40 + $add_to_accrued_after_60;
         }
+
+        $result->current = $current;
 
         return $result;
     }
@@ -119,6 +123,7 @@ class TimeSplitter
         $result            = new TimeSlots();
         $result->towards30 = $add_to_accrued_towards_30;
         $result->after30   = $add_to_accrued_after_30;
+        $result->current   = $is_above_30 ? 'after_30' : 'towards_30';
 
         return $result;
     }

@@ -8,10 +8,11 @@ namespace CircleLinkHealth\NurseInvoices\ValueObjects;
 
 class TimeSlots
 {
-    public int $after20   = 0;
-    public int $after30   = 0;
-    public int $after40   = 0;
-    public int $after60   = 0;
+    public int $after20 = 0;
+    public int $after30 = 0;
+    public int $after40 = 0;
+    public int $after60 = 0;
+    public string $current;
     public int $towards20 = 0;
     public int $towards30 = 0;
 

@@ -69,7 +69,7 @@ abstract class NursePaymentAlgorithm
         string $logDate,
         TimeSlots $slots
     ) {
-        if ($slots->towards20) {
+        if ($slots->towards20 || ($isSuccessfulCall && 'towards_20' === $slots->current)) {
             /** @var Collection $rangeTowards20 */
             $rangeTowards20 = $range->get(0, collect());
             $rangeTowards20->put($nurseInfoId, $this->getEntryForRange(
@@ -81,7 +81,7 @@ abstract class NursePaymentAlgorithm
             ));
             $range->put(0, $rangeTowards20);
         }
-        if ($slots->after20) {
+        if ($slots->after20 || ($isSuccessfulCall && 'after_20' === $slots->current)) {
             /** @var Collection $rangeAfter20 */
             $rangeAfter20 = $range->get(1, collect());
             $rangeAfter20->put($nurseInfoId, $this->getEntryForRange(
@@ -93,7 +93,7 @@ abstract class NursePaymentAlgorithm
             ));
             $range->put(1, $rangeAfter20);
         }
-        if ($slots->after40) {
+        if ($slots->after40 || ($isSuccessfulCall && 'after_40' === $slots->current)) {
             /** @var Collection $rangeAfter40 */
             $rangeAfter40 = $range->get(2, collect());
             $rangeAfter40->put($nurseInfoId, $this->getEntryForRange(
@@ -105,7 +105,7 @@ abstract class NursePaymentAlgorithm
             ));
             $range->put(2, $rangeAfter40);
         }
-        if ($slots->after60) {
+        if ($slots->after60 || ($isSuccessfulCall && 'after_60' === $slots->current)) {
             /** @var Collection $rangeAfter60 */
             $rangeAfter60 = $range->get(3, collect());
             $rangeAfter60->put($nurseInfoId, $this->getEntryForRange(
@@ -118,7 +118,7 @@ abstract class NursePaymentAlgorithm
             $range->put(3, $rangeAfter60);
         }
 
-        if ($slots->towards30) {
+        if ($slots->towards30 || ($isSuccessfulCall && 'towards_30' === $slots->current)) {
             /** @var Collection $rangeTowards30 */
             $rangeTowards30 = $range->get(0, collect());
             $rangeTowards30->put($nurseInfoId, $this->getEntryForRange(
@@ -130,7 +130,7 @@ abstract class NursePaymentAlgorithm
             ));
             $range->put(0, $rangeTowards30);
         }
-        if ($slots->after30) {
+        if ($slots->after30 || ($isSuccessfulCall && 'after_30' === $slots->current)) {
             /** @var Collection $rangeAfter30 */
             $rangeAfter30 = $range->get(1, collect());
             $rangeAfter30->put($nurseInfoId, $this->getEntryForRange(
