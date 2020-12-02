@@ -94,6 +94,6 @@ class UnresolvedPostmarkCallbackView extends BaseSqlView
 
     public function shouldRun(): bool
     {
-        return 'CarePlan Manager' === config('app.name');
+        return isCpm();
     }
 }
