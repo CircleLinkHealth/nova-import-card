@@ -21,6 +21,7 @@ class CCM60 extends AbstractProcessor
             new RHC(),
             new RPM(),
             new RPM40(),
+            new RPM60(),
         ];
     }
 

@@ -61,17 +61,17 @@ class ProcessSinglePatientMonthlyServices extends Job implements HasUniqueIdenti
 
         (app(ProcessPatientSummaries::class))->execute($this->getPatientId(), $this->getMonth());
     }
-    
+
     public function middleware()
     {
         $rateLimitedMiddleware = (new RateLimited())
             ->allow(30)
             ->everySeconds(60)
             ->releaseAfterSeconds(20);
-        
+
         return [$rateLimitedMiddleware];
     }
-    
+
     public function retryUntil(): \DateTime
     {
         return now()->addDay();
