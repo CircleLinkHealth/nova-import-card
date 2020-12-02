@@ -6,10 +6,8 @@
 
 namespace App\Nova\Actions;
 
-use App\Entities\PatientTime;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
@@ -70,17 +68,10 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             /** @var PageTimer $timeRecord */
             $timeRecord = $model;
 
-            if ( ! $this->canModifyTemp($timeRecord)) {
-                $this->markAsFailed(
-                    $timeRecord,
-                    'You cannot modify this time tracker entry, because it has time tracked for multiple activities. Please contact CLH Dev Team.'
-                );
-            }
-
             if ( ! $this->canModify($timeRecord)) {
                 $this->markAsFailed(
                     $timeRecord,
-                    'You cannot modify this time tracker entry, because it has time tracked for already fulfilled chargeable services. Please try a more recent one for this patient.'
+                    'You cannot modify this time tracker entry, because it has time tracked for multiple activities. Please contact CLH Dev Team.'
                 );
             }
 
@@ -112,49 +103,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
 
     private function canModify(PageTimer $timeRecord)
     {
-        if ($timeRecord->activities->isEmpty()) {
-            return true;
-        }
-
-        /** @var ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices */
-        $chargeableServices = ChargeableService
-            ::whereIn('id', $timeRecord->activities->pluck('chargeable_service_id'))
-                ->get();
-
-        if ($chargeableServices->isEmpty()) {
-            return false;
-        }
-
-        $patientTime = PatientTime::getForPatient($timeRecord->patient, $chargeableServices);
-        /** @var Activity $activity */
-        $activity = $timeRecord->activities->sortBy('id')->last();
-        if ( ! $activity->chargeable_service_id) {
-            return false;
-        }
-
-        $csCode = $chargeableServices->firstWhere('id', '=', $activity->chargeable_service_id)->code;
-
-        return $this->isModifiable($patientTime, $csCode);
-    }
-
-    /**
-     * Temporary block for modifying page timer entries with multiple activities.
-     * Will be removed with ROAD-389.
-     *
-     * @return bool
-     */
-    private function canModifyTemp(PageTimer $timeRecord)
-    {
         return $timeRecord->activities->count() <= 1;
-    }
-
-    private function isModifiable(PatientTime $patientTime, string $csCode)
-    {
-        if (ChargeableService::CCM_PLUS_60 === $csCode) {
-            return true;
-        }
-
-        return ! $patientTime->isFulFilled($csCode);
     }
 
     /**
