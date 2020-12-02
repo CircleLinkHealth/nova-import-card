@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "65aaca382c20db5c116215e5eea610a6",
+    "content-hash": "86a601f36b1d01499f4120d6b91dd479",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1093,7 +1093,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -1129,7 +1129,7 @@
         },
         {
             "name": "circlelinkhealth/clh-nova-theme",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhNovaTheme",
@@ -1346,7 +1346,7 @@
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/EnrollmentInvites",
@@ -1383,7 +1383,7 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -1419,7 +1419,7 @@
         },
         {
             "name": "circlelinkhealth/generate-success-stories-report",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GenerateSuccessStoriesReport",
@@ -1455,7 +1455,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -1492,7 +1492,7 @@
         },
         {
             "name": "circlelinkhealth/invoices-download",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/InvoicesDownload",
@@ -1528,11 +1528,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.6.7",
+            "version": "v1.6.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "e2085c0cfe7940e0feafcae0b239acecf9bad77e"
+                "reference": "bb5a918a412d6fd5753153657164c5addf31a802"
             },
             "type": "laravel-module",
             "extra": {
@@ -1554,7 +1554,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-02T08:36:50+00:00"
+            "time": "2020-12-02T11:24:07+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
