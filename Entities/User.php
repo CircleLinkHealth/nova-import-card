@@ -665,13 +665,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function billableProblems()
     {
-        $genericDiabetes = \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', 'Diabetes')->firstOrFail(); // Is this needed now???
         //todo: use billing repo
         return $this->ccdProblems()
             ->whereNotNull('cpm_problem_id')
-            ->when($genericDiabetes, function ($p) use ($genericDiabetes) {
-                $p->where('cpm_problem_id', '!=', $genericDiabetes->id); // Is this needed now???
-            })
             ->with(['cpmProblem', 'icd10Codes'])
             ->where('is_monitored', true);
     }
