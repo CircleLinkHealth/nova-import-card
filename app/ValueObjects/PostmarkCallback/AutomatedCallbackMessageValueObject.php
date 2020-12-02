@@ -26,6 +26,7 @@ class AutomatedCallbackMessageValueObject
 
     /**
      * @param $callbackMessage
+     *
      * @return string
      */
     public function constructCallbackMessage()

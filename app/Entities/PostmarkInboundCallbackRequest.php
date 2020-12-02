@@ -39,6 +39,7 @@ class PostmarkInboundCallbackRequest
 
     /**
      * @throws \Exception
+     *
      * @return array|void
      */
     public function run(string $inboundCallback, int $postmarkId)

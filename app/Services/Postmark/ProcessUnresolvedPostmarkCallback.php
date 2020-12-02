@@ -20,6 +20,7 @@ class ProcessUnresolvedPostmarkCallback
 
     /**
      * ManageUnresolvedPostmarkCallback constructor.
+     *
      * @param $matchedUsersDataFromDb
      */
     public function __construct(array $matchedUsersDataFromDb, int $recordId)

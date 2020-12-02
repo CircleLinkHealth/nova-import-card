@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b0db9daa7dd4533e86d13e6cf838d377",
+    "content-hash": "65aaca382c20db5c116215e5eea610a6",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -355,22 +355,22 @@
         },
         {
             "name": "appstract/laravel-opcache",
-            "version": "4.0.1",
+            "version": "4.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/appstract/laravel-opcache.git",
-                "reference": "414f2f0f26e254f70126723b1462a25cb913448b"
+                "reference": "d2ce88cddda6af54c14d1f9ceaaf94b54f38f9d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/414f2f0f26e254f70126723b1462a25cb913448b",
-                "reference": "414f2f0f26e254f70126723b1462a25cb913448b",
+                "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/d2ce88cddda6af54c14d1f9ceaaf94b54f38f9d3",
+                "reference": "d2ce88cddda6af54c14d1f9ceaaf94b54f38f9d3",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.3.1|^7.0",
                 "laravel/framework": ">=7.0",
-                "php": "^7.2.5"
+                "php": ">=7.2.5"
             },
             "require-dev": {
                 "orchestra/testbench": "^5.0",
@@ -409,7 +409,7 @@
                 "laravel",
                 "php"
             ],
-            "time": "2020-08-13T08:00:24+00:00"
+            "time": "2020-12-01T16:12:14+00:00"
         },
         {
             "name": "ashallendesign/short-url",
@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.164.0",
+            "version": "3.166.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "39ecf57d828eb50ab23fd70255a68b8996392ac9"
+                "reference": "b0002f081b8819f16429b2351db84c18d0c3e57b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/39ecf57d828eb50ab23fd70255a68b8996392ac9",
-                "reference": "39ecf57d828eb50ab23fd70255a68b8996392ac9",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b0002f081b8819f16429b2351db84c18d0c3e57b",
+                "reference": "b0002f081b8819f16429b2351db84c18d0c3e57b",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-11-24T19:18:22+00:00"
+            "time": "2020-12-02T04:43:32+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -910,11 +910,11 @@
         },
         {
             "name": "circlelinkhealth/ccda-parser-processor-php-module",
-            "version": "v1.1.3",
+            "version": "v1.1.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git",
-                "reference": "0c01b4e1b13b3e2cf2d601a34f6eed0b5e73c661"
+                "reference": "e679a1052d3d5d24ad8310742a8ac1f5070a4375"
             },
             "type": "laravel-module",
             "extra": {
@@ -946,7 +946,7 @@
                 }
             ],
             "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2020-09-04T15:10:07+00:00"
+            "time": "2020-11-30T17:48:38+00:00"
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
@@ -1528,11 +1528,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.6.6",
+            "version": "v1.6.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "0383dbd34103b77544dbc69a02f4442c359c3478"
+                "reference": "e2085c0cfe7940e0feafcae0b239acecf9bad77e"
             },
             "type": "laravel-module",
             "extra": {
@@ -1554,7 +1554,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-30T18:28:07+00:00"
+            "time": "2020-12-02T08:36:50+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1790,11 +1790,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.3.2",
+            "version": "v1.3.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "02ae528ccc23b2bf2bf4bd115459c39764037041"
+                "reference": "a5cb5f69dc2337adf92e3a12c41f5ea41a9fa659"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1819,7 +1819,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-30T18:28:47+00:00"
+            "time": "2020-12-02T08:35:18+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -3550,16 +3550,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.154",
+            "version": "v0.156",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "7f44a314836c444b7894d648c1c49f83fb9d37ca"
+                "reference": "2f5e54fdef034f856208328126bddd8376dae4b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/7f44a314836c444b7894d648c1c49f83fb9d37ca",
-                "reference": "7f44a314836c444b7894d648c1c49f83fb9d37ca",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/2f5e54fdef034f856208328126bddd8376dae4b3",
+                "reference": "2f5e54fdef034f856208328126bddd8376dae4b3",
                 "shasum": ""
             },
             "require": {
@@ -3583,7 +3583,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-11-19T19:01:11+00:00"
+            "time": "2020-11-30T20:03:55+00:00"
         },
         {
             "name": "google/auth",
@@ -4883,16 +4883,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v7.29.3",
+            "version": "v7.30.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "93f6d565a07045baa0e4b941ae1f733cd5984d65"
+                "reference": "629c36a0fe87b66d8dccd3c82927950d0f59d3f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/93f6d565a07045baa0e4b941ae1f733cd5984d65",
-                "reference": "93f6d565a07045baa0e4b941ae1f733cd5984d65",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/629c36a0fe87b66d8dccd3c82927950d0f59d3f9",
+                "reference": "629c36a0fe87b66d8dccd3c82927950d0f59d3f9",
                 "shasum": ""
             },
             "require": {
@@ -4964,7 +4964,7 @@
                 "illuminate/view": "self.version"
             },
             "require-dev": {
-                "aws/aws-sdk-php": "^3.0",
+                "aws/aws-sdk-php": "^3.155",
                 "doctrine/dbal": "^2.6",
                 "filp/whoops": "^2.8",
                 "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
@@ -4978,7 +4978,7 @@
                 "symfony/cache": "^5.0"
             },
             "suggest": {
-                "aws/aws-sdk-php": "Required to use the SQS queue driver, DynamoDb failed job storage and SES mail driver (^3.0).",
+                "aws/aws-sdk-php": "Required to use the SQS queue driver, DynamoDb failed job storage and SES mail driver (^3.155).",
                 "doctrine/dbal": "Required to rename columns and drop SQLite columns (^2.6).",
                 "ext-ftp": "Required to use the Flysystem FTP driver.",
                 "ext-gd": "Required to use Illuminate\\Http\\Testing\\FileFactory::image().",
@@ -5037,7 +5037,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-11-03T14:12:58+00:00"
+            "time": "2020-12-01T15:01:25+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -5167,17 +5167,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "3.15.0",
+            "version": "3.16.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "54057eedd1b500f1d9b3395f21d882190c08cd50"
+                "reference": "55c9acf9bfe5095af1d13ef96ba7f637cda8e12c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-54057eedd1b500f1d9b3395f21d882190c08cd50-zip-1ef7d6.zip",
-                "reference": "54057eedd1b500f1d9b3395f21d882190c08cd50",
-                "shasum": "84bfb83819c0c80f44afd195cf347d42ae79bfb6"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-55c9acf9bfe5095af1d13ef96ba7f637cda8e12c-zip-320e51.zip",
+                "reference": "55c9acf9bfe5095af1d13ef96ba7f637cda8e12c",
+                "shasum": "d9835c14057f117c671cb59cf1c49403eb9b7a06"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5232,6 +5232,7 @@
                     "@php -r \"if (file_exists('.env.dusk')) { copy('.env.dusk', 'vendor/laravel/nova-dusk-suite/.env'); } else { copy('.env.dusk.example', 'vendor/laravel/nova-dusk-suite/.env'); }\""
                 ],
                 "dusk:assets": [
+                    "yarn install",
                     "yarn run prod",
                     "./vendor/bin/testbench-dusk nova:publish"
                 ],
@@ -5253,7 +5254,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-11-10T16:05:55+00:00"
+            "time": "2020-12-01T20:06:44+00:00"
         },
         {
             "name": "laravel/passport",
@@ -9342,21 +9343,21 @@
         },
         {
             "name": "sentry/sdk",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php-sdk.git",
-                "reference": "908ea3fd0e7a19ccf4b53d1c247c44231595d008"
+                "reference": "f03133b067fdf03fed09ff03daf3f1d68f5f3673"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php-sdk/zipball/908ea3fd0e7a19ccf4b53d1c247c44231595d008",
-                "reference": "908ea3fd0e7a19ccf4b53d1c247c44231595d008",
+                "url": "https://api.github.com/repos/getsentry/sentry-php-sdk/zipball/f03133b067fdf03fed09ff03daf3f1d68f5f3673",
+                "reference": "f03133b067fdf03fed09ff03daf3f1d68f5f3673",
                 "shasum": ""
             },
             "require": {
                 "http-interop/http-factory-guzzle": "^1.0",
-                "sentry/sentry": "^3.0",
+                "sentry/sentry": "^3.1",
                 "symfony/http-client": "^4.3|^5.0"
             },
             "type": "metapackage",
@@ -9391,27 +9392,27 @@
                     "type": "custom"
                 }
             ],
-            "time": "2020-09-28T07:49:07+00:00"
+            "time": "2020-12-01T10:31:45+00:00"
         },
         {
             "name": "sentry/sentry",
-            "version": "3.0.4",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "745b3faafdc865ea8de75e0dc61ddfdd36a31d9c"
+                "reference": "55f5714e6eff6bc9e3dc4b47ac4a0e6d72088e1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/745b3faafdc865ea8de75e0dc61ddfdd36a31d9c",
-                "reference": "745b3faafdc865ea8de75e0dc61ddfdd36a31d9c",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/55f5714e6eff6bc9e3dc4b47ac4a0e6d72088e1e",
+                "reference": "55f5714e6eff6bc9e3dc4b47ac4a0e6d72088e1e",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-mbstring": "*",
                 "guzzlehttp/promises": "^1.3",
-                "guzzlehttp/psr7": "^1.6",
+                "guzzlehttp/psr7": "^1.7",
                 "jean85/pretty-package-versions": "^1.5",
                 "ocramius/package-versions": "^1.8",
                 "php": "^7.2",
@@ -9440,7 +9441,7 @@
                 "phpstan/phpstan": "^0.12",
                 "phpstan/phpstan-phpunit": "^0.12",
                 "phpunit/phpunit": "^7.5.18",
-                "symfony/phpunit-bridge": "^4.3|^5.0",
+                "symfony/phpunit-bridge": "^5.1",
                 "vimeo/psalm": "^3.4"
             },
             "suggest": {
@@ -9449,7 +9450,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0.x-dev"
+                    "dev-master": "3.1.x-dev"
                 }
             },
             "autoload": {
@@ -9491,26 +9492,27 @@
                     "type": "custom"
                 }
             ],
-            "time": "2020-11-06T11:58:00+00:00"
+            "time": "2020-12-01T09:59:47+00:00"
         },
         {
             "name": "sentry/sentry-laravel",
-            "version": "2.2.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-laravel.git",
-                "reference": "f4c663b6510e793a180dee6b3a7c95c339f7fd8a"
+                "reference": "fd987481113fbfbfafb8adc0717cab9babe50ce4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/f4c663b6510e793a180dee6b3a7c95c339f7fd8a",
-                "reference": "f4c663b6510e793a180dee6b3a7c95c339f7fd8a",
+                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/fd987481113fbfbfafb8adc0717cab9babe50ce4",
+                "reference": "fd987481113fbfbfafb8adc0717cab9babe50ce4",
                 "shasum": ""
             },
             "require": {
                 "illuminate/support": "5.0 - 5.8 | ^6.0 | ^7.0 | ^8.0",
                 "php": "^7.2",
-                "sentry/sdk": "^3.0"
+                "sentry/sdk": "^3.1",
+                "sentry/sentry": "3.1.*"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "2.16.*",
@@ -9572,7 +9574,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2020-11-04T14:56:24+00:00"
+            "time": "2020-12-01T13:57:22+00:00"
         },
         {
             "name": "setasign/fpdf",
@@ -9810,16 +9812,16 @@
         },
         {
             "name": "spatie/image",
-            "version": "1.10.0",
+            "version": "1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/image.git",
-                "reference": "65d615c1f604e479764f25525291d696041dfcea"
+                "reference": "6eaf45d61832c2396dd4b10cc81d9fce93a59e2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/image/zipball/65d615c1f604e479764f25525291d696041dfcea",
-                "reference": "65d615c1f604e479764f25525291d696041dfcea",
+                "url": "https://api.github.com/repos/spatie/image/zipball/6eaf45d61832c2396dd4b10cc81d9fce93a59e2d",
+                "reference": "6eaf45d61832c2396dd4b10cc81d9fce93a59e2d",
                 "shasum": ""
             },
             "require": {
@@ -9869,7 +9871,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-27T14:44:09+00:00"
+            "time": "2020-12-01T20:42:11+00:00"
         },
         {
             "name": "spatie/image-optimizer",
@@ -16486,16 +16488,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.5.12",
+            "version": "8.5.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f40cf5be80a7d177494592ad1b2db3f64ea1dee3"
+                "reference": "8e86be391a58104ef86037ba8a846524528d784e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f40cf5be80a7d177494592ad1b2db3f64ea1dee3",
-                "reference": "f40cf5be80a7d177494592ad1b2db3f64ea1dee3",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8e86be391a58104ef86037ba8a846524528d784e",
+                "reference": "8e86be391a58104ef86037ba8a846524528d784e",
                 "shasum": ""
             },
             "require": {
@@ -16575,7 +16577,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-30T12:23:30+00:00"
+            "time": "2020-12-01T04:53:52+00:00"
         },
         {
             "name": "react/event-loop",

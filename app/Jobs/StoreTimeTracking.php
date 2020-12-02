@@ -93,6 +93,10 @@ class StoreTimeTracking implements ShouldQueue
 
     public function middleware()
     {
+        if (isUnitTestingEnv()) {
+            return [];
+        }
+
         $rateLimitedMiddleware = (new RateLimited())
             ->allow(150)
             ->everySeconds(60)
