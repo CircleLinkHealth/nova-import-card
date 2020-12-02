@@ -71,6 +71,8 @@ router.put('/:providerId/:patientId', userExistsValidator, addTimeToChargeableSe
 
     const user = timeTracker.get(info)
 
+    userCache.clearForPatient(+patientId);
+
     if (user) {
         const data = req.body;
         user.addToChargeableService(+data.chargeable_service_id, data.chargeable_service_code, data.chargeable_service_name, +data.duration_seconds);
@@ -160,6 +162,12 @@ router.get('/active-no-live-count', function (req, res, next) {
 
 router.get('/cache', function (req, res, next) {
     res.send(userCache.getAll());
+});
+
+router.put('/cache/:patientId/clear', function (req, res, next) {
+    const patientId = req.params.patientId;
+    userCache.clearForPatient(+patientId);
+    res.send('ok');
 });
 
 router.get('/', (req, res) => {

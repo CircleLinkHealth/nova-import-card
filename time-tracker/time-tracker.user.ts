@@ -4,7 +4,7 @@ import {createActivity, formatTimeForServer, validateInfo} from './utils.fn';
 import axios from 'axios';
 import axiosRetry, {exponentialDelay} from "axios-retry";
 import {getErrorLogger} from '../logger';
-import {getTime, getTimeForCsId, storeTime} from "../cache/user-time";
+import {getCacheKey, getTime, getTimeForCsId, storeTime} from "../cache/user-time";
 import {ignorePatientTimeSync} from '../sockets/sync.with.cpm';
 import {Activity, PatientChargeableService, TimeEntity, TimeoutOverrideOptions, TimeTrackerInfo} from "../types";
 
@@ -46,14 +46,7 @@ export default class TimeTrackerUser {
     private setup(info: TimeTrackerInfo) {
         validateInfo(info);
 
-        let key;
-        if (info.isFromCaPanel) {
-            key = `${info.providerId}`;
-        } else {
-            key = `${info.providerId}-${info.patientId}`;
-        }
-
-        this.key = key;
+        this.key = getCacheKey(info);
         this.inactiveSeconds = 0;
         this.activities = [];
         this.patientId = info.patientId;
