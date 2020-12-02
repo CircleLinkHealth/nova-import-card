@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "01f2e0fc95bc373baed50f46e90c3d3c",
+    "content-hash": "0dfdeb6bab2914fc9292e06834016835",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1280,7 +1280,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "763c08fed0daecd0b5785fe9f4028fa65ef72247"
+                "reference": "e589a1ac4ef74e3cfd935ff36883e8280ae9f2c6"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
@@ -1315,7 +1315,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-02T06:03:47+00:00"
+            "time": "2020-12-02T12:40:08+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1714,11 +1714,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.8.1",
+            "version": "dev-show-diabetes-on-careplan",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "a7a379f549aa32a6cce465d99296636ff3c1f349"
+                "reference": "512c656fd939eeebc5fe753785d0ba68b255a1b8"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1732,7 +1732,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-27T09:18:08+00:00"
+            "time": "2020-12-02T12:40:08+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -18450,6 +18450,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
