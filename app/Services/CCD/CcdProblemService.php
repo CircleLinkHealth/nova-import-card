@@ -121,7 +121,7 @@ class CcdProblemService
             : User::findOrFail($userId);
 
         $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes', 'ccdProblems.cpmProblem']);
-        
+
         //If patient has been imported via UPG0506 using instructions from the PDF, we need to show ONLY those instructions, avoiding default instructions attached to CPM Problems
         //Check will happen in the front-end
         $shouldShowDefaultInstructions = ! $user->patientIsUPG0506();
