@@ -105,7 +105,7 @@ class PatientSummaryEloquentRepository
             ->values()
             ->all();
 
-        return $this->attachChargeableService($summary, $attach);
+        return $this->attachChargeableService($summary, $attach, true);
     }
 
     public function detachChargeableService($summary, $chargeableServiceId)
