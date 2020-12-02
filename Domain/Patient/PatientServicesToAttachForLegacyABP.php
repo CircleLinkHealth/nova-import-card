@@ -116,7 +116,13 @@ class PatientServicesToAttachForLegacyABP
             return;
         }
 
-        $this->eligibleServices[] = $this->practiceServices->firstWhere('id', $matchingCcmCodes[0]);
+        $codeLeft = collect($matchingCcmCodes)->first() ?? null;
+
+        if (is_null($codeLeft)) {
+            return;
+        }
+
+        $this->eligibleServices[] = $this->practiceServices->firstWhere('id', $codeLeft);
     }
 
     private function setEligibleServices(): self
