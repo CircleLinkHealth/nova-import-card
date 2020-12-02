@@ -954,7 +954,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "a3b1d627093ff08dd45e39ed0b864b06d4066ac3"
+                "reference": "6147f9d47a2d6ad2b11caf864507778a7719fb22"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1002,7 +1002,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-02T07:36:21+00:00"
+            "time": "2020-12-02T12:28:32+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -3380,16 +3380,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.13",
+            "version": "8.12.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "571bbbabdab5b1cf16550cb257005bb527fa0899"
+                "reference": "c42a963110b08b8a4a419c35566bf9d3456ba479"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/571bbbabdab5b1cf16550cb257005bb527fa0899",
-                "reference": "571bbbabdab5b1cf16550cb257005bb527fa0899",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/c42a963110b08b8a4a419c35566bf9d3456ba479",
+                "reference": "c42a963110b08b8a4a419c35566bf9d3456ba479",
                 "shasum": ""
             },
             "require": {
@@ -3403,8 +3403,8 @@
                 "pear/versioncontrol_git": "^0.5",
                 "phing/phing": "^2.7",
                 "php-coveralls/php-coveralls": "^1.0|^2.0",
-                "phpunit/phpunit": "^4.8.36|^5.0|^7.0",
-                "symfony/console": "^2.8|^3.0"
+                "symfony/console": "^2.8|^3.0",
+                "symfony/phpunit-bridge": "^4.2 || ^5"
             },
             "type": "library",
             "extra": {
@@ -3444,7 +3444,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2020-11-12T14:42:30+00:00"
+            "time": "2020-12-02T10:54:10+00:00"
         },
         {
             "name": "giggsey/locale",
