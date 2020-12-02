@@ -12,25 +12,34 @@ use Illuminate\Support\Facades\Log;
 
 class TimeTrackerServerService
 {
+    public function clearCache(int $patientId)
+    {
+        $url = config('services.ws.server-url').'/cache/'.$patientId.'/clear';
+        $this->sendRequest($url, []);
+    }
+
     /**
      * Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds).
      */
     public function syncOfflineTime(OfflineActivityTimeRequest $request)
     {
-        $client = new Client();
-
         $url = config('services.ws.server-url').'/'.$request->requester_id.'/'.$request->patient_id;
+        $this->sendRequest($url, [
+            'chargeable_service_id'   => $request->chargeable_service_id,
+            'chargeable_service_code' => $request->chargeableService->code,
+            'chargeable_service_name' => $request->chargeableService->display_name,
+            'duration_seconds'        => $request->duration_seconds,
+        ]);
+    }
 
+    private function sendRequest(string $url, array $params)
+    {
+        $client = new Client();
         try {
             $res = $client->put(
                 $url,
                 [
-                    'form_params' => [
-                        'chargeable_service_id'   => $request->chargeable_service_id,
-                        'chargeable_service_code' => $request->chargeableService->code,
-                        'chargeable_service_name' => $request->chargeableService->display_name,
-                        'duration_seconds'        => $request->duration_seconds,
-                    ],
+                    'form_params' => $params,
                 ]
             );
             $status = $res->getStatusCode();
