@@ -665,13 +665,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function billableProblems()
     {
-        $genericDiabetes = \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', 'Diabetes')->firstOrFail();
         //todo: use billing repo
         return $this->ccdProblems()
             ->whereNotNull('cpm_problem_id')
-            ->when($genericDiabetes, function ($p) use ($genericDiabetes) {
-                $p->where('cpm_problem_id', '!=', $genericDiabetes->id);
-            })
             ->with(['cpmProblem', 'icd10Codes'])
             ->where('is_monitored', true);
     }
@@ -881,6 +877,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    
     public function ccdMedications()
     {
         return $this->hasMany(Medication::class, 'patient_id');
