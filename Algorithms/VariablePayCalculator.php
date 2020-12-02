@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
+use CircleLinkHealth\Nurseinvoices\Debug\MeasureTime;
 use CircleLinkHealth\NurseInvoices\ValueObjects\CalculationResult;
 use CircleLinkHealth\NurseInvoices\ValueObjects\PatientPayCalculationResult;
 use Illuminate\Support\Collection;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 
 class VariablePayCalculator
 {
+    protected bool $debug = false;
     protected Carbon $endDate;
 
     protected array $nurseInfoIds;
@@ -30,8 +32,9 @@ class VariablePayCalculator
      */
     private ?Collection $nurseCareRateLogs = null;
 
-    public function __construct(array $nurseInfoIds, Carbon $startDate, Carbon $endDate)
+    public function __construct(array $nurseInfoIds, Carbon $startDate, Carbon $endDate, bool $debug = false)
     {
+        $this->debug        = $debug;
         $this->nurseInfoIds = $nurseInfoIds;
         $this->startDate    = $startDate;
         $this->endDate      = $endDate;
@@ -43,41 +46,50 @@ class VariablePayCalculator
      */
     public function calculate(User $nurse)
     {
-        $nurseInfo    = $nurse->nurseInfo;
-        $careRateLogs = $this->getForNurses();
+        return $this->measureTimeAndLog("$nurse->id-calculate", function () use ($nurse) {
+            $nurseInfo = $nurse->nurseInfo;
+            $careRateLogs = $this->measureTimeAndLog(
+                "$nurse->id-careRateLogs",
+                fn () => $this->getForNurses()
+            );
 
-        $totalPay                                 = 0.0;
-        $visitsPerPatientPerChargeableServiceCode = collect();
-        $ccmPlusAlgoEnabled                       = $this->isNewNursePayAlgoEnabled();
-        $visitFeeBased                            = $ccmPlusAlgoEnabled && $this->isNewNursePayAltAlgoEnabledForUser($nurse->id);
+            $totalPay = 0.0;
+            $visitsPerPatientPerChargeableServiceCode = collect();
+            $ccmPlusAlgoEnabled = $this->isNewNursePayAlgoEnabled();
+            $visitFeeBased = $ccmPlusAlgoEnabled && $this->isNewNursePayAltAlgoEnabledForUser($nurse->id);
 
-        $perPatient = $careRateLogs->mapToGroups(function ($e) {
-            return [$e['patient_user_id'] => $e];
+            $perPatient = $careRateLogs->mapToGroups(function ($e) {
+                return [$e['patient_user_id'] => $e];
+            });
+
+            $perPatient->each(function (Collection $patientCareRateLogs) use (
+                &$totalPay,
+                $visitsPerPatientPerChargeableServiceCode,
+                $nurseInfo,
+                $ccmPlusAlgoEnabled,
+                $visitFeeBased
+            ) {
+                $patientUserIdStr = optional($patientCareRateLogs->first())->patient_user_id ?? '';
+                $patientPayCalculation = $this->measureTimeAndLog(
+                    "$patientUserIdStr-calculateBasedOnAlgorithm",
+                    fn () => $this->calculateBasedOnAlgorithm($nurseInfo, $patientCareRateLogs, $ccmPlusAlgoEnabled, $visitFeeBased)
+                );
+
+                $totalPay += $patientPayCalculation->pay;
+
+                if (optional($patientPayCalculation->visitsPerChargeableServiceCode)->isNotEmpty()) {
+                    $patientUserId = $patientCareRateLogs->first()->patient_user_id;
+                    $visitsPerPatientPerChargeableServiceCode->put($patientUserId, $patientPayCalculation->visitsPerChargeableServiceCode);
+                }
+            });
+
+            return new CalculationResult(
+                $ccmPlusAlgoEnabled,
+                $visitFeeBased,
+                $visitsPerPatientPerChargeableServiceCode,
+                $totalPay
+            );
         });
-
-        $perPatient->each(function (Collection $patientCareRateLogs) use (
-            &$totalPay,
-            $visitsPerPatientPerChargeableServiceCode,
-            $nurseInfo,
-            $ccmPlusAlgoEnabled,
-            $visitFeeBased
-        ) {
-            $patientPayCalculation = $this->calculateBasedOnAlgorithm($nurseInfo, $patientCareRateLogs, $ccmPlusAlgoEnabled, $visitFeeBased);
-
-            $totalPay += $patientPayCalculation->pay;
-
-            if (optional($patientPayCalculation->visitsPerChargeableServiceCode)->isNotEmpty()) {
-                $patientUserId = $patientCareRateLogs->first()->patient_user_id;
-                $visitsPerPatientPerChargeableServiceCode->put($patientUserId, $patientPayCalculation->visitsPerChargeableServiceCode);
-            }
-        });
-
-        return new CalculationResult(
-            $ccmPlusAlgoEnabled,
-            $visitFeeBased,
-            $visitsPerPatientPerChargeableServiceCode,
-            $totalPay
-        );
     }
 
     public function getForNurses()
@@ -122,11 +134,16 @@ class VariablePayCalculator
         }
 
         /** @var User $patient */
-        $patient = User::withTrashed()
-            ->with([
-                'primaryPractice.chargeableServices',
-            ])
-            ->find($patientUserId);
+        $patient = $this->measureTimeAndLog(
+            "$patientUserId-find",
+            function () use ($patientUserId) {
+                return User::withTrashed()
+                    ->with([
+                        'primaryPractice.chargeableServices',
+                    ])
+                    ->find($patientUserId);
+            }
+        );
 
         if ( ! $patient) {
             Log::critical("Could not find user with id $patientUserId");
@@ -138,19 +155,26 @@ class VariablePayCalculator
             return PatientPayCalculationResult::withVisits(collect());
         }
 
-        $options = [$nurseInfo, $patientCareRateLogs, $this->startDate, $this->endDate, $patient];
+        $options = [$nurseInfo, $patientCareRateLogs, $this->startDate, $this->endDate, $patient, $this->debug];
 
         if ( ! $ccmPlusAlgoEnabled) {
             return (new LegacyPaymentAlgorithm(...$options))->calculate();
         }
 
-        $patientIsPcm = $patient->isPcm();
+        /** @var bool $patientIsPcm */
+        $patientIsPcm = $this->measureTimeAndLog(
+            "$patientUserId-isPcm",
+            fn () => $patient->isPcm()
+        );
         if ( ! $visitFeeBased && $patientIsPcm) {
             $visitFeeBased = true;
         }
 
         if ($visitFeeBased) {
-            return (new VisitFeePaymentAlgorithm(...$options))->calculate();
+            return $this->measureTimeAndLog(
+                "$patientUserId-VisitCalculate",
+                fn () => (new VisitFeePaymentAlgorithm(...$options))->calculate()
+            );
         }
 
         return (new VariableRatePaymentAlgorithm(...$options))->calculate();
@@ -174,5 +198,16 @@ class VariablePayCalculator
         }
 
         return false;
+    }
+
+    private function measureTimeAndLog(string $desc, $func)
+    {
+        if ( ! $this->debug) {
+            return $func();
+        }
+
+        $msg = "VariablePayCalculator-$desc";
+
+        return MeasureTime::log($msg, $func);
     }
 }

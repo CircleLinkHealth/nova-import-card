@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Nurseinvoices\Debug\MeasureTime;
 use CircleLinkHealth\NurseInvoices\Time\TimeSplitter;
 use CircleLinkHealth\NurseInvoices\ValueObjects\PatientPayCalculationResult;
 use CircleLinkHealth\NurseInvoices\ValueObjects\TimeRangeEntry;
@@ -30,6 +31,8 @@ abstract class NursePaymentAlgorithm
     const MONTHLY_TIME_TARGET_3X_IN_SECONDS      = 3600;
     const MONTHLY_TIME_TARGET_IN_SECONDS         = 1200;
     const MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM = 1800;
+
+    protected bool $debug = false;
 
     protected Carbon $endDate;
 
@@ -48,8 +51,9 @@ abstract class NursePaymentAlgorithm
 
     protected Carbon $startDate;
 
-    public function __construct(Nurse $nurseInfo, Collection $patientCareRateLogs, Carbon $startDate, Carbon $endDate, ?User $patient = null)
+    public function __construct(Nurse $nurseInfo, Collection $patientCareRateLogs, Carbon $startDate, Carbon $endDate, ?User $patient = null, bool $debug = false)
     {
+        $this->debug               = $debug;
         $this->nurseInfo           = $nurseInfo;
         $this->patientCareRateLogs = $patientCareRateLogs;
         $this->startDate           = $startDate;
@@ -199,6 +203,19 @@ abstract class NursePaymentAlgorithm
         }
 
         return app(ActivityService::class)->totalTimeForChargeableServiceId($this->patientId, $cs->id, $month);
+    }
+
+    protected function measureTimeAndLog(string $desc, $func)
+    {
+        if ( ! $this->debug) {
+            return $func();
+        }
+
+        $patientId   = $this->patientId ?? '';
+        $generalInfo = static::class."[$patientId]";
+        $msg         = "$generalInfo-$desc";
+
+        return MeasureTime::log($msg, $func);
     }
 
     protected function practiceHasCcmPlusCode(

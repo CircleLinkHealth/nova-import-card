@@ -9,6 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Jobs;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Algorithms\VariablePayCalculator;
+use CircleLinkHealth\Nurseinvoices\Config\DebugConfig;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Time\TotalTimeAggregator;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
@@ -85,7 +86,8 @@ class GenerateNurseInvoice implements ShouldQueue
                 ? [$this->nurseUser->nurseInfo->id]
                 : [],
             $this->startDate,
-            $this->endDate
+            $this->endDate,
+            DebugConfig::isEnabled()
         );
 
         $nurseSystemTimeMap->each(
