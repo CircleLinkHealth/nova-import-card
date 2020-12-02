@@ -198,7 +198,7 @@
     "circlelinkhealth/condition-code-lookup-module": "1.1.7",
     "circlelinkhealth/core-module": "1.8.2",
     "circlelinkhealth/cpm-migrations-module": "2.6.6",
-    "circlelinkhealth/customer-module": "3.5.8",
+    "circlelinkhealth/customer-module": "dev-show-diabetes-on-careplan",
     "circlelinkhealth/eligibility-module": "3.7.2",
     "circlelinkhealth/enrollment-invites": "*",
     "circlelinkhealth/generate-patient-call-data-csv": "*",

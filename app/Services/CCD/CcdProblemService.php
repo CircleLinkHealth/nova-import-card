@@ -121,16 +121,12 @@ class CcdProblemService
             : User::findOrFail($userId);
 
         $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes', 'ccdProblems.cpmProblem']);
-
-        //exclude generic diabetes type
-        $diabetes = genericDiabetes();
-
+        
         //If patient has been imported via UPG0506 using instructions from the PDF, we need to show ONLY those instructions, avoiding default instructions attached to CPM Problems
         //Check will happen in the front-end
         $shouldShowDefaultInstructions = ! $user->patientIsUPG0506();
 
         return $user->ccdProblems
-            ->where('cpm_problem_id', '!=', $diabetes->id)
             ->map(function ($p) use ($shouldShowDefaultInstructions) {
                 return $this->setupProblem($p, $shouldShowDefaultInstructions);
             })
