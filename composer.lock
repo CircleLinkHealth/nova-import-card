@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "487a7706f7c30d58fde76030e6434bc3",
+    "content-hash": "43051d514b865812040297cc9fa22235",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -962,11 +962,11 @@
         },
         {
             "name": "circlelinkhealth/ccm-billing-module",
-            "version": "v1.1.5",
+            "version": "v1.1.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "09b6e8838bffbeced840a1d8045b2921ed76e410"
+                "reference": "dea6c0dbecef63c5a19f73a0457e50d1432c192a"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -1014,7 +1014,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-02T16:15:30+00:00"
+            "time": "2020-12-02T16:41:15+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
