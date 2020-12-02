@@ -57,7 +57,7 @@ class PatientServicesToAttachForLegacyABP
     {
         $this->activities = Activity::wherePatientId($this->patientId)
             ->with(['provider.roles'])
-            ->createdInMonth(Carbon::now()->startOfMonth(), 'performed_at')
+            ->createdInMonth(Carbon::parse($this->summary->month_year)->startOfMonth(), 'performed_at')
             ->get()
             ->collect();
 
