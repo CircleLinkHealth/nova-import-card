@@ -10,8 +10,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Chargeable;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 
 class ResetPMSChargeableServicesForMonth extends Command
 {
@@ -59,7 +57,7 @@ class ResetPMSChargeableServicesForMonth extends Command
         $this->resetPmsForABP($monthYear);
         $this->info('Deletion completed.');
     }
-    
+
     private function resetPmsForABP(Carbon $month)
     {
         PatientMonthlySummary::createdOn($month, 'month_year')
