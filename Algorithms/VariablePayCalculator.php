@@ -161,13 +161,13 @@ class VariablePayCalculator
             return (new LegacyPaymentAlgorithm(...$options))->calculate();
         }
 
-        /** @var bool $patientIsPcm */
-        $patientIsPcm = $this->measureTimeAndLog(
-            "$patientUserId-isPcm",
-            fn () => $patient->isPcm()
-        );
-        if ( ! $visitFeeBased && $patientIsPcm) {
-            $visitFeeBased = true;
+        if ( ! $visitFeeBased) {
+            /** @var bool $patientIsPcm */
+            $patientIsPcm = $this->measureTimeAndLog(
+                "$patientUserId-isPcm",
+                fn () => $patient->isPcm()
+            );
+            $visitFeeBased = $patientIsPcm;
         }
 
         if ($visitFeeBased) {
