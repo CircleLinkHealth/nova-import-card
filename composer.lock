@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6d50db33ba56b3147dba327e5dbf631c",
+    "content-hash": "65aaca382c20db5c116215e5eea610a6",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.165.0",
+            "version": "3.166.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ddc727e18c670ab07c453ceeb5f310bb6b2f1508"
+                "reference": "b0002f081b8819f16429b2351db84c18d0c3e57b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ddc727e18c670ab07c453ceeb5f310bb6b2f1508",
-                "reference": "ddc727e18c670ab07c453ceeb5f310bb6b2f1508",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b0002f081b8819f16429b2351db84c18d0c3e57b",
+                "reference": "b0002f081b8819f16429b2351db84c18d0c3e57b",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-01T19:14:48+00:00"
+            "time": "2020-12-02T04:43:32+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1268,11 +1268,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-ROAD-389_modify_patient_time",
+            "version": "v3.5.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "e7810c1b6d4be7775e8a9e44eea2ae7c48339ac5"
+                "reference": "8983ac5e3b4469cd7b3f88d6339629256098f255"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
@@ -1307,7 +1307,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-01T13:41:42+00:00"
+            "time": "2020-11-30T18:24:23+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1528,11 +1528,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "dev-ROAD-389_modify_patient_time",
+            "version": "v1.6.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "28fdd856303b638952d8ec38f04bbe1b0066c371"
+                "reference": "e2085c0cfe7940e0feafcae0b239acecf9bad77e"
             },
             "type": "laravel-module",
             "extra": {
@@ -1554,7 +1554,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-01T20:54:23+00:00"
+            "time": "2020-12-02T08:36:50+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1790,11 +1790,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "dev-ROAD-389_modify_patient_time_new",
+            "version": "v1.3.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "5f162427a3213eda1840c2bc2ea9eaf0140b163f"
+                "reference": "a5cb5f69dc2337adf92e3a12c41f5ea41a9fa659"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1819,7 +1819,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-01T14:18:16+00:00"
+            "time": "2020-12-02T08:35:18+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -5167,17 +5167,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "3.15.0",
+            "version": "3.16.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "54057eedd1b500f1d9b3395f21d882190c08cd50"
+                "reference": "55c9acf9bfe5095af1d13ef96ba7f637cda8e12c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-54057eedd1b500f1d9b3395f21d882190c08cd50-zip-1ef7d6.zip",
-                "reference": "54057eedd1b500f1d9b3395f21d882190c08cd50",
-                "shasum": "84bfb83819c0c80f44afd195cf347d42ae79bfb6"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-55c9acf9bfe5095af1d13ef96ba7f637cda8e12c-zip-320e51.zip",
+                "reference": "55c9acf9bfe5095af1d13ef96ba7f637cda8e12c",
+                "shasum": "d9835c14057f117c671cb59cf1c49403eb9b7a06"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -5232,6 +5232,7 @@
                     "@php -r \"if (file_exists('.env.dusk')) { copy('.env.dusk', 'vendor/laravel/nova-dusk-suite/.env'); } else { copy('.env.dusk.example', 'vendor/laravel/nova-dusk-suite/.env'); }\""
                 ],
                 "dusk:assets": [
+                    "yarn install",
                     "yarn run prod",
                     "./vendor/bin/testbench-dusk nova:publish"
                 ],
@@ -5253,7 +5254,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-11-10T16:05:55+00:00"
+            "time": "2020-12-01T20:06:44+00:00"
         },
         {
             "name": "laravel/passport",
@@ -18147,9 +18148,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/nurseinvoices-module": 20,
-        "circlelinkhealth/timetracking-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
