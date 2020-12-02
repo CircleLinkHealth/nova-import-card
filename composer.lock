@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c80cae022513bf8cbde59233b8f231b",
+    "content-hash": "52639f7f263b49ffbb9b2aa7121b7438",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1238,11 +1238,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.6.6",
+            "version": "v2.6.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "1bf78e4c23aabcc16d1007f0dfef7a771bb640e8"
+                "reference": "d140ce941530a2cb9735dcb0a1fdd34bcf08e78a"
             },
             "type": "laravel-module",
             "extra": {
@@ -1264,7 +1264,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-30T18:27:17+00:00"
+            "time": "2020-12-02T18:20:05+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1728,11 +1728,14 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.4.1",
+            "version": "v1.4.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "b6a1220eaa02b89b93faa422b4b5c5ec2dfc9385"
+                "reference": "6008948f761e9a4d24d279ab3ae77231fde70192"
+            },
+            "require": {
+                "phlak/semver": "^3.2"
             },
             "type": "laravel-module",
             "extra": {
@@ -1757,7 +1760,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-30T12:46:22+00:00"
+            "time": "2020-12-02T18:16:01+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
@@ -7825,6 +7828,61 @@
                 "phaxio"
             ],
             "time": "2019-03-08T19:14:29+00:00"
+        },
+        {
+            "name": "phlak/semver",
+            "version": "3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHLAK/SemVer.git",
+                "reference": "2167230f819d43d565194e2e91d69a1fa110c3df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHLAK/SemVer/zipball/2167230f819d43d565194e2e91d69a1fa110c3df",
+                "reference": "2167230f819d43d565194e2e91d69a1fa110c3df",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16.1",
+                "phpunit/phpunit": "^7.0 || ^8.0 || ^9.0",
+                "psy/psysh": "^0.10",
+                "vimeo/psalm": "^3.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHLAK\\SemVer\\": "src/"
+                },
+                "files": [
+                    "src/Support/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Kankiewicz",
+                    "email": "Chris@ChrisKankiewicz.com"
+                }
+            ],
+            "description": "Semantic versioning helper library",
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/PHLAK",
+                    "type": "github"
+                },
+                {
+                    "url": "https://paypal.me/ChrisKankiewicz",
+                    "type": "paypal"
+                }
+            ],
+            "time": "2020-04-10T17:31:42+00:00"
         },
         {
             "name": "php-http/client-common",
