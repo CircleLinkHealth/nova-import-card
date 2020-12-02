@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6463c8da0a336b61bbbf2c4fd5c05d3c",
+    "content-hash": "5c80cae022513bf8cbde59233b8f231b",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1528,11 +1528,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.6.8",
+            "version": "v1.6.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "bb5a918a412d6fd5753153657164c5addf31a802"
+                "reference": "484569b899895cec12b9ce518a6633063d567e96"
             },
             "type": "laravel-module",
             "extra": {
@@ -1554,7 +1554,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-02T11:24:07+00:00"
+            "time": "2020-12-02T17:53:35+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
