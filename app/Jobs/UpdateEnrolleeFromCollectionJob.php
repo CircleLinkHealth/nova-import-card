@@ -62,7 +62,7 @@ class UpdateEnrolleeFromCollectionJob implements ShouldQueue
                 return;
             }
 
-            $this->updateEnrollees($enrolleeIds, $providerUser->id);
+            $this->updateEnrolleesProvider($enrolleeIds, $providerUser->id);
             foreach ($enrolleeIds as $enrolleeId) {
                 /** @var User $patientUser */
                 $patientUser = User::with('enrollee')
@@ -116,7 +116,7 @@ class UpdateEnrolleeFromCollectionJob implements ShouldQueue
         $this->decideActionOnUnresponsivePatient($user);
     }
 
-    private function updateEnrollees(array $enrolleeIds, int $providerUserId)
+    private function updateEnrolleesProvider(array $enrolleeIds, int $providerUserId)
     {
         Enrollee::whereIn('id', $enrolleeIds)->update([
             'provider_id' => $providerUserId,
