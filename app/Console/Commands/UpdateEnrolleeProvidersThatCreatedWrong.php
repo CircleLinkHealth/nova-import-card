@@ -19,13 +19,13 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
      *
      * @var string
      */
-    protected $description = 'Update Enrollees that got assign the wrong Provider.';
+    protected $description = 'Updates Enrollees that got assign with wrong Provider. Also updates enrollee-status depending on pending letter/enrolment status!';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'update:enrollee-providers';
+    protected $signature = 'update:marillac-enrollee-providers';
 
     /**
      * Create a new command instance.
