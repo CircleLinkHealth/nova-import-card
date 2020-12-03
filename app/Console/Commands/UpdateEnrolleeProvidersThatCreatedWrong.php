@@ -25,7 +25,7 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
      *
      * @var string
      */
-    protected $signature = 'update:marillac-enrollee-providers';
+    protected $signature = 'update:marillac-enrollee';
 
     /**
      * Create a new command instance.
