@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\UpdateEnrolleeFromCollectionJob;
+use App\Jobs\UpdateEnrolleesFromCollectionJob;
 use App\ValueObjects\SelfEnrolment\MarillacEnrolleeProvidersValueObject;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
@@ -42,6 +42,6 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
         $practice = Practice::where('name', self::MARILLAC_NAME)->firstOrFail();
 
         $dataToUpdate = (new MarillacEnrolleeProvidersValueObject())->dataGroupedByProvider();
-        UpdateEnrolleeFromCollectionJob::dispatch($dataToUpdate, $practice->id);
+        UpdateEnrolleesFromCollectionJob::dispatch($dataToUpdate, $practice->id);
     }
 }

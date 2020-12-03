@@ -10,6 +10,7 @@ use App\Search\ProviderByName;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,11 +20,12 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
-class UpdateEnrolleeFromCollectionJob implements ShouldQueue
+class UpdateEnrolleesFromCollectionJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
+    use SelfEnrollableTrait;
 
     use SerializesModels;
 
@@ -65,23 +67,31 @@ class UpdateEnrolleeFromCollectionJob implements ShouldQueue
             $this->updateEnrolleesProvider($enrolleeIds, $providerUser->id);
             foreach ($enrolleeIds as $enrolleeId) {
                 /** @var User $patientUser */
-                $patientUser = User::with('enrollee', 'careTeamMembers')
+                $patientUser = User::with('enrollee', 'careTeamMembers', 'enrollmentInvitationLinks')
                     ->whereHas('enrollee', function ($enrollee) use ($enrolleeId) {
-                        $enrollee->where('id', $enrolleeId);
+                        $enrollee->where('id', $enrolleeId)->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT);
                     })
                     ->where('program_id', $this->practiceId)
                     ->first();
-    
+
                 if ( ! $patientUser) {
                     Log::error("Enrollee with id [$enrolleeId] not found!");
-        
+
                     return;
                 }
-                
+
+                if ( ! $patientUser->enrollee->enrollmentInvitationLinks()->exists()) {
+                    Log::channel('database')
+                        ->critical("Enrollee with user_id [$patientUser->id] does not have an invitation link.");
+
+                    return;
+                }
+
                 if ($patientUser->careTeamMembers->where('member_user_id', $providerUser->id)->isEmpty()) {
                     Log::channel('database')
                         ->critical("The correct provider to update [$providerUser->id] does not match careTeamMembers [member_user_id] of
                         enrolee user_id $patientUser->id");
+
                     return;
                 }
 
