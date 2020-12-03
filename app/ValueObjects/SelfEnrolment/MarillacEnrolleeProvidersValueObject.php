@@ -833,9 +833,4 @@ class MarillacEnrolleeProvidersValueObject
             355204 => 'Leah Barjenbruch',
         ];
     }
-
-    public function dataToUpdateTesting(Collection $collection)
-    {
-        return $collection;
-    }
 }
