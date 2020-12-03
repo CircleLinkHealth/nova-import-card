@@ -65,19 +65,26 @@ class UpdateEnrolleeFromCollectionJob implements ShouldQueue
             $this->updateEnrolleesProvider($enrolleeIds, $providerUser->id);
             foreach ($enrolleeIds as $enrolleeId) {
                 /** @var User $patientUser */
-                $patientUser = User::with('enrollee')
+                $patientUser = User::with('enrollee', 'careTeamMembers')
                     ->whereHas('enrollee', function ($enrollee) use ($enrolleeId) {
                         $enrollee->where('id', $enrolleeId);
                     })
                     ->where('program_id', $this->practiceId)
                     ->first();
-
+    
                 if ( ! $patientUser) {
                     Log::error("Enrollee with id [$enrolleeId] not found!");
-
+        
                     return;
                 }
-    
+                
+                if ($patientUser->careTeamMembers->where('member_user_id', $providerUser->id)->isEmpty()) {
+                    Log::channel('database')
+                        ->critical("The correct provider to update [$providerUser->id] does not match careTeamMembers [member_user_id] of
+                        enrolee user_id $patientUser->id");
+                    return;
+                }
+
                 $this->decideActionOnUnresponsivePatient($patientUser);
             }
         }
@@ -113,8 +120,12 @@ class UpdateEnrolleeFromCollectionJob implements ShouldQueue
 
     private function updateEnrolleesProvider(array $enrolleeIds, int $providerUserId)
     {
-        Enrollee::whereIn('id', $enrolleeIds)->update([
-            'provider_id' => $providerUserId,
-        ]);
+        Enrollee::with('user.careTeamMembers')
+            ->whereHas('user.careTeamMembers', function ($carePerson) use ($providerUserId) {
+                $carePerson->where('member_user_id', $providerUserId);
+            })
+            ->whereIn('id', $enrolleeIds)->update([
+                'provider_id' => $providerUserId,
+            ]);
     }
 }
