@@ -77,8 +77,8 @@ class UpdateEnrolleeFromCollectionJob implements ShouldQueue
 
                     return;
                 }
-
-                $this->putIntoCallQueueOrMarkUnresponsive($patientUser);
+    
+                $this->decideActionOnUnresponsivePatient($patientUser);
             }
         }
     }
@@ -109,11 +109,6 @@ class UpdateEnrolleeFromCollectionJob implements ShouldQueue
                 'requested_callback'        => now()->addDays(UnreachablesFinalAction::TO_CALL_AFTER_DAYS_HAVE_PASSED),
             ]
         );
-    }
-
-    private function putIntoCallQueueOrMarkUnresponsive(User $user)
-    {
-        $this->decideActionOnUnresponsivePatient($user);
     }
 
     private function updateEnrolleesProvider(array $enrolleeIds, int $providerUserId)
