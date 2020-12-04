@@ -13,7 +13,8 @@ use Illuminate\Console\Command;
 
 class UpdateEnrolleeProvidersThatCreatedWrong extends Command
 {
-    const MARILLAC_NAME = 'marillac-clinic-inc';
+    const MARILLAC_NAME        = 'marillac-clinic-inc';
+    const WRONG_PROVIDER_EMAIL = 'danbecker14@gmail.com';
     /**
      * The console command description.
      *

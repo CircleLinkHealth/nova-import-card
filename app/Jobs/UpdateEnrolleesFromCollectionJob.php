@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Console\Commands\UpdateEnrolleeProvidersThatCreatedWrong;
 use App\Search\ProviderByName;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\Services\Enrollment\EnrollmentInvitationService;
@@ -29,6 +30,7 @@ class UpdateEnrolleesFromCollectionJob implements ShouldQueue
 
     use SerializesModels;
 
+    const PROVIDER_TYPE = 'billing_provider';
     private Collection $dataToUpdate;
     private int $practiceId;
 
@@ -48,23 +50,35 @@ class UpdateEnrolleesFromCollectionJob implements ShouldQueue
      */
     public function handle()
     {
-        foreach ($this->dataToUpdate as $providerName => $enrolleeIds) {
-            $enrolleeIds  = $enrolleeIds->toArray();
-            $providerUser = ProviderByName::first($providerName);
+        $wrongProviderEmail = UpdateEnrolleeProvidersThatCreatedWrong::WRONG_PROVIDER_EMAIL;
+        $wrongProviderUser  = User::where('email', $wrongProviderEmail)->first();
 
-            if ( ! $providerUser) {
+        if ( ! $wrongProviderUser) {
+            Log::error("Weird, known existing user in Production [user_id:13899, email:$wrongProviderEmail] not found!");
+
+            return;
+        }
+
+        foreach ($this->dataToUpdate as $providerName => $enrolleeIds) {
+            $enrolleesToUpdateCount = $enrolleeIds->count();
+            $enrolleeIds            = $enrolleeIds->toArray();
+            $correctProviderUser    = ProviderByName::first($providerName);
+
+            if ( ! $correctProviderUser) {
                 $class = ProviderByName::class;
                 Log::warning("Provider [$providerName] not found using $class");
-                $providerUser = User::where('display_name', $providerName)->first();
+                $correctProviderUser = User::where('display_name', $providerName)->first();
             }
 
-            if ( ! $providerUser) {
+            if ( ! $correctProviderUser) {
                 Log::channel('database')->critical("Provider [$providerName] not found in CPM");
 
                 return;
             }
 
-            $this->updateEnrolleesProvider($enrolleeIds, $providerUser->id);
+            $enrolleeIdsThatGotDirty    = collect();
+            $enrolleeIdsThatStayedClean = collect();
+            $enrolleeIdsThatFailed      = collect();
             foreach ($enrolleeIds as $enrolleeId) {
                 /** @var User $patientUser */
                 $patientUser = User::with('enrollee', 'careTeamMembers', 'enrollmentInvitationLinks')
@@ -87,13 +101,54 @@ class UpdateEnrolleesFromCollectionJob implements ShouldQueue
                     return;
                 }
 
-                if ($patientUser->careTeamMembers->where('member_user_id', $providerUser->id)->isEmpty()) {
-                    Log::channel('database')
-                        ->critical("The correct provider to update [$providerUser->id] does not match careTeamMembers [member_user_id] of
-                        enrolee user_id $patientUser->id");
+                $wrongProviderAsCareTeamMember   = $this->providerIsSetAsCareTeamMember($patientUser, $wrongProviderUser->id);
+                $correctProviderAsCareTeamMember = $this->providerIsSetAsCareTeamMember($patientUser, $correctProviderUser->id);
 
-                    return;
+                if ($correctProviderAsCareTeamMember->isEmpty()) { // Maybe For some reason is updated before.
+                    if ($wrongProviderAsCareTeamMember->isNotEmpty() && $patientUser->enrollee->provider_id === $wrongProviderUser->id) { // It could a third provider for example.
+                        $updatedCareTeamMembers = $wrongProviderAsCareTeamMember->first()
+                            ->update([
+                                'member_user_id' => $correctProviderUser->id,
+                            ]);
+
+                        if ( ! $updatedCareTeamMembers) {
+                            $enrolleeIdsThatFailed->push($enrolleeId);
+                            Log::channel('database')
+                                ->critical("Failed to update member_user_id for user_id [$patientUser->id] in care_team_members");
+
+                            return;
+                        }
+
+                        $updatedEnrollee = $patientUser->enrollee->update([
+                            'provider_id' => $correctProviderUser->id,
+                        ]);
+
+                        if ( ! $updatedEnrollee) {
+                            $enrolleeIdsThatFailed->push($enrolleeId);
+                            Log::channel('database')
+                                ->critical("Failed to update provider_id for id [$enrolleeId] in Enrollees");
+
+                            return;
+                        }
+
+                        $enrolleeIdsThatGotDirty->push($enrolleeId);
+                    } else {
+                        $enrolleeIdsThatFailed->push($enrolleeId);
+                        Log::error("Fishy! Expected Provider [user_id:$wrongProviderUser->id
+                        in [column:member_user_id table:patient_care_team_members] for [user_id:$patientUser->id]");
+
+                        return;
+                    }
+                } else {
+                    $enrolleeIdsThatStayedClean->push($enrolleeId);
                 }
+
+                $enrolleeIdsThatGotDirtyCount    = $enrolleeIdsThatGotDirty->count();
+                $enrolleeIdsThatFailedCount      = $enrolleeIdsThatFailed->count();
+                $enrolleeIdsThatStayedCleanCount = $enrolleeIdsThatStayedClean->count();
+
+                Log::info("Update wrong imported Providers in care team members: For PROVIDER $providerName: [updated $enrolleeIdsThatGotDirtyCount], [failed $enrolleeIdsThatFailedCount],
+                [unprocessed $enrolleeIdsThatStayedCleanCount] FROM $enrolleesToUpdateCount entries");
 
                 $this->decideActionOnUnresponsivePatient($patientUser);
             }
@@ -128,14 +183,13 @@ class UpdateEnrolleesFromCollectionJob implements ShouldQueue
         );
     }
 
-    private function updateEnrolleesProvider(array $enrolleeIds, int $providerUserId)
+    /**
+     * @return \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection
+     */
+    private function providerIsSetAsCareTeamMember(User $patientUser, int $providerUserId)
     {
-        Enrollee::with('user.careTeamMembers')
-            ->whereHas('user.careTeamMembers', function ($carePerson) use ($providerUserId) {
-                $carePerson->where('member_user_id', $providerUserId);
-            })
-            ->whereIn('id', $enrolleeIds)->update([
-                'provider_id' => $providerUserId,
-            ]);
+        return $patientUser->careTeamMembers
+            ->where('type', self::PROVIDER_TYPE)
+            ->where('member_user_id', $providerUserId);
     }
 }

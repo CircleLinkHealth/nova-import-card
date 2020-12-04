@@ -37,20 +37,27 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
     private \CircleLinkHealth\Customer\Entities\User $newProviderToImport;
     private \CircleLinkHealth\Customer\Entities\User $newProviderToImport2;
     private \CircleLinkHealth\Customer\Entities\Practice $practice;
-    private \CircleLinkHealth\Customer\Entities\User $provider;
     private $seeder;
     private \CircleLinkHealth\Customer\Entities\User $user1;
     private \CircleLinkHealth\Customer\Entities\User $user2;
+    private \CircleLinkHealth\Customer\Entities\User $wrongProviderThatShouldBeReplaced;
 
-    public function createDataCollectionTest(?bool $assignCareTeamProvider = true, ?bool $sendNotification = true)
+    public function createDataCollectionTest(?bool $assignCareTeamProvider = true, ?bool $sendNotification = true, ?bool $assignTheWrongProvider = true)
     {
-        $dataToUpdate               = [];
-        $this->practice             = $this->setUpMarillacPractice();
-        $this->provider             = $this->createUser($this->practice->id, 'provider');
-        $this->newProviderToImport  = $this->createUser($this->practice->id, 'provider');
-        $this->newProviderToImport2 = $this->createUser($this->practice->id, 'provider');
+        $dataToUpdate                            = [];
+        $this->practice                          = $this->setUpMarillacPractice();
+        $this->wrongProviderThatShouldBeReplaced = $this->createUser($this->practice->id, 'provider');
+        $this->newProviderToImport               = $this->createUser($this->practice->id, 'provider');
+        $this->newProviderToImport2              = $this->createUser($this->practice->id, 'provider');
+
+        $updated = $this->wrongProviderThatShouldBeReplaced->update([
+            'email' => UpdateEnrolleeProvidersThatCreatedWrong::WRONG_PROVIDER_EMAIL,
+        ]);
+
+        self::assertTrue($updated);
+
         /** @var \CircleLinkHealth\Customer\Entities\User $provider */
-        $provider = $this->provider;
+        $provider = $assignTheWrongProvider ? $this->wrongProviderThatShouldBeReplaced : $this->createUser($this->practice->id, 'provider');
         if ($sendNotification) {
             $enrollee1 = $this->factory()->createEnrollee($this->practice, $provider);
             $enrollee2 = $this->factory()->createEnrollee($this->practice, $provider);
@@ -77,12 +84,12 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
 
         if ($assignCareTeamProvider) {
             $this->user1->careTeamMembers()->create([
-                'member_user_id' => $this->newProviderToImport->id,
+                'member_user_id' => $this->wrongProviderThatShouldBeReplaced->id,
                 'type'           => CarePerson::BILLING_PROVIDER,
             ]);
 
             $this->user2->careTeamMembers()->create([
-                'member_user_id' => $this->newProviderToImport2->id,
+                'member_user_id' => $this->wrongProviderThatShouldBeReplaced->id,
                 'type'           => CarePerson::BILLING_PROVIDER,
             ]);
         }
@@ -95,9 +102,30 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         return (new MarillacEnrolleeProvidersValueObject())->dataGroupedByProviderTesting($dataToUpdate);
     }
 
+    public function test_it_will_not_process_data_if_care_team_provider_is_not_dan_becker()
+    {
+        $dataToUpdate = $this->createDataCollectionTest(false, true, false);
+        UpdateEnrolleesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
+
+        $providerId = $this->newProviderToImport->id;
+        $userId     = $this->user1->id;
+
+        $this->assertDatabaseHas('enrollees', [
+            'user_id'     => $userId,
+            'provider_id' => $this->user1->enrollee->provider_id,
+            'status'      => Enrollee::QUEUE_AUTO_ENROLLMENT,
+        ]);
+
+        $this->assertDatabaseMissing('enrollees', [
+            'user_id'     => $userId,
+            'provider_id' => $providerId,
+            'status'      => Enrollee::TO_CALL,
+        ]);
+    }
+
     public function test_it_will_not_process_data_if_enrolee_has_not_any_invitation_links()
     {
-        $dataToUpdate = $this->createDataCollectionTest(false, false);
+        $dataToUpdate = $this->createDataCollectionTest(true, false);
         $this->assertDataPreUpdate();
 
         UpdateEnrolleesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
@@ -111,7 +139,7 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
 
         $this->assertDatabaseHas('enrollees', [
             'user_id'     => $userId,
-            'provider_id' => $this->provider->id,
+            'provider_id' => $this->wrongProviderThatShouldBeReplaced->id,
             'status'      => Enrollee::QUEUE_AUTO_ENROLLMENT,
         ]);
 
@@ -122,31 +150,9 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         ]);
     }
 
-    public function test_it_will_not_process_data_if_provider_to_replace_does_not_match_care_team_member_provider_id()
+    public function test_it_will_put_into_call_queue_if_letter_is_seen_and_that_will_mark_as_unresponsive_if_not()
     {
-        $dataToUpdate = $this->createDataCollectionTest(false, true);
-        $this->assertDataPreUpdate();
-        UpdateEnrolleesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
-
-        $providerId = $this->newProviderToImport->id;
-        $userId     = $this->user1->id;
-
-        $this->assertDatabaseHas('enrollees', [
-            'user_id'     => $userId,
-            'provider_id' => $this->provider->id,
-            'status'      => Enrollee::QUEUE_AUTO_ENROLLMENT,
-        ]);
-
-        $this->assertDatabaseMissing('enrollees', [
-            'user_id'     => $userId,
-            'provider_id' => $providerId,
-            'status'      => Enrollee::TO_CALL,
-        ]);
-    }
-
-    public function test_it_will_put_into_call_queue_if_letter_is_seen_or_mark_as_unresponsive_if_not()
-    {
-        $dataToUpdate = $this->createDataCollectionTest();
+        $dataToUpdate = $this->createDataCollectionTest(false);
         $enrollee     = $this->user1->enrollee;
         $enrollee2    = $this->user2->enrollee;
         Queue::fake();
@@ -177,7 +183,7 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
 
     public function test_it_will_update_enrollee_providers_using_data_collection()
     {
-        $dataToUpdate = $this->createDataCollectionTest();
+        $dataToUpdate = $this->createDataCollectionTest(false);
 
         $this->assertDataPreUpdate();
 
@@ -199,14 +205,32 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
             'provider_id' => $this->newProviderToImport2->id,
             'status'      => Enrollee::TO_CALL,
         ]);
+
+        $this->assertDatabaseHas('patient_care_team_members', [
+            'user_id'        => $this->user1->id,
+            'member_user_id' => $this->newProviderToImport->id,
+            'type'           => UpdateEnrolleesFromCollectionJob::PROVIDER_TYPE,
+        ]);
+
+        $this->assertDatabaseHas('patient_care_team_members', [
+            'user_id'        => $this->user2->id,
+            'member_user_id' => $this->newProviderToImport2->id,
+            'type'           => UpdateEnrolleesFromCollectionJob::PROVIDER_TYPE,
+        ]);
     }
 
     private function assertDataPreUpdate()
     {
         $this->assertDatabaseHas('enrollees', [
             'user_id'     => $this->user2->id,
-            'provider_id' => $this->provider->id,
+            'provider_id' => $this->wrongProviderThatShouldBeReplaced->id,
             'status'      => Enrollee::QUEUE_AUTO_ENROLLMENT,
+        ]);
+
+        $this->assertDatabaseHas('patient_care_team_members', [
+            'user_id'        => $this->user2->id,
+            'member_user_id' => $this->wrongProviderThatShouldBeReplaced->id,
+            'type'           => UpdateEnrolleesFromCollectionJob::PROVIDER_TYPE,
         ]);
     }
 
