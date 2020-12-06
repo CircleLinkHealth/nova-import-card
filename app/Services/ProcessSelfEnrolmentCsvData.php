@@ -11,7 +11,6 @@ use Validator;
 
 class ProcessSelfEnrolmentCsvData
 {
-    public Collection $errors;
     /**
      * @var mixed
      */
@@ -20,12 +19,7 @@ class ProcessSelfEnrolmentCsvData
      * @var mixed
      */
     private $userId;
-
-    public function getErrors(): Collection
-    {
-        return $this->errors;
-    }
-
+    
     /**
      * @return Collection
      */
@@ -35,9 +29,8 @@ class ProcessSelfEnrolmentCsvData
             $this->userId = $row[0];
             $this->providerName = $row[1];
             Validator::make($row->toArray(), $this->rules(), $this->validationMessages())->validate();
-
             return [
-                $row[1] => $row[0],
+                $this->providerName => $this->userId,
             ];
         });
     }
