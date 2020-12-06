@@ -6,10 +6,12 @@
 
 namespace App\Console\Commands;
 
+use App\Imports\SelfEnrolment\ReadSelfEnrolmentCsvData;
 use App\Jobs\UpdateEnrolleesFromCollectionJob;
-use App\ValueObjects\SelfEnrolment\MarillacEnrolleeProvidersValueObject;
+use App\Services\ProcessSelfEnrolmentCsvData;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UpdateEnrolleeProvidersThatCreatedWrong extends Command
 {
@@ -40,9 +42,24 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
 
     public function handle()
     {
-        $practice = Practice::where('name', self::MARILLAC_NAME)->firstOrFail();
+        $practice    = Practice::where('name', self::MARILLAC_NAME)->firstOrFail();
+        $dataFromCsv = Excel::toCollection(new ReadSelfEnrolmentCsvData(), 'storage/selfEnrolment-templates/ManuallyProcessEnrolmentPatients.csv')->flatten(1);
 
-        $dataToUpdate = (new MarillacEnrolleeProvidersValueObject())->dataGroupedByProvider();
-        UpdateEnrolleesFromCollectionJob::dispatch($dataToUpdate, $practice->id);
+        if ($dataFromCsv->isEmpty()) {
+            $this->error('Csv imported collection is empty');
+
+            return;
+        }
+
+        $processCsvService = (new ProcessSelfEnrolmentCsvData());
+
+        try {
+            $dataFromCsvProcessed = $processCsvService->processCsvCollection($dataFromCsv);
+        } catch (\Exception $exception) {
+            $this->error($exception->getMessage());
+            return;
+        }
+
+        UpdateEnrolleesFromCollectionJob::dispatch($dataFromCsvProcessed, $practice->id);
     }
 }

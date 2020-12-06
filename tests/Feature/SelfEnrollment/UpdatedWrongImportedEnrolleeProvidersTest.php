@@ -14,7 +14,6 @@ use App\Jobs\UpdateEnrolleesFromCollectionJob;
 use App\LoginLogout;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\SelfEnrollment\Jobs\SendInvitation;
-use App\ValueObjects\SelfEnrolment\MarillacEnrolleeProvidersValueObject;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -99,7 +98,7 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         $this->user1->fresh();
         $this->user2->fresh();
 
-        return (new MarillacEnrolleeProvidersValueObject())->dataGroupedByProviderTesting($dataToUpdate);
+        return $this->dataGroupedByProviderTesting($dataToUpdate);
     }
 
     public function test_it_will_not_process_data_if_care_team_provider_is_not_dan_becker()
@@ -293,5 +292,14 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
                 'outgoing_phone_number' => +16419544560,
             ]
         );
+    }
+    
+    private function dataGroupedByProviderTesting(array $dataToUpdateTesting)
+    {
+        return collect($dataToUpdateTesting)->mapToGroups(function ($providerName, $enrolleeId) {
+            return [
+                $providerName => $enrolleeId,
+            ];
+        });
     }
 }
