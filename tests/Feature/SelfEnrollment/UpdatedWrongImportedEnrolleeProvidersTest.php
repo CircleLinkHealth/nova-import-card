@@ -44,7 +44,7 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
     public function createDataCollectionTest(?bool $assignCareTeamProvider = true, ?bool $sendNotification = true, ?bool $assignTheWrongProvider = true)
     {
         $dataToUpdate                            = [];
-        $this->practice                          = $this->setUpMarillacPractice();
+        $this->practice                          = $this->setUpPractice();
         $this->wrongProviderThatShouldBeReplaced = $this->createUser($this->practice->id, 'provider');
         $this->newProviderToImport               = $this->createUser($this->practice->id, 'provider');
         $this->newProviderToImport2              = $this->createUser($this->practice->id, 'provider');
@@ -247,6 +247,15 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         return $user;
     }
 
+    private function dataGroupedByProviderTesting(array $dataToUpdateTesting)
+    {
+        return collect($dataToUpdateTesting)->mapToGroups(function ($providerName, $enrolleeId) {
+            return [
+                $providerName => $enrolleeId,
+            ];
+        });
+    }
+
     private function factory()
     {
         if (is_null($this->seeder)) {
@@ -277,7 +286,7 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         });
     }
 
-    private function setUpMarillacPractice()
+    private function setUpPractice()
     {
         return Practice::firstOrCreate(
             [
@@ -292,14 +301,5 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
                 'outgoing_phone_number' => +16419544560,
             ]
         );
-    }
-    
-    private function dataGroupedByProviderTesting(array $dataToUpdateTesting)
-    {
-        return collect($dataToUpdateTesting)->mapToGroups(function ($providerName, $enrolleeId) {
-            return [
-                $providerName => $enrolleeId,
-            ];
-        });
     }
 }

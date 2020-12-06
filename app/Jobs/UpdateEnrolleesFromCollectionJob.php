@@ -54,7 +54,7 @@ class UpdateEnrolleesFromCollectionJob implements ShouldQueue
         $wrongProviderUser  = User::where('email', $wrongProviderEmail)->first();
 
         if ( ! $wrongProviderUser) {
-            Log::error("Weird, known existing user in Production [user_id:13899, email:$wrongProviderEmail] not found!");
+            Log::error("Weird, known existing user in Production [email:$wrongProviderEmail] not found!");
 
             return;
         }
@@ -147,7 +147,7 @@ class UpdateEnrolleesFromCollectionJob implements ShouldQueue
                 $enrolleeIdsThatFailedCount      = $enrolleeIdsThatFailed->count();
                 $enrolleeIdsThatStayedCleanCount = $enrolleeIdsThatStayedClean->count();
 
-                Log::info("Update wrong imported Providers in care team members: For PROVIDER $providerName: [updated $enrolleeIdsThatGotDirtyCount], [failed $enrolleeIdsThatFailedCount],
+                Log::info("Updated wrong imported Providers in care team members: For PROVIDER $providerName: [updated $enrolleeIdsThatGotDirtyCount], [failed $enrolleeIdsThatFailedCount],
                 [unprocessed $enrolleeIdsThatStayedCleanCount] FROM $enrolleesToUpdateCount entries");
 
                 $this->decideActionOnUnresponsivePatient($patientUser);
