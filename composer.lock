@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3b191917fc445b22179f6111c161b1cb",
+    "content-hash": "17f44a6fa71944ffb280a0f230bbe30a",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -106,16 +106,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.166.1",
+            "version": "3.166.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "36788095cfab7850400e337a3128572cfc1537e6"
+                "reference": "fe0ec9235d07b0f51ec4396dce0dd639020ae1a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/36788095cfab7850400e337a3128572cfc1537e6",
-                "reference": "36788095cfab7850400e337a3128572cfc1537e6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fe0ec9235d07b0f51ec4396dce0dd639020ae1a7",
+                "reference": "fe0ec9235d07b0f51ec4396dce0dd639020ae1a7",
                 "shasum": ""
             },
             "require": {
@@ -187,7 +187,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-03T19:25:02+00:00"
+            "time": "2020-12-04T19:12:30+00:00"
         },
         {
             "name": "brick/math",
@@ -1954,6 +1954,37 @@
             "time": "2020-09-14T08:43:34+00:00"
         },
         {
+            "name": "joshbrw/laravel-module-installer",
+            "version": "v0.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
+                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
+            },
+            "require": {
+                "composer-plugin-api": "^1.1",
+                "php": "^5.4|7.*"
+            },
+            "require-dev": {
+                "composer/composer": "^1.3",
+                "mockery/mockery": "~1.0",
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Joshbrw\\LaravelModuleInstaller\\LaravelModuleInstallerPlugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Joshbrw\\LaravelModuleInstaller\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "time": "2020-01-16T16:56:46+00:00"
+        },
+        {
             "name": "lab404/laravel-impersonate",
             "version": "1.7.2",
             "source": {
@@ -3086,24 +3117,23 @@
         },
         {
             "name": "league/iso3166",
-            "version": "2.1.5",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/iso3166.git",
-                "reference": "aed3b32fc293afdf2c6c6a322c2408eb5d20804a"
+                "reference": "9976d382f270ad3f3df8a68719beb7a7179ffa1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/iso3166/zipball/aed3b32fc293afdf2c6c6a322c2408eb5d20804a",
-                "reference": "aed3b32fc293afdf2c6c6a322c2408eb5d20804a",
+                "url": "https://api.github.com/repos/thephpleague/iso3166/zipball/9976d382f270ad3f3df8a68719beb7a7179ffa1e",
+                "reference": "9976d382f270ad3f3df8a68719beb7a7179ffa1e",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0"
+                "php": "^7.3|^8.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.12",
-                "phpunit/phpunit": "^5.7.11 || ^6.0 || ^7.0"
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
@@ -3136,7 +3166,7 @@
                 "iso",
                 "library"
             ],
-            "time": "2020-01-29T07:08:12+00:00"
+            "time": "2020-12-05T06:50:42+00:00"
         },
         {
             "name": "league/mime-type-detection",
@@ -4814,24 +4844,24 @@
         },
         {
             "name": "propaganistas/laravel-phone",
-            "version": "4.2.6",
+            "version": "4.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Propaganistas/Laravel-Phone.git",
-                "reference": "b99ca1fe48884df39656990819b9faec4ec711ea"
+                "reference": "f2765e308977511c7ee42a48d635dca7026fa427"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Propaganistas/Laravel-Phone/zipball/b99ca1fe48884df39656990819b9faec4ec711ea",
-                "reference": "b99ca1fe48884df39656990819b9faec4ec711ea",
+                "url": "https://api.github.com/repos/Propaganistas/Laravel-Phone/zipball/f2765e308977511c7ee42a48d635dca7026fa427",
+                "reference": "f2765e308977511c7ee42a48d635dca7026fa427",
                 "shasum": ""
             },
             "require": {
                 "giggsey/libphonenumber-for-php": "^7.0|^8.0",
                 "illuminate/support": "^6.0|^7.0|^8.0",
                 "illuminate/validation": "^6.0|^7.0|^8.0",
-                "league/iso3166": "^2.0",
-                "php": ">=7.1"
+                "league/iso3166": "^2.0|^3.0",
+                "php": "^7.1|^8.0"
             },
             "require-dev": {
                 "orchestra/testbench": "*",
@@ -4871,7 +4901,7 @@
                 "phone",
                 "validation"
             ],
-            "time": "2020-10-25T20:07:56+00:00"
+            "time": "2020-12-06T10:57:11+00:00"
         },
         {
             "name": "psr/container",
