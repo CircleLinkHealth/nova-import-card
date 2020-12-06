@@ -43,7 +43,7 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
     public function handle()
     {
         $practice    = Practice::where('name', self::MARILLAC_NAME)->firstOrFail();
-        $dataFromCsv = Excel::toCollection(new ReadSelfEnrolmentCsvData(), 'storage/selfEnrolment-templates/ManuallyProcessEnrolmentPatients.csv')->flatten(1);
+        $dataFromCsv = Excel::toCollection(new ReadSelfEnrolmentCsvData(), 'storage/selfEnrolment-templates/MarillacManuallyProcessEnrolmentPatients.csv')->flatten(1);
 
         if ($dataFromCsv->isEmpty()) {
             $this->error('Csv imported collection is empty');
