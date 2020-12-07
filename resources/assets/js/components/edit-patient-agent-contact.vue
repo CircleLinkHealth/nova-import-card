@@ -177,7 +177,6 @@ export default {
         anyAgentFieldIsEmpty(){
             return this.agentNameIsEmpty
                 || this.agentRelationshipIsEmpty
-                || this.agentEmailIsEmpty
                 || this.agentPhoneIsEmpty;
         },
 
@@ -228,7 +227,7 @@ export default {
                 return true;
             }
 
-            if (! this.isValidEmail){
+            if (this.agentContactDetails[0].agentEmail.length > 0 && ! this.isValidEmail){
                 return true;
             }
 
@@ -338,11 +337,6 @@ export default {
                 return;
             }
 
-            if(agentNewEmail.length === 0){
-                alert("Agent contact email is required.");
-                this.loading = false;
-                return;
-            }
 
             if (agentNewEmail.length > 0 && ! this.isValidEmail){
                 alert("Agent email is not a valid email format.");
