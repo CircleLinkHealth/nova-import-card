@@ -20,16 +20,12 @@ class CallReportController extends Controller
 {
     public function exportXlsV2(Request $request, CallViewFilters $filters)
     {
-        ini_set('memory_limit', '512M');
-        
         $date = Carbon::now()->startOfMonth();
         
         $calls = CallView::filter($filters)
-            ->get();
+            ->paginate($filters->filters()['rows']);
         
-        $data = $this->generateXlsData($date, $calls);
-        
-        return $data->download($data->getFilename());
+        return PamCsvResource::collection($calls);
     }
     
     /**
@@ -88,7 +84,7 @@ class CallReportController extends Controller
             'Scheduler',
         ];
         
-        $patientTimeAndCallCounts = $calls->isNotEmpty() ? PatientTimeAndCallsValueObject::get($calls->pluck('patient_id')->toArray()) : collect();
+        $patientTimeAndCallCounts = $calls->isNotEmpty() ? PatientTimeAndCalls::get($calls->pluck('patient_id')->toArray()) : collect();
         $rows                     = [];
         
         foreach ($calls as $call) {
