@@ -227,7 +227,7 @@ export default {
                 return true;
             }
 
-            if (this.agentContactDetails[0].agentEmail.length > 0 && ! this.isValidEmail){
+            if (this.agentContactDetails[0]?.agentEmail?.length > 0 && ! this.isValidEmail){
                 return true;
             }
 
