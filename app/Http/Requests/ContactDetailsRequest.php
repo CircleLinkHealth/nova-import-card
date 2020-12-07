@@ -38,7 +38,7 @@ class ContactDetailsRequest extends FormRequest
             'phoneNumber'       => 'required|numeric',
             'agentRelationship' => 'sometimes|regex:/^[\pL\s\-]+$/u', // allow only text-letters with spaces
             'agentName'         => 'sometimes|regex:/^[\pL\s\-]+$/u',
-            'agentEmail'        => 'sometimes|email',
+            'agentEmail'        => 'sometimes|nullable|email',
             'phoneType'         => 'sometimes|required',
         ];
     }
