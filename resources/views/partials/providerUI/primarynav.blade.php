@@ -110,7 +110,7 @@ $isTwoFaRoute            = Route::is(['user.2fa.show.token.form', 'user.settings
                         @endif
 
                         @if(!$isTwoFaRoute && ! auth()->user()->isCallbacksAdmin())
-                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(App\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
+                            @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $userIsCareCoach && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking && app(CircleLinkHealth\Customer\Policies\CreateNoteForPatient::class)->can(auth()->id(), $patient->id))
                                 <li>
                                     <time-tracker-call-mode ref="timeTrackerCallMode"
                                                             :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
