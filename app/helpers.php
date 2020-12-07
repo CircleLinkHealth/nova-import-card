@@ -1873,14 +1873,6 @@ if ( ! function_exists('validateUsPhoneNumber')) {
     }
 }
 
-if ( ! function_exists('genericDiabetes')) {
-    function genericDiabetes(): CircleLinkHealth\SharedModels\Entities\CpmProblem
-    {
-        return \Cache::remember('cpm_problem_diabetes', 2, function () {
-            return \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', \CircleLinkHealth\SharedModels\Entities\CpmProblem::GENERIC_DIABETES)->first();
-        });
-    }
-}
 if ( ! function_exists('sanitizeString')) {
     /**
      * @param $string

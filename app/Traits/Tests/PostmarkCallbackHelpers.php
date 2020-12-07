@@ -15,7 +15,8 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
 trait PostmarkCallbackHelpers
 {
     /**
-     * @param  bool   $testForUnsanitisedInputCases
+     * @param bool $testForUnsanitisedInputCases
+     *
      * @return string
      */
     public function getCallbackMailData(User $patient, bool $requestsToWithdraw, bool $nameIsSelf = false, string $number, $testForUnsanitisedInputCases = false)

@@ -5,6 +5,15 @@
 
 @section('content')
 
+    <?php
+    $user = auth()->user();
+    ?>
+
+    <script>
+        window['userId'] = @json($user->id);
+        window['userFullName'] = @json($user->getFullName());
+    </script>
+
     @include('partials.providerUItimer', ['forEnrollment' => true])
 
     <div id="app">
