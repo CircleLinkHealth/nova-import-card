@@ -28,7 +28,7 @@ use Titasgailius\SearchRelations\SearchesRelations;
 class TimeTracker extends Resource
 {
     use SearchesRelations;
-
+    
     /**
      * The logical group associated with the resource.
      *
@@ -42,7 +42,7 @@ class TimeTracker extends Resource
      * @var string
      */
     public static $model = PageTimer::class;
-
+    
     /**
      * The columns that should be searched.
      *
@@ -55,7 +55,7 @@ class TimeTracker extends Resource
         'patient_id',
         'provider_id',
     ];
-
+    
     /**
      * The relationship columns that should be searched.
      *
@@ -65,14 +65,14 @@ class TimeTracker extends Resource
         'logger'  => ['id', 'display_name', 'first_name', 'last_name'],
         'patient' => ['id', 'display_name', 'first_name', 'last_name'],
     ];
-
+    
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
     public static $title = 'title';
-
+    
     /**
      * Get the actions available for the resource.
      *
@@ -81,14 +81,14 @@ class TimeTracker extends Resource
     public function actions(Request $request)
     {
         return [
-            (new Actions\ModifyTimeTracker())
-                ->confirmText("Modifying the duration may have side-effects on patient's ccm/bhi time and care coach's compensation. Are you sure you want to proceed?")
+            (new ModifyTimeTracker())
+                ->confirmText("Modifying the duration may have side-effects on patient's time and care coach's compensation. Are you sure you want to proceed?")
                 ->confirmButtonText('Done')
                 ->cancelButtonText('Cancel')
                 ->onlyOnDetail(true),
         ];
     }
-
+    
     /**
      * @return bool
      */
@@ -96,7 +96,7 @@ class TimeTracker extends Resource
     {
         return false;
     }
-
+    
     /**
      * @return bool
      */
@@ -104,7 +104,7 @@ class TimeTracker extends Resource
     {
         return false;
     }
-
+    
     /**
      * @return bool
      */
@@ -112,7 +112,7 @@ class TimeTracker extends Resource
     {
         return true;
     }
-
+    
     /**
      * @return bool
      */
@@ -120,7 +120,7 @@ class TimeTracker extends Resource
     {
         return auth()->user()->isAdmin();
     }
-
+    
     /**
      * Get the cards available for the request.
      *
@@ -130,7 +130,7 @@ class TimeTracker extends Resource
     {
         return [];
     }
-
+    
     /**
      * Get the fields displayed by the resource.
      *
@@ -141,46 +141,46 @@ class TimeTracker extends Resource
         /** @var NovaRequest $req */
         $req    = $request;
         $fields = $req->isResourceDetailRequest() ? $this->getFieldsForActivities($this->resource) : [];
-
+        
         return array_merge([
             ID::make()->sortable(),
-
+            
             BelongsTo::make('Logger', 'logger', User::class)
                 ->sortable()
                 ->readonly(true),
-
+            
             Text::make('Patient ID', 'patient.id')
                 ->sortable()
                 ->readonly(true),
-
+            
             Text::make('Patient', 'patient.display_name')
                 ->sortable()
                 ->readonly(true),
-
+            
             Text::make('Activity', 'activity_type')
                 ->sortable()
                 ->readonly(true),
-
+            
             Number::make('Duration (seconds)', 'duration')
                 ->sortable()
                 ->readonly(true),
-
+            
             DateTime::make('Date Time', 'start_time')
                 ->sortable()
                 ->readonly(true),
-
+            
             Boolean::make('Billable', function ($row) {
                 return $row->activities->isNotEmpty();
             }),
-
+            
             Text::make('Service(s)', function ($row) {
                 $csCodes = $row->activities->map(fn (Activity $a) => $a->chargeableService->code)->toArray();
-
+                
                 return implode(', ', $csCodes);
             }),
         ], $fields);
     }
-
+    
     /**
      * Get the filters available for the resource.
      *
@@ -198,7 +198,7 @@ class TimeTracker extends Resource
             new TimestampFilter('To', 'start_time', 'to', Carbon::now()->endOfMonth()),
         ];
     }
-
+    
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query->with([
@@ -218,12 +218,12 @@ class TimeTracker extends Resource
             },
         ]);
     }
-
+    
     public static function label()
     {
         return 'Time Tracking';
     }
-
+    
     /**
      * Get the lenses available for the resource.
      *
@@ -233,21 +233,21 @@ class TimeTracker extends Resource
     {
         return [];
     }
-
+    
     private function getFieldsForActivities(PageTimer $pageTimer)
     {
         $fields = [];
-
+        
         /** @var \CircleLinkHealth\Customer\Entities\ChargeableService[]|Collection $chargeableServices */
         $chargeableServices = \CircleLinkHealth\Customer\Entities\ChargeableService
             ::whereIn('id', $pageTimer->activities->pluck('chargeable_service_id'))
-                ->get();
-
+            ->get();
+        
         $len = $pageTimer->activities->count();
         if (0 === $len) {
             return $fields;
         }
-
+        
         $patientTime        = PatientTime::getForPatient($pageTimer->patient, $chargeableServices);
         $modifiableCsCode   = null;
         $modifiableDuration = null;
@@ -262,7 +262,7 @@ class TimeTracker extends Resource
                 $modifiableDuration = $activity->duration;
             }
         }
-
+        
         if ( ! $modifiableCsCode) {
             $fields[] = Text::make('NOTE', function () {
                 return 'You cannot modify this time tracker entry, because it has time tracked for already fulfilled chargeable services. Please try a more recent one for this patient.';
@@ -272,16 +272,16 @@ class TimeTracker extends Resource
                 return "This time tracker entry has activities for multiple chargeable services. You can only modify duration of $modifiableCsCode. Maximum $modifiableDuration seconds.";
             });
         }
-
+        
         return $fields;
     }
-
-    private function isModifiable(\CircleLinkHealth\SharedModels\Entities\PatientTime $patientTime, string $csCode)
+    
+    private function isModifiable(PatientTime $patientTime, string $csCode)
     {
         if (\CircleLinkHealth\Customer\Entities\ChargeableService::CCM_PLUS_60 === $csCode) {
             return true;
         }
-
+        
         return ! $patientTime->isFulFilled($csCode);
     }
 }

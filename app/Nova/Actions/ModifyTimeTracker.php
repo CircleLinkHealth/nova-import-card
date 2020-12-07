@@ -30,7 +30,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
+    
     /**
      * Get the fields available on the action.
      *
@@ -43,7 +43,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             Boolean::make('Force', 'allow_accrued_towards'),
         ];
     }
-
+    
     /**
      * Perform the action on the given models.
      *
@@ -62,125 +62,76 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         $duration    = intval($durationStr);
         if ( ! $duration || $duration < 1) {
             $this->markAsFailed($models->first(), 'Need to supply a valid number for duration. Minimum 1.');
-
+            
             return;
         }
-
+        
         foreach ($models as $model) {
             /** @var PageTimer $timeRecord */
             $timeRecord = $model;
-
-            if ( ! $this->canModifyTemp($timeRecord)) {
+            
+            if ( ! $this->canModify($timeRecord)) {
                 $this->markAsFailed(
                     $timeRecord,
                     'You cannot modify this time tracker entry, because it has time tracked for multiple activities. Please contact CLH Dev Team.'
                 );
             }
-
-            if ( ! $this->canModify($timeRecord)) {
-                $this->markAsFailed(
-                    $timeRecord,
-                    'You cannot modify this time tracker entry, because it has time tracked for already fulfilled chargeable services. Please try a more recent one for this patient.'
-                );
-            }
-
+            
             $maxDuration = optional($timeRecord->activities->sortBy('id')->last())->duration ?? $timeRecord->duration;
             if ($maxDuration === $duration) {
                 continue;
             }
-
+            
             if ($duration > $maxDuration) {
                 $this->markAsFailed(
                     $timeRecord,
                     "Only decreasing duration is supported at the moment. Please supply a lower value than the existing[$maxDuration] or choose another record."
                 );
-
+                
                 return;
             }
-
+            
             try {
                 $this->modifyRecords($timeRecord, $duration, $fields->get('allow_accrued_towards', false));
             } catch (Exception $e) {
                 $this->markAsFailed($timeRecord, $e->getMessage());
-
+                
                 return;
             }
         }
-
+        
         $this->markAsFinished($models->first());
     }
-
+    
     private function canModify(PageTimer $timeRecord)
-    {
-        if ($timeRecord->activities->isEmpty()) {
-            return true;
-        }
-
-        /** @var ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices */
-        $chargeableServices = ChargeableService
-            ::whereIn('id', $timeRecord->activities->pluck('chargeable_service_id'))
-                ->get();
-
-        if ($chargeableServices->isEmpty()) {
-            return false;
-        }
-
-        $patientTime = PatientTime::getForPatient($timeRecord->patient, $chargeableServices);
-        /** @var Activity $activity */
-        $activity = $timeRecord->activities->sortBy('id')->last();
-        if ( ! $activity->chargeable_service_id) {
-            return false;
-        }
-
-        $csCode = $chargeableServices->firstWhere('id', '=', $activity->chargeable_service_id)->code;
-
-        return $this->isModifiable($patientTime, $csCode);
-    }
-
-    /**
-     * Temporary block for modifying page timer entries with multiple activities.
-     * Will be removed with ROAD-389.
-     *
-     * @return bool
-     */
-    private function canModifyTemp(PageTimer $timeRecord)
     {
         return $timeRecord->activities->count() <= 1;
     }
-
-    private function isModifiable(PatientTime $patientTime, string $csCode)
-    {
-        if (ChargeableService::CCM_PLUS_60 === $csCode) {
-            return true;
-        }
-
-        return ! $patientTime->isFulFilled($csCode);
-    }
-
+    
     /**
      * @throws Exception
      */
     private function modifyRecords(PageTimer $timeRecord, int $duration, bool $allowAccruedTowards = false)
     {
         $entriesToSave = collect();
-
+        
         $timeRecord->duration = $duration;
         $entriesToSave->push($timeRecord);
-
+        
         /** @var Activity $activity */
         $activity = $timeRecord->activities->sortBy('id')->last();
         if ($activity) {
             $activity->duration = $duration;
             $entriesToSave->push($activity);
-
+            
             /** @var NurseCareRateLog $careRateLog */
             $careRateLogQuery = NurseCareRateLog::whereActivityId($activity->id);
             if ( ! $allowAccruedTowards) {
                 $careRateLogQuery->where('ccm_type', '=', 'accrued_after_ccm');
             }
-
+            
             $careRateLog = $careRateLogQuery->first();
-
+            
             //some more validation here, simply because the current implementation supports simple use cases
             if ( ! $careRateLog) {
                 $msg = 'Cannot modify activity. Please choose a different one.';
@@ -189,16 +140,16 @@ class ModifyTimeTracker extends Action implements ShouldQueue
                 }
                 throw new Exception($msg);
             }
-
+            
             if ($duration > $careRateLog->increment) {
                 throw new Exception("Cannot modify activity. Please lower duration to at least $careRateLog->increment. [duration > care rate log]");
             }
         }
-
+        
         $entriesToSave->each(function (Model $item) {
             $item->save();
         });
-
+        
         $startTime = Carbon::parse($timeRecord->start_time);
         if ($activity) {
             if ($careRateLog) {
@@ -208,10 +159,10 @@ class ModifyTimeTracker extends Action implements ShouldQueue
                     'allowAccruedTowards' => $allowAccruedTowards,
                 ]);
             }
-
+            
             //if this was a billable activity, we have to
             //recalculate ccm/bhi time for patient (patient_monthly_summaries table)
-
+            
             //todo: unfulfill everything
             ProcessSinglePatientMonthlyServices::dispatch($activity->patient_id);
             \Artisan::call('ccm_time:recalculate', [
@@ -219,7 +170,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
                 'userIds'    => $timeRecord->patient_id,
             ]);
         }
-
+        
         //always re-generate invoice for nurse
         \Artisan::call('nurseinvoices:create', [
             'month'   => $startTime->copy()->startOfMonth()->toDateString(),
