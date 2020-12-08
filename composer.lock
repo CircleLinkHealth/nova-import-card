@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b013e899ddbe146bed2cb20e3d9292b",
+    "content-hash": "b8643dd3c9d439715ad4c52e132d99da",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1209,11 +1209,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.8.2",
+            "version": "v1.8.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "fd1f2e393e4d9dbb75af579750734eef5b2e2a04"
+                "reference": "68dc42055fa077c1c1d0f71a58ff14e42daab83e"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1242,7 +1242,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-27T14:08:16+00:00"
+            "time": "2020-12-08T04:42:16+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -1319,11 +1319,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.7.4",
+            "version": "v3.7.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "74bea43900d0e704646871ae36f35562d7f405e8"
+                "reference": "11c947c56cc54fd11aa677665fc34712690ae1d2"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1350,7 +1350,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-08T03:50:19+00:00"
+            "time": "2020-12-08T04:42:16+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
