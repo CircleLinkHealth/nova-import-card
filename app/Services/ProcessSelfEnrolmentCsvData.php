@@ -19,7 +19,7 @@ class ProcessSelfEnrolmentCsvData
      * @var mixed
      */
     private $userId;
-    
+
     /**
      * @return Collection
      */
@@ -29,6 +29,7 @@ class ProcessSelfEnrolmentCsvData
             $this->userId = $row[0];
             $this->providerName = $row[1];
             Validator::make($row->toArray(), $this->rules(), $this->validationMessages())->validate();
+
             return [
                 $this->providerName => $this->userId,
             ];
