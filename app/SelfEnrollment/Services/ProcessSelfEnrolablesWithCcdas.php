@@ -25,12 +25,16 @@ class ProcessSelfEnrolablesWithCcdas
 
         $this->updateCcdasProviderId($patientUser, $ccdasForUpdateIds->toArray(), $correctProviderUserId);
         $wrongProviderAsCareTeamMember = $this->careTeamProviderThatWasSetForEnrolle($patientUser, $wrongProviderUserId);
-        $updatedCareTeamMembers        = $this->updateWrongCareTeamProvider($wrongProviderAsCareTeamMember->first(), $correctProviderUserId);
-        if ( ! $updatedCareTeamMembers) {
-            Log::channel('database')
-                ->critical("Failed to update member_user_id for user_id [$patientUser->id] in care_team_members (with CCDA)");
+        if ($wrongProviderAsCareTeamMember) {
+            $updatedCareTeamMembers = $this->updateWrongCareTeamProvider($wrongProviderAsCareTeamMember->first(), $correctProviderUserId);
+            if ( ! $updatedCareTeamMembers) {
+                Log::channel('database')
+                    ->critical("Failed to update member_user_id for user_id [$patientUser->id] in care_team_members (with CCDA)");
 
-            return;
+                return;
+            }
+        } else {
+            $patientUser->setBillingProviderId($correctProviderUserId);
         }
         $updatedEnrollee = $enrollee->update([
             'provider_id' => $correctProviderUserId,
