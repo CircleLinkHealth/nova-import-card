@@ -27,6 +27,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
+use CircleLinkHealth\Eligibility\DTOs\Address;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
@@ -99,6 +100,41 @@ class CcdaImporter
         );
     }
 
+    public static function emailIsTaken(string $email, string $firstName, string $lastName): bool
+    {
+        return User::ofType(['participant', 'survey-only'])
+            ->where('email', $email)
+            ->where('first_name', '!=', $firstName)
+            ->where('last_name', '!=', $lastName)
+            ->exists();
+    }
+
+    public static function isFamily(string $email, array $phones, string $firstName, string $lastName, Address $address)
+    {
+        if (empty($phones)) {
+            return false;
+        }
+
+        return User::ofType(['participant', 'survey-only'])
+            ->where('email', $email)
+            ->where('first_name', '!=', $firstName)
+            ->where(function ($q) use ($phones, $address, $lastName) {
+                $q->whereHas('phoneNumbers', function ($q) use ($phones) {
+                    $q->whereIn('number', $phones);
+                })->orWhere('last_name', '=', $lastName)
+                    ->when( ! empty($transDems), function ($q) use ($address) {
+                        $q->orWhere([
+                            ['address', '=', $address->address],
+                            ['address2', '=', $address->address2],
+                            ['city', '=', $address->city],
+                            ['state', '=', $address->state],
+                            ['zip', '=', $address->zip],
+                        ]);
+                    });
+            })
+            ->exists();
+    }
+
     /**
      * Returns true if both names are the same, but one includes a middle initial.
      *
@@ -151,11 +187,7 @@ class CcdaImporter
 
         $demographics = $this->ccda->bluebuttonJson()->demographics;
 
-        if ($this->isFamily($email, $demographics, $this->enrollee)) {
-            $email = self::convertToFamilyEmail($email);
-        } elseif ($this->emailIsTaken($email)) {
-            $email = self::EMAIL_EXISTS_BUT_NOT_FAMILY_PREFIX.$email;
-        }
+        $email = $this->ensureEmailIsUnique($this->enrollee, $this->ccda, $email, $demographics);
 
         $newPatientUser = (new UserRepository())->createNewUser(
             new ParameterBag(
@@ -191,13 +223,39 @@ class CcdaImporter
         $this->ccda->setRelation('patient', $newPatientUser);
     }
 
-    private function emailIsTaken(string $email)
+    private function ensureEmailIsUnique(?Enrollee $enrollee, Ccda $ccda, string $email, $demographics)
     {
-        return User::ofType(['participant', 'survey-only'])
-            ->where('email', $email)
-            ->where('first_name', '!=', $this->ccda->patient_first_name)
-            ->where('last_name', '!=', $this->ccda->patient_last_name)
-            ->exists();
+        $phones = collect($demographics->phones)
+            ->pluck('number')
+            ->map(fn ($num) => formatPhoneNumberE164($num))
+            ->merge([
+                formatPhoneNumberE164($enrollee->primary_phone),
+                formatPhoneNumberE164($enrollee->cell_phone),
+                formatPhoneNumberE164($enrollee->home_phone),
+                formatPhoneNumberE164($enrollee->other_phone),
+            ])
+            ->unique()
+            ->filter()
+            ->all();
+
+        $transDems = (new CcdToLogTranformer())->demographics($demographics);
+        $address   = new Address(
+            $transDems['street'],
+            $transDems['city'],
+            $transDems['state'],
+            $transDems['zip'],
+            $transDems['street2']
+        );
+
+        if (self::isFamily($email, $phones, $this->ccda->patient_first_name, $this->ccda->patient_last_name, $address)) {
+            return self::convertToFamilyEmail($email);
+        }
+
+        if (self::emailIsTaken($email, $this->ccda->patient_first_name, $this->ccda->patient_last_name)) {
+            return self::EMAIL_EXISTS_BUT_NOT_FAMILY_PREFIX.$email;
+        }
+
+        return $email;
     }
 
     private function ensurePatientHasParticipantRole()
@@ -434,47 +492,6 @@ class CcdaImporter
         ImportVitals::for($this->ccda->patient, $this->ccda);
 
         return $this;
-    }
-
-    private function isFamily(string $email, object $demographics, Enrollee $enrollee)
-    {
-        $phones = collect($demographics->phones)
-            ->pluck('number')
-            ->map(fn ($num) => formatPhoneNumberE164($num))
-            ->merge([
-                formatPhoneNumberE164($enrollee->primary_phone),
-                formatPhoneNumberE164($enrollee->cell_phone),
-                formatPhoneNumberE164($enrollee->home_phone),
-                formatPhoneNumberE164($enrollee->other_phone),
-            ])
-            ->unique()
-            ->filter()
-            ->all();
-
-        if (empty($phones)) {
-            return false;
-        }
-
-        return User::ofType(['participant', 'survey-only'])
-            ->where('email', $email)
-            ->where('first_name', '!=', $this->ccda->patient_first_name)
-            ->where(function ($q) use ($phones, $demographics) {
-                $transDems = (new CcdToLogTranformer())->demographics($demographics);
-
-                $q->whereHas('phoneNumbers', function ($q) use ($phones) {
-                    $q->whereIn('number', $phones);
-                })->orWhere('last_name', '=', $this->ccda->patient_last_name)
-                ->when( ! empty($transDems), function ($q) use ($transDems) {
-                    $q->orWhere([
-                        ['address', '=', $transDems['street']],
-                        ['address2', '=', $transDems['street2']],
-                        ['city', '=', $transDems['city']],
-                        ['state', '=', $transDems['state']],
-                        ['zip', '=', $transDems['zip']],
-                    ]);
-                    });
-            })
-            ->exists();
     }
 
     private function patientEmail()
