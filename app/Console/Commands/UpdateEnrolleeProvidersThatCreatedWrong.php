@@ -63,12 +63,20 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
 
         $dataFromCsvProcessed
             ->each(function ($enrolleeIds, $providerName) use ($practice) {
-                if (str_contains($providerName, 'PCP Unknown')) {
+                if (str_contains($providerName, $this->invalidProviderNames())) {
                     return;
                 }
                 foreach ($enrolleeIds->chunk(100) as $chunk) {
                     ProcessSelfEnrolablesFromCollectionJob::dispatch($chunk, $practice->id, $providerName);
                 }
             });
+    }
+
+    private function invalidProviderNames()
+    {
+        return [
+            'PCP Unknown',
+            'Marillac PCP . Unassigned',
+        ];
     }
 }
