@@ -10,7 +10,7 @@ use App\Console\Commands\UpdateEnrolleeProvidersThatCreatedWrong;
 use App\EnrollmentInvitationsBatch;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
 use App\Jobs\LogSuccessfulLoginToDB;
-use App\Jobs\UpdateEnrolleesFromCollectionJob;
+use App\Jobs\ProcessSelfEnrolablesFromCollectionJob;
 use App\LoginLogout;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\SelfEnrollment\Jobs\SendInvitation;
@@ -22,6 +22,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Facades\Auth;
 use Notification;
 use PrepareDataForReEnrollmentTestSeeder;
@@ -41,8 +42,12 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
     private \CircleLinkHealth\Customer\Entities\User $user2;
     private \CircleLinkHealth\Customer\Entities\User $wrongProviderThatShouldBeReplaced;
 
-    public function createDataCollectionTest(?bool $assignCareTeamProvider = true, ?bool $sendNotification = true, ?bool $assignTheWrongProvider = true)
-    {
+    public function createDataCollectionTest(
+        ?bool $assignCareTeamProvider = true,
+        ?bool $sendNotification = true,
+        ?bool $assignTheWrongProvider = true,
+        ?bool $assignCcdas = false
+    ) {
         $dataToUpdate                            = [];
         $this->practice                          = $this->setUpPractice();
         $this->wrongProviderThatShouldBeReplaced = $this->createUser($this->practice->id, 'provider');
@@ -93,8 +98,12 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
             ]);
         }
 
-        $this->user1->load('enrollee', 'careTeamMembers', 'enrollmentInvitationLinks');
-        $this->user2->load('enrollee', 'careTeamMembers', 'enrollmentInvitationLinks');
+        if ($assignCcdas) {
+            $this->createCcda($this->user1->id, $this->wrongProviderThatShouldBeReplaced->id);
+        }
+
+        $this->user1->load('enrollee', 'careTeamMembers', 'enrollmentInvitationLinks', 'ccdas');
+        $this->user2->load('enrollee', 'careTeamMembers', 'enrollmentInvitationLinks', 'ccdas');
         $this->user1->fresh();
         $this->user2->fresh();
 
@@ -104,7 +113,7 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
     public function test_it_will_not_process_data_if_care_team_provider_is_not_dan_becker()
     {
         $dataToUpdate = $this->createDataCollectionTest(false, true, false);
-        UpdateEnrolleesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
+        ProcessSelfEnrolablesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
 
         $providerId = $this->newProviderToImport->id;
         $userId     = $this->user1->id;
@@ -127,7 +136,7 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         $dataToUpdate = $this->createDataCollectionTest(true, false);
         $this->assertDataPreUpdate();
 
-        UpdateEnrolleesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
+        ProcessSelfEnrolablesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
 
         $providerId = $this->newProviderToImport->id;
         $userId     = $this->user1->id;
@@ -149,11 +158,46 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         ]);
     }
 
-    public function test_it_will_put_into_call_queue_if_letter_is_seen_and_that_will_mark_as_unresponsive_if_not()
+    public function test_it_will_process_if_wrong_billing_provider_exists_in_ccda()
+    {
+        $dataToUpdate = $this->createDataCollectionTest(false, true, true, true);
+
+        $this->assertCcdasFor($this->user1->id, $this->user1->enrollee->provider_id);
+        ProcessSelfEnrolablesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
+
+        $this->user1->fresh();
+        $this->assertCcdasFor($this->user1->id, $this->newProviderToImport->id);
+        $this->assertDatabaseHas('enrollees', [
+            'user_id'     => $this->user1->id,
+            'provider_id' => $this->newProviderToImport->id,
+            'status'      => Enrollee::TO_CALL,
+        ]);
+
+        $this->assertDatabaseHas('patient_care_team_members', [
+            'user_id'        => $this->user1->id,
+            'member_user_id' => $this->newProviderToImport->id,
+            'type'           => ProcessSelfEnrolablesFromCollectionJob::PROVIDER_TYPE,
+        ]);
+    }
+
+    public function test_it_will_mark_as_unresonsive_if_letter_not_seen()
     {
         $dataToUpdate = $this->createDataCollectionTest(false);
         $enrollee     = $this->user1->enrollee;
-        $enrollee2    = $this->user2->enrollee;
+        ProcessSelfEnrolablesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
+        $this->assertDatabaseHas('enrollees', [
+            'id'                        => $enrollee->id,
+            'status'                    => Enrollee::TO_CALL,
+            'auto_enrollment_triggered' => true,
+            'enrollment_non_responsive' => true,
+            'requested_callback'        => Carbon::parse(now()->addDays(UnreachablesFinalAction::TO_CALL_AFTER_DAYS_HAVE_PASSED))->toDateString(),
+        ]);
+    }
+    
+    public function test_it_will_put_into_call_queue_if_letter_is_seen()
+    {
+        $dataToUpdate = $this->createDataCollectionTest(false);
+        $enrollee     = $this->user1->enrollee;
         Queue::fake();
         Auth::loginUsingId($enrollee->user_id);
 
@@ -163,19 +207,11 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
             return LoginLogout::whereUserId($enrollee->user_id)->exists();
         });
 
-        UpdateEnrolleesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
+        ProcessSelfEnrolablesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
         $this->assertDatabaseHas('enrollees', [
             'id'                        => $enrollee->id,
             'status'                    => Enrollee::TO_CALL,
             'auto_enrollment_triggered' => true,
-            'requested_callback'        => Carbon::parse(now()->addDays(UnreachablesFinalAction::TO_CALL_AFTER_DAYS_HAVE_PASSED))->toDateString(),
-        ]);
-
-        $this->assertDatabaseHas('enrollees', [
-            'id'                        => $enrollee2->id,
-            'status'                    => Enrollee::TO_CALL,
-            'auto_enrollment_triggered' => true,
-            'enrollment_non_responsive' => true,
             'requested_callback'        => Carbon::parse(now()->addDays(UnreachablesFinalAction::TO_CALL_AFTER_DAYS_HAVE_PASSED))->toDateString(),
         ]);
     }
@@ -186,9 +222,17 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
 
         $this->assertDataPreUpdate();
 
-        UpdateEnrolleesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
+        ProcessSelfEnrolablesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
 
         $this->assertDataPostUpdate();
+    }
+
+    private function assertCcdasFor(int $patientId, ?int $providerId)
+    {
+        $this->assertDatabaseHas('ccdas', [
+            'patient_id'          => $patientId,
+            'billing_provider_id' => $providerId,
+        ]);
     }
 
     private function assertDataPostUpdate()
@@ -208,13 +252,13 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         $this->assertDatabaseHas('patient_care_team_members', [
             'user_id'        => $this->user1->id,
             'member_user_id' => $this->newProviderToImport->id,
-            'type'           => UpdateEnrolleesFromCollectionJob::PROVIDER_TYPE,
+            'type'           => ProcessSelfEnrolablesFromCollectionJob::PROVIDER_TYPE,
         ]);
 
         $this->assertDatabaseHas('patient_care_team_members', [
             'user_id'        => $this->user2->id,
             'member_user_id' => $this->newProviderToImport2->id,
-            'type'           => UpdateEnrolleesFromCollectionJob::PROVIDER_TYPE,
+            'type'           => ProcessSelfEnrolablesFromCollectionJob::PROVIDER_TYPE,
         ]);
     }
 
@@ -229,7 +273,15 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         $this->assertDatabaseHas('patient_care_team_members', [
             'user_id'        => $this->user2->id,
             'member_user_id' => $this->wrongProviderThatShouldBeReplaced->id,
-            'type'           => UpdateEnrolleesFromCollectionJob::PROVIDER_TYPE,
+            'type'           => ProcessSelfEnrolablesFromCollectionJob::PROVIDER_TYPE,
+        ]);
+    }
+
+    private function createCcda(int $userId, int $providerId)
+    {
+        Ccda::create([
+            'patient_id'          => $userId,
+            'billing_provider_id' => $providerId,
         ]);
     }
 

@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Imports\SelfEnrolment\ReadSelfEnrolmentCsvData;
-use App\Jobs\UpdateEnrolleesFromCollectionJob;
+use App\Jobs\ProcessSelfEnrolablesFromCollectionJob;
 use App\Services\ProcessSelfEnrolmentCsvData;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
@@ -61,6 +61,6 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
             return;
         }
 
-        UpdateEnrolleesFromCollectionJob::dispatch($dataFromCsvProcessed, $practice->id);
+        ProcessSelfEnrolablesFromCollectionJob::dispatch($dataFromCsvProcessed, $practice->id);
     }
 }
