@@ -29,6 +29,7 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Str;
@@ -457,10 +458,21 @@ class CcdaImporter
         return User::ofType(['participant', 'survey-only'])
             ->where('email', $email)
             ->where('first_name', '!=', $this->ccda->patient_first_name)
-            ->where(function ($q) use ($phones) {
+            ->where(function ($q) use ($phones, $demographics) {
+                $transDems = (new CcdToLogTranformer())->demographics($demographics);
+
                 $q->whereHas('phoneNumbers', function ($q) use ($phones) {
                     $q->whereIn('number', $phones);
-                })->orWhere('last_name', '=', $this->ccda->patient_last_name);
+                })->orWhere('last_name', '=', $this->ccda->patient_last_name)
+                ->when( ! empty($transDems), function ($q) use ($transDems) {
+                    $q->orWhere([
+                        ['address', '=', $transDems['street']],
+                        ['address2', '=', $transDems['street2']],
+                        ['city', '=', $transDems['city']],
+                        ['state', '=', $transDems['state']],
+                        ['zip', '=', $transDems['zip']],
+                    ]);
+                    });
             })
             ->exists();
     }
