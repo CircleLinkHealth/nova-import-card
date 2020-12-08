@@ -439,7 +439,7 @@ class CcdaImporter
      * Example 1: "Foo", "Foo J"
      * Example 2: "Jane", "Jane, J."
      */
-    private function isSameNameButOneHasMiddleInitial(?string $name1, ?string $name2): bool
+    public static function isSameNameButOneHasMiddleInitial(?string $name1, ?string $name2): bool
     {
         if (empty($name1) || empty($name2)) {
             return false;
@@ -515,7 +515,7 @@ class CcdaImporter
         }
 
         //Both names are the same, but one includes a middle name
-        if ($this->isSameNameButOneHasMiddleInitial($this->ccda->patient->first_name, $enrollee->first_name)) {
+        if (self::isSameNameButOneHasMiddleInitial($this->ccda->patient->first_name, $enrollee->first_name)) {
             return;
         }
 

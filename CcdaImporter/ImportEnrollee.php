@@ -259,7 +259,7 @@ class ImportEnrollee
             // Sometimes we may have gotten enrollee from a CSV provided by the practice, so the name may differe by a , or .
             if (
                 $ccdaConcName === $enrolleeConcName
-                || StringHelpers::areSameStringsIfYouCompareOnlyLetters($ccdaConcName, $enrolleeConcName)
+                || StringHelpers::partialOrFullNameMatch($ccdaConcName, $enrolleeConcName)
             ) {
                 $enrollee->medical_record_id = $ccda->id;
 

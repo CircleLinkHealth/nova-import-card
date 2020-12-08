@@ -10,6 +10,7 @@ use CircleLinkHealth\Core\Helpers\StringHelpers;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -72,6 +73,21 @@ class ImportAndApproveEnrollee implements ShouldQueue
         }
     }
 
+    public function middleware()
+    {
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(12)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(30);
+
+        return [$rateLimitedMiddleware];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addDay();
+    }
+
     private function searchForExistingUser(Enrollee &$enrollee)
     {
         $user = User::ofType(['participant', 'survey-only'])
@@ -82,25 +98,10 @@ class ImportAndApproveEnrollee implements ShouldQueue
             })->first();
 
         if ($user
-            && StringHelpers::areSameStringsIfYouCompareOnlyLetters($user->first_name.$user->last_name, $enrollee->first_name.$enrollee->last_name)
+            && StringHelpers::partialOrFullNameMatch($user->first_name.$user->last_name, $enrollee->first_name.$enrollee->last_name)
         ) {
             $enrollee->user_id = $user->id;
             $enrollee->setRelation('user', $user);
         }
-    }
-    
-    public function middleware()
-    {
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(12)
-            ->everySeconds(60)
-            ->releaseAfterSeconds(30);
-        
-        return [$rateLimitedMiddleware];
-    }
-    
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
     }
 }
