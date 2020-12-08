@@ -6,10 +6,8 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use App\Observers\PatientObserver;
 use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use App\Services\Enrollment\EnrollmentInvitationService;
-use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -63,9 +61,9 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
         }
 
         $callQueued = $this->service()->putIntoCallQueue($patient->enrollee, now()->addDays(self::TO_CALL_AFTER_DAYS_HAVE_PASSED));
-        
-        if (!$callQueued){
-            Log::error("Failed to change Enrollee with user_id [$patient->id] status to call_queue.");
+
+        if ( ! $callQueued) {
+            Log::error("Failed to change self enrolment Enrollee [user_id:$patient->id] status to call_queue.");
         }
     }
 
