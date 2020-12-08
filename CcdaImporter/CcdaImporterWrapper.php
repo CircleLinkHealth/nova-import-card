@@ -405,7 +405,7 @@ class CcdaImporterWrapper
         return Location::whereRaw("MATCH(name) AGAINST('$term')")->where('practice_id', $practiceId)->first();
     }
 
-    private static function mysqlMatchProvider(string $term, int $practiceId): ?User
+    public static function mysqlMatchProvider(string $term, int $practiceId): ?User
     {
         $term = self::prepareForMysqlMatch($term);
 
