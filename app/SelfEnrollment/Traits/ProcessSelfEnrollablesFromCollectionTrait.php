@@ -6,7 +6,6 @@
 
 namespace App\SelfEnrollment\Traits;
 
-use App\Jobs\ProcessSelfEnrolablesFromCollectionJob;
 use App\SelfEnrollment\Domain\UnreachablesFinalAction;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -15,6 +14,16 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 trait ProcessSelfEnrollablesFromCollectionTrait
 {
+    /**
+     * @return User
+     */
+    public function billingProviderThatWasSetForEnrolle(User $patientUser, int $providerUserId)
+    {
+        $patientUser->loadMissing('billingProvider');
+
+        return $patientUser->billingProvider()->where('member_user_id', $providerUserId)->first();
+    }
+
     public function decideActionOnUnresponsivePatient(User $user)
     {
         $service  = app(EnrollmentInvitationService::class);
@@ -42,15 +51,7 @@ trait ProcessSelfEnrollablesFromCollectionTrait
             ]
         );
     }
-    /**
-     * @return \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection
-     */
-    public function careTeamProviderThatWasSetForEnrolle(User $patientUser, int $providerUserId)
-    {
-        return $patientUser->careTeamMembers
-            ->where('type', ProcessSelfEnrolablesFromCollectionJob::PROVIDER_TYPE)
-            ->where('member_user_id', $providerUserId);
-    }
+
     /**
      * @return mixed
      */

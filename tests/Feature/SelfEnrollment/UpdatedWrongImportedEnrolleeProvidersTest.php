@@ -23,6 +23,7 @@ use CircleLinkHealth\Customer\Traits\PracticeHelpers;
 use CircleLinkHealth\Customer\Traits\UserHelpers;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Notification;
 use PrepareDataForReEnrollmentTestSeeder;
@@ -110,6 +111,20 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         return $this->dataGroupedByProviderTesting($dataToUpdate);
     }
 
+    public function test_it_will_mark_as_unresonsive_if_letter_not_seen()
+    {
+        $dataToUpdate = $this->createDataCollectionTest(false);
+        $enrollee     = $this->user1->enrollee;
+        ProcessSelfEnrolablesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
+        $this->assertDatabaseHas('enrollees', [
+            'id'                        => $enrollee->id,
+            'status'                    => Enrollee::TO_CALL,
+            'auto_enrollment_triggered' => true,
+            'enrollment_non_responsive' => true,
+            'requested_callback'        => Carbon::parse(now()->addDays(UnreachablesFinalAction::TO_CALL_AFTER_DAYS_HAVE_PASSED))->toDateString(),
+        ]);
+    }
+
     public function test_it_will_not_process_data_if_care_team_provider_is_not_dan_becker()
     {
         $dataToUpdate = $this->createDataCollectionTest(false, true, false);
@@ -163,7 +178,7 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         $dataToUpdate = $this->createDataCollectionTest(false, true, true, true);
 
         $this->assertCcdasFor($this->user1->id, $this->user1->enrollee->provider_id);
-        ProcessSelfEnrolablesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
+        $this->dispatchProcessorJob($dataToUpdate);
 
         $this->user1->fresh();
         $this->assertCcdasFor($this->user1->id, $this->newProviderToImport->id);
@@ -180,20 +195,6 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         ]);
     }
 
-    public function test_it_will_mark_as_unresonsive_if_letter_not_seen()
-    {
-        $dataToUpdate = $this->createDataCollectionTest(false);
-        $enrollee     = $this->user1->enrollee;
-        ProcessSelfEnrolablesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
-        $this->assertDatabaseHas('enrollees', [
-            'id'                        => $enrollee->id,
-            'status'                    => Enrollee::TO_CALL,
-            'auto_enrollment_triggered' => true,
-            'enrollment_non_responsive' => true,
-            'requested_callback'        => Carbon::parse(now()->addDays(UnreachablesFinalAction::TO_CALL_AFTER_DAYS_HAVE_PASSED))->toDateString(),
-        ]);
-    }
-    
     public function test_it_will_put_into_call_queue_if_letter_is_seen()
     {
         $dataToUpdate = $this->createDataCollectionTest(false);
@@ -221,9 +222,7 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
         $dataToUpdate = $this->createDataCollectionTest(false);
 
         $this->assertDataPreUpdate();
-
-        ProcessSelfEnrolablesFromCollectionJob::dispatchNow($dataToUpdate, $this->practice->id);
-
+        $this->dispatchProcessorJob($dataToUpdate);
         $this->assertDataPostUpdate();
     }
 
@@ -353,5 +352,14 @@ class UpdatedWrongImportedEnrolleeProvidersTest extends TestCase
                 'outgoing_phone_number' => +16419544560,
             ]
         );
+    }
+    
+    private function dispatchProcessorJob(Collection $dataToUpdate)
+    {
+        $dataToUpdate->each(function ($enrolleeIds, $providerName) {
+            foreach ($enrolleeIds->chunk(100) as $chunk) {
+                ProcessSelfEnrolablesFromCollectionJob::dispatchNow($chunk, $this->practice->id, $providerName);
+            }
+        });
     }
 }
