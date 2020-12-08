@@ -1,11 +1,14 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
 class AuthServiceProvider extends ServiceProvider
@@ -37,17 +40,18 @@ class AuthServiceProvider extends ServiceProvider
             if (empty($token) || ! Hash::check($this->getTokenString(), $token)) {
                 return null;
             }
-            $user               = new User();
-            $user->id           = $token;
-            $user->first_name   = 'unknown';
+            $user = new User();
+            $user->id = $token;
+            $user->first_name = 'unknown';
             $user->display_name = 'unknown';
-            $user->email        = 'unknown@circlelinkhealth.com';
+            $user->email = 'unknown@circlelinkhealth.com';
 
             return $user;
         });
     }
 
-    private function getTokenString() {
-        return config('app.key') . Carbon::today()->toDateString();
+    private function getTokenString()
+    {
+        return config('app.key').Carbon::today()->toDateString();
     }
 }

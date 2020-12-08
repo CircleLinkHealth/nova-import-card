@@ -15,3 +15,4 @@ _ide_helper.php
 .vapor/
 .env.production
 .env.staging
+/.php_cs.cache

@@ -30,4 +30,14 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'twilio' => [
+        'enabled'          => env('TWILIO_ENABLED', false),
+        'sid'              => env('TWILIO_SID', 'somerandomstring'),
+        'token'            => env('TWILIO_TOKEN', 'somerandomstring'),
+        'from'             => env('TWILIO_FROM', 'somerandomstring'),
+        'twiml-app-sid'    => env('TWIML_APP_SID', 'somerandomstring'),
+        'allow-conference' => env('TWIML_ALLOW_CONFERENCE', false),
+        'allow-recording'  => env('TWIML_ALLOW_RECORDING', false),
+    ],
+
 ];
