@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Console\Commands\UpdateEnrolleeProvidersThatCreatedWrong;
 use Illuminate\Database\Migrations\Migration;
 
 class UpdateMarillacEnrolleesSelfEnrolment extends Migration
@@ -25,7 +26,7 @@ class UpdateMarillacEnrolleesSelfEnrolment extends Migration
     public function up()
     {
         if (App::environment('production')) {
-            Artisan::call('update:marillac-enrollee');
+            Artisan::call(UpdateEnrolleeProvidersThatCreatedWrong::class);
         }
     }
 }
