@@ -35,16 +35,18 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
     use SerializesModels;
 
     const PROVIDER_TYPE = 'billing_provider';
-    private Collection $dataToUpdate;
+    private Collection $enrolleeIds;
     private int $practiceId;
+    private string $provider;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(Collection $dataToUpdate, int $practiceId)
+    public function __construct(Collection $enrolleeIds, int $practiceId, string $provider)
     {
-        $this->dataToUpdate = $dataToUpdate;
-        $this->practiceId   = $practiceId;
+        $this->enrolleeIds = $enrolleeIds;
+        $this->practiceId  = $practiceId;
+        $this->provider    = $provider;
     }
 
     /**
@@ -63,57 +65,54 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
             return;
         }
 
-        foreach ($this->dataToUpdate as $providerName => $enrolleeIds) {
-            $enrolleeIds         = $enrolleeIds->toArray();
-            $correctProviderUser = CcdaImporterWrapper::mysqlMatchProvider($providerName, $this->practiceId);
+        $correctProviderUser = CcdaImporterWrapper::mysqlMatchProvider($this->provider, $this->practiceId);
 
-            if ( ! $correctProviderUser) {
-                $class = ProviderByName::class;
-                Log::warning("Provider [$providerName] not found using $class");
-                $correctProviderUser = User::where('display_name', $providerName)->first();
-            }
+        if ( ! $correctProviderUser) {
+            $class = ProviderByName::class;
+            Log::warning("Provider [$this->provider] not found using $class");
+            $correctProviderUser = User::where('display_name', $this->provider)->first();
+        }
 
-            if ( ! $correctProviderUser) {
-                Log::channel('database')->critical("Provider [$providerName] not found in CPM");
+        if ( ! $correctProviderUser) {
+            Log::channel('database')->critical("Provider [$this->provider] not found in CPM");
+
+            return;
+        }
+
+        foreach ($this->enrolleeIds as $enrolleeId) {
+            /** @var User $patientUser */
+            $patientUser = User::with('enrollee', 'careTeamMembers', 'enrollmentInvitationLinks', 'ccdas')
+                ->whereHas('enrollee', function ($enrollee) use ($enrolleeId) {
+                    $enrollee->where('id', $enrolleeId)->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT);
+                })
+                ->ofPractice($this->practiceId)
+                ->first();
+
+            if ( ! $patientUser) {
+                Log::error("Enrollee with id [$enrolleeId] not found!");
 
                 continue;
             }
 
-            foreach ($enrolleeIds as $enrolleeId) {
-                /** @var User $patientUser */
-                $patientUser = User::with('enrollee', 'careTeamMembers', 'enrollmentInvitationLinks', 'ccdas')
-                    ->whereHas('enrollee', function ($enrollee) use ($enrolleeId) {
-                        $enrollee->where('id', $enrolleeId)->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT);
-                    })
-                    ->ofPractice($this->practiceId)
-                    ->first();
+            if ( ! $patientUser->enrollee->enrollmentInvitationLinks()->exists()) {
+                Log::channel('database')
+                    ->critical("Enrollee with user_id [$patientUser->id] does not have an invitation link.");
 
-                if ( ! $patientUser) {
-                    Log::error("Enrollee with id [$enrolleeId] not found!");
+                continue;
+            }
 
-                    continue;
-                }
+            $wrongProviderUserId = $wrongProviderUser->id;
 
-                if ( ! $patientUser->enrollee->enrollmentInvitationLinks()->exists()) {
-                    Log::channel('database')
-                        ->critical("Enrollee with user_id [$patientUser->id] does not have an invitation link.");
+            $ccdasToUpdate = Ccda::where('patient_id', $patientUser->id)
+                ->where('billing_provider_id', $wrongProviderUserId)
+                ->pluck('id');
 
-                    continue;
-                }
-
-                $wrongProviderUserId = $wrongProviderUser->id;
-
-                $ccdasToUpdate = Ccda::where('patient_id', $patientUser->id)
-                    ->where('billing_provider_id', $wrongProviderUserId)
-                    ->pluck('id');
-
-                if ($ccdasToUpdate->isNotEmpty()) {
-                    app(ProcessSelfEnrolablesWithCcdas::class)
-                        ->process($patientUser, $ccdasToUpdate, $wrongProviderUserId, $correctProviderUser->id);
-                } else {
-                    app(ProcessSelfEnrolablesWithNoCcdas::class)
-                        ->process($patientUser, $wrongProviderUser->id, $correctProviderUser->id);
-                }
+            if ($ccdasToUpdate->isNotEmpty()) {
+                app(ProcessSelfEnrolablesWithCcdas::class)
+                    ->process($patientUser, $ccdasToUpdate, $wrongProviderUserId, $correctProviderUser->id);
+            } else {
+                app(ProcessSelfEnrolablesWithNoCcdas::class)
+                    ->process($patientUser, $wrongProviderUser->id, $correctProviderUser->id);
             }
         }
     }

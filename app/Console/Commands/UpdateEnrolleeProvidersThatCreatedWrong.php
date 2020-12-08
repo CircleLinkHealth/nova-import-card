@@ -60,7 +60,11 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
             $this->error($exception->getMessage());
             return;
         }
-
-        ProcessSelfEnrolablesFromCollectionJob::dispatch($dataFromCsvProcessed, $practice->id);
+    
+        $dataFromCsvProcessed->each(function ($enrolleeIds, $provider) use ($practice){
+            foreach ($enrolleeIds->chunk(100) as $chunk) {
+                ProcessSelfEnrolablesFromCollectionJob::dispatch($chunk, $practice->id, $provider);
+            }
+        });
     }
 }
