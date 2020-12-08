@@ -6,7 +6,7 @@ environments:
     cli-memory: 512
     runtime: 'php-7.4'
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
     deploy:
       - 'php artisan migrate --force'
   staging:
@@ -15,4 +15,4 @@ environments:
     cli-memory: 512
     runtime: 'php-7.4'
     build:
-      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
+      - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
