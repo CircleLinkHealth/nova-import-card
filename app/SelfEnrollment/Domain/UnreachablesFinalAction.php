@@ -53,7 +53,7 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
             return;
         }
 
-        if ($this->isUnreachablePatient($patient)) {
+        if ($this->service()->isUnreachablePatient($patient)) {
             return;
         }
 
@@ -77,27 +77,6 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
                 $q->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT)
                     ->whereNull('source');
             })->with('enrollee');
-    }
-
-    /**
-     * We need the enrollee model created when patient became "unreachable".
-     *
-     * @see PatientObserver
-     * @see UnreachablePatientsToCaPanel
-     */
-    private function isUnreachablePatient(User $user): bool
-    {
-        if ( ! $user->isParticipant()) {
-            return false;
-        }
-        if (Enrollee::QUEUE_AUTO_ENROLLMENT !== $user->enrollee->status) {
-            return false;
-        }
-        if (Enrollee::UNREACHABLE_PATIENT !== $user->enrollee->source) {
-            return false;
-        }
-
-        return true;
     }
 
     private function patientHasLoggedIn(User $patient): bool

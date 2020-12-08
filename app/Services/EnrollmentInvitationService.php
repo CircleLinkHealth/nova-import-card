@@ -14,6 +14,27 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 class EnrollmentInvitationService
 {
     /**
+     * We need the enrollee model created when patient became "unreachable".
+     *
+     * @see PatientObserver
+     * @see UnreachablePatientsToCaPanel
+     */
+    public function isUnreachablePatient(User $user): bool
+    {
+        if ( ! $user->isParticipant()) {
+            return false;
+        }
+        if (Enrollee::QUEUE_AUTO_ENROLLMENT !== $user->enrollee->status) {
+            return false;
+        }
+        if (Enrollee::UNREACHABLE_PATIENT !== $user->enrollee->source) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Non responsive patients were not reachable during the SelfEnrollment process.
      * Marking them as unreachable means they will get a physical letter inviting them to enroll mailed to their address.
      */
