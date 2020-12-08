@@ -7,10 +7,12 @@
 namespace App\Jobs;
 
 use App\Console\Commands\UpdateEnrolleeProvidersThatCreatedWrong;
+use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use App\SelfEnrollment\Traits\ProcessSelfEnrollablesFromCollectionTrait;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -62,17 +64,12 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
         }
 
         foreach ($this->enrolleeIds as $enrolleeId) {
-            /** @var User $patientUser */
-            $patientUser = User::with('enrollee', 'billingProvider', 'enrollmentInvitationLinks', 'ccdas')
-                ->whereHas('enrollee', function ($enrollee) use ($enrolleeId) {
-                    $enrollee->where('id', $enrolleeId);
-                })
-                ->ofType(['participant', 'survey-only'])
-                ->ofPractice($this->practiceId)
-                ->first();
+            $patientUser = $this->getUser($enrolleeId, $this->practiceId);
 
             if ( ! $patientUser) {
                 Log::error("Enrollee with id [$enrolleeId] not found!");
+                CreateSurveyOnlyUserFromEnrollee::dispatch(Enrollee::find($enrolleeId));
+                $patientUser = $this->getUser($enrolleeId, $this->practiceId);
 
                 continue;
             }
@@ -107,5 +104,16 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
 
             $this->decideActionOnUnresponsivePatient($patientUser);
         }
+    }
+
+    private function getUser(int $enrolleeId, int $practiceId)
+    {
+        return User::with('enrollee', 'billingProvider', 'enrollmentInvitationLinks', 'ccdas')
+            ->whereHas('enrollee', function ($enrollee) use ($enrolleeId) {
+                $enrollee->where('id', $enrolleeId);
+            })
+            ->ofType(['participant', 'survey-only'])
+            ->ofPractice($practiceId)
+            ->first();
     }
 }
