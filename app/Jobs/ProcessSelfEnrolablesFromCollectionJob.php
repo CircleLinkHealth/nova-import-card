@@ -13,6 +13,7 @@ use App\SelfEnrollment\Services\ProcessSelfEnrolablesWithNoCcdas;
 use App\SelfEnrollment\Traits\ProcessSelfEnrollablesFromCollectionTrait;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
@@ -64,7 +65,7 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
 
         foreach ($this->dataToUpdate as $providerName => $enrolleeIds) {
             $enrolleeIds         = $enrolleeIds->toArray();
-            $correctProviderUser = ProviderByName::first($providerName);
+            $correctProviderUser = CcdaImporterWrapper::mysqlMatchProvider($providerName, $this->practiceId);
 
             if ( ! $correctProviderUser) {
                 $class = ProviderByName::class;
@@ -75,7 +76,7 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
             if ( ! $correctProviderUser) {
                 Log::channel('database')->critical("Provider [$providerName] not found in CPM");
 
-                return;
+                continue;
             }
 
             foreach ($enrolleeIds as $enrolleeId) {
@@ -84,20 +85,20 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
                     ->whereHas('enrollee', function ($enrollee) use ($enrolleeId) {
                         $enrollee->where('id', $enrolleeId)->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT);
                     })
-                    ->where('program_id', $this->practiceId)
+                    ->ofPractice($this->practiceId)
                     ->first();
 
                 if ( ! $patientUser) {
                     Log::error("Enrollee with id [$enrolleeId] not found!");
 
-                    return;
+                    continue;
                 }
 
                 if ( ! $patientUser->enrollee->enrollmentInvitationLinks()->exists()) {
                     Log::channel('database')
                         ->critical("Enrollee with user_id [$patientUser->id] does not have an invitation link.");
 
-                    return;
+                    continue;
                 }
 
                 $wrongProviderUserId = $wrongProviderUser->id;
@@ -109,14 +110,10 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
                 if ($ccdasToUpdate->isNotEmpty()) {
                     app(ProcessSelfEnrolablesWithCcdas::class)
                         ->process($patientUser, $ccdasToUpdate, $wrongProviderUserId, $correctProviderUser->id);
-                    
-                }else{
+                } else {
                     app(ProcessSelfEnrolablesWithNoCcdas::class)
                         ->process($patientUser, $wrongProviderUser->id, $correctProviderUser->id);
                 }
-
-                
-                
             }
         }
     }
