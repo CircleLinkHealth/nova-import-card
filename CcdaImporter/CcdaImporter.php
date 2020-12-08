@@ -37,7 +37,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CcdaImporter
 {
-    const FAMILY_EMAIL_SUFFIX = '+family';
+    const EMAIL_EXISTS_BUT_NOT_FAMILY_PREFIX = 'email_taken_';
+    const FAMILY_EMAIL_SUFFIX                = '+family';
     /**
      * How many times to try the importing process.
      */
@@ -98,6 +99,26 @@ class CcdaImporter
     }
 
     /**
+     * Returns true if both names are the same, but one includes a middle initial.
+     *
+     * Example 1: "Foo", "Foo J"
+     * Example 2: "Jane", "Jane, J."
+     */
+    public static function isSameNameButOneHasMiddleInitial(?string $name1, ?string $name2): bool
+    {
+        if (empty($name1) || empty($name2)) {
+            return false;
+        }
+
+        //If none of the strings contain spaces, we assume none contain a middle initial
+        if ( ! Str::contains($name1, ' ') && ! Str::contains($name2, ' ')) {
+            return false;
+        }
+
+        return 1 === levenshtein(extractLetters(strtolower($name1)), extractLetters(strtolower($name2)));
+    }
+
+    /**
      * Create a new CarePlan.
      *
      * @return $this
@@ -131,6 +152,8 @@ class CcdaImporter
 
         if ($this->isFamily($email, $demographics, $this->enrollee)) {
             $email = self::convertToFamilyEmail($email);
+        } elseif ($this->emailIsTaken($email)) {
+            $email = self::EMAIL_EXISTS_BUT_NOT_FAMILY_PREFIX.$email;
         }
 
         $newPatientUser = (new UserRepository())->createNewUser(
@@ -165,6 +188,15 @@ class CcdaImporter
 
         $this->ccda->patient_id = $newPatientUser->id;
         $this->ccda->setRelation('patient', $newPatientUser);
+    }
+
+    private function emailIsTaken(string $email)
+    {
+        return User::ofType(['participant', 'survey-only'])
+            ->where('email', $email)
+            ->where('first_name', '!=', $this->ccda->patient_first_name)
+            ->where('last_name', '!=', $this->ccda->patient_last_name)
+            ->exists();
     }
 
     private function ensurePatientHasParticipantRole()
@@ -425,32 +457,12 @@ class CcdaImporter
         return User::ofType(['participant', 'survey-only'])
             ->where('email', $email)
             ->where('first_name', '!=', $this->ccda->patient_first_name)
-            ->where(function ($q) use ($phones, $demographics) {
+            ->where(function ($q) use ($phones) {
                 $q->whereHas('phoneNumbers', function ($q) use ($phones) {
                     $q->whereIn('number', $phones);
                 })->orWhere('last_name', '=', $this->ccda->patient_last_name);
             })
             ->exists();
-    }
-
-    /**
-     * Returns true if both names are the same, but one includes a middle initial.
-     *
-     * Example 1: "Foo", "Foo J"
-     * Example 2: "Jane", "Jane, J."
-     */
-    public static function isSameNameButOneHasMiddleInitial(?string $name1, ?string $name2): bool
-    {
-        if (empty($name1) || empty($name2)) {
-            return false;
-        }
-
-        //If none of the strings contain spaces, we assume none contain a middle initial
-        if ( ! Str::contains($name1, ' ') && ! Str::contains($name2, ' ')) {
-            return false;
-        }
-
-        return 1 === levenshtein(extractLetters(strtolower($name1)), extractLetters(strtolower($name2)));
     }
 
     private function patientEmail()
