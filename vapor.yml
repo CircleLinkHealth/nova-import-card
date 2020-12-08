@@ -10,7 +10,7 @@ environments:
     deploy:
       - 'php artisan migrate --force'
   staging:
-    domain: cpm-caller.clh-staging.com
+    domain: cpm-caller-laravel.clh-staging.com
     memory: 1024
     cli-memory: 512
     runtime: 'php-7.4'
