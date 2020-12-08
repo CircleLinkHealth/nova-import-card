@@ -61,10 +61,14 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
             return;
         }
 
-        $dataFromCsvProcessed->each(function ($enrolleeIds, $providerName) use ($practice) {
-            foreach ($enrolleeIds->chunk(100) as $chunk) {
-                ProcessSelfEnrolablesFromCollectionJob::dispatch($chunk, $practice->id, $providerName);
-            }
-        });
+        $dataFromCsvProcessed
+            ->each(function ($enrolleeIds, $providerName) use ($practice) {
+                if (str_contains($providerName, 'PCP Unknown')) {
+                    return;
+                }
+                foreach ($enrolleeIds->chunk(100) as $chunk) {
+                    ProcessSelfEnrolablesFromCollectionJob::dispatch($chunk, $practice->id, $providerName);
+                }
+            });
     }
 }
