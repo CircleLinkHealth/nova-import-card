@@ -42,7 +42,6 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
 
     public function handle()
     {
-//        @todo: Make an enpoint to upload data from Csv / Practice, in future iteration.
         $practice    = Practice::where('name', self::MARILLAC_NAME)->firstOrFail();
         $dataFromCsv = Excel::toCollection(new ReadSelfEnrolmentCsvData(), 'storage/selfEnrolment-templates/MarillacManuallyProcessEnrolmentPatients.csv')->flatten(1);
 
@@ -58,12 +57,13 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
             $dataFromCsvProcessed = $processCsvService->processCsvCollection($dataFromCsv);
         } catch (\Exception $exception) {
             $this->error($exception->getMessage());
+
             return;
         }
-    
-        $dataFromCsvProcessed->each(function ($enrolleeIds, $provider) use ($practice){
+
+        $dataFromCsvProcessed->each(function ($enrolleeIds, $providerName) use ($practice) {
             foreach ($enrolleeIds->chunk(100) as $chunk) {
-                ProcessSelfEnrolablesFromCollectionJob::dispatch($chunk, $practice->id, $provider);
+                ProcessSelfEnrolablesFromCollectionJob::dispatch($chunk, $practice->id, $providerName);
             }
         });
     }
