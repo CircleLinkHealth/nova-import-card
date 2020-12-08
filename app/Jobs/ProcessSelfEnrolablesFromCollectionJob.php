@@ -83,7 +83,7 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
             /** @var User $patientUser */
             $patientUser = User::with('enrollee', 'careTeamMembers', 'enrollmentInvitationLinks', 'ccdas')
                 ->whereHas('enrollee', function ($enrollee) use ($enrolleeId) {
-                    $enrollee->where('id', $enrolleeId)->where('status', Enrollee::QUEUE_AUTO_ENROLLMENT);
+                    $enrollee->where('id', $enrolleeId);
                 })
                 ->ofPractice($this->practiceId)
                 ->first();
