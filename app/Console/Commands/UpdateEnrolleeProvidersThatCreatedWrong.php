@@ -62,8 +62,9 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
         }
 
         $dataFromCsvProcessed
+            ->reverse()
             ->each(function ($enrolleeIds, $providerName) use ($practice) {
-                if (str_contains($providerName, $this->invalidProviderNames())) {
+                if (in_array($providerName, $this->invalidProviderNames())) {
                     return;
                 }
                 foreach ($enrolleeIds->chunk(100) as $chunk) {
@@ -75,8 +76,10 @@ class UpdateEnrolleeProvidersThatCreatedWrong extends Command
     private function invalidProviderNames()
     {
         return [
-            'PCP Unknown',
+            'PCP Unknown . TRANSFERRED Care',
             'Marillac PCP . Unassigned',
+            'PCP Unknown . Outreach Non',
+            'PCP Unknown . DISMISSED',
         ];
     }
 }
