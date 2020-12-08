@@ -57,11 +57,7 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
         $wrongProviderEmail = UpdateEnrolleeProvidersThatCreatedWrong::WRONG_PROVIDER_EMAIL;
         $wrongProviderUser  = User::where('email', $wrongProviderEmail)->firstOrFail();
 
-        $correctProviderUser = CcdaImporterWrapper::mysqlMatchProvider($this->providerName, $this->practiceId);
-
-        if ( ! $correctProviderUser) {
-            throw new \Exception("Provider [$this->providerName] not found in CPM");
-        }
+        $correctProviderUser = CcdaImporterWrapper::mysqlMatchProvider($this->providerName, $this->practiceId) ?? null;
 
         foreach ($this->enrolleeIds as $enrolleeId) {
             $patientUser = $this->getUser($enrolleeId, $this->practiceId);
@@ -75,7 +71,7 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
             }
 
             $wrongProviderUserId   = $wrongProviderUser->id;
-            $correctProviderUserId = $correctProviderUser->id;
+            $correctProviderUserId = optional($correctProviderUser)->id;
 
             $updated = Ccda::where(function ($ccda) use ($patientUser) {
                 $ccda->where('patient_id', $patientUser->id)
@@ -92,7 +88,8 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
                 $patientUser->setBillingProviderId($correctProviderUserId);
 
                 $updatedEnrollee = $patientUser->enrollee->update([
-                    'provider_id' => $correctProviderUserId,
+                    'provider_id'             => $correctProviderUserId,
+                    'referring_provider_name' => optional($correctProviderUser)->getFullName() ?? $this->providerName,
                 ]);
 
                 if ( ! $updatedEnrollee) {
