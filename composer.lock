@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc453b3f1f87915e732c7a62ad6ce4f2",
+    "content-hash": "048da6e0898b509a262c3856f2c32df7",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1246,11 +1246,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.7.0",
+            "version": "v2.7.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "051ab32c846c4a974a419617871fa7a9928e5659"
+                "reference": "f4b2fc96fbf1ea060742c6a388194adbe0bcdfae"
             },
             "type": "laravel-module",
             "extra": {
@@ -1272,7 +1272,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-09T02:09:25+00:00"
+            "time": "2020-12-09T16:30:36+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
