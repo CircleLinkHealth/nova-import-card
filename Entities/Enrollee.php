@@ -18,6 +18,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 /**
@@ -136,6 +137,7 @@ class Enrollee extends BaseModel
     use MySQLSearchable;
     use Notifiable;
     use SelfEnrollableTrait;
+    use SoftDeletes;
 
     // Agent array keys
     const AGENT_EMAIL_KEY        = 'email';
