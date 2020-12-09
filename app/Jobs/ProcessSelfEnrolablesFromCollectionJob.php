@@ -61,6 +61,13 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
 
         foreach ($this->enrolleeIds as $enrolleeId) {
             $patientUser = $this->getUser($enrolleeId, $this->practiceId);
+            
+            $olderEnrolleesDeleted = Enrollee::where('id', '!=', $enrolleeId)
+                ->where('practice_id', $this->practiceId)
+                ->where('mrn', $patientUser->enrollee->mrn)
+                ->where('first_name', $patientUser->enrollee->first_name)
+                ->where('last_name', $patientUser->enrollee->last_name)
+                ->delete();
 
             if ( ! $patientUser) {
                 Log::error("Enrollee with id [$enrolleeId] not found!");
