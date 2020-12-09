@@ -3685,7 +3685,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function setBillingProviderId($value)
     {
         if (empty($value)) {
-            Log::debug("Removing provider for enrollee[$this->id] because value[$value] is empty");
+            Log::debug("Removing provider for user[$this->id] because value[$value] is empty");
             $this->careTeamMembers()->where('type', CarePerson::BILLING_PROVIDER)->delete();
 
             return true;
