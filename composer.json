@@ -29,6 +29,7 @@
     },
     "require": {
         "circlelinkhealth/core-module": "*",
+        "circlelinkhealth/ccm-billing-module": "*",
         "laravel/passport": "^8.0",
         "laravel/scout": "^7.1|^8.0",
         "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -39,6 +40,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-core.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-ccm-billing.git"
         }
     ]
 }

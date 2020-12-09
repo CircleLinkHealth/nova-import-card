@@ -79,7 +79,7 @@ class ItemizedBillablePatientsReport
                             $u = $summary->patient;
 
                             $patientData = new PatientReportData();
-                            $patientData->setCcmTime(round($summary->ccm_time / 60, 2));
+                            $patientData->setCcmTime(round($summary->getBillableCcmCs() / 60, 2));
                             $patientData->setBhiTime(round($summary->bhi_time / 60, 2));
                             $patientData->setName($u->getFullName());
                             $patientData->setDob($u->getBirthDate());
@@ -88,7 +88,7 @@ class ItemizedBillablePatientsReport
                             $patientData->setBillingCodes($u->billingCodes($this->month));
 
                             $patientData->setCcmProblemCodes(
-                                $this->getCcmAttestedConditions($summary)
+                                $this->getCcmAttestedConditions($summary, $u)
                             );
 
                             $patientData->setAllCcmProblemCodes($summary);
@@ -200,7 +200,7 @@ class ItemizedBillablePatientsReport
 
                             $patientData = new PatientReportData();
                             $patientData->setCcmTime(
-                                round($summary->ccm_time / 60, 2)
+                                round($summary->getBillableCcmCs() / 60, 2)
                             );
                             $patientData->setBhiTime(
                                 round($summary->bhi_time / 60, 2)
@@ -213,7 +213,7 @@ class ItemizedBillablePatientsReport
                             $patientData->setBillingCodes(
                                 $patientUser->billingCodes($this->month)
                             );
-                            $patientData->setCcmProblemCodes($this->getCcmAttestedConditions($summary));
+                            $patientData->setCcmProblemCodes($this->getCcmAttestedConditions($summary, $patientUser));
 
                             $patientData->setAllCcmProblemCodes($this->getAllCcmConditions(
                                 $patientUser,
@@ -290,11 +290,7 @@ class ItemizedBillablePatientsReport
 
     private function getAllCcmConditions(User $patient, PatientMonthlySummary $summary)
     {
-        $problems = $patient->ccdProblems->where(
-            'cpm_problem_id',
-            '!=',
-            genericDiabetes()->id
-        );
+        $problems = $patient->ccdProblems;
 
         if ($summary->hasServiceCode(ChargeableService::BHI)) {
             $problems = $problems->where('cpmProblem.is_behavioral', '=', false);
@@ -312,8 +308,12 @@ class ItemizedBillablePatientsReport
         return $this->formatProblemCodesForReport($summary->bhiAttestedProblems()->filter());
     }
 
-    private function getCcmAttestedConditions(PatientMonthlySummary $summary)
+    private function getCcmAttestedConditions(PatientMonthlySummary $summary, User $patient)
     {
+        if ($summary->hasServiceCode(ChargeableService::RPM)) {
+            return $this->getAllCcmConditions($patient, $summary);
+        }
+
         return $this->formatProblemCodesForReport($summary->ccmAttestedProblems()->filter());
     }
 

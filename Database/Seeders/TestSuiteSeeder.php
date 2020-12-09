@@ -5,6 +5,7 @@
  */
 
 use CircleLinkHealth\CcmBilling\Database\Seeders\BillingRevampTableSeeder;
+use CircleLinkHealth\CcmBilling\Database\Seeders\ChargeableServiceSeeder;
 use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;

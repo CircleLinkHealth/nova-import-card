@@ -328,6 +328,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User hasBhiConsent()
  * @property EloquentCollection|EndOfMonthCcmStatusLog[]                                                             $endOfMonthCcmStatusLogs
  * @property int|null                                                                                                $end_of_month_ccm_status_logs_count
+ * @method   static                                                                                                  \Illuminate\Database\Eloquent\Builder|User searchPhoneNumber($phones)
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -664,13 +665,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function billableProblems()
     {
-        $genericDiabetes = \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', 'Diabetes')->firstOrFail();
         //todo: use billing repo
         return $this->ccdProblems()
             ->whereNotNull('cpm_problem_id')
-            ->when($genericDiabetes, function ($p) use ($genericDiabetes) {
-                $p->where('cpm_problem_id', '!=', $genericDiabetes->id);
-            })
             ->with(['cpmProblem', 'icd10Codes'])
             ->where('is_monitored', true);
     }
@@ -880,6 +877,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    
     public function ccdMedications()
     {
         return $this->hasMany(Medication::class, 'patient_id');
@@ -1804,6 +1802,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         ];
     }
 
+    public function getPcmTime(): int
+    {
+        if (is_null($this->id)) {
+            return 0;
+        }
+
+        return PatientMonthlyServiceTime::pcm($this->id, Carbon::now()->startOfMonth());
+    }
+
     public function getPhone()
     {
         if ( ! $this->phoneNumbers) {
@@ -2407,6 +2414,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isProvider(): bool
     {
         return $this->hasRole('provider');
+    }
+
+    public function isRhc(): bool
+    {
+        if (is_null($this->id)) {
+            return false;
+        }
+
+        return \Cache::remember("user:$this->id:is_rhc", 5, function () {
+            return PatientIsOfServiceCode::execute($this->id, ChargeableService::GENERAL_CARE_MANAGEMENT);
+        });
     }
 
     public function isRpm(): bool
