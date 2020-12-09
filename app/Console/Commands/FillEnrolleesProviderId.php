@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Search\ProviderByName;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 
@@ -42,12 +42,16 @@ class FillEnrolleesProviderId extends Command
      */
     public function handle()
     {
-        Enrollee::where('practice_id', $this->argument('practiceId'))->whereNull('provider_id')->whereNotNull('referring_provider_name')->chunkById(200, function ($enrollees) {
-            $enrollees->each(function ($enrollee) {
+        $practiceId = $this->argument('practiceId');
+        Enrollee::where('practice_id', $practiceId)
+            ->whereNull('provider_id')
+            ->whereNotNull('referring_provider_name')
+            ->chunkById(200, function ($enrollees) use($practiceId) {
+            $enrollees->each(function ($enrollee) use($practiceId){
                 if ( ! empty($enrollee->provider_id)) {
                     return;
                 }
-                if ($provider = ProviderByName::first($enrollee->referring_provider_name)) {
+                if ($provider = CcdaImporterWrapper::mysqlMatchProvider($enrollee->referring_provider_name, $practiceId)) {
                     $this->warn("Assign providerid:{$provider->id} to enrolleeid:{$enrollee->id}.");
                     $enrollee->provider_id = $provider->id;
                     $enrollee->save();
