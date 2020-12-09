@@ -22,8 +22,7 @@ class ImportEnrollee
     public static function import(Enrollee &$enrollee)
     {
         $static = new static();
-
-        //verify it wasn't already imported
+        
         if ($enrollee->user_id) {
             /** @var User|null $patientUser */
             $patientUserImported = $static->handleExistingUser($enrollee);
@@ -35,13 +34,11 @@ class ImportEnrollee
 
         /** @var ImportService $importService */
         $importService = app(ImportService::class);
-
-        //import ccda
+        
         if ($importService->isCcda($enrollee->medical_record_type)) {
             return $importService->importExistingCcda($enrollee->medical_record_id, $enrollee);
         }
-
-        //import from AthenaAPI
+        
         if ($enrollee->targetPatient) {
             return $static->importTargetPatient($enrollee);
         }
@@ -50,10 +47,15 @@ class ImportEnrollee
             return $importService->importExistingCcda($enrollee->medical_record_id, $enrollee);
         }
 
-        //import from eligibility jobs
-        $job = $static->eligibilityJob($enrollee);
+        //If enrollee is from uploaded CSV from Nova Page,
+        //Where we create Enrollees without any other data,
+        //so we can consent them and then ask the practice to send us the CCDs
+        //It is expected to reach this point, do not throw error
+        if (Enrollee::UPLOADED_CSV === $enrollee->source) {
+            return;
+        }
 
-        if ($job) {
+        if ($job = $static->eligibilityJob($enrollee)) {
             $importedUsingMrn = $static->importCcdUsingMrnFromEligibilityJob($job, $enrollee);
 
             if (false !== $importedUsingMrn) {
@@ -61,14 +63,6 @@ class ImportEnrollee
             }
 
             $static->importFromEligibilityJob($enrollee, $job);
-        }
-
-        //If enrollee is from uploaded CSV from Nova Page,
-        //Where we create Enrollees without any other data,
-        //so we can consent them and then ask the practice to send us the CCDs
-        //It is expected to reach this point, do not throw error
-        if (Enrollee::UPLOADED_CSV === $enrollee->source) {
-            return;
         }
 
         if (Enrollee::ENROLLED === $enrollee->status) {
