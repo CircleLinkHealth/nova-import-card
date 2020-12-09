@@ -7,7 +7,6 @@
 namespace App\Nova\Importers;
 
 use App\Nova\Actions\ImportEnrollees;
-use App\Search\ProviderByName;
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
