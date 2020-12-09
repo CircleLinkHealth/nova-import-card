@@ -86,7 +86,9 @@ class ProcessSelfEnrolablesFromCollectionJob implements ShouldQueue
 
             if ($patientUser->getBillingProviderId() !== $correctProviderUserId) {
                 $patientUser->setBillingProviderId($correctProviderUserId);
+            }
 
+            if ($patientUser->enrollee->provider_id !== $correctProviderUserId) {
                 $updatedEnrollee = $patientUser->enrollee->update([
                     'provider_id'             => $correctProviderUserId,
                     'referring_provider_name' => optional($correctProviderUser)->getFullName() ?? $this->providerName,
