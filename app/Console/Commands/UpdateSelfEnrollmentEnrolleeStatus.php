@@ -17,7 +17,7 @@ class UpdateSelfEnrollmentEnrolleeStatus extends Command
      *
      * @var string
      */
-    protected $description = 'Update status on auto enrolment triggered Enrollees that was failed to update.';
+    protected $description = 'Update status on auto enrolment triggered Enrollees to call_queue.';
     /**
      * The name and signature of the console command.
      *
