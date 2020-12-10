@@ -36,13 +36,13 @@ class InboundCallbackMultimatchService
         $patientFieldName    = $this->sanitizedPatientFieldName($inboundPostmarkData['ptn']);
         $callerIdFieldName   = $this->sanitizedPatientFieldName($inboundPostmarkData['callerId']);
         $fromFieldName       = $this->sanitizedPatientFieldName($inboundPostmarkData['from']);
-        $nameFieldsToCompare = (new InboundCallbackNameFields($callerIdFieldName, $fromFieldName, $patientFieldName))->allNameFields();
+        $nameFieldsToCompare = (new InboundCallbackNameFields($callerIdFieldName, $fromFieldName, $patientFieldName));
 
         if (PostmarkInboundCallbackMatchResults::SELF === $inboundPostmarkData['ptn']) {
             return $this->matchUsingNameFields($matchedWithPhone, $inboundPostmarkData, $recordId, $nameFieldsToCompare);
         }
 
-        $matchedInboundPtnFieldName = $this->getMatchedPatientsUsingName($matchedWithPhone, [$patientFieldName, $callerIdFieldName]);
+        $matchedInboundPtnFieldName = $this->getMatchedPatientsUsingName($matchedWithPhone, $nameFieldsToCompare);
 
         if (is_null($matchedInboundPtnFieldName)) {
             Log::critical("Couldn't match sanitized patient name for record_id:$recordId in postmark_inbound_mail");
@@ -59,14 +59,14 @@ class InboundCallbackMultimatchService
     }
 
     /**
-     * @return Collection
+     * @return \Collection|Collection
      */
-    private function getMatchedPatientsUsingName(Collection $matchedWithPhone, array $namesToCompare)
+    private function getMatchedPatientsUsingName(Collection $matchedWithPhone, InboundCallbackNameFields $namesToCompare)
     {
         $matchedMatientsResults = collect();
         $matchedWithPhone->transform(function ($patientUser) use (&$matchedMatientsResults, $namesToCompare) {
             $dbPatientName = $this->sanitizedPatientFieldName($patientUser->display_name);
-            foreach ($namesToCompare as $fieldToCompare) {
+            foreach ($namesToCompare->allNameFields() as $fieldToCompare) {
                 if ($fieldToCompare === $dbPatientName) {
                     if ( ! in_array($patientUser->id, $matchedMatientsResults->pluck('id')->toArray())) {
                         $matchedMatientsResults->push($patientUser);
@@ -77,30 +77,26 @@ class InboundCallbackMultimatchService
 
         return $matchedMatientsResults;
     }
-    
+
     /**
-     * @param Collection $patientsMatchedByPhone
-     * @param array $inboundPostmarkData
-     * @param int $recordId
-     * @param array $namesToCompare
      * @return array|void
      */
-    private function matchUsingNameFields(Collection $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId, array $namesToCompare)
+    private function matchUsingNameFields(Collection $patientsMatchedByPhone, array $inboundPostmarkData, int $recordId, InboundCallbackNameFields $namesToCompare)
     {
-        $patientsMatchedByCallerFieldName = $this->getMatchedPatientsUsingName($patientsMatchedByPhone, $namesToCompare);
+        $patientsMatchedByNameFields = $this->getMatchedPatientsUsingName($patientsMatchedByPhone, $namesToCompare);
 
-        if (0 === $patientsMatchedByCallerFieldName->count()) {
+        if (0 === $patientsMatchedByNameFields->count()) {
             Log::critical("Couldn't match patient for record_id:$recordId in postmark_inbound_mail");
             sendSlackMessage('#carecoach_ops_alerts', "Could not find a patient match for record_id:[$recordId] in postmark_inbound_mail");
 
             return;
         }
 
-        if (1 === $patientsMatchedByCallerFieldName->count()) {
-            return $this->resolveSingleMatchResult($patientsMatchedByCallerFieldName->first(), $inboundPostmarkData);
+        if (1 === $patientsMatchedByNameFields->count()) {
+            return $this->resolveSingleMatchResult($patientsMatchedByNameFields->first(), $inboundPostmarkData);
         }
 
-        return $this->multimatchResult($patientsMatchedByCallerFieldName, PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF);
+        return $this->multimatchResult($patientsMatchedByNameFields, PostmarkInboundCallbackMatchResults::NO_NAME_MATCH_SELF);
     }
 
     /**
