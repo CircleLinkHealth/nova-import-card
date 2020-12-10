@@ -22,7 +22,10 @@ class AppointmentRepository
 
     public function belongsToUser($id, $userId)
     {
-        return (bool) $this->model()->where(['id' => $id, 'patient_id' => $userId])->first();
+        return (bool) $this->model()->where([
+            ['id',  '=', $id],
+            ['patient_id', '=', $userId],
+        ])->exists();
     }
 
     public function count()

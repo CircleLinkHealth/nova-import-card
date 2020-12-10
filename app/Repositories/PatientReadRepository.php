@@ -65,6 +65,7 @@ class PatientReadRepository
                     $q->patientsPendingCLHApproval(auth()->user());
                 }
             })
+            ->without(['perms', 'roles'])
             ->when(
                 false === $showPracticePatients,
                 function ($query) {
