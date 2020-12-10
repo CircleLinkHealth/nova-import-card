@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\CcdaImporter;
 
 use App\Search\LocationByName;
-use App\Search\ProviderByName;
 use CircleLinkHealth\Customer\Console\Commands\CreateLocationsFromAthenaApi;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -327,32 +326,6 @@ class CcdaImporterWrapper
         if ($provider = self::mysqlMatchProvider($term, $practiceId)) {
             return $provider;
         }
-        $baseQuery = (new ProviderByName())->query($term);
-
-        if ('algolia' === config('scout.driver')) {
-            return $baseQuery
-                ->with(
-                    [
-                        'typoTolerance' => true,
-                    ]
-                )->when(
-                    ! empty($practiceId),
-                    function ($q) use ($practiceId) {
-                        $q->whereIn('practice_ids', [$practiceId]);
-                    }
-                )
-                ->first();
-        }
-
-        return $baseQuery->when(
-            ! empty($practiceId),
-            function ($q) use ($practiceId) {
-                if ( ! method_exists($q, 'ofPractice')) {
-                    return $q->whereIn('practice_ids', [$practiceId]);
-                }
-                $q->ofPractice($practiceId);
-            }
-        )->first();
     }
 
     /**
