@@ -332,7 +332,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
-    use \Laravel\Nova\Actions\Actionable;
     use Authenticatable;
     use CanResetPassword;
     use CerberusSiteUserTrait;
@@ -341,6 +340,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use HasEmrDirectAddress;
     use HasMediaTrait;
     use Impersonate;
+    use \Laravel\Nova\Actions\Actionable;
     use MakesOrReceivesCalls;
     use Notifiable;
     use PivotEventTrait;
@@ -877,7 +877,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    
     public function ccdMedications()
     {
         return $this->hasMany(Medication::class, 'patient_id');
@@ -2766,13 +2765,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->withPivot('role_id')
             ->when(
                 $onlyActive,
-                function ($query) use ($onlyActive) {
+                function ($query) {
                     return $query->where('active', '=', 1);
                 }
             )
             ->when(
                 $onlyEnrolledPatients,
-                function ($query) use ($onlyEnrolledPatients) {
+                function ($query) {
                     //$query -> Practice Model
                     return $query->whereHas(
                         'patients',
@@ -3437,7 +3436,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $query->ofPractice($approver->practices)
             ->ofType('participant')
-            ->whereHas('patientInfo', function ($q) use ($approver) {
+            ->whereHas('patientInfo', function ($q) {
                 $q->enrolled();
             })
             ->whereHas(
@@ -3556,7 +3555,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopeWithDownloadableInvoices($query, Carbon $startDate, Carbon $endDate)
     {
         return $query->careCoaches()->with([
-            'nurseInfo' => function ($nurseInfo) use ($startDate, $endDate) {
+            'nurseInfo' => function ($nurseInfo) use ($startDate) {
                 $nurseInfo->with(
                     [
                         'invoices' => function ($invoice) use ($startDate) {
