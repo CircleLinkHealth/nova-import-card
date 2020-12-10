@@ -8,6 +8,8 @@ namespace App\SelfEnrollment;
 
 use App\Constants\ProviderClinicalTypes;
 use App\Http\Controllers\Enrollment\SelfEnrollmentController;
+use Cache;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Query\Builder;
@@ -141,5 +143,13 @@ class Helpers
         ];
 
         return $map[$providerSuffix] ?? '';
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function selfEnrollmentSlackLogChannel()
+    {
+        return AppConfig::pull('self-enrolment-log-slack-channel', '');
     }
 }
