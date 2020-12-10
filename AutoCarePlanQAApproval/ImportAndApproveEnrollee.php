@@ -62,8 +62,7 @@ class ImportAndApproveEnrollee implements ShouldQueue
         ApproveIfValid::dispatch($enrollee->user, CarePlanAutoApprover::user());
 
         $enrollee->loadMissing([
-            'user',
-            'patientInfo',
+            'user.patientInfo',
         ]);
 
         $enrollee->user->patientInfo->ccm_status = Patient::ENROLLED;
