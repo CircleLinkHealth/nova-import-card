@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08daefb0da3edc983e548a1fc92fff55",
+    "content-hash": "9756f83459cc8aa2e2f7529b36f87493",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1276,11 +1276,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.6.1",
+            "version": "v3.6.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "9d6a4be7056acf4303c88f5dab6412691379f437"
+                "reference": "7d0d68a8d0639506d341600abe9d3c2c8abc631f"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
@@ -1315,15 +1315,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-09T23:17:50+00:00"
+            "time": "2020-12-10T05:16:56+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.8.0",
+            "version": "v3.8.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "df1ec301bf2f45be31a4b027a6f7e0ee2f34663c"
+                "reference": "5bc24eed6b60508a8def6f6c48eda0d40bf8eef4"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1350,7 +1350,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-09T23:19:29+00:00"
+            "time": "2020-12-10T05:16:56+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
