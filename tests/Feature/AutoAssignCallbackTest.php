@@ -116,13 +116,13 @@ class AutoAssignCallbackTest extends TestCase
         }
     }
 
-    public function test_if_existing_callback_exists_it_will_create_callback()
+    public function test_if_existing_callback_exists_it_will_upate_it_and_mark_as_asap()
     {
         $patient = $this->createPatientData(Patient::ENROLLED, $this->practice->id, Enrollee::ENROLLED);
         $nurse   = $this->createUser(Practice::firstOrFail()->id, 'care-center');
         $this->setUpPermanentNurse($nurse, $patient);
 
-        Call::create([
+         Call::create([
             'type'            => SchedulerService::TASK_TYPE,
             'status'          => Call::SCHEDULED,
             'inbound_cpm_id'  => $patient->id,
@@ -382,6 +382,8 @@ class AutoAssignCallbackTest extends TestCase
             'inbound_cpm_id' => $patientId,
             'sub_type'       => SchedulerService::CALL_BACK_TYPE,
             'scheduler'      => $nurseId,
+            'asap'           => true,
+            'status'         => Call::SCHEDULED,
         ]);
     }
 
