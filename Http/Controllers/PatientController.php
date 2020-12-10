@@ -33,9 +33,6 @@ class PatientController extends Controller
      */
     public function index(PatientFilters $filters)
     {
-        ini_set('max_execution_time', 60);
-        ini_set('memory_limit', '800M');
-        
         return $this->patientService->patients($filters);
     }
 
