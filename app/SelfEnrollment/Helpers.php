@@ -150,8 +150,6 @@ class Helpers
      */
     public static function selfEnrollmentSlackDevWatcher()
     {
-        return Cache::remember('self-enrolment-watcher-channel-id', 2, function () {
-            return AppConfig::pull('self-enrolment-watcher', '');
-        });
+        return AppConfig::pull('self-enrolment-watcher', '');
     }
 }
