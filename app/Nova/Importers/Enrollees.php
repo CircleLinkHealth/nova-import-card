@@ -7,11 +7,11 @@
 namespace App\Nova\Importers;
 
 use App\Nova\Actions\ImportEnrollees;
-use App\Search\ProviderByName;
 use App\SelfEnrollment\Jobs\CreateSurveyOnlyUserFromEnrollee;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -220,7 +220,7 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
             return;
         }
 
-        $provider = ProviderByName::first($row['provider']);
+        $provider = CcdaImporterWrapper::mysqlMatchProvider($row['provider'], $this->practiceId);
 
         if ( ! $provider) {
             Log::channel('database')->critical("Import for:{$this->fileName}, Provider ({$row['provider']}) not found for Enrollee at row: {$this->rowNumber}.");

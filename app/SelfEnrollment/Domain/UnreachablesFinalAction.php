@@ -6,15 +6,14 @@
 
 namespace App\SelfEnrollment\Domain;
 
-use App\Observers\PatientObserver;
 use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
 use App\Services\Enrollment\EnrollmentInvitationService;
-use App\Traits\UnreachablePatientsToCaPanel;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 
 class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
 {
@@ -61,7 +60,11 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
             $this->service()->markAsNonResponsive($patient->enrollee);
         }
 
-        $this->service()->putIntoCallQueue($patient->enrollee, now()->addDays(self::TO_CALL_AFTER_DAYS_HAVE_PASSED));
+        $callQueued = $this->service()->putIntoCallQueue($patient->enrollee, now()->addDays(self::TO_CALL_AFTER_DAYS_HAVE_PASSED));
+
+        if ( ! $callQueued) {
+            Log::error("Failed to change self enrolment Enrollee [user_id:$patient->id] status to call_queue.");
+        }
     }
 
     public function query(): Builder

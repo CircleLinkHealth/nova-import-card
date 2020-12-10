@@ -95,11 +95,11 @@ class CreateSurveyOnlyUserFromEnrollee
         }
 
         $phones = array_filter([
-                formatPhoneNumberE164($this->enrollee->primary_phone),
-                formatPhoneNumberE164($this->enrollee->cell_phone),
-                formatPhoneNumberE164($this->enrollee->home_phone),
-                formatPhoneNumberE164($this->enrollee->other_phone),
-            ]);
+            formatPhoneNumberE164($this->enrollee->primary_phone),
+            formatPhoneNumberE164($this->enrollee->cell_phone),
+            formatPhoneNumberE164($this->enrollee->home_phone),
+            formatPhoneNumberE164($this->enrollee->other_phone),
+        ]);
 
         $address = new Address($this->enrollee->address, $this->enrollee->city, $this->enrollee->state, $this->enrollee->zip, $this->enrollee->address_2);
 
@@ -111,7 +111,6 @@ class CreateSurveyOnlyUserFromEnrollee
             $email = CcdaImporter::EMAIL_EXISTS_BUT_NOT_FAMILY_PREFIX.$email;
         }
 
-        //what about if enrollee already has user?
         $userCreatedFromEnrollee = (new UserRepository())->createNewUser(
             new ParameterBag(
                 [
@@ -180,10 +179,12 @@ class CreateSurveyOnlyUserFromEnrollee
             'noemail@noemail.com',
             'null',
             'none',
+            'none@none.com',
             'n/a',
             '123@yahoo.com',
             '1234@yahoo.com',
             'donthaveone@yahoo.com',
+            'unknown@unknown.com',
         ];
     }
 
