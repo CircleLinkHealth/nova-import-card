@@ -64,7 +64,7 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
         $callQueued = $this->service()->putIntoCallQueue($patient->enrollee, now()->addDays(self::TO_CALL_AFTER_DAYS_HAVE_PASSED));
 
         if ( ! $callQueued) {
-            $slackChannel = Helpers::selfEnrollmentSlackDevWatcher();
+            $slackChannel = Helpers::selfEnrollmentSlackLogChannel();
             $errorMessage = "Failed to change self unresponsive self enrollable [user_id:$patient->id] to call_queue status.";
             if ($slackChannel) {
                 sendSlackMessage($slackChannel, $errorMessage);
