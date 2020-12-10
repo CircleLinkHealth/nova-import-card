@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6329633378d6dfafac6c97def57674e0",
+    "content-hash": "16a2ae4aaa6e899dc7aa4064a5a03350",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.168.1",
+            "version": "3.168.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d648085cce7bfadc8973a8ded401921583c1e3f9"
+                "reference": "1d6a976da857d13b156bd63613ee086c13f6dc29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d648085cce7bfadc8973a8ded401921583c1e3f9",
-                "reference": "d648085cce7bfadc8973a8ded401921583c1e3f9",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1d6a976da857d13b156bd63613ee086c13f6dc29",
+                "reference": "1d6a976da857d13b156bd63613ee086c13f6dc29",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-09T19:17:01+00:00"
+            "time": "2020-12-10T19:35:18+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1566,11 +1566,11 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.3.7",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "a86abed365c2fec5d66fc6cd5e2ebafe8dee2fc1"
+                "reference": "589a1f4db3f915181cda5ef51bc09d57ae0a410d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1592,7 +1592,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-20T19:30:57+00:00"
+            "time": "2020-12-10T19:42:17+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -18558,6 +18558,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/patientapi-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20

@@ -206,7 +206,7 @@
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/invoices-download": "*",
     "circlelinkhealth/nurseinvoices-module": "1.6.9",
-    "circlelinkhealth/patientapi-module": "1.3.7",
+    "circlelinkhealth/patientapi-module": "dev-master",
     "circlelinkhealth/raygun-module": "1.2",
     "circlelinkhealth/revisionable-module": "6.1.1",
     "circlelinkhealth/saml-sp-module": "1.0.7",
