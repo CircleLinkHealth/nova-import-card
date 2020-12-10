@@ -530,6 +530,9 @@ class CcdaImporter
 
             $this->ccda->patient->patientInfo->ccm_status = Patient::ENROLLED;
             $this->ccda->patient->patientInfo->save();
+    
+            $this->ccda->status = Ccda::CAREPLAN_CREATED;
+            $this->ccda->save();
         }
 
         return $this;

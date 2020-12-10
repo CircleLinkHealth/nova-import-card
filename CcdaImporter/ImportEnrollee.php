@@ -245,6 +245,7 @@ class ImportEnrollee
             ->where('patient_last_name', $enrollee->last_name)
             ->where('patient_mrn', $enrollee->mrn)
             ->where('patient_dob', $enrollee->dob->toDateString())
+            ->withTrashed()
             ->first()) {
             $ccdaConcName     = $ccda->patient_last_name.$ccda->patient_first_name;
             $enrolleeConcName = $enrollee->last_name.$enrollee->first_name;
@@ -255,6 +256,9 @@ class ImportEnrollee
                 $ccdaConcName === $enrolleeConcName
                 || StringHelpers::partialOrFullNameMatch($ccdaConcName, $enrolleeConcName)
             ) {
+                if ($ccda->trashed()) {
+                    $ccda->restore();
+                }
                 $enrollee->medical_record_id = $ccda->id;
 
                 return $ccda;
