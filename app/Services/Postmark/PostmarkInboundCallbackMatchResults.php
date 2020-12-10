@@ -65,7 +65,7 @@ class PostmarkInboundCallbackMatchResults
      */
     private function matchByPhone(string $phoneNumber, string $callerIdFieldPhone)
     {
-        return User::withTrashed()->ofType('participant')->with([
+        return User::withTrashed()->ofTypePatients()->with([
             'patientInfo' => function ($q) {
                 return $q->select(['id', 'ccm_status', 'user_id']);
             },
