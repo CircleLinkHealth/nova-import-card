@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc453b3f1f87915e732c7a62ad6ce4f2",
+    "content-hash": "16a2ae4aaa6e899dc7aa4064a5a03350",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.168.0",
+            "version": "3.168.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "842621099b1de31ec6efd7535b8b343397c6e0ec"
+                "reference": "1d6a976da857d13b156bd63613ee086c13f6dc29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/842621099b1de31ec6efd7535b8b343397c6e0ec",
-                "reference": "842621099b1de31ec6efd7535b8b343397c6e0ec",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1d6a976da857d13b156bd63613ee086c13f6dc29",
+                "reference": "1d6a976da857d13b156bd63613ee086c13f6dc29",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-08T19:17:21+00:00"
+            "time": "2020-12-10T19:35:18+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1246,11 +1246,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v2.7.0",
+            "version": "v2.7.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "051ab32c846c4a974a419617871fa7a9928e5659"
+                "reference": "f5c73a5ed6b68791f250cd61682705a848071508"
             },
             "type": "laravel-module",
             "extra": {
@@ -1272,15 +1272,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-09T02:09:25+00:00"
+            "time": "2020-12-09T23:05:13+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v3.6.0",
+            "version": "v3.6.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "53444426084d431b02d925b8d52bd73768ab491b"
+                "reference": "7d0d68a8d0639506d341600abe9d3c2c8abc631f"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "*",
@@ -1315,15 +1315,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-09T02:16:00+00:00"
+            "time": "2020-12-10T05:16:56+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.7.9",
+            "version": "v3.8.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "2ccce736fc4a860a0ef591ac733c0f2577f1bdeb"
+                "reference": "c690eb1df41660eb24472fcfc3277c1f4397bf25"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1350,7 +1350,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-09T16:16:30+00:00"
+            "time": "2020-12-10T17:11:36+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1566,11 +1566,11 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.3.7",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "a86abed365c2fec5d66fc6cd5e2ebafe8dee2fc1"
+                "reference": "08f55b492522d955320992fd44af5d0406f54dec"
             },
             "type": "laravel-module",
             "extra": {
@@ -1592,7 +1592,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-20T19:30:57+00:00"
+            "time": "2020-12-10T20:27:36+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -14973,16 +14973,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.5.2",
+            "version": "2.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "08668034beb185fa2ac6f09b1034eaa440952ace"
+                "reference": "d8dc4f90ed469f9f9313b976fb078c20585d5c99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/08668034beb185fa2ac6f09b1034eaa440952ace",
-                "reference": "08668034beb185fa2ac6f09b1034eaa440952ace",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/d8dc4f90ed469f9f9313b976fb078c20585d5c99",
+                "reference": "d8dc4f90ed469f9f9313b976fb078c20585d5c99",
                 "shasum": ""
             },
             "require": {
@@ -15040,7 +15040,7 @@
                 "laravel",
                 "page"
             ],
-            "time": "2020-11-17T09:18:51+00:00"
+            "time": "2020-12-09T20:25:45+00:00"
         },
         {
             "name": "facade/ignition-contracts",
@@ -18558,6 +18558,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/patientapi-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
