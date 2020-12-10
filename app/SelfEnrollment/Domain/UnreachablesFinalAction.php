@@ -7,6 +7,7 @@
 namespace App\SelfEnrollment\Domain;
 
 use App\SelfEnrollment\AbstractSelfEnrollableUserIterator;
+use App\SelfEnrollment\Helpers;
 use App\Services\Enrollment\EnrollmentInvitationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -63,7 +64,10 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
         $callQueued = $this->service()->putIntoCallQueue($patient->enrollee, now()->addDays(self::TO_CALL_AFTER_DAYS_HAVE_PASSED));
 
         if ( ! $callQueued) {
-            Log::error("Failed to change self enrolment Enrollee [user_id:$patient->id] status to call_queue.");
+            $slackChannel = Helpers::selfEnrollmentSlackDevWatcher();
+            $errorMessage = "Failed to change self enrolment Enrollee [user_id:$patient->id] status to call_queue.";
+            sendSlackMessage($slackChannel, $errorMessage);
+            Log::error($errorMessage);
         }
     }
 
