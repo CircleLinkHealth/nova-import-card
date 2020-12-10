@@ -44,7 +44,7 @@ class UpdateCameronEnrolleeProviders extends Command
         $providerId  = User::whereId(self::BRANDY_GERMAN_PROVIDER_USER_ID)->firstOrFail()->id;
         $enrolleeIds = $this->getEnrolleesToUpdate();
 
-        $enrollees = Enrollee::where('practice', $practiceId)
+        $enrollees = Enrollee::where('practice_id', $practiceId)
             ->whereIn('id', $enrolleeIds);
 
         $updated = $enrollees->update([
@@ -56,59 +56,15 @@ class UpdateCameronEnrolleeProviders extends Command
 
             return;
         }
-
-        foreach ($enrollees as $enrollee) {
+    
+        $enrollees->each(function ($enrollee) {
             CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
-        }
+        }, 100);
     }
 
     private function getEnrolleesToUpdate()
     {
         return [
-            '342415',
-            '342423',
-            '342449',
-            '342506',
-            '342517',
-            '342532',
-            '342557',
-            '342595',
-            '342601',
-            '342603',
-            '342613',
-            '342629',
-            '342637',
-            '342651',
-            '342680',
-            '342683',
-            '342687',
-            '342692',
-            '342703',
-            '342717',
-            '342732',
-            '342734',
-            '342747',
-            '342748',
-            '342756',
-            '342757',
-            '342767',
-            '342779',
-            '342782',
-            '342793',
-            '342800',
-            '342825',
-            '342826',
-            '342828',
-            '342838',
-            '342842',
-            '342867',
-            '342871',
-            '342888',
-            '342906',
-            '342911',
-            '342918',
-            '342922',
-            '342987',
             '343000',
             '343040',
             '343089',
