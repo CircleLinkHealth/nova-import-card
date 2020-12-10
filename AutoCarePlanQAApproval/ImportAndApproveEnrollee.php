@@ -10,7 +10,6 @@ use CircleLinkHealth\Core\Helpers\StringHelpers;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
 use CircleLinkHealth\Eligibility\CcdaImporter\ImportEnrollee;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -47,7 +46,7 @@ class ImportAndApproveEnrollee implements ShouldQueue
         if ( ! $enrollee->user) {
             $this->searchForExistingUser($enrollee);
         }
-        if ( ! $enrollee->user) {
+        if ( ! $enrollee->user || ! $enrollee->user->isParticipant()) {
             ImportEnrollee::import($enrollee);
         }
         if ($enrollee->user && $enrollee->user->carePlan && in_array($enrollee->user->carePlan->status, [CarePlan::PROVIDER_APPROVED, CarePlan::QA_APPROVED, CarePlan::RN_APPROVED])) {
@@ -88,7 +87,22 @@ class ImportAndApproveEnrollee implements ShouldQueue
         return now()->addDay();
     }
 
-    private function searchForExistingUser(Enrollee &$enrollee)
+    private function searchByFakeClhEmail(Enrollee $enrollee)
+    {
+        if (starts_with($enrollee->email, 'eJ_') && ends_with($enrollee->email, '@cpm.com')) {
+            $user = User::ofType(['participant', 'survey-only'])
+                ->where('first_name', $enrollee->first_name)
+                ->where('last_name', $enrollee->last_name)
+                ->where('email', $enrollee->email)
+                ->first();
+
+            return $this->validateMatchAndAttachToEnrollee($enrollee, $user);
+        }
+
+        return null;
+    }
+
+    private function searchByMrnAndDOB(Enrollee &$enrollee): ?User
     {
         $user = User::ofType(['participant', 'survey-only'])
             ->with('carePlan')
@@ -97,11 +111,31 @@ class ImportAndApproveEnrollee implements ShouldQueue
                     ->where('birth_date', $enrollee->dob);
             })->first();
 
+        return $this->validateMatchAndAttachToEnrollee($enrollee, $user);
+    }
+
+    private function searchForExistingUser(Enrollee &$enrollee)
+    {
+        if ( ! is_null($this->searchByMrnAndDOB($enrollee))) {
+            return;
+        }
+
+        if ( ! is_null($this->searchByFakeClhEmail($enrollee))) {
+            return;
+        }
+    }
+
+    private function validateMatchAndAttachToEnrollee(Enrollee &$enrollee, ?User $user): ?User
+    {
         if ($user
             && StringHelpers::partialOrFullNameMatch($user->first_name.$user->last_name, $enrollee->first_name.$enrollee->last_name)
         ) {
             $enrollee->user_id = $user->id;
             $enrollee->setRelation('user', $user);
+
+            return $user;
         }
+
+        return null;
     }
 }

@@ -103,6 +103,7 @@ class CcdaImporter
     public static function emailIsTaken(string $email, string $firstName, string $lastName): bool
     {
         return User::ofType(['participant', 'survey-only'])
+            ->withTrashed()
             ->where('email', $email)
             ->where('first_name', '!=', $firstName)
             ->where('last_name', '!=', $lastName)
