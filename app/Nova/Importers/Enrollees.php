@@ -28,110 +28,110 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
 {
     use Importable;
     use RegistersEventListeners;
-
+    
     protected $attributes;
-
+    
     protected $modelClass;
-
+    
     protected $resource;
-
+    
     protected $rowNumber = 2;
-
+    
     protected $rules;
-
+    
     private $actionType;
-
+    
     private $caId;
-
+    
     private $fileName;
-
+    
     /**
      * @var int
      */
     private $practiceId;
-
+    
     public function __construct(int $practiceId, $actionType, $fileName, $caId)
     {
         ini_set('upload_max_filesize', '200M');
         ini_set('post_max_size', '200M');
         ini_set('max_input_time', 900);
         ini_set('max_execution_time', 900);
-
+        
         $this->practiceId = $practiceId;
         $this->actionType = $actionType;
         $this->fileName   = $fileName;
         $this->caId       = $caId;
     }
-
+    
     public function chunkSize(): int
     {
         return 100;
     }
-
+    
     public function markAsIneligible(array $row)
     {
         $enrollee = Enrollee::where('mrn', $row['mrn'])
             ->where('practice_id', $this->practiceId)
             ->first();
-
+        
         if (is_null($enrollee)) {
             Log::channel('database')->critical("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
-
+            
             return;
         }
-
+        
         $enrollee->status = Enrollee::INELIGIBLE;
         $enrollee->save();
     }
-
+    
     public function message(): string
     {
         return 'File queued for importing.';
     }
-
+    
     public function onRow(Row $row)
     {
         $row = $row->toArray();
-
+        
         if (ImportEnrollees::ACTION_MARK_INELIGIBLE == $this->actionType) {
             $this->markAsIneligible($row);
         }
         if (ImportEnrollees::ACTION_MARK_AUTO_ENROLLMENT == $this->actionType) {
             $this->markForAutoEnrollment($row);
         }
-
+        
         if (ImportEnrollees::ACTION_CREATE_ENROLLEES == $this->actionType) {
             $this->updateOrCreateEnrolleeFromCsv($row);
         }
-
+        
         if (ImportEnrollees::ACTION_ASSIGN_ENROLLEES_TO_CA == $this->actionType) {
             $this->assignToCa($row);
         }
         ++$this->rowNumber;
     }
-
+    
     public function rules(): array
     {
         return $this->rules;
     }
-
+    
     private function assignToCa(array $row)
     {
         $enrollee = $this->fetchEnrollee($row);
-
+        
         if ( ! $enrollee) {
             Log::channel('database')->critical("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
-
+            
             return;
         }
-
+        
         $enrollee->status                  = Enrollee::TO_CALL;
         $enrollee->care_ambassador_user_id = $this->caId;
         $enrollee->attempt_count           = 0;
-
+        
         $enrollee->save();
     }
-
+    
     /**
      * Subtracts 100 years off date if it's after 1/1/2000.
      *
@@ -141,14 +141,14 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
     {
         //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
         $cutoffDate = Carbon::createFromDate(2000, 1, 1);
-
+        
         if ($date->gte($cutoffDate)) {
             $date->subYears(100);
         }
-
+        
         return $date;
     }
-
+    
     private function fetchEnrollee(array $row): ?Enrollee
     {
         $v = Validator::make($row, [
@@ -157,13 +157,13 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
             'first_name'          => 'required',
             'last_name'           => 'required',
         ]);
-
+        
         if ($v->fails()) {
             Log::channel('database')->critical("Input Validation for CSV:{$this->fileName}, at row: {$this->rowNumber}, failed.");
-
+            
             return null;
         }
-
+        
         return Enrollee::with(['user', 'enrollmentInvitationLinks'])
             ->whereId($row['eligible_patient_id'])
             ->where('practice_id', $this->practiceId)
@@ -172,63 +172,63 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
             ->where('last_name', $row['last_name'])
             ->first();
     }
-
+    
     private function markForAutoEnrollment(array $row)
     {
         $enrollee = $this->fetchEnrollee($row);
-
+        
         if ( ! $enrollee) {
             Log::channel('database')->critical("Patient not found for CSV:{$this->fileName}, for row: {$this->rowNumber}.");
-
+            
             return;
         }
-
+        
         if (Enrollee::QUEUE_AUTO_ENROLLMENT === $enrollee->status || $enrollee->enrollmentInvitationLinks->isNotEmpty()) {
             Log::channel('database')->warning("Patient for CSV:{$this->fileName}, for row: {$this->rowNumber} has already been marked for auto-enrollment.");
-
+            
             return;
         }
-
+        
         $enrollee->status = Enrollee::QUEUE_AUTO_ENROLLMENT;
-
+        
         $enrollee->care_ambassador_user_id = null;
-
+        
         //reset attempt count and requested callback to prevent the CA call queue from accidentally picking these up - edge case
         //this also means we reset their call statuses in general
         $enrollee->attempt_count      = 0;
         $enrollee->requested_callback = null;
         $enrollee->save();
     }
-
+    
     private function updateOrCreateEnrolleeFromCsv(array $row)
     {
         if ($row['dob']) {
             if (is_numeric($row['dob'])) {
                 $row['dob'] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['dob']);
             }
-
+            
             $date = $this->validateDob($row['dob']);
-
+            
             $row['dob'] = $date;
         }
-
+        
         if (empty($row['dob']) || false === $row['dob']) {
             Log::channel('database')->critical("Import for:{$this->fileName}, Invalid DOB for Enrollee at row: {$this->rowNumber}.");
-
+            
             return;
         }
-
-        $provider = \CircleLinkHealth\Customer\ScoutSearches\ProviderByName::first($row['provider']);
-
+        
+        $provider = CcdaImporterWrapper::mysqlMatchProvider($row['provider'], $this->practiceId);
+        
         if ( ! $provider) {
             Log::channel('database')->critical("Import for:{$this->fileName}, Provider ({$row['provider']}) not found for Enrollee at row: {$this->rowNumber}.");
-
+            
             return;
         }
-
+        
         $row['provider_id'] = $provider->id;
         $row['practice_id'] = $this->practiceId;
-
+        
         $enrollee = Enrollee::updateOrCreate(
             [
                 'mrn'         => $row['mrn'],
@@ -237,9 +237,9 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
             [
                 'first_name' => ucfirst(strtolower($row['first_name'])),
                 'last_name'  => ucfirst(strtolower($row['last_name'])),
-
+                
                 'provider_id' => $provider->id,
-
+                
                 'address'   => ucwords(strtolower($row['address'])),
                 'address_2' => ucwords(strtolower($row['address_2'])),
                 //we only get one phone number, add as home_phone
@@ -250,24 +250,24 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
                 'city'  => ucwords(strtolower($row['city'])),
                 'state' => $row['state'],
                 'zip'   => $row['zip'],
-
+                
                 'status' => Enrollee::TO_CALL,
                 'source' => Enrollee::UPLOADED_CSV,
             ]
         );
-
+        
         $user = $enrollee->user;
-
+        
         if (is_null($user)) {
             CreateSurveyOnlyUserFromEnrollee::dispatch($enrollee);
-
+            
             return;
         }
-
+        
         if ( ! $user->isSurveyOnly()) {
             return;
         }
-
+        
         CarePerson::updateOrCreate(
             [
                 'type'    => CarePerson::BILLING_PROVIDER,
@@ -278,26 +278,26 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
             ]
         );
     }
-
+    
     private function validateDob($dob)
     {
         if ( ! $dob) {
             return false;
         }
-
-        $validator = Validator::make(['dob' => $dob], ['dob' => 'required|filled|date']);
-
+        
+        $validator = \Validator::make(['dob' => $dob], ['dob' => 'required|filled|date']);
+        
         if ($validator->fails()) {
             return false;
         }
-
+        
         try {
             $date = Carbon::parse($dob);
-
+            
             if ($date->isToday()) {
                 return false;
             }
-
+            
             return $this->correctCenturyIfNeeded($date);
         } catch (\InvalidArgumentException $e) {
             if (Str::contains($dob, '/')) {
@@ -306,18 +306,18 @@ class Enrollees implements WithChunkReading, OnEachRow, WithHeadingRow, ShouldQu
                 $delimiter = '-';
             }
             $date = explode($delimiter, $dob);
-
+            
             if (count($date) < 3) {
                 throw new \Exception("Invalid date $dob");
             }
-
+            
             $year = $date[2];
-
+            
             if (2 == strlen($year)) {
                 //if date is two digits we are assuming it's from the 1900s
                 $year = (int) $year + 1900;
             }
-
+            
             return Carbon::createFromDate($year, $date[0], $date[1]);
         }
     }
