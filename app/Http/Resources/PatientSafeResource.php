@@ -6,10 +6,9 @@
 
 namespace App\Http\Resources;
 
-use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserSafeResource extends JsonResource
+class PatientSafeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,17 +20,12 @@ class UserSafeResource extends JsonResource
      */
     public function toArray($request)
     {
-        $careplan     = $this->carePlan;
-        $observation  = $this->observations->first();
-        $phone        = $this->phoneNumbers->first();
         $locationName = 'N/A';
         $locationId   = null;
 
-        /** @var Patient $patientInfo */
-        $patientInfo = $this->whenLoaded('patientInfo');
-        if ( ! is_null($patientInfo) && $patientInfo->relationLoaded('location') && ! is_null($patientInfo->location)) {
-            $locationName = $patientInfo->location->name;
-            $locationId   = $patientInfo->location->id;
+        if ($location = optional($this->patientInfo)->location) {
+            $locationName = $location->name;
+            $locationId   = $location->id;
         }
 
         return [
@@ -41,7 +35,7 @@ class UserSafeResource extends JsonResource
             'address'               => $this->address,
             'city'                  => $this->city,
             'state'                 => $this->state,
-            'specialty'             => $this->getSpecialty(),
+            'specialty'             => '',
             'program_id'            => $this->program_id,
             'status'                => $this->status,
             'user_status'           => $this->user_status,
@@ -52,11 +46,9 @@ class UserSafeResource extends JsonResource
             'billing_provider_id'   => $this->getBillingProviderId(),
             'location_name'         => $locationName,
             'location_id'           => $locationId,
-            'careplan'              => optional($careplan)->safe(),
-            'last_read'             => optional($observation)->obs_date,
-            'phone'                 => $this->getPhone() ?? optional($phone)->number,
-            'ccm_time'              => $this->getCcmTime(),
-            'bhi_time'              => $this->getBhiTime(),
+            'careplan'              => optional($this->carePlan)->safe(),
+            'last_read'             => optional($this->observations->first())->obs_date,
+            'phone'                 => $this->getPhone() ?? optional($this->phoneNumbers->first())->number,
             'created_at'            => optional($this->created_at)->format('c') ?? null,
             'updated_at'            => optional($this->updated_at)->format('c') ?? null,
         ];

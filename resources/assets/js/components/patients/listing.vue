@@ -71,12 +71,6 @@
                     N/A
                 </p>
             </template>
-            <template slot="filter__ccm">
-                <div>(HH:MM:SS)</div>
-            </template>
-            <template slot="filter__bhi">
-                <div>(HH:MM:SS)</div>
-            </template>
             <template slot="h__ccmStatus" slot-scope="props">
                 CCM Status
             </template>
@@ -98,12 +92,6 @@
             </template>
             <template slot="h__registeredOn" slot-scope="props">
                 Registered On
-            </template>
-            <template slot="h__bhi" slot-scope="props">
-                BHI
-            </template>
-            <template slot="h__ccm" slot-scope="props">
-                CCM
             </template>
         </v-client-table>
         <div class="row">
@@ -206,7 +194,7 @@
                 locationsForSelect: [],
                 showPracticePatients: false,
                 nameDisplayType: NameDisplayType.FirstName,
-                columns: ['name', 'provider', 'location', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
+                columns: ['name', 'provider', 'location', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn'],
                 loaders: {
                     next: false,
                     practices: null,
@@ -247,7 +235,7 @@
 
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'practice', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
+                    sortable: ['name', 'provider', 'practice', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn'],
                     filterable: ['name', 'provider', 'practice', 'location', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
                     listColumns: {
                         provider: this.providersForSelect,
@@ -284,8 +272,6 @@
                         phone: (ascending) => iSort,
                         age: (ascending) => iSort,
                         registeredOn: (ascending) => iSort,
-                        bhi: (ascending) => iSort,
-                        ccm: (ascending) => iSort,
                         practice: (ascending) => iSort
                     },
                     noResults: 'No patients match these criteria at this time.'
@@ -477,14 +463,6 @@
                         patient.sort_registeredOn = new Date(patient.created_at)
                         patient.sort_ccmStatusDate = new Date(patient.ccmStatusDate)
 
-                        const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
-                        const seconds = patient.ccm_time || 0
-                        patient.ccm = pad(Math.floor(seconds / 3600), 2) + ':' + pad(Math.floor(seconds / 60) % 60, 2) + ':' + pad(seconds % 60, 2);
-                        patient.sort_ccm = seconds;
-
-                        const bhiSeconds = patient.bhi_time || 0
-                        patient.bhi = pad(Math.floor(bhiSeconds / 3600), 2) + ':' + pad(Math.floor(bhiSeconds / 60) % 60, 2) + ':' + pad(bhiSeconds % 60, 2);
-                        patient.sort_bhi = bhiSeconds;
                         return patient
                     }).map(patient => {
                         const loadColumnList = (list = [], item = null) => {
@@ -570,7 +548,7 @@
                 }
                 return download().then(res => {
 
-                    const str = 'name,provider,practice,location,ccm status,careplan status, withdrawn reason, dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
+                    const str = 'name,provider,practice,location,ccm status,careplan status, withdrawn reason, dob,mrn,phone,age,registered on,ccm status change\n'
                         + patients.join('\n');
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);
