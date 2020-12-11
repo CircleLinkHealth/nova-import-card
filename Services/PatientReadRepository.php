@@ -19,19 +19,19 @@ class PatientReadRepository
         return User::ofType('participant')
             ->with('patientInfo')->get();
     }
-
+    
     public function patients(PatientFilters $filters)
     {
         $shouldSetDefaultRows = false;
         $filtersInput         = $filters->filters();
-
+        
         $showPracticePatientsInput = $filtersInput['showPracticePatients'] ?? null;
         $isProvider                = auth()->user()->isProvider();
         $showPracticePatients      = true;
         if ($isProvider && (User::SCOPE_LOCATION === auth()->user()->scope || 'false' === $showPracticePatientsInput)) {
             $showPracticePatients = false;
         }
-
+        
         $users = User::ofType('participant')
             ->with([
                 'carePlan' => function ($q) {
@@ -39,10 +39,6 @@ class PatientReadRepository
                 },
                 'phoneNumbers' => function ($q) {
                     $q->select(['user_id', 'is_primary', 'number', 'type']);
-                },
-                'patientSummaries' => function ($q) {
-                    $q->whereMonthYear(Carbon::now()->startOfMonth()->toDateString())
-                        ->select(['patient_id', 'ccm_time', 'bhi_time', 'month_year']);
                 },
                 'patientInfo.location',
                 'careTeamMembers' => function ($q) {
@@ -65,6 +61,7 @@ class PatientReadRepository
                     $q->patientsPendingCLHApproval(auth()->user());
                 }
             })
+            ->without(['perms', 'roles'])
             ->when(
                 false === $showPracticePatients,
                 function ($query) {
@@ -80,26 +77,26 @@ class PatientReadRepository
             ->whereHas('patientInfo')
             ->intersectPracticesWith(auth()->user())
             ->filter($filters);
-
+        
         if ( ! isset($filtersInput['rows'])) {
             $shouldSetDefaultRows = true;
         } elseif ('all' !== $filtersInput['rows'] && ! is_numeric($filtersInput['rows'])) {
             $shouldSetDefaultRows = true;
         }
-
+        
         if ($shouldSetDefaultRows) {
             $filtersInput['rows'] = 15;
         }
-
+        
         if ('all' == $filtersInput['rows']) {
             $users = $users->paginate($users->count());
         } else {
             $users = $users->paginate($filtersInput['rows']);
         }
-
+        
         return $users;
     }
-
+    
     /**
      * Scope for paused patients.
      *
@@ -112,10 +109,10 @@ class PatientReadRepository
             ->whereHas('patientInfo', function ($q) {
                 $q->ccmStatus('paused');
             });
-
+        
         return $this;
     }
-
+    
     /**
      * Scope for patients whose paused letter was not printed yet.
      *
@@ -128,10 +125,10 @@ class PatientReadRepository
             ->whereHas('patientInfo', function ($q) {
                 $q->whereNull('paused_letter_printed_at');
             });
-
+        
         return $this;
     }
-
+    
     /**
      * Scope for unreachable patients().
      *
@@ -144,7 +141,7 @@ class PatientReadRepository
             ->whereHas('patientInfo', function ($q) {
                 $q->ccmStatus(Patient::UNREACHABLE);
             });
-
+        
         return $this;
     }
 }
