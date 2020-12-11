@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f4c45328ced8cc250dce34714e2b1f44",
+    "content-hash": "0be90be93a19a192e665de55738760a6",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -574,16 +574,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.168.2",
+            "version": "3.168.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1d6a976da857d13b156bd63613ee086c13f6dc29"
+                "reference": "49ef1f905388c8185012c9651b80941b8f2a218d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1d6a976da857d13b156bd63613ee086c13f6dc29",
-                "reference": "1d6a976da857d13b156bd63613ee086c13f6dc29",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/49ef1f905388c8185012c9651b80941b8f2a218d",
+                "reference": "49ef1f905388c8185012c9651b80941b8f2a218d",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-10T19:35:18+00:00"
+            "time": "2020-12-11T19:12:18+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1209,11 +1209,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.8.3",
+            "version": "dev-hotfix",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "68dc42055fa077c1c1d0f71a58ff14e42daab83e"
+                "reference": "f3df868a051fe4b564188e7696f35ad837da74c4"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -1242,7 +1242,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-08T04:42:16+00:00"
+            "time": "2020-12-11T20:05:10+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -15996,12 +15996,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "bd37cf1c87fee760937595ef4244ade7a3a4b61c"
+                "reference": "a6e87a42a6601b9620963853d1bd6d64dda2df03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/bd37cf1c87fee760937595ef4244ade7a3a4b61c",
-                "reference": "bd37cf1c87fee760937595ef4244ade7a3a4b61c",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/a6e87a42a6601b9620963853d1bd6d64dda2df03",
+                "reference": "a6e87a42a6601b9620963853d1bd6d64dda2df03",
                 "shasum": ""
             },
             "require": {
@@ -16065,7 +16065,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-17T08:44:31+00:00"
+            "time": "2020-12-11T19:59:47+00:00"
         },
         {
             "name": "orangehill/iseed",
@@ -18557,6 +18557,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/core-module": 20,
         "heroku/heroku-buildpack-php": 20,
         "nwidart/laravel-modules": 20,
         "orangehill/iseed": 20
