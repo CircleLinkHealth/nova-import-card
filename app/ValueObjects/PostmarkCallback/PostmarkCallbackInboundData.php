@@ -10,24 +10,43 @@ use Illuminate\Support\Arr;
 
 class PostmarkCallbackInboundData
 {
-    public function getInboundDataArray(array $inboundDataArray)
+    private array $inboundDataArray;
+
+    /**
+     * PostmarkCallbackInboundData constructor.
+     */
+    public function __construct(array $inboundDataArray)
+    {
+        $this->inboundDataArray = $inboundDataArray;
+    }
+
+    public function getInboundDataArray()
     {
         $inboundDataFormatted = [
-            'from'      => $inboundDataArray['From'],
-            'phone'     => $inboundDataArray['Phone'],
-            'ptn'       => $inboundDataArray['Ptn'],
-            'message'   => $inboundDataArray['Msg'],
-            'primary'   => $inboundDataArray['Primary'],
-            'messageId' => $inboundDataArray['Msg ID'],
-            'isRecId'   => $inboundDataArray['IS Rec #'],
-            'callerId'  => $inboundDataArray['Clr ID'],
-            'taken'     => $inboundDataArray['Taken'],
+            'from'      => $this->inboundDataArray['From'],
+            'phone'     => $this->inboundDataArray['Phone'],
+            'ptn'       => $this->inboundDataArray['Ptn'],
+            'message'   => $this->inboundDataArray['Msg'],
+            'primary'   => $this->inboundDataArray['Primary'],
+            'messageId' => $this->inboundDataArray['Msg ID'],
+            'isRecId'   => $this->inboundDataArray['IS Rec #'],
+            'callerId'  => $this->inboundDataArray['Clr ID'],
+            'taken'     => $this->inboundDataArray['Taken'],
         ];
 
-        if (isset($inboundDataArray['Cancel/Withdraw Reason'])) {
-            $inboundDataFormatted = Arr::add($inboundDataFormatted, 'cancelReason', $inboundDataArray['Cancel/Withdraw Reason']);
+        if (isset($this->inboundDataArray['Cancel/Withdraw Reason'])) {
+            $inboundDataFormatted = Arr::add($inboundDataFormatted, 'cancelReason', $this->inboundDataArray['Cancel/Withdraw Reason']);
         }
 
         return $inboundDataFormatted;
+    }
+    
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function getField($key)
+    {
+        return $this->getInboundDataArray()[$key] ?? null;
     }
 }

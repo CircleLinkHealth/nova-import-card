@@ -6,6 +6,7 @@
 
 namespace App\Services\Postmark;
 
+use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -21,13 +22,15 @@ class PostmarkInboundCallbackMatchResults
     const SELF                        = 'SELF';
     const WITHDRAW_REQUEST            = 'withdraw_request';
 
-    private array $postmarkCallbackData;
+    private PostmarkCallbackInboundData $postmarkCallbackData;
     private int $recordId;
-
+    
     /**
      * PostmarkInboundCallbackMatchResults constructor.
+     * @param PostmarkCallbackInboundData $postmarkCallbackData
+     * @param int $recordId
      */
-    public function __construct(array $postmarkCallbackData, int $recordId)
+    public function __construct(PostmarkCallbackInboundData $postmarkCallbackData, int $recordId)
     {
         $this->postmarkCallbackData = $postmarkCallbackData;
         $this->recordId             = $recordId;
@@ -41,7 +44,7 @@ class PostmarkInboundCallbackMatchResults
     public function matchedPatientsData()
     {
         /** @var Builder $inboundDataMatchedWithPhone */
-        $inboundDataMatchedWithPhone = $this->matchByPhone($this->postmarkCallbackData['phone'], $this->postmarkCallbackData['callerId']);
+        $inboundDataMatchedWithPhone = $this->matchByPhone($this->postmarkCallbackData->getField('phone'), $this->postmarkCallbackData->getField('callerId'));
 
         if (1 === $inboundDataMatchedWithPhone->count()) {
             /** @var User $matchedPatient */

@@ -6,6 +6,7 @@
 
 namespace App\Services\Postmark;
 
+use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
 use App\ValueObjects\PostmarkCallback\PostmarkSingleMatchData;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -18,7 +19,7 @@ class InboundCallbackSingleMatchService
     /**
      * @return string
      */
-    public function callbackEligibilityReasoning(array $inboundPostmarkData, User $patientUser)
+    public function callbackEligibilityReasoning(PostmarkCallbackInboundData $inboundPostmarkData, User $patientUser)
     {
         /** @var Enrollee $enrollee */
         $enrollee = $patientUser->enrollee;
@@ -66,17 +67,19 @@ class InboundCallbackSingleMatchService
      * @param $postmarkData
      * @return bool
      */
-    public function requestsCancellation(array $postmarkData)
+    public function requestsCancellation(PostmarkCallbackInboundData $postmarkData)
     {
-        return isset($postmarkData['cancelReason'])
-            || Str::contains(Str::of($postmarkData['message'])->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
+        $cancelReason = $postmarkData->getField('cancelReason');
+        return isset($cancelReason)
+            || Str::contains(Str::of($postmarkData->getField('message'))->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
     }
-
+    
     /**
-     * @param $patientUser
+     * @param User $patientUser
+     * @param PostmarkCallbackInboundData $inboundPostmarkData
      * @return array
      */
-    public function singleMatchCallbackResult(User $patientUser, array $inboundPostmarkData)
+    public function singleMatchCallbackResult(User $patientUser, PostmarkCallbackInboundData $inboundPostmarkData)
     {
         return $this->singleMatchResult($patientUser, $inboundPostmarkData);
     }
@@ -84,7 +87,7 @@ class InboundCallbackSingleMatchService
     /**
      * @return array
      */
-    private function singleMatchResult(?User $matchedPatient, array $inboundPostmarkData)
+    private function singleMatchResult(?User $matchedPatient, PostmarkCallbackInboundData $inboundPostmarkData)
     {
         $callBackEligibleReason = $this->callbackEligibilityReasoning($inboundPostmarkData, $matchedPatient);
 

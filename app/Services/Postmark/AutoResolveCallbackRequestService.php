@@ -10,6 +10,7 @@ use App\Entities\PostmarkInboundCallbackRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\Services\Calls\SchedulerService;
 use App\ValueObjects\PostmarkCallback\AutomatedCallbackMessageValueObject;
+use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -112,7 +113,7 @@ class AutoResolveCallbackRequestService
         ]);
     }
 
-    private function assignCallbackToNurse(User $user, array $postmarkCallbackData)
+    private function assignCallbackToNurse(User $user, PostmarkCallbackInboundData $postmarkCallbackData)
     {
         /** @var SchedulerService $service */
         $service = app(SchedulerService::class);
@@ -120,8 +121,8 @@ class AutoResolveCallbackRequestService
         return $service->scheduleAsapCallbackTask(
             $user,
             (new AutomatedCallbackMessageValueObject(
-                $postmarkCallbackData['phone'],
-                $postmarkCallbackData['message'],
+                $postmarkCallbackData->getField('phone'),
+                $postmarkCallbackData->getField('message'),
                 $user->first_name,
                 $user->last_name
             ))->constructCallbackMessage(),

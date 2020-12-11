@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Log;
 class PostmarkCallbackMailService
 {
     /**
-     * @return array|void
+     * @throws \Exception
+     * @return PostmarkCallbackInboundData|void
      */
     public function postmarkInboundData(int $postmarkRecordId)
     {
@@ -36,6 +37,6 @@ class PostmarkCallbackMailService
             return;
         }
 
-        return (new PostmarkCallbackInboundData())->getInboundDataArray($inboundDataArray);
+        return new PostmarkCallbackInboundData($inboundDataArray);
     }
 }
