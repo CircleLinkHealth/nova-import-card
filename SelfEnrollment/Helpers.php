@@ -142,4 +142,12 @@ class Helpers
         
         return $map[$providerSuffix] ?? '';
     }
+    
+    /**
+     * @return mixed
+     */
+    public static function selfEnrollmentSlackLogChannel()
+    {
+        return AppConfig::pull('self-enrolment-log-slack-channel', '');
+    }
 }

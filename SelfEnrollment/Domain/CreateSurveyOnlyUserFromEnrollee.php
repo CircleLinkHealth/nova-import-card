@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporter;
 use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -92,7 +93,23 @@ class CreateSurveyOnlyUserFromEnrollee
             $isAwv                     = Ccda::IMPORTER_AWV === $ccda->source;
         }
         
-        //what about if enrollee already has user?
+        $phones = array_filter([
+            formatPhoneNumberE164($this->enrollee->primary_phone),
+            formatPhoneNumberE164($this->enrollee->cell_phone),
+            formatPhoneNumberE164($this->enrollee->home_phone),
+            formatPhoneNumberE164($this->enrollee->other_phone),
+        ]);
+        
+        $address = new Address($this->enrollee->address, $this->enrollee->city, $this->enrollee->state, $this->enrollee->zip, $this->enrollee->address_2);
+        
+        if (CcdaImporter::isFamily($email, $phones, $this->enrollee->first_name, $this->enrollee->last_name, $address)) {
+            $email = CcdaImporter::convertToFamilyEmail($email);
+        }
+        
+        if (CcdaImporter::emailIsTaken($email, $this->enrollee->first_name, $this->enrollee->last_name)) {
+            $email = CcdaImporter::EMAIL_EXISTS_BUT_NOT_FAMILY_PREFIX.$email;
+        }
+        
         $userCreatedFromEnrollee = (new UserRepository())->createNewUser(
             new ParameterBag(
                 [
@@ -161,10 +178,12 @@ class CreateSurveyOnlyUserFromEnrollee
             'noemail@noemail.com',
             'null',
             'none',
+            'none@none.com',
             'n/a',
             '123@yahoo.com',
             '1234@yahoo.com',
             'donthaveone@yahoo.com',
+            'unknown@unknown.com',
         ];
     }
     

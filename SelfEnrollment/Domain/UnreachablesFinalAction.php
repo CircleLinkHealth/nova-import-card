@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 
 class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
 {
@@ -34,7 +35,7 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
      * @var EnrollmentInvitationService
      */
     private $service;
-
+    
     /**
      * UnreachablesFinalAction constructor.
      */
@@ -44,7 +45,7 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
         $this->dateInviteSent = $dateInviteSent;
         $this->limit          = $limit;
     }
-
+    
     public function action(User $patient): void
     {
         //if enrollee has already been assigned to CA do not put back to call_queue
@@ -52,18 +53,27 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
         if ( ! empty($patient->enrollee->care_ambassador_user_id)) {
             return;
         }
-
-        if ($this->isUnreachablePatient($patient)) {
+        
+        if ($this->service()->isUnreachablePatient($patient)) {
             return;
         }
-
+        
         if ( ! $this->patientHasLoggedIn($patient)) {
             $this->service()->markAsNonResponsive($patient->enrollee);
         }
-
-        $this->service()->putIntoCallQueue($patient->enrollee, now()->addDays(self::TO_CALL_AFTER_DAYS_HAVE_PASSED));
+        
+        $callQueued = $this->service()->putIntoCallQueue($patient->enrollee, now()->addDays(self::TO_CALL_AFTER_DAYS_HAVE_PASSED));
+        
+        if ( ! $callQueued) {
+            $slackChannel = Helpers::selfEnrollmentSlackLogChannel();
+            $errorMessage = "Failed to change self unresponsive self enrollable [user_id:$patient->id] to call_queue status.";
+            if ($slackChannel) {
+                sendSlackMessage($slackChannel, $errorMessage);
+            }
+            Log::error($errorMessage);
+        }
     }
-
+    
     public function query(): Builder
     {
         return User::hasSelfEnrollmentInvite($this->dateInviteSent)
@@ -78,39 +88,18 @@ class UnreachablesFinalAction extends AbstractSelfEnrollableUserIterator
                     ->whereNull('source');
             })->with('enrollee');
     }
-
-    /**
-     * We need the enrollee model created when patient became "unreachable".
-     *
-     * @see PatientObserver
-     * @see UnreachablePatientsToCaPanel
-     */
-    private function isUnreachablePatient(User $user): bool
-    {
-        if ( ! $user->isParticipant()) {
-            return false;
-        }
-        if (Enrollee::QUEUE_AUTO_ENROLLMENT !== $user->enrollee->status) {
-            return false;
-        }
-        if (Enrollee::UNREACHABLE_PATIENT !== $user->enrollee->source) {
-            return false;
-        }
-
-        return true;
-    }
-
+    
     private function patientHasLoggedIn(User $patient): bool
     {
         return $patient->loginEvents()->exists();
     }
-
+    
     private function service()
     {
         if (is_null($this->service)) {
             $this->service = app(EnrollmentInvitationService::class);
         }
-
+        
         return $this->service;
     }
 }

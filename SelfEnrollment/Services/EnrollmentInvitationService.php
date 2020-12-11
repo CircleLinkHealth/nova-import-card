@@ -14,6 +14,27 @@ use CircleLinkHealth\SharedModels\Entities\Enrollee;
 class EnrollmentInvitationService
 {
     /**
+     * We need the enrollee model created when patient became "unreachable".
+     *
+     * @see PatientObserver
+     * @see UnreachablePatientsToCaPanel
+     */
+    public function isUnreachablePatient(User $user): bool
+    {
+        if ( ! $user->isParticipant()) {
+            return false;
+        }
+        if (Enrollee::QUEUE_AUTO_ENROLLMENT !== $user->enrollee->status) {
+            return false;
+        }
+        if (Enrollee::UNREACHABLE_PATIENT !== $user->enrollee->source) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
      * Non responsive patients were not reachable during the SelfEnrollment process.
      * Marking them as unreachable means they will get a physical letter inviting them to enroll mailed to their address.
      */
@@ -24,7 +45,7 @@ class EnrollmentInvitationService
             'auto_enrollment_triggered' => true,
         ]);
     }
-
+    
     public function putIntoCallQueue(Enrollee $enrollee, Carbon $earliestDayToCall)
     {
         $enrollee->update(
@@ -35,7 +56,7 @@ class EnrollmentInvitationService
             ]
         );
     }
-
+    
     /**
      * @param $enrollable
      *
@@ -49,10 +70,10 @@ class EnrollmentInvitationService
             \Log::alert($exception);
             throw new \Exception($exception);
         }
-
+        
         return redirect($surveyLink->url);
     }
-
+    
     public function setEnrollmentCallOnDelivery(Enrollee $enrollee)
     {
         $enrollee->update(
