@@ -273,6 +273,8 @@ class CcdaImporter
 
         \DB::commit();
         $this->ccda->patient->clearRolesCache();
+
+        return $this;
     }
 
     private function handleDuplicateEnrollees()
@@ -354,8 +356,6 @@ class CcdaImporter
             }
         }
 
-        $this->ensurePatientHasParticipantRole();
-
         $this->ccda->loadMissing(['patient.primaryPractice', 'patient.patientInfo']);
 
         if (is_null($this->ccda->patient)) {
@@ -382,6 +382,7 @@ class CcdaImporter
 //                 - Not useful because in the case of BP we don't have a starting value.
 //            Uncomment after we have refactored vitals/observations.
 //            ->importVitals()
+            ->ensurePatientHasParticipantRole()
             ->updateCcdaPostImport()
             ->updateEnrolleePostImport()
             ->updatePatientUserPostImport()
@@ -530,7 +531,7 @@ class CcdaImporter
 
             $this->ccda->patient->patientInfo->ccm_status = Patient::ENROLLED;
             $this->ccda->patient->patientInfo->save();
-    
+
             $this->ccda->status = Ccda::CAREPLAN_CREATED;
             $this->ccda->save();
         }
