@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\SelfEnrollment;
 
 use App\Constants\ProviderClinicalTypes;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
