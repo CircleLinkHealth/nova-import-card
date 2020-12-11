@@ -262,7 +262,7 @@ class CcdaImporter
     private function ensurePatientHasParticipantRole()
     {
         if ($this->ccda->patient->isParticipant()) {
-            return;
+            return $this;
         }
 
         $this->ccda->patient->roles()->sync([
