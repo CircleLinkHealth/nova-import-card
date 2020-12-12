@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9bdc0a2f483eacda62b7fa025b40822a",
+    "content-hash": "0afa2db9a75d79a6569f45f1da18f9bc",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1319,11 +1319,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v3.8.7",
+            "version": "v3.8.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "156bc709c8aab248654f3de26e1a2cc41287980f"
+                "reference": "347fce32fb12cf9ff4b834325056269040bfdcb3"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1350,7 +1350,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-11T21:25:42+00:00"
+            "time": "2020-12-12T19:14:22+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -16558,16 +16558,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.59",
+            "version": "0.12.60",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "cf4107257c8ca2ad967efdd6a00f12b21acbb779"
+                "reference": "d4577922c296d28746e28a5f046e787562143157"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/cf4107257c8ca2ad967efdd6a00f12b21acbb779",
-                "reference": "cf4107257c8ca2ad967efdd6a00f12b21acbb779",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d4577922c296d28746e28a5f046e787562143157",
+                "reference": "d4577922c296d28746e28a5f046e787562143157",
                 "shasum": ""
             },
             "require": {
@@ -16610,7 +16610,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-12-07T14:46:03+00:00"
+            "time": "2020-12-12T13:07:07+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
