@@ -114,6 +114,7 @@ trait ValidatesEligibility
             'email',
             'language',
             'gender',
+            'cpm_location_name',
             'patient_id',
             'last_name',
             'first_name',
@@ -155,14 +156,23 @@ trait ValidatesEligibility
 
     private function transformProblems(array $row)
     {
-        if (array_key_exists('problems_string', $row) && is_json($row['problems_string'])) {
-            $problems               = json_decode($row['problems_string'])->Problems;
-            $row['problems_string'] = [];
-            foreach ($problems as $problem) {
-                $row['problems'][] = [
-                    'Name' => $problem->Name,
-                    'Code' => $problem->Code,
-                ];
+        if (array_key_exists('problems_string', $row)) {
+            if (is_json($row['problems_string'])) {
+                $problems               = json_decode($row['problems_string'])->Problems;
+                $row['problems_string'] = [];
+                foreach ($problems as $problem) {
+                    $row['problems'][] = [
+                        'Name' => $problem->Name,
+                        'Code' => $problem->Code,
+                    ];
+                }
+            } elseif (is_string($row['problems_string'])) {
+                foreach (explode(',', $row['problems_string']) as $problem) {
+                    $row['problems'][] = [
+                        'Name' => $problem,
+                        'Code' => $problem,
+                    ];
+                }
             }
         }
 

@@ -694,6 +694,12 @@ class EligibilityChecker
             throw new \Exception('$args is expected to be an array. '.EligibilityJob::class.':'.$this->eligibilityJob->id);
         }
 
+        if (isset($this->eligibilityJob->data['cpm_location_name'])) {
+            $args['facility_name'] = $this->eligibilityJob->data['cpm_location_name'];
+        } elseif (isset($this->eligibilityJob->data['facility_name'])) {
+            $args['facility_name'] = $this->eligibilityJob->data['facility_name'];
+        }
+
         $args['primary_insurance']   = $this->eligibilityJob->data['primary_insurance'] ?? null;
         $args['secondary_insurance'] = $this->eligibilityJob->data['secondary_insurance'] ?? null;
         $args['tertiary_insurance']  = $this->eligibilityJob->data['tertiary_insurance'] ?? null;
