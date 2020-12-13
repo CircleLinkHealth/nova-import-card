@@ -1,6 +1,7 @@
 <?php
 
-$user_info = [];
+use Illuminate\Support\Str;$user_info = [];
+$url = Str::replaceLast('/', '', config('app.url'));
 ?>
 
 @extends('partials.providerUI')
@@ -348,7 +349,7 @@ $user_info = [];
                                                                 function populateBillingProviderDropdown(practiceId, locationId) {
                                                                     $('#provider_id_loader').removeClass('hide');
                                                                     return $.ajax({
-                                                                        url: 'api/practices/' + practiceId + '/locations/' + locationId + '/providers',
+                                                                        url: '{{$url}}/api/practices/' + practiceId + '/locations/' + locationId + '/providers',
                                                                         type: 'GET',
                                                                         success: function (providers) {
                                                                             console.log('practice:providers', providers)
@@ -395,7 +396,7 @@ $user_info = [];
                                                                 $('#preferred_contact_location_loader').removeClass('hide');
 
                                                                 return $.ajax({
-                                                                    url: 'api/practices/' + practiceId + '/locations',
+                                                                    url: '{{$url}}/api/practices/' + practiceId + '/locations',
                                                                     type: 'GET',
                                                                     success: function (locations) {
                                                                         console.log('practice:locations', locations)
@@ -414,7 +415,7 @@ $user_info = [];
                                                             function populateBillingProviderDropdown(practiceId, locationId) {
                                                                 $('#provider_id_loader').removeClass('hide');
                                                                 return $.ajax({
-                                                                    url: 'api/practices/' + practiceId + '/locations/' + locationId + '/providers',
+                                                                    url: '{{$url}}/api/practices/' + practiceId + '/locations/' + locationId + '/providers',
                                                                     type: 'GET',
                                                                     success: function (providers) {
                                                                         console.log('practice:providers', providers)
