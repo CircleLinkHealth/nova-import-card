@@ -17,7 +17,10 @@ class VisitFeePaymentAlgorithm extends NursePaymentAlgorithm
     public function calculate(): PatientPayCalculationResult
     {
         $this->practiceHasCcmPlus                 = $this->practiceHasCcmPlusCode($this->patient->primaryPractice);
-        $timeEntryPerCsCodePerRangePerNurseInfoId = $this->separateTimeAccruedInRanges($this->patientCareRateLogs);
+        $timeEntryPerCsCodePerRangePerNurseInfoId = $this->measureTimeAndLog(
+            'separateTimeAccruedInRanges',
+            fn () => $this->separateTimeAccruedInRanges($this->patientCareRateLogs)
+        );
 
         $visitsPerChargeableServiceCodePerDay = collect();
 
@@ -32,52 +35,69 @@ class VisitFeePaymentAlgorithm extends NursePaymentAlgorithm
         $singleBillableEvent = $this->getBillableEventIfOnlyOne($timeEntryPerCsCodePerRangePerNurseInfoId);
 
         if ($singleBillableEvent) {
-            $pay = $this->getVisitFeePayForOneBillableEvent(
-                $singleBillableEvent,
-                $timeEntryPerCsCodePerRangePerNurseInfoId->get($singleBillableEvent, collect())
-            );
-            $date = $pay->lastLogDate;
-            if ($date) {
-                /** @var Collection $visitsOfChargeableServiceCodePerDay */
-                $visitsOfChargeableServiceCodePerDay = $visitsPerChargeableServiceCodePerDay->get($singleBillableEvent, collect());
-                /** @var VisitFeePay $visitsForDate */
-                $visitsForDate = $visitsOfChargeableServiceCodePerDay->get($date, new VisitFeePay(null, 0, 0));
-                $visitsOfChargeableServiceCodePerDay->put($date, new VisitFeePay(
-                    null,
-                    $visitsForDate->fee + $pay->fee,
-                    $visitsForDate->count + $pay->count
-                ));
-                $visitsPerChargeableServiceCodePerDay->put($singleBillableEvent, $visitsOfChargeableServiceCodePerDay);
-            }
-        } else {
-            $timeEntryPerCsCodePerRangePerNurseInfoId->each(function (Collection $timeEntryForCsCodePerRangePerNurseInfoId, string $csCode) use ($visitsPerChargeableServiceCodePerDay) {
-                $totalTime = $this->getTotalTimeForMonth($csCode);
-                $timeEntryForCsCodePerRangePerNurseInfoId->each(function (Collection $timeEntryForCsCodeForRangePerNurseInfoId, int $rangeKey) use ($csCode, $totalTime, $visitsPerChargeableServiceCodePerDay) {
-                    if ($timeEntryForCsCodeForRangePerNurseInfoId->isEmpty()) {
-                        return;
-                    }
-
-                    $pay = $this->getVisitFeePayForRange(
-                        $csCode,
-                        $totalTime,
-                        $rangeKey,
-                        $timeEntryForCsCodeForRangePerNurseInfoId
+            $this->measureTimeAndLog(
+                'getVisitFeePayForOneBillableEvent',
+                function () use (
+                    $visitsPerChargeableServiceCodePerDay,
+                    $timeEntryPerCsCodePerRangePerNurseInfoId,
+                    $singleBillableEvent
+                ) {
+                    $pay = $this->getVisitFeePayForOneBillableEvent(
+                        $singleBillableEvent,
+                        $timeEntryPerCsCodePerRangePerNurseInfoId->get($singleBillableEvent, collect())
                     );
-
-                    if ($pay && $pay->lastLogDate) {
+                    $date = $pay->lastLogDate;
+                    if ($date) {
                         /** @var Collection $visitsOfChargeableServiceCodePerDay */
-                        $visitsOfChargeableServiceCodePerDay = $visitsPerChargeableServiceCodePerDay->get($csCode, collect());
+                        $visitsOfChargeableServiceCodePerDay = $visitsPerChargeableServiceCodePerDay->get($singleBillableEvent, collect());
                         /** @var VisitFeePay $visitsForDate */
-                        $visitsForDate = $visitsOfChargeableServiceCodePerDay->get($pay->lastLogDate, new VisitFeePay(null, 0, 0));
-                        $visitsOfChargeableServiceCodePerDay->put($pay->lastLogDate, new VisitFeePay(
+                        $visitsForDate = $visitsOfChargeableServiceCodePerDay->get($date, new VisitFeePay(null, 0, 0));
+                        $visitsOfChargeableServiceCodePerDay->put($date, new VisitFeePay(
                             null,
                             $visitsForDate->fee + $pay->fee,
                             $visitsForDate->count + $pay->count
                         ));
-                        $visitsPerChargeableServiceCodePerDay->put($csCode, $visitsOfChargeableServiceCodePerDay);
+                        $visitsPerChargeableServiceCodePerDay->put($singleBillableEvent, $visitsOfChargeableServiceCodePerDay);
                     }
-                });
-            });
+                }
+            );
+        } else {
+            $this->measureTimeAndLog(
+                'getVisitFeePayForRange',
+                function () use (
+                    $timeEntryPerCsCodePerRangePerNurseInfoId,
+                    $visitsPerChargeableServiceCodePerDay
+                ) {
+                    $timeEntryPerCsCodePerRangePerNurseInfoId->each(function (Collection $timeEntryForCsCodePerRangePerNurseInfoId, string $csCode) use ($visitsPerChargeableServiceCodePerDay) {
+                        $totalTime = $this->getTotalTimeForMonth($csCode);
+                        $timeEntryForCsCodePerRangePerNurseInfoId->each(function (Collection $timeEntryForCsCodeForRangePerNurseInfoId, int $rangeKey) use ($csCode, $totalTime, $visitsPerChargeableServiceCodePerDay) {
+                            if ($timeEntryForCsCodeForRangePerNurseInfoId->isEmpty()) {
+                                return;
+                            }
+
+                            $pay = $this->getVisitFeePayForRange(
+                                $csCode,
+                                $totalTime,
+                                $rangeKey,
+                                $timeEntryForCsCodeForRangePerNurseInfoId
+                            );
+
+                            if ($pay && $pay->lastLogDate) {
+                                /** @var Collection $visitsOfChargeableServiceCodePerDay */
+                                $visitsOfChargeableServiceCodePerDay = $visitsPerChargeableServiceCodePerDay->get($csCode, collect());
+                                /** @var VisitFeePay $visitsForDate */
+                                $visitsForDate = $visitsOfChargeableServiceCodePerDay->get($pay->lastLogDate, new VisitFeePay(null, 0, 0));
+                                $visitsOfChargeableServiceCodePerDay->put($pay->lastLogDate, new VisitFeePay(
+                                    null,
+                                    $visitsForDate->fee + $pay->fee,
+                                    $visitsForDate->count + $pay->count
+                                ));
+                                $visitsPerChargeableServiceCodePerDay->put($csCode, $visitsOfChargeableServiceCodePerDay);
+                            }
+                        });
+                    });
+                }
+            );
         }
 
         return PatientPayCalculationResult::withVisits($visitsPerChargeableServiceCodePerDay);
