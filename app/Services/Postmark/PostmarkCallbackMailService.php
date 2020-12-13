@@ -37,6 +37,6 @@ class PostmarkCallbackMailService
             return;
         }
 
-        return new PostmarkCallbackInboundData($inboundDataArray);
+       return $inboundDataArray;
     }
 }

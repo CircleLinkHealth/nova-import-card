@@ -6,6 +6,7 @@
 
 namespace App\Entities;
 
+use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -39,8 +40,7 @@ class PostmarkInboundCallbackRequest
 
     /**
      * @throws \Exception
-     *
-     * @return array|void
+     * @return PostmarkCallbackInboundData
      */
     public function run(string $inboundCallback, int $postmarkId)
     {
@@ -50,13 +50,13 @@ class PostmarkInboundCallbackRequest
             throw new \Exception(self::INBOUND_CALLBACK_DAILY_REPORT);
         }
 
-        return $this->arrayWithKeys($inboundCallbackArray);
+        return $this->arrayObjectWithKeys($inboundCallbackArray);
     }
 
     /**
-     * @return array
+     * @return PostmarkCallbackInboundData
      */
-    private function arrayWithKeys(Collection $inboundCallback)
+    private function arrayObjectWithKeys(Collection $inboundCallback)
     {
         $callbackDataKeys = $this->getKeys();
 
@@ -69,12 +69,9 @@ class PostmarkInboundCallbackRequest
             });
         }
 
-        return $callbackData;
+        return new PostmarkCallbackInboundData($callbackData);
     }
 
-    /**
-     * @return \Collection|Collection|void
-     */
     private function getArrayFromStringWithBreaks(string $inboundCallback, int $postmarkId)
     {
         $array = explode("\n", $inboundCallback);
