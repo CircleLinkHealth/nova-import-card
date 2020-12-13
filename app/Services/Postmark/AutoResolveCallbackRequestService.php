@@ -24,8 +24,7 @@ class AutoResolveCallbackRequestService
         try {
             $postmarkCallbackService = app(PostmarkCallbackMailService::class);
             $postmarkCallbackData    = $postmarkCallbackService->postmarkInboundData($recordId);
-            /** @var array $matchedResultsFromDB */
-            $matchedResultsFromDB = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
+            $matchedResultsFromDB    = (new PostmarkInboundCallbackMatchResults($postmarkCallbackData, $recordId))
                 ->matchedPatientsData();
 
             if (empty($matchedResultsFromDB)) {
@@ -38,8 +37,8 @@ class AutoResolveCallbackRequestService
                 return;
             }
 
-            if (PostmarkInboundCallbackMatchResults::CREATE_CALLBACK === $matchedResultsFromDB['reasoning']) {
-                $callBackAssignedToNurse = $this->assignCallbackToNurse($matchedResultsFromDB['matchUsersResult'], $postmarkCallbackData);
+            if (PostmarkInboundCallbackMatchResults::CREATE_CALLBACK === $matchedResultsFromDB->reasoning()) {
+                $callBackAssignedToNurse = $this->assignCallbackToNurse($matchedResultsFromDB->matchedData(), $postmarkCallbackData);
                 if ( ! $callBackAssignedToNurse) {
                     Log::error("Failed to created callback assigned to Nurse. See [$recordId] in inbound_postmark_mail");
                     sendSlackMessage('#carecoach_ops_alerts', "Failed to created callback assigned to Nurse. See [$recordId] in inbound_postmark_mail");
@@ -48,8 +47,8 @@ class AutoResolveCallbackRequestService
                 return;
             }
 
-            if (PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_ASSIGNED === $matchedResultsFromDB['reasoning']) {
-                $callBackAssignedToCa = $this->assignCallbackToCareAmbassador($matchedResultsFromDB['matchUsersResult'], $recordId);
+            if (PostmarkInboundCallbackMatchResults::NOT_CONSENTED_CA_ASSIGNED === $matchedResultsFromDB->reasoning()) {
+                $callBackAssignedToCa = $this->assignCallbackToCareAmbassador($matchedResultsFromDB->matchedData(), $recordId);
                 if ( ! $callBackAssignedToCa) {
                     Log::error("Failed to created callback assigned to CA. See [$recordId] in inbound_postmark_mail");
                     sendSlackMessage('#carecoach_ops_alerts', "Failed to created callback assigned to CA. See [$recordId] in inbound_postmark_mail");
@@ -58,7 +57,7 @@ class AutoResolveCallbackRequestService
                 return;
             }
 
-            $saveUnresolvedCallback = $this->createUnresolvedInboundCallback($matchedResultsFromDB, $recordId);
+            $saveUnresolvedCallback = $this->createUnresolvedInboundCallback($matchedResultsFromDB->toArray(), $recordId);
 
             if ( ! $saveUnresolvedCallback) {
                 Log::error("Failed to create Unresolved Callback for:[$recordId] in postmark_inbound_mail");
@@ -112,24 +111,29 @@ class AutoResolveCallbackRequestService
             'callback_note'           => 'Callback automatically scheduled by the system - patient requested callback',
         ]);
     }
-
+    
+    /**
+     * @param User $user
+     * @param PostmarkCallbackInboundData $postmarkCallbackData
+     * @return \App\Call
+     * @throws \Exception
+     */
     private function assignCallbackToNurse(User $user, PostmarkCallbackInboundData $postmarkCallbackData)
     {
         /** @var SchedulerService $service */
         $service = app(SchedulerService::class);
-
         return $service->scheduleAsapCallbackTask(
-            $user,
-            (new AutomatedCallbackMessageValueObject(
-                $postmarkCallbackData->getField('phone'),
-                $postmarkCallbackData->getField('message'),
-                $user->first_name,
-                $user->last_name
-            ))->constructCallbackMessage(),
-            ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
-            null,
-            SchedulerService::CALL_BACK_TYPE,
-        );
+                $user,
+                (new AutomatedCallbackMessageValueObject(
+                    $postmarkCallbackData->get('phone'),
+                    $postmarkCallbackData->get('message'),
+                    $user->first_name,
+                    $user->last_name
+                ))->constructCallbackMessage(),
+                ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
+                null,
+                SchedulerService::CALL_BACK_TYPE,
+            );
     }
 
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)

@@ -7,7 +7,7 @@
 namespace App\Services\Postmark;
 
 use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
-use App\ValueObjects\PostmarkCallback\PostmarkSingleMatchData;
+use App\Entities\PostmarkSingleMatchData;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -64,36 +64,27 @@ class InboundCallbackSingleMatchService
     }
 
     /**
-     * @param $postmarkData
+     * @param $postmarkCallbackInboundData
      * @return bool
      */
-    public function requestsCancellation(PostmarkCallbackInboundData $postmarkData)
+    public function requestsCancellation(PostmarkCallbackInboundData $postmarkCallbackInboundData)
     {
-        $cancelReason = $postmarkData->getField('cancelReason');
+        $cancelReason = $postmarkCallbackInboundData->callbackCancellationMessage();
+
         return isset($cancelReason)
-            || Str::contains(Str::of($postmarkData->getField('message'))->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
-    }
-    
-    /**
-     * @param User $patientUser
-     * @param PostmarkCallbackInboundData $inboundPostmarkData
-     * @return array
-     */
-    public function singleMatchCallbackResult(User $patientUser, PostmarkCallbackInboundData $inboundPostmarkData)
-    {
-        return $this->singleMatchResult($patientUser, $inboundPostmarkData);
+            || Str::contains(Str::of($postmarkCallbackInboundData->get('message'))->upper(), ['CANCEL', 'CX', 'WITHDRAW']);
     }
 
     /**
-     * @return array
+     * @return PostmarkSingleMatchData
      */
-    private function singleMatchResult(?User $matchedPatient, PostmarkCallbackInboundData $inboundPostmarkData)
+    public function singleMatchCallbackResult(User $matchedPatient, PostmarkCallbackInboundData $inboundPostmarkData)
     {
         $callBackEligibleReason = $this->callbackEligibilityReasoning($inboundPostmarkData, $matchedPatient);
 
-        return (new PostmarkSingleMatchData(
+        return new PostmarkSingleMatchData(
             $matchedPatient,
             $callBackEligibleReason
-        ))->getMatchedData();
+        );
     }
 }

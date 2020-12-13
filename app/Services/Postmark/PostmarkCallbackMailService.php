@@ -27,16 +27,14 @@ class PostmarkCallbackMailService
 
             return;
         }
-
-        $inboundDataArray = (new PostmarkInboundCallbackRequest())->run($postmarkRecord->body, $postmarkRecordId);
-
-        if (empty($inboundDataArray)) {
+        
+        if (empty($postmarkRecord->body)) {
             Log::error("Inbound Callback data is empty for inbound_postmark_mail id: [$postmarkRecordId]");
             sendSlackMessage('#carecoach_ops_alerts', "Inbound Callback data is empty for inbound_postmark_mail id: [$postmarkRecordId]");
 
             return;
         }
 
-       return $inboundDataArray;
+        return (new PostmarkInboundCallbackRequest())->run($postmarkRecord->body, $postmarkRecordId);
     }
 }

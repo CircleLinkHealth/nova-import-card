@@ -6,47 +6,109 @@
 
 namespace App\ValueObjects\PostmarkCallback;
 
-use Illuminate\Support\Arr;
+use Illuminate\Contracts\Support\Arrayable;
 
-class PostmarkCallbackInboundData
+class PostmarkCallbackInboundData implements Arrayable
 {
-    private array $inboundDataArray;
+    const CANCELLATION_REASON_KEY     = 'Cancel/Withdraw Reason';
+    const CANCELLATION_REASON_NEW_KEY = 'cancelReason';
+    /**
+     * @var mixed
+     */
+    private $callerId;
+    /**
+     * @var mixed
+     */
+    private $from;
+    /**
+     * @var mixed
+     */
+    private $isRecId;
+    /**
+     * @var mixed
+     */
+    private $message;
+    /**
+     * @var mixed
+     */
+    private $messageId;
+    /**
+     * @var mixed
+     */
+    private $phone;
+    /**
+     * @var mixed
+     */
+    private $primary;
+    /**
+     * @var mixed
+     */
+    private $ptn;
+    private array $rawInboundDataArray;
+    /**
+     * @var mixed
+     */
+    private $taken;
 
     /**
      * PostmarkCallbackInboundData constructor.
      */
-    public function __construct(array $inboundDataArray)
+    public function __construct(array $rawInboundDataArray)
     {
-        $this->inboundDataArray = $inboundDataArray;
+        $this->rawInboundDataArray = $rawInboundDataArray;
+        $this->from                = $rawInboundDataArray['From'];
+        $this->phone               = $rawInboundDataArray['Phone'];
+        $this->ptn                 = $rawInboundDataArray['Ptn'];
+        $this->message             = $rawInboundDataArray['Msg'];
+        $this->primary             = $rawInboundDataArray['Primary'];
+        $this->messageId           = $rawInboundDataArray['Msg ID'];
+        $this->isRecId             = $rawInboundDataArray['IS Rec #'];
+        $this->callerId            = $rawInboundDataArray['Clr ID'];
+        $this->taken               = $rawInboundDataArray['Taken'];
     }
 
-    public function getInboundDataArray()
+    /**
+     * @return mixed|null
+     */
+    public function callbackCancellationMessage()
     {
-        $inboundDataFormatted = [
-            'from'      => $this->inboundDataArray['From'],
-            'phone'     => $this->inboundDataArray['Phone'],
-            'ptn'       => $this->inboundDataArray['Ptn'],
-            'message'   => $this->inboundDataArray['Msg'],
-            'primary'   => $this->inboundDataArray['Primary'],
-            'messageId' => $this->inboundDataArray['Msg ID'],
-            'isRecId'   => $this->inboundDataArray['IS Rec #'],
-            'callerId'  => $this->inboundDataArray['Clr ID'],
-            'taken'     => $this->inboundDataArray['Taken'],
-        ];
-
-        if (isset($this->inboundDataArray['Cancel/Withdraw Reason'])) {
-            $inboundDataFormatted = Arr::add($inboundDataFormatted, 'cancelReason', $this->inboundDataArray['Cancel/Withdraw Reason']);
+        if ( ! isset($this->rawInboundDataArray[self::CANCELLATION_REASON_KEY])) {
+            return null;
         }
 
-        return $inboundDataFormatted;
+        return $this->rawInboundDataArray[self::CANCELLATION_REASON_KEY];
     }
-    
+
     /**
      * @param $key
      * @return mixed
      */
-    public function getField($key)
+    public function get($key)
     {
-        return $this->getInboundDataArray()[$key] ?? null;
+        return $this->$key ?? null;
+    }
+
+    public function toArray()
+    {
+        return [
+            'from'                            => $this->from,
+            'phone'                           => $this->phone,
+            'ptn'                             => $this->ptn,
+            'message'                         => $this->message,
+            'primary'                         => $this->primary,
+            'messageId'                       => $this->messageId,
+            'isRecId'                         => $this->isRecId,
+            'callerId'                        => $this->callerId,
+            'taken'                           => $this->taken,
+            self::CANCELLATION_REASON_NEW_KEY => $this->callbackCancellationMessage(),
+        ];
+    }
+    
+    /**
+     * @return array
+     */
+    public function rawInboundCallbackData()
+    {
+        return $this->rawInboundDataArray;
     }
 }

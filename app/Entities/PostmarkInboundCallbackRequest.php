@@ -33,7 +33,6 @@ class PostmarkInboundCallbackRequest
             'IS Rec #:',
             'Clr ID:',
             'Taken:',
-            'Cancel/Withdraw Reason:',
             'Msg:',
         ];
     }
@@ -50,26 +49,13 @@ class PostmarkInboundCallbackRequest
             throw new \Exception(self::INBOUND_CALLBACK_DAILY_REPORT);
         }
 
-        return $this->arrayObjectWithKeys($inboundCallbackArray);
-    }
+        $inboundDataArray = $this->inboundDataInArray($inboundCallbackArray);
 
-    /**
-     * @return PostmarkCallbackInboundData
-     */
-    private function arrayObjectWithKeys(Collection $inboundCallback)
-    {
-        $callbackDataKeys = $this->getKeys();
-
-        $callbackData = [];
-        foreach ($callbackDataKeys as $callbackDataKey) {
-            $inboundCallback->map(function ($callbackDataItem) use ($callbackDataKey, &$callbackData) {
-                if (Str::contains($callbackDataItem, $callbackDataKey)) {
-                    $callbackData[trim($callbackDataKey, ':')] = trim(trim(substr($callbackDataItem, strpos($callbackDataItem, $callbackDataKey) + strlen($callbackDataKey)), '|'));
-                }
-            });
+        if (empty($inboundDataArray)) {
+            sendSlackMessage('#carecoach_ops_alerts', "Email body is empty for inbound_postmark_mail [$postmarkId]");
         }
 
-        return new PostmarkCallbackInboundData($callbackData);
+        return new PostmarkCallbackInboundData($inboundDataArray);
     }
 
     private function getArrayFromStringWithBreaks(string $inboundCallback, int $postmarkId)
@@ -87,5 +73,24 @@ class PostmarkInboundCallbackRequest
 
             return null;
         }
+    }
+
+    /**
+     * @return array
+     */
+    private function inboundDataInArray(Collection $inboundCallback)
+    {
+        $callbackDataKeys = $this->getKeys();
+
+        $callbackData = [];
+        foreach ($callbackDataKeys as $callbackDataKey) {
+            $inboundCallback->map(function ($callbackDataItem) use ($callbackDataKey, &$callbackData) {
+                if (Str::contains($callbackDataItem, $callbackDataKey)) {
+                    $callbackData[trim($callbackDataKey, ':')] = trim(trim(substr($callbackDataItem, strpos($callbackDataItem, $callbackDataKey) + strlen($callbackDataKey)), '|'));
+                }
+            });
+        }
+
+        return $callbackData;
     }
 }

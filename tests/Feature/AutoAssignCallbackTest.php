@@ -16,6 +16,7 @@ use App\Services\Calls\SchedulerService;
 use App\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use App\Traits\Tests\PostmarkCallbackHelpers;
 use App\UnresolvedPostmarkCallback;
+use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
@@ -77,10 +78,11 @@ class AutoAssignCallbackTest extends TestCase
         assert(isset($inboundTextBody['TextBody']));
 
         $textBodyData     = $inboundTextBody['TextBody'];
-        $inboundDataArray = (new PostmarkInboundCallbackRequest())->run($textBodyData, $postmarkRecord->id);
+        $inboundData      = (new PostmarkInboundCallbackRequest())->run($textBodyData, $postmarkRecord->id);
+        $inboundDataArray = $inboundData->toArray();
 
-        assert(is_array($inboundDataArray));
-        assert( ! isset($inboundDataArray['Cancel/Withdraw Reason']));
+        assert( ! empty($inboundDataArray));
+        assert( ! isset($inboundDataArray[PostmarkCallbackInboundData::CANCELLATION_REASON_KEY]));
         $keys = (new PostmarkInboundCallbackRequest())->getKeys();
 
         foreach ($keys as $key) {
@@ -95,24 +97,21 @@ class AutoAssignCallbackTest extends TestCase
     {
         $patient         = $this->createPatientData(Patient::ENROLLED, $this->practice->id, Enrollee::ENROLLED, 'participant');
         $postmarkRecord  = $this->createPostmarkCallbackData(true, false, $patient);
-        $patient         = $this->patient;
         $inboundTextBody = collect(json_decode($postmarkRecord->data))->toArray();
 
         assert(isset($inboundTextBody['TextBody']));
 
         $textBodyData     = $inboundTextBody['TextBody'];
-        $inboundDataArray = (new PostmarkInboundCallbackRequest())->run($textBodyData, $postmarkRecord->id);
+        $inboundData      = (new PostmarkInboundCallbackRequest())->run($textBodyData, $postmarkRecord->id);
+        $inboundDataArray = $inboundData->toArray();
+        $rawInboundData   = $inboundData->rawInboundCallbackData();
 
-        assert(is_array($inboundDataArray));
-        assert(isset($inboundDataArray['Cancel/Withdraw Reason']));
+        assert(isset($inboundDataArray[PostmarkCallbackInboundData::CANCELLATION_REASON_NEW_KEY]));
 
         $keys = (new PostmarkInboundCallbackRequest())->getKeys();
 
         foreach ($keys as $key) {
-            $keyTrimmed = trim($key, ':');
-            if (isset($inboundDataArray[$keyTrimmed])) {
-                assert(array_key_exists($keyTrimmed, $inboundDataArray));
-            }
+            asset(isset($rawInboundData[$key]));
         }
     }
 
