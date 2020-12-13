@@ -271,7 +271,7 @@ class UserController extends Controller
 
         // display view
         return view(
-            'wpUsers.edit',
+            'cpm-admin::wpUsers.edit',
             [
                 'patient'       => $user,
                 'locations_arr' => $locations_arr,

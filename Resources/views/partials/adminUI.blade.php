@@ -289,6 +289,7 @@
 @endif
 
 <script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
+<script src="{{asset('compiled/js/dependencies.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
 
 <script>
