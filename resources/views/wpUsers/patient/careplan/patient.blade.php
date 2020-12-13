@@ -348,7 +348,7 @@ $user_info = [];
                                                                 function populateBillingProviderDropdown(practiceId, locationId) {
                                                                     $('#provider_id_loader').removeClass('hide');
                                                                     return $.ajax({
-                                                                        url: '/api/practices/' + practiceId + '/locations/' + locationId + '/providers',
+                                                                        url: 'api/practices/' + practiceId + '/locations/' + locationId + '/providers',
                                                                         type: 'GET',
                                                                         success: function (providers) {
                                                                             console.log('practice:providers', providers)
