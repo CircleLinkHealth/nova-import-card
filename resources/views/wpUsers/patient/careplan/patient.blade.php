@@ -348,11 +348,9 @@ $url = Str::replaceLast('/', '', config('app.url'));
 
                                                                 function populateBillingProviderDropdown(practiceId, locationId) {
                                                                     $('#provider_id_loader').removeClass('hide');
-                                                                    return $.ajax({
+                                                                    return $.get({
                                                                         url: '{{$url}}/api/practices/' + practiceId + '/locations/' + locationId + '/providers',
-                                                                        type: 'GET',
                                                                         success: function (providers) {
-                                                                            console.log('practice:providers', providers)
                                                                             providers.forEach(function (provider) {
                                                                                 $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.display_name))
                                                                             })
@@ -395,11 +393,9 @@ $url = Str::replaceLast('/', '', config('app.url'));
                                                             function populateLocationsDropdown(practiceId) {
                                                                 $('#preferred_contact_location_loader').removeClass('hide');
 
-                                                                return $.ajax({
+                                                                return $.get({
                                                                     url: '{{$url}}/api/practices/' + practiceId + '/locations',
-                                                                    type: 'GET',
                                                                     success: function (locations) {
-                                                                        console.log('practice:locations', locations)
                                                                         locations.forEach(function (location) {
                                                                             $('[name="preferred_contact_location"]').append($('<option />').val(location.id).text(location.name))
                                                                         })
@@ -414,11 +410,9 @@ $url = Str::replaceLast('/', '', config('app.url'));
 
                                                             function populateBillingProviderDropdown(practiceId, locationId) {
                                                                 $('#provider_id_loader').removeClass('hide');
-                                                                return $.ajax({
+                                                                return $.get({
                                                                     url: '{{$url}}/api/practices/' + practiceId + '/locations/' + locationId + '/providers',
-                                                                    type: 'GET',
                                                                     success: function (providers) {
-                                                                        console.log('practice:providers', providers)
                                                                         providers.forEach(function (provider) {
                                                                             $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.display_name))
                                                                         })
@@ -560,7 +554,6 @@ $url = Str::replaceLast('/', '', config('app.url'));
                                                             return;
                                                         }
 
-                                                        console.log(ccmStatus);
                                                         if (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call") {
                                                             $('#withdrawn-reason').removeClass('hidden');
                                                             onReasonChange();
