@@ -82,6 +82,10 @@ class WelcomeController extends Controller
         if ($user->isCareAmbassador()) {
             return \App::call('App\Http\Controllers\Enrollment\EnrollmentCenterController@dashboard');
         }
+    
+        if ($user->isAdmin()) {
+            return redirect()->to(config('core.apps.cpm-admin.url'));
+        }
 
         if ($user->isEhrReportWriter()) {
             if ( ! isProductionEnv()) {

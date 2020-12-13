@@ -395,7 +395,7 @@ $user_info = [];
                                                                 $('#preferred_contact_location_loader').removeClass('hide');
 
                                                                 return $.ajax({
-                                                                    url: '/api/practices/' + practiceId + '/locations',
+                                                                    url: 'api/practices/' + practiceId + '/locations',
                                                                     type: 'GET',
                                                                     success: function (locations) {
                                                                         console.log('practice:locations', locations)
@@ -414,7 +414,7 @@ $user_info = [];
                                                             function populateBillingProviderDropdown(practiceId, locationId) {
                                                                 $('#provider_id_loader').removeClass('hide');
                                                                 return $.ajax({
-                                                                    url: '/api/practices/' + practiceId + '/locations/' + locationId + '/providers',
+                                                                    url: 'api/practices/' + practiceId + '/locations/' + locationId + '/providers',
                                                                     type: 'GET',
                                                                     success: function (providers) {
                                                                         console.log('practice:providers', providers)
