@@ -15487,6 +15487,16 @@
                 "nova",
                 "novaunit"
             ],
+            "funding": [
+                {
+                    "url": "https://ko-fi.com/JoshGaber",
+                    "type": "ko_fi"
+                },
+                {
+                    "url": "https://www.patreon.com/joshgaber",
+                    "type": "patreon"
+                }
+            ],
             "time": "2020-10-11T02:14:47+00:00"
         },
         {
