@@ -12,15 +12,17 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class PostmarkSingleMatchData implements Arrayable
 {
-    private User $matchedUser;
+    private User $matchedPatient;
     private ?string $reasoning;
-
+    
     /**
      * PostmarkSingleMatchData constructor.
+     * @param User $matchedPatient
+     * @param string|null $reasoning
      */
-    public function __construct(User $matchedUser, ?string $reasoning)
+    public function __construct(User $matchedPatient, ?string $reasoning)
     {
-        $this->matchedUser = $matchedUser;
+        $this->matchedPatient = $matchedPatient;
         $this->reasoning   = $reasoning;
     }
 
@@ -29,7 +31,7 @@ class PostmarkSingleMatchData implements Arrayable
      */
     public function matchedData()
     {
-        return $this->matchedUser;
+        return $this->matchedPatient;
     }
 
     /**
@@ -46,7 +48,7 @@ class PostmarkSingleMatchData implements Arrayable
     public function toArray()
     {
         return [
-            PostmarkInboundCallbackMatchResults::MATCHED_DATA => $this->matchedUser,
+            PostmarkInboundCallbackMatchResults::MATCHED_DATA => $this->matchedPatient,
             PostmarkInboundCallbackMatchResults::REASONING    => $this->reasoning,
         ];
     }
