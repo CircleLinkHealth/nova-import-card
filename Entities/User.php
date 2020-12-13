@@ -340,7 +340,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use HasEmrDirectAddress;
     use HasMediaTrait;
     use Impersonate;
-    use \Laravel\Nova\Actions\Actionable;
     use MakesOrReceivesCalls;
     use Notifiable;
     use PivotEventTrait;
