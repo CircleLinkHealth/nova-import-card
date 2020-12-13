@@ -9,12 +9,14 @@ namespace CircleLinkHealth\CcmBilling\Repositories;
 use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as RepositoryInterface;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class CachedPatientServiceProcessorRepository implements RepositoryInterface
@@ -63,10 +65,12 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->firstWhere('id', $summary->id)
             ->is_fulfilled = true;
 
-        $patient
-            ->chargeableMonthlySummariesView
-            ->firstWhere('id', $summary->id)
-            ->is_fulfilled = true;
+        if ($patient->relationLoaded('chargeableMonthlySummariesView')) {
+            $patient
+                ->chargeableMonthlySummariesView
+                ->firstWhere('id', $summary->id)
+                ->is_fulfilled = true;
+        }
 
         return $summary;
     }
@@ -167,7 +171,7 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
      */
     public function reloadPatientSummaryViews(int $patientId, Carbon $month): void
     {
-        if (BillingCache::patientExistsInCache($patientId)) {
+        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG) && BillingCache::patientExistsInCache($patientId)) {
             $this->getPatientFromCache($patientId)
                 ->load(['chargeableMonthlySummariesView' => function ($q) use ($month) {
                     $q->createdOnIfNotNull($month, 'chargeable_month');
@@ -201,9 +205,11 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
             ->firstWhere('id', $summary->id)
             ->requires_patient_consent = false;
 
-        $patient->chargeableMonthlySummariesView
-            ->firstWhere('id', $summary->id)
-            ->requires_patient_consent = false;
+        if ($patient->relationLoaded('chargeableMonthlySummariesView')) {
+            $patient->chargeableMonthlySummariesView
+                ->firstWhere('id', $summary->id)
+                ->requires_patient_consent = false;
+        }
 
         return $summary;
     }
@@ -225,13 +231,15 @@ class CachedPatientServiceProcessorRepository implements RepositoryInterface
         $patient->chargeableMonthlySummaries
             ->push($summary);
 
-        if ( ! $patient->chargeableMonthlySummariesView->contains('id', $summary->id)) {
-            $patient->chargeableMonthlySummariesView->forgetUsingModelKey('id', $summary->id);
-        }
+        if ($patient->relationLoaded('chargeableMonthlySummariesView')) {
+            if ($patient->chargeableMonthlySummariesView->contains('id', $summary->id)) {
+                $patient->chargeableMonthlySummariesView->forgetUsingModelKey('id', $summary->id);
+            }
 
-        $patient->chargeableMonthlySummariesView->push(
-            ChargeablePatientMonthlySummaryView::firstWhere('id', $summary->id)
-        );
+            $patient->chargeableMonthlySummariesView->push(
+                ChargeablePatientMonthlySummaryView::firstWhere('id', $summary->id)
+            );
+        }
 
         return $summary;
     }

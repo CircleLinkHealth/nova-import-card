@@ -9,6 +9,7 @@ namespace CircleLinkHealth\CcmBilling\Tests\Database;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\CcmBilling\Events\PatientConsentedToService;
+use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Traits\PracticeHelpers;
@@ -32,16 +33,10 @@ class PatientBillingHelpersTest extends CustomerTestCase
         $this->practice = $this->setupPractice(true, true, true, true);
     }
 
-    public function test_patient_bhi_time_helper_uses_new_summaries()
-    {
-    }
-
-    public function test_patient_ccm_time_helper_uses_new_summaries()
-    {
-    }
-
     public function test_patient_is_bhi_helper_uses_new_summaries()
     {
+        BillingCache::clearPatients();
+        BillingCache::clearLocations();
         $bhiPatient = $this->setupPatient($this->practice, true);
 
         $bhiPatient->notes()->create([
@@ -69,6 +64,8 @@ class PatientBillingHelpersTest extends CustomerTestCase
 
     public function test_patient_is_pcm_helper_uses_new_summaries()
     {
+        BillingCache::clearPatients();
+        BillingCache::clearLocations();
         $patient = $this->setupPatient($this->practice, false, true);
 
         self::assertTrue(Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG));

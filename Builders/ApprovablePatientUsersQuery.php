@@ -7,7 +7,9 @@
 namespace CircleLinkHealth\CcmBilling\Builders;
 
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
 use CircleLinkHealth\Customer\Entities\User;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use Illuminate\Database\Eloquent\Builder;
 
 trait ApprovablePatientUsersQuery
@@ -20,7 +22,7 @@ trait ApprovablePatientUsersQuery
 
     public function approvablePatientUsersQuery(Carbon $monthYear = null): Builder
     {
-        return User::with([
+        $relations = [
             'primaryPractice'         => fn ($p)         => $p->with(['chargeableServices', 'pcmProblems', 'rpmProblems']),
             'endOfMonthCcmStatusLogs' => function ($q) use ($monthYear) {
                 $q->createdOnIfNotNull($monthYear, 'chargeable_month');
@@ -40,9 +42,14 @@ trait ApprovablePatientUsersQuery
                 $q->with(['chargeableService'])
                     ->createdOnIfNotNull($monthYear, 'chargeable_month');
             },
-            'chargeableMonthlySummariesView' => function ($q) use ($monthYear) {
+        ];
+
+        if (Feature::isEnabled(BillingConstants::BILLING_REVAMP_FLAG)) {
+            $relations['chargeableMonthlySummariesView'] = function ($q) use ($monthYear) {
                 $q->createdOnIfNotNull($monthYear, 'chargeable_month');
-            },
-        ]);
+            };
+        }
+
+        return User::with($relations);
     }
 }
