@@ -327,32 +327,6 @@ class CcdaImporterWrapper
         if ($provider = self::mysqlMatchProvider($term, $practiceId)) {
             return $provider;
         }
-        $baseQuery = (new ProviderByName())->query($term);
-
-        if ('algolia' === config('scout.driver')) {
-            return $baseQuery
-                ->with(
-                    [
-                        'typoTolerance' => true,
-                    ]
-                )->when(
-                    ! empty($practiceId),
-                    function ($q) use ($practiceId) {
-                        $q->whereIn('practice_ids', [$practiceId]);
-                    }
-                )
-                ->first();
-        }
-
-        return $baseQuery->when(
-            ! empty($practiceId),
-            function ($q) use ($practiceId) {
-                if ( ! method_exists($q, 'ofPractice')) {
-                    return $q->whereIn('practice_ids', [$practiceId]);
-                }
-                $q->ofPractice($practiceId);
-            }
-        )->first();
     }
 
     /**
@@ -405,7 +379,7 @@ class CcdaImporterWrapper
         return Location::whereRaw("MATCH(name) AGAINST('$term')")->where('practice_id', $practiceId)->first();
     }
 
-    private static function mysqlMatchProvider(string $term, int $practiceId): ?User
+    public static function mysqlMatchProvider(string $term, int $practiceId): ?User
     {
         $term = self::prepareForMysqlMatch($term);
 

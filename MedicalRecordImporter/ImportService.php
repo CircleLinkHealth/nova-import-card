@@ -80,6 +80,9 @@ class ImportService
         if ( ! $ccda->billing_provider_id) {
             $ccda->billing_provider_id = $enrollee->provider_id;
         }
+        if ( ! $ccda->patient_id) {
+            $ccda->patient_id = $enrollee->user_id;
+        }
 
         return $ccda;
     }

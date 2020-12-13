@@ -46,7 +46,7 @@ class ImportAndApproveEnrollee implements ShouldQueue
         if ( ! $enrollee->user) {
             $this->searchForExistingUser($enrollee);
         }
-        if ( ! $enrollee->user) {
+        if ( ! $enrollee->user || ! $enrollee->user->isParticipant()) {
             ImportEnrollee::import($enrollee);
         }
         if ($enrollee->user && $enrollee->user->carePlan && in_array($enrollee->user->carePlan->status, [CarePlan::PROVIDER_APPROVED, CarePlan::QA_APPROVED, CarePlan::RN_APPROVED])) {
@@ -56,6 +56,14 @@ class ImportAndApproveEnrollee implements ShouldQueue
             return;
         }
         if (is_null($enrollee->user)) {
+            return;
+        }
+
+        $enrollee->loadMissing([
+            'user.patientInfo',
+        ]);
+
+        if ($enrollee->user->isSurveyOnly()) {
             return;
         }
 
@@ -72,7 +80,37 @@ class ImportAndApproveEnrollee implements ShouldQueue
         }
     }
 
-    private function searchForExistingUser(Enrollee &$enrollee)
+    public function middleware()
+    {
+        $rateLimitedMiddleware = (new RateLimited())
+            ->allow(12)
+            ->everySeconds(60)
+            ->releaseAfterSeconds(30);
+
+        return [$rateLimitedMiddleware];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addDay();
+    }
+
+    private function searchByFakeClhEmail(Enrollee $enrollee)
+    {
+        if (starts_with($enrollee->email, 'eJ_') && ends_with($enrollee->email, '@cpm.com')) {
+            $user = User::ofType(['participant', 'survey-only'])
+                ->where('first_name', $enrollee->first_name)
+                ->where('last_name', $enrollee->last_name)
+                ->where('email', $enrollee->email)
+                ->first();
+
+            return $this->validateMatchAndAttachToEnrollee($enrollee, $user);
+        }
+
+        return null;
+    }
+
+    private function searchByMrnAndDOB(Enrollee &$enrollee): ?User
     {
         $user = User::ofType(['participant', 'survey-only'])
             ->with('carePlan')
@@ -81,26 +119,31 @@ class ImportAndApproveEnrollee implements ShouldQueue
                     ->where('birth_date', $enrollee->dob);
             })->first();
 
+        return $this->validateMatchAndAttachToEnrollee($enrollee, $user);
+    }
+
+    private function searchForExistingUser(Enrollee &$enrollee)
+    {
+        if ( ! is_null($this->searchByMrnAndDOB($enrollee))) {
+            return;
+        }
+
+        if ( ! is_null($this->searchByFakeClhEmail($enrollee))) {
+            return;
+        }
+    }
+
+    private function validateMatchAndAttachToEnrollee(Enrollee &$enrollee, ?User $user): ?User
+    {
         if ($user
-            && StringHelpers::areSameStringsIfYouCompareOnlyLetters($user->first_name.$user->last_name, $enrollee->first_name.$enrollee->last_name)
+            && StringHelpers::partialOrFullNameMatch($user->first_name.$user->last_name, $enrollee->first_name.$enrollee->last_name)
         ) {
             $enrollee->user_id = $user->id;
             $enrollee->setRelation('user', $user);
+
+            return $user;
         }
-    }
-    
-    public function middleware()
-    {
-        $rateLimitedMiddleware = (new RateLimited())
-            ->allow(12)
-            ->everySeconds(60)
-            ->releaseAfterSeconds(30);
-        
-        return [$rateLimitedMiddleware];
-    }
-    
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
+
+        return null;
     }
 }

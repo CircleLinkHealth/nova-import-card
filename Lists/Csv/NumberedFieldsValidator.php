@@ -16,6 +16,7 @@ class NumberedFieldsValidator extends BaseValidator
             'first_name',
             'dob',
             'gender',
+            'cpm_location_name',
             'lang',
             'referring_provider_name',
             'cell_phone',

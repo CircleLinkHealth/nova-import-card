@@ -85,7 +85,7 @@ class CsvWithJsonMedicalRecord extends BaseMedicalRecordTemplate
                 'suffix' => null,
             ],
             'dob'            => $this->getDob()->toDateString(),
-            'gender'         => $this->data['gender'],
+            'gender'         => $this->data['gender'] ?? null,
             'mrn_number'     => $this->getMrn(),
             'marital_status' => '',
             'address'        => [

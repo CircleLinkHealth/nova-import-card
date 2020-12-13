@@ -26,18 +26,21 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportVitals;
+use CircleLinkHealth\Eligibility\DTOs\Address;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\CreateSurveyOnlyUserFromEnrollee;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CcdaImporter
 {
-    const FAMILY_EMAIL_SUFFIX = '+family';
+    const EMAIL_EXISTS_BUT_NOT_FAMILY_PREFIX = 'email_taken_';
+    const FAMILY_EMAIL_SUFFIX                = '+family';
     /**
      * How many times to try the importing process.
      */
@@ -97,6 +100,62 @@ class CcdaImporter
         );
     }
 
+    public static function emailIsTaken(string $email, string $firstName, string $lastName): bool
+    {
+        return User::ofType(['participant', 'survey-only'])
+            ->withTrashed()
+            ->where('email', $email)
+            ->where('first_name', '!=', $firstName)
+            ->where('last_name', '!=', $lastName)
+            ->exists();
+    }
+
+    public static function isFamily(string $email, array $phones, string $firstName, string $lastName, Address $address)
+    {
+        if (empty($phones)) {
+            return false;
+        }
+
+        return User::ofType(['participant', 'survey-only'])
+            ->where('email', $email)
+            ->where('first_name', '!=', $firstName)
+            ->where(function ($q) use ($phones, $address, $lastName) {
+                $q->whereHas('phoneNumbers', function ($q) use ($phones) {
+                    $q->whereIn('number', $phones);
+                })->orWhere('last_name', '=', $lastName)
+                    ->when( ! empty($transDems), function ($q) use ($address) {
+                        $q->orWhere([
+                            ['address', '=', $address->address],
+                            ['address2', '=', $address->address2],
+                            ['city', '=', $address->city],
+                            ['state', '=', $address->state],
+                            ['zip', '=', $address->zip],
+                        ]);
+                    });
+            })
+            ->exists();
+    }
+
+    /**
+     * Returns true if both names are the same, but one includes a middle initial.
+     *
+     * Example 1: "Foo", "Foo J"
+     * Example 2: "Jane", "Jane, J."
+     */
+    public static function isSameNameButOneHasMiddleInitial(?string $name1, ?string $name2): bool
+    {
+        if (empty($name1) || empty($name2)) {
+            return false;
+        }
+
+        //If none of the strings contain spaces, we assume none contain a middle initial
+        if ( ! Str::contains($name1, ' ') && ! Str::contains($name2, ' ')) {
+            return false;
+        }
+
+        return 1 === levenshtein(extractLetters(strtolower($name1)), extractLetters(strtolower($name2)));
+    }
+
     /**
      * Create a new CarePlan.
      *
@@ -129,9 +188,7 @@ class CcdaImporter
 
         $demographics = $this->ccda->bluebuttonJson()->demographics;
 
-        if ($this->isFamily($email, $demographics, $this->enrollee)) {
-            $email = self::convertToFamilyEmail($email);
-        }
+        $email = $this->ensureEmailIsUnique($this->enrollee, $this->ccda, $email, $demographics);
 
         $newPatientUser = (new UserRepository())->createNewUser(
             new ParameterBag(
@@ -167,10 +224,45 @@ class CcdaImporter
         $this->ccda->setRelation('patient', $newPatientUser);
     }
 
+    private function ensureEmailIsUnique(?Enrollee $enrollee, Ccda $ccda, string $email, $demographics)
+    {
+        $phones = collect($demographics->phones)
+            ->pluck('number')
+            ->map(fn ($num) => formatPhoneNumberE164($num))
+            ->merge([
+                formatPhoneNumberE164($enrollee->primary_phone),
+                formatPhoneNumberE164($enrollee->cell_phone),
+                formatPhoneNumberE164($enrollee->home_phone),
+                formatPhoneNumberE164($enrollee->other_phone),
+            ])
+            ->unique()
+            ->filter()
+            ->all();
+
+        $transDems = (new CcdToLogTranformer())->demographics($demographics);
+        $address   = new Address(
+            $transDems['street'],
+            $transDems['city'],
+            $transDems['state'],
+            $transDems['zip'],
+            $transDems['street2']
+        );
+
+        if (self::isFamily($email, $phones, $this->ccda->patient_first_name, $this->ccda->patient_last_name, $address)) {
+            return self::convertToFamilyEmail($email);
+        }
+
+        if (self::emailIsTaken($email, $this->ccda->patient_first_name, $this->ccda->patient_last_name)) {
+            return self::EMAIL_EXISTS_BUT_NOT_FAMILY_PREFIX.$email;
+        }
+
+        return $email;
+    }
+
     private function ensurePatientHasParticipantRole()
     {
         if ($this->ccda->patient->isParticipant()) {
-            return;
+            return $this;
         }
 
         $this->ccda->patient->roles()->sync([
@@ -181,6 +273,8 @@ class CcdaImporter
 
         \DB::commit();
         $this->ccda->patient->clearRolesCache();
+
+        return $this;
     }
 
     private function handleDuplicateEnrollees()
@@ -262,8 +356,6 @@ class CcdaImporter
             }
         }
 
-        $this->ensurePatientHasParticipantRole();
-
         $this->ccda->loadMissing(['patient.primaryPractice', 'patient.patientInfo']);
 
         if (is_null($this->ccda->patient)) {
@@ -290,6 +382,7 @@ class CcdaImporter
 //                 - Not useful because in the case of BP we don't have a starting value.
 //            Uncomment after we have refactored vitals/observations.
 //            ->importVitals()
+            ->ensurePatientHasParticipantRole()
             ->updateCcdaPostImport()
             ->updateEnrolleePostImport()
             ->updatePatientUserPostImport()
@@ -403,58 +496,6 @@ class CcdaImporter
         return $this;
     }
 
-    private function isFamily(string $email, object $demographics, ?Enrollee $enrollee)
-    {
-        $phones = collect($demographics->phones)
-            ->pluck('number')
-            ->map(fn ($num) => formatPhoneNumberE164($num))
-            ->when( ! is_null($enrollee), function ($coll) use ($enrollee) {
-                return $coll->merge([
-                    formatPhoneNumberE164($enrollee->primary_phone),
-                    formatPhoneNumberE164($enrollee->cell_phone),
-                    formatPhoneNumberE164($enrollee->home_phone),
-                    formatPhoneNumberE164($enrollee->other_phone),
-                ]);
-            })
-            ->unique()
-            ->filter()
-            ->all();
-
-        if (empty($phones)) {
-            return false;
-        }
-
-        return User::ofType(['participant', 'survey-only'])
-            ->where('email', $email)
-            ->where('first_name', '!=', $this->ccda->patient_first_name)
-            ->where(function ($q) use ($phones, $demographics) {
-                $q->whereHas('phoneNumbers', function ($q) use ($phones) {
-                    $q->whereIn('number', $phones);
-                })->orWhere('last_name', '=', $this->ccda->patient_last_name);
-            })
-            ->exists();
-    }
-
-    /**
-     * Returns true if both names are the same, but one includes a middle initial.
-     *
-     * Example 1: "Foo", "Foo J"
-     * Example 2: "Jane", "Jane, J."
-     */
-    private function isSameNameButOneHasMiddleInitial(?string $name1, ?string $name2): bool
-    {
-        if (empty($name1) || empty($name2)) {
-            return false;
-        }
-
-        //If none of the strings contain spaces, we assume none contain a middle initial
-        if ( ! Str::contains($name1, ' ') && ! Str::contains($name2, ' ')) {
-            return false;
-        }
-
-        return 1 === levenshtein(extractLetters(strtolower($name1)), extractLetters(strtolower($name2)));
-    }
-
     private function patientEmail()
     {
         $email = $this->ccda->patient_email;
@@ -490,6 +531,9 @@ class CcdaImporter
 
             $this->ccda->patient->patientInfo->ccm_status = Patient::ENROLLED;
             $this->ccda->patient->patientInfo->save();
+
+            $this->ccda->status = Ccda::CAREPLAN_CREATED;
+            $this->ccda->save();
         }
 
         return $this;
@@ -517,7 +561,7 @@ class CcdaImporter
         }
 
         //Both names are the same, but one includes a middle name
-        if ($this->isSameNameButOneHasMiddleInitial($this->ccda->patient->first_name, $enrollee->first_name)) {
+        if (self::isSameNameButOneHasMiddleInitial($this->ccda->patient->first_name, $enrollee->first_name)) {
             return;
         }
 
