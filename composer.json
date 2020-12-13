@@ -14,7 +14,7 @@
                 "CircleLinkHealth\\SqlViews\\Providers\\SqlViewsServiceProvider"
             ],
             "aliases": {
-                
+
             }
         }
     },
@@ -25,5 +25,8 @@
         "classmap": [
             "Database/Views"
         ]
+    },
+    "require": {
+        "phlak/semver": "^3.2"
     }
 }
