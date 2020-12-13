@@ -486,16 +486,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.168.2",
+            "version": "3.168.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1d6a976da857d13b156bd63613ee086c13f6dc29"
+                "reference": "49ef1f905388c8185012c9651b80941b8f2a218d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1d6a976da857d13b156bd63613ee086c13f6dc29",
-                "reference": "1d6a976da857d13b156bd63613ee086c13f6dc29",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/49ef1f905388c8185012c9651b80941b8f2a218d",
+                "reference": "49ef1f905388c8185012c9651b80941b8f2a218d",
                 "shasum": ""
             },
             "require": {
@@ -567,7 +567,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-10T19:35:18+00:00"
+            "time": "2020-12-11T19:12:18+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -1016,7 +1016,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "0f1a4cc20efec43d324d9eaef0360548768ebf4c"
+                "reference": "1e67902775c98386822b9f52739d4b34960ae215"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -1052,7 +1052,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-11T18:31:57+00:00"
+            "time": "2020-12-13T03:23:21+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1060,7 +1060,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4ba9ee847ed28359af8f352eba8bf70a1149e549"
+                "reference": "35797ecc50789fa18e8303bf0ec1e68a921b9030"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1087,7 +1087,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-11T18:31:56+00:00"
+            "time": "2020-12-11T18:53:38+00:00"
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
@@ -14767,12 +14767,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "bd37cf1c87fee760937595ef4244ade7a3a4b61c"
+                "reference": "a6e87a42a6601b9620963853d1bd6d64dda2df03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/bd37cf1c87fee760937595ef4244ade7a3a4b61c",
-                "reference": "bd37cf1c87fee760937595ef4244ade7a3a4b61c",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/a6e87a42a6601b9620963853d1bd6d64dda2df03",
+                "reference": "a6e87a42a6601b9620963853d1bd6d64dda2df03",
                 "shasum": ""
             },
             "require": {
@@ -14836,7 +14836,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-17T08:44:31+00:00"
+            "time": "2020-12-11T19:59:47+00:00"
         },
         {
             "name": "orangehill/iseed",
@@ -15329,16 +15329,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.59",
+            "version": "0.12.60",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "cf4107257c8ca2ad967efdd6a00f12b21acbb779"
+                "reference": "d4577922c296d28746e28a5f046e787562143157"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/cf4107257c8ca2ad967efdd6a00f12b21acbb779",
-                "reference": "cf4107257c8ca2ad967efdd6a00f12b21acbb779",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d4577922c296d28746e28a5f046e787562143157",
+                "reference": "d4577922c296d28746e28a5f046e787562143157",
                 "shasum": ""
             },
             "require": {
@@ -15381,7 +15381,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-12-07T14:46:03+00:00"
+            "time": "2020-12-12T13:07:07+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
