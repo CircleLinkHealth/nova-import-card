@@ -569,7 +569,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "c57f100efbbd642f45bc172e968a7db99b81a874"
+                "reference": "936a1896f60c91d62884fa452684f9ee2f8c5f26"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -617,7 +617,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-07T00:31:04+00:00"
+            "time": "2020-12-13T15:05:02+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -780,7 +780,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "11f7d3e7295181484c7d7cbf1926ce18419321f3"
+                "reference": "53c70c3fd65fbd47082f229019720dc096af6410"
             },
             "require": {
                 "laravel/passport": "^8.0 || ^7.3.0",
@@ -814,7 +814,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-01T02:04:02+00:00"
+            "time": "2020-12-13T15:01:35+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -872,7 +872,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "1e67902775c98386822b9f52739d4b34960ae215"
+                "reference": "f91d83bd8215ece996b06e434516786e020669dd"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -908,7 +908,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-13T03:23:21+00:00"
+            "time": "2020-12-13T15:02:35+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -916,7 +916,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "35797ecc50789fa18e8303bf0ec1e68a921b9030"
+                "reference": "09efddc166205741f9c1a50a5169bd2493554f7b"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -943,7 +943,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-11T18:53:38+00:00"
+            "time": "2020-12-13T15:05:02+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1133,7 +1133,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "2c0a921fc6a5f0980be65c129ae14fedfaa1f894"
+                "reference": "8035fe9f66bfb2d035b6e1f6fcc99ddaf6138b83"
             },
             "type": "laravel-module",
             "extra": {
@@ -1155,7 +1155,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-30T15:57:39+00:00"
+            "time": "2020-12-13T15:05:01+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1281,7 +1281,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "1ab4dc24d17be7a29d62c01e77a4ec131e66ac29"
+                "reference": "0152fc4cbc5d9136cbf753b6e1560c0469614d3f"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1298,7 +1298,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-13T04:00:24+00:00"
+            "time": "2020-12-13T15:05:01+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1334,7 +1334,10 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "22752f0c2331fa42cec1fb14cfc2a2cbdb9788b9"
+                "reference": "72bed6e1eef79258c85710df9aaa5c2b6fa57ebb"
+            },
+            "require": {
+                "phlak/semver": "^3.2"
             },
             "type": "laravel-module",
             "extra": {
@@ -1359,7 +1362,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-11-30T17:21:35+00:00"
+            "time": "2020-12-13T15:02:04+00:00"
         },
         {
             "name": "circlelinkhealth/synonyms-module",
@@ -1396,7 +1399,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "3a9b581cf8d123e4f95c274d9e681f031df06cec"
+                "reference": "11417dc74160c53926aa07a4de782c0d2a570428"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1421,7 +1424,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-07T00:31:03+00:00"
+            "time": "2020-12-13T15:02:15+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -6090,6 +6093,61 @@
                 "phaxio"
             ],
             "time": "2019-03-08T19:14:29+00:00"
+        },
+        {
+            "name": "phlak/semver",
+            "version": "3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHLAK/SemVer.git",
+                "reference": "2167230f819d43d565194e2e91d69a1fa110c3df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHLAK/SemVer/zipball/2167230f819d43d565194e2e91d69a1fa110c3df",
+                "reference": "2167230f819d43d565194e2e91d69a1fa110c3df",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16.1",
+                "phpunit/phpunit": "^7.0 || ^8.0 || ^9.0",
+                "psy/psysh": "^0.10",
+                "vimeo/psalm": "^3.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHLAK\\SemVer\\": "src/"
+                },
+                "files": [
+                    "src/Support/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Kankiewicz",
+                    "email": "Chris@ChrisKankiewicz.com"
+                }
+            ],
+            "description": "Semantic versioning helper library",
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/PHLAK",
+                    "type": "github"
+                },
+                {
+                    "url": "https://paypal.me/ChrisKankiewicz",
+                    "type": "paypal"
+                }
+            ],
+            "time": "2020-04-10T17:31:42+00:00"
         },
         {
             "name": "php-http/message-factory",
