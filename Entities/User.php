@@ -340,6 +340,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use HasEmrDirectAddress;
     use HasMediaTrait;
     use Impersonate;
+    use \Laravel\Nova\Actions\Actionable;
     use MakesOrReceivesCalls;
     use Notifiable;
     use PivotEventTrait;
@@ -664,13 +665,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function billableProblems()
     {
-        $genericDiabetes = \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', 'Diabetes')->firstOrFail();
         //todo: use billing repo
         return $this->ccdProblems()
             ->whereNotNull('cpm_problem_id')
-            ->when($genericDiabetes, function ($p) use ($genericDiabetes) {
-                $p->where('cpm_problem_id', '!=', $genericDiabetes->id);
-            })
             ->with(['cpmProblem', 'icd10Codes'])
             ->where('is_monitored', true);
     }
@@ -2768,13 +2765,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->withPivot('role_id')
             ->when(
                 $onlyActive,
-                function ($query) use ($onlyActive) {
+                function ($query) {
                     return $query->where('active', '=', 1);
                 }
             )
             ->when(
                 $onlyEnrolledPatients,
-                function ($query) use ($onlyEnrolledPatients) {
+                function ($query) {
                     //$query -> Practice Model
                     return $query->whereHas(
                         'patients',
@@ -3439,7 +3436,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $query->ofPractice($approver->practices)
             ->ofType('participant')
-            ->whereHas('patientInfo', function ($q) use ($approver) {
+            ->whereHas('patientInfo', function ($q) {
                 $q->enrolled();
             })
             ->whereHas(
@@ -3558,7 +3555,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopeWithDownloadableInvoices($query, Carbon $startDate, Carbon $endDate)
     {
         return $query->careCoaches()->with([
-            'nurseInfo' => function ($nurseInfo) use ($startDate, $endDate) {
+            'nurseInfo' => function ($nurseInfo) use ($startDate) {
                 $nurseInfo->with(
                     [
                         'invoices' => function ($invoice) use ($startDate) {
@@ -3705,7 +3702,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function setBillingProviderId($value)
     {
         if (empty($value)) {
-            Log::debug("Removing provider for enrollee[$this->id] because value[$value] is empty");
+            Log::debug("Removing provider for user[$this->id] because value[$value] is empty");
             $this->careTeamMembers()->where('type', CarePerson::BILLING_PROVIDER)->delete();
 
             return true;

@@ -359,7 +359,7 @@ trait UserHelpers
 
         $patient->patientInfo->ccm_status = Patient::ENROLLED;
         $patient->patientInfo->save();
-        $cpmProblems = CpmProblem::notGenericDiabetes()->get();
+        $cpmProblems = CpmProblem::get();
 
         if ($addRpm) {
             $cpmProb = $cpmProblems->get(1);

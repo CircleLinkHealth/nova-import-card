@@ -777,8 +777,9 @@ class UserRepository
                     $params->get('birth_date'),
                     $params->get('mrn_number')
                 );
-            }
 
+                return;
+            }
             throw new ValidationException($validator);
         }
 
