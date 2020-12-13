@@ -40,10 +40,6 @@ class PatientReadRepository
                 'phoneNumbers' => function ($q) {
                     $q->select(['user_id', 'is_primary', 'number', 'type']);
                 },
-                'patientSummaries' => function ($q) {
-                    $q->whereMonthYear(Carbon::now()->startOfMonth()->toDateString())
-                        ->select(['patient_id', 'ccm_time', 'bhi_time', 'month_year']);
-                },
                 'patientInfo.location',
                 'careTeamMembers' => function ($q) {
                     $q->whereIn(
