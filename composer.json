@@ -24,7 +24,8 @@
         }
     },
     "require": {
-        "circlelinkhealth/customer-module": "*"
+        "circlelinkhealth/customer-module": "*",
+        "spatie/laravel-rate-limited-job-middleware": "*"
     },
     "repositories": [
         {
