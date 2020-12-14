@@ -313,8 +313,8 @@ abstract class NursePaymentAlgorithm
                 $nurseCallsInDays->put($nurseInfoId, $entry);
             });
         });
-        $coll->each(function (Collection $nurseRange, $rangeIndex) use ($coll, $nurseCallsInDays) {
-            $nurseRange->each(function (TimeRangeEntry $range, string $nurseInfoId) use ($coll, $rangeIndex, $nurseCallsInDays) {
+        $coll->each(function (Collection $nurseRange, $rangeIndex) use ($nurseCallsInDays) {
+            $nurseRange->each(function (TimeRangeEntry $range, string $nurseInfoId) use ($nurseCallsInDays) {
                 $entry = $nurseCallsInDays->get($nurseInfoId, []);
                 if (in_array($range->lastLogDate, $entry)) {
                     $range->hasSuccessfulCall = true;

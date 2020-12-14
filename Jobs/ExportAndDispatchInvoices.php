@@ -8,9 +8,9 @@ namespace CircleLinkHealth\NurseInvoices\Jobs;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\Nurseinvoices\GenerateInvoicesExport;
 use CircleLinkHealth\NurseInvoices\Notifications\NurseInvoicesDownloaded;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -61,7 +61,7 @@ class ExportAndDispatchInvoices implements ShouldQueue
 
         User::withDownloadableInvoices($startDate, $endDate)
             ->select('id')
-            ->chunk(100, function ($users) use ($startDate, $endDate, &$invoices) {
+            ->chunk(100, function ($users) use (&$invoices) {
                 $users->each(function ($user) use ($invoices) {
                     $invoices->push($user->nurseInfo->invoices->first());
                 });

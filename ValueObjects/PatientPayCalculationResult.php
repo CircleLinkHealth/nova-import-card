@@ -16,7 +16,6 @@ class PatientPayCalculationResult
     /** @var ?Collection In case of variable pay payment, array of low rate payments */
     public ?Collection $lowRates = null;
 
-    /** @var float */
     public float $pay;
 
     /** @var ?Collection In case of visit fee payment, [chargeableServiceCode => [range(key), payment(value)] ] */

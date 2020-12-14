@@ -10,10 +10,10 @@ use App\Jobs\GenerateNurseMonthlyInvoiceCsv;
 use App\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Notification;
 
@@ -125,7 +125,7 @@ class SendResolveInvoiceDisputeReminder extends Command
     public function unresolvedDisputesCount($month)
     {
         return NurseInvoice::where('month_year', $month)
-            ->whereHas('disputes', function ($q) use ($month) {
+            ->whereHas('disputes', function ($q) {
                 $q->whereNull('resolved_at');
             })
             ->count();

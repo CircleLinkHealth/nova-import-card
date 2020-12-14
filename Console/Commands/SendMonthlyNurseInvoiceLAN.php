@@ -8,10 +8,10 @@ namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
 use App\Notifications\InvoiceReminder;
 use Carbon\Carbon;
-use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Console\Command;
 
 class SendMonthlyNurseInvoiceLAN extends Command

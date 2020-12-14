@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\NurseInvoices\Notifications;
 
 use CircleLinkHealth\Core\Contracts\HasAttachment;
-use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
