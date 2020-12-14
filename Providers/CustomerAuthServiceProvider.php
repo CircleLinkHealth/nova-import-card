@@ -46,7 +46,7 @@ class CustomerAuthServiceProvider extends ServiceProvider
                 ),
                 [
                     $sourcePath,
-                    __DIR__.'/../Billing/Resources/views'
+                    __DIR__.'/../Billing/Resources/views',
                 ]
             ),
             'customer'

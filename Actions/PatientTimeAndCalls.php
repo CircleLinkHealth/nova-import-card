@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\Customer\Actions;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\DTO\PatientTimeAndCalls as DTO;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
-use CircleLinkHealth\Customer\DTO\PatientTimeAndCalls as DTO;
 
 class PatientTimeAndCalls
 {

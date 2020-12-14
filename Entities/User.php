@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
 use App\ForeignId;
 use App\LoginLogout;
 use App\Message;
@@ -38,14 +37,12 @@ use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Customer\Traits\SelfEnrollableTrait;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
-use CircleLinkHealth\SharedModels\Entities\Dispute;
-use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
-use CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\SamlSp\Entities\SamlUser;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
@@ -59,8 +56,11 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\CpmSmoking;
 use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
 use CircleLinkHealth\SharedModels\Entities\CpmWeight;
+use CircleLinkHealth\SharedModels\Entities\Dispute;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Medication;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
@@ -132,7 +132,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\TwoFA\Entities\AuthyUser                                                                      $authyUser
  * @property \CircleLinkHealth\Customer\Entities\CareAmbassador                                                              $careAmbassador
  * @property \CircleLinkHealth\SharedModels\Entities\CarePlan                                                                $carePlan
- * @property \CircleLinkHealth\SharedModels\Entities\CareplanAssessment                                                                                         $carePlanAssessment
+ * @property \CircleLinkHealth\SharedModels\Entities\CareplanAssessment                                                      $carePlanAssessment
  * @property \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection                       $careTeamMembers
  * @property int|null                                                                                                        $care_team_members_count
  * @property \CircleLinkHealth\SharedModels\Entities\Allergy[]|\Illuminate\Database\Eloquent\Collection                      $ccdAllergies
@@ -171,7 +171,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                   $cpmSymptoms
  * @property int|null                                                                                                        $cpm_symptoms_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight                                                               $cpmWeight
- * @property \CircleLinkHealth\SharedModels\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                     $disputes
+ * @property \CircleLinkHealth\SharedModels\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection                      $disputes
  * @property int|null                                                                                                        $disputes_count
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                                            $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo                                                         $ehrReportWriterInfo
@@ -206,7 +206,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                                                        $notes_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
- * @property \CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection           $nurseBonuses
+ * @property \CircleLinkHealth\SharedModels\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection            $nurseBonuses
  * @property int|null                                                                                                        $nurse_bonuses_count
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurseInfo
  * @property \CircleLinkHealth\SharedModels\Entities\Observation[]|\Illuminate\Database\Eloquent\Collection                  $observations

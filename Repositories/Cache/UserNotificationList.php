@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Customer\Repositories\Cache;
 
-use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Customer\Contracts\UserNotificationListInterface;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Contracts\UserNotificationListInterface;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\User;
 
 class UserNotificationList implements UserNotificationListInterface

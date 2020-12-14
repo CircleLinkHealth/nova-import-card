@@ -49,8 +49,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 class SaasAccount extends BaseModel implements HasMedia
 {
     use HasMediaTrait;
-    use
-        SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',

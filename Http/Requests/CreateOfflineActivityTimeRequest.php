@@ -23,7 +23,7 @@ class CreateOfflineActivityTimeRequest extends FormRequest
     {
         return optional(auth()->user())->hasPermission('offlineActivityRequest.create');
     }
-    
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -36,7 +36,7 @@ class CreateOfflineActivityTimeRequest extends FormRequest
                 'patient_id' => $this->route('patientId'),
             ]
         );
-        
+
         return [
             'type'                  => ['required', Rule::in(Activity::input_activity_types())],
             'duration_minutes'      => ['required', 'numeric'],

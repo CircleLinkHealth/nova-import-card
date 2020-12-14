@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\SharedModels\Entities\NurseInvoice;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -62,32 +62,32 @@ use Illuminate\Support\Collection;
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse
  *     filter(\App\Filters\QueryFilters $filters)
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newModelQuery()
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newQuery()
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse query()
- * @property int                                                                                              $is_demo
- * @property int                                                                                              $pay_interval
- * @property int                                                                                              $is_variable_rate
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newModelQuery()
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newQuery()
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse query()
+ * @property int                                                                                             $is_demo
+ * @property int                                                                                             $pay_interval
+ * @property int                                                                                             $is_variable_rate
  * @property \CircleLinkHealth\SharedModels\Entities\NurseInvoice[]|\Illuminate\Database\Eloquent\Collection $invoices
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsDemo($value)
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsVariableRate($value)
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse wherePayInterval($value)
- * @property int|null                                                                                         $care_rate_logs_count
- * @property int|null                                                                                         $holidays_count
- * @property int|null                                                                                         $invoices_count
- * @property int|null                                                                                         $revision_history_count
- * @property int|null                                                                                         $states_count
- * @property int|null                                                                                         $summary_count
- * @property int|null                                                                                         $windows_count
- * @property int|null                                                                                         $workhourables_count
- * @property int|null                                                                                         $case_load_capacity
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereCaseLoadCapacity($value)
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee($value)
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereHighRate2($value)
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereHighRate3($value)
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee2($value)
- * @method   static                                                                                           \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee3($value)
- * @property \Illuminate\Support\Carbon|null                                                                  $start_date
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsDemo($value)
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsVariableRate($value)
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse wherePayInterval($value)
+ * @property int|null                                                                                        $care_rate_logs_count
+ * @property int|null                                                                                        $holidays_count
+ * @property int|null                                                                                        $invoices_count
+ * @property int|null                                                                                        $revision_history_count
+ * @property int|null                                                                                        $states_count
+ * @property int|null                                                                                        $summary_count
+ * @property int|null                                                                                        $windows_count
+ * @property int|null                                                                                        $workhourables_count
+ * @property int|null                                                                                        $case_load_capacity
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereCaseLoadCapacity($value)
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee($value)
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereHighRate2($value)
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereHighRate3($value)
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee2($value)
+ * @method   static                                                                                          \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee3($value)
+ * @property \Illuminate\Support\Carbon|null                                                                 $start_date
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 {

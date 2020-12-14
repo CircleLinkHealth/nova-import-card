@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
-use CircleLinkHealth\SharedModels\Entities\PasswordlessLoginToken;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\PasswordlessLoginToken;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 

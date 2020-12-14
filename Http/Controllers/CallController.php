@@ -8,10 +8,10 @@ namespace CircleLinkHealth\Customer\Http\Controllers;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Rules\DateBeforeUsingCarbon;
-use CircleLinkHealth\Customer\Http\Requests\CreateNewCallRequest;
-use CircleLinkHealth\Customer\Http\Resources\Call as CallResource;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Http\Requests\CreateNewCallRequest;
+use CircleLinkHealth\Customer\Http\Resources\Call as CallResource;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;

@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Customer\LocationServices;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Revisionable\Entities\Revision;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**

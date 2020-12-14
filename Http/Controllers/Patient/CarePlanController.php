@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Customer\Http\Controllers\Patient;
 
-use CircleLinkHealth\Customer\Http\Requests\DmCarePlanToBillingProviderRequest;
 use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Http\Requests\DmCarePlanToBillingProviderRequest;
 use Illuminate\Routing\Controller;
 
 class CarePlanController extends Controller

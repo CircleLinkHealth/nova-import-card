@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\Customer\Repositories;
 
-use CircleLinkHealth\Customer\Contracts\NurseFinderRepositoryContract;
-use CircleLinkHealth\Customer\Policies\CreateNoteForPatient;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
+use CircleLinkHealth\Customer\Contracts\NurseFinderRepositoryContract;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Policies\CreateNoteForPatient;
 use Illuminate\Support\Facades\Cache;
 
 class NurseFinderEloquentRepository implements NurseFinderRepositoryContract
