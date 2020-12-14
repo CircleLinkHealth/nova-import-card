@@ -324,9 +324,9 @@
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-patient-call-data-csv" />
       <path value="$PROJECT_DIR$/vendor/circlelinkhealth/generate-success-stories-report" />
-      <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-snappy" />
       <path value="$PROJECT_DIR$/vendor/daltcore/lara-pdf-merger" />
       <path value="$PROJECT_DIR$/vendor/knplabs/knp-snappy" />
+      <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-snappy" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
