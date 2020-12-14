@@ -98,7 +98,7 @@ export default {
         },
 
         seeAll() {
-            window.location.href = '/see-all-notifications'
+            window.location.href = 'see-all-notifications'
         },
 
     },
