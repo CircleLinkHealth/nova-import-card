@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
+use CircleLinkHealth\Customer\DTO\PatientTimeAndCalls as DTO;
 
 class PatientTimeAndCalls
 {
@@ -55,7 +56,7 @@ class PatientTimeAndCalls
     private function formatAndReturnData(): Collection
     {
         return collect($this->returnTimeAndCalls())->map(function ($item, $key) {
-            return (new \App\ValueObjects\PatientTimeAndCalls())
+            return (new DTO())
                 ->setPatientId($key)
                 ->fromArray($item);
         });
