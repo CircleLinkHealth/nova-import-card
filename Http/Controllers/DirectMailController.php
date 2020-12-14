@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Services\PhiMail\CheckResult;
 use CircleLinkHealth\Core\Contracts\DirectMail;
 use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
-use App\Services\PhiMail\CheckResult;
 use Illuminate\Http\Request;
 
 class DirectMailController extends Controller

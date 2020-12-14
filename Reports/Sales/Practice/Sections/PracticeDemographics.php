@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CpmAdmin\Reports\Sales\Practice\Sections;
 
-use CircleLinkHealth\CpmAdmin\Reports\Sales\SalesReportSection;
 use Carbon\Carbon;
+use CircleLinkHealth\CpmAdmin\Reports\Sales\SalesReportSection;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 

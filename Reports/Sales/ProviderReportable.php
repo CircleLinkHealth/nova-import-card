@@ -11,20 +11,20 @@ use CircleLinkHealth\CpmAdmin\Contracts\Reportable;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Entities\Observation;
-use CircleLinkHealth\SharedModels\Entities\Activity;
 
 class ProviderReportable implements Reportable
 {
     protected $provider;
-    
+
     public function __construct(User $provider)
     {
         $this->provider = $provider;
     }
-    
+
     /**
      * Sum of activity time for this Reportable.
      *
@@ -36,11 +36,11 @@ class ProviderReportable implements Reportable
             ::whereHas('patient', function ($q) {
                 $q->hasBillingProvider($this->provider->id);
             })
-            ->where('created_at', '>=', $start->toDateTimeString())
-            ->where('created_at', '<=', $end->toDateTimeString())
-            ->sum('duration');
+                ->where('created_at', '>=', $start->toDateTimeString())
+                ->where('created_at', '<=', $end->toDateTimeString())
+                ->sum('duration');
     }
-    
+
     /**
      * Total eligible-to-be-billed patients count (for given month) for this Reportable.
      *
@@ -50,7 +50,7 @@ class ProviderReportable implements Reportable
     {
         return $this->totalBilledPatientsCount($month);
     }
-    
+
     /**
      * Call count for this Reportable.
      *
@@ -69,14 +69,14 @@ class ProviderReportable implements Reportable
         })
             ->where('called_date', '>=', $start)
             ->where('called_date', '<=', $end);
-        
+
         if ($status) {
             $q->whereStatus($status);
         }
-        
+
         return $q->count();
     }
-    
+
     /**
      * Forwarded emergency notes count for this Reportable.
      *
@@ -88,7 +88,7 @@ class ProviderReportable implements Reportable
             ->emergency()
             ->count();
     }
-    
+
     /**
      * Forwarded notes count for this Reportable.
      *
@@ -99,7 +99,7 @@ class ProviderReportable implements Reportable
         return Note::forwardedTo(get_class($this->provider), $this->provider->id, $start, $end)
             ->count();
     }
-    
+
     /**
      * The link to view this Reportable's notes.
      *
@@ -109,7 +109,7 @@ class ProviderReportable implements Reportable
     {
         return route('patient.note.listing')."/?provider={$this->provider->id}";
     }
-    
+
     /**
      * Observation count for this Reportable.
      *
@@ -121,11 +121,11 @@ class ProviderReportable implements Reportable
             ::whereHas('user', function ($q) {
                 $q->hasBillingProvider($this->provider->id);
             })
-            ->where('created_at', '>=', $start)
-            ->where('created_at', '<=', $end)
-            ->count();
+                ->where('created_at', '>=', $start)
+                ->where('created_at', '<=', $end)
+                ->count();
     }
-    
+
     /**
      * All patients for this Reportable.
      *
@@ -137,7 +137,7 @@ class ProviderReportable implements Reportable
             ->hasBillingProvider($this->provider->id)
             ->get();
     }
-    
+
     /**
      * Total billed patients count (since the beginning of time) for this Reportable.
      *
@@ -152,11 +152,11 @@ class ProviderReportable implements Reportable
             });
         })
             ->where('total_time', '>', 1199);
-        
+
         if ($month) {
             $q->where('month_year', $month->firstOfMonth());
         }
-        
+
         return $q->count();
     }
 }

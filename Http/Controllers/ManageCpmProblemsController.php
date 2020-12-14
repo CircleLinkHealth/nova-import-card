@@ -57,7 +57,7 @@ class ManageCpmProblemsController extends Controller
 
         return view('cpm-admin::admin.problemKeywords.index', compact(['problems']));
     }
-    
+
     /**
      * Update the specified resource in storage.
      *

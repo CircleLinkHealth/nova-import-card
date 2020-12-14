@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 class EnrollmentStatsController extends Controller
 {
     use ApiReturnHelpers;
-    
+
     /**
      * Render ambassador stats datatable.
      *

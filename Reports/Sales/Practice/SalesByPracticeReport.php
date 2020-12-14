@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\CpmAdmin\Reports\Sales\Practice;
 
+use Carbon\Carbon;
 use CircleLinkHealth\CpmAdmin\Reports\Sales\Practice\Sections\EnrollmentSummary;
 use CircleLinkHealth\CpmAdmin\Reports\Sales\Practice\Sections\FinancialSummary;
 use CircleLinkHealth\CpmAdmin\Reports\Sales\Practice\Sections\PracticeDemographics;
 use CircleLinkHealth\CpmAdmin\Reports\Sales\Practice\Sections\RangeSummary;
 use CircleLinkHealth\CpmAdmin\Reports\Sales\SalesReport;
-use Carbon\Carbon;
 
 class SalesByPracticeReport extends SalesReport
 {

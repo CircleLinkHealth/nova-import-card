@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
 use CircleLinkHealth\CpmAdmin\Http\Requests\StoreMedicationGroupMapRequest;
-use CircleLinkHealth\SharedModels\Entities\MedicationGroupsMap;
 use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
+use CircleLinkHealth\SharedModels\Entities\MedicationGroupsMap;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 

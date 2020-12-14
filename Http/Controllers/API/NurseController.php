@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API;
 
 use CircleLinkHealth\CpmAdmin\Filters\NurseFilters;
-use CircleLinkHealth\Customer\Http\Resources\NurseInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Http\Resources\NurseInfo;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 

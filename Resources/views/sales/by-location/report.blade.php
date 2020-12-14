@@ -31,7 +31,7 @@
         @endif
     </tr>
 
-    <?php  ?>
+    <?php ?>
     @foreach($data['diff'] as $key => $value)
         <tr>
             <td>{{ucwords($key) . ' during period'}}</td>
