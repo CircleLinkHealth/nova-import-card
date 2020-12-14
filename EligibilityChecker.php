@@ -12,6 +12,7 @@ use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
+use CircleLinkHealth\Eligibility\CcdaImporter\CcdaImporterWrapper;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -779,7 +780,9 @@ class EligibilityChecker
         }
 
         $args['practice_id'] = $this->practice->id;
-        $args['provider_id'] = $this->practice->user_id;
+        if ( ! $args['provider_id']) {
+            $args['provider_id'] = CcdaImporterWrapper::searchBillingProvider($args['referring_provider_name'], $this->practice->id);
+        }
 
         if (empty($args['email'])) {
             $timestamp     = now()->timestamp;
