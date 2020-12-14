@@ -260,16 +260,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.168.3",
+            "version": "3.169.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "49ef1f905388c8185012c9651b80941b8f2a218d"
+                "reference": "d15a231355e4435fc33bab83df075ec31edd0a9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/49ef1f905388c8185012c9651b80941b8f2a218d",
-                "reference": "49ef1f905388c8185012c9651b80941b8f2a218d",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d15a231355e4435fc33bab83df075ec31edd0a9b",
+                "reference": "d15a231355e4435fc33bab83df075ec31edd0a9b",
                 "shasum": ""
             },
             "require": {
@@ -341,7 +341,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-11T19:12:18+00:00"
+            "time": "2020-12-14T19:12:33+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -780,16 +780,18 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "ffe2944e6754db06cf36f0036452006f2ca84a4a"
+                "reference": "9593e46bdea99bb8ab0311d4b00100ef8a36026f"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
+                "jeremykenedy/slack-laravel": "*",
                 "laravel/passport": "^8.0 || ^7.3.0",
                 "laravel/vapor-core": "^2.9",
                 "laravel/vapor-ui": "*",
                 "laravelcollective/html": "^6.1",
                 "lcobucci/jwt": "3.3.3",
-                "maatwebsite/excel": "^3.1"
+                "maatwebsite/excel": "^3.1",
+                "mxl/laravel-job": "^1.2"
             },
             "type": "laravel-module",
             "extra": {
@@ -815,7 +817,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T18:31:46+00:00"
+            "time": "2020-12-14T20:19:39+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1164,7 +1166,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "f27df3034a0a1f98d370592f7f9490025ab0ada2"
+                "reference": "83f2a95ff8749baca1701eea6706d1e5a9d3ff3b"
             },
             "require": {
                 "barryvdh/laravel-snappy": "0.4.7",
@@ -1195,7 +1197,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T17:44:50+00:00"
+            "time": "2020-12-14T19:29:39+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1321,7 +1323,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "b928b67d43a018bc914c85a77dacfc0e264f5956"
+                "reference": "9424b6f31a0ddf217ea250f670edb91cc0d9fdff"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1338,7 +1340,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T16:59:20+00:00"
+            "time": "2020-12-14T19:26:32+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -3383,6 +3385,125 @@
                 }
             ],
             "time": "2020-06-13T08:05:20+00:00"
+        },
+        {
+            "name": "jeremykenedy/slack",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jeremykenedy/slack.git",
+                "reference": "b862ea0f65585cec3ffe065296f0de56afd61763"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jeremykenedy/slack/zipball/b862ea0f65585cec3ffe065296f0de56afd61763",
+                "reference": "b862ea0f65585cec3ffe065296f0de56afd61763",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "guzzlehttp/guzzle": "~6.0|~5.0|~4.0",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "4.2.*"
+            },
+            "suggest": {
+                "jeremykenedy/slack-laravel": "Required for Laravel support",
+                "nexylan/slack-bundle": "Required for Symfony bundle support"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "jeremykenedy\\Slack\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "maknz",
+                    "email": "github@mak.geek.nz"
+                },
+                {
+                    "name": "jeremykenedy",
+                    "email": "jeremykenedy@gmail.com"
+                }
+            ],
+            "description": "A simple PHP package for sending messages to Slack.",
+            "keywords": [
+                "laravel",
+                "slack"
+            ],
+            "time": "2017-07-21T17:13:29+00:00"
+        },
+        {
+            "name": "jeremykenedy/slack-laravel",
+            "version": "v2.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jeremykenedy/slack-laravel.git",
+                "reference": "447485a9309831a8830bb4291445fed36450b053"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jeremykenedy/slack-laravel/zipball/447485a9309831a8830bb4291445fed36450b053",
+                "reference": "447485a9309831a8830bb4291445fed36450b053",
+                "shasum": ""
+            },
+            "require": {
+                "jeremykenedy/slack": "~2.0",
+                "php": ">=5.6.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "jeremykenedy\\Slack\\Laravel\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "Slack": "jeremykenedy\\Slack\\Laravel\\Facade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "jeremykenedy\\Slack\\Laravel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "maknz",
+                    "email": "github@mak.geek.nz"
+                },
+                {
+                    "name": "jeremykenedy",
+                    "email": "jeremykenedy@gmail.com"
+                }
+            ],
+            "description": "Laravel integration for the jeremykenedy/slack package, including facades and service providers.",
+            "keywords": [
+                "laravel",
+                "slack"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/jeremykenedy",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/jeremykenedy",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2020-10-19T17:05:23+00:00"
         },
         {
             "name": "joshbrw/laravel-module-installer",
@@ -5747,6 +5868,61 @@
                 "jsonpath"
             ],
             "time": "2020-07-31T21:01:56+00:00"
+        },
+        {
+            "name": "mxl/laravel-job",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mxl/laravel-job.git",
+                "reference": "826e472f5282d3c630dca3fccf99784fa379ce5c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mxl/laravel-job/zipball/826e472f5282d3c630dca3fccf99784fa379ce5c",
+                "reference": "826e472f5282d3c630dca3fccf99784fa379ce5c",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "5.5.*|5.6.*|5.7.*|5.8.*|^6.0|^7.0|^8.0",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MichaelLedin\\LaravelJob\\LaravelJobServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MichaelLedin\\LaravelJob\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Ledin",
+                    "email": "mledin89@gmail.com"
+                }
+            ],
+            "description": "Laravel job tools",
+            "homepage": "https://github.com/mxl/laravel-job",
+            "keywords": [
+                "command",
+                "dispatch",
+                "job",
+                "laravel",
+                "tools"
+            ],
+            "time": "2020-09-11T06:40:19+00:00"
         },
         {
             "name": "myclabs/php-enum",
