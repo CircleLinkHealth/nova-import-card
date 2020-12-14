@@ -7,11 +7,11 @@
 namespace Tests\Feature;
 
 use App\Console\Commands\ReArrangeActivityChargeableServices;
+use CircleLinkHealth\SharedModels\Services\PageTimerService;
 use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
 use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
-use App\Services\PageTimerService;
-use App\ValueObjects\CreatePageTimerParams;
+use CircleLinkHealth\SharedModels\DTO\CreatePageTimerParams;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
