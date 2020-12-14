@@ -117,6 +117,10 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/short-url.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/pdf-service-module.git"
     }
   ],
   "require": {
