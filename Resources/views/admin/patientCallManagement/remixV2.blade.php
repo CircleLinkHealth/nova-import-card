@@ -1,8 +1,8 @@
 <?php
-$isAdmin = ! Auth::guest() && Cerberus::hasPermission('admin-access');
+$isAdmin = ! auth()->guest() && auth()->user()->hasPermission('admin-access');
 ?>
 
-@extends($isAdmin ? 'cpm-admin::partials.adminUI' : 'partials.providerUI')
+@extends($isAdmin ? 'cpm-admin::partials.adminUI' : 'cpm-admin::partials.non-adminUI')
 
 @section('title', 'Patient Activity Management')
 @section('activity', 'Patient Activity Management')

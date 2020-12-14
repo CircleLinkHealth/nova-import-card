@@ -28,53 +28,54 @@ Route::prefix('api')->group(function() {
     Route::get('nurses', 'API\NurseController@index')->middleware('permission:nurse.read');
 });
 
-    Route::get('upg0506/{type}', [
-        'uses' => 'DashboardController@upg0506',
-        'as'   => 'upg0506.demo',
-    ])->middleware('auth');
+Route::get('upg0506/{type}', [
+    'uses' => 'DashboardController@upg0506',
+    'as'   => 'upg0506.demo',
+])->middleware('auth');
 
-    Route::group(['prefix' => 'api'], function () {
-        Route::group(['prefix' => 'admin'], function () {
-            Route::get('clear-cache/{key}', [
-                'uses' => 'DashboardController@clearCache',
-                'as'   => 'clear.cache.key',
+Route::group(['prefix' => 'api'], function () {
+    Route::group(['prefix' => 'admin'], function () {
+        Route::get('clear-cache/{key}', [
+            'uses' => 'DashboardController@clearCache',
+            'as'   => 'clear.cache.key',
+        ])->middleware('permission:call.read');
+        //the new calls route that uses calls-view table
+        Route::get('calls-v2', [
+            'uses' => 'API\CallsViewController@index',
+            'as'   => 'calls.v2.index',
+        ])->middleware('permission:call.read');
+
+        Route::group(['prefix' => 'calls'], function () {
+            Route::get('', [
+                'uses' => 'API\CallsController@index',
+                'as'   => 'calls.index',
             ])->middleware('permission:call.read');
-            //the new calls route that uses calls-view table
-            Route::get('calls-v2', [
-                'uses' => 'API\CallsViewController@index',
-                'as'   => 'calls.v2.index',
+
+            Route::get('{id}', [
+                'uses' => 'API\CallsController@show',
+                'as'   => 'calls.show',
             ])->middleware('permission:call.read');
 
-            Route::group(['prefix' => 'calls'], function () {
-                Route::get('', [
-                    'uses' => 'API\CallsController@index',
-                    'as'   => 'calls.index',
-                ])->middleware('permission:call.read');
-
-                Route::get('{id}', [
-                    'uses' => 'API\CallsController@show',
-                    'as'   => 'calls.show',
-                ])->middleware('permission:call.read');
-
-                Route::delete('{ids}', [
-                    'uses' => 'API\CallsController@remove',
-                    'as'   => 'calls.destroy',
-                ])->middleware('permission:call.delete');
-            });
-
-            Route::post(
-                'user.outbound-calls',
-                'API\UserOutboundCallController@store'
-            )->middleware('permission:call.create');
-    
-            Route::post('calls-v2-time-and-calls', [
-                'uses' => 'API\CallsViewController@getPatientTimeAndCalls',
-                'as'   => 'calls.v2.time-and-calls',
-            ])->middleware('permission:call.read');
+            Route::delete('{ids}', [
+                'uses' => 'API\CallsController@remove',
+                'as'   => 'calls.destroy',
+            ])->middleware('permission:call.delete');
         });
-    });
 
-    Route::group([
+        Route::post(
+            'user.outbound-calls',
+            'API\UserOutboundCallController@store'
+        )->middleware('permission:call.create');
+
+        Route::post('calls-v2-time-and-calls', [
+            'uses' => 'API\CallsViewController@getPatientTimeAndCalls',
+            'as'   => 'calls.v2.time-and-calls',
+        ])->middleware('permission:call.read');
+    });
+});
+
+
+Route::group([
         'middleware' => [
             'auth',
             'permission:admin-access,practice-admin',
@@ -82,11 +83,6 @@ Route::prefix('api')->group(function() {
         'prefix' => 'admin',
     ], function () {
         Route::get('opcache', 'OPCacheGUIController@index');
-
-        Route::get('calls-v2', [
-            'uses' => 'PatientCallManagementController@remixV2',
-            'as'   => 'admin.patientCallManagement.v2.index',
-        ]);
     });
 
     Route::group([
@@ -142,63 +138,6 @@ Route::prefix('api')->group(function() {
                 'as'   => 'demo.note.efax',
                 'uses' => 'SendSampleNoteController@sendNoteViaEFax',
             ])->middleware('permission:note.send');
-        });
-
-        Route::group(['prefix' => 'ca-director'], function () {
-            Route::get('', [
-                'uses' => 'EnrollmentDirectorController@index',
-                'as'   => 'ca-director.index',
-            ]);
-
-            Route::get('searchEnrollables', [
-                'uses' => 'EnrollmentDirectorController@searchEnrollables',
-                'as'   => 'enrollables.ca-director.search',
-            ]);
-
-            Route::get('/enrollees', [
-                'uses' => 'EnrollmentDirectorController@getEnrollees',
-                'as'   => 'ca-director.enrollees',
-            ]);
-
-            Route::get('/ambassadors', [
-                'uses' => 'EnrollmentDirectorController@getCareAmbassadors',
-                'as'   => 'ca-director.ambassadors',
-            ]);
-
-            Route::post('/assign-ambassador', [
-                'uses' => 'EnrollmentDirectorController@assignCareAmbassadorToEnrollees',
-                'as'   => 'ca-director.assign-ambassador',
-            ]);
-
-            Route::post('/assign-callback', [
-                'uses' => 'EnrollmentDirectorController@assignCallback',
-                'as'   => 'ca-director.assign-callback',
-            ]);
-
-            Route::post('/mark-ineligible', [
-                'uses' => 'EnrollmentDirectorController@markEnrolleesAsIneligible',
-                'as'   => 'ca-director.mark-ineligible',
-            ]);
-
-            Route::post('/unassign-ca', [
-                'uses' => 'EnrollmentDirectorController@unassignCareAmbassadorFromEnrollees',
-                'as'   => 'ca-director.unassign-ambassador',
-            ]);
-
-            Route::post('/edit-enrollee', [
-                'uses' => 'EnrollmentDirectorController@editEnrolleeData',
-                'as'   => 'ca-director.edit-enrollee',
-            ]);
-
-            Route::post('/add-enrollee-custom-filter', [
-                'uses' => 'EnrollmentDirectorController@addEnrolleeCustomFilter',
-                'as'   => 'ca-director.add-enrollee-custom-filter',
-            ]);
-
-            Route::get('/test-enrollees', [
-                'uses' => 'EnrollmentDirectorController@runCreateEnrolleesSeeder',
-                'as'   => 'ca-director.test-enrollees',
-            ]);
         });
 
         Route::get(
@@ -355,11 +294,6 @@ Route::prefix('api')->group(function() {
                     'as'   => 'reports.sales.practice.report',
                 ])->middleware('permission:salesReport.create');
             });
-
-            Route::get('call-v2', [
-                'uses' => 'Reports\CallReportController@exportxlsV2',
-                'as'   => 'CallReportController.exportxlsv2',
-            ])->middleware('permission:call.read,note.read,patient.read,patientSummary.read');
 
             Route::group([
                 'prefix' => 'calls-dashboard',
@@ -844,4 +778,73 @@ Route::group([
         'uses' => 'CareCenter\WorkScheduleController@getHolidays',
         'as'   => 'get.admin.nurse.schedules.holidays',
     ])->middleware('permission:nurse.read');
+    
+    Route::group([
+        'prefix' => 'pam',
+    ], function () {
+        Route::get('', [
+            'uses' => 'PatientCallManagementController@remixV2',
+            'as'   => 'patientCallManagement.v2.index',
+        ])->middleware('permission:pam.view');
+    });
+    
+    Route::group([
+        'prefix' => 'ca-director',
+        'middleware' => 'permission:ca-director.view',
+    ], function () {
+        Route::get('', [
+            'uses' => 'EnrollmentDirectorController@index',
+            'as'   => 'ca-director.index',
+        ]);
+        
+        Route::get('searchEnrollables', [
+            'uses' => 'EnrollmentDirectorController@searchEnrollables',
+            'as'   => 'enrollables.ca-director.search',
+        ]);
+        
+        Route::get('/enrollees', [
+            'uses' => 'EnrollmentDirectorController@getEnrollees',
+            'as'   => 'ca-director.enrollees',
+        ]);
+        
+        Route::get('/ambassadors', [
+            'uses' => 'EnrollmentDirectorController@getCareAmbassadors',
+            'as'   => 'ca-director.ambassadors',
+        ]);
+        
+        Route::post('/assign-ambassador', [
+            'uses' => 'EnrollmentDirectorController@assignCareAmbassadorToEnrollees',
+            'as'   => 'ca-director.assign-ambassador',
+        ]);
+        
+        Route::post('/assign-callback', [
+            'uses' => 'EnrollmentDirectorController@assignCallback',
+            'as'   => 'ca-director.assign-callback',
+        ]);
+        
+        Route::post('/mark-ineligible', [
+            'uses' => 'EnrollmentDirectorController@markEnrolleesAsIneligible',
+            'as'   => 'ca-director.mark-ineligible',
+        ]);
+        
+        Route::post('/unassign-ca', [
+            'uses' => 'EnrollmentDirectorController@unassignCareAmbassadorFromEnrollees',
+            'as'   => 'ca-director.unassign-ambassador',
+        ]);
+        
+        Route::post('/edit-enrollee', [
+            'uses' => 'EnrollmentDirectorController@editEnrolleeData',
+            'as'   => 'ca-director.edit-enrollee',
+        ]);
+        
+        Route::post('/add-enrollee-custom-filter', [
+            'uses' => 'EnrollmentDirectorController@addEnrolleeCustomFilter',
+            'as'   => 'ca-director.add-enrollee-custom-filter',
+        ]);
+        
+        Route::get('/test-enrollees', [
+            'uses' => 'EnrollmentDirectorController@runCreateEnrolleesSeeder',
+            'as'   => 'ca-director.test-enrollees',
+        ]);
+    });
 });

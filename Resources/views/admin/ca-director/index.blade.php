@@ -1,4 +1,4 @@
-@extends(! Auth::guest() && Cerberus::hasPermission('admin-access') ? 'cpm-admin::partials.adminUI' : 'partials.providerUI')
+@extends(! Auth::guest() && Cerberus::hasPermission('admin-access') ? 'cpm-admin::partials.adminUI' : 'cpm-admin::partials.non-adminUI')
 
 @section('title', 'Care Ambassador Director Palen')
 @section('activity', 'Care Ambassador Director Palen')
