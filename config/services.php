@@ -94,7 +94,7 @@ return [
         'api-key'         => env('SERVERLESS_PDF_GENERATOR_API_KEY'),
         'default-options' => [
             'format' => 'Letter',
-            'scale'  => '0.8',
+            'scale'  => 0.8,
             'margin' => [
                 'top'    => '1cm',
                 'bottom' => '1cm',
