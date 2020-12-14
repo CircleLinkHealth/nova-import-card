@@ -228,7 +228,6 @@ return [
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
         CcmBillingServiceProvider::class,
-        \CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider::class,
 
         Spatie\SlashCommand\SlashCommandServiceProvider::class,
         SynonymsServiceProvider::class,
