@@ -27,6 +27,12 @@
             "Helpers/helpers.php"
         ]
     },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/slack-laravel.git"
+        }
+    ],
     "require": {
         "laravel/passport": "^8.0 || ^7.3.0",
         "lcobucci/jwt": "3.3.3",
