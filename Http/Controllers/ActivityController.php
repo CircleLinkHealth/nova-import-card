@@ -6,14 +6,9 @@
 
 namespace CircleLinkHealth\TimeTracking\Http\Controllers;
 
-use CircleLinkHealth\Customer\NurseTimeAlgorithms\AlternativeCareTimePayableCalculator;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShowPatientActivities;
-use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
-use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
-use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
 use App\Reports\PatientDailyAuditReport;
-use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
@@ -21,11 +16,15 @@ use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Jobs\ProcessMonthltyPatientTime;
+use CircleLinkHealth\Customer\Jobs\ProcessNurseMonthlyLogs;
+use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\ActivityMeta;
-use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
+use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
 use CircleLinkHealth\Timetracking\Requests\AdminCreateOfflineActivityTimeRequest;
+use CircleLinkHealth\TimeTracking\Services\ActivityService;
 use CircleLinkHealth\Timetracking\Services\TimeTrackerServerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
