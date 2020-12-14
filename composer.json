@@ -40,7 +40,7 @@
         "laravel/vapor-core": "^2.9",
         "laravelcollective/html": "^6.1",
         "friendsofcat/laravel-feature-flag": "^3.2",
-        "jeremykenedy/slack-laravel": "^7.0.0",
+        "jeremykenedy/slack-laravel": "*",
         "mxl/laravel-job": "^1.2",
         "laravel/vapor-ui": "*"
     }
