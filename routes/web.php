@@ -1100,3 +1100,8 @@ Route::post('enrollee-login-viewed', [
     'uses' => '\CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController@viewFormVisited',
     'as'   => 'enrollee.login.viewed',
 ])->middleware('guest');
+
+Route::post('callcreate-multi', [
+    'uses' => '\CircleLinkHealth\Customer\Http\Controllers\CallController@createMulti',
+    'as'   => 'api.callcreate-multi',
+])->middleware('auth');
