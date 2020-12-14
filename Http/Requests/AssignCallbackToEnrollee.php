@@ -20,7 +20,7 @@ class AssignCallbackToEnrollee extends FormRequest
     {
         return auth()->user()->isAdmin() || auth()->user()->isCallbacksAdmin();
     }
-    
+
     /**
      * Get the validation rules that apply to the request.
      *

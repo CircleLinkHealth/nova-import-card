@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\CpmAdmin\Reports\Sales\Provider\Sections;
 
+use Carbon\Carbon;
 use CircleLinkHealth\CpmAdmin\Reports\Sales\ProviderReportable;
 use CircleLinkHealth\CpmAdmin\Reports\Sales\SalesReportSection;
 use CircleLinkHealth\CpmAdmin\Reports\Sales\StatsHelper;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\DB;

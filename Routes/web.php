@@ -1,30 +1,34 @@
 <?php
 
-Route::prefix('api')->group(function() {
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+Route::prefix('api')->group(function () {
     Route::group(['prefix' => 'practices'], function () {
         Route::get('{practiceId}/patients/without-scheduled-activities', [
             'uses' => 'API\CallsController@patientsWithoutScheduledActivities',
             'as'   => 'practice.patients.without-scheduled-activities',
         ])->middleware('permission:patient.read,careplan.read');
-        
+
         Route::get('{practiceId}/patients/without-inbound-calls', [
             'uses' => 'API\CallsController@patientsWithoutInboundCalls',
             'as'   => 'practice.patients.without-inbound-calls',
         ])->middleware('permission:patient.read');
     });
-    
+
     Route::prefix('patients')->group(function () {
         Route::get('without-scheduled-activities', [
             'uses' => 'API\CallsController@patientsWithoutScheduledActivities',
             'as'   => 'patients.without-scheduled-activities',
         ])->middleware('permission:patient.read,careplan.read,call.read');
-        
+
         Route::get('without-inbound-calls', [
             'uses' => 'API\CallsController@patientsWithoutInboundCalls',
             'as'   => 'patients.without-inbound-calls',
         ])->middleware('permission:patient.read,call.read');
     });
-    
+
     Route::get('nurses', 'API\NurseController@index')->middleware('permission:nurse.read');
 });
 
@@ -74,16 +78,15 @@ Route::group(['prefix' => 'api'], function () {
     });
 });
 
-
 Route::group([
-        'middleware' => [
-            'auth',
-            'permission:admin-access,practice-admin',
-        ],
-        'prefix' => 'admin',
-    ], function () {
-        Route::get('opcache', 'OPCacheGUIController@index');
-    });
+    'middleware' => [
+        'auth',
+        'permission:admin-access,practice-admin',
+    ],
+    'prefix' => 'admin',
+], function () {
+    Route::get('opcache', 'OPCacheGUIController@index');
+});
 
     Route::group([
         'middleware' => [
@@ -662,7 +665,6 @@ Route::group([
         'as'   => 'admin.reports.nurse.metrics',
     ])->middleware('permission:nurseReport.read');
 
-
 Route::group([
     'prefix'     => 'practices/{practiceSlug}',
     'middleware' => [
@@ -674,62 +676,62 @@ Route::group([
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreChargeableServices',
         'as'   => 'provider.dashboard.store.chargeable-services',
     ])->middleware('permission:practiceSetting.create');
-    
+
     Route::get('chargeable-services', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreateChargeableServices',
         'as'   => 'provider.dashboard.manage.chargeable-services',
     ])->middleware('permission:practiceSetting.read');
-    
+
     Route::post('invite', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreInvite',
         'as'   => 'post.store.invite',
     ])->middleware('permission:invite.create');
-    
+
     Route::post('locations', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreLocations',
         'as'   => 'provider.dashboard.store.locations',
     ])->middleware('permission:practiceSetting.create');
-    
+
     Route::post('staff', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreStaff',
         'as'   => 'provider.dashboard.store.staff',
     ])->middleware('permission:practiceSetting.update');
-    
+
     Route::post('notifications', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreNotifications',
         'as'   => 'provider.dashboard.store.notifications',
     ])->middleware('permission:practiceSetting.update');
-    
+
     Route::get('notifications', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreateNotifications',
         'as'   => 'provider.dashboard.manage.notifications',
     ])->middleware('permission:practiceSetting.read');
-    
+
     Route::post('practice', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStorePractice',
         'as'   => 'provider.dashboard.store.practice',
     ])->middleware('permission:practiceSetting.update');
-    
+
     Route::get('practice', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreatePractice',
         'as'   => 'provider.dashboard.manage.practice',
     ])->middleware('permission:practiceSetting.read');
-    
+
     Route::get('staff', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreateStaff',
         'as'   => 'provider.dashboard.manage.staff',
     ])->middleware('permission:practiceSetting.read');
-    
+
     Route::get('locations', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreateLocation',
         'as'   => 'provider.dashboard.manage.locations',
     ])->middleware('permission:practiceSetting.read');
-    
+
     Route::get('enrollment', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@getCreateEnrollment',
         'as'   => 'provider.dashboard.manage.enrollment',
     ])->middleware('permission:practiceSetting.read');
-    
+
     Route::post('enrollment', [
         'uses' => '\CircleLinkHealth\CpmAdmin\PracticeSettings\Http\Controllers\DashboardController@postStoreEnrollment',
         'as'   => 'provider.dashboard.store.enrollment',
@@ -768,7 +770,7 @@ Route::post('callcreate-multi', [
     'as'   => 'api.callcreate-multi',
 ]);
 Route::group([
-    'middleware' => 'auth'
+    'middleware' => 'auth',
 ], function () {
     Route::patch(
         'work-hours/{id}',
@@ -778,7 +780,7 @@ Route::group([
         'uses' => 'CareCenter\WorkScheduleController@getHolidays',
         'as'   => 'get.admin.nurse.schedules.holidays',
     ])->middleware('permission:nurse.read');
-    
+
     Route::group([
         'prefix' => 'pam',
     ], function () {
@@ -792,61 +794,61 @@ Route::group([
             'as'   => 'patientCallManagement.v2.export',
         ])->middleware('permission:pam.view');
     });
-    
+
     Route::group([
-        'prefix' => 'ca-director',
+        'prefix'     => 'ca-director',
         'middleware' => 'permission:ca-director.view',
     ], function () {
         Route::get('', [
             'uses' => 'EnrollmentDirectorController@index',
             'as'   => 'ca-director.index',
         ]);
-        
+
         Route::get('searchEnrollables', [
             'uses' => 'EnrollmentDirectorController@searchEnrollables',
             'as'   => 'enrollables.ca-director.search',
         ]);
-        
+
         Route::get('/enrollees', [
             'uses' => 'EnrollmentDirectorController@getEnrollees',
             'as'   => 'ca-director.enrollees',
         ]);
-        
+
         Route::get('/ambassadors', [
             'uses' => 'EnrollmentDirectorController@getCareAmbassadors',
             'as'   => 'ca-director.ambassadors',
         ]);
-        
+
         Route::post('/assign-ambassador', [
             'uses' => 'EnrollmentDirectorController@assignCareAmbassadorToEnrollees',
             'as'   => 'ca-director.assign-ambassador',
         ]);
-        
+
         Route::post('/assign-callback', [
             'uses' => 'EnrollmentDirectorController@assignCallback',
             'as'   => 'ca-director.assign-callback',
         ]);
-        
+
         Route::post('/mark-ineligible', [
             'uses' => 'EnrollmentDirectorController@markEnrolleesAsIneligible',
             'as'   => 'ca-director.mark-ineligible',
         ]);
-        
+
         Route::post('/unassign-ca', [
             'uses' => 'EnrollmentDirectorController@unassignCareAmbassadorFromEnrollees',
             'as'   => 'ca-director.unassign-ambassador',
         ]);
-        
+
         Route::post('/edit-enrollee', [
             'uses' => 'EnrollmentDirectorController@editEnrolleeData',
             'as'   => 'ca-director.edit-enrollee',
         ]);
-        
+
         Route::post('/add-enrollee-custom-filter', [
             'uses' => 'EnrollmentDirectorController@addEnrolleeCustomFilter',
             'as'   => 'ca-director.add-enrollee-custom-filter',
         ]);
-        
+
         Route::get('/test-enrollees', [
             'uses' => 'EnrollmentDirectorController@runCreateEnrolleesSeeder',
             'as'   => 'ca-director.test-enrollees',

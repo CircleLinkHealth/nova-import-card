@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\CpmAdmin\Reports\Sales\Practice\Sections;
 
+use Carbon\Carbon;
 use CircleLinkHealth\CpmAdmin\Reports\Sales\PracticeReportable;
 use CircleLinkHealth\CpmAdmin\Reports\Sales\SalesReportSection;
 use CircleLinkHealth\CpmAdmin\Reports\Sales\StatsHelper;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 
 class RangeSummary extends SalesReportSection

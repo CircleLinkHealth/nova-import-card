@@ -62,7 +62,7 @@ class ShowRevisionsController extends Controller
         if ($errors->isEmpty()) {
             $revisions = Revision::where('updated_at', '>=', $startDate->toDateTimeString())
                 ->where('updated_at', '<=', $endDate->toDateTimeString())
-                ->when($phiOnly, function ($q) use ($revisionableType) {
+                ->when($phiOnly, function ($q) {
                     $q->where('is_phi', '=', true);
                 })
                 ->when((bool) $revisionableType, function ($q) use ($revisionableType) {

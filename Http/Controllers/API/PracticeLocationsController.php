@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API;
 
-use CircleLinkHealth\CpmAdmin\Http\Requests\UpdatePracticeLocation;
 use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\CpmAdmin\Http\Requests\UpdatePracticeLocation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;

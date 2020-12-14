@@ -21,7 +21,7 @@ abstract class SalesReportSection implements Section
     protected $end;
     protected $for;
     protected $start;
-    
+
     public function __construct(
         $for,
         Carbon $start,
@@ -31,6 +31,6 @@ abstract class SalesReportSection implements Section
         $this->start = $start;
         $this->end   = $end;
     }
-    
+
     abstract public function render();
 }

@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\CpmAdmin\Console\Commands;
 
-use CircleLinkHealth\SharedModels\Repositories\CallRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\SharedModels\Repositories\CallRepository;
 use Illuminate\Console\Command;
 
 class CountPatientMonthlySummaryCalls extends Command

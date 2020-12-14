@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\SuperAdmin;
 
-use CircleLinkHealth\SharedModels\Entities\Note;
 use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -15,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -112,7 +112,7 @@ class UserController extends Controller
         if ( ! $user) {
             return response('User not found', 401);
         }
-        
+
         $user->delete();
 
         return redirect()->back()->with('messages', ['successfully deleted user']);

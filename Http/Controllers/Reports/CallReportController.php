@@ -7,11 +7,10 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
-
-use CircleLinkHealth\CpmAdmin\Http\Resources\PamCsvResource;
-use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls as PatientTimeAndCallsValueObject;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
+use CircleLinkHealth\CpmAdmin\Http\Resources\PamCsvResource;
+use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls as PatientTimeAndCallsValueObject;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\SharedModels\Entities\CallView;
 use CircleLinkHealth\SharedModels\Filters\CallViewFilters;
@@ -23,13 +22,13 @@ class CallReportController extends Controller
     public function exportXlsV2(Request $request, CallViewFilters $filters)
     {
         $date = Carbon::now()->startOfMonth();
-        
+
         $calls = CallView::filter($filters)
             ->paginate($filters->filters()['rows']);
-        
+
         return PamCsvResource::collection($calls);
     }
-    
+
     /**
      * @return int media id
      */
@@ -40,10 +39,10 @@ class CallReportController extends Controller
         $model      = SaasAccount::whereSlug('circlelink-health')->firstOrFail();
         $collection = "pam_{$date->toDateString()}";
         $media      = $data->storeAndAttachMediaTo($model, $collection);
-        
+
         return $media->id;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -52,17 +51,17 @@ class CallReportController extends Controller
     public function index(Request $request)
     {
     }
-    
+
     private function formatTime($time)
     {
         $seconds = $time;
         $H       = floor($seconds / 3600);
         $i       = ($seconds / 60) % 60;
         $s       = $seconds % 60;
-        
+
         return sprintf('%02d:%02d:%02d', $H, $i, $s);
     }
-    
+
     private function generateXlsData($date, $calls)
     {
         $headings = [
@@ -85,10 +84,10 @@ class CallReportController extends Controller
             'Billing Provider',
             'Scheduler',
         ];
-        
+
         $patientTimeAndCallCounts = $calls->isNotEmpty() ? PatientTimeAndCalls::get($calls->pluck('patient_id')->toArray()) : collect();
         $rows                     = [];
-        
+
         foreach ($calls as $call) {
             /** @var PatientTimeAndCallsValueObject */
             $supplementaryViewDataForPatient = $patientTimeAndCallCounts->filter(fn (PatientTimeAndCallsValueObject $p) => $p->getPatientId() == $call->patient_id)->first();
@@ -113,9 +112,9 @@ class CallReportController extends Controller
                 $call->scheduler,
             ];
         }
-        
+
         $fileName = 'CLH-Report-'.$date.'.xls';
-        
+
         return new FromArray($fileName, $rows, $headings);
     }
 }

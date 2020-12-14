@@ -66,6 +66,4 @@ class EnrollmentConsentController extends Controller
     {
         return view('cpm-admin::admin.reports.enrollment.enrollment-list');
     }
-
-   
 }

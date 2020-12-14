@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\API;
 
+use CircleLinkHealth\CpmAdmin\Http\Resources\CallView as CallViewResource;
 use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls;
 use CircleLinkHealth\SharedModels\Entities\CallView;
 use CircleLinkHealth\SharedModels\Filters\CallViewFilters;
-use CircleLinkHealth\CpmAdmin\Http\Resources\CallView as CallViewResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
@@ -18,12 +18,12 @@ class CallsViewController extends Controller
     public function __construct()
     {
     }
-    
+
     public function getPatientTimeAndCalls(Request $request)
     {
         return response()->json(PatientTimeAndCalls::getRaw($request->input()));
     }
-    
+
     /**
      * @SWG\GET(
      *     path="/admin/calls",
@@ -44,7 +44,7 @@ class CallsViewController extends Controller
         $rows  = $request->input('rows');
         $calls = CallView::filter($filters)
             ->paginate($rows ?? 15);
-        
+
         return CallViewResource::collection($calls);
     }
 }

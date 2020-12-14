@@ -25,7 +25,7 @@ class OnboardingService
      * @var \CircleLinkHealth\Core\StringManipulation
      */
     protected $stringManipulation;
-    
+
     /**
      * OnboardingService constructor.
      */
@@ -33,7 +33,7 @@ class OnboardingService
     {
         $this->stringManipulation = $stringManipulation;
     }
-    
+
     /**
      * Gets existing locations, and outputs them on window.cpm.
      */
@@ -46,7 +46,7 @@ class OnboardingService
             ) {
                 $contactType = $loc->clinicalEmergencyContact->first()->pivot->name ?? null;
                 $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
-                
+
                 return [
                     'id'               => $loc->id,
                     'clinical_contact' => [
@@ -75,14 +75,14 @@ class OnboardingService
                     'sameEHRLogin'              => $primaryPractice->same_ehr_login,
                 ];
             });
-        
+
         \JavaScript::put([
             'existingLocations' => $existingLocations,
         ]);
-        
+
         return $existingLocations;
     }
-    
+
     /**
      * Gets existing staff, and outputs them on window.cpm.
      */
@@ -99,7 +99,7 @@ class OnboardingService
 //        if (auth()->user()->isAdmin()) {
 //            $relevantRoles[] = 'administrator';
 //        }
-        
+
         $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
             ->whereHas('practices', function ($q) use (
                 $primaryPractice
@@ -109,45 +109,45 @@ class OnboardingService
             ->get()
             ->sortBy('first_name')
             ->values();
-        
+
         if ( ! auth()->user()->isAdmin()) {
             $practiceUsers->reject(function ($user) {
                 return $user->isAdmin();
             })
                 ->values();
         }
-        
+
         //Get the users that were as clinical emergency contacts from the locations page
         $existingUsers = $practiceUsers->map(function ($user) use (
             $primaryPractice
         ) {
             $permissions = $user->practice($primaryPractice->id);
             $phone = $user->phoneNumbers->first();
-            
+
             $roleId = $permissions->pivot->role_id
                 ? $permissions->pivot->role_id
                 : $user->roles->first()['id'];
-            
+
             $forwardAlertsToContactUser = $user->forwardAlertsTo()
-                    ->having('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
-                    ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
-                    ->first()
+                ->having('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
+                ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+                ->first()
                 ?? null;
-            
+
             $forwardCarePlanApprovalEmailsToContactUser = $user->forwardAlertsTo()
-                    ->having(
-                        'name',
-                        '=',
-                        User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
-                    )
-                    ->orHaving(
-                        'name',
-                        '=',
-                        User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
-                    )
-                    ->first()
+                ->having(
+                    'name',
+                    '=',
+                    User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
+                )
+                ->orHaving(
+                    'name',
+                    '=',
+                    User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
+                )
+                ->first()
                 ?? null;
-            
+
             return [
                 'id'              => $user->id,
                 'email'           => $user->email,
@@ -156,9 +156,9 @@ class OnboardingService
                 'phone_number'    => $phone->number ?? '',
                 'phone_extension' => $phone->extension ?? '',
                 'phone_type'      => array_search(
-                        $phone->type ?? '',
-                        PhoneNumber::getTypes()
-                    ) ?? '',
+                    $phone->type ?? '',
+                    PhoneNumber::getTypes()
+                ) ?? '',
                 'isComplete'         => false,
                 'validated'          => false,
                 'sendBillingReports' => $permissions->pivot->send_billing_reports ?? false,
@@ -176,18 +176,18 @@ class OnboardingService
                 ],
             ];
         });
-        
+
         $locations = $primaryPractice->locations->map(function ($loc) {
             return [
                 'id'   => $loc->id,
                 'name' => $loc->name,
             ];
         });
-        
+
         $locationIds = $primaryPractice->locations->map(function ($loc) {
             return $loc->id;
         });
-        
+
         //get the relevant roles
         $roles = Role::whereIn('name', $relevantRoles)
             ->get([
@@ -195,7 +195,7 @@ class OnboardingService
                 'display_name',
             ])
             ->sortBy('display_name');
-        
+
         $result = [
             'existingUsers' => $existingUsers,
             'locations'     => $locations,
@@ -205,12 +205,12 @@ class OnboardingService
             //this will help us get role names on the views: rolesMap[id]
             'rolesMap' => $roles->keyBy('id')->all(),
         ];
-        
+
         \JavaScript::put($result);
-        
+
         return $result;
     }
-    
+
     public function postStoreLocations(
         Practice $primaryPractice,
         Request $request
@@ -218,18 +218,18 @@ class OnboardingService
         foreach ($request->input('deleteTheseLocations') as $id) {
             Location::delete($id);
         }
-        
+
         $created = [];
         $i       = 0;
-        
+
         $sameClinicalContact = $request->input('sameClinicalIssuesContact');
         $sameEHRLogin        = $request->input('sameEHRLogin');
-        
+
         foreach ($request->input('locations') as $index => $newLocation) {
             if ( ! $newLocation['name']) {
                 continue;
             }
-            
+
             try {
                 if (isset($newLocation['id'])) {
                     $location = Location::update([
@@ -269,7 +269,7 @@ class OnboardingService
                             ? $request->input('locations')[0]['ehr_password']
                             : $newLocation['ehr_password'] ?? null,
                     ];
-                    
+
                     Validator::validate($args, [
                         'practice_id'    => 'required|exists:practices,id',
                         'name'           => 'required',
@@ -282,9 +282,9 @@ class OnboardingService
                         'postal_code'    => 'required',
                         'billing_code'   => 'required',
                     ]);
-                    
+
                     $location = Location::create($args);
-                    
+
                     $created[] = $i;
                 }
             } catch (ValidationException $e) {
@@ -294,43 +294,43 @@ class OnboardingService
                     'input'    => $newLocation,
                 ];
             }
-            
+
             if (1 == Location::where('practice_id', $primaryPractice->id)->count()) {
                 $location->is_primary = 1;
                 $location->save();
             }
-            
+
             $location->emr_direct_address           = $newLocation['emr_direct_address'];
             $primaryPractice->same_clinical_contact = false;
-            
+
             //If clinical contact is same for all, then get the data from the first location.
             if ($sameClinicalContact) {
                 $newLocation['clinical_contact']['type']      = $request->input('locations')[0]['clinical_contact']['type'];
                 $newLocation['clinical_contact']['email']     = $request->input('locations')[0]['clinical_contact']['email'];
                 $newLocation['clinical_contact']['firstName'] = $request->input('locations')[0]['clinical_contact']['firstName'];
                 $newLocation['clinical_contact']['lastName']  = $request->input('locations')[0]['clinical_contact']['lastName'];
-                
+
                 $primaryPractice->same_clinical_contact = true;
             }
-            
+
             $primaryPractice->same_ehr_login = false;
-            
+
             if ($sameEHRLogin) {
                 $primaryPractice->same_ehr_login = true;
             }
-            
+
             $primaryPractice->save();
-            
+
             if (CarePerson::BILLING_PROVIDER == $newLocation['clinical_contact']['type']) {
                 //clean up other contacts, just in case this was just set as the billing provider
                 $location->clinicalEmergencyContact()->sync([]);
             } else {
                 $clinicalContactUser = User::whereEmail($newLocation['clinical_contact']['email'])
                     ->first();
-                
+
                 if ( ! $newLocation['clinical_contact']['email']) {
                     $clinicalContactUser = null;
-                    
+
                     $errors[] = [
                         'index'    => $index,
                         'messages' => [
@@ -339,7 +339,7 @@ class OnboardingService
                         'input' => $newLocation,
                     ];
                 }
-                
+
                 if ( ! $clinicalContactUser) {
                     try {
                         $args = [
@@ -349,22 +349,22 @@ class OnboardingService
                             'last_name'  => $newLocation['clinical_contact']['last_name'],
                             'password'   => 'password_not_set',
                         ];
-                        
+
                         Validator::validate($args, [
                             'email'      => 'required|email|unique:users,email',
                             'first_name' => 'required',
                             'last_name'  => 'required',
                             'password'   => 'required|min:8',
                         ]);
-                        
+
                         $clinicalContactUser = User::create($args);
-                        
+
                         $clinicalContactUser->attachPractice($primaryPractice, []);
                         $clinicalContactUser->attachLocation($location);
-                        
+
                         //clean up other contacts before adding the new one
                         $location->clinicalEmergencyContact()->sync([]);
-                        
+
                         $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
                             'name' => $newLocation['clinical_contact']['type'],
                         ]);
@@ -377,13 +377,13 @@ class OnboardingService
                     }
                 }
             }
-            
+
             if ($primaryPractice->lead) {
                 $primaryPractice->lead->attachLocation($location);
             }
             ++$i;
         }
-        
+
         if (isset($errors)) {
             return response()->json([
                 'errors'  => $errors,
@@ -391,28 +391,28 @@ class OnboardingService
             ], 400);
         }
     }
-    
+
     public function postStoreStaff(
         Practice $primaryPractice,
         Request $request
     ) {
         $implementationLead = $primaryPractice->lead;
-        
+
         foreach ($request->input('deleteTheseUsers') as $id) {
             $detachUser = User::find($id);
             $detachUser->practices()->detach($primaryPractice->id);
         }
-        
+
         $created = [];
         $i       = 0;
-        
+
         foreach ($request->input('users') as $index => $newUser) {
             //create the user
             try {
                 if ( ! $newUser['first_name'] && ! $newUser['last_name']) {
                     continue;
                 }
-                
+
                 if (isset($newUser['id'])) {
                     $user = User::update([
                         'program_id'   => $primaryPractice->id,
@@ -434,24 +434,24 @@ class OnboardingService
                         'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
                         'user_status'  => 1,
                     ]);
-                    
+
                     $user->attachGlobalRole($newUser['role_id']);
-                    
+
                     $created[] = $i;
                 }
-                
+
                 $user->emr_direct_address = $newUser['emr_direct_address'];
-                
+
                 //Attach the locations
                 $user->attachLocation($newUser['locations']);
-                
+
                 $sendBillingReports = false;
                 if ($newUser['sendBillingReports']) {
                     $sendBillingReports = true;
                 }
-                
+
                 $user->attachPractice($primaryPractice, [$newUser['role_id']], $sendBillingReports);
-                
+
                 //attach phone
                 $phone = $user->clearAllPhonesAndAddNewPrimary(
                     $newUser['phone_number'],
@@ -459,22 +459,22 @@ class OnboardingService
                     true,
                     $newUser['phone_extension']
                 );
-                
+
                 $providerRole = Role::whereName('provider')->first();
-                
+
                 if ($newUser['role_id'] == $providerRole->id) {
                     $providerInfoCreated = ProviderInfo::firstOrCreate([
                         'user_id' => $user->id,
                     ]);
                 }
-                
+
                 //clean up other contacts before adding the new one
                 $user->forwardAlertsTo()->sync([]);
-                
+
                 if ('billing_provider' != $newUser['forward_alerts_to']['who']) {
                     $user->forwardTo($newUser['forward_alerts_to']['user_id'], $newUser['forward_alerts_to']['who']);
                 }
-                
+
                 if ('billing_provider' != $newUser['forward_careplan_approval_emails_to']['who']) {
                     $user->forwardTo(
                         $newUser['forward_careplan_approval_emails_to']['user_id'],
@@ -486,7 +486,7 @@ class OnboardingService
                 \Log::alert($e);
                 if ($e instanceof QueryException) {
                     //                    @todo:heroku query to see if it exists, then attach
-                    
+
                     $errorCode = $e->errorInfo[1];
                     if (1062 == $errorCode) {
                         //do nothing
@@ -501,10 +501,10 @@ class OnboardingService
                     ];
                 }
             }
-            
+
             ++$i;
         }
-        
+
         if (isset($errors)) {
             return response()->json([
                 'errors'  => $errors,

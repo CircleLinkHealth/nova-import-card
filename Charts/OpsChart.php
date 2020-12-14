@@ -65,7 +65,7 @@ class OpsChart extends Chart
         return Cache::remember(
             self::ADMIN_CHART_CACHE_KEY,
             1440,
-            function () use ($clh) {
+            function () {
                 $period = CarbonPeriod::create(now()->subMonths(2), now());
                 $collections = [];
 

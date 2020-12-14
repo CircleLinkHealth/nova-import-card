@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\CpmAdmin\Console\Commands;
 
-use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\SharedModels\Repositories\PatientSummaryEloquentRepository;
 use Illuminate\Console\Command;
 
 class SyncNumberOfCallsForCurrentMonth extends Command
