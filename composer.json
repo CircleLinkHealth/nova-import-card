@@ -33,6 +33,7 @@
         "maatwebsite/excel": "^3.1",
         "laravel/vapor-core": "^2.9",
         "laravelcollective/html": "^6.1",
+        "friendsofcat/laravel-feature-flag": "^3.2",
         "laravel/vapor-ui": "*"
     }
 }
