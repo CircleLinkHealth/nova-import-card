@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
-use App\Contracts\HasUniqueIdentifierForDebounce;
+use CircleLinkHealth\CcmBilling\Contracts\HasUniqueIdentifierForDebounce;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Domain\Patient\ProcessPatientSummaries;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
