@@ -9,7 +9,7 @@ namespace CircleLinkHealth\PdfService\Providers;
 use CircleLinkHealth\PdfService\Commands\TestServerlessPdfService;
 use Illuminate\Support\ServiceProvider;
 
-class PdfServiceServiceProvider extends ServiceProvider
+class PdfServiceProvider extends ServiceProvider
 {
     public function register()
     {
