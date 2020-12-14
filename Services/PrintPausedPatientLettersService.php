@@ -6,11 +6,9 @@
 
 namespace CircleLinkHealth\Customer\Services;
 
-use CircleLinkHealth\Customer\CpmConstants;
-use CircleLinkHealth\Customer\Services\PatientReadRepository;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
+use CircleLinkHealth\PdfService\Services\PdfService;
 
 class PrintPausedPatientLettersService
 {
@@ -80,7 +78,7 @@ class PrintPausedPatientLettersService
                             'lang'    => $lang,
                         ],
                         null,
-                        CpmConstants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
+                        config('services.serverless-pdf-generator.mail-vendor-envelope-options')
                     );
 
                     $pathToFlyer = public_path("assets/pdf/flyers/paused/${lang}.pdf");

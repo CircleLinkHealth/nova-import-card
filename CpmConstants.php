@@ -71,16 +71,6 @@ class CpmConstants
     const PRACTICE_STAFF_ROLE_NAMES     = ['provider', 'office_admin', 'med_assistant', 'registered-nurse', 'specialist'];
     const SAAS_INTERNAL_USER_ROLE_NAMES = ['saas-admin', 'care-center'];
     
-    /**
-     * These settings match CLH mail vendor's envelopes.
-     */
-    const SNAPPY_CLH_MAIL_VENDOR_SETTINGS = [
-        'disable-javascript' => true,
-        'margin-top'         => '12',
-        'margin-left'        => '25',
-        'margin-bottom'      => '15',
-        'margin-right'       => '0.75',
-    ];
     const SNOMED                 = ProblemCodeSystem::SNOMED;
     const SNOMED_NAME            = ProblemCodeSystem::SNOMED_NAME;
     const TEN_MINUTES_IN_SECONDS = 600;
