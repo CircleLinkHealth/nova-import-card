@@ -26,10 +26,6 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git"
-    },
-    {
-      "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
     },
     {
@@ -89,10 +85,6 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/slack-laravel.git"
     },
     {
       "type": "git",
@@ -167,7 +159,6 @@
     "genealabs/laravel-caffeine": "^7.0",
     "guzzlehttp/guzzle": "^6.3",
     "jenssegers/agent": "^2.5",
-    "jeremykenedy/slack-laravel": "^7.0.0",
     "joshbrw/laravel-module-installer": "^0.1.5",
     "lab404/laravel-impersonate": "^1.2",
     "laracasts/utilities": "~3.0",
@@ -182,7 +173,6 @@
     "macellan/laravel-zip": "^1.0",
     "moontoast/math": "1.1.2 as 1.999.999",
     "mpbarlow/laravel-queue-debouncer": "^2.0",
-    "mxl/laravel-job": "^1.2",
     "nao-pon/flysystem-google-drive": "~1.1",
     "nvanheuverzwijn/monolog-logdna": "^2.1",
     "phaxio/phaxio": "^2.0",

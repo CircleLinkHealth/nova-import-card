@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "115b3ef0c23ef6d2e9c9c483886daeb0",
+    "content-hash": "0d2a74f24a123cee1a018f5aafe472b0",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -486,16 +486,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.168.3",
+            "version": "3.169.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "49ef1f905388c8185012c9651b80941b8f2a218d"
+                "reference": "d15a231355e4435fc33bab83df075ec31edd0a9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/49ef1f905388c8185012c9651b80941b8f2a218d",
-                "reference": "49ef1f905388c8185012c9651b80941b8f2a218d",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d15a231355e4435fc33bab83df075ec31edd0a9b",
+                "reference": "d15a231355e4435fc33bab83df075ec31edd0a9b",
                 "shasum": ""
             },
             "require": {
@@ -567,7 +567,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-12-11T19:12:18+00:00"
+            "time": "2020-12-14T19:12:33+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -946,16 +946,18 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "ffe2944e6754db06cf36f0036452006f2ca84a4a"
+                "reference": "c3485cbc138ddf7d0eb48e348a8cd9adfc08ef39"
             },
             "require": {
                 "friendsofcat/laravel-feature-flag": "^3.2",
+                "jeremykenedy/slack-laravel": "*",
                 "laravel/passport": "^8.0 || ^7.3.0",
                 "laravel/vapor-core": "^2.9",
                 "laravel/vapor-ui": "*",
                 "laravelcollective/html": "^6.1",
                 "lcobucci/jwt": "3.3.3",
-                "maatwebsite/excel": "^3.1"
+                "maatwebsite/excel": "^3.1",
+                "mxl/laravel-job": "^1.2"
             },
             "type": "laravel-module",
             "extra": {
@@ -981,7 +983,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T18:31:46+00:00"
+            "time": "2020-12-14T20:25:31+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -1206,7 +1208,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
-                "reference": "f27df3034a0a1f98d370592f7f9490025ab0ada2"
+                "reference": "83f2a95ff8749baca1701eea6706d1e5a9d3ff3b"
             },
             "require": {
                 "barryvdh/laravel-snappy": "0.4.7",
@@ -1237,7 +1239,7 @@
                     "email": "pangratios@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T17:44:50+00:00"
+            "time": "2020-12-14T19:29:39+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1363,7 +1365,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "b928b67d43a018bc914c85a77dacfc0e264f5956"
+                "reference": "9424b6f31a0ddf217ea250f670edb91cc0d9fdff"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1380,7 +1382,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T16:59:20+00:00"
+            "time": "2020-12-14T19:26:32+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
