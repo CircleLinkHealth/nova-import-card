@@ -8,7 +8,7 @@
 </template>
 <script>
     import {Event} from 'vue-tables-2'
-    import AddActionModal from '../../../../../../../../resources/assets/js/admin/calls/comps/modals/add-action.modal'
+    import AddActionModal from './modals/add-action.modal'
     import UserRolesHelperMixin from '../../../mixins/user-roles-helpers.mixin'
 
     export default {
