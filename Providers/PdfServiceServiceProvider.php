@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Pdfservice\Providers;
 
-use App\Console\Commands\TestServerlessPdfService;
+use CircleLinkHealth\PdfService\Commands\TestServerlessPdfService;
 use Illuminate\Support\ServiceProvider;
 
 class PdfServiceServiceProvider extends ServiceProvider
