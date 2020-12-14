@@ -40,6 +40,6 @@
     "require": {
         "barryvdh/laravel-snappy": "0.4.7",
         "circlelinkhealth/core-module": "dev-vaporizing-admin",
-        "daltcore/lara-pdf-merger": "1.1.2"
+        "daltcore/lara-pdf-merger": "2.0.6"
     }
 }

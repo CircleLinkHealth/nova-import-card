@@ -42,8 +42,13 @@ class TestServerlessPdfService extends Command
     public function handle()
     {
         $pdfService = app(PdfService::class);
-        $path       = $pdfService->blankPage();
+        $path       = $pdfService->blankPage('php1.php');
         $this->info("Blank Page generated: $path");
+
+        $path2  = $pdfService->blankPage('pdf2.php');
+        $merged = $pdfService->mergeFiles([$path, $path2], storage_path('pdfs/pdf_merged.php'));
+        $count  = $pdfService->countPages($merged);
+        $this->info("Count of merged: $count");
 
         return 0;
     }
