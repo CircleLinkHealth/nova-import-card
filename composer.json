@@ -33,6 +33,6 @@
         "maatwebsite/excel": "^3.1",
         "laravel/vapor-core": "^2.9",
         "laravelcollective/html": "^6.1",
-        "laravel/vapor-ui": "^0.0.5"
+        "laravel/vapor-ui": "*"
     }
 }
