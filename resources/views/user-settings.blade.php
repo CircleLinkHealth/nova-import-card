@@ -1,3 +1,3 @@
-@extends('core::partials.providerUI')
+@extends('partials.providerUI')
 
 @include('twofa::user-settings')

@@ -1,4 +1,4 @@
-@extends('core::partials.providerUI')
+@extends('partials.providerUI')
 
 @section('title', 'Schedule Task')
 @section('activity', 'Schedule Task')

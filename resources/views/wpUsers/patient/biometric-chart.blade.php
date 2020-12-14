@@ -1,4 +1,4 @@
-@extends('core::partials.providerUI')
+@extends('partials.providerUI')
 
 @section('title', 'Patient Summary - Biometrics Chart')
 @section('activity', 'Patient Biometrics Chart Review')

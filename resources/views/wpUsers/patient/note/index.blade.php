@@ -1,4 +1,4 @@
-@extends('core::partials.providerUI')
+@extends('partials.providerUI')
 
 @section('title', 'Notes and Activities')
 @section('activity', 'Notes/Offline Activities Review')

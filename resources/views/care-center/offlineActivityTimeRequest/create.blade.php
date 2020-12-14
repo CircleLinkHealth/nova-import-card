@@ -1,4 +1,4 @@
-@extends('core::partials.providerUI')
+@extends('partials.providerUI')
 
 @section('title', 'Request Offline Activity Time')
 @section('activity', 'Request Offline Activity Time')

@@ -1,4 +1,4 @@
-@extends('core::partials.providerUI')
+@extends('partials.providerUI')
 
 @if (!empty($detailSection))
     @if ($detailSection == 'obs_biometrics')

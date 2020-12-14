@@ -1,7 +1,7 @@
 <?php
 
 ?>
-@extends('core::partials.providerUI')
+@extends('partials.providerUI')
 
 @section('title', 'Input Appointments')
 @section('activity', 'Patient Input Appointment')
