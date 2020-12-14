@@ -8,6 +8,11 @@ namespace App\Http\Controllers;
 
 class RedirectToAdminApp extends Controller
 {
+    public function getCADirectorIndex()
+    {
+        return $this->redirectToAdmin('ca-director');
+    }
+
     public function getCreateNotifications(string $practiceSlug)
     {
         return redirect()->to(config('core.apps.cpm-admin.url')."/practices/$practiceSlug/notifications");
@@ -17,14 +22,14 @@ class RedirectToAdminApp extends Controller
     {
         return redirect()->to(config('core.apps.cpm-admin.url')."/practices/$practiceSlug/practice");
     }
-    
+
     public function getPAM()
     {
-        return redirect()->to(config('core.apps.cpm-admin.url')."/pam");
+        return $this->redirectToAdmin('pam');
     }
-    
-    public function getCADirectorIndex()
+
+    public function redirectToAdmin($url)
     {
-        return redirect()->to(config('core.apps.cpm-admin.url')."/ca-director");
+        return redirect()->to(rtrim(config('core.apps.cpm-admin.url'), '/')."/$url");
     }
 }
