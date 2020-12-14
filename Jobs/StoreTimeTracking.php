@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\TimeTracking\Jobs;
 
 use App\Jobs\ProcessCareAmbassadorTime;
-use App\Services\PageTimerService;
-use App\ValueObjects\CreatePageTimerParams;
+use CircleLinkHealth\SharedModels\Services\PageTimerService;
+use CircleLinkHealth\SharedModels\DTO\CreatePageTimerParams;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
 use CircleLinkHealth\Customer\Entities\User;
