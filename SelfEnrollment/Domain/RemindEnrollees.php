@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Eligibility\SelfEnrollment\Domain;
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\AbstractSelfEnrollableUserIterator;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\SelfEnrollment\AbstractSelfEnrollableUserIterator;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendReminder;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
 

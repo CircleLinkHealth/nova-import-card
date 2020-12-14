@@ -7,11 +7,11 @@
 namespace CircleLinkHealth\Eligibility\SelfEnrollment\Domain;
 
 use App\EnrollmentInvitationsBatch;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
-use CircleLinkHealth\Eligibility\SelfEnrollment\AbstractSelfEnrollableUserIterator;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\SelfEnrollment\AbstractSelfEnrollableUserIterator;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Database\Eloquent\Builder;
 

@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\Tests;
 
 use App\EnrollmentInvitationsBatch;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\AppConfig\CarePlanAutoApprover;
@@ -29,11 +28,12 @@ use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPatientInfo;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportPhones;
 use CircleLinkHealth\Eligibility\CcdaImporter\Tasks\ImportProblems;
 use CircleLinkHealth\Eligibility\Console\ReimportPatientMedicalRecord;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\SendInvitation;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeCalvaryCcda;
 use CircleLinkHealth\Eligibility\Tests\Fakers\FakeDiabetesAndEndocrineCcda;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use PrepareDataForReEnrollmentTestSeeder;
 use Tests\CustomerTestCase;
 

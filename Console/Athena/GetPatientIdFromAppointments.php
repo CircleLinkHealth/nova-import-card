@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
-use CircleLinkHealth\Eligibility\Services\AthenaAPI\Actions\DetermineEnrollmentEligibility;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Services\AthenaAPI\Actions\DetermineEnrollmentEligibility;
 use Illuminate\Console\Command;
 
 class GetPatientIdFromAppointments extends Command

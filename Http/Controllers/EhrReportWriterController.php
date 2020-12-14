@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\Eligibility\Http\Controllers;
 
-use CircleLinkHealth\Eligibility\Notifications\EhrReportWriterNotification;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\Eligibility\Notifications\EhrReportWriterNotification;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Illuminate\Http\Request;

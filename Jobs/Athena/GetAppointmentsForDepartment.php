@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs\Athena;
 
-use CircleLinkHealth\Customer\CpmConstants;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;

@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers;
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\Services\EnrollmentInvitationService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\EnrollmentInvitationLetter;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Services\EnrollmentBaseLetter;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Requests\EnrollmentLinkValidation;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Requests\SelfEnrollableUserAuthRequest;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Services\EnrollmentBaseLetter;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Services\EnrollmentInvitationService;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;

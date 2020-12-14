@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Eligibility\SelfEnrollment\Jobs;
 
 use App\Jobs\AwvNotifyBillingProviderOfCareDocument;
-use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

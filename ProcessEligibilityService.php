@@ -14,7 +14,6 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Exceptions\CsvEligibilityListStructureValidationException;
 use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
 use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
@@ -26,6 +25,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicatio
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
 use CircleLinkHealth\Eligibility\Notifications\EligibilityBatchProcessed;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 

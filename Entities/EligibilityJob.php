@@ -42,7 +42,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int                                                     $invalid_problems
  * @property int                                                     $invalid_phones
  * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch $batch
- * @property \CircleLinkHealth\SharedModels\Entities\Enrollee         $enrollee
+ * @property \CircleLinkHealth\SharedModels\Entities\Enrollee        $enrollee
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection
  *     $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob eligible()

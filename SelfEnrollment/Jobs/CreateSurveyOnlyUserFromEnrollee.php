@@ -20,9 +20,9 @@ class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    
+
     private Enrollee $enrollee;
-    
+
     /**
      * CreateSurveyOnlyUserFromEnrollee constructor.
      */
@@ -30,7 +30,7 @@ class CreateSurveyOnlyUserFromEnrollee implements ShouldQueue
     {
         $this->enrollee = $enrollee;
     }
-    
+
     /**
      * Execute the job.
      *

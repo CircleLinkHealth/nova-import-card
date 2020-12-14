@@ -200,7 +200,7 @@ class ProcessEligibilityBatch implements ShouldQueue
                 $batch->save();
 
                 $targetPatients->each(
-                    function (TargetPatient $targetPatient) use ($batch) {
+                    function (TargetPatient $targetPatient) {
                         ProcessTargetPatientForEligibility::dispatch($targetPatient);
                     }
                 );

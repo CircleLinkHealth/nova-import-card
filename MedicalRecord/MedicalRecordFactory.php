@@ -12,11 +12,11 @@ use CircleLinkHealth\Eligibility\Decorators\DemographicsFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\MedicalHistoryFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\PracticePullMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Str;
 
 class MedicalRecordFactory

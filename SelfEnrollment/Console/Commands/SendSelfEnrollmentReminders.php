@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\SelfEnrollment\Console\Commands;
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\Constants;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\RemindEnrollees;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Domain\RemindUnreachablePatients;
 use Illuminate\Console\Command;
