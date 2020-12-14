@@ -104,10 +104,6 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/pdf-service-module.git"
-    },
-    {
-      "type": "git",
       "url": "git@github.com:CircleLinkHealth/synonyms.git"
     },
     {
@@ -151,6 +147,7 @@
     "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
     "circlelinkhealth/nurseinvoices-module": "dev-vaporizing-admin",
     "circlelinkhealth/patientapi-module": "dev-vaporizing-admin",
+    "circlelinkhealth/pdf-service-module": "dev-master",
     "circlelinkhealth/raygun-module": "1.2",
     "circlelinkhealth/revisionable-module": "6.1.1",
     "circlelinkhealth/saml-sp-module": "dev-vaporizing-admin",
