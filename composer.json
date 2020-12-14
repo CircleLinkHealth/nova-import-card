@@ -11,8 +11,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\Pdfservice\\Providers\\PdfServiceProvider",
-                "CircleLinkHealth\\Pdfservice\\Providers\\PdfServiceDeferrableProvider"
+                "CircleLinkHealth\\PdfService\\Providers\\PdfServiceProvider",
+                "CircleLinkHealth\\PdfService\\Providers\\PdfServiceDeferrableProvider"
             ],
             "aliases": {
 
