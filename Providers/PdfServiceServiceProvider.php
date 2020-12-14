@@ -13,7 +13,8 @@ class PdfServiceServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        //todo: register SnappyServiceProvider
+        $this->app->register(\Barryvdh\Snappy\ServiceProvider::class);
+
         $this->commands([
             TestServerlessPdfService::class,
         ]);
