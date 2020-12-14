@@ -12,7 +12,8 @@
         "laravel": {
             "providers": [
                 "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider",
-                "CircleLinkHealth\\Core\\Providers\\CoreDeferredBindingsServiceProvider"
+                "CircleLinkHealth\\Core\\Providers\\CoreDeferredBindingsServiceProvider",
+                "MichaelLedin\\LaravelJob\\LaravelJobServiceProvider"
             ],
             "aliases": {
                 
