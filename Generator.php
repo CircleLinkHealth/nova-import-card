@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\NurseInvoices;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Jobs\GenerateNurseInvoice;
 
@@ -22,11 +21,6 @@ class Generator
      * @var array
      */
     protected $nurseUserIds;
-
-    /**
-     * @var PdfService
-     */
-    protected $pdfService;
 
     /**
      * @var \Illuminate\Foundation\Application|mixed|SaveInvoicesService
@@ -59,7 +53,6 @@ class Generator
         $sendToCareCoaches = false,
         $storeInvoicesForNurseReview = false
     ) {
-        $this->pdfService                  = app(PdfService::class);
         $this->startDate                   = $startDate;
         $this->endDate                     = $endDate;
         $this->sendToCareCoaches           = $sendToCareCoaches;
