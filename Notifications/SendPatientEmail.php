@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Customer\Notifications;
 
-use CircleLinkHealth\Customer\Mail\TrixMailable;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Mail\TrixMailable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 

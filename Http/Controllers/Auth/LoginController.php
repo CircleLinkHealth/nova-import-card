@@ -40,34 +40,34 @@ class LoginController extends Controller
     | to conveniently provide its functionality to your applications.
     |
     */
-    
+
     use PasswordLessAuth;
-    
+
     const MIN_PASSWORD_CHANGE_IN_DAYS = 180;
-    
+
     /**
      * Throttle logon for this many minutes after $maxAttempts failed login attempts.
      *
      * @var int
      */
     protected $decayMinutes = 5;
-    
+
     /**
      * Throttle login on this many unsuccessful attempts.
      *
      * @var int
      */
     protected $maxAttempts = 4;
-    
+
     /**
      * Where to redirect users after login.
      *
      * @var string
      */
     protected $redirectTo = '/home';
-    
+
     protected $username = 'email';
-    
+
     /**
      * Create a new controller instance.
      */
@@ -75,7 +75,7 @@ class LoginController extends Controller
     {
         $this->middleware('guest', ['except' => 'logout']);
     }
-    
+
     /**
      * Logout due to inactivity.
      *
@@ -84,9 +84,9 @@ class LoginController extends Controller
     public function inactivityLogout(Request $request)
     {
         $this->guard()->logout();
-        
+
         $request->session()->invalidate();
-        
+
         return redirect()
             ->route('login')
             ->with([
@@ -95,7 +95,7 @@ class LoginController extends Controller
                 ],
             ]);
     }
-    
+
     /**
      * @throws ValidationException
      *
@@ -104,38 +104,38 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $shouldUsePasswordless = Route::is('passwordless.login.for.careplan.approval');
-        
+
         if ( ! $shouldUsePasswordless) {
             $this->usernameOrEmail($request);
         }
-        
+
         $loginResponse = $shouldUsePasswordless
             ? $this->passwordlessLogin($request, $request->route('token'))
             : $this->traitLogin($request);
-        
+
         if ('username' === $this->username) {
             \Log::debug('User['.auth()->id().'] logged in using Username.');
         }
-        
+
         $agent = new Agent();
-        
+
         $isClh = auth()->user()->hasRole(['care-center', 'administrator', 'developer']);
-        
+
         if ( ! $this->validateBrowserCompatibility($agent, $isClh)) {
             $this->sendInvalidBrowserResponse($agent->browser(), $isClh);
         }
-        
+
         if ( ! $shouldUsePasswordless && ! $this->validatePasswordAge() && config('auth.force_password_change')) {
             auth()->logout();
             $days = LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
-            
+
             return redirect('auth/password/reset')
                 ->withErrors(['old-password' => "Your password has not been changed for the last ${days} days. Please reset it to continue."]);
         }
-        
+
         return $loginResponse;
     }
-    
+
     public function logout(Request $request)
     {
         $samlIdp = session(SamlLoginEventListener::SESSION_IDP_NAME_KEY, null);
@@ -144,14 +144,14 @@ class LoginController extends Controller
                 return redirect(route('saml2_logout', ['idpName' => $samlIdp]));
             } catch (Error $e) {
                 Log::critical($e->getMessage(), ['idp' => $samlIdp]);
-                
+
                 return $this->traitLogout($request);
             }
         }
-        
+
         return $this->traitLogout($request);
     }
-    
+
     /**
      * Overrides laravel method.
      *
@@ -167,25 +167,25 @@ class LoginController extends Controller
         if (empty($session->get('url.intended')) && ! Str::contains($previous, ['login', 'logout'])) {
             $session->put('url.intended', $session->previousUrl());
         }
-        
+
         $this->checkPracticeNameCookie($request);
-        
+
         if (auth()->check()) {
             return redirect('/');
         }
-        
+
         $agent = new Agent();
-        
+
         if ( ! $this->validateBrowserVersion($agent) && ! optional(session('errors'))->has('invalid-browser-force-switch')) {
             $message = "You are using an outdated version of {$agent->browser()}. Please update to a newer version.";
-            
+
             return view('auth.login')
                 ->withErrors(['outdated-browser' => [$message]]);
         }
-        
+
         return response()->view('auth.login');
     }
-    
+
     /**
      * Get the login username to be used by the controller.
      *
@@ -195,7 +195,7 @@ class LoginController extends Controller
     {
         return $this->username;
     }
-    
+
     /**
      * @return bool
      */
@@ -211,17 +211,17 @@ class LoginController extends Controller
                 }
             }
         }
-        
+
         return true;
     }
-    
+
     protected function getBrowsers(): Collection
     {
         return \Cache::remember('supported-browsers', 2, function () {
             return DB::table('browsers')->get();
         });
     }
-    
+
     /**
      * @param $browser
      * @param bool $isCLH
@@ -239,10 +239,10 @@ class LoginController extends Controller
             <br>If you must use IE v10 or earlier, please e-mail <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>",
             ];
         }
-        
+
         if ($isCLH) {
             auth()->logout();
-            
+
             if ('Chrome' == $browser) {
                 $messages = [
                     'invalid-browser-force-switch' => 'Care Coaches and Administrators are required to use a version of Chrome that is less than 6 months old. Please update to a newer version of Chrome and try logging in again.',
@@ -253,25 +253,25 @@ class LoginController extends Controller
                 ];
             }
         }
-        
+
         return redirect()
             ->route('login')
             ->withErrors($messages);
     }
-    
+
     protected function storeBrowserCompatibilityCheckPreference(Request $request)
     {
         if ( ! auth()->check() || auth()->user()->isCareCoach()) {
             return;
         }
-        
+
         auth()->user()->update([
             'skip_browser_checks' => $request->input('doNotShowAgain', false),
         ]);
-        
+
         return response()->redirectTo($this->redirectPath());
     }
-    
+
     /**
      * Determine whether log in input is email or username, and do the needful to authenticate.
      *
@@ -282,18 +282,18 @@ class LoginController extends Controller
         if ( ! $request->filled('email')) {
             return false;
         }
-        
+
         $request->merge(array_map('trim', $request->input()));
-        
+
         if ( ! Str::contains($request->input('email'), '@')) {
             $this->username = 'username';
-            
+
             $request->merge([
                 'username' => $request->input('email'),
             ]);
         }
     }
-    
+
     /**
      * Check whether the user is using a supported browser.
      *
@@ -306,14 +306,14 @@ class LoginController extends Controller
         if (auth()->check() && auth()->user()->skip_browser_checks) {
             return true;
         }
-        
+
         if ($agent->isIE()) {
             return false;
         }
-        
+
         return $this->validateBrowserVersion($agent, $isCLH);
     }
-    
+
     /**
      * @param bool $isCLH
      *
@@ -325,11 +325,11 @@ class LoginController extends Controller
         if (isset($_COOKIE['skip_outdated_browser_check'])) {
             return true;
         }
-        
+
         $browsers = $this->getBrowsers();
-        
+
         $browser = $browsers->where('name', $agent->browser())->first();
-        
+
         if ($browser) {
             //if the User is CLH staff, only perform the check if the browser is Chrome, otherwise fail.
             //required_version is 6 months old
@@ -342,16 +342,16 @@ class LoginController extends Controller
             } else {
                 $browserVersionString = $browser->warning_version;
             }
-            
+
             $browserVersion = explode('.', $browserVersionString);
             $agentVersion   = explode('.', $agent->version($agent->browser()));
-            
+
             return $this->checkVersion($agentVersion, $browserVersion);
         }
-        
+
         return false;
     }
-    
+
     /**
      * Checks the last time the password was changed.
      * Returns true (validation success) if it was changed in less than
@@ -362,18 +362,18 @@ class LoginController extends Controller
     protected function validatePasswordAge()
     {
         $user = auth()->user();
-        
+
         //nothing to validate if not auth
         if ( ! $user) {
             return true;
         }
-        
+
         $diffInDays = 0;
         $history    = $user->passwordsHistory;
         if ($history) {
             $diffInDays = $history->updated_at->diffInDays(Carbon::today());
         }
-        
+
         return $diffInDays < LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
     }
 }

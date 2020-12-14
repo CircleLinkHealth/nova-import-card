@@ -6,11 +6,10 @@
 
 namespace CircleLinkHealth\Customer\Services;
 
-use CircleLinkHealth\Customer\Filters\PatientFilters;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Filters\PatientFilters;
 
 class PatientReadRepository
 {
@@ -19,19 +18,19 @@ class PatientReadRepository
         return User::ofType('participant')
             ->with('patientInfo')->get();
     }
-    
+
     public function patients(PatientFilters $filters)
     {
         $shouldSetDefaultRows = false;
         $filtersInput         = $filters->filters();
-        
+
         $showPracticePatientsInput = $filtersInput['showPracticePatients'] ?? null;
         $isProvider                = auth()->user()->isProvider();
         $showPracticePatients      = true;
         if ($isProvider && (User::SCOPE_LOCATION === auth()->user()->scope || 'false' === $showPracticePatientsInput)) {
             $showPracticePatients = false;
         }
-        
+
         $users = User::ofType('participant')
             ->with([
                 'carePlan' => function ($q) {
@@ -77,26 +76,26 @@ class PatientReadRepository
             ->whereHas('patientInfo')
             ->intersectPracticesWith(auth()->user())
             ->filter($filters);
-        
+
         if ( ! isset($filtersInput['rows'])) {
             $shouldSetDefaultRows = true;
         } elseif ('all' !== $filtersInput['rows'] && ! is_numeric($filtersInput['rows'])) {
             $shouldSetDefaultRows = true;
         }
-        
+
         if ($shouldSetDefaultRows) {
             $filtersInput['rows'] = 15;
         }
-        
+
         if ('all' == $filtersInput['rows']) {
             $users = $users->paginate($users->count());
         } else {
             $users = $users->paginate($filtersInput['rows']);
         }
-        
+
         return $users;
     }
-    
+
     /**
      * Scope for paused patients.
      *
@@ -109,10 +108,10 @@ class PatientReadRepository
             ->whereHas('patientInfo', function ($q) {
                 $q->ccmStatus('paused');
             });
-        
+
         return $this;
     }
-    
+
     /**
      * Scope for patients whose paused letter was not printed yet.
      *
@@ -125,10 +124,10 @@ class PatientReadRepository
             ->whereHas('patientInfo', function ($q) {
                 $q->whereNull('paused_letter_printed_at');
             });
-        
+
         return $this;
     }
-    
+
     /**
      * Scope for unreachable patients().
      *
@@ -141,7 +140,7 @@ class PatientReadRepository
             ->whereHas('patientInfo', function ($q) {
                 $q->ccmStatus(Patient::UNREACHABLE);
             });
-        
+
         return $this;
     }
 }

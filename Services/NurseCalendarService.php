@@ -7,12 +7,11 @@
 namespace CircleLinkHealth\Customer\Services;
 
 use App\LoginLogout;
-use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
-use CircleLinkHealth\Customer\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
+use CircleLinkHealth\Customer\Traits\ValidatesWorkScheduleCalendar;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
@@ -337,7 +336,7 @@ class NurseCalendarService
         return \Cache::remember("total_time_visits_for_{$auth->id}_$date", 2, function () use ($auth, $date) {
             $invoice = $auth->nurseInfo->invoices()->where('month_year', Carbon::parse($date)->startOfMonth())->first();
 
-            return  $this->validatedInvoiceData($invoice, $auth);
+            return $this->validatedInvoiceData($invoice, $auth);
         });
     }
 
@@ -382,7 +381,7 @@ class NurseCalendarService
      */
     public function manipulateReportData(array $nextUpcomingWindow, array $report)
     {
-        return  [
+        return [
             'windowStart' => isset($nextUpcomingWindow['window_time_start'])
                 ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
                 : null,

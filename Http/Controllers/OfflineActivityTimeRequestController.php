@@ -8,7 +8,6 @@ namespace CircleLinkHealth\Customer\Http\Controllers;
 
 use CircleLinkHealth\CcmBilling\Domain\Patient\PatientServicesForTimeTracker;
 use CircleLinkHealth\CcmBilling\Events\PatientActivityCreated;
-use CircleLinkHealth\Customer\Http\Requests\CreateOfflineActivityTimeRequest;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\OfflineActivityTimeRequest;
@@ -25,49 +24,49 @@ class OfflineActivityTimeRequestController extends Controller
         ])
             ->whereNull('is_approved')
             ->get();
-        
+
         return view('care-center.offlineActivityTimeRequest.index')
             ->with('requests', $requests);
     }
-    
+
     public function adminRespond(Request $request)
     {
         $timeRequest = OfflineActivityTimeRequest::findOrFail($request->input('offline_time_request_id'));
-        
+
         $isApproved = (bool) $request->input('approved');
-        
+
         $timeRequest->is_approved = $isApproved;
-        
+
         if ($isApproved) {
             $timeRequest->approve();
             event(new PatientActivityCreated($timeRequest->patient_id, false));
         } else {
             $timeRequest->reject();
         }
-        
+
         return redirect()->route('admin.offline-activity-time-requests.index');
     }
-    
+
     public function create($patientId)
     {
         if ( ! $patientId) {
             return abort(404);
         }
-        
+
         $patient = User::find($patientId);
-        
+
         if ( ! $patient) {
             return response('User not found', 401);
         }
-        
+
         $patient_name = $patient->getFullName();
-        
+
         $userTimeZone = $patient->timezone;
-        
+
         if (empty($userTimeZone)) {
             $userTimeZone = 'America/New_York';
         }
-        
+
         return view(
             'care-center.offlineActivityTimeRequest.create',
             [
@@ -81,7 +80,7 @@ class OfflineActivityTimeRequestController extends Controller
             ]
         );
     }
-    
+
     public function index()
     {
         $requests = OfflineActivityTimeRequest::with([
@@ -90,11 +89,11 @@ class OfflineActivityTimeRequestController extends Controller
         ])
             ->where('requester_id', auth()->id())
             ->get();
-        
+
         return view('care-center.offlineActivityTimeRequest.index')
             ->with('requests', $requests);
     }
-    
+
     /**
      * @param $patientId
      *
@@ -106,24 +105,24 @@ class OfflineActivityTimeRequestController extends Controller
     {
         $offlineActivityRequest = OfflineActivityTimeRequest::create(
             [
-                'type'             => $request->input('type'),
-                'comment'          => $request->input('comment'),
-                'duration_seconds' => $request->input('duration_minutes') * 60,
-                'patient_id'       => $request->input('patient_id'),
-                'requester_id'     => auth()->id(),
-                'is_behavioral'    => $request->input('is_behavioral'),
+                'type'                  => $request->input('type'),
+                'comment'               => $request->input('comment'),
+                'duration_seconds'      => $request->input('duration_minutes') * 60,
+                'patient_id'            => $request->input('patient_id'),
+                'requester_id'          => auth()->id(),
+                'is_behavioral'         => $request->input('is_behavioral'),
                 'chargeable_service_id' => $request->input('chargeable_service_id'),
-                'performed_at'     => \Carbon::parse($request->input('performed_at')),
+                'performed_at'          => \Carbon::parse($request->input('performed_at')),
             ]
         );
-        
+
         if ($offlineActivityRequest) {
             return redirect()->route('offline-activity-time-requests.index');
         }
-        
+
         throw new \Exception('Failed saving Offline Activity Time Request', 500);
     }
-    
+
     private function getChargeableServices($patientId)
     {
         return (new PatientServicesForTimeTracker((int) $patientId, now()))->get();

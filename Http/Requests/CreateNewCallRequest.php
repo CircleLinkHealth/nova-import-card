@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Customer\Http\Requests;
 
-use CircleLinkHealth\Customer\Policies\CreateNoteForPatient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Policies\CreateNoteForPatient;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateNewCallRequest extends FormRequest
@@ -20,14 +20,14 @@ class CreateNewCallRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
-        
+
         if ($user->isCareCoach()) {
             return app(CreateNoteForPatient::class)->can($user->id, $this->route('patientId') ?? $this->input('0.patientId'));
         }
-        
+
         return $user->hasPermission('call.create');
     }
-    
+
     /**
      * Get the validation rules that apply to the request.
      *

@@ -17,7 +17,7 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     public const HOME = '/';
-    
+
     /**
      * The root namespace to assume when generating URLs to actions.
      *

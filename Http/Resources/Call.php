@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Http\Resources;
 
-use CircleLinkHealth\Customer\Http\Resources\UserResource;
 use CircleLinkHealth\Customer\Entities\User as UserModel;
 use Illuminate\Http\Resources\Json\JsonResource;
 

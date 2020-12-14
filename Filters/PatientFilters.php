@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Customer\Filters;
 
-use CircleLinkHealth\Core\Filters\QueryFilters;
 use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Filters\QueryFilters;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;

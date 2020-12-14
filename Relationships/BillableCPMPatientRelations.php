@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Relationships;
 
-use CircleLinkHealth\Customer\NurseTimeAlgorithms\AlternativeCareTimePayableCalculator;
 use Carbon\Carbon;
 
 class BillableCPMPatientRelations
@@ -21,12 +20,12 @@ class BillableCPMPatientRelations
      * @var Carbon
      */
     protected $month;
-    
+
     public function __construct(Carbon $month)
     {
         $this->month = $month;
     }
-    
+
     public function get(
         array $with = [
             'careTeamMembers',
@@ -52,17 +51,17 @@ class BillableCPMPatientRelations
                 if (in_array($item, $with)) {
                     return false;
                 }
-                
+
                 return true;
             }
         )->all();
     }
-    
+
     public static function getDefaultWith(Carbon $month): array
     {
         return (new static($month))->get(self::DEFAULT_RELATIONSHIPS);
     }
-    
+
     private function getPatientSummariesCallback()
     {
         return function ($query) {

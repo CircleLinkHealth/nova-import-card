@@ -20,12 +20,12 @@ class PatientTimeAndCalls
     public function fromArray(array $array): self
     {
         return $this->setCcmTotalTime($array['ccm_total_time'] ?? 0)
-                    ->setBhiTotalTime($array['bhi_total_time'] ?? 0)
-                    ->setPcmTotalTime($array['pcm_total_time'] ?? 0)
-                    ->setRpmTotalTime($array['rpm_total_time'] ?? 0)
-                    ->setRhcTotalTime($array['rhc_total_time'] ?? 0)
-                    ->setNoOfCalls($array['no_of_calls'] ?? 0)
-                    ->setNoOfSuccessfulCalls($array['no_of_successful_calls'] ?? 0);
+            ->setBhiTotalTime($array['bhi_total_time'] ?? 0)
+            ->setPcmTotalTime($array['pcm_total_time'] ?? 0)
+            ->setRpmTotalTime($array['rpm_total_time'] ?? 0)
+            ->setRhcTotalTime($array['rhc_total_time'] ?? 0)
+            ->setNoOfCalls($array['no_of_calls'] ?? 0)
+            ->setNoOfSuccessfulCalls($array['no_of_successful_calls'] ?? 0);
     }
 
     public function getBhiTotalTime(): int

@@ -4,8 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SharedModels\Entities\Call;
-use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Models\PracticePull\Demographics;
 use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use Carbon\Carbon;
@@ -18,8 +16,10 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 $factory->define(
     \CircleLinkHealth\Customer\Entities\User::class,
@@ -52,7 +52,7 @@ $factory->define(Patient::class, function (Faker\Generator $faker) use ($factory
 
 $factory->define(
     \CircleLinkHealth\SharedModels\Entities\Activity::class,
-    function (Faker\Generator $faker) use ($factory) {
+    function (Faker\Generator $faker) {
         return [
             'type'          => $faker->text(15),
             'duration'      => $faker->numberBetween(1, 120),
@@ -165,7 +165,7 @@ $factory->define(Invite::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factory) {
+$factory->define(Enrollee::class, function (Faker\Generator $faker) {
     if (isProductionEnv()) {
         $practice = Practice::whereName('demo')->firstOrFail();
         $provider = \CircleLinkHealth\Customer\Entities\User::ofType('provider')
