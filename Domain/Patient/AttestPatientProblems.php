@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\CcmBilling\Domain\Patient;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Models\Addendum;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Entities\AttestedProblem;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Database\Eloquent\Collection;
 

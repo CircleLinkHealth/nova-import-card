@@ -14,7 +14,7 @@ trait ApprovablePatientServicesQuery
 {
     public function approvablePatientServicesQuery(Carbon $monthYear): Builder
     {
-        return  ChargeablePatientMonthlySummary::with(['patient', 'chargeableService'])
+        return ChargeablePatientMonthlySummary::with(['patient', 'chargeableService'])
             ->has('patient')
             ->has('chargeableService')
             ->createdOn($monthYear, 'chargeable_month');

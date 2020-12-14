@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Http\Resources;
 
-use CircleLinkHealth\CcmBilling\Http\Resources\ChargeableService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceModel;
 use CircleLinkHealth\Customer\Entities\User;
@@ -25,7 +24,7 @@ class ApprovableBillablePatient extends JsonResource
             ];
         });
     }
-    
+
     /**
      * Transform the resource into an array.
      *
@@ -39,18 +38,18 @@ class ApprovableBillablePatient extends JsonResource
             ->careTeamMembers
             ->where('type', '=', 'billing_provider')
             ->first();
-        
+
         $name = $this->patient->getFullName();
         $url  = route('patient.note.index', [
             $this->patient->id,
         ]);
-        
+
         $status = $this->closed_ccm_status;
         if (null == $status) {
             $status = $this->patient->patientInfo->getCcmStatusForMonth(Carbon::parse($this->month_year));
         }
         $problems = $this->allCcdProblems($this->patient)->unique('code')->filter()->values();
-        
+
         return [
             'id'       => $this->patient->id,
             'mrn'      => $this->patient->getMRN(),

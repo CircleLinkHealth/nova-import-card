@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CcmBilling\Events;
 
-use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\CcmBilling\Contracts\CanDebounceJobForPatient;
+use CircleLinkHealth\Customer\CpmConstants;
 use Illuminate\Queue\SerializesModels;
 
 class PatientActivityCreated implements CanDebounceJobForPatient

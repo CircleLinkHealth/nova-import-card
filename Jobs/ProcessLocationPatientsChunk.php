@@ -84,28 +84,28 @@ class ProcessLocationPatientsChunk extends ChunksEloquentBuilderJob implements S
             );
         });
     }
-    
+
     public function middleware()
     {
         if (isUnitTestingEnv()) {
             return [];
         }
-        
+
         $rateLimitedMiddleware = (new RateLimited())
             ->allow(20)
             ->everySeconds(60)
             ->releaseAfterSeconds(20);
-        
+
         return [$rateLimitedMiddleware];
-    }
-    
-    public function retryUntil(): \DateTime
-    {
-        return now()->addDay();
     }
 
     public function repo(): LocationProcessorRepository
     {
         return app(LocationProcessorRepository::class);
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addDay();
     }
 }

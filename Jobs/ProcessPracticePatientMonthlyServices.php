@@ -47,21 +47,21 @@ class ProcessPracticePatientMonthlyServices implements ShouldQueue
                 ProcessLocationPatientMonthlyServices::dispatch($location->id, $this->chargeableMonth);
             });
     }
-    
+
     public function middleware()
     {
         if (isUnitTestingEnv()) {
             return [];
         }
-        
+
         $rateLimitedMiddleware = (new RateLimited())
             ->allow(20)
             ->everySeconds(60)
             ->releaseAfterSeconds(20);
-        
+
         return [$rateLimitedMiddleware];
     }
-    
+
     public function retryUntil(): \DateTime
     {
         return now()->addDay();

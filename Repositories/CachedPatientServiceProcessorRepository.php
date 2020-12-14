@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\CcmBilling\Repositories;
 
-use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Contracts\PatientServiceProcessorRepository as RepositoryInterface;
 use CircleLinkHealth\CcmBilling\Entities\BillingConstants;
@@ -14,6 +13,7 @@ use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummary;
 use CircleLinkHealth\CcmBilling\Entities\ChargeablePatientMonthlySummaryView;
 use CircleLinkHealth\CcmBilling\Facades\BillingCache;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\DTO\ChargeableServiceDuration;
 use CircleLinkHealth\SharedModels\Entities\Activity;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;

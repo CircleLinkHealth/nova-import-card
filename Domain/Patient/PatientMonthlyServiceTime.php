@@ -147,6 +147,6 @@ class PatientMonthlyServiceTime
     {
         $this->summaries = $this->repo->getChargeablePatientSummaries($this->patientId, $month);
 
-        return  $this;
+        return $this;
     }
 }

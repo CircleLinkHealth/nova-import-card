@@ -39,7 +39,7 @@ class CompareCurrentAndLegacyBillingDataPracticeChunk extends ChunksEloquentBuil
 
     public function getBuilder(): Builder
     {
-        return  User::ofType('participant')
+        return User::ofType('participant')
             ->ofPractice($this->practiceId)
             ->whereHas('patientInfo', fn ($pi) => $pi->enrolled())
             ->whereHas('carePlan', fn ($cp) => $cp->whereIn('status', [

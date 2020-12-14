@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\CcmBilling\Jobs;
 
-use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
 use Carbon\Carbon;
+use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
 use CircleLinkHealth\CpmAdmin\Notifications\InvoicesCreatedNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

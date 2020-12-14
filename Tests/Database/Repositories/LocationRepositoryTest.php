@@ -39,7 +39,7 @@ class LocationRepositoryTest extends CustomerTestCase
             ChargeableService::CCM,
             ChargeableService::BHI,
             ChargeableService::PCM,
-        ] as  $code) {
+        ] as $code) {
             $this->repo->store($location->id, $code, $startOfMonth);
         }
 

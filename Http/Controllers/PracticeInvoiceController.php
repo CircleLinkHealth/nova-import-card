@@ -13,7 +13,6 @@ use CircleLinkHealth\CcmBilling\Notifications\PracticeInvoice;
 use CircleLinkHealth\CcmBilling\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\CcmBilling\Services\PracticeReportsService;
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\Core\Traits\ApiReturnHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -29,7 +28,7 @@ class PracticeInvoiceController extends Controller
     private $patientSummaryDBRepository;
     private $practiceReportsService;
     private $service;
-    
+
     /**
      * PracticeInvoiceController constructor.
      */
@@ -42,26 +41,26 @@ class PracticeInvoiceController extends Controller
         $this->patientSummaryDBRepository = $patientSummaryDBRepository;
         $this->practiceReportsService     = $practiceReportsService;
     }
-    
+
     /** open patient-monthly-summaries in a practice */
     public function closeMonthlySummaryStatus(Request $request)
     {
         $practice_id = $request->input('practice_id');
         $date        = $request->input('date');
         $user        = auth()->user();
-        
+
         //since this route is also accessible from software-only,
         //we should make sure that software-only role is applied on this practice
         if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
             abort(403);
         }
-        
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         }
-        
+
         $savedSummaries = collect();
-        
+
         $this->getCurrentMonthSummariesQuery($practice_id, $date)
             ->chunkById(100, function ($summaries) use ($user, &$savedSummaries) {
                 foreach ($summaries as $summary) {
@@ -73,53 +72,53 @@ class PracticeInvoiceController extends Controller
                         }
                     }
                     $summary->save();
-                    
+
                     $savedSummaries->push($summary);
                 }
             });
-        
+
         return response()->json($savedSummaries);
     }
-    
+
     public function counts(Request $request)
     {
         $practice_id = $request['practice_id'];
-        
+
         //since this route is also accessible from software-only,
         //we should make sure that software-only role is applied on this practice
         $user = auth()->user();
         if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
             abort(403);
         }
-        
+
         $date = Carbon::createFromFormat('M, Y', $request->input('date'));
-        
+
         $counts = $this->service->counts($practice_id, $date->firstOfMonth());
-        
+
         return response()->json($counts);
     }
-    
+
     public function createInvoices()
     {
         $currentMonth = Carbon::now()->startOfMonth();
-        
+
         $dates = [];
-        
+
         $oldestSummary = PatientMonthlySummary::orderBy('created_at', 'asc')->first();
-        
+
         $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at) ?? 12;
-        
+
         for ($i = 0; $i <= $numberOfMonths; ++$i) {
             $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
-            
+
             $dates[$date->toDateString()] = $date->format('F, Y');
         }
-        
+
         $readyToBill = Practice::active()
             ->authUserCanAccess()
             ->get();
         $invoice_no = AppConfig::pull('billing_invoice_count', 0);
-        
+
         return view('billing::create', compact(
             [
                 'readyToBill',
@@ -128,7 +127,7 @@ class PracticeInvoiceController extends Controller
             ]
         ));
     }
-    
+
     /**
      * Get approvable patients for a practice for a month.
      *
@@ -138,25 +137,25 @@ class PracticeInvoiceController extends Controller
     {
         $practice_id = $request->input('practice_id');
         $date        = $request->input('date');
-        
+
         //since this route is also accessible from software-only,
         //we should make sure that software-only role is applied on this practice
         $user = auth()->user();
         if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
             abort(403);
         }
-        
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         } else {
             return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
-        
+
         $month = $this->service->getBillablePatientsForMonth($practice_id, $date);
-        
+
         return response($month['summaries'])->header('is-closed', (int) $month['is_closed']);
     }
-    
+
     /**
      * @deprecated This will be phased out. It's here only to support older links
      *
@@ -172,26 +171,26 @@ class PracticeInvoiceController extends Controller
         if ( ! auth()->user()->practice((int) $practice) && ! auth()->user()->isAdmin()) {
             return abort(403, 'Unauthorized action.');
         }
-        
+
         return response()->download(storage_path('/download/'.$name), $name, [
             'Content-Length: '.filesize(storage_path('/download/'.$name)),
         ]);
     }
-    
+
     public function getChargeableServices()
     {
         return $this->ok(ChargeableService::cached());
     }
-    
+
     public function getCounts(
         $date,
         $practice
     ) {
         $date = Carbon::parse($date);
-        
+
         return $this->service->counts($practice, $date->firstOfMonth());
     }
-    
+
     /**
      * Show the page to choose a practice and generate approvable billing reports.
      *
@@ -205,28 +204,28 @@ class PracticeInvoiceController extends Controller
             ->authUserCanAccess(auth()->user()->isSoftwareOnly())
             ->active()
             ->get();
-        
+
         $cpmProblems = (new CpmProblemService())->all();
-        
+
         $currentMonth = Carbon::now()->startOfMonth();
-        
+
         $dates = [];
-        
+
         $oldestSummary = PatientMonthlySummary::orderBy('created_at', 'asc')->first();
-        
+
         $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at->copy()->startOfMonth()) ?? 12;
-        
+
         for ($i = 0; $i <= $numberOfMonths; ++$i) {
             $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
-            
+
             $dates[] = [
                 'label' => $date->format('F, Y'),
                 'value' => $date->toDateString(),
             ];
         }
-        
+
         $chargeableServices = ChargeableService::cached();
-        
+
         return view('billing::billing', compact([
             'cpmProblems',
             'practices',
@@ -234,7 +233,7 @@ class PracticeInvoiceController extends Controller
             'dates',
         ]));
     }
-    
+
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
@@ -243,13 +242,13 @@ class PracticeInvoiceController extends Controller
         $date      = Carbon::parse($request->input('date'));
         $format    = $request['format'];
         $practices = $request['practices'];
-        
+
         CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id())->onQueue('low');
-        
+
         $practices = Practice::whereIn('id', $practices)->pluck('display_name')->all();
-        
+
         $niceDate = "{$date->shortEnglishMonth} {$date->year}";
-        
+
         session()->put(
             'messages',
             array_merge(
@@ -258,86 +257,86 @@ class PracticeInvoiceController extends Controller
                 ['We will send you an email when they are ready.']
             )
         );
-        
+
         return redirect()->back();
     }
-    
+
     /** open patient-monthly-summaries in a practice */
     public function openMonthlySummaryStatus(Request $request)
     {
         $practice_id = $request->input('practice_id');
         $date        = $request->input('date');
         $user        = auth()->user();
-        
+
         //since this route is also accessible from software-only,
         //we should make sure that software-only role is applied on this practice
         if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
             abort(403);
         }
-        
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         }
-        
+
         $query = $this->getCurrentMonthSummariesQuery($practice_id, $date);
-        
+
         $query->update([
             'actor_id'          => null,
             'closed_ccm_status' => null,
         ]);
-        
+
         $summaries = $query->get();
-        
+
         return response()->json($summaries);
     }
-    
+
     /**
      * @return string
      */
     public function send(Request $request)
     {
         $invoices = (array) json_decode($request->input('links'));
-        
+
         $logger = '';
-        
+
         foreach ($invoices as $key => $value) {
             $practice = Practice::whereDisplayName($key)->first();
-            
+
             $data = (array) $value;
-            
+
             $patientReportUrl = $data['patient_report_url'];
             $invoiceURL       = $data['invoice_url'];
-            
+
             if ( ! empty($practice->invoice_recipients)) {
                 $recipients = $practice->getInvoiceRecipientsArray();
                 $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->pluck('email')->all());
             } else {
                 $recipients = $practice->getInvoiceRecipients()->pluck('email')->all();
             }
-            
+
             if (count($recipients) > 0) {
                 foreach ($recipients as $recipient) {
                     $user = User::whereEmail($recipient)->first();
-                    
+
                     $notification = new PracticeInvoice($patientReportUrl, $invoiceURL);
-                    
+
                     if ($user) {
                         $user->notify($notification);
                     } else {
                         Notification::route('mail', $recipient)
                             ->notify($notification);
                     }
-                    
+
                     $logger .= "Sent report for {$practice->name} to ${recipient} <br />";
                 }
             } else {
                 $logger .= "No recipients setup for {$practice->name}...";
             }
         }
-        
+
         return $logger;
     }
-    
+
     /**
      * @return \Illuminate\Http\JsonResponse
      */
@@ -347,17 +346,17 @@ class PracticeInvoiceController extends Controller
         $date            = $request->input('date');
         $default_code_id = $request->input('default_code_id');
         $is_detach       = $request->has('detach');
-        
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         } else {
             return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
-        
+
         if ( ! $default_code_id || ! $practice_id) {
             return $this->badRequest('Invalid [practice_id] and [default_code_id] parameters. Must have a values');
         }
-        
+
         $summaries = $this->service
             ->billablePatientSummaries($practice_id, $date)
             ->get()
@@ -369,35 +368,35 @@ class PracticeInvoiceController extends Controller
                     $summary = $this->service
                         ->detachDefaultChargeableService($summary, $default_code_id);
                 }
-                
+
                 return ApprovableBillablePatient::make($summary);
             });
-        
+
         return response()->json($summaries);
     }
-    
+
     public function updateStatus(Request $request)
     {
         if ( ! $request->ajax()) {
             return response()->json('Method not allowed', 403);
         }
-        
+
         $summary = PatientMonthlySummary::find($request['report_id']);
-        
+
         $summary->approved = $request['approved'];
         $summary->rejected = $request['rejected'];
-        
+
         if ( ! $summary->approved && ! $summary->rejected) {
             $summary->needs_qa = true;
         }
-        
+
         //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
         $summary->actor_id = auth()->user()->id;
         $summary->save();
-        
+
         //used for view report counts
         $counts = $this->getCounts($summary->month_year, $summary->patient->primaryPractice->id);
-        
+
         return response()->json([
             'report_id' => $summary->id,
             'counts'    => $counts,
@@ -408,48 +407,48 @@ class PracticeInvoiceController extends Controller
             'actor_id' => $summary->actor_id,
         ]);
     }
-    
+
     public function updateSummaryChargeableServices(Request $request)
     {
         if ( ! $request->ajax()) {
             return response()->json('Method not allowed', 403);
         }
-        
+
         $reportId = $request->input('report_id');
-        
+
         if ( ! $reportId) {
             return $this->badRequest('report_id is a required field');
         }
-        
+
         //need array of IDs
         $chargeableIDs = $request->input('patient_chargeable_services');
-        
+
         if ( ! is_array($chargeableIDs)) {
             return $this->badRequest('patient_chargeable_services must be an array');
         }
-        
+
         $summary = PatientMonthlySummary::find($reportId);
-        
+
         $summary->actor_id = auth()->id();
         $summary->save();
-        
+
         if ( ! $summary) {
             return $this->badRequest("Report with id ${reportId} not found.");
         }
-        
+
         $toSync = [];
-        
+
         foreach ($chargeableIDs as $id) {
             $toSync[$id] = [
                 'is_fulfilled' => true,
             ];
         }
-        
+
         $summary->chargeableServices()->sync($toSync);
-        
+
         return $this->ok($summary);
     }
-    
+
     /**
      * @param $practice_id
      *

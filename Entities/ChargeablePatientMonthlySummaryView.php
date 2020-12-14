@@ -34,7 +34,7 @@ use CircleLinkHealth\Core\Traits\DateScopesTrait;
  * @property int|null                        $no_of_calls
  * @property int|null                        $no_of_successful_calls
  * @property string|null                     $total_time
- * @method static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummaryView createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
+ * @method   static                          \Illuminate\Database\Eloquent\Builder|ChargeablePatientMonthlySummaryView createdOnIfNotNull(\Carbon\Carbon $date = null, $field = 'created_at')
  * @property string|null                     $chargeable_service_name
  */
 class ChargeablePatientMonthlySummaryView extends SqlViewModel
