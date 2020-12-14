@@ -569,7 +569,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccm-billing-module.git",
-                "reference": "936a1896f60c91d62884fa452684f9ee2f8c5f26"
+                "reference": "f2deafc4f132c0abc63182b7a3ff38fc0839c3ce"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -617,7 +617,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-13T15:05:02+00:00"
+            "time": "2020-12-14T16:16:32+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper-module",
@@ -872,7 +872,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f5f0ae26366ee49ed866cd00c41151800c4ff077"
+                "reference": "815388b275d8cbf7a069f45e9ecd4443891db3ba"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -908,7 +908,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T02:51:15+00:00"
+            "time": "2020-12-14T16:16:32+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -916,7 +916,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "09efddc166205741f9c1a50a5169bd2493554f7b"
+                "reference": "84cab85d9af72ad5a180a7b800a888629179f2d8"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -943,7 +943,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-13T15:05:02+00:00"
+            "time": "2020-12-14T15:24:11+00:00"
         },
         {
             "name": "circlelinkhealth/enrollment-invites",
@@ -1281,7 +1281,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "0152fc4cbc5d9136cbf753b6e1560c0469614d3f"
+                "reference": "0243b1886f7cc81aeedb83d15f80d0a3211c0b2c"
             },
             "require": {
                 "circlelinkhealth/eligibility-module": "dev-vaporizing-admin"
@@ -1298,7 +1298,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-13T15:05:01+00:00"
+            "time": "2020-12-14T16:16:32+00:00"
         },
         {
             "name": "circlelinkhealth/sharedvuecomponents-module",
@@ -1399,7 +1399,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "33a0cdf93f9e7ee9a8998cddb32a2de9aa838bd6"
+                "reference": "21d2b7f377b51c0bce12e32fbf6d428229a6e71a"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*",
@@ -1425,7 +1425,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T03:31:00+00:00"
+            "time": "2020-12-14T16:16:31+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -5436,16 +5436,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "2.1.1",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "f9eee5cec93dfb313a38b6b288741e84e53f02d5"
+                "reference": "1cb1cde8e8dd0f70cc0fe51354a59acad9302084"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/f9eee5cec93dfb313a38b6b288741e84e53f02d5",
-                "reference": "f9eee5cec93dfb313a38b6b288741e84e53f02d5",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/1cb1cde8e8dd0f70cc0fe51354a59acad9302084",
+                "reference": "1cb1cde8e8dd0f70cc0fe51354a59acad9302084",
                 "shasum": ""
             },
             "require": {
@@ -5458,16 +5458,17 @@
             "require-dev": {
                 "aws/aws-sdk-php": "^2.4.9 || ^3.0",
                 "doctrine/couchdb": "~1.0@dev",
-                "elasticsearch/elasticsearch": "^6.0",
+                "elasticsearch/elasticsearch": "^7",
                 "graylog2/gelf-php": "^1.4.2",
+                "mongodb/mongodb": "^1.8",
                 "php-amqplib/php-amqplib": "~2.4",
                 "php-console/php-console": "^3.1.3",
-                "php-parallel-lint/php-parallel-lint": "^1.0",
                 "phpspec/prophecy": "^1.6.1",
+                "phpstan/phpstan": "^0.12.59",
                 "phpunit/phpunit": "^8.5",
                 "predis/predis": "^1.1",
                 "rollbar/rollbar": "^1.3",
-                "ruflin/elastica": ">=0.90 <3.0",
+                "ruflin/elastica": ">=0.90 <7.0.1",
                 "swiftmailer/swiftmailer": "^5.3|^6.0"
             },
             "suggest": {
@@ -5487,7 +5488,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.x-dev"
+                    "dev-main": "2.x-dev"
                 }
             },
             "autoload": {
@@ -5503,11 +5504,11 @@
                 {
                     "name": "Jordi Boggiano",
                     "email": "j.boggiano@seld.be",
-                    "homepage": "http://seld.be"
+                    "homepage": "https://seld.be"
                 }
             ],
             "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
-            "homepage": "http://github.com/Seldaek/monolog",
+            "homepage": "https://github.com/Seldaek/monolog",
             "keywords": [
                 "log",
                 "logging",
@@ -5523,7 +5524,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-07-23T08:41:23+00:00"
+            "time": "2020-12-14T13:15:25+00:00"
         },
         {
             "name": "moontoast/math",
