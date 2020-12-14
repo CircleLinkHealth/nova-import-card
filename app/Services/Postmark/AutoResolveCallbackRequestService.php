@@ -111,29 +111,28 @@ class AutoResolveCallbackRequestService
             'callback_note'           => 'Callback automatically scheduled by the system - patient requested callback',
         ]);
     }
-    
+
     /**
-     * @param User $user
-     * @param PostmarkCallbackInboundData $postmarkCallbackData
-     * @return \App\Call
      * @throws \Exception
+     * @return \App\Call
      */
     private function assignCallbackToNurse(User $user, PostmarkCallbackInboundData $postmarkCallbackData)
     {
         /** @var SchedulerService $service */
         $service = app(SchedulerService::class);
+
         return $service->scheduleAsapCallbackTask(
-                $user,
-                (new AutomatedCallbackMessageValueObject(
+            $user,
+            (new AutomatedCallbackMessageValueObject(
                     $postmarkCallbackData->get('phone'),
                     $postmarkCallbackData->get('message'),
                     $user->first_name,
                     $user->last_name
                 ))->constructCallbackMessage(),
-                ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
-                null,
-                SchedulerService::CALL_BACK_TYPE,
-            );
+            ProcessPostmarkInboundMailJob::SCHEDULER_POSTMARK_INBOUND_MAIL,
+            null,
+            SchedulerService::CALL_BACK_TYPE,
+        );
     }
 
     private function createUnresolvedInboundCallback(array $matchedResultsFromDB, int $recordId)
