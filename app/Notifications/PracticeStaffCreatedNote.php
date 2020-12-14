@@ -6,10 +6,10 @@
 
 namespace App\Notifications;
 
-use CircleLinkHealth\Core\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Traits\ArrayableNotification;
+use CircleLinkHealth\Core\Contracts\HasAttachment;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;

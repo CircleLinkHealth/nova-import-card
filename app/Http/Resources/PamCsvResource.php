@@ -6,8 +6,8 @@
 
 namespace App\Http\Resources;
 
-use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls;
 use CircleLinkHealth\Customer\DTO\PatientTimeAndCalls as PatientTimeAndCallsValueObject;
+use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PamCsvResource extends JsonResource

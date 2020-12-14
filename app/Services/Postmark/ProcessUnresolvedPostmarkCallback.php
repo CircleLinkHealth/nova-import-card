@@ -72,7 +72,7 @@ class ProcessUnresolvedPostmarkCallback
     public function saveAsUnresolved(array $suggestedUsersIds)
     {
         try {
-            return  UnresolvedPostmarkCallback::firstOrCreate(
+            return UnresolvedPostmarkCallback::firstOrCreate(
                 [
                     'postmark_id' => $this->recordId,
                 ],

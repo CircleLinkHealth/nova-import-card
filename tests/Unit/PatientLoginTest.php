@@ -6,16 +6,16 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Http\Controllers\NotesController;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Notifications\NotifyPatientCarePlanApproved;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Support\Facades\Notification;
 use Tests\CustomerTestCase;
 

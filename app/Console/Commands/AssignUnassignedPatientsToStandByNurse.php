@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Console\Command;
 
 class AssignUnassignedPatientsToStandByNurse extends Command

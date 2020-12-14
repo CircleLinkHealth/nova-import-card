@@ -53,8 +53,6 @@ class UpdateSelfEnrollmentEnrolleeStatus extends Command
                 'status' => Enrollee::TO_CALL,
             ]);
 
-     
         Log::info("Update Enrollees of practice $practiceId command status: $updated");
-     
     }
 }

@@ -8,12 +8,12 @@ namespace App\Services\Postmark;
 
 use App\Entities\PostmarkInboundCallbackRequest;
 use App\Jobs\ProcessPostmarkInboundMailJob;
-use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\ValueObjects\PostmarkCallback\AutomatedCallbackMessageValueObject;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Services\Postmark\PostmarkInboundCallbackMatchResults;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 

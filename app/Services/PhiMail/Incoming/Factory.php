@@ -6,12 +6,12 @@
 
 namespace App\Services\PhiMail\Incoming;
 
-use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\Services\PhiMail\Incoming\Handlers\Plain;
 use App\Services\PhiMail\Incoming\Handlers\Unknown;
 use App\Services\PhiMail\Incoming\Handlers\XML;
 use App\Services\PhiMail\Incoming\Handlers\Zip;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use Illuminate\Support\Str;
 
 class Factory

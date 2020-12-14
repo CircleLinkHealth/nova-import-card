@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Helpers;
 use CircleLinkHealth\Eligibility\SelfEnrollment\Jobs\EnrollableSurveyCompleted;
-use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Console\Command;
 
@@ -53,7 +53,7 @@ class ImportCompletedCalvaryPatientsMissed extends Command
             },
         ])->has('user')
             ->where('practice_id', $practiceId)
-            ->chunk(100, function ($enrollees) use ($practiceId, $surveyInstance) {
+            ->chunk(100, function ($enrollees) use ($surveyInstance) {
                 foreach ($enrollees as $enrollee) {
                     if (Helpers::hasCompletedSelfEnrollmentSurvey($enrollee->user)) {
                         EnrollableSurveyCompleted::dispatch([

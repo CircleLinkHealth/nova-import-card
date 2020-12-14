@@ -70,7 +70,7 @@ class CameronMemorialLetter extends EnrollmentLetterDefaultConfigs implements Se
 
         $this->extraAddressValuesExists = ! empty(collect($this->extraAddressValues)->filter()->all());
 
-        return  $this->letterBladeView();
+        return $this->letterBladeView();
     }
 
     public static function signatures(Model $practiceLetter, Practice $practice, User $provider): string

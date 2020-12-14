@@ -6,9 +6,9 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

@@ -10,12 +10,12 @@ use App\Events\CarePlanWasProviderApproved;
 use App\Events\CarePlanWasQAApproved;
 use App\Events\CarePlanWasRNApproved;
 use App\Events\PdfableCreated;
-use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 
 class CarePlanObserver
 {

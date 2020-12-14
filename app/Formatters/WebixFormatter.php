@@ -7,17 +7,17 @@
 namespace App\Formatters;
 
 use App\Contracts\ReportFormatter;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Relationships\PatientCareplanRelations;
 use App\Services\CPM\CpmMiscService;
-use CircleLinkHealth\Customer\Services\NoteService;
-use CircleLinkHealth\Customer\Services\ReportsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Services\NoteService;
+use CircleLinkHealth\Customer\Services\ReportsService;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Database\Eloquent\Collection;
 
 class WebixFormatter implements ReportFormatter
@@ -34,7 +34,7 @@ class WebixFormatter implements ReportFormatter
         $billingProvider = $patient->getBillingProviderName();
 
         $notes = $patient->notes->sortByDesc('id')->map(
-            function (Note $note) use ($patient, $billingProvider) {
+            function (Note $note) use ($billingProvider) {
                 $result = [
                     'id'          => $note->id,
                     'logger_id'   => $note->author_id,

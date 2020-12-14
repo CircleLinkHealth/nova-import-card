@@ -6,8 +6,8 @@
 
 namespace Tests\Nurse;
 
-use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Tests\CustomerTestCase;
 
 class PerformanceTest extends CustomerTestCase

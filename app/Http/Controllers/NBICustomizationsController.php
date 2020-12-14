@@ -24,7 +24,7 @@ class NBICustomizationsController extends Controller
                 $lastName
             )->whereHas(
                 'patientInfo',
-                function ($q) use ($date, $n) {
+                function ($q) use ($date) {
                     $q->whereBirthDate($date->toDateString());
                 }
             )->first();

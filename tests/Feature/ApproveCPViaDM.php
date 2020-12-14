@@ -6,21 +6,21 @@
 
 namespace Tests\Feature;
 
-use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use App\AppConfig\DMDomainForAutoApproval;
-use CircleLinkHealth\SharedModels\Entities\Call;
-use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Notifications\CarePlanDMApprovalConfirmation;
-use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
-use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
+use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
+use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Support\Str;
 use Tests\CustomerTestCase;
 

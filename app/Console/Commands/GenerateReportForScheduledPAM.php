@@ -6,12 +6,12 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\SharedModels\Filters\CallViewFilters;
-use CircleLinkHealth\CpmAdmin\Http\Controllers\Reports\CallReportController;
 use App\Notifications\PatientActivityManagementEndOfMonthReportGeneratedNotification;
 use App\User;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\CpmAdmin\Http\Controllers\Reports\CallReportController;
+use CircleLinkHealth\SharedModels\Filters\CallViewFilters;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;

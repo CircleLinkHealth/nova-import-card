@@ -6,10 +6,10 @@
 
 namespace Tests\ExternalApi;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\Calls;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Patient;
 use CircleLinkHealth\Eligibility\Services\AthenaAPI\DTO\Problem;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 

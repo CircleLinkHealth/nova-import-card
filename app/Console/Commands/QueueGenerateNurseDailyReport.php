@@ -49,7 +49,7 @@ class QueueGenerateNurseDailyReport extends Command
                 $forDate = Carbon::parse($forDate);
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
-                die(1);
+                exit(1);
             }
         } else {
             //CPM-404

@@ -6,10 +6,10 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Jobs\DecorateUPG0506CcdaWithPdfData;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use Illuminate\Console\Command;
 
 class ReprocessUpg0506DmAttachments extends Command

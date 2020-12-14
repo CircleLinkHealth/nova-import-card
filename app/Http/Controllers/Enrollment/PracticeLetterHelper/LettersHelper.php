@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers\Enrollment\PracticeLetterHelper;
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
@@ -20,7 +20,7 @@ class LettersHelper
     public static function extraAddressValues(array $extraProps, array $practiceLocationArray)
     {
         return collect($extraProps)->mapWithKeys(function ($prop) use ($practiceLocationArray) {
-            return  [
+            return [
                 $prop => $practiceLocationArray[$prop],
             ];
         })->toArray();

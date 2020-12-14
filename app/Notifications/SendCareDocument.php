@@ -6,9 +6,9 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Core\Contracts\FaxableNotification;
 use CircleLinkHealth\Core\DTO\SimpleNotification;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

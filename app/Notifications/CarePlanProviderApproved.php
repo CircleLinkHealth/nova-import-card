@@ -8,10 +8,10 @@ namespace App\Notifications;
 
 use CircleLinkHealth\Core\Contracts\DirectMailableNotification;
 use CircleLinkHealth\Core\Contracts\FaxableNotification;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use CircleLinkHealth\Core\DTO\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;

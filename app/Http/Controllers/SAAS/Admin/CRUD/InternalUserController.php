@@ -13,11 +13,11 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Notifications\SAAS\SendInternalUserSignupInvitation;
+use CircleLinkHealth\Customer\Services\SAAS\UserManagementService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Session;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use CircleLinkHealth\Customer\Services\SAAS\UserManagementService;
 
 class InternalUserController extends Controller
 {

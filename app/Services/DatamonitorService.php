@@ -7,10 +7,10 @@
 namespace App\Services;
 
 use App\CPRulesQuestions;
-use CircleLinkHealth\SharedModels\Entities\Observation;
 use App\ObservationMeta;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Observation;
 use DateTime;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ServerException;

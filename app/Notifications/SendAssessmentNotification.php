@@ -6,8 +6,8 @@
 
 namespace App\Notifications;
 
-use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
 use CircleLinkHealth\Core\Contracts\FaxableNotification;
+use CircleLinkHealth\SharedModels\Entities\CareplanAssessment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;

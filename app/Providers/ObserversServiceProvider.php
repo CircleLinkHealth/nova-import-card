@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Models\Addendum;
 use App\Observers\AddendumObserver;
 use App\Observers\AppConfigObserver;
@@ -43,6 +42,7 @@ use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Revisionable\Entities\Revision;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;

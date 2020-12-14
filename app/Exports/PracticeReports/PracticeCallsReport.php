@@ -6,9 +6,9 @@
 
 namespace App\Exports\PracticeReports;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Database\Eloquent\Builder;
 
 class PracticeCallsReport extends BasePracticeReport

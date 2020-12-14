@@ -6,17 +6,17 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\Customer\Filters\PatientFilters;
 use App\Http\Resources\PatientSafeResource;
 use App\Http\Resources\UserAutocompleteResource;
 use App\Http\Resources\UserCsvResource;
-use CircleLinkHealth\Customer\Services\PatientReadRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Filters\PatientFilters;
 use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
+use CircleLinkHealth\Customer\Services\PatientReadRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PatientService

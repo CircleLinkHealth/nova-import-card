@@ -7,8 +7,8 @@
 namespace App\Notifications;
 
 use CircleLinkHealth\Core\Contracts\DirectMailableNotification;
-use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use CircleLinkHealth\Core\DTO\SimpleNotification;
+use CircleLinkHealth\Core\Notifications\Channels\DirectMailChannel;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

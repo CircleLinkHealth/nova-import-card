@@ -7,9 +7,9 @@
 namespace App\Console\Commands;
 
 use App\Jobs\SendDailyReportToRN;
-use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Services\NursesPerformanceReportService;
 use Illuminate\Console\Command;
 
 class EmailRNDailyReport extends Command
