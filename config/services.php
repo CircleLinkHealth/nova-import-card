@@ -89,6 +89,29 @@ return [
         'report_url' => env('AWV_URL', '').env('AWV_REPORT_URI', ''),
     ],
 
+    'serverless-pdf-generator' => [
+        'api-url'         => env('SERVERLESS_PDF_GENERATOR_API_URL'),
+        'api-key'         => env('SERVERLESS_PDF_GENERATOR_API_KEY'),
+        'default-options' => [
+            'format' => 'Letter',
+            'scale'  => '0.8',
+            'margin' => [
+                'top'    => '1cm',
+                'bottom' => '1cm',
+                'left'   => '1cm',
+                'right'  => '1cm',
+            ],
+        ],
+        'mail-vendor-envelope-options' => [
+            'margin' => [
+                'top'    => '12mm',
+                'bottom' => '15mm',
+                'left'   => '25mm',
+                'right'  => '0.75mm',
+            ],
+        ],
+    ],
+
     'tester' => [
         'email'     => 'nektariosx01@gmail.com',
         'phone'     => '+35799018718',

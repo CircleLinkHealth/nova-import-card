@@ -6,15 +6,14 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
-use CircleLinkHealth\Customer\CpmConstants;
 use App\Contracts\ReportFormatter;
 use App\Relationships\PatientCareplanRelations;
-use App\Repositories\PatientReadRepository;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Services\PatientReadRepository;
+use CircleLinkHealth\PdfService\Services\PdfService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -64,7 +63,7 @@ class CarePlanGeneratorService
                 'wpUsers.patient.multiview',
                 $viewParams,
                 null,
-                CpmConstants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
+                config('services.serverless-pdf-generator.mail-vendor-envelope-options')
             );
 
             if ($users->count() > 1) {

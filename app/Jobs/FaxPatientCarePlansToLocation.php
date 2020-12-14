@@ -7,7 +7,6 @@
 namespace App\Jobs;
 
 use App\Notifications\CarePlanProviderApproved;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,8 +24,6 @@ class FaxPatientCarePlansToLocation implements ShouldQueue
     public $location;
     public $patients;
 
-    protected $pdfService;
-
     /**
      * Create a new job instance.
      *
@@ -34,9 +31,8 @@ class FaxPatientCarePlansToLocation implements ShouldQueue
      */
     public function __construct($patients, Location $location)
     {
-        $this->patients   = $patients;
-        $this->location   = $location;
-        $this->pdfService = app(PdfService::class);
+        $this->patients = $patients;
+        $this->location = $location;
     }
 
     /**

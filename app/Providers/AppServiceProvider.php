@@ -34,7 +34,6 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Laravel\Horizon\Horizon;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Queue;
 
@@ -69,7 +68,7 @@ class AppServiceProvider extends ServiceProvider
         } else {
             \Log::warning('Class Swift_Preferences does not exist.');
         }
-        
+
         Queue::looping(
             function () {
                 //Rollback any transactions that were left open by a previously failed job
@@ -215,18 +214,16 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->register(\Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class);
-        $this->app->register(\Barryvdh\Snappy\ServiceProvider::class);
 
         $this->app->register(\jeremykenedy\Slack\Laravel\ServiceProvider::class);
         $this->app->register(EmailArrayValidatorServiceProvider::class);
         $this->app->register(\Propaganistas\LaravelPhone\PhoneServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
-        $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
 
 //        Auth::provider('enrollmentLogin', function ($app, array $config) {
 //            return new AutoEnrollmentLoginProvider($app['hash'], $config['model']);
 //        });
-        
+
         if ($this->app->environment('local', 'review', 'testing')) {
             app(Factory::class)->load(base_path('CircleLinkHealth/Customer/Database/Factories'));
         }

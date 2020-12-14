@@ -2,7 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CcdaBuilder" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CcdaParserProcessorPhp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CcmBilling" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/CerberusGatekeeper" vcs="Git" />
@@ -14,6 +13,7 @@
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Eligibility" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Nurseinvoices" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Patientapi" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Pdfservice" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Raygun" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/Revisionable" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CircleLinkHealth/SamlSp" vcs="Git" />

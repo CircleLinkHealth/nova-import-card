@@ -10,7 +10,6 @@ use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvide
 use CircleLinkHealth\CcmBilling\Providers\CcmBillingServiceProvider;
 use CircleLinkHealth\Core\Providers\AuthServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
-use CircleLinkHealth\Core\Providers\HtmlToPdfServiceProvider;
 use CircleLinkHealth\Core\Providers\SmartCacheServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
@@ -211,7 +210,6 @@ return [
 
         App\Providers\BroadcastServiceProvider::class,
 
-        HtmlToPdfServiceProvider::class,
         App\Providers\DirectMailServiceProvider::class,
         FaxServiceProvider::class,
         App\Providers\TwilioClientServiceProvider::class,

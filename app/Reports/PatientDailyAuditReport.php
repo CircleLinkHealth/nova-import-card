@@ -6,11 +6,11 @@
 
 namespace App\Reports;
 
-use CircleLinkHealth\SharedModels\Entities\Note;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\PdfService\Services\PdfService;
 use CircleLinkHealth\SharedModels\Entities\Activity;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Illuminate\Support\Facades\DB;
 
 /**

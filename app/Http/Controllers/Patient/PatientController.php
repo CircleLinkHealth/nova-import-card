@@ -6,9 +6,7 @@
 
 namespace App\Http\Controllers\Patient;
 
-use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use App\Contracts\ReportFormatter;
-use CircleLinkHealth\Customer\Services\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CallPatientRequest;
 use App\Http\Requests\ContactDetailsRequest;
@@ -16,11 +14,13 @@ use App\Http\Requests\MarkPrimaryPhoneRequest;
 use App\Services\Observations\ObservationConstants;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\AppConfig\SeesAutoQAButton;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Services\NurseCalendarService;
+use CircleLinkHealth\PdfService\Services\PdfService;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;

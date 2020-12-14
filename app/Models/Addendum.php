@@ -6,12 +6,12 @@
 
 namespace App\Models;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
-use CircleLinkHealth\Core\Contracts\AttachableToNotification;
 use App\Contracts\RelatesToActivity;
 use App\Traits\ActivityRelatable;
-use CircleLinkHealth\Customer\Traits\NotificationAttachable;
+use CircleLinkHealth\Core\Contracts\AttachableToNotification;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\NotificationAttachable;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

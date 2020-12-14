@@ -6,25 +6,19 @@
 
 namespace App\Http\Controllers\Patient;
 
-use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
 use App\CarePlanPrintListView;
-use App\Contracts\DirectMail;
-use CircleLinkHealth\Customer\CpmConstants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
 use App\Http\Requests\DeleteAlternateContactRequest;
 use App\Http\Requests\DeletePatientPhoneRequest;
-use CircleLinkHealth\Customer\Http\Requests\DmCarePlanToBillingProviderRequest;
 use App\Http\Requests\PatientPhonesRequest;
 use App\Jobs\GeneratePatientsCarePlans;
-use CircleLinkHealth\Customer\Services\PatientReadRepository;
 use App\Services\CarePlanGeneratorService;
 use App\Services\CareplanService;
 use App\Services\PatientService;
 use Auth;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -33,6 +27,7 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Exceptions\PatientAlreadyExistsException;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
+use CircleLinkHealth\Customer\Services\PatientReadRepository;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use DateTime;
@@ -47,16 +42,13 @@ class PatientCareplanController extends Controller
 {
     private $formatter;
     private $patientReadRepository;
-    private $pdfService;
 
     public function __construct(
         ReportFormatter $formatter,
-        PatientReadRepository $patientReadRepository,
-        PdfService $pdfService
+        PatientReadRepository $patientReadRepository
     ) {
         $this->formatter             = $formatter;
         $this->patientReadRepository = $patientReadRepository;
-        $this->pdfService            = $pdfService;
     }
 
     public function createPatientDemographics(Request $request)
