@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f136f36df5e109f6cc4716d50202025e",
+    "content-hash": "e5969a7cbb34f93552f7e09fd1314c57",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -17436,7 +17436,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/ccm-billing-module": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
