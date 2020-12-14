@@ -25,3 +25,8 @@ Route::get('calls-v2', [
     'uses' => 'RedirectToAdminApp@getPAM',
     'as'   => 'patientCallManagement.v2.index',
 ]);
+
+Route::get('ca/index', [
+    'uses' => 'RedirectToAdminApp@getCADirectorIndex',
+    'as'   => 'ca-director.index',
+]);

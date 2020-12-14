@@ -22,4 +22,9 @@ class RedirectToAdminApp extends Controller
     {
         return redirect()->to(config('core.apps.cpm-admin.url')."/pam");
     }
+    
+    public function getCADirectorIndex()
+    {
+        return redirect()->to(config('core.apps.cpm-admin.url')."/ca-director");
+    }
 }
