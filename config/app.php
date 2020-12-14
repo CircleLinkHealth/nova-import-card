@@ -5,6 +5,7 @@ use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
+use CircleLinkHealth\Customer\Billing\Providers\BillingServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
 use CircleLinkHealth\TwoFA\Providers\AuthyServiceProvider;
 use CircleLinkHealth\TwoFA\Providers\TwoFAServiceProvider;
@@ -194,6 +195,7 @@ return [
         CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
         FaxServiceProvider::class,
         VaporUiServiceProvider::class,
+        BillingServiceProvider::class,
     ],
 
     /*
