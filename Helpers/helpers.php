@@ -6,6 +6,7 @@
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Core\Jobs\SendSlackMessage;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -14,9 +15,6 @@ use Illuminate\Support\Str;
 
 if ( ! function_exists('isProductionEnv')) {
     /**
-     *
-     *
-     *
      * Returns whether or not this is a Production server, ie. used by real users.
      *
      * @return \Illuminate\Config\Repository|mixed
@@ -43,27 +41,27 @@ if ( ! function_exists('presentDate')) {
         $timeFormat = $withTimezone
             ? 'h:iA T'
             : 'h:iA';
-        
+
         if ( ! is_a($date, Carbon::class)) {
             $validator = Validator::make(['date' => $date], ['date' => 'date']);
-            
+
             if ($validator->fails()) {
                 return 'N/A';
             }
-            
+
             $carbonDate = Carbon::parse($date);
         } else {
             $carbonDate = $date;
         }
-        
+
         if ($carbonDate->year < 1) {
             return 'N/A';
         }
-        
+
         if ($forceHumanForm) {
             $dateFormat = 'm-d-Y';
         }
-        
+
         return $withTime
             ? $carbonDate->format("$dateFormat $timeFormat")
             : $carbonDate->format($dateFormat);
@@ -321,10 +319,30 @@ if ( ! function_exists('getIpAddress')) {
     {
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ipAddresses = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            
+
             return trim(end($ipAddresses));
         }
-        
+
         return $_SERVER['REMOTE_ADDR'] ?? null;
+    }
+}
+
+if ( ! function_exists('sendSlackMessage')) {
+    /**
+     * Sends a message to Slack.
+     *
+     * @param string $to      - slack channel (should start with '#')
+     * @param string $message
+     * @param bool   $force   - in case you really want the message to go to slack (testing | debugging)
+     */
+    function sendSlackMessage($to, $message, $force = false)
+    {
+        Log::warning("$to: $message");
+
+        if ( ! $force && ! isProductionEnv()) {
+            return;
+        }
+
+        SendSlackMessage::dispatch($to, $message)->onQueue('default');
     }
 }
