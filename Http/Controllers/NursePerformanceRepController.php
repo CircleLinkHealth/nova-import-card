@@ -168,7 +168,7 @@ class NursePerformanceRepController extends Controller
         $endDate       = $this->getEndDate($dates);
 
         return view(
-            'admin.reports.nursePerformance',
+            'admin::reports.nursePerformance',
             compact('endDate', 'yesterdayDate', 'limitDate', 'startDate')
         );
     }
