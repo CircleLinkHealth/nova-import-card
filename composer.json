@@ -105,6 +105,10 @@
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/pdf-service-module.git"
         }
     ],
     "require": {
@@ -129,6 +133,7 @@
         "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
         "circlelinkhealth/customer-module": "dev-vaporizing-admin",
         "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",
+        "circlelinkhealth/pdf-service-module": "dev-master",
         "circlelinkhealth/enrollment-invites": "*",
         "circlelinkhealth/generate-patient-call-data-csv": "*",
         "circlelinkhealth/generate-success-stories-report": "*",

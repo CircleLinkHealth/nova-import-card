@@ -3,7 +3,6 @@
 use CircleLinkHealth\Core\Providers\CoreDeferredBindingsServiceProvider;
 use CircleLinkHealth\Core\Providers\CoreServiceProvider;
 use CircleLinkHealth\Core\Providers\FaxServiceProvider;
-use CircleLinkHealth\Core\Providers\HtmlToPdfServiceProvider;
 use CircleLinkHealth\Core\Providers\VaporUiServiceProvider;
 use CircleLinkHealth\CpmAdmin\Providers\CpmAdminServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
@@ -194,7 +193,6 @@ return [
         CircleLinkHealth\Customer\Providers\CustomerAuthServiceProvider::class,
         CircleLinkHealth\Customer\Providers\CustomerDeferrableServiceProvider::class,
         FaxServiceProvider::class,
-        HtmlToPdfServiceProvider::class,
         VaporUiServiceProvider::class,
     ],
 
