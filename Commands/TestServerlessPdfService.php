@@ -42,7 +42,7 @@ class TestServerlessPdfService extends Command
     public function handle()
     {
         $pdfService = app(PdfService::class);
-        $path       = $pdfService->blankPage('php1.php');
+        $path       = $pdfService->blankPage('pdf1.php');
         $this->info("Blank Page generated: $path");
 
         $path2  = $pdfService->blankPage('pdf2.php');

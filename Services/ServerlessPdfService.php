@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\PdfService\Services;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
 class ServerlessPdfService implements HtmlToPdfService
@@ -20,8 +21,11 @@ class ServerlessPdfService implements HtmlToPdfService
      */
     public function __construct()
     {
+        $url = config('services.serverless-pdf-generator.api-url');
+        Log::debug("Calling: $url");
+
         $this->client = new Client([
-            'base_uri' => config('services.serverless-pdf-generator.api-url'),
+            'base_uri' => $url,
             'headers'  => [
                 'x-api-key' => config('services.serverless-pdf-generator.api-key'),
             ],
