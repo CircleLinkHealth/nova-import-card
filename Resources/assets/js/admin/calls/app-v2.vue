@@ -617,7 +617,7 @@
                     'Successful Calls': call.no_of_successful_calls ?? null,
                     'Preferred Call Days': call.preferred_call_days,
                     'Patient ID': call.patient_id,
-                    notesLink: rootUrl(`manage-patients/${call.patient_id}/notes`),
+                    notesLink: window.provider_app_url+ `/manage-patients/${call.patient_id}/notes`,
                     'Activity Day': call.scheduled_date,
                     'Activity Start': call.call_time_start,
                     'Activity End': call.call_time_end,
