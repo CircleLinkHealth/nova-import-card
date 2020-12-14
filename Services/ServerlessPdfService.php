@@ -31,7 +31,7 @@ class ServerlessPdfService implements HtmlToPdfService
             ],
         ]);
         $this->htmlString = null;
-        $this->options    = config('services.serverless-pdf-generator.default-options');
+        $this->options    = config('services.serverless-pdf-generator.default-options') ?? [];
     }
 
     public function loadHTML(string $htmlString): HtmlToPdfService
