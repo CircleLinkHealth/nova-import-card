@@ -780,12 +780,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "50199860c37e2dcda347721cc09f242999f377d7"
+                "reference": "cc1254e58a8971f88f23a0108887b4ede5d92107"
             },
             "require": {
                 "laravel/passport": "^8.0 || ^7.3.0",
                 "laravel/vapor-core": "^2.9",
-                "laravel/vapor-ui": "^0.0.5",
+                "laravel/vapor-ui": "*",
                 "laravelcollective/html": "^6.1",
                 "lcobucci/jwt": "3.3.3",
                 "maatwebsite/excel": "^3.1"
@@ -814,7 +814,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-14T00:15:42+00:00"
+            "time": "2020-12-14T03:44:20+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-admin-module",
@@ -872,7 +872,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d73928d3b95ab838f004124cf5d6f64221bc0609"
+                "reference": "f5f0ae26366ee49ed866cd00c41151800c4ff077"
             },
             "require": {
                 "circlelinkhealth/ccm-billing-module": "dev-vaporizing-admin",
@@ -908,7 +908,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-13T15:16:57+00:00"
+            "time": "2020-12-14T02:51:15+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1399,10 +1399,11 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "11417dc74160c53926aa07a4de782c0d2a570428"
+                "reference": "33a0cdf93f9e7ee9a8998cddb32a2de9aa838bd6"
             },
             "require": {
-                "circlelinkhealth/customer-module": "*"
+                "circlelinkhealth/customer-module": "*",
+                "spatie/laravel-rate-limited-job-middleware": "*"
             },
             "type": "laravel-module",
             "extra": {
@@ -1424,7 +1425,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-12-13T15:02:15+00:00"
+            "time": "2020-12-14T03:31:00+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -4237,22 +4238,22 @@
         },
         {
             "name": "laravel/vapor-ui",
-            "version": "v0.0.5",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/vapor-ui.git",
-                "reference": "f241e5ecada57f7c44886cba8d82bf6694279c97"
+                "reference": "148f3b5145062971d6e6f9c5f69f51d8af6bd45d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/vapor-ui/zipball/f241e5ecada57f7c44886cba8d82bf6694279c97",
-                "reference": "f241e5ecada57f7c44886cba8d82bf6694279c97",
+                "url": "https://api.github.com/repos/laravel/vapor-ui/zipball/148f3b5145062971d6e6f9c5f69f51d8af6bd45d",
+                "reference": "148f3b5145062971d6e6f9c5f69f51d8af6bd45d",
                 "shasum": ""
             },
             "require": {
                 "aws/aws-sdk-php": "^3.148.3",
                 "laravel/framework": "^6.0|^7.0|^8.0",
-                "php": "^7.3"
+                "php": "^7.3|^8.0"
             },
             "require-dev": {
                 "nunomaduro/larastan": "^0.6.4",
@@ -4295,7 +4296,7 @@
                 "laravel",
                 "vapor"
             ],
-            "time": "2020-09-03T11:11:06+00:00"
+            "time": "2020-11-03T13:49:28+00:00"
         },
         {
             "name": "laravelcollective/html",
@@ -7543,6 +7544,62 @@
                 }
             ],
             "time": "2020-11-04T21:08:45+00:00"
+        },
+        {
+            "name": "spatie/laravel-rate-limited-job-middleware",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-rate-limited-job-middleware.git",
+                "reference": "7b72592e0d823e2948c413f5e661de0fd3431db5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-rate-limited-job-middleware/zipball/7b72592e0d823e2948c413f5e661de0fd3431db5",
+                "reference": "7b72592e0d823e2948c413f5e661de0fd3431db5",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/redis": "^6.0|^7.0|^8.0",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.4",
+                "orchestra/testbench": "^4.0|^5.0|^6.0",
+                "phpunit/phpunit": "^8.2|^9.0",
+                "symfony/var-dumper": "^4.3|^5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\RateLimitedMiddleware\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A middleware that can rate limit jobs",
+            "homepage": "https://github.com/spatie/laravel-rate-limited-job-middleware",
+            "keywords": [
+                "laravel-rate-limited-job-middleware",
+                "spatie"
+            ],
+            "funding": [
+                {
+                    "url": "https://www.patreon.com/spatie",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2020-11-27T09:36:55+00:00"
         },
         {
             "name": "spatie/once",
