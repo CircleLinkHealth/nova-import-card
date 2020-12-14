@@ -1,4 +1,4 @@
-@extends('partials.providerUI')
+@extends('core::partials.providerUI')
 
 @section('title', 'Billable Patient Reports & Invoices')
 @section('activity', 'Billable Patient Reports & Invoices')

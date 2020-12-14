@@ -1,4 +1,4 @@
-@extends('partials.providerUI')
+@extends('core::partials.providerUI')
 
 @section('title', 'View all Users')
 @section('activity', 'View all Users')

@@ -1,5 +1,5 @@
 @if(!isset($isPdf))
-    @extends('partials.providerUI')
+    @extends('core::partials.providerUI')
 @endif
 
 <?php

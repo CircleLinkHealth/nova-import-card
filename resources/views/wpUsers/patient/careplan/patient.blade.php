@@ -5,7 +5,7 @@ $rawUrl = Str::replaceLast('/', '', config('app.url'));
 $url = substr($rawUrl, strpos($rawUrl, ':')+1);
 ?>
 
-@extends('partials.providerUI')
+@extends('core::partials.providerUI')
 
 @section('title', 'Patient Demographics')
 @section('activity', 'Edit/Modify Care Plan')

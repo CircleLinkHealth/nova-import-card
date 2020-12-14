@@ -1,4 +1,4 @@
-@extends('partials.providerUI')
+@extends('core::partials.providerUI')
 
 @section('title', 'See All Notifications')
 @section('activity', 'See All Notifications')

@@ -72,7 +72,7 @@ class WelcomeController extends Controller
         }
 
         if ($user->isCallbacksAdmin()) {
-            return redirect()->to(config('core.apps.cpm-admin.url'));
+            return redirect()->route('patientCallManagement.v2.index');
         }
 
         if ($user->isSaasAdmin()) {

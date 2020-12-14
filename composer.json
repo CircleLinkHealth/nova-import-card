@@ -143,6 +143,7 @@
     "circlelinkhealth/cerberus-gatekeeper-module": "3.1.9",
     "circlelinkhealth/condition-code-lookup-module": "1.1.7",
     "circlelinkhealth/core-module": "dev-vaporizing-admin",
+    "circlelinkhealth/cpm-admin-module": "dev-vaporizing-admin",
     "circlelinkhealth/cpm-migrations-module": "dev-vaporizing-admin",
     "circlelinkhealth/customer-module": "dev-vaporizing-admin",
     "circlelinkhealth/eligibility-module": "dev-vaporizing-admin",

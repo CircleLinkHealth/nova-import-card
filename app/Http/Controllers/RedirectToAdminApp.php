@@ -20,6 +20,6 @@ class RedirectToAdminApp extends Controller
     
     public function getPAM()
     {
-        return redirect()->to(config('core.apps.cpm-admin.url')."/admin/calls-v2");
+        return redirect()->to(config('core.apps.cpm-admin.url')."/pam");
     }
 }

@@ -1,4 +1,4 @@
-@extends('partials.providerUI')
+@extends('core::partials.providerUI')
 
 @section('title', 'Care Plan Print List')
 @section('activity', 'Care Plan Print List')

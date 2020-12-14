@@ -1,4 +1,4 @@
-@extends('partials.providerUI')
+@extends('core::partials.providerUI')
 
 @section('title', empty($note) ? 'Create Patient Note' : 'Edit Patient Note')
 @section('activity', empty($note) ? 'Patient Note Creation' : 'Patient Note Edit')
