@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\ModifyPatientTime;
+use App\Nova\Actions\ModifyPatientTimeAction;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -52,7 +52,7 @@ class PatientTime extends Resource
     public function actions(Request $request)
     {
         return [
-            (new ModifyPatientTime())
+            (new ModifyPatientTimeAction())
                 ->confirmText("Modifying the duration may have side-effects on patient's time and care coach's compensation. Are you sure you want to proceed?")
                 ->confirmButtonText('Done')
                 ->cancelButtonText('Cancel')

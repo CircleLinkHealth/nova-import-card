@@ -13,95 +13,54 @@ use CircleLinkHealth\CcmBilling\Jobs\ProcessSinglePatientMonthlyServices;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\Timetracking\Services\TimeTrackerServerService;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Laravel\Nova\Actions\Action;
-use Laravel\Nova\Fields\ActionFields;
-use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Select;
 
-class ModifyPatientTime extends Action implements ShouldQueue
+class ModifyPatientTime
 {
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    private bool $allowLessThan20Minutes = false;
-    private ?int $chargeableServiceId    = null;
-    private ?int $currentTimeSeconds     = 0;
-    private ?Carbon $monthYear           = null;
-    private ?int $newTimeSeconds         = 0;
-    private ?int $patientId              = null;
+    private bool $allowLessThan20Minutes;
+    private string $chargeableServiceCode;
+    private ?int $chargeableServiceId = null;
+    private ?int $currentTimeSeconds  = 0;
+    private ?Carbon $monthYear;
+    private ?int $newTimeSeconds;
+    private ?int $patientId;
 
     /**
-     * Get the fields available on the action.
-     *
-     * @return array
+     * ModifyPatientTime constructor.
      */
-    public function fields()
+    public function __construct(int $patientId, string $chargeableServiceCode, int $newTimeSeconds, bool $allowLessThan20Minutes)
     {
-        return [
-            Select::make('Chargeable Service', 'chargeable_service')
-                ->required(true)
-                ->options([
-                    ChargeableService::CCM                     => 'CCM',
-                    ChargeableService::GENERAL_CARE_MANAGEMENT => 'CCM (RHC/FQHC)',
-                    ChargeableService::BHI                     => 'BHI',
-                    ChargeableService::PCM                     => 'PCM',
-                    ChargeableService::RPM                     => 'RPM',
-                ]),
-
-            Number::make('Enter new duration (minutes)', 'durationMinutes')
-                ->required(true),
-
-            Boolean::make('Force (even if less than 20 minutes)', 'allow_accrued_towards'),
-        ];
+        $this->patientId              = $patientId;
+        $this->monthYear              = now()->startOfMonth();
+        $this->chargeableServiceCode  = $chargeableServiceCode;
+        $this->allowLessThan20Minutes = $allowLessThan20Minutes;
+        $this->newTimeSeconds         = $newTimeSeconds;
     }
 
     /**
-     * Perform the action on the given models.
-     *
-     * @return mixed
+     * @throws \Exception
      */
-    public function handle(ActionFields $fields, Collection $models)
+    public function execute()
     {
-        $this->monthYear              = now()->startOfMonth();
-        $this->allowLessThan20Minutes = $fields->get('allow_accrued_towards', false);
-        $this->newTimeSeconds         = $fields->get('durationMinutes') * 60;
-
-        /** @var string $chargeableServiceCode */
-        $chargeableServiceCode     = $fields->get('chargeable_service');
         $this->chargeableServiceId = ChargeableService::cached()
-            ->where('code', '=', $chargeableServiceCode)
+            ->where('code', '=', $this->chargeableServiceCode)
             ->first()
             ->id;
 
-        /** @var User $patient */
-        $patient                  = $models->first();
-        $this->patientId          = $patient->id;
         $this->currentTimeSeconds = PatientMonthlyServiceTime::forChargeableServiceId($this->chargeableServiceId, $this->patientId, $this->monthYear);
 
-        $errorMsg = $this->validate($models);
-        if ($errorMsg) {
-            $this->markAsFailed($models->first(), $errorMsg);
-
-            return;
-        }
+        $this->validate();
 
         $activityIds         = $this->modifyActivities();
         $pageTimerIds        = $this->modifyPageTimers($activityIds);
         $nurseCareRateLogIds = $this->modifyNurseCareRateLogs($activityIds);
 
-        $this->modifyPatientMonthlySummary($chargeableServiceCode);
+        $this->modifyPatientMonthlySummary();
 
         app(TimeTrackerServerService::class)->clearCache($this->patientId);
 
@@ -110,18 +69,28 @@ class ModifyPatientTime extends Action implements ShouldQueue
             $pageTimerIdsStr        = json_encode($pageTimerIds);
             $activityIdsStr         = json_encode($activityIds);
             $nurseCareRateLogIdsStr = json_encode($nurseCareRateLogIds);
-            $this->markAsFailed($models->first(), "There was an issue modifying the time. Please review: PageTimer[$pageTimerIdsStr] | Activities[$activityIdsStr] | NurseCareRateLogs[$nurseCareRateLogIdsStr]");
+
+            throw new \Exception("There was an issue modifying the time. Please review: PageTimer[$pageTimerIdsStr] | Activities[$activityIdsStr] | NurseCareRateLogs[$nurseCareRateLogIdsStr]");
         }
 
         //todo: unfulfill everything
-        ProcessSinglePatientMonthlyServices::dispatch($patient->id);
+        ProcessSinglePatientMonthlyServices::dispatch($this->patientId);
 
-        \Artisan::call('nurseinvoices:create', [
-            'month'   => now()->startOfMonth()->toDateString(),
-            'userIds' => $patient->id,
-        ]);
+        $this->generateNurseInvoices($nurseCareRateLogIds);
+    }
 
-        $this->markAsFinished($models->first());
+    private function generateNurseInvoices(array $nurseCareRateLogIds)
+    {
+        NurseCareRateLog::with('nurse')
+            ->whereIn('id', $nurseCareRateLogIds)
+            ->distinct('nurse_id')
+            ->select('nurse_id')
+            ->each(function (NurseCareRateLog $nurseLog) {
+                \Artisan::call('nurseinvoices:create', [
+                    'month'   => now()->startOfMonth()->toDateString(),
+                    'userIds' => $nurseLog->nurse->user_id,
+                ]);
+            });
     }
 
     private function getActivities(): Collection
@@ -151,6 +120,9 @@ class ModifyPatientTime extends Action implements ShouldQueue
     private function getPageTimers(): Collection
     {
         return PageTimer::wherePatientId($this->patientId)
+            ->whereHas('logger', function ($q) {
+                $q->ofType(Role::CCM_TIME_ROLES);
+            })
             ->where('chargeable_service_id', '=', $this->chargeableServiceId)
             ->whereBetween('start_time', [
                 $this->monthYear->copy()->startOfMonth(),
@@ -249,14 +221,14 @@ class ModifyPatientTime extends Action implements ShouldQueue
         return $result->toArray();
     }
 
-    private function modifyPatientMonthlySummary(string $chargeableServiceCode)
+    private function modifyPatientMonthlySummary()
     {
         /** @var PatientMonthlySummary $pms */
         $pms = PatientMonthlySummary::where('patient_id', '=', $this->patientId)
             ->where('month_year', '=', now()->startOfMonth()->toDateString())
             ->first();
 
-        if (in_array($chargeableServiceCode, [ChargeableService::CCM, ChargeableService::GENERAL_CARE_MANAGEMENT, ChargeableService::PCM, ChargeableService::RPM])) {
+        if (in_array($this->chargeableServiceCode, [ChargeableService::CCM, ChargeableService::GENERAL_CARE_MANAGEMENT, ChargeableService::PCM, ChargeableService::RPM])) {
             $pms->ccm_time = $this->newTimeSeconds;
         } else {
             $pms->bhi_time = $this->newTimeSeconds;
@@ -266,26 +238,20 @@ class ModifyPatientTime extends Action implements ShouldQueue
         $pms->save();
     }
 
-    private function validate(Collection $models): ?string
+    private function validate()
     {
-        if ($models->count() > 1) {
-            return 'Please run this action for a single patient at a time.';
-        }
-
         if ($this->currentTimeSeconds < $this->newTimeSeconds) {
             $currentTimeMinutes = round($this->currentTimeSeconds / 60);
 
-            return "You cannot add time to the patient. Current time is $currentTimeMinutes minutes.";
+            throw new \Exception("You cannot add time to the patient. Current time is $currentTimeMinutes minutes.");
         }
 
         $minimum = Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS;
         if ( ! $this->allowLessThan20Minutes && $this->newTimeSeconds < $minimum) {
             $minMinutes = round($minimum / 60);
 
-            return "You cannot reduce time to less than $minMinutes minutes.";
+            throw new \Exception("You cannot reduce time to less than $minMinutes minutes.");
         }
-
-        return null;
     }
 
     private function verifyChanges(): bool
