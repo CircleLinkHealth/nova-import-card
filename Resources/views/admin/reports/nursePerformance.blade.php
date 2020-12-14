@@ -20,13 +20,13 @@
                             <div class="panel-heading">Nurse Performance Report</div>
 
                             <div class="calendar-date" style="padding-left: 2%; padding-top: 1%;">
-                                @include('admin::reports.nursesPerformanceForm')
+                                @include('cpm-admin::reports.nursesPerformanceForm')
                             </div>
 
                             <div class="panel-body">
                                 <table class="table table-hover" id="nurse_metrics" style="width: 100%">
                                     <thead>
-                                    @include('admin::reports.nursePerformanceReportHeadings')
+                                    @include('cpm-admin::reports.nursePerformanceReportHeadings')
                                     </thead>
                                 </table>
                             </div>
