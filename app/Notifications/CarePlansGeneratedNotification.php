@@ -6,9 +6,9 @@
 
 namespace App\Notifications;
 
-use App\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Contracts\HasAttachment;
 use CircleLinkHealth\Customer\Entities\Media;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
