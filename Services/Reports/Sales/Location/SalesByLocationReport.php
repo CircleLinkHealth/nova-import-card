@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Location;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\PdfService\Services\PdfService;
 use Illuminate\Support\Facades\DB;
 
 /**

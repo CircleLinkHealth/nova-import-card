@@ -8,9 +8,9 @@ namespace CircleLinkHealth\CcmBilling\Services;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Invoices\ItemizedBillablePatientsReport;
+use CircleLinkHealth\PdfService\Services\PdfService;
 
 class PracticeInvoiceGenerator
 {

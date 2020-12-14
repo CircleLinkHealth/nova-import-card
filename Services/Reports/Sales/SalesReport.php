@@ -7,10 +7,10 @@
 namespace CircleLinkHealth\CpmAdmin\Services\Reports\Sales;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\PdfService\Services\PdfService;
 
 abstract class SalesReport
 {

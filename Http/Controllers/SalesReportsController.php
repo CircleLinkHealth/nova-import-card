@@ -7,13 +7,13 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Services\PdfService;
 use CircleLinkHealth\CpmAdmin\Mail\SalesPracticeReport;
 use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Location\SalesByLocationReport;
 use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Practice\SalesByPracticeReport;
 use CircleLinkHealth\CpmAdmin\Services\Reports\Sales\Provider\SalesByProviderReport;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\PdfService\Services\PdfService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Mail;
