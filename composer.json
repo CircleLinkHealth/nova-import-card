@@ -159,7 +159,6 @@
     "darkghosthunter/laraload": "^2.1",
     "doctrine/dbal": "2.9.2",
     "fideloper/proxy": "^4.2",
-    "friendsofcat/laravel-feature-flag": "^3.2",
     "fruitcake/laravel-cors": "^1.0",
     "fzaninotto/faker": "~1.4",
     "genealabs/laravel-caffeine": "^7.0",
