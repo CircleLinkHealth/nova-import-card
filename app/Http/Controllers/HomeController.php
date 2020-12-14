@@ -23,10 +23,20 @@ class HomeController extends Controller
      */
     public function index()
     {
-        if (auth()-> guest() || ! auth()->user()->isAdmin()) {
+        if (auth()->guest()) {
             return redirect()->to(config('core.apps.cpm-provider.url'));
         }
+    
+        $user = auth()->user();
         
-        return view('cpm-admin::dashboard');
+        if ($user->isAdmin())
+        {
+            return view('cpm-admin::dashboard');
+        }
+    
+        if ($user->isCallbacksAdmin()) {
+            return redirect()->route('patientCallManagement.v2.index');
+        }
+        
     }
 }
