@@ -7,6 +7,8 @@
 namespace CircleLinkHealth\CpmAdmin\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
+
+use CircleLinkHealth\CpmAdmin\Http\Resources\PamCsvResource;
 use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls as PatientTimeAndCallsValueObject;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exports\FromArray;

@@ -786,6 +786,11 @@ Route::group([
             'uses' => 'PatientCallManagementController@remixV2',
             'as'   => 'patientCallManagement.v2.index',
         ])->middleware('permission:pam.view');
+
+        Route::get('export', [
+            'uses' => 'Reports\CallReportController@exportXlsV2',
+            'as'   => 'patientCallManagement.v2.export',
+        ])->middleware('permission:pam.view');
     });
     
     Route::group([
