@@ -9,8 +9,8 @@ namespace App\Services\Enrollment;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Collection;
 
 class UpdateEnrollable extends EnrollableService

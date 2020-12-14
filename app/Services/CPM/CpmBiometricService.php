@@ -6,9 +6,9 @@
 
 namespace App\Services\CPM;
 
-use CircleLinkHealth\SharedModels\Contracts\CpmModel;
 use App\Repositories\CpmBiometricUserRepository;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Contracts\CpmModel;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 
 class CpmBiometricService implements CpmModel

@@ -6,12 +6,12 @@
 
 namespace Tests\Feature;
 
-use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
-use CircleLinkHealth\SharedModels\Entities\Note;
 use App\Notifications\PracticeStaffCreatedNote;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\SharedModels\Entities\Note;
 use Tests\CustomerTestCase;
 
 class NotifyPatientNurseWhenPracticeStaffCreatesNotes extends CustomerTestCase

@@ -1,8 +1,10 @@
 <?php
 
-use Illuminate\Support\Str;$user_info = [];
-$rawUrl = Str::replaceLast('/', '', config('app.url'));
-$url = substr($rawUrl, strpos($rawUrl, ':')+1);
+use Illuminate\Support\Str;
+
+$user_info = [];
+$rawUrl    = Str::replaceLast('/', '', config('app.url'));
+$url       = substr($rawUrl, strpos($rawUrl, ':') + 1);
 ?>
 
 @extends('partials.providerUI')

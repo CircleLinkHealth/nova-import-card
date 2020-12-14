@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\SharedModels\Entities\FaxLog;
 use App\Http\Requests\PhaxioWebhookRequest;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Jobs\PhaxioNotificationStatusUpdateJob;
+use CircleLinkHealth\SharedModels\Entities\FaxLog;
 
 class PhaxioWebhookController extends Controller
 {

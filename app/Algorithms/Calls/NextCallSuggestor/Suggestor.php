@@ -8,14 +8,14 @@ namespace App\Algorithms\Calls\NextCallSuggestor;
 
 use App\Algorithms\Calls\NextCallSuggestor\Handlers\SuccessfulCall;
 use App\Algorithms\Calls\NextCallSuggestor\Suggestion as NextCallSuggestion;
-use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
-use CircleLinkHealth\SharedModels\Entities\Call;
-use CircleLinkHealth\Customer\CpmConstants;
 use App\Contracts\CallHandler;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\CpmConstants;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\SharedModels\Entities\Call;
 
 class Suggestor
 {

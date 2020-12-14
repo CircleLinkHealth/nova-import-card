@@ -79,7 +79,7 @@ class ManualCallControllerTest extends CustomerTestCase
         $patient = $this->fakePatient();
         $nurse   = $this->fakeNurse();
 
-        $this->mock(Suggestor::class, function ($m) use ($nurse, $patient, $handler) {
+        $this->mock(Suggestor::class, function ($m) use ($patient, $handler) {
             $m->shouldReceive('handle')
                 ->with($patient, $handler)
                 ->once()

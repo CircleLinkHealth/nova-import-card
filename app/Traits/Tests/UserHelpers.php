@@ -6,7 +6,6 @@
 
 namespace App\Traits\Tests;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\StringManipulation;
@@ -22,6 +21,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Repositories\UserRepository;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
+use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;

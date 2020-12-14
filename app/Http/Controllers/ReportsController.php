@@ -9,15 +9,15 @@ namespace App\Http\Controllers;
 use App\Contracts\ReportFormatter;
 use App\Http\Requests\GetUnder20MinutesReport;
 use App\Relationships\PatientCareplanRelations;
-use CircleLinkHealth\Customer\Services\PatientReadRepository;
 use App\Services\CareplanAssessmentService;
 use App\Services\CareplanService;
 use App\Services\CCD\CcdInsurancePolicyService;
-use CircleLinkHealth\Customer\Services\PrintPausedPatientLettersService;
-use CircleLinkHealth\Customer\Services\ReportsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Services\PatientReadRepository;
+use CircleLinkHealth\Customer\Services\PrintPausedPatientLettersService;
+use CircleLinkHealth\Customer\Services\ReportsService;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\SharedModels\Entities\Note;
@@ -26,26 +26,6 @@ use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
 {
-    private $assessmentService;
-    private $formatter;
-    private $patientReadRepository;
-    private $printPausedPatientLettersService;
-    private $service;
-    
-    public function __construct(
-        CareplanAssessmentService $assessmentService,
-        ReportsService $service,
-        ReportFormatter $formatter,
-        Request $request,
-        PrintPausedPatientLettersService $printPausedPatientLettersService,
-        PatientReadRepository $patientReadRepository
-    ) {
-        $this->service                          = $service;
-        $this->formatter                        = $formatter;
-        $this->assessmentService                = $assessmentService;
-        $this->printPausedPatientLettersService = $printPausedPatientLettersService;
-        $this->patientReadRepository            = $patientReadRepository;
-    }
     const CAREPLAN_ACTIVITIES = [
         'Edit/Modify Care Plan',
         'Initial Care Plan Setup',
@@ -80,6 +60,26 @@ class ReportsController extends Controller
         'Call to Other Care Team Member',
         'Appointments',
     ];
+    private $assessmentService;
+    private $formatter;
+    private $patientReadRepository;
+    private $printPausedPatientLettersService;
+    private $service;
+
+    public function __construct(
+        CareplanAssessmentService $assessmentService,
+        ReportsService $service,
+        ReportFormatter $formatter,
+        Request $request,
+        PrintPausedPatientLettersService $printPausedPatientLettersService,
+        PatientReadRepository $patientReadRepository
+    ) {
+        $this->service                          = $service;
+        $this->formatter                        = $formatter;
+        $this->assessmentService                = $assessmentService;
+        $this->printPausedPatientLettersService = $printPausedPatientLettersService;
+        $this->patientReadRepository            = $patientReadRepository;
+    }
 
     public function billing(
         Request $request
@@ -517,7 +517,7 @@ class ReportsController extends Controller
             $args
         );
     }
-    
+
     private function getMonthsList()
     {
         return [
@@ -535,14 +535,14 @@ class ReportsController extends Controller
             'Dec',
         ];
     }
-    
+
     private function getYearsList(int $howFarBack = 3)
     {
         $years = [];
         for ($i = 0; $i < $howFarBack; ++$i) {
             $years[] = Carbon::now()->subYear($i)->year;
         }
-        
+
         return $years;
     }
 }

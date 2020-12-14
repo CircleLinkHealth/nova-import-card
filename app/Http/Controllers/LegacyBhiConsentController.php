@@ -7,14 +7,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateLegacyBhiConsentDecision;
-use CircleLinkHealth\SharedModels\Entities\Note;
-use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\CcmBilling\Events\PatientConsentedToService;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\SharedModels\Entities\Note;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Support\Facades\Cache;
 
 class LegacyBhiConsentController extends Controller

@@ -6,9 +6,9 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\CpmAdmin\Charts\OpsChart;
 use App\Services\OpsDashboardReport;
 use Carbon\Carbon;
+use CircleLinkHealth\CpmAdmin\Charts\OpsChart;
 use CircleLinkHealth\Customer\Entities\OpsDashboardPracticeReport;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Bus\Queueable;

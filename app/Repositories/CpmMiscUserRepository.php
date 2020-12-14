@@ -81,7 +81,7 @@ class CpmMiscUserRepository
 
         $miscData = $user->cpmMiscUserPivot->when($miscTypeId, function ($cpmMiscUserPivotCollection) use ($miscTypeId) {
             return $cpmMiscUserPivotCollection->where('cpm_misc_id', $miscTypeId);
-        })->map(function ($userMisc) use ($user) {
+        })->map(function ($userMisc) {
             $instructions = [];
             $misc = $userMisc->cpmMisc;
 

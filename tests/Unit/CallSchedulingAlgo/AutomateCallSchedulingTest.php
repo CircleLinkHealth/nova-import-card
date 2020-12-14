@@ -6,7 +6,6 @@
 
 namespace Tests\Unit\CallSchedulingAlgo;
 
-use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\StandByNurseUser;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -15,14 +14,15 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Illuminate\Support\Carbon;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\TestCase;
 
 class AutomateCallSchedulingTest extends TestCase
 {
-    use \CircleLinkHealth\Customer\Traits\UserHelpers;
     use CarePlanHelpers;
+    use \CircleLinkHealth\Customer\Traits\UserHelpers;
 
     /** @var SchedulerService */
     protected $schedulerService;

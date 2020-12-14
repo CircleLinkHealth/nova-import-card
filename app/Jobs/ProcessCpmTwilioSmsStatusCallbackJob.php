@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Core\Jobs;
 
-use CircleLinkHealth\SharedModels\Entities\OutgoingSms;
 use CircleLinkHealth\Core\TwilioClientable;
+use CircleLinkHealth\SharedModels\Entities\OutgoingSms;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

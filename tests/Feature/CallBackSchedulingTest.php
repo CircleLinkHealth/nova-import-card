@@ -6,11 +6,11 @@
 
 namespace Tests\Feature;
 
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Repositories\NurseFinderEloquentRepository;
+use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Services\SchedulerService;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Repositories\PatientWriteRepository;
 
 class CallBackSchedulingTest extends NekatostrasClinicTestCase
 {

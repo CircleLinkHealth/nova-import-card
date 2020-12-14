@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\SharedModels\Entities\Call;
 use CircleLinkHealth\SharedModels\Entities\CpmCallAlert;
-use CircleLinkHealth\Core\Entities\AppConfig;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;

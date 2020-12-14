@@ -9,15 +9,15 @@ namespace Tests\Unit;
 use App\Traits\Tests\CareAmbassadorHelpers;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
 class ConsentedEnrolleeImportedTest extends TestCase
 {
-    use \CircleLinkHealth\Customer\Traits\UserHelpers;
     use CareAmbassadorHelpers;
+    use \CircleLinkHealth\Customer\Traits\UserHelpers;
 
     protected $careAmbassadorUser;
     protected $enrollee;

@@ -6,10 +6,10 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\CpmAdmin\Http\Resources\CareAmbassadorKPIs;
-use CircleLinkHealth\CpmAdmin\Http\Resources\PracticeKPIs;
 use App\Traits\Tests\CareAmbassadorHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\CpmAdmin\Http\Resources\CareAmbassadorKPIs;
+use CircleLinkHealth\CpmAdmin\Http\Resources\PracticeKPIs;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use Illuminate\Support\Facades\Artisan;
@@ -17,8 +17,8 @@ use Tests\TestCase;
 
 class EnrollmentKPIsTest extends TestCase
 {
-    use \CircleLinkHealth\Customer\Traits\UserHelpers;
     use CareAmbassadorHelpers;
+    use \CircleLinkHealth\Customer\Traits\UserHelpers;
 
     protected $careAmbassadorUser;
     protected $enrollee;

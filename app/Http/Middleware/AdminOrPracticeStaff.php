@@ -6,8 +6,8 @@
 
 namespace App\Http\Middleware;
 
-use CircleLinkHealth\Customer\CpmConstants;
 use App\User;
+use CircleLinkHealth\Customer\CpmConstants;
 use Closure;
 
 class AdminOrPracticeStaff

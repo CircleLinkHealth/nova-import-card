@@ -6,10 +6,10 @@
 
 namespace App\Listeners;
 
-use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Services\PhiMail\IncomingMessageHandler;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\DirectMailMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Str;

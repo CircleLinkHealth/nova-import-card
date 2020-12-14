@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\EnrollableInvitationLink\EnrollableInvitationLink;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\SelfEnrollment\Http\Controllers\SelfEnrollmentController;
 use CircleLinkHealth\SharedModels\Entities\Enrollee;
 
 abstract class EnrollmentLetterDefaultConfigs extends Controller

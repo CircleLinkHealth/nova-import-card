@@ -359,7 +359,7 @@ $lifestyles = $data['lifestyles'];
         </div>
         <div class="col-xs-12">
             @if($careplan['allergies'])
-                <p><?= nl2br($careplan['allergies']); ?></p>
+                <p><?php echo nl2br($careplan['allergies']); ?></p>
             @else
                 <p>No instructions at this time</p>
             @endif
@@ -377,7 +377,7 @@ $lifestyles = $data['lifestyles'];
         </div>
         <div class="col-xs-12">
             @if($careplan['social'])
-                <p><?= nl2br($careplan['social']); ?></p>
+                <p><?php echo nl2br($careplan['social']); ?></p>
             @else
                 <p>No instructions at this time</p>
             @endif
@@ -474,7 +474,7 @@ $lifestyles = $data['lifestyles'];
             <?php $careplan['other']; ?>
 
             @if($careplan['other'])
-                <p><?= nl2br($careplan['other']); ?></p>
+                <p><?php echo nl2br($careplan['other']); ?></p>
             @else
                 <p>No instructions at this time</p>
             @endif

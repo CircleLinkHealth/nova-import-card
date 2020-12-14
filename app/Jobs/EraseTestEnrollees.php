@@ -7,8 +7,8 @@
 namespace App\Jobs;
 
 use CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog;
-use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\PageTimer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -6,17 +6,17 @@
 
 namespace Tests\Feature;
 
-use CircleLinkHealth\SharedModels\Entities\Call;
 use App\Console\Commands\CheckVoiceCalls;
-use CircleLinkHealth\SharedModels\Entities\CpmCallAlert;
 use App\Nova\Filters\TwilioCallSourceFilter;
-use CircleLinkHealth\SharedModels\Services\SchedulerService;
-use CircleLinkHealth\Customer\Traits\PracticeHelpers;
-use CircleLinkHealth\Customer\Traits\TimeHelpers;
-use CircleLinkHealth\SharedModels\Entities\TwilioCall;
-use CircleLinkHealth\SharedModels\Entities\VoiceCall;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Traits\PracticeHelpers;
+use CircleLinkHealth\Customer\Traits\TimeHelpers;
+use CircleLinkHealth\SharedModels\Entities\Call;
+use CircleLinkHealth\SharedModels\Entities\CpmCallAlert;
+use CircleLinkHealth\SharedModels\Entities\TwilioCall;
+use CircleLinkHealth\SharedModels\Entities\VoiceCall;
+use CircleLinkHealth\SharedModels\Services\SchedulerService;
 use Tests\CustomerTestCase;
 
 class VoiceCallsTest extends CustomerTestCase
