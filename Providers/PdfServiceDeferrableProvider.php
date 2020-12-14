@@ -11,7 +11,7 @@ use CircleLinkHealth\PdfService\Services\ServerlessPdfService;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class PdfServiceDeferredServiceProvider extends ServiceProvider implements DeferrableProvider
+class PdfServiceDeferrableProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Get the services provided by the provider.
