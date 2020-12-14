@@ -26,7 +26,7 @@ trait ApiReturnHelpers
 
     public function downloadMedia(Media $media)
     {
-        return  \Storage::disk('media')
+        return \Storage::disk('media')
             ->download("{$media->id}/{$media->file_name}");
     }
 

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace CircleLinkHealth\Core\Providers;
 
 use Illuminate\Support\Facades\Gate;
@@ -18,6 +22,15 @@ class VaporUiServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+    }
+
+    /**
      * Register the Vapor UI gate.
      *
      * This gate determines who can access Vapor UI in non-local environments.
@@ -29,15 +42,5 @@ class VaporUiServiceProvider extends ServiceProvider
         Gate::define('viewVaporUI', function ($user = null) {
             return $user->isAdmin();
         });
-    }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        //
     }
 }

@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Core\Notifications\Channels;
 
-use  CircleLinkHealth\Core\Exceptions\CannotSendNotificationException;
-use CircleLinkHealth\SharedModels\Entities\NotificationsExclusion;
+use CircleLinkHealth\Core\Exceptions\CannotSendNotificationException;
 use CircleLinkHealth\Core\TwilioInterface;
+use CircleLinkHealth\SharedModels\Entities\NotificationsExclusion;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Notifications\Notification;

@@ -36,7 +36,7 @@ trait DateScopesTrait
                 ->where($field, '<=', $date->copy()->endOfMonth()->toDateTimeString());
         });
     }
-    
+
     /**
      * Scope a query to only include activities created on a day. Defaults to created_at field, but a different field may
      * be specified.
@@ -57,7 +57,7 @@ trait DateScopesTrait
                 ->where($field, '<=', $date->copy()->endOfDay()->toDateTimeString());
         });
     }
-    
+
     /**
      * Wrapper for createdOn Scope for null dates.
      *
@@ -77,7 +77,7 @@ trait DateScopesTrait
             $sq->createdOn($date, $field);
         });
     }
-    
+
     /**
      * Scope a query to only include activities created this month. Defaults to created_at field, but a different field
      * may be specified.
@@ -91,7 +91,7 @@ trait DateScopesTrait
     ) {
         $builder->createdInMonth(Carbon::now(), $field);
     }
-    
+
     /**
      * Scope a query to only include activities created today. Defaults to created_at field, but a different field may
      * be specified.
@@ -110,7 +110,7 @@ trait DateScopesTrait
                 ->where($field, '<=', Carbon::now()->endOfDay()->toDateTimeString());
         });
     }
-    
+
     /**
      * Scope a query to only include activities created yesterday. Defaults to created_at field, but a different field may
      * be specified.
