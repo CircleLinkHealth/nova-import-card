@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\Jobs\SendSlackMessage;
+use CircleLinkHealth\Core\Jobs\SendSlackMessage;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 

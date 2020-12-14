@@ -5,7 +5,7 @@
  */
 
 use CircleLinkHealth\Customer\CpmConstants;
-use App\Jobs\SendSlackMessage;
+use CircleLinkHealth\Core\Jobs\SendSlackMessage;
 use AshAllenDesign\ShortURL\Classes\Builder as ShortUrlBuilder;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -210,26 +210,6 @@ if ( ! function_exists('activeNurseNames')) {
                 }
             )->where('user_status', 1)
             ->pluck('display_name', 'id');
-    }
-}
-
-if ( ! function_exists('sendSlackMessage')) {
-    /**
-     * Sends a message to Slack.
-     *
-     * @param string $to      - slack channel (should start with '#')
-     * @param string $message
-     * @param bool   $force   - in case you really want the message to go to slack (testing | debugging)
-     */
-    function sendSlackMessage($to, $message, $force = false)
-    {
-        Log::warning("$to: $message");
-
-        if ( ! $force && ! isProductionEnv()) {
-            return;
-        }
-
-        SendSlackMessage::dispatch($to, $message)->onQueue('default');
     }
 }
 
