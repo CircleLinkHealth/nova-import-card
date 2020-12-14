@@ -184,7 +184,6 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\VaporUiServiceProvider::class,
     
         \Circlelinkhealth\ClhNovaTheme\ThemeServiceProvider::class,
         \App\Providers\NovaServiceProvider::class,
