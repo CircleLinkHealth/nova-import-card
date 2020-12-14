@@ -88,10 +88,6 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/slack-laravel.git"
-    },
-    {
-      "type": "git",
       "url": "git@github.com:CircleLinkHealth/shared-vue-components-module.git"
     },
     {
