@@ -188,7 +188,7 @@ class CcdaImporter
 
         $demographics = $this->ccda->bluebuttonJson()->demographics;
 
-        $email = $this->ensureEmailIsUnique($this->enrollee, $this->ccda, $email, $demographics);
+        $email = $this->ensureEmailIsUnique($this->ccda, $email, $demographics, $this->enrollee);
 
         $newPatientUser = (new UserRepository())->createNewUser(
             new ParameterBag(
@@ -224,17 +224,19 @@ class CcdaImporter
         $this->ccda->setRelation('patient', $newPatientUser);
     }
 
-    private function ensureEmailIsUnique(?Enrollee $enrollee, Ccda $ccda, string $email, $demographics)
+    private function ensureEmailIsUnique(Ccda $ccda, string $email, $demographics, ?Enrollee $enrollee)
     {
         $phones = collect($demographics->phones)
             ->pluck('number')
             ->map(fn ($num) => formatPhoneNumberE164($num))
-            ->merge([
-                formatPhoneNumberE164($enrollee->primary_phone),
-                formatPhoneNumberE164($enrollee->cell_phone),
-                formatPhoneNumberE164($enrollee->home_phone),
-                formatPhoneNumberE164($enrollee->other_phone),
-            ])
+            ->when($enrollee, function ($col) use ($enrollee) {
+                $col->merge([
+                    formatPhoneNumberE164($enrollee->primary_phone),
+                    formatPhoneNumberE164($enrollee->cell_phone),
+                    formatPhoneNumberE164($enrollee->home_phone),
+                    formatPhoneNumberE164($enrollee->other_phone),
+                ]);
+            })
             ->unique()
             ->filter()
             ->all();
@@ -248,11 +250,11 @@ class CcdaImporter
             $transDems['street2']
         );
 
-        if (self::isFamily($email, $phones, $this->ccda->patient_first_name, $this->ccda->patient_last_name, $address)) {
+        if (self::isFamily($email, $phones, $ccda->patient_first_name, $ccda->patient_last_name, $address)) {
             return self::convertToFamilyEmail($email);
         }
 
-        if (self::emailIsTaken($email, $this->ccda->patient_first_name, $this->ccda->patient_last_name)) {
+        if (self::emailIsTaken($email, $ccda->patient_first_name, $ccda->patient_last_name)) {
             return self::EMAIL_EXISTS_BUT_NOT_FAMILY_PREFIX.$email;
         }
 
