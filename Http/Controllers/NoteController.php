@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use CircleLinkHealth\SharedModels\Filters\NoteFilters;
 use CircleLinkHealth\Customer\Services\NoteService;
+use CircleLinkHealth\SharedModels\Filters\NoteFilters;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
