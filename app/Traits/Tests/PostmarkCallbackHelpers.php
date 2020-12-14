@@ -8,7 +8,10 @@ namespace App\Traits\Tests;
 
 use App\Jobs\ProcessPostmarkInboundMailJob;
 use App\PostmarkInboundMail;
+use App\ValueObjects\Athena\Patient;
+use App\ValueObjects\PostmarkCallback\PostmarkCallbackInboundData;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
@@ -44,7 +47,8 @@ trait PostmarkCallbackHelpers
         Taken: Not relevant";
 
         if ($requestsToWithdraw) {
-            $withdrawReasonText = 'Cancel/Withdraw Reason:| I want to Cancel |';
+            $key = PostmarkCallbackInboundData::CANCELLATION_REASON_KEY;
+            $withdrawReasonText = "$key:| I want to Cancel |";
             $extraValues        = "\n".' '.$withdrawReasonText;
             $callbackMailData   = $callbackMailData.$extraValues;
         }
@@ -95,9 +99,9 @@ trait PostmarkCallbackHelpers
         return $enrollee;
     }
 
-    private function createPatientData(string $patientStatus, int $practiceId, string $enrolleeStatus)
+    private function createPatientData(string $patientStatus, int $practiceId, string $enrolleeStatus, string $role = 'participant')
     {
-        $patient = $this->createUserWithPatientCcmStatus($practiceId, $patientStatus);
+        $patient = $this->createUserWithPatientCcmStatus($practiceId, $patientStatus, $role);
         $this->createEnrolleeData($enrolleeStatus, $patient, $this->practice->id, $this->careAmbassador->id);
 
         return $patient;
@@ -125,9 +129,9 @@ trait PostmarkCallbackHelpers
         );
     }
 
-    private function createUserWithPatientCcmStatus(int $practiceId, string $status)
+    private function createUserWithPatientCcmStatus(int $practiceId, string $status, string $role)
     {
-        $user = $this->createUser($practiceId, 'participant', $status);
+        $user = $this->createUser($practiceId, $role, $status);
         $user->patientSummaries()->update([
             'no_of_successful_calls' => 0,
         ]);

@@ -6,28 +6,109 @@
 
 namespace App\ValueObjects\PostmarkCallback;
 
-use Illuminate\Support\Arr;
+use Illuminate\Contracts\Support\Arrayable;
 
-class PostmarkCallbackInboundData
+class PostmarkCallbackInboundData implements Arrayable
 {
-    public function getInboundDataArray(array $inboundDataArray)
-    {
-        $inboundDataFormatted = [
-            'from'      => $inboundDataArray['From'],
-            'phone'     => $inboundDataArray['Phone'],
-            'ptn'       => $inboundDataArray['Ptn'],
-            'message'   => $inboundDataArray['Msg'],
-            'primary'   => $inboundDataArray['Primary'],
-            'messageId' => $inboundDataArray['Msg ID'],
-            'isRecId'   => $inboundDataArray['IS Rec #'],
-            'callerId'  => $inboundDataArray['Clr ID'],
-            'taken'     => $inboundDataArray['Taken'],
-        ];
+    const CANCELLATION_REASON_KEY     = 'Cancel/Withdraw Reason';
+    const CANCELLATION_REASON_NEW_KEY = 'cancelReason';
+    /**
+     * @var mixed
+     */
+    private $callerId;
+    /**
+     * @var mixed
+     */
+    private $from;
+    /**
+     * @var mixed
+     */
+    private $isRecId;
+    /**
+     * @var mixed
+     */
+    private $message;
+    /**
+     * @var mixed
+     */
+    private $messageId;
+    /**
+     * @var mixed
+     */
+    private $phone;
+    /**
+     * @var mixed
+     */
+    private $primary;
+    /**
+     * @var mixed
+     */
+    private $ptn;
+    private array $rawInboundDataArray;
+    /**
+     * @var mixed
+     */
+    private $taken;
 
-        if (isset($inboundDataArray['Cancel/Withdraw Reason'])) {
-            $inboundDataFormatted = Arr::add($inboundDataFormatted, 'cancelReason', $inboundDataArray['Cancel/Withdraw Reason']);
+    /**
+     * PostmarkCallbackInboundData constructor.
+     */
+    public function __construct(array $rawInboundDataArray)
+    {
+        $this->rawInboundDataArray = $rawInboundDataArray;
+        $this->from                = $rawInboundDataArray['From'];
+        $this->phone               = $rawInboundDataArray['Phone'];
+        $this->ptn                 = $rawInboundDataArray['Ptn'];
+        $this->message             = $rawInboundDataArray['Msg'];
+        $this->primary             = $rawInboundDataArray['Primary'];
+        $this->messageId           = $rawInboundDataArray['Msg ID'];
+        $this->isRecId             = $rawInboundDataArray['IS Rec #'];
+        $this->callerId            = $rawInboundDataArray['Clr ID'];
+        $this->taken               = $rawInboundDataArray['Taken'];
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function callbackCancellationMessage()
+    {
+        if ( ! isset($this->rawInboundDataArray[self::CANCELLATION_REASON_KEY])) {
+            return null;
         }
 
-        return $inboundDataFormatted;
+        return $this->rawInboundDataArray[self::CANCELLATION_REASON_KEY];
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function get($key)
+    {
+        return $this->$key ?? null;
+    }
+
+    public function toArray()
+    {
+        return [
+            'from'                            => $this->from,
+            'phone'                           => $this->phone,
+            'ptn'                             => $this->ptn,
+            'message'                         => $this->message,
+            'primary'                         => $this->primary,
+            'messageId'                       => $this->messageId,
+            'isRecId'                         => $this->isRecId,
+            'callerId'                        => $this->callerId,
+            'taken'                           => $this->taken,
+            self::CANCELLATION_REASON_NEW_KEY => $this->callbackCancellationMessage(),
+        ];
+    }
+    
+    /**
+     * @return array
+     */
+    public function rawInboundCallbackData()
+    {
+        return $this->rawInboundDataArray;
     }
 }
