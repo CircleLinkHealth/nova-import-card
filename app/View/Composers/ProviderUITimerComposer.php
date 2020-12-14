@@ -190,7 +190,7 @@ class ProviderUITimerComposer extends ServiceProvider
             $record1->chargeable_service_id   = -1;
             $record1->chargeable_service_code = 'NONE';
             $record1->chargeable_service_name = 'NONE';
-            $record1->total_time              = optional(CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
+            $record1->total_time              = optional(CircleLinkHealth\SharedModels\Entities\CareAmbassadorLog::createOrGetLogs($user->careAmbassador->id))->total_time_in_system ?? 0;
             $chargeableServices               = new PatientChargeableSummaryCollection(collect([
                 new PatientChargeableSummary($record1),
             ]));
