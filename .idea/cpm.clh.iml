@@ -10,6 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/CircleLinkHealth" isTestSource="false" packagePrefix="CircleLinkHealth\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/CircleLinkHealth/SamlSp/Tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/.vapor" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/aacotroneo/laravel-saml2" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/algolia/algoliasearch-client-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/algolia/scout-extended" />
