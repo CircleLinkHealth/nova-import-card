@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "039cc5d48f59945348322af250f09750",
+    "content-hash": "84b9eaf507e1735f77615e742c53ae2b",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -823,7 +823,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-admin-module.git",
-                "reference": "d232fc18bc1512b24fcc6b82a3e73de68c24aefd"
+                "reference": "96f0b068fe59f02e9573ecc8208c393f74d214dd"
             },
             "require": {
                 "circlelinkhealth/core-module": "*",
@@ -865,7 +865,7 @@
                     "role": "Lead Developer"
                 }
             ],
-            "time": "2020-12-14T16:59:20+00:00"
+            "time": "2020-12-14T17:31:05+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1157,6 +1157,45 @@
                 }
             ],
             "time": "2020-12-14T16:59:20+00:00"
+        },
+        {
+            "name": "circlelinkhealth/pdf-service-module",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/pdf-service-module.git",
+                "reference": "f27df3034a0a1f98d370592f7f9490025ab0ada2"
+            },
+            "require": {
+                "barryvdh/laravel-snappy": "0.4.7",
+                "circlelinkhealth/core-module": "dev-vaporizing-admin",
+                "daltcore/lara-pdf-merger": "1.1.2"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\PdfService\\Providers\\PdfServiceProvider",
+                        "CircleLinkHealth\\PdfService\\Providers\\PdfServiceDeferrableProvider"
+                    ],
+                    "aliases": [],
+                    "dont-discover": [
+                        "barryvdh/laravel-snappy"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\PdfService\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pangratios@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-12-14T17:44:50+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -12715,6 +12754,7 @@
         "circlelinkhealth/cpm-admin-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/pdf-service-module": 20,
         "circlelinkhealth/saml-sp-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/sharedvuecomponents-module": 20,
