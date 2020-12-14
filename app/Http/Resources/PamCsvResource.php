@@ -6,7 +6,7 @@
 
 namespace App\Http\Resources;
 
-use App\Actions\PatientTimeAndCalls;
+use CircleLinkHealth\Customer\Actions\PatientTimeAndCalls;
 use App\ValueObjects\PatientTimeAndCalls as PatientTimeAndCallsValueObject;
 use Illuminate\Http\Resources\Json\JsonResource;
 
